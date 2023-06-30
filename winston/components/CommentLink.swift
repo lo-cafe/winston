@@ -92,6 +92,7 @@ struct CommentLink: View {
               }
           }
         }
+        .contentShape(Rectangle())
         .swipyActions(leftActionHandler: {}, rightActionHandler: {}, secondActionHandler: {})
         
         if let replies = data.replies {

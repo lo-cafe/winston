@@ -7,14 +7,23 @@
 
 import SwiftUI
 
-struct GoodNavigator: View {
-    var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
-    }
-}
+struct GoodNavigator<Content: View>: View {
+    
+    private let content: () -> Content
 
-struct GoodNavigator_Previews: PreviewProvider {
-    static var previews: some View {
-        GoodNavigator()
+    init(@ViewBuilder content: @escaping () -> Content) {
+        self.content = content
+    }
+
+    var body: some View {
+        if #available(iOS 16.0, *) {
+            NavigationStack {
+                self.content()
+            }
+        } else {
+            NavigationView {
+                self.content()
+            }
+        }
     }
 }

@@ -11,8 +11,16 @@ import Defaults
 typealias Comment = GenericRedditEntity<CommentData>
 
 extension Comment {
-  func vote(_ action: RedditAPI.VoteAction) {
-    
+  mutating func vote(action: RedditAPI.VoteAction) async -> Bool? {
+    let oldValue = data?.likes
+    var newAction = action
+    newAction = action.boolVersion() == oldValue ? .none : action
+    data?.likes = newAction.boolVersion()
+    let result = await redditAPI.vote(newAction, id: id)
+    if result == nil || !result! {
+      data?.likes = oldValue
+    }
+    return result
   }
 }
 
@@ -28,7 +36,7 @@ struct CommentData: GenericRedditEntityDataType {
 //  let total_awards_received: Int?
 //  let subreddit: String?
 //  let author_flair_template_id: String?
-  let likes: Bool?
+  var likes: Bool?
   let replies: Either<String, Listing<CommentData>>?
 //  let user_reports: [String]?
   let saved: Bool?

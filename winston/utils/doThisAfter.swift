@@ -5,16 +5,10 @@
 //  Created by Igor Marcossi on 28/06/23.
 //
 
-import SwiftUI
+import Foundation
 
-struct doThisAfter: View {
-    var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
-    }
-}
-
-struct doThisAfter_Previews: PreviewProvider {
-    static var previews: some View {
-        doThisAfter()
+func doThisAfter(_ seconds: CGFloat, callback: @escaping () -> Void) {
+    return DispatchQueue.main.asyncAfter(deadline: .now() + seconds) {
+        callback()
     }
 }

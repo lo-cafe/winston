@@ -8,8 +8,24 @@
 import SwiftUI
 
 struct Me: View {
+  @Environment(\.openURL) var openURL
+  @EnvironmentObject var redditAPI: RedditAPI
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+      VStack {
+        if let refreshToken = redditAPI.loggedUser.refreshToken {
+          Text(refreshToken)
+          Button("Logout") {
+            redditAPI.loggedUser.accessToken = nil
+            redditAPI.loggedUser.refreshToken = nil
+            redditAPI.loggedUser.expiration = nil
+            redditAPI.loggedUser.lastRefresh = nil
+          }
+        } else {
+          Button("Open auth") {
+            openURL(redditAPI.getAuthorizationCodeURL())
+          }
+        }
+      }
     }
 }
 

@@ -8,7 +8,30 @@
 import Foundation
 import Defaults
 
-struct PostData: Codable, Defaults.Serializable {
+typealias Post = GenericRedditEntity<PostData>
+
+extension Post {
+  func fetchComments(sort: CommentSortOption = .confidence, after: String? = nil) async -> ([Comment]?, String?)? {
+    if let subreddit = data?.subreddit, let response = await redditAPI.fetchPostComments(subreddit: subreddit, postID: id), let data = response.0 {
+      return (data.map { x in Comment(data: x.data, api: redditAPI) }, response.1)
+    }
+    return nil
+  }
+  
+  mutating func vote(action: RedditAPI.VoteAction) async -> Bool? {
+    let oldValue = data?.likes
+    var newAction = action
+    newAction = action.boolVersion() == oldValue ? .none : action
+    data?.likes = newAction.boolVersion()
+    let result = await redditAPI.vote(newAction, id: id)
+    if result == nil || !result! {
+      data?.likes = oldValue
+    }
+    return result
+  }
+}
+
+struct PostData: GenericRedditEntityDataType, Defaults.Serializable {
   let subreddit: String
   let selftext: String
   let author_fullname: String?
@@ -51,7 +74,7 @@ struct PostData: Codable, Defaults.Serializable {
   let pwls: Int?
   let link_flair_text: String?
   let thumbnail: String?
-  let edited: Edited?
+//  let edited: Edited?
   let link_flair_template_id: String?
   let author_flair_text: String?
   //    let media: String?
@@ -70,7 +93,7 @@ struct PostData: Codable, Defaults.Serializable {
   let removed_by_category: String?
   let banned_by: String?
   let author_flair_type: String?
-  let likes: Bool?
+  var likes: Bool?
   let suggested_sort: String?
   let banned_at_utc: String?
   let view_count: String?
@@ -79,7 +102,7 @@ struct PostData: Codable, Defaults.Serializable {
   let is_crosspostable: Bool?
   let pinned: Bool?
   let over_18: Bool?
-  let all_awardings: [Awarding]?
+//  let all_awardings: [Awarding]?
   let awarders: [String]?
   let media_only: Bool?
   let can_gild: Bool?
@@ -101,12 +124,12 @@ struct PostData: Codable, Defaults.Serializable {
   let secure_media_embed: SecureMediaEmbed?
 }
 
-struct SecureMediaAlt: Codable {
+struct SecureMediaAlt: Codable, Hashable {
     let type: String?
     let oembed: Oembed?
 }
 
-struct Oembed: Codable {
+struct Oembed: Codable, Hashable {
     let provider_url: String?
     let version: String?
     let title: String?
@@ -122,7 +145,7 @@ struct Oembed: Codable {
     let author_url: String?
 }
 
-struct SecureMediaEmbed: Codable {
+struct SecureMediaEmbed: Codable, Hashable {
     let content: String?
     let width: Int?
     let scrolling: Bool?
@@ -130,7 +153,7 @@ struct SecureMediaEmbed: Codable {
     let height: Int?
 }
 
-struct RedditVideo: Codable {
+struct RedditVideo: Codable, Hashable {
   let bitrate_kbps: Int?
   let fallback_url: String?
   let has_audio: Bool?
@@ -144,11 +167,11 @@ struct RedditVideo: Codable {
   let transcoding_status: String?
 }
 
-struct SecureMediaRedditVideo: Codable {
+struct SecureMediaRedditVideo: Codable, Hashable {
   let reddit_video: RedditVideo?
 }
 
-struct Awarding: Codable {
+struct Awarding: Codable, Hashable {
   let id: String
   let name: String
   let description: String

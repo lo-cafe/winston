@@ -13,26 +13,30 @@ import Defaults
 
 class RedditAPI: ObservableObject {
   static let winstonAPIBase = "https://winston.lo.cafe/api"
-  static let apiURLBase = "https://oauth.reddit.com"
+  static let redditApiURLBase = "https://oauth.reddit.com"
+  static let redditWWWApiURLBase = "https://www.reddit.com"
   static let appClientID: String = "slCYQaTCGfV7FE38BxOeJw"
   static let appRedirectURI: String = "https://app.winston.lo.cafe/auth-success"
   
   @Published var loggedUser: UserCredential = UserCredential()
   @Published var lastAuthState: String?
   
-  func getRequestHeaders() -> HTTPHeaders? {
+  func getRequestHeaders(includeAuth: Bool = true) -> HTTPHeaders? {
     if let accessToken = self.loggedUser.accessToken {
-      let headers: HTTPHeaders = [
-        "Authorization": "Bearer \(accessToken)",
+      var headers: HTTPHeaders = [
         "User-Agent": "ios:lo.cafe.winston:v0.1.0 (by /u/Kinark)"
       ]
+      if includeAuth {
+        headers["Authorization"] = "Bearer \(accessToken)"
+      }
       return headers
     }
     return nil
   }
   
   func refreshToken() async -> Void {
-    if let refreshToken = loggedUser.accessToken {
+    print("refresca")
+    if let refreshToken = loggedUser.refreshToken {
       if loggedUser.lastRefresh!.timeIntervalSinceNow > Double(loggedUser.expiration ?? 0) {
         let payload = RefreshAccessTokenPayload(refreshToken: refreshToken)
         let response = await AF.request("\(RedditAPI.winstonAPIBase)/get-access-token",
@@ -102,111 +106,10 @@ class RedditAPI: ObservableObject {
     return URL(string: "https://www.reddit.com/api/v1/authorize?client_id=\(client_id)&response_type=\(response_type)&state=\(state)&redirect_uri=\(redirect_uri)&duration=\(duration)&scope=\(scope)".addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!)!
   }
   
-  func fetchSubs() async -> Void {
-    await refreshToken()
-    if let accessToken = self.loggedUser.accessToken {
-      let headers: HTTPHeaders = [
-        "Authorization": "Bearer \(accessToken)",
-        "User-Agent": "ios:lo.cafe.winston:v0.1.0 (by /u/Kinark)"
-      ]
-      
-      let params = ["limit": 100, "count": 0]
-      
-      let response = await AF.request("\(RedditAPI.apiURLBase)/subreddits/mine/subscriber",
-                                      method: .get,
-                                      parameters: params,
-                                      encoder: URLEncodedFormParameterEncoder(destination: .queryString),
-                                      headers: headers
-      )
-        .serializingDecodable(Listing<SubredditData>.self).response
-      switch response.result {
-      case .success(let data):
-        await MainActor.run {
-          if let children = data.data?.children {
-            Defaults[.subreddits] = children
-          }
-        }
-        return
-      case .failure(let error):
-        print(error)
-        return
-      }
-    } else {
-      return
+  func getModHash() async {
+    if loggedUser.modhash == nil {
+      await fetchSubs()
     }
-  }
-  
-  func fetchSubPosts(_ url: String, sort: SubListingSortOption = .hot, after: String? = nil) async -> ([ListingChild<PostData>]?, String?)? {
-    await refreshToken()
-    if let headers = self.getRequestHeaders() {
-      let params = FetchSubsPayload(limit: 15, count: 0, after: after)
-      
-      let response = await AF.request("\(RedditAPI.apiURLBase)\(url)\(sort.rawVal.value)/.json",
-                                      method: .get,
-                                      parameters: params,
-                                      encoder: URLEncodedFormParameterEncoder(destination: .queryString),
-                                      headers: headers
-      )
-        .serializingDecodable(Listing<PostData>.self).response
-      switch response.result {
-      case .success(let data):
-        return (data.data?.children, data.data?.after)
-      case .failure(let error):
-        print(error)
-        return nil
-      }
-    } else {
-      return nil
-    }
-  }
-  
-  func fetchPostComments(subreddit: String, postID: String, sort: CommentSortOption = .confidence) async -> ([ListingChild<CommentData>]?, String?)? {
-    await refreshToken()
-    if let headers = self.getRequestHeaders() {
-      let params = FetchPostCommentsPayload(sort: sort.rawVal.value, limit: 100, depth: 1)
-      
-      let response = await AF.request("\(RedditAPI.apiURLBase)/r/\(subreddit)/comments/\(postID)/.json",
-                                      method: .get,
-                                      parameters: params,
-                                      encoder: URLEncodedFormParameterEncoder(destination: .queryString),
-                                      headers: headers
-      )
-        .serializingDecodable(FetchPostCommentsResponse.self).response
-      switch response.result {
-      case .success(let data):
-        switch data[1] {
-        case .a(_):
-          return nil
-        case .b(let actualData):
-          return (actualData.data?.children, actualData.data?.after)
-        }
-      case .failure(let error):
-        print(error)
-        return nil
-      }
-    } else {
-      return nil
-    }
-  }
-  
-  typealias FetchPostCommentsResponse = [Either<Listing<SubredditData>, Listing<CommentData>>]
-  
-//  struct FetchPostCommentsResponse: Codable {
-//    var sort: String
-//    var limit: Int
-//    var depth: Int
-//  }
-  
-  struct FetchPostCommentsPayload: Codable {
-    var sort: String
-    var limit: Int
-    var depth: Int
-  }
-  
-  struct FetchSubsPayload: Codable {
-    var limit: Int
-    var count: Int
-    var after: String?
   }
   
   struct RefreshAccessTokenResponse: Decodable {
@@ -231,6 +134,7 @@ class RedditAPI: ObservableObject {
   struct UserCredential {
     let credentialsKeychain = Keychain(service: "lo.cafe.winston.reddit-credentials")
     
+    var modhash: String?
     var accessToken: String? {
       didSet {
         credentialsKeychain["accessToken"] = accessToken
@@ -273,17 +177,17 @@ class RedditAPI: ObservableObject {
   
 }
 
-struct ListingChild<T: Codable>: Codable, Defaults.Serializable {
-  let kind: String
+struct ListingChild<T: Codable & Hashable>: Codable, Defaults.Serializable, Hashable {
+  let kind: String?
   let data: T
 }
 
-struct Listing<T: Codable>: Codable, Defaults.Serializable {
-  let kind: String
+struct Listing<T: Codable & Hashable>: Codable, Defaults.Serializable, Hashable {
+  let kind: String?
   let data: ListingData<T>?
 }
 
-struct ListingData<T: Codable>: Codable, Defaults.Serializable {
+struct ListingData<T: Codable & Hashable>: Codable, Defaults.Serializable, Hashable {
   let after: String?
   let dist: Int?
   let modhash: String?
@@ -291,29 +195,33 @@ struct ListingData<T: Codable>: Codable, Defaults.Serializable {
   let children: [ListingChild<T>]?
 }
 
-enum Either<A: Codable, B: Codable>: Codable {
-    case a(A)
-    case b(B)
+enum Either<A: Codable & Hashable, B: Codable & Hashable>: Codable, Hashable {
+    case first(A)
+    case second(B)
 
     init(from decoder: Decoder) throws {
         let container = try decoder.singleValueContainer()
-        if let value = try? container.decode(A.self) {
-            self = .a(value)
-            return
+
+        do {
+            let firstType = try container.decode(A.self)
+            self = .first(firstType)
+        } catch let firstError {
+            do {
+                let secondType = try container.decode(B.self)
+                self = .second(secondType)
+            } catch let secondError {
+                let context = DecodingError.Context(codingPath: decoder.codingPath, debugDescription: "Type mismatch for both types.", underlyingError: Swift.DecodingError.typeMismatch(Any.self, DecodingError.Context.init(codingPath: decoder.codingPath, debugDescription: "First type error: \(firstError). Second type error: \(secondError)")))
+                throw DecodingError.dataCorrupted(context)
+            }
         }
-        if let value = try? container.decode(B.self) {
-            self = .b(value)
-            return
-        }
-        throw DecodingError.typeMismatch(Either.self, DecodingError.Context(codingPath: decoder.codingPath, debugDescription: "Wrong type"))
     }
 
     func encode(to encoder: Encoder) throws {
         var container = encoder.singleValueContainer()
         switch self {
-        case .a(let value):
+        case .first(let value):
             try container.encode(value)
-        case .b(let value):
+        case .second(let value):
             try container.encode(value)
         }
     }

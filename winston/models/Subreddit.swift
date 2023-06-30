@@ -8,74 +8,37 @@
 import Foundation
 import Defaults
 
-struct SubListingSort: Codable, Identifiable {
-  var icon: String
-  var value: String
-  var id: String {
-    value
-  }
-}
 
-enum SubListingSortOption: Codable, CaseIterable, Identifiable, Defaults.Serializable {
-  var id: String {
-    self.rawVal.id
-  }
-  
-    case hot
-    case new
-    case top
+typealias Subreddit = GenericRedditEntity<SubredditData>
 
-    var rawVal: SubListingSort {
-        switch self {
-        case .hot:
-            return SubListingSort(icon: "flame.fill", value: "hot")
-        case .new:
-            return SubListingSort(icon: "newspaper.fill", value: "new")
-        case .top:
-            return SubListingSort(icon: "arrow.up.forward.app.fill", value: "top")
-        }
-    }
-}
-
-struct Subreddit: Identifiable, Hashable {
-  func hash(into hasher: inout Hasher) {
-      hasher.combine(data)
-  }
-  
-  static func == (lhs: Subreddit, rhs: Subreddit) -> Bool {
-      return lhs.data == rhs.data
-  }
-  
-  var data: SubredditData?
-  let redditAPI: RedditAPI
-  var id: String
-  var loading = false
-  
-  init(id: String, api: RedditAPI) {
-    self.id = id
-    self.redditAPI = api
-  }
-  
-  init(data: SubredditData, api: RedditAPI) {
-    self.data = data
-    self.id = data.id
-    self.redditAPI = api
-  }
-  
+extension Subreddit {
   mutating func refreshSubreddit() async {
     self.loading = true
-    data = await redditAPI.fetchSub(id)
+    if let data = (await redditAPI.fetchSub(id))?.data {
+      self.data = data
+    }
     self.loading = false
   }
   
-  mutating func fetchPosts() async -> {
-    self.loading = true
-    data = await redditAPI.fetchSub(id)
-    self.loading = false
+  func fetchPosts(sort: SubListingSortOption = .hot, after: String? = nil) async -> ([Post]?, String?)? {
+    if let response = await redditAPI.fetchSubPosts(id, sort: sort, after: after), let data = response.0 {
+      return (data.map { x in Post(data: x.data, api: redditAPI) }, response.1)
+    }
+    return nil
+  }
+  
+  mutating func toggleSubscribing(action: RedditAPI.SubscribeSubAction) async -> Bool? {
+    let oldValue = data?.user_is_subscriber
+    data?.user_is_subscriber = action == .sub ? true : false
+    let result = await redditAPI.subscribeSubs(action: (data?.user_is_subscriber ?? false) ? .unsub : .sub, subs: [id])
+    if let oldValue = oldValue, result == nil || !result! {
+      data?.user_is_subscriber = oldValue
+    }
+    return result
   }
 }
 
-struct SubredditData: Codable, Hashable {
+struct SubredditData: GenericRedditEntityDataType {
   let user_flair_background_color: String?
   let submit_text_html: String?
   let restrict_posting: Bool
@@ -128,7 +91,7 @@ struct SubredditData: Codable, Hashable {
   let wls: Int?
   let show_media_preview: Bool
   let submission_type: String
-  let user_is_subscriber: Bool
+  var user_is_subscriber: Bool
   let allowed_media_in_comments: [String]
   let allow_videogifs: Bool
   let should_archive_posts: Bool
@@ -183,4 +146,33 @@ struct SubredditData: Codable, Hashable {
 
 struct CommentContributionSettings: Codable, Hashable {
   let allowed_media_types: [String]?
+}
+
+struct SubListingSort: Codable, Identifiable {
+  var icon: String
+  var value: String
+  var id: String {
+    value
+  }
+}
+
+enum SubListingSortOption: Codable, CaseIterable, Identifiable, Defaults.Serializable {
+  var id: String {
+    self.rawVal.id
+  }
+  
+  case hot
+  case new
+  case top
+  
+  var rawVal: SubListingSort {
+    switch self {
+    case .hot:
+      return SubListingSort(icon: "flame.fill", value: "hot")
+    case .new:
+      return SubListingSort(icon: "newspaper.fill", value: "new")
+    case .top:
+      return SubListingSort(icon: "arrow.up.forward.app.fill", value: "top")
+    }
+  }
 }
