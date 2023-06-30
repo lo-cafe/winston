@@ -1,0 +1,204 @@
+//
+//  PostData.swift
+//  winston
+//
+//  Created by Igor Marcossi on 26/06/23.
+//
+
+import Foundation
+import Defaults
+
+struct PostData: Codable, Defaults.Serializable {
+  let subreddit: String
+  let selftext: String
+  let author_fullname: String?
+  let saved: Bool
+  let gilded: Int
+  let clicked: Bool
+  let title: String
+  let subreddit_name_prefixed: String
+  let hidden: Bool
+  let downs: Int
+  let hide_score: Bool
+  let name: String
+  let quarantine: Bool
+  let link_flair_text_color: String?
+  let upvote_ratio: Double
+  let subreddit_type: String
+  let ups: Int
+  let total_awards_received: Int
+  let is_self: Bool
+  let created: Double
+  let domain: String
+  let allow_live_comments: Bool
+  let selftext_html: String?
+  let id: String
+  let is_robot_indexable: Bool
+  let author: String
+  let num_comments: Int
+  let send_replies: Bool
+  let whitelist_status: String?
+  let contest_mode: Bool
+  let permalink: String
+  let url: String
+  let subreddit_subscribers: Int
+  let created_utc: Double
+  let num_crossposts: Int
+  let is_video: Bool
+  
+  // Optional properties
+  let wls: Int?
+  let pwls: Int?
+  let link_flair_text: String?
+  let thumbnail: String?
+  let edited: Edited?
+  let link_flair_template_id: String?
+  let author_flair_text: String?
+  //    let media: String?
+  let approved_at_utc: String?
+  let mod_reason_title: String?
+  let top_awarded_type: String?
+  let author_flair_background_color: String?
+  let approved_by: String?
+  let is_created_from_ads_ui: Bool?
+  let author_premium: Bool?
+  let author_flair_css_class: String?
+  let gildings: [String: Int]?
+  let content_categories: [String]?
+  let mod_note: String?
+  let link_flair_type: String?
+  let removed_by_category: String?
+  let banned_by: String?
+  let author_flair_type: String?
+  let likes: Bool?
+  let suggested_sort: String?
+  let banned_at_utc: String?
+  let view_count: String?
+  let archived: Bool?
+  let no_follow: Bool?
+  let is_crosspostable: Bool?
+  let pinned: Bool?
+  let over_18: Bool?
+  let all_awardings: [Awarding]?
+  let awarders: [String]?
+  let media_only: Bool?
+  let can_gild: Bool?
+  let spoiler: Bool?
+  let locked: Bool?
+  let treatment_tags: [String]?
+  let visited: Bool?
+  let removed_by: String?
+  let num_reports: Int?
+  let distinguished: String?
+  let subreddit_id: String?
+  let author_is_blocked: Bool?
+  let mod_reason_by: String?
+  let removal_reason: String?
+  let link_flair_background_color: String?
+  let report_reasons: [String]?
+  let discussion_type: String?
+  let secure_media: Either<SecureMediaRedditVideo, SecureMediaAlt>?
+  let secure_media_embed: SecureMediaEmbed?
+}
+
+struct SecureMediaAlt: Codable {
+    let type: String?
+    let oembed: Oembed?
+}
+
+struct Oembed: Codable {
+    let provider_url: String?
+    let version: String?
+    let title: String?
+    let type: String?
+    let thumbnail_width: Int?
+    let height: Int?
+    let width: Int?
+    let html: String?
+    let author_name: String?
+    let provider_name: String?
+    let thumbnail_url: String?
+    let thumbnail_height: Int?
+    let author_url: String?
+}
+
+struct SecureMediaEmbed: Codable {
+    let content: String?
+    let width: Int?
+    let scrolling: Bool?
+    let media_domain_url: String?
+    let height: Int?
+}
+
+struct RedditVideo: Codable {
+  let bitrate_kbps: Int?
+  let fallback_url: String?
+  let has_audio: Bool?
+  let height: Int?
+  let width: Int?
+  let scrubber_media_url: String?
+  let dash_url: String?
+  let duration: Int?
+  let hls_url: String?
+  let is_gif: Bool?
+  let transcoding_status: String?
+}
+
+struct SecureMediaRedditVideo: Codable {
+  let reddit_video: RedditVideo?
+}
+
+struct Awarding: Codable {
+  let id: String
+  let name: String
+  let description: String
+  let coin_price: Int
+  let coin_reward: Int
+  let icon_url: String
+  let is_enabled: Bool
+  let count: Int
+  
+  // Optional properties
+  let days_of_premium: Int?
+  let award_sub_type: String?
+  let days_of_drip_extension: Int?
+  let icon_height: Int?
+  let icon_width: Int?
+  let is_new: Bool?
+  let subreddit_coin_reward: Int?
+  let tier_by_required_awardings: [String: Int]?
+  let award_type: String?
+  let awardings_required_to_grant_benefits: Int?
+  let start_date: Double?
+  let end_date: Double?
+  let static_icon_height: Int?
+  let static_icon_url: String?
+  let static_icon_width: Int?
+  let subreddit_id: String?
+}
+
+enum Edited: Codable {
+  case bool(Bool)
+  case double(Double)
+  
+  init(from decoder: Decoder) throws {
+    let container = try decoder.singleValueContainer()
+    if let boolValue = try? container.decode(Bool.self) {
+      self = .bool(boolValue)
+    } else if let doubleValue = try? container.decode(Double.self) {
+      self = .double(doubleValue)
+    } else {
+      throw DecodingError.typeMismatch(Edited.self, DecodingError.Context(codingPath: decoder.codingPath, debugDescription: "Expected value of type Bool or Double"))
+    }
+  }
+  
+  func encode(to encoder: Encoder) throws {
+    var container = encoder.singleValueContainer()
+    switch self {
+    case .bool(let boolValue):
+      try container.encode(boolValue)
+    case .double(let doubleValue):
+      try container.encode(doubleValue)
+    }
+  }
+}

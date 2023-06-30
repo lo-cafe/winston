@@ -1,0 +1,21 @@
+{
+  "images" : [
+    {
+      "filename" : "kinark_a_cute_app_icon_of_a_3d_astronaut_black_cat_with_yellow__1c3612cd-2901-4f3d-981c-fd343250a083.png",
+      "idiom" : "universal",
+      "scale" : "1x"
+    },
+    {
+      "idiom" : "universal",
+      "scale" : "2x"
+    },
+    {
+      "idiom" : "universal",
+      "scale" : "3x"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}

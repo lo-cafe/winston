@@ -1,8 +1,111 @@
 {
   "images" : [
     {
-      "idiom" : "universal",
-      "platform" : "ios",
+      "filename" : "kinark_a_cute_app_icon_of_a_3d_astronaut_black_cat_with_yellow__1c3612cd-2901-4f3d-981c-fd343250a083-20@2x.png",
+      "idiom" : "iphone",
+      "scale" : "2x",
+      "size" : "20x20"
+    },
+    {
+      "filename" : "kinark_a_cute_app_icon_of_a_3d_astronaut_black_cat_with_yellow__1c3612cd-2901-4f3d-981c-fd343250a083-20@3x.png",
+      "idiom" : "iphone",
+      "scale" : "3x",
+      "size" : "20x20"
+    },
+    {
+      "filename" : "kinark_a_cute_app_icon_of_a_3d_astronaut_black_cat_with_yellow__1c3612cd-2901-4f3d-981c-fd343250a083-29@2x.png",
+      "idiom" : "iphone",
+      "scale" : "2x",
+      "size" : "29x29"
+    },
+    {
+      "filename" : "kinark_a_cute_app_icon_of_a_3d_astronaut_black_cat_with_yellow__1c3612cd-2901-4f3d-981c-fd343250a083-29@3x.png",
+      "idiom" : "iphone",
+      "scale" : "3x",
+      "size" : "29x29"
+    },
+    {
+      "filename" : "kinark_a_cute_app_icon_of_a_3d_astronaut_black_cat_with_yellow__1c3612cd-2901-4f3d-981c-fd343250a083-40@2x.png",
+      "idiom" : "iphone",
+      "scale" : "2x",
+      "size" : "40x40"
+    },
+    {
+      "filename" : "kinark_a_cute_app_icon_of_a_3d_astronaut_black_cat_with_yellow__1c3612cd-2901-4f3d-981c-fd343250a083-40@3x.png",
+      "idiom" : "iphone",
+      "scale" : "3x",
+      "size" : "40x40"
+    },
+    {
+      "filename" : "kinark_a_cute_app_icon_of_a_3d_astronaut_black_cat_with_yellow__1c3612cd-2901-4f3d-981c-fd343250a083-60@2x.png",
+      "idiom" : "iphone",
+      "scale" : "2x",
+      "size" : "60x60"
+    },
+    {
+      "filename" : "kinark_a_cute_app_icon_of_a_3d_astronaut_black_cat_with_yellow__1c3612cd-2901-4f3d-981c-fd343250a083-60@3x.png",
+      "idiom" : "iphone",
+      "scale" : "3x",
+      "size" : "60x60"
+    },
+    {
+      "filename" : "kinark_a_cute_app_icon_of_a_3d_astronaut_black_cat_with_yellow__1c3612cd-2901-4f3d-981c-fd343250a083-20.png",
+      "idiom" : "ipad",
+      "scale" : "1x",
+      "size" : "20x20"
+    },
+    {
+      "filename" : "kinark_a_cute_app_icon_of_a_3d_astronaut_black_cat_with_yellow__1c3612cd-2901-4f3d-981c-fd343250a083-20@2x.png",
+      "idiom" : "ipad",
+      "scale" : "2x",
+      "size" : "20x20"
+    },
+    {
+      "filename" : "kinark_a_cute_app_icon_of_a_3d_astronaut_black_cat_with_yellow__1c3612cd-2901-4f3d-981c-fd343250a083-29.png",
+      "idiom" : "ipad",
+      "scale" : "1x",
+      "size" : "29x29"
+    },
+    {
+      "filename" : "kinark_a_cute_app_icon_of_a_3d_astronaut_black_cat_with_yellow__1c3612cd-2901-4f3d-981c-fd343250a083-29@2x.png",
+      "idiom" : "ipad",
+      "scale" : "2x",
+      "size" : "29x29"
+    },
+    {
+      "filename" : "kinark_a_cute_app_icon_of_a_3d_astronaut_black_cat_with_yellow__1c3612cd-2901-4f3d-981c-fd343250a083-40.png",
+      "idiom" : "ipad",
+      "scale" : "1x",
+      "size" : "40x40"
+    },
+    {
+      "filename" : "kinark_a_cute_app_icon_of_a_3d_astronaut_black_cat_with_yellow__1c3612cd-2901-4f3d-981c-fd343250a083-40@2x.png",
+      "idiom" : "ipad",
+      "scale" : "2x",
+      "size" : "40x40"
+    },
+    {
+      "filename" : "kinark_a_cute_app_icon_of_a_3d_astronaut_black_cat_with_yellow__1c3612cd-2901-4f3d-981c-fd343250a083-76.png",
+      "idiom" : "ipad",
+      "scale" : "1x",
+      "size" : "76x76"
+    },
+    {
+      "filename" : "kinark_a_cute_app_icon_of_a_3d_astronaut_black_cat_with_yellow__1c3612cd-2901-4f3d-981c-fd343250a083-76@2x.png",
+      "idiom" : "ipad",
+      "scale" : "2x",
+      "size" : "76x76"
+    },
+    {
+      "filename" : "kinark_a_cute_app_icon_of_a_3d_astronaut_black_cat_with_yellow__1c3612cd-2901-4f3d-981c-fd343250a083-83.5@2x.png",
+      "idiom" : "ipad",
+      "scale" : "2x",
+      "size" : "83.5x83.5"
+    },
+    {
+      "filename" : "kinark_a_cute_app_icon_of_a_3d_astronaut_black_cat_with_yellow__1c3612cd-2901-4f3d-981c-fd343250a083-1024.png",
+      "idiom" : "ios-marketing",
+      "scale" : "1x",
       "size" : "1024x1024"
     }
   ],
