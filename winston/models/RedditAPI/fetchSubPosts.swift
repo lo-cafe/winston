@@ -13,7 +13,7 @@ extension RedditAPI {
     await refreshToken()
     if let headers = self.getRequestHeaders() {
       let params = FetchSubsPayload(limit: 15, count: 0, after: after)
-      let response = await AF.request("\(RedditAPI.redditApiURLBase)\(id.hasPrefix("/r/") ? id : "/r/\(id)")/\(sort.rawVal.value)/.json",
+      let response = await AF.request("\(RedditAPI.redditApiURLBase)\(id.hasPrefix("/r/") ? id : "/r/\(id)")\(sort.rawVal.value)/.json",
                                       method: .get,
                                       parameters: params,
                                       encoder: URLEncodedFormParameterEncoder(destination: .queryString),

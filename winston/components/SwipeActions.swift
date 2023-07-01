@@ -11,7 +11,7 @@ import SimpleHaptics
 
 struct SwipeActionsModifier: ViewModifier {
   @EnvironmentObject private var haptics: SimpleHapticGenerator
-  @GestureState var offsetX: CGFloat = .zero
+  @GestureState var offsetX: CGFloat?
   @State private var offsetXTemp: CGFloat = .zero
   @State private var offsetOffset: CGFloat?
   @State private var firstAction = false
@@ -22,7 +22,8 @@ struct SwipeActionsModifier: ViewModifier {
   var secondActionHandler: (()->())?
   
   let firstActionThreshold: CGFloat = 75
-  let secondActionThreshold: CGFloat = 110
+  let secondActionThreshold: CGFloat = 150
+  let minimumDragDistance: CGFloat = 16
   
   init(leftActionHandler: @escaping ()->(), rightActionHandler: @escaping ()->(), secondActionHandler: (()->())? = nil) {
     self.leftActionHandler = leftActionHandler
@@ -31,7 +32,7 @@ struct SwipeActionsModifier: ViewModifier {
   }
   
   func body(content: Content) -> some View {
-    let actualOffsetX = offsetX + offsetXTemp
+    let actualOffsetX = (offsetX ?? 0) + offsetXTemp
     let pressing = actualOffsetX != 0
     let offsetXInterpolate = interpolatorBuilder([0, firstActionThreshold], value: actualOffsetX)
     let offsetXNegativeInterpolate = interpolatorBuilder([0, -firstActionThreshold], value: actualOffsetX)
@@ -42,7 +43,7 @@ struct SwipeActionsModifier: ViewModifier {
           .padding(.vertical, -14)
           .padding(.horizontal, -16)
       )
-      .offset(x: offsetXTemp + offsetX)
+      .offset(x: actualOffsetX)
       .background(
         HStack {
           
@@ -79,17 +80,17 @@ struct SwipeActionsModifier: ViewModifier {
           .frame(maxWidth: .infinity, maxHeight: .infinity)
       )
       .simultaneousGesture(
-        DragGesture(minimumDistance: 15, coordinateSpace: .global)
+        DragGesture(minimumDistance: minimumDragDistance, coordinateSpace: .global)
           .updating($offsetX, body: { val, state, transaction in
             let x = val.translation.width
             Task {
               if offsetOffset == nil && x != 0 {
-                offsetOffset = x < 0 ? -15 : 15
+                offsetOffset = x < 0 ? -minimumDragDistance : minimumDragDistance
               }
             }
             if let offsetOffset = offsetOffset {
               transaction.isContinuous = true
-              transaction.animation = .interpolatingSpring(stiffness: 1000, damping: 100)
+              transaction.animation = .interpolatingSpring(stiffness: 1000, damping: 100, initialVelocity: 0)
               state = x - offsetOffset
             }
           })
@@ -97,16 +98,12 @@ struct SwipeActionsModifier: ViewModifier {
             let predictedEnd = val.predictedEndTranslation.width
             let xPos = val.translation.width
             offsetXTemp = xPos - (offsetOffset ?? 0)
-            offsetOffset = nil
             let finalXPos: CGFloat = 0
             let distance = abs(finalXPos - xPos)
             var initialVel = abs(predictedEnd / distance)
             initialVel = initialVel < 3.75 ? 0 : initialVel * 2
-            offsetOffset = nil
             if firstAction {
-              firstAction = false
               if secondAction {
-                secondAction = false
                 secondActionHandler?()
               } else {
                 if xPos > 0 {
@@ -125,23 +122,30 @@ struct SwipeActionsModifier: ViewModifier {
             
           }
       )
-      .onChange(of: offsetX) { val in
-        let firstActioning = abs(val) > firstActionThreshold - 1
-        let secondActioning = val < -secondActionThreshold + 1
-        
-        if (!firstAction && firstActioning) || (firstAction && !firstActioning) {
-          withAnimation(.interpolatingSpring(stiffness: 200, damping: 15, initialVelocity: firstActioning ? 35 : 0)) {
-            firstAction = firstActioning
-          }
-          try? haptics.fire(intensity: firstActioning ? 0.5 : 0.35, sharpness: firstActioning ? 0.25 : 0.5)
-        }
-        if secondActionHandler != nil {
-          if (!secondAction && secondActioning) || (secondAction && !secondActioning) {
-            withAnimation(.interpolatingSpring(stiffness: 200, damping: 15, initialVelocity: secondActioning ? 35 : 0)) {
-              secondAction = secondActioning
+      .onChange(of: offsetX) { _val in
+        let val = _val ?? 0
+        if _val != nil {
+          let firstActioning = abs(val) > firstActionThreshold - 1
+          let secondActioning = val < -secondActionThreshold + 1
+          
+          if (!firstAction && firstActioning) || (firstAction && !firstActioning) {
+            withAnimation(.interpolatingSpring(stiffness: 200, damping: 15, initialVelocity: firstActioning ? 35 : 0)) {
+              firstAction = firstActioning
             }
-            try? haptics.fire(intensity: secondActioning ? 0.5 : 0.35, sharpness: secondActioning ? 0.25 : 0.5)
+            try? haptics.fire(intensity: firstActioning ? 0.5 : 0.35, sharpness: firstActioning ? 0.25 : 0.5)
           }
+          if secondActionHandler != nil {
+            if (!secondAction && secondActioning) || (secondAction && !secondActioning) {
+              withAnimation(.interpolatingSpring(stiffness: 200, damping: 15, initialVelocity: secondActioning ? 35 : 0)) {
+                secondAction = secondActioning
+              }
+              try? haptics.fire(intensity: secondActioning ? 0.5 : 0.35, sharpness: secondActioning ? 0.25 : 0.5)
+            }
+          }
+        } else {
+          offsetOffset = nil
+          firstAction = false
+          secondAction = false
         }
       }
   }

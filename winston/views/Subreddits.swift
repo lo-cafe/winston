@@ -8,6 +8,7 @@
 import SwiftUI
 import Defaults
 import CachedAsyncImage
+import SDWebImageSwiftUI
 
 let alphabetLetters = Array("ABCDEFGHIJKLMNOPQRSTUVWXYZ").map { String($0) }
 
@@ -29,19 +30,18 @@ struct SubItem: View {
                 .mask(Circle())
                 .fontWeight(.semibold)
             } else {
-              CachedAsyncImage(url: URL(string: icon)) { image in
-                image
-                  .resizable()
-                  .scaledToFill()
-                  .frame(width: 30, height: 30)
-                  .mask(Circle())
-              } placeholder: {
-                ProgressView()
-                  .progressViewStyle(.circular)
-                  .frame(width: 22, height: 22 )
-                  .frame(width: 30, height: 30 )
-                  .background(Color.hex(data.primary_color), in: Circle())
-              }
+              WebImage(url: URL(string: icon))
+                .resizable()
+                .placeholder {
+                  ProgressView()
+                    .progressViewStyle(.circular)
+                    .frame(width: 22, height: 22 )
+                    .frame(width: 30, height: 30 )
+                    .background(Color.hex(data.primary_color), in: Circle())
+                }
+                .scaledToFill()
+                .frame(width: 30, height: 30)
+                .mask(Circle())
             }
           }
           Text(data.display_name)

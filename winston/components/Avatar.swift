@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-import CachedAsyncImage
+import SDWebImageSwiftUI
 
 struct Avatar: View {
   var userID: String
@@ -14,18 +14,18 @@ struct Avatar: View {
   @EnvironmentObject var redditAPI: RedditAPI
   var body: some View {
     Group {
-      if let iconImg = userData?.iconImg {
-        CachedAsyncImage(url: URL(string: iconImg)) { image in
-          image
+      if let iconFull = userData?.subreddit?.icon_img, iconFull != "" {
+        let icon = String(iconFull.split(separator: "?")[0])
+          WebImage(url: URL(string: icon))
             .resizable()
+            .placeholder {
+              Text(userID.prefix(1))
+                .background(
+                  Circle()
+                    .fill(.gray.opacity(0.5))
+                )
+            }
             .scaledToFill()
-        } placeholder: {
-          Text(userID.prefix(1))
-            .background(
-              Circle()
-                .fill(.gray.opacity(0.5))
-            )
-        }
       } else {
         Text(userID.prefix(1).uppercased())
           .background(
@@ -35,7 +35,7 @@ struct Avatar: View {
           )
           .onAppear {
             Task {
-              if let data = await redditAPI.fetchUser(userID: userID) {
+              if let data = await redditAPI.fetchUser(userID) {
                 userData = data
               }
             }

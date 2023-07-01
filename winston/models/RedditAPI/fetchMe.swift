@@ -1,25 +1,25 @@
 //
-//  fetchUser.swift
+//  fetchMe.swift
 //  winston
 //
-//  Created by Igor Marcossi on 28/06/23.
+//  Created by Igor Marcossi on 01/07/23.
 //
 
 import Foundation
 import Alamofire
 
 extension RedditAPI {
-  func fetchUser(_ userName: String) async -> UserData? {
+  func fetchMe() async -> User? {
     await refreshToken()
     if let headers = self.getRequestHeaders() {
-    let response = await AF.request("\(RedditAPI.redditApiURLBase)/user/\(userName)/about.json",
+    let response = await AF.request("\(RedditAPI.redditApiURLBase)/api/v1/me",
                                       method: .get,
                                       headers: headers
       )
-        .serializingDecodable(ListingChild<UserData>.self).response
+        .serializingDecodable(UserData.self).response
       switch response.result {
       case .success(let data):
-        return data.data
+        return User(data: data, api: self)
       case .failure(let error):
         print(error)
         return nil

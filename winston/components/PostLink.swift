@@ -6,14 +6,13 @@
 //
 
 import SwiftUI
-import CachedAsyncImage
+import SDWebImageSwiftUI
 import VideoPlayer
 import CoreMedia
 
 struct PostLink: View {
-  var post: Post
-  var sub: SubredditData
-  @Binding var disableScroll: Bool
+  @State var post: Post
+  var sub: Subreddit
   @State var contentWidth: CGFloat = .zero
   @State var playingVideo = true
   @State private var time: CMTime = .zero
@@ -24,7 +23,7 @@ struct PostLink: View {
   
   var body: some View {
     NavigationLink { PostView(post: post, subreddit: sub) } label: {
-      if let data = post.data{
+      if let data = post.data {
         VStack(alignment: .leading, spacing: 8) {
           VStack(alignment: .leading, spacing: 12) {
             Text(data.title)
@@ -61,23 +60,18 @@ struct PostLink: View {
               let height: CGFloat = 150
               if lightBoxType.url != data.url {
                 VStack {
-                  CachedAsyncImage(url: URL(string: data.url)) { image in
-                    image
-                    //                Image("cat")
-                      .resizable()
-                      .scaledToFill()
-                      .matchedGeometryEffect(id: "\(data.url)-img", in: namespaceWrapper.namespace)
-                      .frame(maxWidth: contentWidth, minHeight: height, maxHeight: height)
-                      .mask(RR(12, .black).matchedGeometryEffect(id: "\(data.url)-mask", in: namespaceWrapper.namespace))
-                      .zIndex(1)
-                    //              .onAppear {
-                    //                aboveAll = 0
-                    //              }
-                  } placeholder: {
-                    RR(12, .gray.opacity(0.5))
-                      .frame(maxWidth: contentWidth, minHeight: height, maxHeight: height)
-                  }
-                  .allowsHitTesting(false)
+                  WebImage(url: URL(string: data.url))
+                    .resizable()
+                    .placeholder {
+                      RR(12, .gray.opacity(0.35))
+                        .frame(maxWidth: contentWidth, minHeight: height, maxHeight: height)
+                    }
+                    .matchedGeometryEffect(id: "\(data.url)-img", in: namespaceWrapper.namespace)
+                    .scaledToFill()
+                    .frame(maxWidth: contentWidth, minHeight: height, maxHeight: height)
+                    .mask(RR(12, .black).matchedGeometryEffect(id: "\(data.url)-mask", in: namespaceWrapper.namespace))
+                    .zIndex(1)
+                    .allowsHitTesting(false)
                 }
                 .contentShape(Rectangle())
                 .transition(.offset(x: 0, y: 1))
@@ -130,7 +124,11 @@ struct PostLink: View {
           
           HStack {
             VStack(alignment: .leading) {
-              (Text("by ").font(.system(size: 14, weight: .medium)) + Text(data.author).font(.system(size: 14, weight: .semibold)))
+              NavigationLink {
+                UserView(user: User(id: data.author, api: post.redditAPI))
+              } label: {
+                (Text("by ").font(.system(size: 14, weight: .medium)) + Text(data.author).font(.system(size: 14, weight: .semibold)))
+              }
               
               HStack(alignment: .center, spacing: 8) {
                 HStack(alignment: .center, spacing: 4) {
@@ -150,8 +148,14 @@ struct PostLink: View {
             
             Spacer()
             
-            HStack(alignment: .center, spacing: 4) {
-              Button { } label: {
+            HStack(alignment: .center, spacing: 8) {
+              Button {
+                Task {
+                  var newPost = post
+                  _ = await newPost.vote(action: .down)
+                  post = newPost
+                }
+              } label: {
                 Image(systemName: "arrow.up")
               }
               .foregroundColor(data.likes != nil && data.likes! ? .orange : .gray)
@@ -161,12 +165,18 @@ struct PostLink: View {
                 .foregroundColor(downup == 0 ? .gray : downup > 0 ? .orange : .blue)
                 .fontSize(16, .semibold)
               
-              Button { } label: {
+              Button {
+                Task {
+                  var newPost = post
+                  _ = await newPost.vote(action: .down)
+                  post = newPost
+                }
+              } label: {
                 Image(systemName: "arrow.down")
               }
               .foregroundColor(data.likes != nil && !data.likes! ? .blue : .gray)
             }
-            .fontSize(20, .medium)
+            .fontSize(22, .medium)
           }
         }
         .background(
@@ -181,31 +191,33 @@ struct PostLink: View {
           }
         )
         .contentShape(Rectangle())
-        .swipyActions(leftActionHandler: {}, rightActionHandler: {})
+        .swipyActions(leftActionHandler: {
+          Task {
+            var newPost = post
+            _ = await newPost.vote(action: .up)
+            post = newPost
+          }
+        }, rightActionHandler: {
+          Task {
+            var newPost = post
+            _ = await newPost.vote(action: .down)
+            post = newPost
+          }
+        })
         .padding(.horizontal, 18)
         .padding(.vertical, 16)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(
-          RR(20, .secondary.opacity(0.15))
-          //      }
-        )
+        .background(RR(20, .secondary.opacity(0.15)))
+        .mask(RR(20, .black))
         .foregroundColor(.primary)
         .multilineTextAlignment(.leading)
         .zIndex(Double(aboveAll))
       } else {
         Text("Oops something went wrong")
       }
-    //    .onChange(of: lightBoxType.url) { val in
-    //      if val != data.url {
-    //        if val != nil {
-    //          aboveAll = 0
-    //        } else {
-    //          aboveAll = max(0, aboveAll - 1)
-    //        }
-    //      }
-    //    }
+    }
+    .buttonStyle(PlainButtonStyle())
   }
-}
 }
 
 //struct Post_Previews: PreviewProvider {

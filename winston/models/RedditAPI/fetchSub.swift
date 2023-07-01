@@ -13,7 +13,7 @@ extension RedditAPI {
     await refreshToken()
     if let headers = self.getRequestHeaders() {
       let response = await AF.request(
-        "\(RedditAPI.redditApiURLBase)\(id.hasPrefix("/r/") ? id : "/r/\(id)")/about.json",
+        "\(RedditAPI.redditApiURLBase)\(id.hasPrefix("/r/") ? id : "/r/\(id)/")about.json",
         method: .get,
         headers: headers
       )

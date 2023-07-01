@@ -11,14 +11,21 @@ import Defaults
 typealias Comment = GenericRedditEntity<CommentData>
 
 extension Comment {
+  init(data: T, api: RedditAPI) {
+      self.init(data: data, api: api, typePrefix: "t1_")
+  }
+  
   mutating func vote(action: RedditAPI.VoteAction) async -> Bool? {
-    let oldValue = data?.likes
+    let oldLikes = data?.likes
+    let oldUps = data?.ups ?? 0
     var newAction = action
-    newAction = action.boolVersion() == oldValue ? .none : action
+    newAction = action.boolVersion() == oldLikes ? .none : action
     data?.likes = newAction.boolVersion()
-    let result = await redditAPI.vote(newAction, id: id)
+    data?.ups = oldUps + (action.boolVersion() == oldLikes ? oldLikes == nil ? 0 : -action.rawValue : action.rawValue * (oldLikes == nil ? 1 : 2))
+    let result = await redditAPI.vote(newAction, id: "\(typePrefix ?? "")\(id)")
     if result == nil || !result! {
-      data?.likes = oldValue
+      data?.likes = oldLikes
+      data?.ups = oldUps
     }
     return result
   }
@@ -94,7 +101,7 @@ struct CommentData: GenericRedditEntityDataType {
   let collapsed_because_crowd_control: String?
   let mod_reports: [String]?
   let num_reports: Int?
-  let ups: Int?
+  var ups: Int?
 }
 
 struct Gildings: Codable {

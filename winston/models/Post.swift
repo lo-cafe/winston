@@ -11,6 +11,10 @@ import Defaults
 typealias Post = GenericRedditEntity<PostData>
 
 extension Post {
+  init(data: T, api: RedditAPI) {
+      self.init(data: data, api: api, typePrefix: "t3_")
+  }
+  
   func fetchComments(sort: CommentSortOption = .confidence, after: String? = nil) async -> ([Comment]?, String?)? {
     if let subreddit = data?.subreddit, let response = await redditAPI.fetchPostComments(subreddit: subreddit, postID: id), let data = response.0 {
       return (data.map { x in Comment(data: x.data, api: redditAPI) }, response.1)
@@ -19,13 +23,16 @@ extension Post {
   }
   
   mutating func vote(action: RedditAPI.VoteAction) async -> Bool? {
-    let oldValue = data?.likes
+    let oldLikes = data?.likes
+    let oldUps = data?.ups ?? 0
     var newAction = action
-    newAction = action.boolVersion() == oldValue ? .none : action
+    newAction = action.boolVersion() == oldLikes ? .none : action
     data?.likes = newAction.boolVersion()
-    let result = await redditAPI.vote(newAction, id: id)
+    data?.ups = oldUps + (action.boolVersion() == oldLikes ? oldLikes == nil ? 0 : -action.rawValue : action.rawValue * (oldLikes == nil ? 1 : 2))
+    let result = await redditAPI.vote(newAction, id: "\(typePrefix ?? "")\(id)")
     if result == nil || !result! {
-      data?.likes = oldValue
+      data?.likes = oldLikes
+      data?.ups = oldUps
     }
     return result
   }
@@ -48,7 +55,7 @@ struct PostData: GenericRedditEntityDataType, Defaults.Serializable {
   let link_flair_text_color: String?
   let upvote_ratio: Double
   let subreddit_type: String
-  let ups: Int
+  var ups: Int
   let total_awards_received: Int
   let is_self: Bool
   let created: Double

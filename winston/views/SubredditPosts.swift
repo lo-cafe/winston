@@ -7,15 +7,15 @@
 
 import SwiftUI
 import Defaults
-import CachedAsyncImage
 import SwiftUIIntrospect
+import SDWebImageSwiftUI
 
 struct SubredditPosts: View {
   var subreddit: Subreddit
   @Environment(\.openURL) var openURL
   @State var loading = true
   @State var loadingMore = false
-  @State var posts: [Post] = []
+  @State var posts: [Post]?
   @State var lastPostAfter: String?
   @State var scrollPos: CGFloat = 0
   @State var smallerPostHeight: CGFloat = 0
@@ -27,14 +27,14 @@ struct SubredditPosts: View {
   //  @EnvironmentObject var lightBoxType: ContentLightBox
   
   var contentHeight: CGFloat {
-    (((UIScreen.screenHeight / 1.15) / 2.5)) * CGFloat(posts.count)
+    (((UIScreen.screenHeight / 1.15) / 2.5)) * CGFloat(posts?.count ?? 0)
   }
   
   func asyncFetch(loadMore: Bool = false) async {
     if let result = await subreddit.fetchPosts(sort: sort, after: loadMore ? lastPostAfter : nil), let newPosts = result.0 {
       withAnimation {
         if loadMore {
-          posts = posts + newPosts
+          posts = (posts ?? []) + newPosts
         } else {
           posts = newPosts
         }
@@ -64,32 +64,37 @@ struct SubredditPosts: View {
         } else {
           
           Group {
-//            ForEach(posts) { post in
-//              let data = post.data
-//              PostLink(data: data, sub: subreddit, disableScroll: $disableScroll)
-//                .background(
-//                  GeometryReader { geo in
-//                    Color.clear
-//                      .onAppear {
-//                        let height = geo.size.height
-//                        if height != 0 {
-//                          if smallerPostHeight == 0 || height < smallerPostHeight {
-//                            smallerPostHeight = height
-//                          }
-//                          if biggerPostHeight == 0 || height > biggerPostHeight {
-//                            biggerPostHeight = height
-//                          }
-//                        }
-//                      }
-//                  }
-//                )
-//            }
+            if let posts = posts {
+              ForEach(posts) { post in
+                
+                if let _ = subreddit.data {
+                  PostLink(post: post, sub: subreddit)
+                    .background(
+                      GeometryReader { geo in
+                        Color.clear
+                          .onAppear {
+                            let height = geo.size.height
+                            if height != 0 {
+                              if smallerPostHeight == 0 || height < smallerPostHeight {
+                                smallerPostHeight = height
+                              }
+                              if biggerPostHeight == 0 || height > biggerPostHeight {
+                                biggerPostHeight = height
+                              }
+                            }
+                          }
+                      }
+                    )
+                }
+              }
+            }
           }
           
         }
       }
       .padding(.horizontal, 8)
       .padding(.top, 8)
+      .padding(.bottom, 16)
     }
     //    .scrollDisabled(disableScroll)
     //    .introspect(.scrollView, on: .iOS(.v13, .v14, .v15, .v16, .v17)) { scrollView in
@@ -121,22 +126,23 @@ struct SubredditPosts: View {
           }
           
           if let data = subreddit.data {
-            Button { } label: {
+            NavigationLink {
+              SubredditInfo(subreddit: subreddit)
+            } label: {
               let communityIcon = data.community_icon.split(separator: "?")
               let icon = data.icon_img == "" ? communityIcon.count > 0 ? String(communityIcon[0]) : "" : data.icon_img
-              CachedAsyncImage(url: URL(string: icon)) { image in
-                image
-                  .resizable()
-                  .scaledToFill()
-                  .frame(width: 30, height: 30)
-                  .mask(Circle())
-              } placeholder: {
-                Text(data.display_name.prefix(1).uppercased())
-                  .frame(width: 30, height: 30)
-                  .background(.blue, in: Circle())
-                  .mask(Circle())
-                  .fontWeight(.semibold)
-              }
+              WebImage(url: URL(string: icon))
+                .resizable()
+                .placeholder {
+                  Text(data.display_name.prefix(1).uppercased())
+                    .frame(width: 30, height: 30)
+                    .background(.blue, in: Circle())
+                    .mask(Circle())
+                    .fontWeight(.semibold)
+                }
+                .scaledToFill()
+                .frame(width: 30, height: 30)
+                .mask(Circle())
             }
           }
         }
@@ -147,7 +153,12 @@ struct SubredditPosts: View {
       await asyncFetch()
     }
     .onAppear {
-      fetch()
+      sort = Defaults[.preferredSort]
+      doThisAfter(0) {
+        if posts == nil {
+          fetch()
+        }
+      }
     }
     //    .onChange(of: lightBoxType.url) { val in
     //      if val == nil {

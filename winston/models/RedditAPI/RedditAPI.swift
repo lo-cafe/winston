@@ -35,7 +35,6 @@ class RedditAPI: ObservableObject {
   }
   
   func refreshToken() async -> Void {
-    print("refresca")
     if let refreshToken = loggedUser.refreshToken {
       if loggedUser.lastRefresh!.timeIntervalSinceNow > Double(loggedUser.expiration ?? 0) {
         let payload = RefreshAccessTokenPayload(refreshToken: refreshToken)
@@ -226,3 +225,4 @@ enum Either<A: Codable & Hashable, B: Codable & Hashable>: Codable, Hashable {
         }
     }
 }
+

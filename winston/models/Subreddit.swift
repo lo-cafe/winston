@@ -12,16 +12,24 @@ import Defaults
 typealias Subreddit = GenericRedditEntity<SubredditData>
 
 extension Subreddit {
+  init(data: T, api: RedditAPI) {
+      self.init(data: data, api: api, typePrefix: "t5_")
+  }
+  
+  init(id: String, api: RedditAPI) {
+      self.init(id: id, api: api, typePrefix: "t5_")
+  }
+  
   mutating func refreshSubreddit() async {
     self.loading = true
-    if let data = (await redditAPI.fetchSub(id))?.data {
+    if let displayName = data?.display_name, let data = (await redditAPI.fetchSub(displayName))?.data {
       self.data = data
     }
     self.loading = false
   }
   
   func fetchPosts(sort: SubListingSortOption = .hot, after: String? = nil) async -> ([Post]?, String?)? {
-    if let response = await redditAPI.fetchSubPosts(id, sort: sort, after: after), let data = response.0 {
+    if let url = data?.url, let response = await redditAPI.fetchSubPosts(url, sort: sort, after: after), let data = response.0 {
       return (data.map { x in Post(data: x.data, api: redditAPI) }, response.1)
     }
     return nil

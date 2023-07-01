@@ -13,8 +13,8 @@ extension RedditAPI {
     await refreshToken()
 //    await getModHash()
     if let headers = self.getRequestHeaders() {
-      let params = VotePayload(dit: action, id: id)
-      let dataTask = AF.request("\(RedditAPI.redditApiURLBase)/api/subscribe",
+      let params = VotePayload(dir: action.rawValue, id: id)
+      let dataTask = AF.request("\(RedditAPI.redditApiURLBase)/api/vote",
                                 method: .post,
                                 parameters: params,
                                 encoder: URLEncodedFormParameterEncoder(destination: .queryString),
@@ -23,6 +23,7 @@ extension RedditAPI {
       let result = await dataTask.result
       switch result {
       case .success:
+        
         return true
       case .failure:
         //        print(error)
@@ -34,7 +35,7 @@ extension RedditAPI {
   }
   
   struct VotePayload: Codable {
-    let dit: VoteAction
+    let dir: Int
     let id: String
     var rank = 2
 //    let uh: String

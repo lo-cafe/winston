@@ -8,7 +8,7 @@
 import SwiftUI
 import CoreMedia
 import VideoPlayer
-import CachedAsyncImage
+import SDWebImageSwiftUI
 
 class ContentLightBox: Equatable, ObservableObject, Identifiable {
   static func ==(lhs: ContentLightBox, rhs: ContentLightBox) -> Bool {
@@ -61,26 +61,20 @@ struct LightBox: View {
               
               //                .frame(maxWidth: .infinity, maxHeight: .infinity)
             } else {
-              CachedAsyncImage(url: URL(string: url)) { image in
-                image
-                //              Image("cat")
-                  .resizable()
-                  .scaledToFit()
-                  .matchedGeometryEffect(id: "\(url)-img", in: namespaceWrapper.namespace)
-              } placeholder: {
-                EmptyView()
-                  .zIndex(1)
-              }
-              .onTapGesture {
-                withAnimation(.easeOut) {
-                  appearBlack = data.url == nil
+              WebImage(url: URL(string: url))
+                .resizable()
+                .matchedGeometryEffect(id: "\(url)-img", in: namespaceWrapper.namespace)
+                .scaledToFit()
+                .onTapGesture {
+                  withAnimation(.easeOut) {
+                    appearBlack = data.url == nil
+                  }
+                  //                  doThisAfter(0) {
+                  withAnimation(.interpolatingSpring(stiffness: 200, damping: 20)) {
+                    data.url = data.url == nil ? id : nil
+                  }
+                  //                  }
                 }
-                //                  doThisAfter(0) {
-                withAnimation(.interpolatingSpring(stiffness: 200, damping: 20)) {
-                  data.url = data.url == nil ? id : nil
-                }
-                //                  }
-              }
             }
           }
           .mask(RR(12, .black).matchedGeometryEffect(id: "\(url)-mask", in: namespaceWrapper.namespace))
