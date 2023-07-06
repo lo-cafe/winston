@@ -11,28 +11,64 @@ import Defaults
 typealias Post = GenericRedditEntity<PostData>
 
 extension Post {
-  init(data: T, api: RedditAPI) {
-      self.init(data: data, api: api, typePrefix: "t3_")
+  convenience init(data: T, api: RedditAPI) {
+    self.init(data: data, api: api, typePrefix: "t3_")
   }
   
-  func fetchComments(sort: CommentSortOption = .confidence, after: String? = nil) async -> ([Comment]?, String?)? {
-    if let subreddit = data?.subreddit, let response = await redditAPI.fetchPostComments(subreddit: subreddit, postID: id), let data = response.0 {
-      return (data.map { x in Comment(data: x.data, api: redditAPI) }, response.1)
+  convenience init(id: String, api: RedditAPI) {
+    self.init(id: id, api: api, typePrefix: "t3_")
+  }
+  
+  func refreshPost(sort: CommentSortOption = .confidence, after: String? = nil, subreddit: String? = nil, full: Bool = true) async -> ([Comment]?, String?)? {
+    if let subreddit = data?.subreddit ?? subreddit, let response = await redditAPI.fetchPost(subreddit: subreddit, postID: id) {
+      if let post = response[0] {
+        switch post {
+        case .first(let actualData):
+          if full {
+            await MainActor.run {
+              let newData = actualData.data?.children?[0].data
+              self.data = newData
+            }
+          }
+        case .second(_):
+          break
+        }
+      }
+      if let comments = response[1] {
+        switch comments {
+        case .first(_):
+          return nil
+        case .second(let actualData):
+          if let data = actualData.data {
+            return (data.children?.map { x in
+              if let data = x.data {
+                return Comment(data: data, api: redditAPI)
+              } else {
+                return nil
+              }
+            }.compactMap { $0 }, data.after)
+          }
+        }
+      }
     }
     return nil
   }
   
-  mutating func vote(action: RedditAPI.VoteAction) async -> Bool? {
+  func vote(action: RedditAPI.VoteAction) async -> Bool? {
     let oldLikes = data?.likes
     let oldUps = data?.ups ?? 0
     var newAction = action
     newAction = action.boolVersion() == oldLikes ? .none : action
-    data?.likes = newAction.boolVersion()
-    data?.ups = oldUps + (action.boolVersion() == oldLikes ? oldLikes == nil ? 0 : -action.rawValue : action.rawValue * (oldLikes == nil ? 1 : 2))
+    await MainActor.run { [newAction] in
+      data?.likes = newAction.boolVersion()
+      data?.ups = oldUps + (action.boolVersion() == oldLikes ? oldLikes == nil ? 0 : -action.rawValue : action.rawValue * (oldLikes == nil ? 1 : 2))
+    }
     let result = await redditAPI.vote(newAction, id: "\(typePrefix ?? "")\(id)")
     if result == nil || !result! {
-      data?.likes = oldLikes
-      data?.ups = oldUps
+      await MainActor.run {
+        data?.likes = oldLikes
+        data?.ups = oldUps
+      }
     }
     return result
   }
@@ -48,14 +84,14 @@ struct PostData: GenericRedditEntityDataType, Defaults.Serializable {
   let title: String
   let subreddit_name_prefixed: String
   let hidden: Bool
-  let downs: Int
+  var ups: Int
+  var downs: Int
   let hide_score: Bool
   let name: String
   let quarantine: Bool
   let link_flair_text_color: String?
   let upvote_ratio: Double
   let subreddit_type: String
-  var ups: Int
   let total_awards_received: Int
   let is_self: Bool
   let created: Double
@@ -81,7 +117,7 @@ struct PostData: GenericRedditEntityDataType, Defaults.Serializable {
   let pwls: Int?
   let link_flair_text: String?
   let thumbnail: String?
-//  let edited: Edited?
+  //  let edited: Edited?
   let link_flair_template_id: String?
   let author_flair_text: String?
   //    let media: String?
@@ -109,7 +145,7 @@ struct PostData: GenericRedditEntityDataType, Defaults.Serializable {
   let is_crosspostable: Bool?
   let pinned: Bool?
   let over_18: Bool?
-//  let all_awardings: [Awarding]?
+  //  let all_awardings: [Awarding]?
   let awarders: [String]?
   let media_only: Bool?
   let can_gild: Bool?
@@ -132,32 +168,32 @@ struct PostData: GenericRedditEntityDataType, Defaults.Serializable {
 }
 
 struct SecureMediaAlt: Codable, Hashable {
-    let type: String?
-    let oembed: Oembed?
+  let type: String?
+  let oembed: Oembed?
 }
 
 struct Oembed: Codable, Hashable {
-    let provider_url: String?
-    let version: String?
-    let title: String?
-    let type: String?
-    let thumbnail_width: Int?
-    let height: Int?
-    let width: Int?
-    let html: String?
-    let author_name: String?
-    let provider_name: String?
-    let thumbnail_url: String?
-    let thumbnail_height: Int?
-    let author_url: String?
+  let provider_url: String?
+  let version: String?
+  let title: String?
+  let type: String?
+  let thumbnail_width: Int?
+  let height: Int?
+  let width: Int?
+  let html: String?
+  let author_name: String?
+  let provider_name: String?
+  let thumbnail_url: String?
+  let thumbnail_height: Int?
+  let author_url: String?
 }
 
 struct SecureMediaEmbed: Codable, Hashable {
-    let content: String?
-    let width: Int?
-    let scrolling: Bool?
-    let media_domain_url: String?
-    let height: Int?
+  let content: String?
+  let width: Int?
+  let scrolling: Bool?
+  let media_domain_url: String?
+  let height: Int?
 }
 
 struct RedditVideo: Codable, Hashable {

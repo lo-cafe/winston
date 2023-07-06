@@ -60,19 +60,19 @@ struct MasterButton: View {
     let btnCornerRadius = proportional == .circle ? height / 2 : cornerRadius
     let finalColor = color.opacity(mode == .normal ? 1 : mode == .subtle ? pressing ? 0.1 : 0 : 0.2 )
     let proportionalSize = proportional != .no ? height : nil
-    Button {
-      if confirmLabel != nil {
-        if confirming {
-          action()
-        } else {
-          withAnimation(BTN_SHRINK_ANIMATION) {
-            confirming = true
-          }
-        }
-      } else {
-        action()
-      }
-    } label: {
+//    Button {
+//      if confirmLabel != nil {
+//        if confirming {
+//          action()
+//        } else {
+//          withAnimation(BTN_SHRINK_ANIMATION) {
+//            confirming = true
+//          }
+//        }
+//      } else {
+//        action()
+//      }
+//    } label: {
       HStack {
         if let icon = icon {
           Image(systemName: icon)
@@ -114,13 +114,29 @@ struct MasterButton: View {
       .if(!hoverWorkaround) { v in
         v.contentShape(RoundedRectangle(cornerRadius: btnCornerRadius, style: .continuous))
       }
-    }
+//    }
     .simultaneousGesture(
-      LongPressGesture(minimumDuration: 1, maximumDistance: 1)
-        .updating($pressing, body: { newPressing, pressing, transaction in
-          pressing = newPressing
-        })
+      TapGesture()
+        .onEnded {
+          if confirmLabel != nil {
+            if confirming {
+              action()
+            } else {
+              withAnimation(BTN_SHRINK_ANIMATION) {
+                confirming = true
+              }
+            }
+          } else {
+            action()
+          }
+        }
     )
+//    .simultaneousGesture(
+//      LongPressGesture(minimumDuration: 1, maximumDistance: 1)
+//        .updating($pressing, body: { newPressing, pressing, transaction in
+//          pressing = newPressing
+//        })
+//    )
     .disabled(disabled)
     .saturation(disabled ? 0 : 1)
     .opacity(disabled ? 0.75 : 1)

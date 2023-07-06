@@ -7,12 +7,12 @@
 
 import SwiftUI
 import SDWebImageSwiftUI
-import MarkdownUI
 import SwiftDate
 
 struct SubredditInfo: View {
-  @State var subreddit: Subreddit
+  @ObservedObject var subreddit: Subreddit
   @State var loading = true
+  
   var body: some View {
     ScrollView {
       if let data = subreddit.data {
@@ -47,10 +47,8 @@ struct SubredditInfo: View {
               .fontSize(20, .bold)
               .frame(maxWidth: .infinity, alignment: .leading)
             
-            Markdown(data.description)
-            //            .markdownTextStyle {
-            //              FontSize(15)
-            //            }
+            Text((data.public_description == "" ? data.description : data.public_description).md())
+
               .frame(maxWidth: .infinity, alignment: .leading)
               .multilineTextAlignment(.leading)
           }
@@ -59,9 +57,7 @@ struct SubredditInfo: View {
         .onAppear {
           if loading {
             Task {
-              var newSub = subreddit
-              await newSub.refreshSubreddit()
-              subreddit = newSub
+              await subreddit.refreshSubreddit()
               loading = false
             }
           }

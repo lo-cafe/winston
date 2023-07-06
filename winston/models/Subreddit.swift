@@ -12,30 +12,42 @@ import Defaults
 typealias Subreddit = GenericRedditEntity<SubredditData>
 
 extension Subreddit {
-  init(data: T, api: RedditAPI) {
+  convenience init(data: T, api: RedditAPI) {
       self.init(data: data, api: api, typePrefix: "t5_")
   }
   
-  init(id: String, api: RedditAPI) {
+  convenience init(id: String, api: RedditAPI) {
       self.init(id: id, api: api, typePrefix: "t5_")
   }
   
-  mutating func refreshSubreddit() async {
-    self.loading = true
-    if let displayName = data?.display_name, let data = (await redditAPI.fetchSub(displayName))?.data {
-      self.data = data
+  func refreshSubreddit() async {
+    await MainActor.run {
+      self.loading = true
     }
-    self.loading = false
+    if let data = (await redditAPI.fetchSub(data?.display_name ?? id))?.data {
+      await MainActor.run {
+        self.data = data
+      }
+    }
+    await MainActor.run {
+      self.loading = false
+    }
   }
   
   func fetchPosts(sort: SubListingSortOption = .hot, after: String? = nil) async -> ([Post]?, String?)? {
-    if let url = data?.url, let response = await redditAPI.fetchSubPosts(url, sort: sort, after: after), let data = response.0 {
-      return (data.map { x in Post(data: x.data, api: redditAPI) }, response.1)
+    if let response = await redditAPI.fetchSubPosts(data?.url ?? id, sort: sort, after: after), let data = response.0 {
+      return (data.map { x in
+        if let data = x.data {
+          return Post(data: data, api: redditAPI)
+        } else {
+          return nil
+        }
+      }.compactMap { $0 }, response.1)
     }
     return nil
   }
   
-  mutating func toggleSubscribing(action: RedditAPI.SubscribeSubAction) async -> Bool? {
+  func toggleSubscribing(action: RedditAPI.SubscribeSubAction) async -> Bool? {
     let oldValue = data?.user_is_subscriber
     data?.user_is_subscriber = action == .sub ? true : false
     let result = await redditAPI.subscribeSubs(action: (data?.user_is_subscriber ?? false) ? .unsub : .sub, subs: [id])
@@ -110,7 +122,7 @@ struct SubredditData: GenericRedditEntityDataType {
   let public_description_html: String
   let allow_videos: Bool
   let is_crosspostable_subreddit: Bool?
-  let notification_level: String
+  let notification_level: String?
   let should_show_media_in_comments_setting: Bool
   let can_assign_link_flair: Bool
   let accounts_active_is_fuzzed: Bool

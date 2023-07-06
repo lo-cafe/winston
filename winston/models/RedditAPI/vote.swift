@@ -11,14 +11,15 @@ import Alamofire
 extension RedditAPI {
   func vote(_ action: VoteAction, id: String) async -> Bool? {
     await refreshToken()
-//    await getModHash()
+    //    await getModHash()
     if let headers = self.getRequestHeaders() {
       let params = VotePayload(dir: action.rawValue, id: id)
-      let dataTask = AF.request("\(RedditAPI.redditApiURLBase)/api/vote",
-                                method: .post,
-                                parameters: params,
-                                encoder: URLEncodedFormParameterEncoder(destination: .queryString),
-                                headers: headers
+      let dataTask = AF.request(
+        "\(RedditAPI.redditApiURLBase)/api/vote",
+        method: .post,
+        parameters: params,
+        encoder: URLEncodedFormParameterEncoder(destination: .queryString),
+        headers: headers
       ).serializingString()
       let result = await dataTask.result
       switch result {
@@ -38,7 +39,7 @@ extension RedditAPI {
     let dir: Int
     let id: String
     var rank = 2
-//    let uh: String
+    //    let uh: String
   }
   
   enum VoteAction: Int, Codable {

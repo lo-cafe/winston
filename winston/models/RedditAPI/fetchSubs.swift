@@ -16,11 +16,12 @@ extension RedditAPI {
       
       let params = ["limit": 100, "count": 0]
       
-      let response = await AF.request("\(RedditAPI.redditApiURLBase)/subreddits/mine/subscriber.json",
-                                      method: .get,
-                                      parameters: params,
-                                      encoder: URLEncodedFormParameterEncoder(destination: .queryString),
-                                      headers: headers
+      let response = await AF.request(
+        "\(RedditAPI.redditApiURLBase)/subreddits/mine/subscriber.json",
+        method: .get,
+        parameters: params,
+        encoder: URLEncodedFormParameterEncoder(destination: .queryString),
+        headers: headers
       )
         .serializingDecodable(Listing<SubredditData>.self).response
       switch response.result {

@@ -13,18 +13,19 @@ extension RedditAPI {
     await refreshToken()
     if let headers = self.getRequestHeaders() {
       let params = FetchSubsPayload(limit: 15, count: 0, after: after)
-      let response = await AF.request("\(RedditAPI.redditApiURLBase)\(id.hasPrefix("/r/") ? id : "/r/\(id)")\(sort.rawVal.value)/.json",
-                                      method: .get,
-                                      parameters: params,
-                                      encoder: URLEncodedFormParameterEncoder(destination: .queryString),
-                                      headers: headers
+      let response = await AF.request(
+        "\(RedditAPI.redditApiURLBase)\(id.hasPrefix("/r/") ? id : "/r/\(id)")\(sort.rawVal.value)/.json",
+        method: .get,
+        parameters: params,
+        encoder: URLEncodedFormParameterEncoder(destination: .queryString),
+        headers: headers
       )
         .serializingDecodable(Listing<PostData>.self).response
       switch response.result {
       case .success(let data):
-//        if let modhash = data.data?.modhash {
-//          loggedUser.modhash = modhash
-//        }
+        //        if let modhash = data.data?.modhash {
+        //          loggedUser.modhash = modhash
+        //        }
         return (data.data?.children, data.data?.after)
       case .failure(let error):
         print(error)

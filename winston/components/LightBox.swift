@@ -12,12 +12,12 @@ import SDWebImageSwiftUI
 
 class ContentLightBox: Equatable, ObservableObject, Identifiable {
   static func ==(lhs: ContentLightBox, rhs: ContentLightBox) -> Bool {
-    return lhs.url == rhs.url
+    return lhs.post == rhs.post
   }
-  @Published var url: String? = nil
+  @Published var post: Post? = nil
   @Published var time: CMTime? = nil
   var id: String {
-    url ?? UUID().uuidString
+    post?.id ?? UUID().uuidString
   }
 }
 
@@ -29,6 +29,8 @@ struct LightBox: View {
   @State var id: String?
   @State var appearBlack = false
   @State var drag: CGSize = .zero
+  @State var zoom: CGSize = .zero
+  @State var imgSize: CGSize = .zero
   
   var body: some View {
     let interpolate = interpolatorBuilder([0, 100], value: max(abs(drag.width), abs(drag.height)))
@@ -42,7 +44,7 @@ struct LightBox: View {
             }
             doThisAfter(0) {
               withAnimation(.interpolatingSpring(stiffness: 300, damping: 25)) {
-                data.url = nil
+                data.post = nil
                 data.time = nil
               }
             }
@@ -51,34 +53,39 @@ struct LightBox: View {
           .transition(.opacity)
       }
       VStack {
-        if let url = data.url {
+        if let postData = data.post?.data {
+          let url = postData.url
+            Text(postData.title)
+              .fontSize(20, .semibold)
+          Spacer()
           Group {
             if let _ = data.time {
               VideoPlayer(url:  URL(string: url)!, play: $playingVideo, time: $time)
                 .contentMode(.scaleAspectFit)
-                .matchedGeometryEffect(id: "\(url)-video", in: namespaceWrapper.namespace)
-                .mask(RR(12, .black).matchedGeometryEffect(id: "\(url)-mask", in: namespaceWrapper.namespace))
+//                .matchedGeometryEffect(id: "\(url)-video", in: namespaceWrapper.namespace)
+                .mask(RR(12, .black))
               
               //                .frame(maxWidth: .infinity, maxHeight: .infinity)
             } else {
               WebImage(url: URL(string: url))
                 .resizable()
-                .matchedGeometryEffect(id: "\(url)-img", in: namespaceWrapper.namespace)
+//                .matchedGeometryEffect(id: "\(url)-img", in: namespaceWrapper.namespace)
                 .scaledToFit()
-                .onTapGesture {
-                  withAnimation(.easeOut) {
-                    appearBlack = data.url == nil
-                  }
-                  //                  doThisAfter(0) {
-                  withAnimation(.interpolatingSpring(stiffness: 200, damping: 20)) {
-                    data.url = data.url == nil ? id : nil
-                  }
-                  //                  }
-                }
+//                .onTapGesture {
+//                  withAnimation(.easeOut) {
+//                    appearBlack = data.url == nil
+//                  }
+//                  //                  doThisAfter(0) {
+//                  withAnimation(.interpolatingSpring(stiffness: 200, damping: 20)) {
+//                    data.url = data.url == nil ? id : nil
+//                  }
+//                  //                  }
+//                }
             }
           }
-          .mask(RR(12, .black).matchedGeometryEffect(id: "\(url)-mask", in: namespaceWrapper.namespace))
+//          .mask(RR(12, .black).matchedGeometryEffect(id: "\(url)-mask", in: namespaceWrapper.namespace))
           //          .scaleEffect(interpolate([1, 0.9], true))
+          .zIndex(1)
           .offset(drag)
           .simultaneousGesture(
             DragGesture(minimumDistance: 0)
@@ -102,12 +109,17 @@ struct LightBox: View {
                 withAnimation(.interpolatingSpring(stiffness: 200, damping: 20, initialVelocity: 0)) {
                   drag = .zero
                   if shouldClose {
-                    data.url = nil
+                    data.post = nil
                     data.time = nil
                   }
                 }
               }
           )
+          
+          Spacer()
+          
+          
+          
         }
       }
     }
@@ -116,12 +128,12 @@ struct LightBox: View {
       withAnimation(.easeOut) {
         appearBlack = true
       }
-      id = data.url
+      id = data.post!.id
     }
     .ignoresSafeArea(.all)
     .zIndex(999)
     .transition(.offset(x: 0, y: 1))
-    .id("\(String(describing: data.url ?? id))-lightbox")
+    .id("\(String(describing: data.post?.id ?? id))-lightbox")
   }
 }
 

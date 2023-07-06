@@ -17,13 +17,15 @@ struct GoodNavigator<Content: View>: View {
 
     var body: some View {
         if #available(iOS 16.0, *) {
-            NavigationStack {
+          NavigationView {
                 self.content()
             }
+          .navigationViewStyle(.stack)
         } else {
             NavigationView {
                 self.content()
             }
+            .navigationViewStyle(.stack)
         }
     }
 }

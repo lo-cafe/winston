@@ -10,17 +10,21 @@ import SwiftUI
 struct Me: View {
   @Environment(\.openURL) var openURL
   @EnvironmentObject var redditAPI: RedditAPI
-  @State var user: User?
   @State var loading = true
   var body: some View {
     GoodNavigator {
       Group {
-        if let user = user {
+        if let user = redditAPI.me {
           UserView(user: user)
         } else {
           ProgressView()
             .progressViewStyle(.circular)
-            .frame(maxWidth: .infinity, minHeight: 300 )
+            .frame(maxWidth: .infinity, minHeight: UIScreen.screenHeight - 200 )
+            .onAppear {
+              Task {
+                await redditAPI.fetchMe()
+              }
+            }
         }
         
 //        if let refreshToken = redditAPI.loggedUser.refreshToken {
@@ -38,18 +42,12 @@ struct Me: View {
 //        }
       }
     }
-    .onAppear {
-      Task {
-        if let newUser = await redditAPI.fetchMe() {
-          user = newUser
-        }
-      }
-    }
+
   }
 }
 
-struct Me_Previews: PreviewProvider {
-  static var previews: some View {
-    Me()
-  }
-}
+//struct Me_Previews: PreviewProvider {
+//  static var previews: some View {
+//    Me()
+//  }
+//}

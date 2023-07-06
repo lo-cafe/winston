@@ -9,17 +9,18 @@ import Foundation
 import Alamofire
 
 extension RedditAPI {
-  func fetchUserOverview(_ userName: String) async -> [Either<CommentData, PostData>]? {
+  func fetchUserOverview(_ userName: String) async -> [Either<PostData, CommentData>]? {
     await refreshToken()
     if let headers = self.getRequestHeaders() {
-    let response = await AF.request("\(RedditAPI.redditApiURLBase)/user/\(userName)/overview.json",
-                                      method: .get,
-                                      headers: headers
+      let response = await AF.request(
+        "\(RedditAPI.redditApiURLBase)/user/\(userName)/overview.json",
+        method: .get,
+        headers: headers
       )
-        .serializingDecodable(Listing<Either<CommentData, PostData>>.self).response
+        .serializingDecodable(Listing<Either<PostData, CommentData>>.self).response
       switch response.result {
       case .success(let data):
-        return data.data?.children?.map { $0.data }
+        return data.data?.children?.map { $0.data }.compactMap { $0 }
       case .failure(let error):
         print(error)
         return nil

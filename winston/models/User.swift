@@ -10,30 +10,42 @@ import Foundation
 typealias User = GenericRedditEntity<UserData>
 
 extension User {
-  init(data: T, api: RedditAPI) {
+  convenience init(data: T, api: RedditAPI) {
     self.init(data: data, api: api, typePrefix: "t2_")
   }
-  init(id: String, api: RedditAPI) {
+  convenience init(id: String, api: RedditAPI) {
     self.init(id: id, api: api, typePrefix: "t2_")
   }
   
-  mutating func refetchOverview() async -> [Either<CommentData, PostData>]? {
-    self.loading = true
+  func refetchOverview() async -> [Either<PostData, CommentData>]? {
+    await MainActor.run {
+      self.loading = true
+    }
     if let name = data?.name, let data = await redditAPI.fetchUserOverview(name) {
-      self.loading = false
+      await MainActor.run {
+        self.loading = false
+      }
       return data
     }
-    self.loading = false
+    await MainActor.run {
+      self.loading = false
+    }
     return nil
   }
   
-  mutating func refetchUser() async {
-    self.loading = true
+  func refetchUser() async {
+    await MainActor.run {
+      self.loading = true
+    }
     let userName = data?.name ?? id
     if let data = (await redditAPI.fetchUser(userName)) {
-      self.data = data
+      await MainActor.run {
+        self.data = data
+      }
     }
-    self.loading = false
+    await MainActor.run {
+      self.loading = false
+    }
   }
   
   
@@ -61,6 +73,7 @@ struct UserData: GenericRedditEntityDataType {
   var created_utc: Double?
   var created: Double?
   var pref_show_presence: Bool?
+  var snoovatar_img: String?
   var in_redesign_beta: Bool?
   var is_employee: Bool?
   var name: String

@@ -16,6 +16,10 @@ extension Defaults.Keys {
   static let subreddits = Key<[ListingChild<SubredditData>]>("subreddits", default: [])
   static let preferredSort = Key<SubListingSortOption>("preferredSort", default: .hot)
   static let preferredCommentSort = Key<CommentSortOption>("preferredCommentSort", default: .confidence)
+  static let preferenceShowPostsAvatars = Key<Bool>("preferenceShowPostsAvatars", default: true)
+  static let preferenceShowPostsCards = Key<Bool>("preferenceShowPostsCards", default: true)
+  static let preferenceShowCommentsAvatars = Key<Bool>("preferenceShowCommentsAvatars", default: true)
+  static let preferenceShowCommentsCards = Key<Bool>("preferenceShowCommentsCards", default: true)
 }
 
 extension UIScreen {
@@ -24,4 +28,4 @@ extension UIScreen {
    static let screenSize = UIScreen.main.bounds.size
 }
 
-let spring = Animation.interpolatingSpring(stiffness: 300, damping: 20, initialVelocity: 0)
+let spring = Animation.interpolatingSpring(stiffness: 300, damping: 30, initialVelocity: 0)

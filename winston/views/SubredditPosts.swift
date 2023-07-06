@@ -8,38 +8,35 @@
 import SwiftUI
 import Defaults
 import SwiftUIIntrospect
+import ASCollectionView
 import SDWebImageSwiftUI
 
 struct SubredditPosts: View {
-  var subreddit: Subreddit
+  @Default(.preferenceShowPostsCards) var preferenceShowPostsCards
+  @ObservedObject var subreddit: Subreddit
   @Environment(\.openURL) var openURL
   @State var loading = true
   @State var loadingMore = false
-  @State var posts: [Post]?
+  @StateObject var posts = ObservableArray<Post>()
   @State var lastPostAfter: String?
-  @State var scrollPos: CGFloat = 0
-  @State var smallerPostHeight: CGFloat = 0
-  @State var biggerPostHeight: CGFloat = 0
   @State var sort: SubListingSortOption = Defaults[.preferredSort]
-  @State var scrollViewHeight: CGFloat = .zero
-  @State var disableScroll = false
+//  @State var disableScroll = false
   @EnvironmentObject var redditAPI: RedditAPI
-  //  @EnvironmentObject var lightBoxType: ContentLightBox
-  
-  var contentHeight: CGFloat {
-    (((UIScreen.screenHeight / 1.15) / 2.5)) * CGFloat(posts?.count ?? 0)
-  }
   
   func asyncFetch(loadMore: Bool = false) async {
+    if subreddit.data == nil {
+      await subreddit.refreshSubreddit()
+    }
     if let result = await subreddit.fetchPosts(sort: sort, after: loadMore ? lastPostAfter : nil), let newPosts = result.0 {
       withAnimation {
         if loadMore {
-          posts = (posts ?? []) + newPosts
+          posts.data = (posts.data) + newPosts
         } else {
-          posts = newPosts
+          posts.data = newPosts
         }
         loading = false
       }
+      await redditAPI.updateAvatarURLCacheFromPosts(posts: newPosts)
       lastPostAfter = result.1
       loadingMore = false
     }
@@ -55,51 +52,31 @@ struct SubredditPosts: View {
   }
   
   var body: some View {
-    ObservedScrollView(offset: $scrollPos) {
-      LazyVStack(spacing: 12) {
-        if loading {
-          ProgressView()
-            .progressViewStyle(.circular)
-            .frame(maxWidth: .infinity, minHeight: 700 )
-        } else {
-          
-          Group {
-            if let posts = posts {
-              ForEach(posts) { post in
-                
-                if let _ = subreddit.data {
-                  PostLink(post: post, sub: subreddit)
-                    .background(
-                      GeometryReader { geo in
-                        Color.clear
-                          .onAppear {
-                            let height = geo.size.height
-                            if height != 0 {
-                              if smallerPostHeight == 0 || height < smallerPostHeight {
-                                smallerPostHeight = height
-                              }
-                              if biggerPostHeight == 0 || height > biggerPostHeight {
-                                biggerPostHeight = height
-                              }
-                            }
-                          }
-                      }
-                    )
-                }
-              }
+    
+    List {
+      ForEach(Array(posts.data.enumerated()), id: \.self.element.id) { i, post in
+        PostLink(post: post, sub: subreddit)
+          .listRowInsets(EdgeInsets(top: 8, leading: 8, bottom: 8, trailing: 8))
+          .listRowSeparator(preferenceShowPostsCards ? .hidden : .automatic)
+          .listRowBackground(Color.clear)
+          .if(Int(Double(posts.data.count) * 0.75) == i) { view in
+            view.onAppear {
+              fetch(loadMore: true)
             }
           }
-          
-        }
       }
-      .padding(.horizontal, 8)
-      .padding(.top, 8)
-      .padding(.bottom, 16)
     }
-    //    .scrollDisabled(disableScroll)
-    //    .introspect(.scrollView, on: .iOS(.v13, .v14, .v15, .v16, .v17)) { scrollView in
-    //      scrollView.isScrollEnabled = !disableScroll
-    //    }
+//    .navigationDestination(for: Post.self) { post in
+//      PostView(post: post, subreddit: subreddit)
+//    }
+//    .navigationDestination(for: String.self) { author in
+//      UserView(user: User(id: author, api: redditAPI))
+//    }
+    .introspect(.scrollView, on: .iOS(.v13, .v14, .v15, .v16, .v17)) { scrollView in
+      scrollView.delaysContentTouches = false
+      scrollView.panGestureRecognizer.delaysTouchesBegan = true
+    }
+    .listStyle(.plain)
     .navigationBarItems(
       trailing:
         HStack {
@@ -138,7 +115,7 @@ struct SubredditPosts: View {
                     .frame(width: 30, height: 30)
                     .background(.blue, in: Circle())
                     .mask(Circle())
-                    .fontWeight(.semibold)
+                    .fontSize(16, .semibold)
                 }
                 .scaledToFill()
                 .frame(width: 30, height: 30)
@@ -148,14 +125,14 @@ struct SubredditPosts: View {
         }
         .animation(nil, value: sort)
     )
-    .navigationTitle("r/\(subreddit.data?.display_name ?? "error")")
+    .navigationTitle("r/\(subreddit.data?.display_name ?? subreddit.id)")
     .refreshable {
       await asyncFetch()
     }
     .onAppear {
-      sort = Defaults[.preferredSort]
+//      sort = Defaults[.preferredSort]
       doThisAfter(0) {
-        if posts == nil {
+        if posts.data.count == 0 {
           fetch()
         }
       }
@@ -165,17 +142,20 @@ struct SubredditPosts: View {
     //        disableScroll = false
     //      }
     //    }
+//    .onChange(of: posts) { _ in
+//      print("posts")
+//    }
     .onChange(of: sort) { val in
       withAnimation {
         loading = true
       }
       fetch()
     }
-    .onChange(of: scrollPos) { val in
-      //      print(val, contentHeight)
-      if val > contentHeight * 0.75 && !loading && !loadingMore {
-        fetch(loadMore: true)
-      }
-    }
+//    .onChange(of: vScrollWrapper.offset) { val in
+//          //      print(val, contentHeight)
+//          if val > contentHeight * 0.75 && !loading && !loadingMore {
+//            fetch(loadMore: true)
+//          }
+//        }
   }
 }

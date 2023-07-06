@@ -11,6 +11,7 @@ import Alamofire
 import SwiftUI
 import Defaults
 
+
 class RedditAPI: ObservableObject {
   static let winstonAPIBase = "https://winston.lo.cafe/api"
   static let redditApiURLBase = "https://oauth.reddit.com"
@@ -20,6 +21,8 @@ class RedditAPI: ObservableObject {
   
   @Published var loggedUser: UserCredential = UserCredential()
   @Published var lastAuthState: String?
+  @Published var me: User?
+  @Published var avatarURLCache: [String:String] = [:]
   
   func getRequestHeaders(includeAuth: Bool = true) -> HTTPHeaders? {
     if let accessToken = self.loggedUser.accessToken {
@@ -36,21 +39,26 @@ class RedditAPI: ObservableObject {
   
   func refreshToken() async -> Void {
     if let refreshToken = loggedUser.refreshToken {
-      if loggedUser.lastRefresh!.timeIntervalSinceNow > Double(loggedUser.expiration ?? 0) {
+      //      print(loggedUser.accessToken)
+      if Date().timeIntervalSince1970 - loggedUser.lastRefresh!.timeIntervalSince1970 > Double(loggedUser.expiration ?? 0) {
         let payload = RefreshAccessTokenPayload(refreshToken: refreshToken)
-        let response = await AF.request("\(RedditAPI.winstonAPIBase)/get-access-token",
-                                        method: .post,
-                                        parameters: payload,
-                                        encoder: JSONParameterEncoder.default)
+        let response = await AF.request(
+          "\(RedditAPI.winstonAPIBase)/get-access-token",
+          method: .post,
+          parameters: payload,
+          encoder: JSONParameterEncoder.default)
           .serializingDecodable(RefreshAccessTokenResponse.self).response
         switch response.result {
         case .success(let data):
+          print("aksmkam")
           await MainActor.run {
             self.loggedUser.accessToken = data.token
             self.loggedUser.expiration = data.expires
+            self.loggedUser.lastRefresh = Date()
           }
           return
         case .failure(_):
+          print("asmak")
           return
         }
       } else {
@@ -75,6 +83,7 @@ class RedditAPI: ObservableObject {
         self.loggedUser.accessToken = data.token
         self.loggedUser.refreshToken = data.refresh
         self.loggedUser.expiration = data.expires
+        self.loggedUser.lastRefresh = Date()
         //        self.loggedUser = UserCredential(accessToken: data.token, refreshToken: data.refresh, expiration: data.expires)
         break
       case .failure(_):
@@ -178,12 +187,12 @@ class RedditAPI: ObservableObject {
 
 struct ListingChild<T: Codable & Hashable>: Codable, Defaults.Serializable, Hashable {
   let kind: String?
-  let data: T
+  var data: T?
 }
 
 struct Listing<T: Codable & Hashable>: Codable, Defaults.Serializable, Hashable {
   let kind: String?
-  let data: ListingData<T>?
+  var data: ListingData<T>?
 }
 
 struct ListingData<T: Codable & Hashable>: Codable, Defaults.Serializable, Hashable {
@@ -191,7 +200,7 @@ struct ListingData<T: Codable & Hashable>: Codable, Defaults.Serializable, Hasha
   let dist: Int?
   let modhash: String?
   let geo_filter: String?
-  let children: [ListingChild<T>]?
+  var children: [ListingChild<T>]?
 }
 
 enum Either<A: Codable & Hashable, B: Codable & Hashable>: Codable, Hashable {

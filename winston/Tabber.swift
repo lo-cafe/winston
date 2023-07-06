@@ -65,7 +65,7 @@ struct Tabber: View {
       
     }
     .overlay(
-      contentLightBox.url == nil
+      contentLightBox.post == nil
       ? nil
       : LightBox()
     )

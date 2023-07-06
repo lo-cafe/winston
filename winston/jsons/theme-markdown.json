@@ -1,0 +1,64 @@
+{
+    "name": "Default Dark",
+    "author": {
+        "name": "Igor Marcossi",
+        "email": "igormarcossi@hey.com"
+    },
+    "version": "1.0",
+    "editor": {
+        "backgroundColor": "#1D1F2100",
+        "tintColor": "#008FFF",
+        "cursorColor": "#A1A8B5"
+    },
+    "styles": {
+        "h1": {
+            "color": "#008FFF",
+            "size": 23
+        },
+        "h2": {
+            "color": "#008FFF",
+            "size": 20
+        },
+        "h3": {
+            "color": "#008FFF",
+            "size": 18
+        },
+        "h4": {
+            "color": "#008FFF"
+        },
+        "h5": {
+            "color": "#008FFF"
+        },
+        "h6": {
+            "color": "#008FFF"
+        },
+        "body": {
+            "font": "SFPro-Regular",
+            "size": 15,
+        },
+        "bold": {
+            "font": "SFPro-Bold",
+        },
+        "italic": {
+            "font": "SFPro-RegularItalic",
+        },
+        "link": {
+            "color": "#008FFF"
+        },
+        "image": {
+            "color": "#008FFF"
+        },
+        "inlineCode": {
+            "color": "#A7E3A6"
+        },
+        "codeBlock": {
+            "color": "#A7E3A6"
+        },
+        "blockQuote": {
+            "color": "#1CBD47"
+        },
+        "list": {
+            "color": "#A7E3A6"
+        }
+    }
+}

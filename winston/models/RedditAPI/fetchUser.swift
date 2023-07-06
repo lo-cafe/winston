@@ -12,7 +12,7 @@ extension RedditAPI {
   func fetchUser(_ userName: String) async -> UserData? {
     await refreshToken()
     if let headers = self.getRequestHeaders() {
-    let response = await AF.request("\(RedditAPI.redditApiURLBase)/user/\(userName)/about.json",
+      let response = await AF.request("\(RedditAPI.redditApiURLBase)/user/\(userName)/about.json",
                                       method: .get,
                                       headers: headers
       )
@@ -28,4 +28,31 @@ extension RedditAPI {
       return nil
     }
   }
+  func fetchUserPublic(_ userName: String) async -> UserData? {
+    if let headers = self.getRequestHeaders(includeAuth: false) {
+      let response = await AF.request(
+        "\(RedditAPI.redditWWWApiURLBase)/user/\(userName)/about.json",
+        method: .get,
+        headers: headers
+      )
+        .serializingDecodable(ListingChild<Either<EmptyStruct, UserData>>.self).response
+      switch response.result {
+      case .success(let data):
+        switch data.data {
+        case .first(_):
+          return nil
+        case .second(let userData):
+          return userData
+        case .none:
+          return nil
+        }
+      case .failure(let error):
+        print(error)
+        return nil
+      }
+    } else {
+      return nil
+    }
+  }
+  struct EmptyStruct: Codable, Hashable {}
 }
