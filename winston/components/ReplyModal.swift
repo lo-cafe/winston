@@ -34,7 +34,7 @@ class TextFieldObserver : ObservableObject {
 struct ReplyModal: View {
   @ObservedObject var comment: Comment
   var refresh: (Bool, Bool) async -> Void
-  @EnvironmentObject var namespaceWrapper: NamespaceWrapper
+//  @EnvironmentObject var namespaceWrapper: NamespaceWrapper
   @EnvironmentObject var redditAPI: RedditAPI
   @State var alertExit = false
   @StateObject var textWrapper = TextFieldObserver(delay: 0.5)
