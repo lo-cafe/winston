@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-import SDWebImageSwiftUI
+import Kingfisher
 import Defaults
 import VideoPlayer
 import CoreMedia
@@ -41,15 +41,15 @@ struct ImageMediaPost: View {
     let height: CGFloat = 150
     if lightBoxType.post != post, let data = post.data {
       ZStack {
-        WebImage(url: URL(string: data.url))
+        KFImage(URL(string: data.url)!)
           .resizable()
-          .placeholder {
-            RR(12, .gray.opacity(0.5))
-              .frame(maxWidth: .infinity, maxHeight: .infinity)
-          }
+//          .placeholder {
+//            RR(12, .gray.opacity(0.5))
+//              .frame(maxWidth: .infinity, maxHeight: .infinity)
+//          }
 //        Image("cat")
 //          .matchedGeometryEffect(id: "\(data.url)-\(prefix)img", in: namespaceWrapper.namespace)
-          .transition(.fade(duration: 0.5))
+          .fade(duration: 0.5)
           .scaledToFill()
           .zIndex(1)
           .frame(width: contentWidth, height: height)

@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-import SDWebImageSwiftUI
+import Kingfisher
 
 struct Avatar: View {
   var url: String?
@@ -32,20 +32,21 @@ struct Avatar: View {
           )
       } else {
         if let avatarURL = avatarURL, avatarURL != "" {
-          EmptyView()
-          WebImage(url: URL(string: avatarURL))
+//          EmptyView()
+          KFImage(URL(string: avatarURL)!)
             .resizable()
-            .placeholder {
-              Text("l\(userID.prefix(1).uppercased())")
-                .background(
-                  Circle()
-                    .fill(.gray.opacity(0.5))
-                    .frame(width: avatarSize, height: avatarSize)
-                )
-            }
-            .transition(.fade(duration: 0.5))
+//            .placeholder {
+//              Text("l\(userID.prefix(1).uppercased())")
+//                .background(
+//                  Circle()
+//                    .fill(.gray.opacity(0.5))
+//                    .frame(width: avatarSize, height: avatarSize)
+//                )
+//            }
+            .fade(duration: 0.25)
+//            .transition(.fade(duration: 0.5))
             .scaledToFill()
-            .id(avatarURL)
+//            .id(avatarURL)
         } else {
           Text(userID.prefix(1).uppercased())
             .background(

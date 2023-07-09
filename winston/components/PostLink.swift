@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import SDWebImageSwiftUI
 import VideoPlayer
 import CoreMedia
 import SwiftUIBackports

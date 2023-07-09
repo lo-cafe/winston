@@ -7,7 +7,7 @@
 
 import SwiftUI
 import Defaults
-import SDWebImageSwiftUI
+import Kingfisher
 
 let alphabetLetters = Array("ABCDEFGHIJKLMNOPQRSTUVWXYZ").map { String($0) }
 
@@ -15,7 +15,7 @@ struct SubItem: View {
   var sub: Subreddit
   var body: some View {
     NavigationLink {
-      SubredditPosts(subreddit: sub)
+            SubredditPosts(subreddit: sub)
     } label: {
       if let data = sub.data {
         HStack {
@@ -29,16 +29,16 @@ struct SubItem: View {
                 .mask(Circle())
                 .fontSize(16, .semibold)
             } else {
-              WebImage(url: URL(string: icon))
+              KFImage(URL(string: icon)!)
                 .resizable()
-                .placeholder {
-                  ProgressView()
-                    .progressViewStyle(.circular)
-                    .frame(width: 22, height: 22 )
-                    .frame(width: 30, height: 30 )
-                    .background(Color.hex(data.primary_color), in: Circle())
-                }
-                .transition(.fade(duration: 0.5))
+//                .placeholder {
+//                  ProgressView()
+//                    .progressViewStyle(.circular)
+//                    .frame(width: 22, height: 22 )
+//                    .frame(width: 30, height: 30 )
+//                    .background(Color.hex(data.primary_color), in: Circle())
+//                }
+                .fade(duration: 0.5)
                 .scaledToFill()
                 .frame(width: 30, height: 30)
                 .mask(Circle())
@@ -74,11 +74,11 @@ struct Subreddits: View {
       List {
         if let subsDictData = subsDict.data {
           if searchText != "" {
-            ForEach(Array(Array(subsDictData.values).flatMap { $0 }.filter { ($0.data?.display_name ?? "").lowercased().contains(searchText.lowercased()) }).sorted { ($0.data?.display_name.lowercased() ?? "") < ($1.data?.display_name.lowercased() ?? "") }, id: \.self.id) { sub in
-              SubItem(sub: sub)
-            }
+//            ForEach(Array(Array(subsDictData.values).flatMap { $0 }.filter { ($0.data?.display_name ?? "").lowercased().contains(searchText.lowercased()) }).sorted { ($0.data?.display_name.lowercased() ?? "") < ($1.data?.display_name.lowercased() ?? "") }, id: \.self.id) { sub in
+//              SubItem(sub: sub)
+//            }
           } else {
-            Section(header: Text("FAVORITES")) {
+            Section("FAVORITES") {
               ForEach(Array(subsDictData.values).flatMap { $0 }.filter { $0.data?.user_has_favorited ?? false }.sorted { ($0.data?.display_name.lowercased() ?? "") < ($1.data?.display_name.lowercased() ?? "") }, id: \.self.id) { sub in
                 SubItem(sub: sub)
               }

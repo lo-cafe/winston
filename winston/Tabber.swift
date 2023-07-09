@@ -14,7 +14,9 @@ enum TabIdentifier {
 struct Tabber: View {
   @State var activeTab = TabIdentifier.posts
   @StateObject var contentLightBox = ContentLightBox()
+  @EnvironmentObject var redditAPI: RedditAPI
   @Namespace var generalAnimations
+  @State var credModalOpen = false
   var body: some View {
     TabView(selection: $activeTab) {
       
@@ -64,6 +66,27 @@ struct Tabber: View {
         .tag(TabIdentifier.settings)
       
     }
+    .onAppear {
+      if redditAPI.loggedUser.apiAppID == nil || redditAPI.loggedUser.apiAppSecret == nil {
+        withAnimation(spring) {
+          credModalOpen = true
+        }
+      }
+    }
+    .onChange(of: redditAPI.loggedUser) { user in
+      if user.apiAppID == nil || user.apiAppSecret == nil {
+        withAnimation(spring) {
+          credModalOpen = true
+        }
+      }
+    }
+    .sheet(isPresented: $credModalOpen) {
+      ChangeAuthAPIKey(open: $credModalOpen)
+        .interactiveDismissDisabled(true)
+    }
+//    .sheet(item: $credModalOpen) {
+//      ChangeAuthAPIKey()
+//    }
     .overlay(
       contentLightBox.post == nil
       ? nil

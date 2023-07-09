@@ -22,7 +22,6 @@ struct winstonApp: App {
                 .environment(\.managedObjectContext, persistenceController.container.viewContext)
                 .environmentObject(redditAPI)
                 .environmentObject(haptics)
-                .onOpenURL(perform: redditAPI.monitorAuthCallback)
         }
     }
 }

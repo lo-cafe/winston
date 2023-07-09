@@ -8,7 +8,7 @@
 import SwiftUI
 import CoreMedia
 import VideoPlayer
-import SDWebImageSwiftUI
+import Kingfisher
 
 class ContentLightBox: Equatable, ObservableObject, Identifiable {
   static func ==(lhs: ContentLightBox, rhs: ContentLightBox) -> Bool {
@@ -67,7 +67,7 @@ struct LightBox: View {
               
               //                .frame(maxWidth: .infinity, maxHeight: .infinity)
             } else {
-              WebImage(url: URL(string: url))
+              KFImage(URL(string: url)!)
                 .resizable()
 //                .matchedGeometryEffect(id: "\(url)-img", in: namespaceWrapper.namespace)
                 .scaledToFit()

@@ -58,7 +58,7 @@ class GenericRedditEntity<T: GenericRedditEntityDataType>: Identifiable, Hashabl
   
   let redditAPI: RedditAPI
   var anyCancellable: AnyCancellable? = nil
-  @Published var childrenWinston = ObservableArray<GenericRedditEntity<T>>(array: [])
+  @Published var childrenWinston: ObservableArray<GenericRedditEntity<T>> = ObservableArray<GenericRedditEntity<T>>(array: [])
   
   init(id: String, api: RedditAPI, typePrefix: String?) {
     self.id = id

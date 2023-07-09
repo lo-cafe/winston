@@ -25,35 +25,32 @@ class RedditAPI: ObservableObject {
   @Published var avatarURLCache: [String:String] = [:]
   
   func getRequestHeaders(includeAuth: Bool = true) -> HTTPHeaders? {
-    if let accessToken = self.loggedUser.accessToken {
       var headers: HTTPHeaders = [
         "User-Agent": "ios:lo.cafe.winston:v0.1.0 (by /u/Kinark)"
       ]
-      if includeAuth {
-        headers["Authorization"] = "Bearer \(accessToken)"
+      if includeAuth, let accessToken = self.loggedUser.accessToken {
+          headers["Authorization"] = "Bearer \(accessToken)"
       }
       return headers
-    }
-    return nil
   }
   
   func refreshToken() async -> Void {
-    if let refreshToken = loggedUser.refreshToken {
+    if let headers = getRequestHeaders(includeAuth: false), let refreshToken = loggedUser.refreshToken {
       //      print(loggedUser.accessToken)
       if Date().timeIntervalSince1970 - loggedUser.lastRefresh!.timeIntervalSince1970 > Double(loggedUser.expiration ?? 0) {
-        let payload = RefreshAccessTokenPayload(refreshToken: refreshToken)
+        let payload = RefreshAccessTokenPayload(refresh_token: refreshToken)
         let response = await AF.request(
-          "\(RedditAPI.winstonAPIBase)/get-access-token",
+          "\(RedditAPI.redditWWWApiURLBase)/api/v1/access_token",
           method: .post,
           parameters: payload,
-          encoder: JSONParameterEncoder.default)
+          encoder: URLEncodedFormParameterEncoder(destination: .httpBody),
+          headers: headers)
           .serializingDecodable(RefreshAccessTokenResponse.self).response
         switch response.result {
         case .success(let data):
-          print("aksmkam")
           await MainActor.run {
-            self.loggedUser.accessToken = data.token
-            self.loggedUser.expiration = data.expires
+            self.loggedUser.accessToken = data.access_token
+            self.loggedUser.expiration = data.expires_in
             self.loggedUser.lastRefresh = Date()
           }
           return
@@ -67,35 +64,60 @@ class RedditAPI: ObservableObject {
     }
   }
   
-  func getAccessToken(authCode: String) {
-    var code = authCode
-    if code.hasSuffix("#_") {
-      code = "\(code.dropLast(2))"
-    }
-    let payload = GetAccessTokenPayload(code: authCode)
-    AF.request("\(RedditAPI.winstonAPIBase)/get-access-token",
-               method: .post,
-               parameters: payload,
-               encoder: JSONParameterEncoder.default)
-    .responseDecodable(of: GetAccessTokenResponse.self) { response in
-      switch response.result {
-      case .success(let data):
-        self.loggedUser.accessToken = data.token
-        self.loggedUser.refreshToken = data.refresh
-        self.loggedUser.expiration = data.expires
-        self.loggedUser.lastRefresh = Date()
-        //        self.loggedUser = UserCredential(accessToken: data.token, refreshToken: data.refresh, expiration: data.expires)
-        break
-      case .failure(_):
-        break
+  func getAccessToken(authCode: String, callback: ((Bool) -> Void)? = nil) {
+    if let headers = getRequestHeaders(includeAuth: false) {
+      var code = authCode
+      if code.hasSuffix("#_") {
+        code = "\(code.dropLast(2))"
+      }
+      let payload = GetAccessTokenPayload(code: authCode)
+      print(authCode)
+      if let apiKeyID = loggedUser.apiAppID, let apiKeySecret = loggedUser.apiAppSecret {
+        AF.request(
+          "\(RedditAPI.redditWWWApiURLBase)/api/v1/access_token",
+          method: .post,
+          parameters: payload,
+          encoder: URLEncodedFormParameterEncoder(destination: .httpBody),
+          headers: headers)
+        .authenticate(username: apiKeyID, password: apiKeySecret)
+        .responseDecodable(of: GetAccessTokenResponse.self) { response in
+          switch response.result {
+          case .success(let data):
+            self.loggedUser.accessToken = data.access_token
+            self.loggedUser.refreshToken = data.refresh_token
+            self.loggedUser.expiration = data.expires_in
+            self.loggedUser.lastRefresh = Date()
+            callback?(true)
+            //        self.loggedUser = UserCredential(accessToken: data.token, refreshToken: data.refresh, expiration: data.expires)
+            break
+          case .failure(let error):
+            print(error)
+            
+            
+            var errorString: String?
+            if let data = response.data {
+                if let json = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: String] {
+                    errorString = json["error"]
+                }
+            }
+
+            print(errorString)
+            
+            
+            self.loggedUser.apiAppID = nil
+            self.loggedUser.apiAppSecret = nil
+            callback?(false)
+            break
+          }
+        }
       }
     }
   }
   
-  func monitorAuthCallback(_ url: URL) {
+  func monitorAuthCallback(_ url: URL, callback: ((Bool) -> Void)? = nil) {
     if url.lastPathComponent == "auth-success", let query = URLComponents(url: url, resolvingAgainstBaseURL: false), let state = query.queryItems?.first(where: { $0.name == "state" })?.value, let code = query.queryItems?.first(where: { $0.name == "code" })?.value {
       if state == lastAuthState {
-        getAccessToken(authCode: code)
+        getAccessToken(authCode: code, callback: callback)
         lastAuthState = nil
       }
     }
@@ -121,28 +143,57 @@ class RedditAPI: ObservableObject {
   }
   
   struct RefreshAccessTokenResponse: Decodable {
-    let token: String
-    let expires: Int
+    let access_token: String
+    let expires_in: Int
   }
   
   struct GetAccessTokenResponse: Decodable {
-    let token: String
-    let refresh: String
-    let expires: Int
+    let access_token: String
+    let token_type: String
+    let refresh_token: String
+    let scope: String
+    let expires_in: Int
   }
   
   struct RefreshAccessTokenPayload: Encodable {
-    let refreshToken: String
+    let grant_type = "refresh_token"
+    let refresh_token: String
   }
   
   struct GetAccessTokenPayload: Encodable {
+    let grant_type = "authorization_code"
     let code: String
+    let redirect_uri = "https://app.winston.lo.cafe/auth-success"
   }
   
-  struct UserCredential {
+  struct UserCredential: Hashable {
+    static func == (lhs: RedditAPI.UserCredential, rhs: RedditAPI.UserCredential) -> Bool {
+      lhs.hashValue == rhs.hashValue
+    }
+    
     let credentialsKeychain = Keychain(service: "lo.cafe.winston.reddit-credentials")
     
+    func hash(into hasher: inout Hasher) {
+      hasher.combine(modhash)
+      hasher.combine(apiAppID)
+      hasher.combine(apiAppSecret)
+      hasher.combine(accessToken)
+      hasher.combine(refreshToken)
+      hasher.combine(expiration)
+      hasher.combine(lastRefresh)
+    }
+    
     var modhash: String?
+    var apiAppID: String? {
+      didSet {
+        credentialsKeychain["apiAppID"] = apiAppID
+      }
+    }
+    var apiAppSecret: String? {
+      didSet {
+        credentialsKeychain["apiAppSecret"] = apiAppSecret
+      }
+    }
     var accessToken: String? {
       didSet {
         credentialsKeychain["accessToken"] = accessToken
@@ -173,7 +224,9 @@ class RedditAPI: ObservableObject {
       return accessToken != nil && refreshToken != nil && expiration != nil && lastRefresh != nil
     }
     
-    init(accessToken: String? = nil, refreshToken: String? = nil, expiration: Int? = nil) {
+    init(apiAppID: String? = nil, apiAppSecret: String? = nil, accessToken: String? = nil, refreshToken: String? = nil, expiration: Int? = nil) {
+      self.apiAppID = apiAppID ?? credentialsKeychain["apiAppID"]
+      self.apiAppSecret = apiAppSecret ?? credentialsKeychain["apiAppSecret"]
       self.accessToken = accessToken ?? credentialsKeychain["accessToken"]
       self.refreshToken = refreshToken ?? credentialsKeychain["refreshToken"]
       if let expiration = expiration {

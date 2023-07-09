@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-import SDWebImageSwiftUI
+import Kingfisher
 import Defaults
 import VideoPlayer
 import CoreMedia
@@ -31,7 +31,7 @@ struct PostView: View {
           await MainActor.run {
             withAnimation {
               if loadMore {
-                comments.data = (comments.data) + newComments
+                comments.data = comments.data + newComments
               } else {
                 comments.data = newComments
               }
@@ -125,13 +125,22 @@ struct PostView: View {
           .frame(maxWidth: .infinity, alignment: .leading)
         
         let commentsData = comments.data
-        if commentsData.count > 0 {
-          ForEach(commentsData, id: \.self.id) { comment in
-            if let postFullname = post.data?.name {
-              VStack {
-                CommentLink(disableScroll: $disableScroll, postFullname: postFullname, refresh: asyncFetch, comment: comment)
-              }
-              .listRowSeparator(preferenceShowCommentsCards ? .hidden : .automatic)
+        if commentsData.count > 0, let postFullname = post.data?.name {
+          ForEach(Array(commentsData.enumerated()), id: \.element.id) { i, comment in
+            Section {
+              //                Group {
+              //                  OutlineGroup(
+              //                    comments.data ?? [],
+              //                    id: \.self.id,
+              //                    children: \.self.childrenWinston.data
+              //                  ) { comment in
+              //                    VStack {}
+              //                    Text(tree.value)
+              //                      .font(.subheadline)
+              //                  Top().fill(Color("commentBG")).frame(maxWidth: .infinity, minHeight: 20, maxHeight: 20).zIndex(-1)
+              CommentLink(disableScroll: $disableScroll, postFullname: postFullname, refresh: asyncFetch, comment: comment)
+              //                  Bot().fill(Color("commentBG")).frame(maxWidth: .infinity, minHeight: 20, maxHeight: 20).padding(.bottom, 12).zIndex(-1)
+              //                }
             }
           }
         } else {
@@ -145,18 +154,19 @@ struct PostView: View {
               .opacity(0.25)
           }
         }
-        
-        Spacer()
-          .frame(maxWidth: .infinity, minHeight: 72)
       }
+      
       .listRowSeparator(.hidden)
       .listRowBackground(Color.clear)
-      .listRowInsets(EdgeInsets(top: 6, leading: 8, bottom: 6, trailing: 8))
+      .listRowInsets(EdgeInsets(top: 0, leading: 8, bottom: 0, trailing: 8))
     }
-    .introspect(.scrollView, on: .iOS(.v15, .v16, .v17)) { scrollView in
-      //      scrollView.disableScroll = disableScroll
-      scrollView.isScrollEnabled = !disableScroll
-    }
+//    .introspect(.list, on: .iOS(.v16, .v17)) { collectionView in
+//      collectionView.isScrollEnabled = !disableScroll
+//      tableView.isScrollEnabled = !disableScroll
+//      tableView.
+//      scrollView.isScrollEnabled = !disableScroll
+//    }
+//    .defaultMinListRowHeight(
     //    .scrollDisabled(disableScroll)
     .listStyle(.plain)
     .refreshable {
@@ -199,15 +209,15 @@ struct PostView: View {
             } label: {
               let communityIcon = data.community_icon.split(separator: "?")
               let icon = data.icon_img == "" ? communityIcon.count > 0 ? String(communityIcon[0]) : "" : data.icon_img
-              WebImage(url: URL(string: icon))
+              KFImage(URL(string: icon)!)
                 .resizable()
-                .placeholder {
-                  Text(data.display_name.prefix(1).uppercased())
-                    .frame(width: 30, height: 30)
-                    .background(.blue, in: Circle())
-                    .mask(Circle())
-                    .fontSize(16, .semibold)
-                }
+//                .placeholder {
+//                  Text(data.display_name.prefix(1).uppercased())
+//                    .frame(width: 30, height: 30)
+//                    .background(.blue, in: Circle())
+//                    .mask(Circle())
+//                    .fontSize(16, .semibold)
+//                }
                 .scaledToFill()
                 .frame(width: 30, height: 30)
                 .mask(Circle())

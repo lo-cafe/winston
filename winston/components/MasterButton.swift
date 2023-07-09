@@ -35,7 +35,7 @@ struct MasterButton: View {
   var colorHoverEffect: ColorHoverEffect = .normal
   var textColor: Color = .white
   var textSize: CGFloat = 16
-  var textWeight: Font.Weight = .regular
+  var textWeight: Font.Weight = .semibold
   var textDesign: Font.Design = .rounded
   var shrinkHoverEffect: Bool = false
   var padding: CGFloat = 10
@@ -60,61 +60,61 @@ struct MasterButton: View {
     let btnCornerRadius = proportional == .circle ? height / 2 : cornerRadius
     let finalColor = color.opacity(mode == .normal ? 1 : mode == .subtle ? pressing ? 0.1 : 0 : 0.2 )
     let proportionalSize = proportional != .no ? height : nil
-//    Button {
-//      if confirmLabel != nil {
-//        if confirming {
-//          action()
-//        } else {
-//          withAnimation(BTN_SHRINK_ANIMATION) {
-//            confirming = true
-//          }
-//        }
-//      } else {
-//        action()
-//      }
-//    } label: {
-      HStack {
-        if let icon = icon {
-          Image(systemName: icon)
-            .transition(.scaleAndBlur)
-            .id(icon)
+    //    Button {
+    //      if confirmLabel != nil {
+    //        if confirming {
+    //          action()
+    //        } else {
+    //          withAnimation(BTN_SHRINK_ANIMATION) {
+    //            confirming = true
+    //          }
+    //        }
+    //      } else {
+    //        action()
+    //      }
+    //    } label: {
+    HStack {
+      if let icon = icon {
+        Image(systemName: icon)
+          .transition(.scaleAndBlur)
+          .id(icon)
+      }
+      Group {
+        if let label = label {
+          Text(confirming ? confirmLabel ?? label : label)
+            .fixedSize(horizontal: true, vertical: false)
+            .id(confirming ? confirmLabel : label)
+        } else if let confirmLabel = confirmLabel, confirming {
+          Text(confirmLabel)
+            .font(Font(UIFont.systemFont(ofSize: 11, weight: .medium)))
+            .id(confirmLabel)
         }
-        Group {
-          if let label = label {
-            Text(confirming ? confirmLabel ?? label : label)
-              .fixedSize(horizontal: true, vertical: false)
-              .id(confirming ? confirmLabel : label)
-          } else if let confirmLabel = confirmLabel, confirming {
-            Text(confirmLabel)
-              .font(Font(UIFont.systemFont(ofSize: 11, weight: .medium)))
-              .id(confirmLabel)
-          }
-        }
-        .transition(.scaleAndBlur)
       }
-      .fontSize(textSize, textWeight, design: textDesign)
-      //            .padding(.vertical, padding)
-      .padding(.horizontal, 10 * 1.5)
-      .foregroundColor(textColor)
-      .frame(maxWidth: fullWidth ? .infinity : nil, maxHeight: fullHeight ? .infinity : height, alignment: align)
-      .frame(width: confirming ? nil : proportionalSize, height: fullHeight ? nil : height)
-      .background(
-        RR(btnCornerRadius, finalColor)
-          .brightness(colorHoverEffect != .none ? pressing ? -0.1 : 0 : 0)
-      )
-      .mask(
-        RR(btnCornerRadius, .white)
-      )
-      .scaleEffect(1 + (shrinkHoverEffect ? pressing ? -shrinkRatio : 0 : 0) )
-
-      .if(hoverWorkaround) { v in
-        v.contentShape(RoundedRectangle(cornerRadius: btnCornerRadius, style: .continuous))
-      }
-      .animation(shrinkHoverEffect || colorHoverEffect == .animated ? BTN_SHRINK_ANIMATION : nil, value: pressing)
-      .if(!hoverWorkaround) { v in
-        v.contentShape(RoundedRectangle(cornerRadius: btnCornerRadius, style: .continuous))
-      }
-//    }
+      .transition(.scaleAndBlur)
+    }
+    .fontSize(textSize, textWeight, design: textDesign)
+    //            .padding(.vertical, padding)
+    .padding(.horizontal, 10 * 1.5)
+    .foregroundColor(textColor)
+    .frame(maxWidth: fullWidth ? .infinity : nil, maxHeight: fullHeight ? .infinity : height, alignment: align)
+    .frame(width: confirming ? nil : proportionalSize, height: fullHeight ? nil : height)
+    .background(
+      RR(btnCornerRadius, finalColor)
+        .brightness(colorHoverEffect != .none ? pressing ? -0.1 : 0 : 0)
+    )
+    .mask(
+      RR(btnCornerRadius, .white)
+    )
+    .scaleEffect(1 + (shrinkHoverEffect ? pressing ? -shrinkRatio : 0 : 0) )
+    
+    .if(hoverWorkaround) { v in
+      v.contentShape(RoundedRectangle(cornerRadius: btnCornerRadius, style: .continuous))
+    }
+    .animation(shrinkHoverEffect || colorHoverEffect == .animated ? BTN_SHRINK_ANIMATION : nil, value: pressing)
+    .if(!hoverWorkaround) { v in
+      v.contentShape(RoundedRectangle(cornerRadius: btnCornerRadius, style: .continuous))
+    }
+    //    }
     .simultaneousGesture(
       TapGesture()
         .onEnded {
@@ -131,19 +131,19 @@ struct MasterButton: View {
           }
         }
     )
-//    .simultaneousGesture(
-//      LongPressGesture(minimumDuration: 1, maximumDistance: 1)
-//        .updating($pressing, body: { newPressing, pressing, transaction in
-//          pressing = newPressing
-//        })
-//    )
+    //    .simultaneousGesture(
+    //      LongPressGesture(minimumDuration: 1, maximumDistance: 1)
+    //        .updating($pressing, body: { newPressing, pressing, transaction in
+    //          pressing = newPressing
+    //        })
+    //    )
     .disabled(disabled)
     .saturation(disabled ? 0 : 1)
     .opacity(disabled ? 0.75 : 1)
     .fixedSize(horizontal: confirming, vertical: confirming)
-    .getInitialSize($initialSize)
+    //    .getInitialSize($initialSize)
     .frame(maxWidth: fullWidth ? .infinity : confirming ? initialSize.width : nil, alignment: growAnchor)
-    .buttonStyle(NoBtnStyle())
+//    .buttonStyle(NoBtnStyle())
     .onChange(of: confirming) { newValue in
       if newValue {
         DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
@@ -157,7 +157,7 @@ struct MasterButton: View {
 }
 
 struct NoBtnStyle: ButtonStyle {
-    func makeBody(configuration: Configuration) -> some View {
-        configuration.label
-    }
+  func makeBody(configuration: Configuration) -> some View {
+    configuration.label
+  }
 }

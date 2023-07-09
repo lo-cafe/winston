@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-import SDWebImageSwiftUI
+import Kingfisher
 import ASCollectionView
 
 //enum UserViewSections: Int {
@@ -18,6 +18,7 @@ struct UserView: View {
   @State var loading = true
   @State var disableScroll = false
   @State var lastActivities: [Either<PostData, CommentData>]?
+  @State var contentWidth: CGFloat = 0
   
   func refresh(_ force: Bool = false, _ full: Bool = true) async {
     await user.refetchUser()
@@ -31,37 +32,43 @@ struct UserView: View {
               ZStack {
                 if let bannerImgFull = data.subreddit?.banner_img, bannerImgFull != "" {
                   let bannerImg = String(bannerImgFull.split(separator: "?")[0])
-                  WebImage(url: URL(string: bannerImg))
+                  KFImage(URL(string: bannerImg))
                     .resizable()
-                    .placeholder {
-                      ProgressView()
-                        .progressViewStyle(.circular)
-                        .frame(width: 22, height: 22 )
-                        .frame(maxWidth: .infinity, minHeight: 160)
-                    }
-                    .transition(.fade(duration: 0.5))
+//                    .placeholder {
+//                      ProgressView()
+//                        .progressViewStyle(.circular)
+//                        .frame(width: 22, height: 22 )
+//                        .frame(maxWidth: .infinity, minHeight: 160)
+//                    }
+                    .fade(duration: 0.5)
                     .scaledToFill()
-                    .frame(maxWidth: .infinity, maxHeight: 160)
+                    .frame(width: contentWidth, height: 160)
                     .mask(RR(16, .black))
                 }
                 if let iconFull = data.subreddit?.icon_img, iconFull != "" {
                   let icon = String(iconFull.split(separator: "?")[0])
-                  WebImage(url: URL(string: icon))
+                  KFImage(URL(string: icon))
                     .resizable()
-                    .placeholder {
-                      ProgressView()
-                        .progressViewStyle(.circular)
-                        .frame(width: 22, height: 22 )
-                        .frame(width: 30, height: 30 )
-                        .background(.gray, in: Circle())
-                    }
-                    .transition(.fade(duration: 0.5))
+//                    .placeholder {
+//                      ProgressView()
+//                        .progressViewStyle(.circular)
+//                        .frame(width: 22, height: 22 )
+//                        .frame(width: 30, height: 30 )
+//                        .background(.gray, in: Circle())
+//                    }
+                    .fade(duration: 0.5)
                     .scaledToFill()
                     .frame(width: 125, height: 125)
                     .mask(Circle())
                     .offset(y: data.subreddit?.banner_img == "" || data.subreddit?.banner_img == nil ? 0 : 80)
                 }
               }
+              .frame(maxWidth: .infinity)
+              .background(
+                GeometryReader { geo in
+                  Color.clear.onAppear { contentWidth = geo.size.width }
+                }
+              )
               .padding(.bottom, data.subreddit?.banner_img == "" || data.subreddit?.banner_img == nil ? 0 : 78)
               .padding(.horizontal, 16)
               
@@ -69,22 +76,22 @@ struct UserView: View {
                 HStack {
                   if let postKarma = data.link_karma {
                     DataBlock(icon: "highlighter", label: "Post karma", value: "\(postKarma)")
-                      .transition(.fade(duration: 0.5))
+                      .transition(.opacity)
                   }
                   
                   if let commentKarma = data.comment_karma {
                     DataBlock(icon: "checkmark.message.fill", label: "Comment karma", value: "\(commentKarma)")
-                      .transition(.fade(duration: 0.5))
+                      .transition(.opacity)
                   }
                 }
                 if let created = data.created {
                   DataBlock(icon: "star.fill", label: "User since", value: "\(Date(timeIntervalSince1970: TimeInterval(created)).toFormat("MMM dd, yyyy"))")
-                    .transition(.fade(duration: 0.5))
+                    .transition(.opacity)
                 }
               }
               .fixedSize(horizontal: false, vertical: true)
               .padding(.horizontal, 16)
-              .transition(.fade(duration: 0.5))
+              .transition(.opacity)
             }
             
             Text("Last activities")
@@ -101,7 +108,7 @@ struct UserView: View {
                   case .second(let comment):
                     VStack {
                       ShortPostLink(comment: Comment(data: comment, api: user.redditAPI))
-//                      CommentLink(disableScroll: $disableScroll, refresh: refresh, comment: Comment(data: comment, api: user.redditAPI))
+                      CommentLink(disableScroll: $disableScroll, showReplies: false, refresh: refresh, comment: Comment(data: comment, api: user.redditAPI))
                     }
                     .padding(.horizontal, 12)
                     .padding(.top, 12)
@@ -115,7 +122,7 @@ struct UserView: View {
           .listRowInsets(EdgeInsets(top: 8, leading: 0, bottom: 8, trailing: 0))
           .listRowSeparator(.hidden)
           .listRowBackground(Color.clear)
-          .transition(.fade(duration: 0.5))
+          .transition(.opacity)
         }
         
       }

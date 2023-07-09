@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-import SDWebImageSwiftUI
+import Kingfisher
 import SwiftDate
 
 struct SubredditInfo: View {
@@ -19,7 +19,7 @@ struct SubredditInfo: View {
         VStack (spacing: 16) {
           let communityIcon = data.community_icon.split(separator: "?")
           let icon = data.icon_img == "" ? communityIcon.count > 0 ? String(communityIcon[0]) : "" : data.icon_img
-          WebImage(url: URL(string: icon))
+          KFImage(URL(string: icon)!)
             .resizable()
             .scaledToFill()
             .frame(width: 125, height: 125)

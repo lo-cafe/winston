@@ -9,7 +9,7 @@ import SwiftUI
 import Defaults
 import SwiftUIIntrospect
 import ASCollectionView
-import SDWebImageSwiftUI
+import Kingfisher
 
 struct SubredditPosts: View {
   @Default(.preferenceShowPostsCards) var preferenceShowPostsCards
@@ -108,15 +108,15 @@ struct SubredditPosts: View {
             } label: {
               let communityIcon = data.community_icon.split(separator: "?")
               let icon = data.icon_img == "" ? communityIcon.count > 0 ? String(communityIcon[0]) : "" : data.icon_img
-              WebImage(url: URL(string: icon))
+              KFImage(URL(string: icon)!)
                 .resizable()
-                .placeholder {
-                  Text(data.display_name.prefix(1).uppercased())
-                    .frame(width: 30, height: 30)
-                    .background(.blue, in: Circle())
-                    .mask(Circle())
-                    .fontSize(16, .semibold)
-                }
+//                .placeholder {
+//                  Text(data.display_name.prefix(1).uppercased())
+//                    .frame(width: 30, height: 30)
+//                    .background(.blue, in: Circle())
+//                    .mask(Circle())
+//                    .fontSize(16, .semibold)
+//                }
                 .scaledToFill()
                 .frame(width: 30, height: 30)
                 .mask(Circle())
