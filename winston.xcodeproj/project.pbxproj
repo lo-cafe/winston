@@ -257,6 +257,18 @@
 			path = ci_scripts;
 			sourceTree = "<group>";
 		};
+		EC22A3182A5C4FBF0062A112 /* general */ = {
+			isa = PBXGroup;
+			children = (
+				EC593AEF2A47ACB0002D6454 /* Tabber.swift */,
+				EC593AD72A4673B2002D6454 /* winstonApp.swift */,
+				EC593AD92A4673B2002D6454 /* ContentView.swift */,
+				EC593AE02A4673B3002D6454 /* Persistence.swift */,
+				EC593AE22A4673B3002D6454 /* winston.xcdatamodeld */,
+			);
+			path = general;
+			sourceTree = "<group>";
+		};
 		EC2D275A2A4FBEF7006444D6 /* modifiers */ = {
 			isa = PBXGroup;
 			children = (
@@ -294,13 +306,9 @@
 				EC593B042A47B002002D6454 /* globals */,
 				EC593AFB2A47AEAB002D6454 /* models */,
 				EC593AEE2A47ACA1002D6454 /* views */,
-				EC593AEF2A47ACB0002D6454 /* Tabber.swift */,
+				EC22A3182A5C4FBF0062A112 /* general */,
 				EC593AED2A4796C1002D6454 /* winston.entitlements */,
-				EC593AD72A4673B2002D6454 /* winstonApp.swift */,
-				EC593AD92A4673B2002D6454 /* ContentView.swift */,
 				EC593ADB2A4673B3002D6454 /* Assets.xcassets */,
-				EC593AE02A4673B3002D6454 /* Persistence.swift */,
-				EC593AE22A4673B3002D6454 /* winston.xcdatamodeld */,
 			);
 			path = winston;
 			sourceTree = "<group>";
