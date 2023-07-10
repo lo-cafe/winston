@@ -260,6 +260,7 @@
 		EC22A3182A5C4FBF0062A112 /* general */ = {
 			isa = PBXGroup;
 			children = (
+				EC593ADB2A4673B3002D6454 /* Assets.xcassets */,
 				EC593AEF2A47ACB0002D6454 /* Tabber.swift */,
 				EC593AD72A4673B2002D6454 /* winstonApp.swift */,
 				EC593AD92A4673B2002D6454 /* ContentView.swift */,
@@ -308,7 +309,6 @@
 				EC593AEE2A47ACA1002D6454 /* views */,
 				EC22A3182A5C4FBF0062A112 /* general */,
 				EC593AED2A4796C1002D6454 /* winston.entitlements */,
-				EC593ADB2A4673B3002D6454 /* Assets.xcassets */,
 			);
 			path = winston;
 			sourceTree = "<group>";
@@ -703,7 +703,7 @@
 				CODE_SIGN_ENTITLEMENTS = winston/winston.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "\"winston\"";
+				DEVELOPMENT_ASSET_PATHS = "";
 				DEVELOPMENT_TEAM = Z2NNLU4F7U;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -732,11 +732,12 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				"ASSETCATALOG_COMPILER_APPICON_NAME[sdk=iphoneos*]" = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = winston/winston.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "\"winston\"";
+				DEVELOPMENT_ASSET_PATHS = "";
 				DEVELOPMENT_TEAM = Z2NNLU4F7U;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
