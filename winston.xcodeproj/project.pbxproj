@@ -88,7 +88,6 @@
 		ECE2859F2A501CD4009CF9DD /* fetchMe.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECE2859E2A501CD4009CF9DD /* fetchMe.swift */; };
 		ECE285A12A50EC9E009CF9DD /* Badge.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECE285A02A50EC9E009CF9DD /* Badge.swift */; };
 		ECE285A82A513342009CF9DD /* ReplyModal.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECE285A72A513342009CF9DD /* ReplyModal.swift */; };
-		ECE285AA2A513A9C009CF9DD /* CoreData.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECE285A92A513A9C009CF9DD /* CoreData.swift */; };
 		ECF0B7DD2A53DD5C002B9FAD /* ImageMediaPost.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECF0B7DC2A53DD5C002B9FAD /* ImageMediaPost.swift */; };
 		ECF0B7DF2A53DD82002B9FAD /* VideoPlayerPost.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECF0B7DE2A53DD82002B9FAD /* VideoPlayerPost.swift */; };
 		ECF0B7E12A53DE17002B9FAD /* ShortPostLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECF0B7E02A53DE17002B9FAD /* ShortPostLink.swift */; };
@@ -169,7 +168,6 @@
 		ECE2859E2A501CD4009CF9DD /* fetchMe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = fetchMe.swift; sourceTree = "<group>"; };
 		ECE285A02A50EC9E009CF9DD /* Badge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Badge.swift; sourceTree = "<group>"; };
 		ECE285A72A513342009CF9DD /* ReplyModal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReplyModal.swift; sourceTree = "<group>"; };
-		ECE285A92A513A9C009CF9DD /* CoreData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreData.swift; sourceTree = "<group>"; };
 		ECF0B7DC2A53DD5C002B9FAD /* ImageMediaPost.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageMediaPost.swift; sourceTree = "<group>"; };
 		ECF0B7DE2A53DD82002B9FAD /* VideoPlayerPost.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayerPost.swift; sourceTree = "<group>"; };
 		ECF0B7E02A53DE17002B9FAD /* ShortPostLink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShortPostLink.swift; sourceTree = "<group>"; };
@@ -303,7 +301,6 @@
 				EC593ADB2A4673B3002D6454 /* Assets.xcassets */,
 				EC593AE02A4673B3002D6454 /* Persistence.swift */,
 				EC593AE22A4673B3002D6454 /* winston.xcdatamodeld */,
-				ECE285A92A513A9C009CF9DD /* CoreData.swift */,
 			);
 			path = winston;
 			sourceTree = "<group>";
@@ -498,8 +495,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				EC593AE42A4673B3002D6454 /* winston.xcdatamodeld in Sources */,
-				EC593AF02A47ACB0002D6454 /* Tabber.swift in Sources */,
 				EC593AF82A47AE39002D6454 /* Search.swift in Sources */,
 				ECE285A12A50EC9E009CF9DD /* Badge.swift in Sources */,
 				EC0854192A4BFC4600E88389 /* CommentLink.swift in Sources */,
@@ -540,10 +535,10 @@
 				EC2D27592A4F7830006444D6 /* GoodNavigator.swift in Sources */,
 				EC1906EF2A552A3100A0300E /* AccountPanel.swift in Sources */,
 				EC5EDA772A4EA03800140A08 /* subscribeSubs.swift in Sources */,
+				EC593AD82A4673B2002D6454 /* winstonApp.swift in Sources */,
 				EC593AF42A47AE1F002D6454 /* Inbox.swift in Sources */,
 				EC0854412A4D558D00E88389 /* Interpolator.swift in Sources */,
 				EC0854222A4BFF1500E88389 /* fetchSubs.swift in Sources */,
-				ECE285AA2A513A9C009CF9DD /* CoreData.swift in Sources */,
 				EC1906ED2A55293500A0300E /* AppearancePanel.swift in Sources */,
 				ECC10C772A4A874C009124BE /* RR.swift in Sources */,
 				ECE2859B2A5010E2009CF9DD /* DataBlock.swift in Sources */,
@@ -568,9 +563,10 @@
 				EC0854242A4BFF6E00E88389 /* fetchPostComments.swift in Sources */,
 				EC0854202A4BFF0700E88389 /* fetchUser.swift in Sources */,
 				EC2D27652A4FCE42006444D6 /* SubredditInfo.swift in Sources */,
-				EC593AD82A4673B2002D6454 /* winstonApp.swift in Sources */,
 				EC0854132A4BE13000E88389 /* PostView.swift in Sources */,
 				EC0854432A4D6A4800E88389 /* MasterButton.swift in Sources */,
+				EC593AF02A47ACB0002D6454 /* Tabber.swift in Sources */,
+				EC593AE42A4673B3002D6454 /* winston.xcdatamodeld in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -710,7 +706,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -743,7 +739,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

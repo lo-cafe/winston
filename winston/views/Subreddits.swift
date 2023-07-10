@@ -74,9 +74,9 @@ struct Subreddits: View {
       List {
         if let subsDictData = subsDict.data {
           if searchText != "" {
-//            ForEach(Array(Array(subsDictData.values).flatMap { $0 }.filter { ($0.data?.display_name ?? "").lowercased().contains(searchText.lowercased()) }).sorted { ($0.data?.display_name.lowercased() ?? "") < ($1.data?.display_name.lowercased() ?? "") }, id: \.self.id) { sub in
-//              SubItem(sub: sub)
-//            }
+            ForEach(Array(Array(subsDictData.values).flatMap { $0 }.filter { ($0.data?.display_name ?? "").lowercased().contains(searchText.lowercased()) }).sorted { ($0.data?.display_name.lowercased() ?? "") < ($1.data?.display_name.lowercased() ?? "") }, id: \.self.id) { sub in
+              SubItem(sub: sub)
+            }
           } else {
             Section("FAVORITES") {
               ForEach(Array(subsDictData.values).flatMap { $0 }.filter { $0.data?.user_has_favorited ?? false }.sorted { ($0.data?.display_name.lowercased() ?? "") < ($1.data?.display_name.lowercased() ?? "") }, id: \.self.id) { sub in
