@@ -17,7 +17,7 @@ struct VideoPlayerPost: View {
   @State var playingVideo = true
   @State private var time: CMTime = .zero
   @EnvironmentObject var lightBoxType: ContentLightBox
-  @EnvironmentObject var namespaceWrapper: NamespaceWrapper
+  @EnvironmentObject var namespaceWrapper: TabberNamespaceWrapper
   
   var body: some View {
     let media = post.data!.secure_media!

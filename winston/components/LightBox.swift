@@ -22,7 +22,7 @@ class ContentLightBox: Equatable, ObservableObject, Identifiable {
 }
 
 struct LightBox: View {
-  @EnvironmentObject var namespaceWrapper: NamespaceWrapper
+  @EnvironmentObject var namespaceWrapper: TabberNamespaceWrapper
   @EnvironmentObject var data: ContentLightBox
   @State var time = CMTime()
   @State var playingVideo = true

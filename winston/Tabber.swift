@@ -92,7 +92,7 @@ struct Tabber: View {
       ? nil
       : LightBox()
     )
-    .environmentObject(NamespaceWrapper(generalAnimations))
+    .environmentObject(TabberNamespaceWrapper(generalAnimations))
     .environmentObject(contentLightBox)
   }
 }
@@ -103,7 +103,7 @@ struct Tabber: View {
 //  }
 //}
 
-class NamespaceWrapper: ObservableObject {
+class TabberNamespaceWrapper: ObservableObject {
   var namespace: Namespace.ID
   
   init(_ namespace: Namespace.ID) {

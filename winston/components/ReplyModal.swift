@@ -34,19 +34,19 @@ class TextFieldObserver : ObservableObject {
 struct ReplyModal: View {
   @ObservedObject var comment: Comment
   var refresh: (Bool, Bool) async -> Void
-//  @EnvironmentObject var namespaceWrapper: NamespaceWrapper
+//  @EnvironmentObject var namespaceWrapper: TabberNamespaceWrapper
   @EnvironmentObject var redditAPI: RedditAPI
   @State var alertExit = false
   @StateObject var textWrapper = TextFieldObserver(delay: 0.5)
   @Environment(\.backportDismiss) private var dismiss
   @Environment(\.managedObjectContext) private var viewContext
-  @State var currentDraft: Draft?
+  @State var currentDraft: ReplyDraft?
   @State var editorHeight: CGFloat = 200
   @State var loading = false
   @State var disableScroll = false
   @State private var selection: Backport.PresentationDetent = .medium
   
-  @FetchRequest(sortDescriptors: []) var drafts: FetchedResults<Draft>
+  @FetchRequest(sortDescriptors: []) var drafts: FetchedResults<ReplyDraft>
   
   //  private let rules: [HighlightRule] = [
   //          HighlightRule(pattern: betweenUnderscores, formattingRules: [
@@ -143,7 +143,7 @@ struct ReplyModal: View {
           }
           currentDraft = draftEntity
         } else {
-          let newDraft = Draft(context: viewContext)
+          let newDraft = ReplyDraft(context: viewContext)
           newDraft.timestamp = Date()
           newDraft.commentID = comment.id
           currentDraft = newDraft

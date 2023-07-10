@@ -22,7 +22,7 @@ struct ImageMediaPost: View {
   @State var pressing = false
   @State var contentWidth: CGFloat = .zero
   @EnvironmentObject var lightBoxType: ContentLightBox
-  @EnvironmentObject var namespaceWrapper: NamespaceWrapper
+  @EnvironmentObject var namespaceWrapper: TabberNamespaceWrapper
   
   init(parentDragging: Binding<Bool>? = nil, parentOffsetX: Binding<CGFloat>? = nil, prefix: String = "", post: Post, leftAction: (()->())? = nil, rightAction: (()->())? = nil) {
     if let parentOffsetX = parentOffsetX {
