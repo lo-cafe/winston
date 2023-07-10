@@ -10,6 +10,7 @@ import Defaults
 
 struct CommentLinkContent: View {
   @Default(.preferenceShowCommentsAvatars) var preferenceShowCommentsAvatars
+  var lineLimit: Int?
   @ObservedObject var comment: Comment
   var avatarsURL: [String:String]?
   var showReplies = true
@@ -70,6 +71,7 @@ struct CommentLinkContent: View {
           Text(body.md())
           //                Text("\(data.depth ?? 99)")
             .fontSize(15)
+            .lineLimit(lineLimit)
             .animation(nil, value: collapsed)
           //                  .clipped()
             .opacity(hideText ? 0 : 1)

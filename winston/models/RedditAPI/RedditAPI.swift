@@ -123,7 +123,7 @@ class RedditAPI: ObservableObject {
     }
   }
   
-  func getAuthorizationCodeURL() -> URL {
+  func getAuthorizationCodeURL(_ appID: String) -> URL {
     let client_id: String = RedditAPI.appClientID
     let response_type: String = "code"
     let state: String = UUID().uuidString
@@ -133,7 +133,7 @@ class RedditAPI: ObservableObject {
     
     lastAuthState = state
     
-    return URL(string: "https://www.reddit.com/api/v1/authorize?client_id=\(client_id)&response_type=\(response_type)&state=\(state)&redirect_uri=\(redirect_uri)&duration=\(duration)&scope=\(scope)".addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!)!
+    return URL(string: "https://www.reddit.com/api/v1/authorize?client_id=\(appID)&response_type=\(response_type)&state=\(state)&redirect_uri=\(redirect_uri)&duration=\(duration)&scope=\(scope)".addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!)!
   }
   
   func getModHash() async {

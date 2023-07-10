@@ -11,6 +11,10 @@ import SwiftUI
 
 typealias Comment = GenericRedditEntity<CommentData>
 
+enum Oops: Error {
+    case oops
+}
+
 extension Comment {
   convenience init(data: T, api: RedditAPI, kind: String? = nil) {
     self.init(data: data, api: api, typePrefix: "t1_")
@@ -26,6 +30,48 @@ extension Comment {
           return nil
         } ?? []
       }
+    }
+  }
+  convenience init(message: Message) throws {
+    let rawMessage = message
+    if let message = message.data {
+      self.init(data: CommentData(
+        subreddit_id: nil,
+        subreddit: message.subreddit,
+        likes: message.likes != nil ? message.likes! > 0 : nil,
+        replies: message.replies != nil ? .first(message.replies!) : nil,
+        saved: false,
+        id: message.id,
+        archived: false,
+        count: message.num_comments,
+        author: message.author,
+        created_utc: message.created_utc,
+        send_replies: false,
+        parent_id: message.parent_id,
+        score: message.score,
+        author_fullname: message.author_fullname,
+        approved_by: nil,
+        mod_note: nil,
+        collapsed: false,
+        body: message.body,
+        top_awarded_type: nil,
+        name: message.name,
+        downs: nil,
+        children: nil,
+        body_html: message.body_html,
+        created: message.created,
+        link_id: nil,
+        link_title: message.link_title,
+        subreddit_name_prefixed: message.subreddit_name_prefixed,
+        depth: nil,
+        author_flair_background_color: nil,
+        collapsed_because_crowd_control: nil,
+        mod_reports: nil,
+        num_reports: nil,
+        ups: nil
+      ), api: rawMessage.redditAPI, typePrefix: "t1_")
+    } else {
+      throw Oops.oops
     }
   }
   

@@ -19,6 +19,7 @@ struct SubredditPosts: View {
   @State var loadingMore = false
   @StateObject var posts = ObservableArray<Post>()
   @State var lastPostAfter: String?
+  @State var searchText: String = ""
   @State var sort: SubListingSortOption = Defaults[.preferredSort]
 //  @State var disableScroll = false
   @EnvironmentObject var redditAPI: RedditAPI
@@ -129,6 +130,7 @@ struct SubredditPosts: View {
     .refreshable {
       await asyncFetch()
     }
+    .searchable(text: $searchText, prompt: "Search r/\(subreddit.data?.display_name ?? subreddit.id)")
     .onAppear {
 //      sort = Defaults[.preferredSort]
       doThisAfter(0) {

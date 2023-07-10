@@ -62,10 +62,11 @@ class SubCommentsReferencesContainer: ObservableObject {
 
 struct CommentLink: View {
   @Default(.preferenceShowCommentsCards) var preferenceShowCommentsCards
+  var lineLimit: Int?
   var zIndex: Double = 1
   var lastOne = true
   @Binding var disableScroll: Bool
-  var avatarsURL: [String:String]?
+  var avatarsURL: [String:String]? = nil
   var disableShapeShift = true
   var postFullname: String?
   var showReplies = true
@@ -155,7 +156,7 @@ struct CommentLink: View {
             .allowsHitTesting(!loadMoreLoading)
             .opacity(loadMoreLoading ? 0.5 : 1)
           } else {
-            CommentLinkContent(comment: comment, avatarsURL: avatarsURL, showReplies: showReplies, refresh: refresh, collapsed: $collapsed)
+            CommentLinkContent(lineLimit: lineLimit, comment: comment, avatarsURL: avatarsURL, showReplies: showReplies, refresh: refresh, collapsed: $collapsed)
           }
         }
         .compositingGroup()

@@ -218,7 +218,7 @@ struct ChangeAuthAPIKey: View {
                   dismissKeyboard()
                   redditAPI.loggedUser.apiAppID = appID
                   redditAPI.loggedUser.apiAppSecret = appSecret
-                  openURL(redditAPI.getAuthorizationCodeURL())
+                  openURL(redditAPI.getAuthorizationCodeURL(appID))
                 }
               }
             }
