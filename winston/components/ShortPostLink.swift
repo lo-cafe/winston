@@ -28,6 +28,7 @@ struct ShortPostLink: View {
           .lineLimit(2)
           .multilineTextAlignment(.leading)
           .allowsHitTesting(false)
+          .fixedSize(horizontal: false, vertical: true)
         
         VStack(alignment: .leading, spacing: 2) {
           if let author = data.author {

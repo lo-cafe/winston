@@ -90,7 +90,7 @@ struct UserView: View {
                 }
               }
               .fixedSize(horizontal: false, vertical: true)
-              .padding(.horizontal, 16)
+              .padding(.horizontal, 8)
               .transition(.opacity)
             }
             
@@ -119,7 +119,7 @@ struct UserView: View {
               }
             }
           }
-          .listRowInsets(EdgeInsets(top: 8, leading: 0, bottom: 8, trailing: 0))
+          .listRowInsets(EdgeInsets(top: 8, leading: 8, bottom: 8, trailing: 8))
           .listRowSeparator(.hidden)
           .listRowBackground(Color.clear)
           .transition(.opacity)

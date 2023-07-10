@@ -110,7 +110,7 @@ struct CommentLink: View {
       //      let actualLastOne = (lastOne && !hasChild && !isRoot)
       Group {
         HStack(alignment:. top, spacing: 8) {
-          if data.depth != 0 && showReplies {
+          if data.depth != 0 {
             HStack(alignment:. bottom) {
               let shapes = Array(1...Int(data.depth ?? 1))
               ForEach(shapes, id: \.self) { i in
@@ -163,13 +163,13 @@ struct CommentLink: View {
         //        .padding(.bottom, (isRoot || actualLastOne || !showReplies) && preferenceShowCommentsCards ? 14 : 0)
         //        .padding(.top, (isRoot || !showReplies) && preferenceShowCommentsCards ? 6 : 0)
         .padding(.top, (isRoot || !showReplies) && preferenceShowCommentsCards ? 6 : 0)
-        .padding(.horizontal, preferenceShowCommentsCards ? 16 : 0)
+        .padding(.horizontal, preferenceShowCommentsCards && showReplies ? 16 : 0)
         .frame(maxWidth: .infinity, alignment: .topLeading)
         //        .fixedSize(horizontal: false, vertical: true)
         .if(showReplies) { view in
           view.background(CommentBG(pos: getBGPos()).fill(Color("commentBG")))
         }
-        .padding(.top, parentComment == nil ? 12 : 0)
+        .padding(.top, parentComment == nil && showReplies ? 12 : 0)
         .foregroundColor(.primary)
         .multilineTextAlignment(.leading)
         .zIndex(zIndex)
