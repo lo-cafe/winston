@@ -19,7 +19,7 @@ struct Arrows: View {
       .padding(.bottom, 1)
       .offset(y: disableShapeShift ? 0 : -12)
       .padding(.top, disableShapeShift ? 0 : -12 - 8)
-      .padding(.bottom, disableShapeShift ? 12 : 0)
+      .padding(.bottom, disableShapeShift ? 12 + 8 : 8)
       .frame(maxHeight: .infinity, alignment: .topLeading)
     }
 }

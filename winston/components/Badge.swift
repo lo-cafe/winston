@@ -32,6 +32,7 @@ struct Badge: View {
             .onTapGesture {
               opened = true
             }
+//            .shrinkOnTap()
         }
         
         VStack(alignment: .leading) {
@@ -40,6 +41,7 @@ struct Badge: View {
             .onTapGesture {
               opened = true
             }
+//            .shrinkOnTap()
             .background(
               NavigationLink(destination: UserView(user: User(id: author, api: redditAPI)), isActive: $opened, label: { EmptyView().opacity(0).allowsHitTesting(false).disabled(true) }).buttonStyle(PlainButtonStyle()).opacity(0).frame(width: 0, height: 0).allowsHitTesting(false).disabled(true)
             )

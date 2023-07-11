@@ -27,6 +27,7 @@ struct PostView: View {
   @EnvironmentObject var redditAPI: RedditAPI
   
   func asyncFetch(_ loadMore: Bool = false, _ full: Bool = true) async {
+//    print("ish1")
         if let result = await post.refreshPost(sort: sort, after: nil, subreddit: subreddit.data?.display_name ?? subreddit.id, full: full), let newComments = result.0 {
           await MainActor.run {
             withAnimation {
@@ -208,8 +209,8 @@ struct PostView: View {
               SubredditInfo(subreddit: subreddit)
             } label: {
               let communityIcon = data.community_icon.split(separator: "?")
-              let icon = data.icon_img == "" ? communityIcon.count > 0 ? String(communityIcon[0]) : "" : data.icon_img
-              KFImage(URL(string: icon)!)
+              let icon = data.icon_img == "" || data.icon_img == nil ? communityIcon.count > 0 ? String(communityIcon[0]) : "" : data.icon_img
+              KFImage(URL(string: icon ?? "")!)
                 .resizable()
 //                .placeholder {
 //                  Text(data.display_name.prefix(1).uppercased())
@@ -227,6 +228,7 @@ struct PostView: View {
         .animation(nil, value: sort)
     )
     .onAppear {
+//      print("ish2")
       if comments.data.count == 0 || post.data == nil {
         fetch(full: post.data == nil)
       }

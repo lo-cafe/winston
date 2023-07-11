@@ -49,6 +49,7 @@ struct Avatar: View {
 //            .id(avatarURL)
         } else {
           Text(userID.prefix(1).uppercased())
+            .fontSize(avatarSize / 2)
             .background(
               Circle()
                 .fill(.gray.opacity(0.5))
@@ -69,7 +70,7 @@ struct Avatar: View {
         }
       }
     }
-    .frame(width: 30, height: 30)
+    .frame(width: avatarSize, height: avatarSize)
     .mask(Circle())
   }
 }

@@ -17,8 +17,6 @@ struct CommentLinkContent: View {
   var refresh: (Bool, Bool) async -> Void
   @Binding var collapsed: Bool
   @State var prepareCollapsed = false
-  @State var enlarging = false
-  @State var measure = false
   @State var showReplyModal = false
   @State var pressing = false
   @State var collapsableHeight: CGFloat = 0
@@ -44,7 +42,7 @@ struct CommentLinkContent: View {
                 .foregroundColor(data.likes != nil && data.likes! ? .orange : .gray)
               
               let downup = Int(ups - downs)
-              Text("\(downup > 999 ? downup / 1000 : downup)\(downup > 999 ? "K" : "")")
+              Text(formatBigNumber(downup))
                 .foregroundColor(downup == 0 ? .gray : downup > 0 ? .orange : .blue)
                 .fontSize(14, .semibold)
               
@@ -133,7 +131,7 @@ struct CommentLinkContent: View {
           }
         }, secondActionHandler: {
           showReplyModal = true
-        }, disabled: !showReplies)
+        })
       .sheet(isPresented: $showReplyModal) {
         ReplyModal(comment: comment, refresh: refresh)
       }
@@ -143,29 +141,11 @@ struct CommentLinkContent: View {
       //        .padding(.bottom, data.depth != 0 || !showReplies ? 12 : 0)
       .fixedSize(horizontal: false, vertical: true)
       .background(
-        !prepareCollapsed && !measure && !enlarging
+        !prepareCollapsed
         ? nil
         : GeometryReader { geo in
           Color.clear
             .onAppear {
-              if enlarging {
-                withAnimation(spring) {
-                  collapsableHeight = geo.size.height
-                }
-                enlarging = false
-                doThisAfter(0.5) {
-                  disableCollapse = true
-                }
-              }
-              
-              if measure {
-                collapsableHeight = geo.size.height
-                doThisAfter(0) {
-                  measure = false
-                  disableCollapse = false
-                }
-              }
-              
               if prepareCollapsed {
                 if hideTextTimer != nil {
                   hideTextTimer?.cancel()

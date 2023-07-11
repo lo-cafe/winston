@@ -125,10 +125,11 @@ struct PostLink: View {
                 _ = await post.vote(action: .up)
               }
             }
+//            .shrinkOnTap()
             .padding(.all, -8)
             
             let downup = Int(data.ups - data.downs)
-            Text("\(downup > 999 ? downup / 1000 : downup)\(downup > 999 ? "K" : "")")
+            Text(formatBigNumber(downup))
               .foregroundColor(downup == 0 ? .gray : downup > 0 ? .orange : .blue)
               .fontSize(16, .semibold)
             
@@ -137,6 +138,7 @@ struct PostLink: View {
                 _ = await post.vote(action: .down)
               }
             }
+//            .shrinkOnTap()
             .padding(.all, -8)
           }
           .fontSize(22, .medium)

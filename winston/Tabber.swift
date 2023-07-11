@@ -17,10 +17,17 @@ struct Tabber: View {
   @EnvironmentObject var redditAPI: RedditAPI
   @Namespace var generalAnimations
   @State var credModalOpen = false
+  @State var reset: [TabIdentifier:Bool] = [
+    .inbox: true,
+    .me: true,
+    .posts: true,
+    .search: true,
+    .settings: true,
+  ]
   var body: some View {
-    TabView(selection: $activeTab) {
+    TabView(selection: $activeTab.onUpdate { newTab in if activeTab == newTab { reset[newTab]!.toggle() } }) {
       
-      Subreddits()
+      Subreddits(reset: reset[.posts]!)
         .tabItem {
           VStack {
             Image(systemName: "doc.text.image")
@@ -29,7 +36,7 @@ struct Tabber: View {
         }
         .tag(TabIdentifier.posts)
       
-      Inbox()
+      Inbox(reset: reset[.inbox]!)
         .tabItem {
           VStack {
             Image(systemName: "message.fill")
@@ -38,7 +45,7 @@ struct Tabber: View {
         }
         .tag(TabIdentifier.inbox)
       
-      Me()
+      Me(reset: reset[.me]!)
         .tabItem {
           VStack {
             Image(systemName: "person.fill")
@@ -47,7 +54,7 @@ struct Tabber: View {
         }
         .tag(TabIdentifier.me)
       
-      Search()
+      Search(reset: reset[.search]!)
         .tabItem {
           VStack {
             Image(systemName: "magnifyingglass")

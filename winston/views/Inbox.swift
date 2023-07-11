@@ -8,26 +8,45 @@
 import SwiftUI
 
 struct Inbox: View {
+  var reset: Bool
   @State var messages: [Message] = []
+  @State var loading = false
   @EnvironmentObject var redditAPI: RedditAPI
   
-  func fetch(_ loadMore: Bool = false, _ full: Bool = true) async {
+  func fetch(_ loadMore: Bool = false, _ force: Bool = false) async {
+    if messages.count > 0 && !force { return }
+    await MainActor.run {
+      withAnimation {
+        loading = true
+      }
+    }
     if let newItems = await redditAPI.fetchInbox() {
       await MainActor.run {
-        messages = newItems.map { Message(data: $0, api: redditAPI) }
+        withAnimation {
+          loading = false
+          messages = newItems.map { Message(data: $0, api: redditAPI) }
+        }
       }
     }
   }
   
   var body: some View {
     GoodNavigator {
-      List(messages, id: \.self.id) { message in
-        MessageView(message: message, refresh: fetch)
-          .listRowSeparator(.hidden)
-          .listRowBackground(Color.clear)
-          .listRowInsets(EdgeInsets(top: 8, leading: 0, bottom: 8, trailing: 0))
+      List {
+        Group {
+          if loading {
+            ProgressView()
+              .frame(maxWidth: .infinity, minHeight: 500)
+          } else {
+            ForEach(messages, id: \.self.id) { message in
+              MessageView(reset: reset, message: message, refresh: fetch)
+            }
+          }
+        }
+        .listRowSeparator(.hidden)
+        .listRowBackground(Color.clear)
+        .listRowInsets(EdgeInsets(top: 6, leading: 0, bottom: 6, trailing: 0))
       }
-      
       .navigationTitle("Inbox")
       .onAppear {
         Task {
@@ -35,7 +54,7 @@ struct Inbox: View {
         }
       }
       .refreshable {
-        await fetch()
+        await fetch(false, true)
       }
     }
   }

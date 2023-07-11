@@ -24,22 +24,6 @@ extension Message {
     }
     return false
   }
-  
-  func read() async -> [Either<PostData, CommentData>]? {
-    await MainActor.run {
-      self.loading = true
-    }
-    if let name = data?.name, let data = await redditAPI.fetchUserOverview(name) {
-      await MainActor.run {
-        self.loading = false
-      }
-      return data
-    }
-    await MainActor.run {
-      self.loading = false
-    }
-    return nil
-  }
 }
 
 struct MessageData: GenericRedditEntityDataType {
@@ -70,3 +54,10 @@ struct MessageData: GenericRedditEntityDataType {
     let context: String?
     let distinguished: String?
 }
+
+func getPostId(from urlString: String) -> String? {
+    let pathComponents = urlString.components(separatedBy: "/")
+    guard pathComponents.count > 2 else { return nil }
+    return pathComponents[4]
+}
+

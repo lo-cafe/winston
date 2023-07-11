@@ -34,7 +34,7 @@ class TextFieldObserver : ObservableObject {
 struct ReplyModal: View {
   @ObservedObject var comment: Comment
   var refresh: (Bool, Bool) async -> Void
-//  @EnvironmentObject var namespaceWrapper: TabberNamespaceWrapper
+  //  @EnvironmentObject var namespaceWrapper: TabberNamespaceWrapper
   @EnvironmentObject var redditAPI: RedditAPI
   @State var alertExit = false
   @StateObject var textWrapper = TextFieldObserver(delay: 0.5)
@@ -66,7 +66,7 @@ struct ReplyModal: View {
           
           VStack(alignment: .leading) {
             if let me = redditAPI.me?.data {
-              Badge(author: me.name, fullname: me.name, created: Date().timeIntervalSince1970, avatarURL: me.snoovatar_img)
+              Badge(author: me.name, fullname: me.name, created: Date().timeIntervalSince1970, avatarURL: me.icon_img ?? me.snoovatar_img)
             }
             HighlightedTextEditor(text: $textWrapper.replyText, highlightRules: .markdown)
               .introspect { editor in
@@ -88,7 +88,7 @@ struct ReplyModal: View {
           
           
           VStack {
-            CommentLink(disableScroll: $disableScroll, showReplies: false, refresh: refresh, comment: comment)
+            CommentLink(indentLines: 0, disableScroll: $disableScroll, showReplies: false, refresh: refresh, comment: comment)
           }
           
         }
@@ -104,7 +104,7 @@ struct ReplyModal: View {
               }
               let result = await comment.reply(textWrapper.replyText)
               Task {
-                if result { await refresh(false, false) }
+                if result { await refresh(false, true) }
               }
               withAnimation(spring) {
                 if result { dismiss() }
@@ -119,6 +119,8 @@ struct ReplyModal: View {
             }
           }
         }
+          .shrinkOnTap()
+          .offset(y: loading ? 64 : 0)
           .padding(.horizontal, 16)
           .padding(.bottom, 8)
         , alignment: .bottom

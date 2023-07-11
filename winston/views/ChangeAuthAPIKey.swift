@@ -78,20 +78,36 @@ struct CardStep<Content: View>: View {
 
 struct CopiableValue: View {
   var value: String
+  @State var copied = false
   var body: some View {
     HStack {
       Text(value)
-      
     }
       .padding(.vertical, 12)
       .padding(.horizontal, 16)
       .opacity(0.75)
       .frame(maxWidth: .infinity, alignment: .leading)
       .background(RR(12, .black.opacity(0.1)))
+      .overlay(
+        !copied
+        ? nil
+        : Text("Copied!")
+          .foregroundColor(.white)
+          .frame(maxWidth: .infinity, maxHeight: .infinity)
+          .background(RR(12, .black.opacity(0.5)))
+      )
       .padding(.horizontal, -8)
       .fontSize(15)
       .onTapGesture {
         UIPasteboard.general.string = value
+        withAnimation {
+          copied = true
+        }
+        doThisAfter(1) {
+          withAnimation {
+            copied = false
+          }
+        }
       }
   }
 }

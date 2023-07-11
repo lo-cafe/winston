@@ -15,7 +15,7 @@ extension RedditAPI {
     if let headers = self.getRequestHeaders() {
       let params = FetchInboxPayload()
       let response = await AF.request(
-        "\(RedditAPI.redditApiURLBase)/message/inbox",
+        "\(RedditAPI.redditApiURLBase)/message/inbox.json",
         method: .get,
         parameters: params,
         encoder: URLEncodedFormParameterEncoder(destination: .queryString),

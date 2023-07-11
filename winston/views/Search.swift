@@ -6,67 +6,117 @@
 //
 
 import SwiftUI
+import Kingfisher
 
 enum SearchType: String {
   case subreddit = "Subreddit"
   case user = "User"
-  case post = "Post"
 }
 
-struct SearchOpton: View {
-  @Binding var activeSearchType: SearchType
+struct SearchOption: View {
+  var activateSearchType: ()->()
+  var active: Bool
   var searchType: SearchType
   var body: some View {
-    let active = activeSearchType == searchType
-    Button {
-      withAnimation {
-        activeSearchType = searchType
+    Text(searchType.rawValue)
+      .padding(.horizontal, 16)
+      .padding(.vertical, 12)
+      .background(Capsule(style: .continuous).fill(active ? .blue : .secondary.opacity(0.1)))
+      .foregroundColor(active ? .white : .primary)
+      .overlay(RoundedRectangle(cornerRadius: 12, style: .continuous).stroke((active ? Color.white : .primary).opacity(0.01), lineWidth: 1))
+      .contentShape(Capsule())
+      .onTapGesture {
+        withAnimation(.interactiveSpring()) {
+          activateSearchType()
+        }
       }
-    } label: {
-      Text(searchType.rawValue)
-        .padding(.horizontal, 16)
-        .padding(.vertical, 12)
-        .background(RR(12, active ? .blue : .secondary.opacity(0.1)))
-        .foregroundColor(active ? .white : .primary)
-        .overlay(RoundedRectangle(cornerRadius: 12, style: .continuous).stroke((active ? Color.white : .primary).opacity(0.01), lineWidth: 1))
-    }
+      .shrinkOnTap()
   }
 }
-      
+
+typealias SearchTypeArr = Either<[Subreddit], [User]>
+
 struct Search: View {
+  var reset: Bool
   @State var searchType: SearchType = .subreddit
+  @StateObject var resultsSubs = ObservableArray<Subreddit>()
+  @StateObject var resultsUsers = ObservableArray<User>()
+  @State var loading = false
   @State var query = ""
   @EnvironmentObject var redditAPI: RedditAPI
-    var body: some View {
-      GoodNavigator {
-        List {
-          HStack {
-            SearchOpton(activeSearchType: $searchType, searchType: .subreddit)
-            SearchOpton(activeSearchType: $searchType, searchType: .user)
-            SearchOpton(activeSearchType: $searchType, searchType: .post)
+  
+  func fetch() {
+    if query == "" { return }
+    withAnimation {
+      loading = true
+    }
+    switch searchType {
+    case .subreddit:
+      resultsSubs.data.removeAll()
+      Task {
+        if let subs = await redditAPI.searchSubreddits(query)?.map({ Subreddit(data: $0, api: redditAPI) }) {
+          await MainActor.run {
+            withAnimation {
+              resultsSubs.data = subs
+              loading = false
+            }
           }
         }
-        .listStyle(.plain)
-        .navigationTitle("Search")
-        .searchable(text: $query, placement: .toolbar)
-        .onSubmit(of: .search) {
-          switch searchType {
-          case .subreddit:
-            Task {
-              await redditAPI.searchSubreddits(query)
-            }
-          case .user:
-            Task {
-              await redditAPI.searchSubreddits(query)
-            }
-          case .post:
-            Task {
-              await redditAPI.searchSubreddits(query)
+      }
+    case .user:
+      resultsUsers.data.removeAll()
+      Task {
+        if let users = await redditAPI.searchUsers(query)?.map({ User(data: $0, api: redditAPI) }) {
+          await MainActor.run {
+            withAnimation {
+              resultsUsers.data = users
+              loading = false
             }
           }
-            }
+        }
       }
     }
+  }
+  
+  var body: some View {
+    GoodNavigator {
+      List {
+        Group {
+          HStack {
+            SearchOption(activateSearchType: { searchType = .subreddit }, active: searchType == SearchType.subreddit, searchType: .subreddit)
+            SearchOption(activateSearchType: { searchType = .user }, active: searchType == SearchType.user, searchType: .user)
+          }
+          
+          if loading {
+            ProgressView()
+              .frame(maxWidth: .infinity, minHeight: 500)
+          } else {
+            switch searchType {
+            case .subreddit:
+              ForEach(resultsSubs.data) { sub in
+                SubredditLink(reset: reset, sub: sub)
+              }
+            case .user:
+              ForEach(resultsUsers.data) { user in
+                UserLink(reset: reset, user: user)
+              }
+            }
+          }
+        }
+        .listRowSeparator(.hidden)
+        .listRowBackground(Color.clear)
+        .listRowInsets(EdgeInsets(top: 6, leading: 16, bottom: 6, trailing: 16))
+      }
+      .listStyle(.plain)
+      .navigationTitle("Search")
+      .searchable(text: $query, placement: .toolbar)
+      .onChange(of: searchType) { _ in
+        fetch()
+      }
+      .refreshable { fetch() }
+      .onSubmit(of: .search) { fetch() }
+    }
+  }
 }
 
 //struct Search_Previews: PreviewProvider {

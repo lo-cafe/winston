@@ -36,7 +36,7 @@ struct PostFloatingPill: View {
               .foregroundColor(data.likes != nil && data.likes! ? .orange : .gray)
               
               let downup = Int(data.ups - data.downs)
-              Text("\(downup > 999 ? downup / 1000 : downup)\(downup > 999 ? "K" : "")")
+              Text(formatBigNumber(downup))
                 .foregroundColor(downup == 0 ? .gray : downup > 0 ? .orange : .blue)
                 .fontSize(16, .semibold)
               
@@ -58,8 +58,7 @@ struct PostFloatingPill: View {
         .foregroundColor(.blue)
         .padding(.horizontal, 14)
         .padding(.vertical, 8)
-        .background(Capsule(style: .continuous).fill(.ultraThinMaterial))
-        .overlay(Capsule(style: .continuous).stroke(Color.white.opacity(0.05), lineWidth: 1).padding(.all, 0.5))
+        .floating()
         .padding(.all, 8)
     }
 }

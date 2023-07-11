@@ -21,7 +21,7 @@ struct SubredditPosts: View {
   @State var lastPostAfter: String?
   @State var searchText: String = ""
   @State var sort: SubListingSortOption = Defaults[.preferredSort]
-//  @State var disableScroll = false
+  //  @State var disableScroll = false
   @EnvironmentObject var redditAPI: RedditAPI
   
   func asyncFetch(loadMore: Bool = false) async {
@@ -55,29 +55,41 @@ struct SubredditPosts: View {
   var body: some View {
     
     List {
-      ForEach(Array(posts.data.enumerated()), id: \.self.element.id) { i, post in
-        PostLink(post: post, sub: subreddit)
-          .listRowInsets(EdgeInsets(top: 8, leading: 8, bottom: 8, trailing: 8))
-          .listRowSeparator(preferenceShowPostsCards ? .hidden : .automatic)
-          .listRowBackground(Color.clear)
-          .if(Int(Double(posts.data.count) * 0.75) == i) { view in
-            view.onAppear {
-              fetch(loadMore: true)
-            }
+      Group {
+        if loading && posts.data.count == 0 {
+          ProgressView()
+            .frame(maxWidth: .infinity, minHeight: 500)
+        } else {
+          ForEach(Array(posts.data.enumerated()), id: \.self.element.id) { i, post in
+            PostLink(post: post, sub: subreddit)
+              .if(Int(Double(posts.data.count) * 0.75) == i) { view in
+                view.onAppear {
+                  fetch(loadMore: true)
+                }
+              }
           }
+        }
       }
-    }
-//    .navigationDestination(for: Post.self) { post in
-//      PostView(post: post, subreddit: subreddit)
-//    }
-//    .navigationDestination(for: String.self) { author in
-//      UserView(user: User(id: author, api: redditAPI))
-//    }
-    .introspect(.scrollView, on: .iOS(.v13, .v14, .v15, .v16, .v17)) { scrollView in
-      scrollView.delaysContentTouches = false
-      scrollView.panGestureRecognizer.delaysTouchesBegan = true
+      .listRowInsets(EdgeInsets(top: 8, leading: 8, bottom: 8, trailing: 8))
+      .listRowSeparator(preferenceShowPostsCards ? .hidden : .automatic)
+      .listRowBackground(Color.clear)
     }
     .listStyle(.plain)
+    .overlay(
+      Button {
+        
+      } label: {
+        Image(systemName: "newspaper.fill")
+          .fontSize(22, .bold)
+          .frame(width: 64, height: 64)
+          .foregroundColor(.blue)
+          .floating()
+          .contentShape(Circle())
+      }
+        .shrinkOnTap()
+        .padding(.all, 12)
+      , alignment: .bottomTrailing
+    )
     .navigationBarItems(
       trailing:
         HStack {
@@ -108,16 +120,16 @@ struct SubredditPosts: View {
               SubredditInfo(subreddit: subreddit)
             } label: {
               let communityIcon = data.community_icon.split(separator: "?")
-              let icon = data.icon_img == "" ? communityIcon.count > 0 ? String(communityIcon[0]) : "" : data.icon_img
-              KFImage(URL(string: icon)!)
+              let icon = data.icon_img == "" || data.icon_img == nil ? communityIcon.count > 0 ? String(communityIcon[0]) : "" : data.icon_img
+              KFImage(URL(string: icon ?? "")!)
                 .resizable()
-//                .placeholder {
-//                  Text(data.display_name.prefix(1).uppercased())
-//                    .frame(width: 30, height: 30)
-//                    .background(.blue, in: Circle())
-//                    .mask(Circle())
-//                    .fontSize(16, .semibold)
-//                }
+              //                .placeholder {
+              //                  Text(data.display_name.prefix(1).uppercased())
+              //                    .frame(width: 30, height: 30)
+              //                    .background(.blue, in: Circle())
+              //                    .mask(Circle())
+              //                    .fontSize(16, .semibold)
+              //                }
                 .scaledToFill()
                 .frame(width: 30, height: 30)
                 .mask(Circle())
@@ -132,7 +144,7 @@ struct SubredditPosts: View {
     }
     .searchable(text: $searchText, prompt: "Search r/\(subreddit.data?.display_name ?? subreddit.id)")
     .onAppear {
-//      sort = Defaults[.preferredSort]
+      //      sort = Defaults[.preferredSort]
       doThisAfter(0) {
         if posts.data.count == 0 {
           fetch()
@@ -144,20 +156,21 @@ struct SubredditPosts: View {
     //        disableScroll = false
     //      }
     //    }
-//    .onChange(of: posts) { _ in
-//      print("posts")
-//    }
+    //    .onChange(of: posts) { _ in
+    //      print("posts")
+    //    }
     .onChange(of: sort) { val in
       withAnimation {
         loading = true
+        posts.data.removeAll()
       }
       fetch()
     }
-//    .onChange(of: vScrollWrapper.offset) { val in
-//          //      print(val, contentHeight)
-//          if val > contentHeight * 0.75 && !loading && !loadingMore {
-//            fetch(loadMore: true)
-//          }
-//        }
+    //    .onChange(of: vScrollWrapper.offset) { val in
+    //          //      print(val, contentHeight)
+    //          if val > contentHeight * 0.75 && !loading && !loadingMore {
+    //            fetch(loadMore: true)
+    //          }
+    //        }
   }
 }

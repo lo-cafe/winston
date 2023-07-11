@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct Me: View {
+  var reset: Bool
   @Environment(\.openURL) var openURL
   @EnvironmentObject var redditAPI: RedditAPI
   @State var loading = true

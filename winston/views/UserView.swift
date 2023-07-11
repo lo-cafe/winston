@@ -70,17 +70,21 @@ struct UserView: View {
                 }
               )
               .padding(.bottom, data.subreddit?.banner_img == "" || data.subreddit?.banner_img == nil ? 0 : 78)
-              .padding(.horizontal, 16)
+              
+              if let description = data.subreddit?.public_description {
+                Text((description).md())
+                  .fontSize(15)
+              }
               
               VStack {
                 HStack {
                   if let postKarma = data.link_karma {
-                    DataBlock(icon: "highlighter", label: "Post karma", value: "\(postKarma)")
+                    DataBlock(icon: "highlighter", label: "Post karma", value: "\(formatBigNumber(postKarma))")
                       .transition(.opacity)
                   }
                   
                   if let commentKarma = data.comment_karma {
-                    DataBlock(icon: "checkmark.message.fill", label: "Comment karma", value: "\(commentKarma)")
+                    DataBlock(icon: "checkmark.message.fill", label: "Comment karma", value: "\(formatBigNumber(commentKarma))")
                       .transition(.opacity)
                   }
                 }

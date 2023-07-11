@@ -61,13 +61,19 @@ struct UserData: GenericRedditEntityDataType {
   var pref_top_karma_subreddits: Bool?
   var pref_show_snoovatar: Bool?
   var id: String
+  let icon_img: String?
   var has_verified_email: Bool?
   var has_android_subscription: Bool?
   var is_suspended: Bool?
+  var is_friend: Bool?
+  var has_visited_new_profile: Bool?
   var can_edit_name: Bool?
   var in_chat: Bool?
   var link_karma: Int?
+  var total_karma: Int?
   var comment_karma: Int?
+  var awardee_karma: Int?
+  var awarder_karma: Int?
   var gold_expiration: String?
   var has_ios_subscription: Bool?
   var created_utc: Double?
@@ -78,7 +84,6 @@ struct UserData: GenericRedditEntityDataType {
   var is_employee: Bool?
   var name: String
   var pref_autoplay: Bool?
-  var has_visited_new_profile: Bool?
   var pref_no_profanity: Bool?
   var has_external_account: Bool?
   var is_sponsor: Bool?

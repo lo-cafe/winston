@@ -1,30 +1,41 @@
 //
-//  search_subreddits.swift
+//  searchUsers.swift
 //  winston
 //
-//  Created by Igor Marcossi on 10/07/23.
+//  Created by Igor Marcossi on 11/07/23.
 //
 
 import Foundation
 import Alamofire
 
 extension RedditAPI {
-  func searchSubreddits(_ query: String) async -> [SubredditData]? {
+  func searchUsers(_ query: String) async -> [UserData]? {
     await refreshToken()
     //    await getModHash()
     if let headers = self.getRequestHeaders() {
-      let params = SearchSubredditPayload(q: query)
+      let params = SearchUserPayload(q: query)
       let response = await AF.request(
-        "\(RedditAPI.redditApiURLBase)/subreddits/search",
+        "\(RedditAPI.redditApiURLBase)/users/search",
         method: .get,
         parameters: params,
         encoder: URLEncodedFormParameterEncoder(destination: .queryString),
         headers: headers
       )
-        .serializingDecodable(Listing<SubredditData>.self).result
+        .serializingDecodable(Listing<Either<UserData, BannedUser>>.self).result
       switch response {
       case .success(let data):
-        return data.data?.children?.compactMap { $0.data }
+        var result: [UserData] = []
+        data.data?.children?.forEach({ x in
+          switch x.data {
+          case .first(let el):
+            result.append(el)
+          case .second(_):
+            break
+          case .none:
+            break
+          }
+        })
+        return result
       case .failure(let error):
         print(error)
         return nil
@@ -34,7 +45,13 @@ extension RedditAPI {
     }
   }
   
-  struct SearchSubredditPayload: Codable {
+  struct BannedUser: Codable, Hashable {
+    let is_suspended: Bool?
+    let is_blocked: Bool?
+    let name: String?
+  }
+  
+  struct SearchUserPayload: Codable {
     var count = 10
     var limit = 25
     var show = "all"

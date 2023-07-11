@@ -25,13 +25,13 @@ class RedditAPI: ObservableObject {
   @Published var avatarURLCache: [String:String] = [:]
   
   func getRequestHeaders(includeAuth: Bool = true) -> HTTPHeaders? {
-      var headers: HTTPHeaders = [
-        "User-Agent": "ios:lo.cafe.winston:v0.1.0 (by /u/Kinark)"
-      ]
-      if includeAuth, let accessToken = self.loggedUser.accessToken {
-          headers["Authorization"] = "Bearer \(accessToken)"
-      }
-      return headers
+    var headers: HTTPHeaders = [
+      "User-Agent": "ios:lo.cafe.winston:v0.1.0 (by /u/Kinark)"
+    ]
+    if includeAuth, let accessToken = self.loggedUser.accessToken {
+      headers["Authorization"] = "Bearer \(accessToken)"
+    }
+    return headers
   }
   
   func refreshToken() async -> Void {
@@ -55,7 +55,6 @@ class RedditAPI: ObservableObject {
           }
           return
         case .failure(_):
-          print("asmak")
           return
         }
       } else {
@@ -71,7 +70,6 @@ class RedditAPI: ObservableObject {
         code = "\(code.dropLast(2))"
       }
       let payload = GetAccessTokenPayload(code: authCode)
-      print(authCode)
       if let apiKeyID = loggedUser.apiAppID, let apiKeySecret = loggedUser.apiAppSecret {
         AF.request(
           "\(RedditAPI.redditWWWApiURLBase)/api/v1/access_token",
@@ -96,11 +94,11 @@ class RedditAPI: ObservableObject {
             
             var errorString: String?
             if let data = response.data {
-                if let json = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: String] {
-                    errorString = json["error"]
-                }
+              if let json = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: String] {
+                errorString = json["error"]
+              }
             }
-
+            
             print(errorString)
             
             
@@ -257,34 +255,34 @@ struct ListingData<T: Codable & Hashable>: Codable, Defaults.Serializable, Hasha
 }
 
 enum Either<A: Codable & Hashable, B: Codable & Hashable>: Codable, Hashable {
-    case first(A)
-    case second(B)
-
-    init(from decoder: Decoder) throws {
-        let container = try decoder.singleValueContainer()
-
-        do {
-            let firstType = try container.decode(A.self)
-            self = .first(firstType)
-        } catch let firstError {
-            do {
-                let secondType = try container.decode(B.self)
-                self = .second(secondType)
-            } catch let secondError {
-                let context = DecodingError.Context(codingPath: decoder.codingPath, debugDescription: "Type mismatch for both types.", underlyingError: Swift.DecodingError.typeMismatch(Any.self, DecodingError.Context.init(codingPath: decoder.codingPath, debugDescription: "First type error: \(firstError). Second type error: \(secondError)")))
-                throw DecodingError.dataCorrupted(context)
-            }
-        }
+  case first(A)
+  case second(B)
+  
+  init(from decoder: Decoder) throws {
+    let container = try decoder.singleValueContainer()
+    
+    do {
+      let firstType = try container.decode(A.self)
+      self = .first(firstType)
+    } catch let firstError {
+      do {
+        let secondType = try container.decode(B.self)
+        self = .second(secondType)
+      } catch let secondError {
+        let context = DecodingError.Context(codingPath: decoder.codingPath, debugDescription: "Type mismatch for both types.", underlyingError: Swift.DecodingError.typeMismatch(Any.self, DecodingError.Context.init(codingPath: decoder.codingPath, debugDescription: "First type error: \(firstError). Second type error: \(secondError)")))
+        throw DecodingError.dataCorrupted(context)
+      }
     }
-
-    func encode(to encoder: Encoder) throws {
-        var container = encoder.singleValueContainer()
-        switch self {
-        case .first(let value):
-            try container.encode(value)
-        case .second(let value):
-            try container.encode(value)
-        }
+  }
+  
+  func encode(to encoder: Encoder) throws {
+    var container = encoder.singleValueContainer()
+    switch self {
+    case .first(let value):
+      try container.encode(value)
+    case .second(let value):
+      try container.encode(value)
     }
+  }
 }
 

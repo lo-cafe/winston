@@ -12,7 +12,7 @@ struct ShrinkOnTap: ViewModifier {
   
   func body(content: Content) -> some View {
     content
-      .scaleEffect(isPressed ? 0.985 : 1)
+      .scaleEffect(isPressed ? 0.95 : 1)
       .simultaneousGesture(
         LongPressGesture(minimumDuration: 1, maximumDistance: 5)
           .updating($isPressed) { val, state, transaction in
