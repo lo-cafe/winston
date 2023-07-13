@@ -156,7 +156,7 @@ struct SubredditData: GenericRedditEntityDataType {
     let lang: String?
     let whitelist_status: String?
     let url: String
-    let created_utc: Double
+    let created_utc: Double?
     let banner_size: [Int]?
     let mobile_banner_image: String?
     let user_is_contributor: Bool?

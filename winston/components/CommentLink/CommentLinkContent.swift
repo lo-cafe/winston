@@ -122,11 +122,11 @@ struct CommentLinkContent: View {
         },
         leftActionHandler: {
           Task {
-            _ = await comment.vote(action: .up)
+            _ = await comment.vote(action: .down)
           }
         }, rightActionHandler: {
           Task {
-            _ = await comment.vote(action: .down)
+            _ = await comment.vote(action: .up)
           }
         }, secondActionHandler: {
           showReplyModal = true

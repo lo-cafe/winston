@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SwiftUI
 
 typealias Message = GenericRedditEntity<MessageData>
 
@@ -17,31 +18,44 @@ extension Message {
     self.init(id: id, api: api, typePrefix: "t1_")
   }
   
-  func read() async -> Bool {
+  func toggleRead() async -> Bool {
     if let fullname = data?.name {
-      let result = await redditAPI.readMessage(fullname)
-      return result ?? false
+      let old = data?.new ?? false
+      await MainActor.run {
+        withAnimation {
+          data?.new = !old
+        }
+      }
+      let result = old ? ((await redditAPI.readMessage(fullname)) ?? false) : ((await redditAPI.unreadMessage(fullname)) ?? false)
+      if !result {
+        await MainActor.run {
+          withAnimation {
+            data?.new = old
+          }
+        }
+      }
+      return result
     }
     return false
   }
 }
 
 struct MessageData: GenericRedditEntityDataType {
-    let first_message: String?
-    let first_message_name: String?
+//    let first_message: String?
+//    let first_message_name: String?
     let subreddit: String?
-    let likes: Bool?
-    let replies: String?
+//    let likes: Bool?
+//    let replies: Either<String, Listing<CommentData>>?
     let author_fullname: String?
     let id: String
     let subject: String?
-    let associated_awarding_id: String?
-    let score: Int?
+//    let associated_awarding_id: String?
+//    let score: Int?
     let author: String?
-    let num_comments: Int?
+//    let num_comments: Int?
     let parent_id: String?
     let subreddit_name_prefixed: String?
-    let new: Bool?
+    var new: Bool?
     let type: String?
     let body: String?
     let link_title: String?
@@ -52,7 +66,7 @@ struct MessageData: GenericRedditEntityDataType {
     let created: Double?
     let created_utc: Double?
     let context: String?
-    let distinguished: String?
+//    let distinguished: String?
 }
 
 func getPostId(from urlString: String) -> String? {

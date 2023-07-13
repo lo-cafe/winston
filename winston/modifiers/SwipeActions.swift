@@ -14,14 +14,17 @@ struct SwipeActionsModifier: ViewModifier {
   var disableSwipe = false
   var disableFunctions = false
   @Binding var pressing: Bool
-  @State var offsetX: CGFloat = 0
+  @State private var offsetX: CGFloat = 0
   var parentOffsetX: Binding<CGFloat>?
-  @State var firstAction = false
-  @State var secondAction = false
-  @State var dragging = false
+  @State private var firstAction = false
+  @State private var secondAction = false
+  @State private var dragging = false
   var parentDragging: Binding<Bool>?
   
   var onTapAction: (() -> Void)?
+  var leftActionIcon: String
+  var rightActionIcon: String
+  var secondActionIcon: String
   var leftActionHandler: (()->())?
   var rightActionHandler: (()->())?
   var secondActionHandler: (()->())?
@@ -31,7 +34,7 @@ struct SwipeActionsModifier: ViewModifier {
   private let secondActionThreshold: CGFloat = 150
   private let minimumDragDistance: CGFloat = 16
   
-  init(disableSwipe: Bool = false, disableFunctions: Bool = false, pressing: Binding<Bool>, parentDragging: Binding<Bool>? = nil, parentOffsetX: Binding<CGFloat>? = nil, firstAction: Bool = false, secondAction: Bool = false, onTapAction: ( () -> Void)? = nil, leftActionHandler: (() -> Void)? = nil, rightActionHandler: (() -> Void)? = nil, secondActionHandler: (() -> Void)? = nil, disabled: Bool) {
+  init(disableSwipe: Bool = false, disableFunctions: Bool = false, pressing: Binding<Bool>, parentDragging: Binding<Bool>? = nil, parentOffsetX: Binding<CGFloat>? = nil, leftActionIcon: String = "arrow.down", rightActionIcon: String = "arrow.up", secondActionIcon: String = "arrowshape.turn.up.left.fill", firstAction: Bool = false, secondAction: Bool = false, onTapAction: ( () -> Void)? = nil, leftActionHandler: (() -> Void)? = nil, rightActionHandler: (() -> Void)? = nil, secondActionHandler: (() -> Void)? = nil, disabled: Bool) {
     self.disableSwipe = disableSwipe
     self.disableFunctions = disableFunctions
     self._pressing = pressing
@@ -44,6 +47,9 @@ struct SwipeActionsModifier: ViewModifier {
     self.firstAction = firstAction
     self.secondAction = secondAction
     self.onTapAction = onTapAction
+    self.leftActionIcon = leftActionIcon
+    self.rightActionIcon = rightActionIcon
+    self.secondActionIcon = secondActionIcon
     self.leftActionHandler = leftActionHandler
     self.rightActionHandler = rightActionHandler
     self.secondActionHandler = secondActionHandler
@@ -62,23 +68,27 @@ struct SwipeActionsModifier: ViewModifier {
           .background(
             HStack {
               
-              MasterButton(icon: "arrow.down", color: firstAction ? .blue : .gray, textColor: .white, proportional: .circle) {
-                
+              if leftActionHandler != nil {
+                MasterButton(icon: leftActionIcon, color: firstAction ? .blue : .gray, textColor: .white, proportional: .circle) {
+                  
+                }
+                .scaleEffect(firstAction ? 1 : max(0.001, offsetXInterpolate([-0.9, 0.85], false)))
+                .opacity(max(0, offsetXInterpolate([-0.9, 1], false)))
+                .frame(width: abs(actualOffsetX))
+                .offset(x: -16)
               }
-              .scaleEffect(firstAction ? 1 : max(0.001, offsetXInterpolate([-0.9, 0.85], false)))
-              .opacity(max(0, offsetXInterpolate([-0.9, 1], false)))
-              .frame(width: abs(actualOffsetX))
-              .offset(x: -16)
               
               Spacer()
               
-              MasterButton(icon: secondAction ? "arrowshape.turn.up.left.fill" : "arrow.up", color: secondAction ? .secondary.opacity(0.2) : firstAction ? .orange : .gray, textColor: secondAction ? .blue : .white, proportional: .circle) {
-                
+              if rightActionHandler != nil {
+                MasterButton(icon: secondAction ? secondActionIcon : rightActionIcon, color: secondAction ? .secondary.opacity(0.2) : firstAction ? .orange : .gray, textColor: secondAction ? .blue : .white, proportional: .circle) {
+                  
+                }
+                .scaleEffect(secondAction ? 1.1 : firstAction ? 1 : max(0.001, offsetXNegativeInterpolate([-0.9, 0.85], false)))
+                .opacity(max(0, offsetXNegativeInterpolate([-0.9, 1], false)))
+                .frame(width: abs(actualOffsetX))
+                .offset(x: 16)
               }
-              .scaleEffect(secondAction ? 1.1 : firstAction ? 1 : max(0.001, offsetXNegativeInterpolate([-0.9, 0.85], false)))
-              .opacity(max(0, offsetXNegativeInterpolate([-0.9, 1], false)))
-              .frame(width: abs(actualOffsetX))
-              .offset(x: 16)
             }
               .frame(maxWidth: .infinity, maxHeight: .infinity)
               .allowsHitTesting(false)
@@ -138,9 +148,9 @@ struct SwipeActionsModifier: ViewModifier {
                 secondActionHandler?()
               } else {
                 if translation.x > 0 {
-                  rightActionHandler?()
-                } else {
                   leftActionHandler?()
+                } else {
+                  rightActionHandler?()
                 }
               }
             }
@@ -158,7 +168,7 @@ struct SwipeActionsModifier: ViewModifier {
       )
       .onChange(of: (parentOffsetX?.wrappedValue ?? offsetX)) { newValue in
         if !disableFunctions && (parentDragging?.wrappedValue ?? dragging) {
-          let firstActioning = abs(newValue) > firstActionThreshold - 1
+          let firstActioning = (rightActionHandler != nil && newValue < -firstActionThreshold + 1) || (leftActionHandler != nil && newValue > firstActionThreshold - 1)
           let secondActioning = (newValue) < -secondActionThreshold + 1
           if firstAction != firstActioning {
               withAnimation(.interpolatingSpring(stiffness: 200, damping: 15, initialVelocity: firstActioning ? 35 : 0)) {
@@ -183,7 +193,20 @@ struct SwipeActionsModifier: ViewModifier {
 }
 
 extension View {
-  func swipyActions(disableSwipe: Bool = false, disableFunctions: Bool = false, pressing: Binding<Bool>, parentDragging: Binding<Bool>? = nil, parentOffsetX: Binding<CGFloat>? = nil, onTap: (() -> Void)? = nil, leftActionHandler: (()->())? = nil, rightActionHandler: (()->())? = nil, secondActionHandler: (()->())? = nil, disabled: Bool = false) -> some View {
-    self.modifier(SwipeActionsModifier(disableSwipe: disableSwipe, disableFunctions: disableFunctions, pressing: pressing, parentDragging: parentDragging, parentOffsetX: parentOffsetX, onTapAction: onTap, leftActionHandler: leftActionHandler, rightActionHandler: rightActionHandler, secondActionHandler: secondActionHandler, disabled: disabled))
+  func swipyActions(disableSwipe: Bool = false, disableFunctions: Bool = false, pressing: Binding<Bool>, parentDragging: Binding<Bool>? = nil, parentOffsetX: Binding<CGFloat>? = nil, onTap: (() -> Void)? = nil, leftActionIcon: String = "arrow.down", rightActionIcon: String = "arrow.up", secondActionIcon: String = "arrowshape.turn.up.left.fill", leftActionHandler: (()->())? = nil, rightActionHandler: (()->())? = nil, secondActionHandler: (()->())? = nil, disabled: Bool = false) -> some View {
+    self.modifier(SwipeActionsModifier(
+      disableSwipe: disableSwipe,
+      disableFunctions: disableFunctions,
+      pressing: pressing,
+      parentDragging: parentDragging,
+      parentOffsetX: parentOffsetX,
+      leftActionIcon: leftActionIcon,
+      rightActionIcon: rightActionIcon,
+      secondActionIcon: secondActionIcon,
+      onTapAction: onTap,
+      leftActionHandler: leftActionHandler,
+      rightActionHandler: rightActionHandler,
+      secondActionHandler: secondActionHandler,
+      disabled: disabled))
   }
 }

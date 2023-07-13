@@ -15,16 +15,7 @@ struct SubredditLink: View {
     var body: some View {
       if let data = sub.data {
         HStack(spacing: 12) {
-          if let icon = data.icon_img, icon != "" {
-            KFImage(URL(string: icon))
-              .resizable()
-              .frame(width: 64, height: 64)
-              .mask(Circle())
-          } else {
-            Text(data.display_name ?? "?")
-              .frame(width: 64, height: 64)
-              .background(Circle().fill(Color.hex(data.primary_color ?? data.key_color ?? "fafafa")))
-          }
+          SubredditIcon(data: data, size: 64)
           
           VStack(alignment: .leading) {
             Text("r/\(data.display_name ?? "?")")

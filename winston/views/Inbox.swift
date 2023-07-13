@@ -9,12 +9,12 @@ import SwiftUI
 
 struct Inbox: View {
   var reset: Bool
-  @State var messages: [Message] = []
+  @StateObject var messages = ObservableArray<Message>()
   @State var loading = false
   @EnvironmentObject var redditAPI: RedditAPI
   
   func fetch(_ loadMore: Bool = false, _ force: Bool = false) async {
-    if messages.count > 0 && !force { return }
+    if messages.data.count > 0 && !force { return }
     await MainActor.run {
       withAnimation {
         loading = true
@@ -24,7 +24,7 @@ struct Inbox: View {
       await MainActor.run {
         withAnimation {
           loading = false
-          messages = newItems.map { Message(data: $0, api: redditAPI) }
+          messages.data = newItems.map { Message(data: $0, api: redditAPI) }
         }
       }
     }
@@ -38,7 +38,7 @@ struct Inbox: View {
             ProgressView()
               .frame(maxWidth: .infinity, minHeight: 500)
           } else {
-            ForEach(messages, id: \.self.id) { message in
+            ForEach(messages.data, id: \.self.id) { message in
               MessageView(reset: reset, message: message)
             }
           }

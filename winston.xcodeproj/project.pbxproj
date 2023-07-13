@@ -78,6 +78,8 @@
 		EC92FBDE2A589BE200391D1D /* SquircleUIKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC92FBDD2A589BE200391D1D /* SquircleUIKit.swift */; };
 		EC9EAEC42A4AAB470074D06B /* fromHex.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC9EAEC32A4AAB470074D06B /* fromHex.swift */; };
 		ECA30A172A5FA08500BB19D1 /* WhatToTest.en-US.txt in Resources */ = {isa = PBXBuildFile; fileRef = ECA30A162A5FA08500BB19D1 /* WhatToTest.en-US.txt */; };
+		ECA30A192A604ACC00BB19D1 /* SubredditIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECA30A182A604ACC00BB19D1 /* SubredditIcon.swift */; };
+		ECA30A1B2A604FD600BB19D1 /* unreadMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECA30A1A2A604FD600BB19D1 /* unreadMessage.swift */; };
 		ECC10C742A4A8729009124BE /* fontSize.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECC10C732A4A8729009124BE /* fontSize.swift */; };
 		ECC10C772A4A874C009124BE /* RR.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECC10C762A4A874C009124BE /* RR.swift */; };
 		ECD1FC072A56D46D00723016 /* observableArray.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECD1FC062A56D46D00723016 /* observableArray.swift */; };
@@ -178,6 +180,8 @@
 		EC92FBDD2A589BE200391D1D /* SquircleUIKit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SquircleUIKit.swift; sourceTree = "<group>"; };
 		EC9EAEC32A4AAB470074D06B /* fromHex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = fromHex.swift; sourceTree = "<group>"; };
 		ECA30A162A5FA08500BB19D1 /* WhatToTest.en-US.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "WhatToTest.en-US.txt"; sourceTree = "<group>"; };
+		ECA30A182A604ACC00BB19D1 /* SubredditIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubredditIcon.swift; sourceTree = "<group>"; };
+		ECA30A1A2A604FD600BB19D1 /* unreadMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = unreadMessage.swift; sourceTree = "<group>"; };
 		ECC10C732A4A8729009124BE /* fontSize.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = fontSize.swift; sourceTree = "<group>"; };
 		ECC10C762A4A874C009124BE /* RR.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RR.swift; sourceTree = "<group>"; };
 		ECD1FC062A56D46D00723016 /* observableArray.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = observableArray.swift; sourceTree = "<group>"; };
@@ -255,6 +259,7 @@
 				ECF0B7E42A541449002B9FAD /* newReply.swift */,
 				EC22A31B2A5C75AA0062A112 /* fetchInbox.swift */,
 				EC22A3212A5C97D70062A112 /* readMessage.swift */,
+				ECA30A1A2A604FD600BB19D1 /* unreadMessage.swift */,
 				ECF5535A2A5C9EEA004A0136 /* searchSubreddits.swift */,
 				ECEFC25A2A5DAA970003C6C4 /* searchUsers.swift */,
 				ECEFC25C2A5DADDC0003C6C4 /* searchInSubreddit.swift */,
@@ -454,6 +459,7 @@
 				ECEFC2642A5DE5910003C6C4 /* SubredditLink.swift */,
 				ECEFC2662A5DE60C0003C6C4 /* UserLink.swift */,
 				ECEFC2702A5F489E0003C6C4 /* fullscreenPresent.swift */,
+				ECA30A182A604ACC00BB19D1 /* SubredditIcon.swift */,
 			);
 			path = components;
 			sourceTree = "<group>";
@@ -584,6 +590,7 @@
 				EC5EDA792A4F4D4200140A08 /* vote.swift in Sources */,
 				ECF5535B2A5C9EEA004A0136 /* searchSubreddits.swift in Sources */,
 				ECEFC25D2A5DADDC0003C6C4 /* searchInSubreddit.swift in Sources */,
+				ECA30A1B2A604FD600BB19D1 /* unreadMessage.swift in Sources */,
 				ECF0B7DD2A53DD5C002B9FAD /* ImageMediaPost.swift in Sources */,
 				EC22A3222A5C97D70062A112 /* readMessage.swift in Sources */,
 				EC08544A2A4D6EAE00E88389 /* blurTransitions.swift in Sources */,
@@ -607,6 +614,7 @@
 				EC9269F72A52B02E003F33B1 /* Shrinkable.swift in Sources */,
 				EC1906F52A55B88500A0300E /* nestComments.swift in Sources */,
 				EC03F1872A5845CB00102EE1 /* TinyUpvoteIndicator.swift in Sources */,
+				ECA30A192A604ACC00BB19D1 /* SubredditIcon.swift in Sources */,
 				EC1906F12A552A6800A0300E /* BehaviorPanel.swift in Sources */,
 				ECDBA8C32A4A820800FB42DB /* Post.swift in Sources */,
 				EC593AFA2A47AE3E002D6454 /* Settings.swift in Sources */,

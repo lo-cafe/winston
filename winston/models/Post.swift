@@ -123,7 +123,7 @@ struct PostData: GenericRedditEntityDataType, Defaults.Serializable {
   let permalink: String
   let url: String
   let subreddit_subscribers: Int
-  let created_utc: Double
+  let created_utc: Double?
   let num_crossposts: Int
   let is_video: Bool
   

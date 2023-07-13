@@ -199,20 +199,7 @@ struct PostView: View {
             NavigationLink {
               SubredditInfo(subreddit: subreddit)
             } label: {
-              let communityIcon = data.community_icon.split(separator: "?")
-              let icon = data.icon_img == "" || data.icon_img == nil ? communityIcon.count > 0 ? String(communityIcon[0]) : "" : data.icon_img
-              KFImage(URL(string: icon ?? "")!)
-                .resizable()
-//                .placeholder {
-//                  Text(data.display_name.prefix(1).uppercased())
-//                    .frame(width: 30, height: 30)
-//                    .background(.blue, in: Circle())
-//                    .mask(Circle())
-//                    .fontSize(16, .semibold)
-//                }
-                .scaledToFill()
-                .frame(width: 30, height: 30)
-                .mask(Circle())
+              SubredditIcon(data: data)
             }
           }
         }

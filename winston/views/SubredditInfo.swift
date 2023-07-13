@@ -31,13 +31,7 @@ struct SubredditInfo: View {
       Group {
         if let data = subreddit.data {
           VStack (spacing: 16) {
-            let communityIcon = data.community_icon.split(separator: "?")
-            let icon = data.icon_img == "" || data.icon_img == nil ? communityIcon.count > 0 ? String(communityIcon[0]) : "" : data.icon_img
-            KFImage(URL(string: icon ?? "")!)
-              .resizable()
-              .scaledToFill()
-              .frame(width: 125, height: 125)
-              .mask(Circle())
+            SubredditIcon(data: data, size: 125)
             
             VStack {
               Text("r/\(data.display_name ?? "")")

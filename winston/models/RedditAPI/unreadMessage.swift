@@ -1,21 +1,21 @@
 //
-//  readMessage.swift
+//  unreadMessage.swift
 //  winston
 //
-//  Created by Igor Marcossi on 10/07/23.
+//  Created by Igor Marcossi on 13/07/23.
 //
 
 import Foundation
 import Alamofire
 
 extension RedditAPI {
-  func readMessage(_ fullname: String) async -> Bool? {
+  func unreadMessage(_ fullname: String) async -> Bool? {
     await refreshToken()
     //    await getModHash()
     if let headers = self.getRequestHeaders() {
-      let params = ReadMessagePayload(id: fullname)
+      let params = UnreadMessagePayload(id: fullname)
       let dataTask = AF.request(
-        "\(RedditAPI.redditApiURLBase)/api/read_message",
+        "\(RedditAPI.redditApiURLBase)/api/unread_message",
         method: .post,
         parameters: params,
         encoder: URLEncodedFormParameterEncoder(destination: .httpBody),
@@ -33,8 +33,8 @@ extension RedditAPI {
       return nil
     }
   }
-
-  struct ReadMessagePayload: Codable {
+  
+  struct UnreadMessagePayload: Codable {
     var id: String
   }
 }

@@ -19,29 +19,7 @@ struct SubItem: View {
     if let data = sub.data {
       HStack {
         ZStack {
-          let communityIcon = data.community_icon.split(separator: "?")
-          let icon = data.icon_img == "" || data.icon_img == nil ? communityIcon.count > 0 ? String(communityIcon[0]) : "" : data.icon_img
-          if icon == "" {
-            Text(data.display_name?.prefix(1).uppercased() ?? "")
-              .frame(width: 30, height: 30)
-              .background(Color.hex(data.primary_color ?? ""), in: Circle())
-              .mask(Circle())
-              .fontSize(16, .semibold)
-          } else {
-            KFImage(URL(string: icon ?? "")!)
-              .resizable()
-            //                .placeholder {
-            //                  ProgressView()
-            //                    .progressViewStyle(.circular)
-            //                    .frame(width: 22, height: 22 )
-            //                    .frame(width: 30, height: 30 )
-            //                    .background(Color.hex(data.primary_color), in: Circle())
-            //                }
-              .fade(duration: 0.5)
-              .scaledToFill()
-              .frame(width: 30, height: 30)
-              .mask(Circle())
-          }
+          SubredditIcon(data: data)
         }
         Text(data.display_name ?? "")
       }
