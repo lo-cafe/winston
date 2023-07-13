@@ -16,15 +16,15 @@ struct VideoPlayerPost: View {
   var post: Post
   @State var playingVideo = true
   @State private var time: CMTime = .zero
-  @EnvironmentObject var lightBoxType: ContentLightBox
-  @EnvironmentObject var namespaceWrapper: TabberNamespaceWrapper
+//  @EnvironmentObject var lightBoxType: ContentLightBox
+//  @EnvironmentObject var namespaceWrapper: TabberNamespaceWrapper
   
   var body: some View {
     let media = post.data!.secure_media!
     switch media {
     case .first(let data):
       if let url = data.reddit_video?.fallback_url {
-        if lightBoxType.post != post {
+//        if lightBoxType.post != post {
           VideoPlayer(url:  URL(string: url)!, play: $playingVideo, time: $time)
             .contentMode(.scaleAspectFill)
 //            .matchedGeometryEffect(id: "\(url)-\(prefix)video", in: namespaceWrapper.namespace, isSource: true)
@@ -34,15 +34,15 @@ struct VideoPlayerPost: View {
             .id(url)
             .onTapGesture {
               withAnimation(.interpolatingSpring(stiffness: 100, damping: 15)) {
-                lightBoxType.post = post
-                lightBoxType.time = time
+//                lightBoxType.post = post
+//                lightBoxType.time = time
               }
             }
-        } else {
-          Color.clear
-            .frame(maxWidth: .infinity, minHeight: 600)
-            .zIndex(1)
-        }
+//        } else {
+//          Color.clear
+//            .frame(maxWidth: .infinity, minHeight: 600)
+//            .zIndex(1)
+//        }
       } else {
         EmptyView()
       }

@@ -129,19 +129,7 @@ struct PostView: View {
         if commentsData.count > 0, let postFullname = post.data?.name {
           ForEach(Array(commentsData.enumerated()), id: \.element.id) { i, comment in
             Section {
-              //                Group {
-              //                  OutlineGroup(
-              //                    comments.data ?? [],
-              //                    id: \.self.id,
-              //                    children: \.self.childrenWinston.data
-              //                  ) { comment in
-              //                    VStack {}
-              //                    Text(tree.value)
-              //                      .font(.subheadline)
-              //                  Top().fill(Color("commentBG")).frame(maxWidth: .infinity, minHeight: 20, maxHeight: 20).zIndex(-1)
-              CommentLink(disableScroll: $disableScroll, postFullname: postFullname, refresh: asyncFetch, comment: comment)
-              //                  Bot().fill(Color("commentBG")).frame(maxWidth: .infinity, minHeight: 20, maxHeight: 20).padding(.bottom, 12).zIndex(-1)
-              //                }
+              CommentLink(disableScroll: $disableScroll, postFullname: postFullname, comment: comment)
             }
           }
         } else {
@@ -155,12 +143,16 @@ struct PostView: View {
               .opacity(0.25)
           }
         }
+        
+        Spacer()
+          .frame(maxWidth: .infinity, minHeight: 72)
       }
       
       .listRowSeparator(.hidden)
       .listRowBackground(Color.clear)
       .listRowInsets(EdgeInsets(top: 0, leading: 8, bottom: 0, trailing: 8))
     }
+    .listStyle(.plain)
 //    .introspect(.list, on: .iOS(.v16, .v17)) { collectionView in
 //      collectionView.isScrollEnabled = !disableScroll
 //      tableView.isScrollEnabled = !disableScroll
@@ -169,7 +161,6 @@ struct PostView: View {
 //    }
 //    .defaultMinListRowHeight(
     //    .scrollDisabled(disableScroll)
-    .listStyle(.plain)
     .refreshable {
       await asyncFetch(false, true)
     }

@@ -30,7 +30,7 @@ struct MessageData: GenericRedditEntityDataType {
     let first_message: String?
     let first_message_name: String?
     let subreddit: String?
-    let likes: Int?
+    let likes: Bool?
     let replies: String?
     let author_fullname: String?
     let id: String

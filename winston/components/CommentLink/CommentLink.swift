@@ -80,7 +80,6 @@ struct CommentLink: View {
   var disableShapeShift = true
   var postFullname: String?
   var showReplies = true
-  var refresh: (Bool, Bool) async -> Void
   @EnvironmentObject private var haptics: SimpleHapticGenerator
   
   var parentComment: Comment? = nil
@@ -166,7 +165,7 @@ struct CommentLink: View {
             .allowsHitTesting(!loadMoreLoading)
             .opacity(loadMoreLoading ? 0.5 : 1)
           } else {
-            CommentLinkContent(lineLimit: lineLimit, comment: comment, avatarsURL: avatarsURL, showReplies: showReplies, refresh: refresh, collapsed: $collapsed)
+            CommentLinkContent(lineLimit: lineLimit, comment: comment, avatarsURL: avatarsURL, showReplies: showReplies, collapsed: $collapsed)
           }
         }
         .compositingGroup()
@@ -191,7 +190,7 @@ struct CommentLink: View {
           ForEach(Array(comment.childrenWinston.data.enumerated()), id: \.element.id) { index, commentChild in
             let childrenCount = comment.childrenWinston.data.count
             if let dataReply = commentChild.data, let depth = dataReply.depth {
-              CommentLink(zIndex: Double(zIndex + (Double(index + 1) / Double(pow(Double(10), Double(max(1, depth)))))), lastOne: lastOne && index == comment.childrenWinston.data.count - 1, disableScroll: $disableScroll, disableShapeShift: index == 0, postFullname: postFullname, refresh: refresh, parentComment: comment, comment: commentChild)
+              CommentLink(zIndex: Double(zIndex + (Double(index + 1) / Double(pow(Double(10), Double(max(1, depth)))))), lastOne: lastOne && index == comment.childrenWinston.data.count - 1, disableScroll: $disableScroll, disableShapeShift: index == 0, postFullname: postFullname, parentComment: comment, comment: commentChild)
             }
           }
         }

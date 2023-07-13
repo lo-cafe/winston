@@ -12,7 +12,7 @@ import SwiftUI
 typealias Comment = GenericRedditEntity<CommentData>
 
 enum Oops: Error {
-    case oops
+  case oops
 }
 
 extension Comment {
@@ -38,7 +38,7 @@ extension Comment {
       self.init(data: CommentData(
         subreddit_id: nil,
         subreddit: message.subreddit,
-        likes: message.likes != nil ? message.likes! > 0 : nil,
+        likes: message.likes,
         replies: message.replies != nil ? .first(message.replies!) : nil,
         saved: false,
         id: message.id,
@@ -105,7 +105,47 @@ extension Comment {
   
   func reply(_ text: String) async -> Bool {
     if let fullname = data?.name {
-      return await redditAPI.newReply(text, fullname) ?? false
+      let result = await redditAPI.newReply(text, fullname) ?? false
+      if result, let data = data {
+        let newComment = CommentData(
+          subreddit_id: data.subreddit_id,
+          subreddit: data.subreddit,
+          likes: true,
+          saved: false,
+          id: UUID().uuidString,
+          archived: false,
+          count: 0,
+          author: redditAPI.me?.data?.name ?? "",
+          created_utc: nil,
+          send_replies: nil,
+          parent_id: id,
+          score: nil,
+          author_fullname: redditAPI.me?.data?.subreddit?.name ?? "",
+          approved_by: nil,
+          mod_note: nil,
+          collapsed: nil,
+          body: text,
+          top_awarded_type: nil,
+          name: nil,
+          downs: 0,
+          children: nil,
+          body_html: nil,
+          created: Double(Int(Date().timeIntervalSince1970)),
+          link_id: data.link_id,
+          link_title: data.link_title,
+          subreddit_name_prefixed: data.subreddit_name_prefixed,
+          depth: (data.depth ?? 0) + 1,
+          author_flair_background_color: nil,
+          collapsed_because_crowd_control: nil,
+          mod_reports: nil,
+          num_reports: nil,
+          ups: 1
+        )
+        await MainActor.run {
+          childrenWinston.data.append(Comment(data: newComment, api: self.redditAPI))
+        }
+      }
+      return result
     }
     return false
   }
@@ -132,7 +172,7 @@ extension Comment {
 
 struct CommentData: GenericRedditEntityDataType {
   let subreddit_id: String?
-  //  let approved_at_utc: String?
+  //  let approved_at_utc: Int?
   //  let author_is_blocked: Bool?
   //  let comment_type: String?
   //  let awarders: [String]?

@@ -13,9 +13,7 @@ enum TabIdentifier {
 
 struct Tabber: View {
   @State var activeTab = TabIdentifier.posts
-  @StateObject var contentLightBox = ContentLightBox()
   @EnvironmentObject var redditAPI: RedditAPI
-  @Namespace var generalAnimations
   @State var credModalOpen = false
   @State var reset: [TabIdentifier:Bool] = [
     .inbox: true,
@@ -94,13 +92,13 @@ struct Tabber: View {
 //    .sheet(item: $credModalOpen) {
 //      ChangeAuthAPIKey()
 //    }
-    .overlay(
-      contentLightBox.post == nil
-      ? nil
-      : LightBox()
-    )
-    .environmentObject(TabberNamespaceWrapper(generalAnimations))
-    .environmentObject(contentLightBox)
+//    .overlay(
+//      contentLightBox.post == nil
+//      ? nil
+//      : LightBox()
+//    )
+//    .environmentObject(TabberNamespaceWrapper(generalAnimations))
+//    .environmentObject(contentLightBox)
   }
 }
 
@@ -110,10 +108,10 @@ struct Tabber: View {
 //  }
 //}
 
-class TabberNamespaceWrapper: ObservableObject {
-  var namespace: Namespace.ID
-  
-  init(_ namespace: Namespace.ID) {
-    self.namespace = namespace
-  }
-}
+//class TabberNamespaceWrapper: ObservableObject {
+//  var namespace: Namespace.ID
+//  
+//  init(_ namespace: Namespace.ID) {
+//    self.namespace = namespace
+//  }
+//}

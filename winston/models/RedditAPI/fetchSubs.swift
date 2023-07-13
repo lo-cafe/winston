@@ -26,9 +26,6 @@ extension RedditAPI {
         .serializingDecodable(Listing<SubredditData>.self).response
       switch response.result {
       case .success(let data):
-        if let modhash = data.data?.modhash {
-          loggedUser.modhash = modhash
-        }
         await MainActor.run {
           if let children = data.data?.children {
             Defaults[.subreddits] = children

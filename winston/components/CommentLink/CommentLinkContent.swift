@@ -14,7 +14,6 @@ struct CommentLinkContent: View {
   @ObservedObject var comment: Comment
   var avatarsURL: [String:String]?
   var showReplies = true
-  var refresh: (Bool, Bool) async -> Void
   @Binding var collapsed: Bool
   @State var prepareCollapsed = false
   @State var showReplyModal = false
@@ -133,7 +132,7 @@ struct CommentLinkContent: View {
           showReplyModal = true
         })
       .sheet(isPresented: $showReplyModal) {
-        ReplyModal(comment: comment, refresh: refresh)
+        ReplyModalComment(comment: comment)
       }
       .compositingGroup()
       //        .padding(.vertical, (data.depth == 0 || !showReplies) && preferenceShowCommentsCards ? 0 : 6)

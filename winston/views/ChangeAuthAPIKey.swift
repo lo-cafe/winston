@@ -232,8 +232,8 @@ struct ChangeAuthAPIKey: View {
                 }
                 MasterButton(label: "Grant access", height: 44, fullWidth: true) {
                   dismissKeyboard()
-                  redditAPI.loggedUser.apiAppID = appID
-                  redditAPI.loggedUser.apiAppSecret = appSecret
+                  redditAPI.loggedUser.apiAppID = appID.trimmingCharacters(in: .whitespaces)
+                  redditAPI.loggedUser.apiAppSecret = appSecret.trimmingCharacters(in: .whitespaces)
                   openURL(redditAPI.getAuthorizationCodeURL(appID))
                 }
               }

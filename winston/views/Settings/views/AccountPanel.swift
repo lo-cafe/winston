@@ -31,7 +31,13 @@ struct AccountPanel: View {
           Button("Copy current access token") {
             UIPasteboard.general.string = accessToken
           }
+          Button("Refresh access token") {
+            Task {
+              await redditAPI.refreshToken(true)
+            }
+          }
         }
+        
         Button("Logout") {
           isPresentingConfirm = true
         }

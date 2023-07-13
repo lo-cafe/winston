@@ -34,10 +34,14 @@ class RedditAPI: ObservableObject {
     return headers
   }
   
-  func refreshToken() async -> Void {
-    if let headers = getRequestHeaders(includeAuth: false), let refreshToken = loggedUser.refreshToken {
-      //      print(loggedUser.accessToken)
-      if Date().timeIntervalSince1970 - loggedUser.lastRefresh!.timeIntervalSince1970 > Double(loggedUser.expiration ?? 0) {
+  func refreshToken(_ force: Bool = false) async -> Void {
+    if force {
+      await MainActor.run {
+        loggedUser.lastRefresh = Date(seconds: Date().timeIntervalSince1970 - Double(loggedUser.expiration ?? 86400 * 10))
+      }
+    }
+    if let headers = getRequestHeaders(includeAuth: false), let refreshToken = loggedUser.refreshToken, let apiKeyID = loggedUser.apiAppID, let apiKeySecret = loggedUser.apiAppSecret {
+      if Double(Date().timeIntervalSince1970 - loggedUser.lastRefresh!.timeIntervalSince1970) > Double(max(0, (loggedUser.expiration ?? 0) - 100)) {
         let payload = RefreshAccessTokenPayload(refresh_token: refreshToken)
         let response = await AF.request(
           "\(RedditAPI.redditWWWApiURLBase)/api/v1/access_token",
@@ -45,6 +49,7 @@ class RedditAPI: ObservableObject {
           parameters: payload,
           encoder: URLEncodedFormParameterEncoder(destination: .httpBody),
           headers: headers)
+          .authenticate(username: apiKeyID, password: apiKeySecret)
           .serializingDecodable(RefreshAccessTokenResponse.self).response
         switch response.result {
         case .success(let data):
@@ -54,7 +59,8 @@ class RedditAPI: ObservableObject {
             self.loggedUser.lastRefresh = Date()
           }
           return
-        case .failure(_):
+        case .failure(let error):
+          print(error)
           return
         }
       } else {
@@ -131,7 +137,7 @@ class RedditAPI: ObservableObject {
     
     lastAuthState = state
     
-    return URL(string: "https://www.reddit.com/api/v1/authorize?client_id=\(appID)&response_type=\(response_type)&state=\(state)&redirect_uri=\(redirect_uri)&duration=\(duration)&scope=\(scope)".addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!)!
+    return URL(string: "https://www.reddit.com/api/v1/authorize?client_id=\(appID.trimmingCharacters(in: .whitespaces))&response_type=\(response_type)&state=\(state)&redirect_uri=\(redirect_uri)&duration=\(duration)&scope=\(scope)".addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!)!
   }
   
   func getModHash() async {
@@ -142,7 +148,9 @@ class RedditAPI: ObservableObject {
   
   struct RefreshAccessTokenResponse: Decodable {
     let access_token: String
+    let token_type: String
     let expires_in: Int
+    let scope: String
   }
   
   struct GetAccessTokenResponse: Decodable {
@@ -230,7 +238,7 @@ class RedditAPI: ObservableObject {
       if let expiration = expiration {
         self.expiration = expiration
       }
-      self.lastRefresh = Date()
+      self.lastRefresh = Defaults[.redditAPILastTokenRefreshDate]
     }
   }
   

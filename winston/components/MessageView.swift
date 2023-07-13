@@ -15,7 +15,6 @@ struct MessageView: View {
   @State var disableScroll = false
   @State var openedPost = false
   var message: Message
-  var refresh: (Bool, Bool) async -> Void
   
   var body: some View {
     if let data = message.data, let author = data.author, let subreddit = data.subreddit {
@@ -25,7 +24,7 @@ struct MessageView: View {
           .foregroundColor(data.type == "post_reply" ? .blue : .green)
         VStack(alignment: .leading, spacing: 2) {
           Text("**u/\(author)** \(data.type == "post_reply" ? "commented on your post" : "replied to your comment") in **r/\(subreddit)**")
-          //            CommentLink(lineLimit: 2, disableScroll: $disableScroll, showReplies: false, refresh: refresh, comment: comment)
+          //            CommentLink(lineLimit: 2, disableScroll: $disableScroll, showReplies: false, comment: comment)
           Text((data.body ?? "").md()).lineLimit(2).fontSize(15).opacity(0.75)
         }
       }

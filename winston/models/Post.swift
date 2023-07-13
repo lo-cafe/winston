@@ -19,6 +19,21 @@ extension Post {
     self.init(id: id, api: api, typePrefix: "t3_")
   }
   
+  func reply(_ text: String) async -> Bool {
+    if let fullname = data?.name {
+      let result = await redditAPI.newReply(text, fullname) ?? false
+      if result {
+        doThisAfter(0.3) {
+          Task {
+            await self.refreshPost()
+          }
+        }
+      }
+      return result
+    }
+    return false
+  }
+  
   func refreshPost(sort: CommentSortOption = .confidence, after: String? = nil, subreddit: String? = nil, full: Bool = true) async -> ([Comment]?, String?)? {
     if let subreddit = data?.subreddit ?? subreddit, let response = await redditAPI.fetchPost(subreddit: subreddit, postID: id) {
       if let post = response[0] {
@@ -121,7 +136,7 @@ struct PostData: GenericRedditEntityDataType, Defaults.Serializable {
   let link_flair_template_id: String?
   let author_flair_text: String?
   //    let media: String?
-  let approved_at_utc: String?
+  let approved_at_utc: Int?
   let mod_reason_title: String?
   let top_awarded_type: String?
   let author_flair_background_color: String?

@@ -31,10 +31,50 @@ class TextFieldObserver : ObservableObject {
   }
 }
 
-struct ReplyModal: View {
+struct ReplyModalComment: View {
   @ObservedObject var comment: Comment
-  var refresh: (Bool, Bool) async -> Void
-  //  @EnvironmentObject var namespaceWrapper: TabberNamespaceWrapper
+  @State var disableScroll = false
+  var body: some View {
+    ReplyModal(thingFullname: comment.data?.name ?? "", action: { endLoading, text in
+      if let _ = comment.typePrefix {
+        Task {
+          let result = await comment.reply(text)
+          await MainActor.run {
+            withAnimation(spring) {
+              endLoading(result)
+            }
+          }
+        }
+      }
+    }) {
+      VStack {
+        CommentLink(indentLines: 0, disableScroll: $disableScroll, showReplies: false, comment: comment)
+      }
+    }
+  }
+}
+
+struct ReplyModalPost: View {
+  @ObservedObject var post: Post
+  var body: some View {
+    ReplyModal(thingFullname: post.data?.name ?? "", action: { endLoading, text in
+      Task {
+        let result = await post.reply(text)
+        await MainActor.run {
+          withAnimation(spring) {
+            endLoading(result)
+          }
+        }
+      }
+    }) {
+      EmptyView()
+    }
+  }
+}
+
+struct ReplyModal<Content: View>: View {
+  var thingFullname: String
+  var action: ((@escaping (Bool) -> ()), String) -> ()
   @EnvironmentObject var redditAPI: RedditAPI
   @State var alertExit = false
   @StateObject var textWrapper = TextFieldObserver(delay: 0.5)
@@ -47,17 +87,7 @@ struct ReplyModal: View {
   @State private var selection: Backport.PresentationDetent = .medium
   
   @FetchRequest(sortDescriptors: []) var drafts: FetchedResults<ReplyDraft>
-  
-  //  private let rules: [HighlightRule] = [
-  //          HighlightRule(pattern: betweenUnderscores, formattingRules: [
-  //              TextFormattingRule(fontTraits: [.traitItalic, .traitBold]),
-  //              TextFormattingRule(key: .foregroundColor, value: UIColor.red),
-  //              TextFormattingRule(key: .underlineStyle) { content, range in
-  //                  if content.count > 10 { return NSUnderlineStyle.double.rawValue }
-  //                  else { return NSUnderlineStyle.single.rawValue }
-  //              }
-  //          ])
-  //      ]
+  var content: (() -> Content)?
   
   var body: some View {
     NavigationView {
@@ -86,38 +116,28 @@ struct ReplyModal: View {
               .progressViewStyle(.circular)
           )
           
-          
-          VStack {
-            CommentLink(indentLines: 0, disableScroll: $disableScroll, showReplies: false, refresh: refresh, comment: comment)
+          if var content = content {
+            content()
           }
           
+            
         }
         .padding(.horizontal, 16)
         .padding(.bottom, 68)
       }
       .overlay(
         MasterButton(icon: "paperplane.fill", label: "Send", height: 48, fullWidth: true, cornerRadius: 16) {
-          if let _ = comment.typePrefix {
-            Task {
-              withAnimation {
-                loading = true
-              }
-              let result = await comment.reply(textWrapper.replyText)
-              Task {
-                if result { await refresh(false, true) }
-              }
-              withAnimation(spring) {
-                if result { dismiss() }
-                loading = false
-              }
-              if result {
-                if let currentDraft = currentDraft {
-                  viewContext.delete(currentDraft)
-                  try? viewContext.save()
-                }
+          withAnimation { loading = true }
+          action({ result in
+            withAnimation { loading = false }
+            if result {
+              if result { dismiss() }
+              if let currentDraft = currentDraft {
+                viewContext.delete(currentDraft)
+                try? viewContext.save()
               }
             }
-          }
+          }, textWrapper.replyText)
         }
           .shrinkOnTap()
           .offset(y: loading ? 64 : 0)
@@ -139,7 +159,7 @@ struct ReplyModal: View {
         Task {
           await redditAPI.fetchMe()
         }
-        if let draftEntity = drafts.first(where: { draft in draft.commentID == comment.id }) {
+        if let draftEntity = drafts.first(where: { draft in draft.thingID == thingFullname }) {
           if let draftText = draftEntity.replyText {
             textWrapper.replyText = draftText
           }
@@ -147,7 +167,7 @@ struct ReplyModal: View {
         } else {
           let newDraft = ReplyDraft(context: viewContext)
           newDraft.timestamp = Date()
-          newDraft.commentID = comment.id
+          newDraft.thingID = thingFullname
           currentDraft = newDraft
         }
       }
