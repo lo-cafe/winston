@@ -1,3 +1,1 @@
-- Fixed crash on subreddits without icon
-- Attempt to fix some crashes related to the inbox
-- Added read/unread of inbox messages
+- Fixed a bug where 100% of the CPU was used in a specific circumstance

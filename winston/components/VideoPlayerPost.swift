@@ -14,7 +14,7 @@ import ASCollectionView
 struct VideoPlayerPost: View {
   var prefix: String = ""
   var post: Post
-  @State var playingVideo = true
+  @State var playingVideo = false
   @State private var time: CMTime = .zero
 //  @EnvironmentObject var lightBoxType: ContentLightBox
 //  @EnvironmentObject var namespaceWrapper: TabberNamespaceWrapper
@@ -37,6 +37,12 @@ struct VideoPlayerPost: View {
 //                lightBoxType.post = post
 //                lightBoxType.time = time
               }
+            }
+            .onDisappear {
+              playingVideo = false
+            }
+            .onAppear {
+              playingVideo = true
             }
 //        } else {
 //          Color.clear

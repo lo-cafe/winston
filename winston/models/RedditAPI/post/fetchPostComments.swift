@@ -9,13 +9,16 @@ import Foundation
 import Alamofire
 
 extension RedditAPI {
-  func fetchPost(subreddit: String, postID: String, sort: CommentSortOption = .confidence) async -> FetchPostCommentsResponse? {
+  func fetchPost(subreddit: String, postID: String, commentID: String? = nil, sort: CommentSortOption = .confidence) async -> FetchPostCommentsResponse? {
     await refreshToken()
     if let headers = self.getRequestHeaders() {
       let params = FetchPostCommentsPayload(sort: sort.rawVal.value, limit: 25, depth: 3)
-      
+      var specificComment = ""
+      if let commentID = commentID {
+        specificComment = "/comment/\(commentID.hasPrefix("t1_") ? String(commentID.dropFirst(3)) : commentID)"
+      }
       let response = await AF.request(
-        "\(RedditAPI.redditApiURLBase)/r/\(subreddit)/comments/\(postID.hasPrefix("t3_") ? String(postID.dropFirst(3)) : postID).json",
+        "\(RedditAPI.redditApiURLBase)/r/\(subreddit)/comments/\(postID.hasPrefix("t3_") ? String(postID.dropFirst(3)) : postID)\(specificComment).json",
         method: .get,
         parameters: params,
         encoder: URLEncodedFormParameterEncoder(destination: .queryString),

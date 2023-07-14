@@ -24,11 +24,11 @@ struct PostView: View {
   @StateObject var comments = ObservableArray<Comment>()
   @State var lastPostAfter: String?
   @State var avatars: [String:String]?
+  @State var specificComment: String?
   @EnvironmentObject var redditAPI: RedditAPI
   
   func asyncFetch(_ loadMore: Bool = false, _ full: Bool = true) async {
-//    print("ish1")
-        if let result = await post.refreshPost(sort: sort, after: nil, subreddit: subreddit.data?.display_name ?? subreddit.id, full: full), let newComments = result.0 {
+    if let result = await post.refreshPost(commentID: specificComment, sort: sort, after: nil, subreddit: subreddit.data?.display_name ?? subreddit.id, full: full), let newComments = result.0 {
           await MainActor.run {
             withAnimation {
               if loadMore {
@@ -130,6 +130,11 @@ struct PostView: View {
           ForEach(Array(commentsData.enumerated()), id: \.element.id) { i, comment in
             Section {
               CommentLink(disableScroll: $disableScroll, postFullname: postFullname, comment: comment)
+//                .if(Int(Double(commentsData.count) * 0.75) == i) { view in
+//                  view.onAppear {
+//                    fetch(loadMore: true)
+//                  }
+//                }
             }
           }
         } else {
@@ -205,8 +210,12 @@ struct PostView: View {
         }
         .animation(nil, value: sort)
     )
+    .onChange(of: specificComment) { _ in
+      Task {
+        await subreddit.refreshSubreddit()
+      }
+    }
     .onAppear {
-//      print("ish2")
       if comments.data.count == 0 || post.data == nil {
         fetch(full: post.data == nil)
       }
