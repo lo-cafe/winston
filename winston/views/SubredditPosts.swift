@@ -8,7 +8,6 @@
 import SwiftUI
 import Defaults
 import SwiftUIIntrospect
-import ASCollectionView
 import Kingfisher
 
 struct SubredditPosts: View {
@@ -27,6 +26,9 @@ struct SubredditPosts: View {
   func asyncFetch(loadMore: Bool = false) async {
     if subreddit.data == nil {
       await subreddit.refreshSubreddit()
+    }
+    if posts.data.count > 0 && lastPostAfter == nil {
+      return
     }
     if let result = await subreddit.fetchPosts(sort: sort, after: loadMore ? lastPostAfter : nil), let newPosts = result.0 {
       withAnimation {

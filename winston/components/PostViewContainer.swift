@@ -10,8 +10,9 @@ import SwiftUI
 struct PostViewContainer: View {
   @StateObject var post: Post
   @StateObject var sub: Subreddit
+  var fromMessage: MessageData?
     var body: some View {
-        PostView(post: post, subreddit: sub)
+      PostView(post: post, subreddit: sub, fromMessage: fromMessage)
     }
 }
 

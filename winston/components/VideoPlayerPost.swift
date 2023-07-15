@@ -9,7 +9,6 @@ import SwiftUI
 import Defaults
 import VideoPlayer
 import CoreMedia
-import ASCollectionView
 
 struct VideoPlayerPost: View {
   var prefix: String = ""

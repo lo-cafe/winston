@@ -34,7 +34,7 @@ struct MessageView: View {
       .background(
         data.context == nil
         ? nil
-        : NavigationLink(destination: PostViewContainer(post: Post(id: getPostId(from: data.context!) ?? "lol", api: message.redditAPI), sub: Subreddit(id: subreddit, api: message.redditAPI)), isActive: $openedPost, label: { EmptyView() }).buttonStyle(EmptyButtonStyle()).opacity(0).allowsHitTesting(false)
+        : NavigationLink(destination: PostViewContainer(post: Post(id: getPostId(from: data.context!) ?? "lol", api: message.redditAPI), sub: Subreddit(id: subreddit, api: message.redditAPI), fromMessage: data), isActive: $openedPost, label: { EmptyView() }).buttonStyle(EmptyButtonStyle()).opacity(0).allowsHitTesting(false)
       )
       .compositingGroup()
       .opacity(!(data.new ?? false) ? 0.5 : 1)

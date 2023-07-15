@@ -142,11 +142,11 @@ struct CommentLink: View {
             .onTapGesture {
               Task {
                 if let postFullname = postFullname {
-                  withAnimation(spring) {
-                    loadMoreLoading = true
-                  }
-                  
-                  disableScroll = true
+//                  withAnimation(spring) {
+//                    loadMoreLoading = true
+//                  }
+//
+//                  disableScroll = true
                   //                  measure = true
                   await comment.loadChildren(parent: parentComment, postFullname: postFullname, preparation: {
                   }, callback: {

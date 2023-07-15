@@ -24,9 +24,18 @@ struct SubredditIcon: View {
     } else {
       Text(String((data.display_name ?? data.id).prefix(1)).uppercased())
         .frame(width: size, height: size)
-        .background(Color.hex(data.primary_color ?? "fafafa"), in: Circle())
+        .background(Color.hex(String((firstNonEmptyString(data.key_color, data.primary_color, "#828282") ?? "").dropFirst(1))), in: Circle())
         .mask(Circle())
         .fontSize(CGFloat(Int(size * 0.535)), .semibold)
     }
   }
+}
+
+func firstNonEmptyString(_ strings: String?...) -> String? {
+    for string in strings {
+        if let string = string, !string.isEmpty {
+            return string
+        }
+    }
+    return nil
 }

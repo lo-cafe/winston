@@ -35,7 +35,7 @@ extension Subreddit {
   }
   
   func fetchPosts(sort: SubListingSortOption = .hot, after: String? = nil) async -> ([Post]?, String?)? {
-    if let response = await redditAPI.fetchSubPosts(data?.url ?? id, sort: sort, after: after), let data = response.0 {
+    if let response = await redditAPI.fetchSubPosts(data?.url ?? (id == "home" ? "" : id), sort: sort, after: after), let data = response.0 {
       return (data.map { x in
         if let data = x.data {
           return Post(data: data, api: redditAPI)

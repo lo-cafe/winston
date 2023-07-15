@@ -1,1 +1,2 @@
-- Fixed a bug where 100% of the CPU was used in a specific circumstance
+- Fixed markdown rendering (I guess)
+- Added Home feed (it should be here before)

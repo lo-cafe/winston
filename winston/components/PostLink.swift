@@ -74,10 +74,10 @@ struct PostLink: View {
               }
             })
           } else if data.selftext != "" {
-            Text(data.selftext).lineLimit(3)
+//            MD(str: data.selftext, lineLimit: 3)
+            Text(data.selftext.md()).lineLimit(3)
               .fontSize(15)
               .opacity(0.75)
-              .allowsHitTesting(false)
               .allowsHitTesting(false)
           }
         }

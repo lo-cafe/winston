@@ -10,7 +10,6 @@ import Kingfisher
 import Defaults
 import VideoPlayer
 import CoreMedia
-import ASCollectionView
 
 struct ImageMediaPost: View {
   var parentDragging: Binding<Bool>?

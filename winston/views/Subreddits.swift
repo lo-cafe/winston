@@ -33,6 +33,35 @@ struct SubItem: View {
   }
 }
 
+struct SubredditBigBtn: View {
+  var reset: Bool
+  var icon: String
+  var iconColor: Color
+  var label: String
+  @StateObject var destination: Subreddit
+  @State var active = false
+  var body: some View {
+    VStack(alignment: .leading, spacing: 8) {
+      Image(systemName: icon)
+        .fontSize(32)
+        .foregroundColor(iconColor)
+      Text(label)
+        .fontSize(17, .semibold)
+    }
+    .padding(.all, 10)
+    .frame(maxWidth: .infinity, alignment: .leading)
+    .if(destination.id != "homes") { view in
+      view
+        .background(
+          NavigationLink(destination: SubredditPosts(subreddit: destination), isActive: $active, label: { EmptyView() }).buttonStyle(EmptyButtonStyle()).opacity(0).allowsHitTesting(false).frame(width: 0, height: 0)
+        )
+    }
+    .background(RR(13, Color(UIColor.secondarySystemBackground)))
+    .onChange(of: reset) { _ in active = false }
+
+  }
+}
+
 class SubsDictContainer: ObservableObject {
   @Published var data: [String: [Subreddit]]?
 }
@@ -53,25 +82,39 @@ struct Subreddits: View {
   var body: some View {
     GoodNavigator {
       List {
+        HStack(spacing: 12) {
+          
+          SubredditBigBtn(reset: reset, icon: "house.circle.fill", iconColor: .blue, label: "Home", destination: Subreddit(id: "home", api: redditAPI))
+          
+          SubredditBigBtn(reset: reset, icon: "bookmark.circle.fill", iconColor: .green, label: "Saved", destination: Subreddit(id: "homes", api: redditAPI)).allowsHitTesting(false)
+          
+        }
+        .frame(maxWidth: .infinity)
+        .listRowSeparator(.hidden)
+        .listRowBackground(Color.clear)
+        .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
+        .listStyle(.plain)
+        .id("upperPart")
+        
         if let subsDictData = subsDict.data {
           if searchText != "" {
-                        ForEach(Array(Array(subsDictData.values).flatMap { $0 }.filter { ($0.data?.display_name ?? "").lowercased().contains(searchText.lowercased()) }).sorted { ($0.data?.display_name?.lowercased() ?? "") < ($1.data?.display_name?.lowercased() ?? "") }, id: \.self.id) { sub in
-                          SubItem(reset: reset, sub: sub)
-                        }
+            ForEach(Array(Array(subsDictData.values).flatMap { $0 }.filter { ($0.data?.display_name ?? "").lowercased().contains(searchText.lowercased()) }).sorted { ($0.data?.display_name?.lowercased() ?? "") < ($1.data?.display_name?.lowercased() ?? "") }, id: \.self.id) { sub in
+              SubItem(reset: reset, sub: sub)
+            }
           } else {
             Section("FAVORITES") {
-                            ForEach(Array(subsDictData.values).flatMap { $0 }.filter { $0.data?.user_has_favorited ?? false }.sorted { ($0.data?.display_name?.lowercased() ?? "") < ($1.data?.display_name?.lowercased() ?? "") }, id: \.self.id) { sub in
-                              SubItem(reset: reset, sub: sub)
-                            }
-                          }
-                          ForEach(Array(subsDictData.keys).sorted { $0 < $1 }, id: \.self) { letter in
-                            if let subs = subsDictData[letter] {
-                              Section(header: Text(letter)) {
-                                ForEach(subs) { sub in
-                                  SubItem(reset: reset, sub: sub)
-                                }
-                              }
-                            }
+              ForEach(Array(subsDictData.values).flatMap { $0 }.filter { $0.data?.user_has_favorited ?? false }.sorted { ($0.data?.display_name?.lowercased() ?? "") < ($1.data?.display_name?.lowercased() ?? "") }, id: \.self.id) { sub in
+                SubItem(reset: reset, sub: sub)
+              }
+            }
+            ForEach(Array(subsDictData.keys).sorted { $0 < $1 }, id: \.self) { letter in
+              if let subs = subsDictData[letter] {
+                Section(header: Text(letter)) {
+                  ForEach(subs) { sub in
+                    SubItem(reset: reset, sub: sub)
+                  }
+                }
+              }
             }
           }
         }
