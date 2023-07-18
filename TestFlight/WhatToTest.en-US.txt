@@ -1,4 +1,4 @@
-- Fixed possible crash on refresh access token
+- Fixed possible crash on refresh access token (usually happened on startup)
 - Fixed big buttons background on light theme
 - Comments with cards reformulated (I know, there's too much spacing, my bad, it's a WIP), they should not lag, blink nor jump around anymore.
 - Load more comments fully working

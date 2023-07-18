@@ -86,7 +86,7 @@ struct Subreddits: View {
           
           SubredditBigBtn(reset: reset, icon: "house.circle.fill", iconColor: .blue, label: "Home", destination: Subreddit(id: "home", api: redditAPI))
           
-          SubredditBigBtn(reset: reset, icon: "bookmark.circle.fill", iconColor: .green, label: "Saved", destination: Subreddit(id: "homes", api: redditAPI)).allowsHitTesting(false)
+          SubredditBigBtn(reset: reset, icon: "bookmark.circle.fill", iconColor: .green, label: "Saved", destination: Subreddit(id: "home", api: redditAPI)).allowsHitTesting(false)
           
         }
         .frame(maxWidth: .infinity)
