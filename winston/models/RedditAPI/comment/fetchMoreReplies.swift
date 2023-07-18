@@ -9,11 +9,11 @@ import Foundation
 import Alamofire
 
 extension RedditAPI {
-  func fetchMoreReplies(comments: [String], postFullname: String, sort: CommentSortOption = .confidence, dropFirst: Bool = false) async -> [ListingChild<CommentData>]? {
+  func fetchMoreReplies(comments: [String], moreID: String, postFullname: String, sort: CommentSortOption = .confidence, dropFirst: Bool = false) async -> [ListingChild<CommentData>]? {
     await refreshToken()
     //    await getModHash()
     if let headers = self.getRequestHeaders() {
-      let params = MoreRepliesPayload(children: comments.joined(separator: ","), link_id: postFullname, sort: sort.rawVal.value)
+      let params = MoreRepliesPayload(children: comments.joined(separator: ","), link_id: postFullname, sort: sort.rawVal.value, id: moreID)
       let response = await AF.request(
         "\(RedditAPI.redditApiURLBase)/api/morechildren",
         method: .get,
@@ -23,10 +23,7 @@ extension RedditAPI {
       ).serializingDecodable(MoreRepliesResponse.self).response
       switch response.result {
       case .success(let data):
-        if let newData = data.json.data?.things {
-          return nestComments(Array(newData.dropFirst(dropFirst ? 1 : 0)))
-        }
-        return nil
+        return data.json.data?.things
       case .failure(_):
         //        print(error)
         return nil
@@ -39,10 +36,11 @@ extension RedditAPI {
   struct MoreRepliesPayload: Codable {
     var api_type = "json"
     let children: String
-    var depth = 15
+    var depth = 7
     var limit_children = false
     var link_id: String
     var sort: String
+    var id: String = ""
   }
   
   struct MoreRepliesResponse: Codable {

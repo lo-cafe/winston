@@ -21,16 +21,10 @@ extension Subreddit {
   }
   
   func refreshSubreddit() async {
-    await MainActor.run {
-      self.loading = true
-    }
     if let data = (await redditAPI.fetchSub(data?.display_name ?? id))?.data {
       await MainActor.run {
         self.data = data
       }
-    }
-    await MainActor.run {
-      self.loading = false
     }
   }
   
@@ -88,7 +82,7 @@ struct SubredditData: GenericRedditEntityDataType {
     let public_description: String
     let comment_score_hide_mins: Int?
     let allow_predictions: Bool
-    let user_has_favorited: Bool?
+    var user_has_favorited: Bool?
     let user_flair_template_id: String?
     let community_icon: String
     let banner_background_image: String

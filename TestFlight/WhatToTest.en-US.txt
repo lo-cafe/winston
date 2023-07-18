@@ -1,2 +1,8 @@
-- Fixed markdown rendering (I guess)
-- Added Home feed (it should be here before)
+- Fixed possible crash on refresh access token
+- Fixed big buttons background on light theme
+- Comments with cards reformulated (I know, there's too much spacing, my bad, it's a WIP), they should not lag, blink nor jump around anymore.
+- Load more comments fully working
+- Auto scroll to highlighted comment
+- Comment dedicated post view
+- Fixed home taking you to r/home lol
+- I didn't fix the bug that makes the subreddits list not load yet, I'm working on that 👌

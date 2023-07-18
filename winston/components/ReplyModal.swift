@@ -116,7 +116,7 @@ struct ReplyModal<Content: View>: View {
               .progressViewStyle(.circular)
           )
           
-          if var content = content {
+          if let content = content {
             content()
           }
           

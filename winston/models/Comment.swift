@@ -15,6 +15,20 @@ enum Oops: Error {
   case oops
 }
 
+enum CommentParentElement {
+  case post(ObservableArray<Comment>)
+  case comment(Comment)
+  
+  var isPost: Bool {
+    switch self {
+    case .comment(_):
+      return false
+    case .post(_):
+      return true
+    }
+  }
+}
+
 extension Comment {
   convenience init(data: T, api: RedditAPI, kind: String? = nil) {
     self.init(data: data, api: api, typePrefix: "t1_")
@@ -75,31 +89,55 @@ extension Comment {
     }
   }
   
-  func loadChildren(parent: Comment, postFullname: String, preparation: (() -> Void)? = nil, callback: (() -> Void)? = nil) async {
-    if let id = data?.id, let kind = kind, kind == "more", let data = data, let count = data.count, let parent_id = data.parent_id  {
-      if let children = await redditAPI.fetchMoreReplies(comments: count > 0 ? data.children! : [String(parent_id.dropFirst(3))], postFullname: postFullname, dropFirst: count == 0) {
-        var loadedComments: [Comment] = []
-        children.forEach { x in
-          if let data = x.data { loadedComments.append(Comment(data: data, api: redditAPI, kind: x.kind)) }
+  func loadChildren(parent: CommentParentElement, postFullname: String) async {
+    if let id = data?.id, let kind = kind, kind == "more", let data = data, let count = data.count, let parent_id = data.parent_id, let childrenIDS = data.children {
+      
+      let childrensLimit = 25
+      
+      if let children = await redditAPI.fetchMoreReplies(comments: count > 0 ? Array(childrenIDS.prefix(childrensLimit)) : [String(parent_id.dropFirst(3))], moreID: id, postFullname: postFullname, dropFirst: count == 0) {
+        
+        var parentID = ""
+        switch parent {
+        case .comment(let comment):
+          if let name = comment.data?.name {
+              parentID = name
+          }
+        case .post(_):
+          if let postID = children[0].data?.link_id {
+            parentID = postID
+          }
         }
+        
+        let loadedComments: [Comment] = nestComments(children, parentID: parentID, api: redditAPI)
+
         Task { [loadedComments] in
           await redditAPI.updateAvatarURLCacheFromComments(comments: loadedComments)
         }
         await MainActor.run { [loadedComments] in
-          //          preparation?()
-          //          doThisAfter(0) {
-          if let index = parent.childrenWinston.data.firstIndex(where: { $0.data?.id == id }) {
-            withAnimation {
-              parent.childrenWinston.data.remove(at: index)
-              parent.childrenWinston.data.insert(contentsOf: loadedComments, at: index)
+          switch parent {
+          case .comment(let comment):
+            if let index = comment.childrenWinston.data.firstIndex(where: { $0.data?.id == id }) {
+              withAnimation {
+                if (self.data?.children?.count ?? 0) <= 25 {
+                  comment.childrenWinston.data.remove(at: index)
+                } else {
+                  self.data?.children?.removeFirst(childrensLimit)
+                }
+                comment.childrenWinston.data.insert(contentsOf: loadedComments, at: index)
+              }
             }
-            //            }
-            //            doThisAfter(0.2) {
-            //              callback?()
-            //            }
+          case .post(let postArr):
+            if let index = postArr.data.firstIndex(where: { $0.data?.id == id }) {
+              withAnimation {
+                postArr.data.remove(at: index)
+                postArr.data.insert(contentsOf: loadedComments, at: index)
+              }
+            }
           }
         }
+        
       }
+      
     }
   }
   
@@ -214,7 +252,7 @@ struct CommentData: GenericRedditEntityDataType {
   let downs: Int?
   //  let author_flair_richtext: [String]?
   //  let author_patreon_flair: Bool?
-  let children: [String]?
+  var children: [String]?
   let body_html: String?
   //  let removal_reason: String?
   //  let collapsed_reason: String?

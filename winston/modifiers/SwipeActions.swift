@@ -11,6 +11,7 @@ import SimpleHaptics
 
 struct SwipeActionsModifier: ViewModifier {
   @EnvironmentObject private var haptics: SimpleHapticGenerator
+  var disableAnimations = false
   var disableSwipe = false
   var disableFunctions = false
   @Binding var pressing: Bool
@@ -117,7 +118,7 @@ struct SwipeActionsModifier: ViewModifier {
             if disabled { return }
             var transaction = Transaction()
             transaction.isContinuous = true
-            transaction.animation = .interpolatingSpring(stiffness: 1000, damping: 100, initialVelocity: 0)
+            transaction.animation = disableAnimations ? nil : .interpolatingSpring(stiffness: 1000, damping: 100, initialVelocity: 0)
             withTransaction(transaction) {
               if parentOffsetX != nil {
                 parentOffsetX?.wrappedValue = translation.x

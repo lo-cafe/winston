@@ -39,7 +39,7 @@ struct Inbox: View {
               .frame(maxWidth: .infinity, minHeight: 500)
           } else {
             ForEach(messages.data, id: \.self.id) { message in
-              MessageView(reset: reset, message: message)
+              MessageLink(reset: reset, message: message)
             }
           }
         }

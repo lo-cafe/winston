@@ -64,7 +64,7 @@ struct SubredditInfo: View {
                   .fontSize(20, .bold)
                   .frame(maxWidth: .infinity, alignment: .leading)
                 
-                Text((data.public_description == "" ? data.description ?? "" : data.public_description ?? "").md())
+                Text((data.public_description == "" ? data.description ?? "" : data.public_description).md())
                 
                   .frame(maxWidth: .infinity, alignment: .leading)
                   .multilineTextAlignment(.leading)

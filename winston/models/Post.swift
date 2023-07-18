@@ -55,13 +55,14 @@ extension Post {
           return nil
         case .second(let actualData):
           if let data = actualData.data {
-            return (data.children?.map { x in
+            let returnData = (data.children?.map { x in
               if let data = x.data {
-                return Comment(data: data, api: redditAPI)
+                return Comment(data: data, api: redditAPI, kind: x.kind)
               } else {
                 return nil
               }
             }.compactMap { $0 }, data.after)
+            return returnData
           }
         }
       }

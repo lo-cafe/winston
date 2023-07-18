@@ -24,7 +24,7 @@ struct SubredditPosts: View {
   @EnvironmentObject var redditAPI: RedditAPI
   
   func asyncFetch(loadMore: Bool = false) async {
-    if subreddit.data == nil {
+    if subreddit.data == nil && subreddit.id != "home" {
       await subreddit.refreshSubreddit()
     }
     if posts.data.count > 0 && lastPostAfter == nil {
@@ -127,7 +127,7 @@ struct SubredditPosts: View {
         }
         .animation(nil, value: sort)
     )
-    .navigationTitle("r/\(subreddit.data?.display_name ?? subreddit.id)")
+    .navigationTitle("\(subreddit.id == "home" ? "Home" : "r/\(subreddit.data?.display_name ?? subreddit.id)")")
     .refreshable {
       await asyncFetch()
     }

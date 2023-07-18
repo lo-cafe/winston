@@ -56,9 +56,9 @@ struct SubredditBigBtn: View {
           NavigationLink(destination: SubredditPosts(subreddit: destination), isActive: $active, label: { EmptyView() }).buttonStyle(EmptyButtonStyle()).opacity(0).allowsHitTesting(false).frame(width: 0, height: 0)
         )
     }
-    .background(RR(13, Color(UIColor.secondarySystemBackground)))
+    .background(RR(13, .listBG))
     .onChange(of: reset) { _ in active = false }
-
+    
   }
 }
 
@@ -90,11 +90,11 @@ struct Subreddits: View {
           
         }
         .frame(maxWidth: .infinity)
+        .id("upperPart")
         .listRowSeparator(.hidden)
         .listRowBackground(Color.clear)
         .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
         .listStyle(.plain)
-        .id("upperPart")
         
         if let subsDictData = subsDict.data {
           if searchText != "" {

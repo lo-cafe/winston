@@ -7,25 +7,79 @@
 
 import SwiftUI
 
-struct Arrows: View {
-  var disableShapeShift: Bool
-    var body: some View {
-      VStack(alignment: .leading, spacing: 0) {
-        CornerShape()
-          .stroke(Color("divider"), style: StrokeStyle(lineWidth: 2, lineCap: .round))
-          .frame(maxWidth: 12, maxHeight: .infinity)
-      }
-      .padding(.leading, 1)
-      .padding(.bottom, 1)
-      .offset(y: disableShapeShift ? 0 : -12)
-      .padding(.top, disableShapeShift ? 0 : -12 - 8)
-      .padding(.bottom, disableShapeShift ? 12 + 8 : 8)
-      .frame(maxHeight: .infinity, alignment: .topLeading)
+enum ArrowKind {
+  case straight
+  case straightCurve
+  case curve
+  case empty
+  
+  var child: ArrowKind {
+    switch self {
+    case .straightCurve:
+      return .straight
+    case .curve:
+      return .empty
+    case .straight, .empty:
+      return self
     }
+  }
+  
+  var isStraight: Bool { self == .straight }
+  var isStraightCurve: Bool { self == .straightCurve }
+  var isCurve: Bool { self == .curve }
+  var isEmpty: Bool { self == .empty }
 }
 
-//struct Arrows_Previews: PreviewProvider {
-//    static var previews: some View {
-//        Arrows()
-//    }
-//}
+struct Arrows: View {
+  var kind: ArrowKind
+  var body: some View {
+      Group {
+        switch kind {
+        case .curve:
+          CurveShape()
+            .stroke(Color("divider"), style: StrokeStyle(lineWidth: 2, lineCap: .round))
+            .padding(.top, -2)
+        case .straight:
+          StraightShape()
+            .stroke(Color("divider"), style: StrokeStyle(lineWidth: 2, lineCap: .round))
+            .padding(.vertical, -2)
+        case .straightCurve:
+          StraightCurveShape()
+            .stroke(Color("divider"), style: StrokeStyle(lineWidth: 2, lineCap: .round))
+            .padding(.vertical, -2)
+        case .empty:
+          EmptyView()
+        }
+      }
+      .padding(.all, 1)
+      .frame(maxWidth: 12, maxHeight: .infinity, alignment: .topLeading)
+  }
+}
+
+struct StraightShape: Shape {
+  func path(in rect: CGRect) -> Path {
+    var path = Path()
+    path.move(to: CGPoint(x: rect.minX, y: rect.minY))
+    path.addLine(to: CGPoint(x: rect.minX, y: rect.maxY))
+    return path
+  }
+}
+
+struct StraightCurveShape: Shape {
+  func path(in rect: CGRect) -> Path {
+    var path = Path()
+    path.move(to: CGPoint(x: rect.minX, y: rect.minY))
+    path.addLine(to: CGPoint(x: rect.minX, y: rect.maxY))
+    path.addArc(center: CGPoint(x: rect.minX + NEST_LINES_WIDTH, y: (rect.maxY / 2) - NEST_LINES_WIDTH), radius: NEST_LINES_WIDTH, startAngle: .degrees(180), endAngle: .degrees(90), clockwise: true)
+    return path
+  }
+}
+
+struct CurveShape: Shape {
+  func path(in rect: CGRect) -> Path {
+    var path = Path()
+    path.move(to: CGPoint(x: rect.minX, y: rect.minY))
+    path.addArc(center: CGPoint(x: rect.minX + NEST_LINES_WIDTH, y: (rect.maxY / 2) - NEST_LINES_WIDTH), radius: NEST_LINES_WIDTH, startAngle: .degrees(180), endAngle: .degrees(90), clockwise: true)
+    return path
+  }
+}

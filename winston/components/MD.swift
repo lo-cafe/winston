@@ -24,7 +24,7 @@ struct MD: View {
         configuration.label
           .padding()
           .markdownTextStyle {
-            FontCapsVariant(.lowercaseSmallCaps)
+//            FontCapsVariant(.lowercaseSmallCaps)
             FontWeight(.semibold)
             BackgroundColor(nil)
           }

@@ -166,7 +166,7 @@ struct PostLink: View {
       )
       .if(preferenceShowPostsCards) { view in
         view
-          .background(RR(20, .secondary.opacity(0.15)).allowsHitTesting(false).allowsHitTesting(false))
+          .background(RR(20, .secondary.opacity(0.15)).allowsHitTesting(false))
           .mask(RR(20, .black))
       }
       .contentShape(Rectangle())

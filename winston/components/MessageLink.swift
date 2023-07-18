@@ -8,7 +8,7 @@
 import SwiftUI
 import Defaults
 
-struct MessageView: View {
+struct MessageLink: View {
   var reset: Bool
   @Default(.preferenceShowPostsCards) var preferenceShowPostsCards
   @Default(.preferenceShowPostsAvatars) var preferenceShowPostsAvatars
@@ -18,7 +18,8 @@ struct MessageView: View {
   @ObservedObject var message: Message
   
   var body: some View {
-    if let data = message.data, let author = data.author, let subreddit = data.subreddit {
+    if let data = message.data, let author = data.author, let subreddit = data.subreddit, let parentID = data.parent_id, let name = data.name {
+      let actualParentID = parentID.hasPrefix("t3_") ? name : parentID
       HStack(alignment: .top) {
         Image(systemName: data.type == "post_reply" ? "message.circle.fill" : "arrowshape.turn.up.left.circle.fill")
           .fontSize(24, .bold)
@@ -34,7 +35,7 @@ struct MessageView: View {
       .background(
         data.context == nil
         ? nil
-        : NavigationLink(destination: PostViewContainer(post: Post(id: getPostId(from: data.context!) ?? "lol", api: message.redditAPI), sub: Subreddit(id: subreddit, api: message.redditAPI), fromMessage: data), isActive: $openedPost, label: { EmptyView() }).buttonStyle(EmptyButtonStyle()).opacity(0).allowsHitTesting(false)
+        : NavigationLink(destination: PostViewContainer(post: Post(id: getPostId(from: data.context!) ?? "lol", api: message.redditAPI), sub: Subreddit(id: subreddit, api: message.redditAPI), highlightID: actualParentID), isActive: $openedPost, label: { EmptyView() }).buttonStyle(EmptyButtonStyle()).opacity(0).allowsHitTesting(false)
       )
       .compositingGroup()
       .opacity(!(data.new ?? false) ? 0.5 : 1)

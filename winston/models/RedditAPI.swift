@@ -40,8 +40,7 @@ class RedditAPI: ObservableObject {
         loggedUser.lastRefresh = Date(seconds: Date().timeIntervalSince1970 - Double(loggedUser.expiration ?? 86400 * 10))
       }
     }
-    if let headers = getRequestHeaders(includeAuth: false), let refreshToken = loggedUser.refreshToken, let apiKeyID = loggedUser.apiAppID, let apiKeySecret = loggedUser.apiAppSecret {
-      if Double(Date().timeIntervalSince1970 - loggedUser.lastRefresh!.timeIntervalSince1970) > Double(max(0, (loggedUser.expiration ?? 0) - 100)) {
+    if let headers = getRequestHeaders(includeAuth: false), let refreshToken = loggedUser.refreshToken, let apiKeyID = loggedUser.apiAppID, let apiKeySecret = loggedUser.apiAppSecret, Double(Date().timeIntervalSince1970 - loggedUser.lastRefresh!.timeIntervalSince1970) > Double(max(0, (loggedUser.expiration ?? 0) - 100)) {
         let payload = RefreshAccessTokenPayload(refresh_token: refreshToken)
         let response = await AF.request(
           "\(RedditAPI.redditWWWApiURLBase)/api/v1/access_token",
@@ -63,9 +62,6 @@ class RedditAPI: ObservableObject {
           print(error)
           return
         }
-      } else {
-        return
-      }
     }
   }
   
@@ -98,14 +94,14 @@ class RedditAPI: ObservableObject {
             print(error)
             
             
-            var errorString: String?
-            if let data = response.data {
-              if let json = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: String] {
-                errorString = json["error"]
-              }
-            }
+//            var errorString: String?
+//            if let data = response.data {
+//              if let json = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: String] {
+//                errorString = json["error"]
+//              }
+//            }
             
-            print(errorString)
+//            print(errorString)
             
             
             self.loggedUser.apiAppID = nil
@@ -128,7 +124,6 @@ class RedditAPI: ObservableObject {
   }
   
   func getAuthorizationCodeURL(_ appID: String) -> URL {
-    let client_id: String = RedditAPI.appClientID
     let response_type: String = "code"
     let state: String = UUID().uuidString
     let redirect_uri: String = RedditAPI.appRedirectURI
@@ -233,12 +228,12 @@ class RedditAPI: ObservableObject {
     init(apiAppID: String? = nil, apiAppSecret: String? = nil, accessToken: String? = nil, refreshToken: String? = nil, expiration: Int? = nil) {
       self.apiAppID = apiAppID ?? credentialsKeychain["apiAppID"]
       self.apiAppSecret = apiAppSecret ?? credentialsKeychain["apiAppSecret"]
-      self.accessToken = accessToken ?? credentialsKeychain["accessToken"]
       self.refreshToken = refreshToken ?? credentialsKeychain["refreshToken"]
+      self.accessToken = self.refreshToken == nil ? nil : (accessToken ?? credentialsKeychain["accessToken"])
       if let expiration = expiration {
         self.expiration = expiration
       }
-      self.lastRefresh = Defaults[.redditAPILastTokenRefreshDate]
+      self.lastRefresh = self.refreshToken == nil ? nil : (Defaults[.redditAPILastTokenRefreshDate] ?? Date(seconds: Date().timeIntervalSince1970 - Double(self.expiration ?? 86400 * 10)))
     }
   }
   
