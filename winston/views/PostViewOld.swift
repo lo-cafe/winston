@@ -138,7 +138,7 @@
 //          if commentsData.count > 0, let postFullname = post.data?.name {
 //            ForEach(Array(commentsData.enumerated()), id: \.element.id) { i, comment in
 //              Section {
-//                CommentLink(disableScroll: $disableScroll, postFullname: postFullname, parentElement: .post(comments), comment: comment)
+//                CommentLink(postFullname: postFullname, parentElement: .post(comments), comment: comment)
 //              }
 //              .frame(width: UIScreen.screenWidth - 16)
 //            }

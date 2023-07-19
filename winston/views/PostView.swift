@@ -86,7 +86,6 @@ struct PostReplies: View {
   var highlightID: String?
   var sort: CommentSortOption
   var proxy: ScrollViewProxy
-  @State var disableScroll = false
   @EnvironmentObject var redditAPI: RedditAPI
   @StateObject var comments = ObservableArray<Comment>()
   @State var loading = true
@@ -118,13 +117,13 @@ struct PostReplies: View {
         Group {
           ForEach(Array(commentsData.enumerated()), id: \.element.id) { i, comment in
             Section {
-              CommentLink(post: post, subreddit: subreddit, disableScroll: $disableScroll, postFullname: postFullname, parentElement: .post(comments), comment: comment)
+              CommentLink(post: post, subreddit: subreddit, postFullname: postFullname, parentElement: .post(comments), comment: comment)
             }
             .listRowInsets(EdgeInsets(top: 0, leading: 12, bottom: 0, trailing: 12))
           }
           Section {
             Spacer()
-              .frame(height: 5)
+              .frame(height: 1)
               .listRowBackground(Color.clear)
               .onChange(of: ignoreSpecificComment) { val in
                 Task {
@@ -138,6 +137,7 @@ struct PostReplies: View {
               }
               .id("on-change-spacer")
           }
+          .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
         }
       } else {
         if loading {
@@ -198,6 +198,7 @@ struct PostView: View {
         Group {
           Section {
             PostContent(post: post)
+              .padding(.top, preferenceShowCommentsCards ? -24 : 0)
 
             Text("Comments")
               .padding(.top, 16)
@@ -243,6 +244,7 @@ struct PostView: View {
           }
         }
       }
+      .transition(.opacity)
       .environment(\.defaultMinListRowHeight, 5)
       .if(!preferenceShowCommentsCards) { $0.listStyle(.plain) }
       .refreshable {

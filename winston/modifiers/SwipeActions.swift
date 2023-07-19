@@ -11,6 +11,7 @@ import SimpleHaptics
 
 struct SwipeActionsModifier: ViewModifier {
   @EnvironmentObject private var haptics: SimpleHapticGenerator
+  var offsetY: CGFloat? = nil
   var disableAnimations = false
   var disableSwipe = false
   var disableFunctions = false
@@ -35,7 +36,8 @@ struct SwipeActionsModifier: ViewModifier {
   private let secondActionThreshold: CGFloat = 150
   private let minimumDragDistance: CGFloat = 16
   
-  init(disableSwipe: Bool = false, disableFunctions: Bool = false, pressing: Binding<Bool>, parentDragging: Binding<Bool>? = nil, parentOffsetX: Binding<CGFloat>? = nil, leftActionIcon: String = "arrow.down", rightActionIcon: String = "arrow.up", secondActionIcon: String = "arrowshape.turn.up.left.fill", firstAction: Bool = false, secondAction: Bool = false, onTapAction: ( () -> Void)? = nil, leftActionHandler: (() -> Void)? = nil, rightActionHandler: (() -> Void)? = nil, secondActionHandler: (() -> Void)? = nil, disabled: Bool) {
+  init(offsetY: CGFloat? = nil, disableSwipe: Bool = false, disableFunctions: Bool = false, pressing: Binding<Bool>, parentDragging: Binding<Bool>? = nil, parentOffsetX: Binding<CGFloat>? = nil, leftActionIcon: String = "arrow.down", rightActionIcon: String = "arrow.up", secondActionIcon: String = "arrowshape.turn.up.left.fill", firstAction: Bool = false, secondAction: Bool = false, onTapAction: ( () -> Void)? = nil, leftActionHandler: (() -> Void)? = nil, rightActionHandler: (() -> Void)? = nil, secondActionHandler: (() -> Void)? = nil, disabled: Bool) {
+    self.offsetY = offsetY
     self.disableSwipe = disableSwipe
     self.disableFunctions = disableFunctions
     self._pressing = pressing
@@ -92,6 +94,7 @@ struct SwipeActionsModifier: ViewModifier {
               }
             }
               .frame(maxWidth: .infinity, maxHeight: .infinity)
+              .offset(y: offsetY ?? 0)
               .allowsHitTesting(false)
           )
       }
@@ -194,8 +197,9 @@ struct SwipeActionsModifier: ViewModifier {
 }
 
 extension View {
-  func swipyActions(disableSwipe: Bool = false, disableFunctions: Bool = false, pressing: Binding<Bool>, parentDragging: Binding<Bool>? = nil, parentOffsetX: Binding<CGFloat>? = nil, onTap: (() -> Void)? = nil, leftActionIcon: String = "arrow.down", rightActionIcon: String = "arrow.up", secondActionIcon: String = "arrowshape.turn.up.left.fill", leftActionHandler: (()->())? = nil, rightActionHandler: (()->())? = nil, secondActionHandler: (()->())? = nil, disabled: Bool = false) -> some View {
+  func swipyActions(offsetY: CGFloat? = nil, disableSwipe: Bool = false, disableFunctions: Bool = false, pressing: Binding<Bool>, parentDragging: Binding<Bool>? = nil, parentOffsetX: Binding<CGFloat>? = nil, onTap: (() -> Void)? = nil, leftActionIcon: String = "arrow.down", rightActionIcon: String = "arrow.up", secondActionIcon: String = "arrowshape.turn.up.left.fill", leftActionHandler: (()->())? = nil, rightActionHandler: (()->())? = nil, secondActionHandler: (()->())? = nil, disabled: Bool = false) -> some View {
     self.modifier(SwipeActionsModifier(
+      offsetY: offsetY,
       disableSwipe: disableSwipe,
       disableFunctions: disableFunctions,
       pressing: pressing,

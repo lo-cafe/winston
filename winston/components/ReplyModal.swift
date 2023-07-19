@@ -33,7 +33,6 @@ class TextFieldObserver : ObservableObject {
 
 struct ReplyModalComment: View {
   @ObservedObject var comment: Comment
-  @State var disableScroll = false
   var body: some View {
     ReplyModal(thingFullname: comment.data?.name ?? "", action: { endLoading, text in
       if let _ = comment.typePrefix {
@@ -48,7 +47,7 @@ struct ReplyModalComment: View {
       }
     }) {
       VStack {
-        CommentLink(indentLines: 0, disableScroll: $disableScroll, showReplies: false, comment: comment)
+        CommentLink(indentLines: 0, showReplies: false, comment: comment)
       }
     }
   }
@@ -83,7 +82,6 @@ struct ReplyModal<Content: View>: View {
   @State var currentDraft: ReplyDraft?
   @State var editorHeight: CGFloat = 200
   @State var loading = false
-  @State var disableScroll = false
   @State private var selection: Backport.PresentationDetent = .medium
   
   @FetchRequest(sortDescriptors: []) var drafts: FetchedResults<ReplyDraft>
@@ -176,7 +174,7 @@ struct ReplyModal<Content: View>: View {
       .backport.toolbar {
         Backport.ToolbarItem {
           HStack(spacing: 0) {
-            MasterButton(icon: "trash.fill", mode: .subtle, color: .primary, textColor: .red, shrinkHoverEffect: true, height: 52, proportional: .circle) {
+            MasterButton(icon: "trash.fill", mode: .subtle, color: .primary, textColor: .red, shrinkHoverEffect: true, height: 52, proportional: .circle, disabled: textWrapper.replyText == "") {
               withAnimation(spring) {
                 alertExit = true
               }

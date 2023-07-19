@@ -76,6 +76,10 @@ struct Tabber: View {
         withAnimation(spring) {
           credModalOpen = true
         }
+      } else if redditAPI.loggedUser.accessToken != nil && redditAPI.loggedUser.refreshToken != nil {
+        Task {
+          await redditAPI.fetchMe(force: true)
+        }
       }
     }
     .onChange(of: redditAPI.loggedUser) { user in

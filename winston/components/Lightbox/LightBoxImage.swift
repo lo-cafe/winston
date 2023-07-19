@@ -122,7 +122,7 @@ struct LightBoxImage: View {
         
         Spacer()
         
-        HStack {
+        HStack(spacing: 12) {
           LightBoxButton(icon: "square.and.arrow.down.fill") {
             withAnimation(spring) {
               loading = true
@@ -139,7 +139,7 @@ struct LightBoxImage: View {
         }
         .frame(maxWidth: .infinity)
       }
-      .padding(.bottom, 24)
+      .padding(.bottom, 32)
       .padding(.top, 64)
       .overlay(
         !loading && !done

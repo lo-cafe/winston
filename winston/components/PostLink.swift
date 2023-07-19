@@ -119,7 +119,7 @@ struct PostLink: View {
           
           Spacer()
           
-          HStack(alignment: .center, spacing: 8) {
+          HStack(alignment: .center, spacing: 0) {
             MasterButton(icon: "arrow.up", mode: .subtle, color: .white, colorHoverEffect: .animated, textColor: data.likes != nil && data.likes! ? .orange : .gray, textSize: 22, proportional: .circle) {
               Task {
                 _ = await post.vote(action: .up)
@@ -132,6 +132,9 @@ struct PostLink: View {
             Text(formatBigNumber(downup))
               .foregroundColor(downup == 0 ? .gray : downup > 0 ? .orange : .blue)
               .fontSize(16, .semibold)
+              .padding(.horizontal, 12)
+              .viewVotes(data.ups, data.downs)
+              .zIndex(10)
             
             MasterButton(icon: "arrow.down", mode: .subtle, color: .white, colorHoverEffect: .animated, textColor: data.likes != nil && !data.likes! ? .blue : .gray, textSize: 22, proportional: .circle) {
               Task {

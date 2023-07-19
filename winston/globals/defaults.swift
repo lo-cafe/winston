@@ -20,6 +20,7 @@ extension Defaults.Keys {
   static let preferenceShowPostsCards = Key<Bool>("preferenceShowPostsCards", default: true)
   static let preferenceShowCommentsAvatars = Key<Bool>("preferenceShowCommentsAvatars", default: true)
   static let preferenceShowCommentsCards = Key<Bool>("preferenceShowCommentsCards", default: true)
+  static let enableVotesPopover = Key<Bool>("preferenceShowCommentsCards", default: true)
 }
 
 extension UIScreen {

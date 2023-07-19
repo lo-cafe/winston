@@ -90,23 +90,25 @@ extension Comment {
   }
   
   func loadChildren(parent: CommentParentElement, postFullname: String) async {
-    if let id = data?.id, let kind = kind, kind == "more", let data = data, let count = data.count, let parent_id = data.parent_id, let childrenIDS = data.children {
+    if let kind = kind, kind == "more", let data = data, let count = data.count, let parent_id = data.parent_id, let childrenIDS = data.children {
+      var actualID = id
+      actualID.removeLast(5)
       
       let childrensLimit = 25
       
-      if let children = await redditAPI.fetchMoreReplies(comments: count > 0 ? Array(childrenIDS.prefix(childrensLimit)) : [String(parent_id.dropFirst(3))], moreID: id, postFullname: postFullname, dropFirst: count == 0) {
+      if let children = await redditAPI.fetchMoreReplies(comments: count > 0 ? Array(childrenIDS.prefix(childrensLimit)) : [String(parent_id.dropFirst(3))], moreID: actualID, postFullname: postFullname, dropFirst: count == 0) {
         
-        var parentID = ""
-        switch parent {
-        case .comment(let comment):
-          if let name = comment.data?.name {
-              parentID = name
-          }
-        case .post(_):
-          if let postID = children[0].data?.link_id {
-            parentID = postID
-          }
-        }
+        let parentID = data.parent_id ?? ""
+//        switch parent {
+//        case .comment(let comment):
+//          if let name = comment.data?.parent_id ?? comment.data?.name {
+//              parentID = name
+//          }
+//        case .post(_):
+//          if let postID = children[0].data?.link_id {
+//            parentID = postID
+//          }
+//        }
         
         let loadedComments: [Comment] = nestComments(children, parentID: parentID, api: redditAPI)
 
@@ -123,7 +125,9 @@ extension Comment {
                 } else {
                   self.data?.children?.removeFirst(childrensLimit)
                 }
+//                print(id, loadedComments[0].id)
                 comment.childrenWinston.data.insert(contentsOf: loadedComments, at: index)
+//                print(comment.data?.body)
               }
             }
           case .post(let postArr):

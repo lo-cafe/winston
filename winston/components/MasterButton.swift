@@ -115,7 +115,7 @@ struct MasterButton: View {
       v.contentShape(RoundedRectangle(cornerRadius: btnCornerRadius, style: .continuous))
     }
     //    }
-    .simultaneousGesture(
+    .highPriorityGesture(
       TapGesture()
         .onEnded {
           if confirmLabel != nil {
@@ -139,7 +139,7 @@ struct MasterButton: View {
     //    )
     .disabled(disabled)
     .saturation(disabled ? 0 : 1)
-    .opacity(disabled ? 0.75 : 1)
+    .opacity(disabled ? 0.65 : 1)
     .fixedSize(horizontal: confirming, vertical: confirming)
     //    .getInitialSize($initialSize)
     .frame(maxWidth: fullWidth ? .infinity : confirming ? initialSize.width : nil, alignment: growAnchor)

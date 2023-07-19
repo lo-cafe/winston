@@ -12,7 +12,6 @@ struct MessageLink: View {
   var reset: Bool
   @Default(.preferenceShowPostsCards) var preferenceShowPostsCards
   @Default(.preferenceShowPostsAvatars) var preferenceShowPostsAvatars
-  @State var disableScroll = false
   @State var openedPost = false
   @State var pressed = false
   @ObservedObject var message: Message
@@ -26,7 +25,7 @@ struct MessageLink: View {
           .foregroundColor(data.type == "post_reply" ? .blue : .green)
         VStack(alignment: .leading, spacing: 2) {
           Text("**u/\(author)** \(data.type == "post_reply" ? "commented on your post" : "replied to your comment") in **r/\(subreddit)**")
-          //            CommentLink(lineLimit: 2, disableScroll: $disableScroll, showReplies: false, comment: comment)
+          //            CommentLink(lineLimit: 2, showReplies: false, comment: comment)
           Text((data.body ?? "").md()).lineLimit(2).fontSize(15).opacity(0.75)
         }
       }

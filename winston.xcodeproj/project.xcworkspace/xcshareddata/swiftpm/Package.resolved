@@ -55,6 +55,15 @@
       }
     },
     {
+      "identity" : "popovers",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/aheze/Popovers",
+      "state" : {
+        "revision" : "de44c4dd7271ec6413fe350f7efadb14e5e18dce",
+        "version" : "1.3.2"
+      }
+    },
+    {
       "identity" : "simple-haptics",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/hallee/simple-haptics",

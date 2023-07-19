@@ -16,7 +16,6 @@ struct CommentLinkContent: View {
   var lineLimit: Int?
   @ObservedObject var comment: Comment
   var avatarsURL: [String:String]?
-  var showReplies = true
   @Binding var collapsed: Bool
   @State var showReplyModal = false
   @State var pressing = false
@@ -26,7 +25,6 @@ struct CommentLinkContent: View {
   var body: some View {
     if let data = comment.data {
       Group {
-        
         HStack {
           if data.depth != 0 && indentLines != 0 {
             HStack(alignment:. bottom, spacing: 6) {
@@ -60,10 +58,11 @@ struct CommentLinkContent: View {
                   .foregroundColor(data.likes != nil && !data.likes! ? .blue : .gray)
               }
               .fontSize(14, .medium)
-              .padding(.horizontal, 8)
+              .padding(.horizontal, 6)
               .padding(.vertical, 2)
               .background(Capsule(style: .continuous).fill(.secondary.opacity(0.1)))
-              .allowsHitTesting(false)
+              .viewVotes(ups, downs)
+              .allowsHitTesting(!collapsed)
 
               if collapsed {
                 Image(systemName: "eye.slash.fill")
@@ -80,6 +79,7 @@ struct CommentLinkContent: View {
           .offset(x: offsetX)
           .animation(.interpolatingSpring(stiffness: 1000, damping: 100, initialVelocity: 0), value: offsetX)
           .swipyActions(
+//            offsetY: (bodySize.height / 2),
             disableFunctions: true,
             pressing: $pressing,
             parentDragging: $dragging,
@@ -117,8 +117,8 @@ struct CommentLinkContent: View {
                     MD(str: body)
                   }
                 }
-                .animation(nil, value: collapsed)
-                .allowsHitTesting(false)
+//                .animation(nil, value: collapsed)
+//                .allowsHitTesting(false)
               }
               .frame(maxWidth: .infinity, alignment: .topLeading)
               .offset(x: offsetX)
@@ -142,8 +142,8 @@ struct CommentLinkContent: View {
           .sheet(isPresented: $showReplyModal) {
             ReplyModalComment(comment: comment)
           }
-          .measureOnce($bodySize)
-          .if(bodySize != .zero) { $0.frame(height: bodySize.height) }
+//          .measureOnce($bodySize)
+//          .if(bodySize != .zero) { $0.frame(height: bodySize.height) }
           .id("\(data.id)-body")
         }
         

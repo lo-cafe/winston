@@ -15,7 +15,6 @@ import Kingfisher
 struct UserView: View {
   @StateObject var user: User
   @State var loading = true
-  @State var disableScroll = false
   @State var lastActivities: [Either<PostData, CommentData>]?
   @State var contentWidth: CGFloat = 0
   
@@ -111,7 +110,7 @@ struct UserView: View {
                   case .second(let comment):
                     VStack {
                       ShortPostLink(comment: Comment(data: comment, api: user.redditAPI))
-                      CommentLink(disableScroll: $disableScroll, showReplies: false, comment: Comment(data: comment, api: user.redditAPI))
+                      CommentLink(showReplies: false, comment: Comment(data: comment, api: user.redditAPI))
                     }
                     .padding(.horizontal, 12)
                     .padding(.top, 12)

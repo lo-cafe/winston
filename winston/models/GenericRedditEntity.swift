@@ -15,16 +15,17 @@ protocol GenericRedditEntityDataType: Codable, Hashable {
 class GenericRedditEntity<T: GenericRedditEntityDataType>: Identifiable, Hashable, ObservableObject, Codable {
   func hash(into hasher: inout Hasher) {
     hasher.combine(data)
+    hasher.combine(childrenWinston.data)
   }
   
   static func == (lhs: GenericRedditEntity<T>, rhs: GenericRedditEntity<T>) -> Bool {
-    return lhs.id == rhs.id
+    return lhs.id == rhs.id && lhs.kind == rhs.kind
   }
   
   @Published var data: T? {
     didSet {
-      if let id = data?.id {
-        self.id = id
+      if let newID = data?.id {
+        self.id =  kind == "more" ? "\(newID)-more" : newID
       }
     }
   }
@@ -34,7 +35,7 @@ class GenericRedditEntity<T: GenericRedditEntityDataType>: Identifiable, Hashabl
   var kind: String?
   
   enum CodingKeys: CodingKey {
-    case id, loading, typePrefix, kind, data
+    case id, loading, typePrefix, kind, data, childrenWinstonData
   }
 
   required init(from decoder: Decoder) throws {
@@ -61,7 +62,7 @@ class GenericRedditEntity<T: GenericRedditEntityDataType>: Identifiable, Hashabl
   @Published var childrenWinston: ObservableArray<GenericRedditEntity<T>> = ObservableArray<GenericRedditEntity<T>>(array: [])
   
   init(id: String, api: RedditAPI, typePrefix: String?) {
-    self.id = id
+    self.id = kind == "more" ? "\(id)-more" : id
     self.redditAPI = api
     self.typePrefix = typePrefix
     anyCancellable = childrenWinston.objectWillChange.sink { [weak self] (_) in
@@ -72,6 +73,17 @@ class GenericRedditEntity<T: GenericRedditEntityDataType>: Identifiable, Hashabl
   init(data: T, api: RedditAPI, typePrefix: String?) {
     self.data = data
     self.id = data.id
+    self.redditAPI = api
+    self.typePrefix = typePrefix
+    anyCancellable = childrenWinston.objectWillChange.sink { [weak self] (_) in
+        self?.objectWillChange.send()
+    }
+  }
+  
+  init(data: T, api: RedditAPI, typePrefix: String?, kind: String? = nil) {
+    self.data = data
+    self.kind = kind
+    self.id = kind == "more" ? "\(data.id)-more" : data.id
     self.redditAPI = api
     self.typePrefix = typePrefix
     anyCancellable = childrenWinston.objectWillChange.sink { [weak self] (_) in

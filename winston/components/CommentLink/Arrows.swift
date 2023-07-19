@@ -48,7 +48,7 @@ struct Arrows: View {
             .stroke(Color("divider"), style: StrokeStyle(lineWidth: 2, lineCap: .round))
             .padding(.vertical, -2)
         case .empty:
-          EmptyView()
+          Color.clear
         }
       }
       .padding(.all, 1)

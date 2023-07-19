@@ -12,12 +12,13 @@ func nestComments(_ inputComments: [ListingChild<CommentData>], parentID: String
   var commentsMap: [String:Comment] = [:]
   
   inputComments.compactMap { x in
-    if let data = x.data, let name = data.name {
+    if let data = x.data, let name = data.name, let commentParentID = data.parent_id, !name.hasSuffix(parentID) {
       let newComment = Comment(data: data, api: api, kind: x.kind)
-      rootComments.append(newComment)
       commentsMap[name] = newComment
-      if parentID != name {
+      if parentID != commentParentID {
         return newComment
+      } else {
+        rootComments.append(newComment)
       }
     }
     return nil
@@ -26,6 +27,5 @@ func nestComments(_ inputComments: [ListingChild<CommentData>], parentID: String
       parent.childrenWinston.data.append(x)
     }
   }
-  
   return rootComments
 }

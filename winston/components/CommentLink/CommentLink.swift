@@ -53,14 +53,13 @@ class SubCommentsReferencesContainer: ObservableObject {
 }
 
 struct CommentLink: View {
-  @Default(.preferenceShowCommentsCards) var preferenceShowCommentsCards
+  //  @Default(.preferenceShowCommentsCards) var preferenceShowCommentsCards
   var post: Post?
   var subreddit: Subreddit?
   var arrowKinds: [ArrowKind] = []
   var indentLines: Int? = nil
   var lineLimit: Int?
   var lastOne = true
-  @Binding var disableScroll: Bool
   var avatarsURL: [String:String]? = nil
   var disableShapeShift = true
   var postFullname: String?
@@ -103,6 +102,7 @@ struct CommentLink: View {
     if let data = comment.data {
       Group {
         
+        
         Group {
           if let kind = comment.kind, kind == "more" {
             if comment.id == "_" {
@@ -113,24 +113,27 @@ struct CommentLink: View {
               CommentLinkMore(arrowKinds: arrowKinds, comment: comment, postFullname: postFullname, parentElement: parentElement, indentLines: indentLines)
             }
           } else {
-            CommentLinkContent(arrowKinds: arrowKinds, indentLines: indentLines, lineLimit: lineLimit, comment: comment, avatarsURL: avatarsURL, showReplies: showReplies, collapsed: $collapsed)
+            CommentLinkContent(arrowKinds: arrowKinds, indentLines: indentLines, lineLimit: lineLimit, comment: comment, avatarsURL: avatarsURL, collapsed: $collapsed)
           }
         }
-//        .frame(width: UIScreen.screenWidth - 16)
-//        .fixedSize(horizontal: true, vertical: false)
-//        .introspect(.listCell, on: .iOS(.v16, .v17)) { cell in
-//          cell.frame.size.width = UIScreen.screenWidth - 16
-//        }
-//        .fixedSize(horizontal: true, vertical: false)
+        //        .disclosureGroupStyle(CommentLinkDisclosure())
+        //        .frame(width: UIScreen.screenWidth - 16)
+        //        .fixedSize(horizontal: true, vertical: false)
+        //        .introspect(.listCell, on: .iOS(.v16, .v17)) { cell in
+        //          cell.frame.size.width = UIScreen.screenWidth - 16
+        //        }
+        //        .fixedSize(horizontal: true, vertical: false)
         
-        if let _ = data.replies, !collapsed && showReplies {
+        if !collapsed && showReplies {
           ForEach(Array(comment.childrenWinston.data.enumerated()), id: \.element.id) { index, commentChild in
             let childrenCount = comment.childrenWinston.data.count
             if let _ = commentChild.data {
-              CommentLink(arrowKinds: arrowKinds.map { $0.child } + [(childrenCount - 1 == index ? ArrowKind.curve : ArrowKind.straightCurve)], disableScroll: $disableScroll, disableShapeShift: index == 0, postFullname: postFullname, parentElement: .comment(comment), comment: commentChild)
+              CommentLink(arrowKinds: arrowKinds.map { $0.child } + [(childrenCount - 1 == index ? ArrowKind.curve : ArrowKind.straightCurve)], disableShapeShift: index == 0, postFullname: postFullname, parentElement: .comment(comment), comment: commentChild)
             }
           }
         }
+        
+        
         
       }
       

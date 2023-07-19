@@ -101,6 +101,8 @@
 		ECE2859F2A501CD4009CF9DD /* fetchMe.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECE2859E2A501CD4009CF9DD /* fetchMe.swift */; };
 		ECE285A12A50EC9E009CF9DD /* Badge.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECE285A02A50EC9E009CF9DD /* Badge.swift */; };
 		ECE285A82A513342009CF9DD /* ReplyModal.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECE285A72A513342009CF9DD /* ReplyModal.swift */; };
+		ECE449712A67610A00E2A3B7 /* VotesPopover.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECE449702A67610A00E2A3B7 /* VotesPopover.swift */; };
+		ECE449742A67648E00E2A3B7 /* Popovers in Frameworks */ = {isa = PBXBuildFile; productRef = ECE449732A67648E00E2A3B7 /* Popovers */; };
 		ECEFC25B2A5DAA970003C6C4 /* searchUsers.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECEFC25A2A5DAA970003C6C4 /* searchUsers.swift */; };
 		ECEFC25D2A5DADDC0003C6C4 /* searchInSubreddit.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECEFC25C2A5DADDC0003C6C4 /* searchInSubreddit.swift */; };
 		ECEFC2612A5DBC6A0003C6C4 /* PostViewContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECEFC2602A5DBC6A0003C6C4 /* PostViewContainer.swift */; };
@@ -209,6 +211,7 @@
 		ECE2859E2A501CD4009CF9DD /* fetchMe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = fetchMe.swift; sourceTree = "<group>"; };
 		ECE285A02A50EC9E009CF9DD /* Badge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Badge.swift; sourceTree = "<group>"; };
 		ECE285A72A513342009CF9DD /* ReplyModal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReplyModal.swift; sourceTree = "<group>"; };
+		ECE449702A67610A00E2A3B7 /* VotesPopover.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VotesPopover.swift; sourceTree = "<group>"; };
 		ECEFC25A2A5DAA970003C6C4 /* searchUsers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = searchUsers.swift; sourceTree = "<group>"; };
 		ECEFC25C2A5DADDC0003C6C4 /* searchInSubreddit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = searchInSubreddit.swift; sourceTree = "<group>"; };
 		ECEFC2602A5DBC6A0003C6C4 /* PostViewContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostViewContainer.swift; sourceTree = "<group>"; };
@@ -242,6 +245,7 @@
 				EC593B092A47B42D002D6454 /* KeychainAccess in Frameworks */,
 				EC0854332A4CF24600E88389 /* SwiftUIBackports in Frameworks */,
 				ECE285972A4FD6FC009CF9DD /* SwiftDate in Frameworks */,
+				ECE449742A67648E00E2A3B7 /* Popovers in Frameworks */,
 				EC593B002A47AFC1002D6454 /* Defaults in Frameworks */,
 				EC08543D2A4CFE1C00E88389 /* SwiftUIIntrospect in Frameworks */,
 				ECA30A352A62276B00BB19D1 /* MarkdownUI in Frameworks */,
@@ -309,6 +313,7 @@
 			isa = PBXGroup;
 			children = (
 				EC5EDA702A4DA94A00140A08 /* SwipeActions.swift */,
+				ECE449702A67610A00E2A3B7 /* VotesPopover.swift */,
 				EC2D275B2A4FBF00006444D6 /* ShrinkOnTap.swift */,
 				EC9269F62A52B02E003F33B1 /* Shrinkable.swift */,
 				ECEFC26A2A5E00B30003C6C4 /* floating.swift */,
@@ -569,6 +574,7 @@
 				EC9269F12A51A732003F33B1 /* HighlightedTextEditor */,
 				ECD6E9BA2A5B32E100D499E7 /* Kingfisher */,
 				ECA30A342A62276B00BB19D1 /* MarkdownUI */,
+				ECE449732A67648E00E2A3B7 /* Popovers */,
 			);
 			productName = winston;
 			productReference = EC593AD42A4673B2002D6454 /* winston.app */;
@@ -610,6 +616,7 @@
 				EC9269F02A51A732003F33B1 /* XCRemoteSwiftPackageReference "HighlightedTextEditor" */,
 				ECD6E9B92A5B32E100D499E7 /* XCRemoteSwiftPackageReference "Kingfisher" */,
 				ECA30A332A62276B00BB19D1 /* XCRemoteSwiftPackageReference "swift-markdown-ui" */,
+				ECE449722A67648E00E2A3B7 /* XCRemoteSwiftPackageReference "Popovers" */,
 			);
 			productRefGroup = EC593AD52A4673B2002D6454 /* Products */;
 			projectDirPath = "";
@@ -736,6 +743,7 @@
 				EC0854202A4BFF0700E88389 /* fetchUser.swift in Sources */,
 				EC2D27652A4FCE42006444D6 /* SubredditInfo.swift in Sources */,
 				EC0854132A4BE13000E88389 /* PostView.swift in Sources */,
+				ECE449712A67610A00E2A3B7 /* VotesPopover.swift in Sources */,
 				EC0854432A4D6A4800E88389 /* MasterButton.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1040,6 +1048,14 @@
 				minimumVersion = 7.0.0;
 			};
 		};
+		ECE449722A67648E00E2A3B7 /* XCRemoteSwiftPackageReference "Popovers" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/aheze/Popovers";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -1097,6 +1113,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = ECE285952A4FD6FC009CF9DD /* XCRemoteSwiftPackageReference "SwiftDate" */;
 			productName = SwiftDate;
+		};
+		ECE449732A67648E00E2A3B7 /* Popovers */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = ECE449722A67648E00E2A3B7 /* XCRemoteSwiftPackageReference "Popovers" */;
+			productName = Popovers;
 		};
 /* End XCSwiftPackageProductDependency section */
 

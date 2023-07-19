@@ -15,7 +15,7 @@ struct CommentLinkMore: View {
   var indentLines: Int?
   @State var loadMoreLoading = false
   var body: some View {
-    if let data = comment.data, let count = data.children?.count, let parentElement = parentElement, count > 0 {
+    if let data = comment.data, let count = data.count, let parentElement = parentElement, count > 0 {
       HStack {
         if data.depth != 0 && indentLines != 0 {
           HStack(alignment:. bottom, spacing: 6) {
@@ -55,7 +55,7 @@ struct CommentLinkMore: View {
       }
       .frame(maxWidth: .infinity, alignment: .leading)
       .allowsHitTesting(!loadMoreLoading)
-      .id(comment.id)
+      .id("\(comment.id)-more")
     } else {
       Text("Depressive load more :(")
     }

@@ -1,8 +1,6 @@
-- Fixed possible crash on refresh access token (usually happened on startup)
-- Fixed big buttons background on light theme
-- Comments with cards reformulated (I know, there's too much spacing, my bad, it's a WIP), they should not lag, blink nor jump around anymore.
-- Load more comments fully working
-- Auto scroll to highlighted comment
-- Comment dedicated post view
-- Fixed home taking you to r/home lol
-- I didn't fix the bug that makes the subreddits list not load yet, I'm working on that 👌
+- Fixes a nesting bug when loading more comments
+- Improves appear/disappear animation of comments
+- Now you can tap on votes numbers to find how many ups and downs something has (try dragging the little popup 👾)
+- Fixed a blink in the avatar when first replying something after starting the app up
+- General design tweaks
+- I promise the fix for the missing subs is coming, don't be mad please 🏃
