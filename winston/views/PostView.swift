@@ -198,7 +198,6 @@ struct PostView: View {
         Group {
           Section {
             PostContent(post: post)
-              .padding(.top, preferenceShowCommentsCards ? -24 : 0)
 
             Text("Comments")
               .padding(.top, 16)
