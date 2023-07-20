@@ -13,6 +13,7 @@ import Combine
 let alphabetLetters = Array("ABCDEFGHIJKLMNOPQRSTUVWXYZ").map { String($0) }
 
 struct SubItem: View {
+  @Environment(\.editMode) var editMode
   var openSub: (Subreddit) -> ()
   @ObservedObject var sub: Subreddit
   var body: some View {
@@ -111,6 +112,7 @@ struct Subreddits: View {
   @StateObject var selectedSubreddit = SelectedSubredditContainer()
   @State var selectedSubActive = false
   @State var loaded = false
+  @State var editMode: EditMode = .inactive
   
   func sort(_ subs: [ListingChild<SubredditData>]) -> [String: [Subreddit]] {
     return Dictionary(grouping: subs.compactMap { $0.data }, by: { String($0.display_name?.prefix(1) ?? "").uppercased() })
@@ -206,6 +208,7 @@ struct Subreddits: View {
           EditButton()
         }
       }
+      .environment(\.editMode, $editMode)
       //        .onDelete(perform: deleteItems)
     }
   }
@@ -213,7 +216,7 @@ struct Subreddits: View {
   func deleteFromFavorites(at offsets: IndexSet) {
     for i in offsets {
       Task {
-        await favoritesArr[i].subscribeToggle()
+        await favoritesArr[i].subscribeToggle(optimistic: true)
       }
     }
   }
@@ -222,7 +225,7 @@ struct Subreddits: View {
     for i in offsets {
       if let sub = subsDict.data[letter]?[i] {
         Task {
-          await sub.subscribeToggle()
+          await sub.subscribeToggle(optimistic: true)
         }
       }
     }
