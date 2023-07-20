@@ -40,13 +40,14 @@ struct SubredditRulesTab: View {
                   .background(.blue, in: Circle())
                   .foregroundColor(.white)
                 
-                VStack {
+                VStack(alignment: .leading) {
                   Text(rule.short_name ?? "Unamed rule")
                     .fontSize(22, .bold)
                   
                   MD(str: rule.description ?? "Rule without description.", fontSize: 16)
                 }
               }
+              .multilineTextAlignment(.leading)
             }
           }
         } else {

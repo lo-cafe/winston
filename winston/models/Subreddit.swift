@@ -43,7 +43,7 @@ extension Subreddit {
     if let data = data, let subscribedStatus = data.user_is_subscriber {
       if optimistic {
         await MainActor.run {
-          withAnimation(spring) {
+          withAnimation(.default) {
             if subscribedStatus {
               Defaults[.subreddits] = Defaults[.subreddits].filter { sub in
                 sub.data?.id != self.id
@@ -57,11 +57,11 @@ extension Subreddit {
       let result = await redditAPI.subscribe(subscribedStatus ? .unsub : .sub, subFullname: data.name)
       if result {
         await MainActor.run {
-          withAnimation(spring) {
-            self.data?.user_is_subscriber = !subscribedStatus
-            cb?(true)
-          }
           if !optimistic {
+            withAnimation(spring) {
+              self.data?.user_is_subscriber = !subscribedStatus
+              cb?(true)
+            }
             doThisAfter(0.4) {
               if subscribedStatus {
                 Defaults[.subreddits] = Defaults[.subreddits].filter { sub in
@@ -77,15 +77,15 @@ extension Subreddit {
         if optimistic {
           await MainActor.run {
             withAnimation(spring) {
-          if !subscribedStatus {
-            Defaults[.subreddits] = Defaults[.subreddits].filter { sub in
-              sub.data?.id != self.id
+              if !subscribedStatus {
+                Defaults[.subreddits] = Defaults[.subreddits].filter { sub in
+                  sub.data?.id != self.id
+                }
+              } else if !Defaults[.subreddits].contains(where: { $0.data?.id == self.id }) {
+                Defaults[.subreddits].append(ListingChild(kind: "t5", data: data))
+              }
             }
-          } else {
-            Defaults[.subreddits].append(ListingChild(kind: "t5", data: data))
           }
-        }
-        }
         }
         cb?(false)
       }
