@@ -76,7 +76,12 @@ struct SubredditPosts: View {
       .listRowSeparator(preferenceShowPostsCards ? .hidden : .automatic)
       .listRowBackground(Color.clear)
     }
+    .introspect(.list, on: .iOS(.v16, .v17)) { list in
+        list.backgroundColor = UIColor.systemGroupedBackground
+    }
     .listStyle(.plain)
+//    .scrollContentBackground(.hidden)
+//    .if(!preferenceShowPostsCards) { $0.listStyle(.plain) }
     .overlay(
       Button {
         
