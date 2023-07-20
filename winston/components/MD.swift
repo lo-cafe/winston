@@ -11,6 +11,7 @@ import MarkdownUI
 
 struct MD: View {
   var str: String
+  var fontSize: CGFloat = 15
   var lineLimit: Int?
   var body: some View {
     Markdown(str.stringByDecodingHTMLEntities)
@@ -18,7 +19,7 @@ struct MD: View {
           view.lineLimit(lineLimit!)
       }
       .markdownTextStyle(\.text) {
-        FontSize(15)
+        FontSize(fontSize)
       }
       .markdownBlockStyle(\.paragraph) { configuration in
         configuration.label

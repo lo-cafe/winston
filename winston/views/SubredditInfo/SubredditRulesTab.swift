@@ -1,0 +1,57 @@
+//
+//  SubredditRulesTab.swift
+//  winston
+//
+//  Created by Igor Marcossi on 19/07/23.
+//
+
+import SwiftUI
+
+struct SubredditRulesTab: View {
+  @ObservedObject var subreddit: Subreddit
+  @State var loading = true
+  @State var data: RedditAPI.FetchSubRulesResponse?
+    var body: some View {
+      if loading {
+        ProgressView()
+          .frame(maxWidth: .infinity, minHeight: 400)
+          .listRowBackground(Color.clear)
+          .listRowInsets(EdgeInsets(top: 8, leading: 0, bottom: 8, trailing: 0))
+          .onAppear {
+            Task {
+              if let newData = await subreddit.fetchRules() {
+                withAnimation {
+                  data = newData
+                }
+              }
+              withAnimation {
+                loading = false
+              }
+            }
+          }
+      } else {
+        if let data = data, let rules = data.rules {
+          Section {
+            ForEach(Array(rules.enumerated()), id: \.element.short_name) { i, rule in
+              HStack(alignment: .top, spacing: 12) {
+                Text(String(i + 1))
+                  .frame(width: 24, height: 24)
+                  .fontSize(16, .semibold)
+                  .background(.blue, in: Circle())
+                  .foregroundColor(.white)
+                
+                VStack {
+                  Text(rule.short_name ?? "Unamed rule")
+                    .fontSize(22, .bold)
+                  
+                  MD(str: rule.description ?? "Rule without description.", fontSize: 16)
+                }
+              }
+            }
+          }
+        } else {
+          Text("This sub doesn't have any rules")
+        }
+      }
+    }
+}

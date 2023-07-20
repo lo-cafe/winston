@@ -27,6 +27,7 @@ struct SubredditIcon: View {
         .background(Color.hex(String((firstNonEmptyString(data.key_color, data.primary_color, "#828282") ?? "").dropFirst(1))), in: Circle())
         .mask(Circle())
         .fontSize(CGFloat(Int(size * 0.535)), .semibold)
+        .foregroundColor(.primary)
     }
   }
 }

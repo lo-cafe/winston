@@ -1,6 +1,4 @@
-- Fixes a nesting bug when loading more comments
-- Improves appear/disappear animation of comments
-- Now you can tap on votes numbers to find how many ups and downs something has (try dragging the little popup 👾)
-- Fixed a blink in the avatar when first replying something after starting the app up
-- General design tweaks
-- I promise the fix for the missing subs is coming, don't be mad please 🏃
+- Favorite/unfavorite subreddits
+- Subscribe/unsubscribe from subreddits
+- A few dezign tweaks like the cards color
+- Added subreddit rules tab in sub info

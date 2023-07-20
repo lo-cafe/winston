@@ -36,16 +36,16 @@ struct MessageLink: View {
         ? nil
         : NavigationLink(destination: PostViewContainer(post: Post(id: getPostId(from: data.context!) ?? "lol", api: message.redditAPI), sub: Subreddit(id: subreddit, api: message.redditAPI), highlightID: actualParentID), isActive: $openedPost, label: { EmptyView() }).buttonStyle(EmptyButtonStyle()).opacity(0).allowsHitTesting(false)
       )
-      .compositingGroup()
-      .opacity(!(data.new ?? false) ? 0.5 : 1)
       .padding(.horizontal, preferenceShowPostsCards ? 16 : 0)
       .padding(.vertical, preferenceShowPostsCards ? 12 : 0)
       .frame(maxWidth: .infinity, alignment: .topLeading)
       .if(preferenceShowPostsCards) { view in
         view
-          .background(RR(20, .secondary.opacity(0.15)).allowsHitTesting(false).allowsHitTesting(false)).allowsHitTesting(false)
+          .background(RR(20, .listBG).allowsHitTesting(false))
           .mask(RR(20, .black))
       }
+      .compositingGroup()
+      .opacity(!(data.new ?? false) ? 0.5 : 1)
       .swipyActions(pressing: $pressed, onTap: {
         openedPost = true
       }, rightActionIcon: !(data.new ?? false) ? "eye.slash.fill" : "eye.fill", rightActionHandler: {

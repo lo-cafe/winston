@@ -82,23 +82,28 @@ struct Search: View {
     GoodNavigator {
       List {
         Group {
-          HStack {
-            SearchOption(activateSearchType: { searchType = .subreddit }, active: searchType == SearchType.subreddit, searchType: .subreddit)
-            SearchOption(activateSearchType: { searchType = .user }, active: searchType == SearchType.user, searchType: .user)
+          Section {
+            HStack {
+              SearchOption(activateSearchType: { searchType = .subreddit }, active: searchType == SearchType.subreddit, searchType: .subreddit)
+              SearchOption(activateSearchType: { searchType = .user }, active: searchType == SearchType.user, searchType: .user)
+            }
+            .id("options")
           }
           
-          if loading {
-            ProgressView()
-              .frame(maxWidth: .infinity, minHeight: 500)
-          } else {
-            switch searchType {
-            case .subreddit:
-              ForEach(resultsSubs.data) { sub in
-                SubredditLink(reset: reset, sub: sub)
-              }
-            case .user:
-              ForEach(resultsUsers.data) { user in
-                UserLink(reset: reset, user: user)
+          Section {
+            if loading {
+              ProgressView()
+                .frame(maxWidth: .infinity, minHeight: 500)
+            } else {
+              switch searchType {
+              case .subreddit:
+                ForEach(resultsSubs.data) { sub in
+                  SubredditLink(reset: reset, sub: sub)
+                }
+              case .user:
+                ForEach(resultsUsers.data) { user in
+                  UserLink(reset: reset, user: user)
+                }
               }
             }
           }
@@ -112,6 +117,12 @@ struct Search: View {
       .searchable(text: $query, placement: .toolbar)
       .onChange(of: searchType) { _ in
         fetch()
+      }
+      .onChange(of: query) { val in
+        if val == "" {
+          resultsSubs.data = []
+          resultsUsers.data = []
+        }
       }
       .refreshable { fetch() }
       .onSubmit(of: .search) { fetch() }

@@ -37,6 +37,7 @@ struct Inbox: View {
           if loading {
             ProgressView()
               .frame(maxWidth: .infinity, minHeight: 500)
+              .id("loading")
           } else {
             ForEach(messages.data, id: \.self.id) { message in
               MessageLink(reset: reset, message: message)

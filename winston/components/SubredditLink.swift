@@ -29,7 +29,7 @@ struct SubredditLink: View {
         .padding(.horizontal, 16)
         .padding(.vertical, 14)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(RR(20, .secondary.opacity(0.15)))
+        .background(RR(20, .listBG))
         .onChange(of: reset) { _ in opened = false }
         .onTapGesture {
           opened = true
