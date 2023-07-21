@@ -31,6 +31,7 @@ struct SubscribeButton: View {
           
         }
         .fontSize(16, .semibold)
+        .foregroundColor(subscribed ? .white : .primary)
         .padding(.horizontal, 16)
         .padding(.vertical, 12)
         .background(RR(16, subscribed ? .green : .secondary.opacity(0.2)))

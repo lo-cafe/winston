@@ -90,6 +90,8 @@
 		ECC10C772A4A874C009124BE /* RR.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECC10C762A4A874C009124BE /* RR.swift */; };
 		ECD1FC072A56D46D00723016 /* ObservableArray.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECD1FC062A56D46D00723016 /* ObservableArray.swift */; };
 		ECD1FC092A570B4F00723016 /* PostFloatingPill.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECD1FC082A570B4F00723016 /* PostFloatingPill.swift */; };
+		ECD2A3772A69C26900EDD02D /* consts.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECD2A3762A69C26900EDD02D /* consts.swift */; };
+		ECD2A37D2A69CBAD00EDD02D /* WaterfallGrid in Frameworks */ = {isa = PBXBuildFile; productRef = ECD2A37C2A69CBAD00EDD02D /* WaterfallGrid */; };
 		ECD6E9BB2A5B32E100D499E7 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = ECD6E9BA2A5B32E100D499E7 /* Kingfisher */; };
 		ECDBA8C32A4A820800FB42DB /* Post.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECDBA8C22A4A820800FB42DB /* Post.swift */; };
 		ECDBA8C52A4A835800FB42DB /* Subreddit.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECDBA8C42A4A835800FB42DB /* Subreddit.swift */; };
@@ -209,6 +211,7 @@
 		ECC10C762A4A874C009124BE /* RR.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RR.swift; sourceTree = "<group>"; };
 		ECD1FC062A56D46D00723016 /* ObservableArray.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObservableArray.swift; sourceTree = "<group>"; };
 		ECD1FC082A570B4F00723016 /* PostFloatingPill.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostFloatingPill.swift; sourceTree = "<group>"; };
+		ECD2A3762A69C26900EDD02D /* consts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = consts.swift; sourceTree = "<group>"; };
 		ECDBA8C22A4A820800FB42DB /* Post.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Post.swift; sourceTree = "<group>"; };
 		ECDBA8C42A4A835800FB42DB /* Subreddit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Subreddit.swift; sourceTree = "<group>"; };
 		ECDBA8C62A4A83DB00FB42DB /* SubredditPosts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubredditPosts.swift; sourceTree = "<group>"; };
@@ -258,6 +261,7 @@
 				EC593B0C2A47B801002D6454 /* Alamofire in Frameworks */,
 				EC593B092A47B42D002D6454 /* KeychainAccess in Frameworks */,
 				EC0854332A4CF24600E88389 /* SwiftUIBackports in Frameworks */,
+				ECD2A37D2A69CBAD00EDD02D /* WaterfallGrid in Frameworks */,
 				ECE285972A4FD6FC009CF9DD /* SwiftDate in Frameworks */,
 				ECE449742A67648E00E2A3B7 /* Popovers in Frameworks */,
 				EC593B002A47AFC1002D6454 /* Defaults in Frameworks */,
@@ -414,6 +418,7 @@
 			children = (
 				EC593B912A494E7F002D6454 /* defaults.swift */,
 				ECA30A3A2A6329CC00BB19D1 /* colors.swift */,
+				ECD2A3762A69C26900EDD02D /* consts.swift */,
 			);
 			path = globals;
 			sourceTree = "<group>";
@@ -604,6 +609,7 @@
 				ECD6E9BA2A5B32E100D499E7 /* Kingfisher */,
 				ECA30A342A62276B00BB19D1 /* MarkdownUI */,
 				ECE449732A67648E00E2A3B7 /* Popovers */,
+				ECD2A37C2A69CBAD00EDD02D /* WaterfallGrid */,
 			);
 			productName = winston;
 			productReference = EC593AD42A4673B2002D6454 /* winston.app */;
@@ -646,6 +652,7 @@
 				ECD6E9B92A5B32E100D499E7 /* XCRemoteSwiftPackageReference "Kingfisher" */,
 				ECA30A332A62276B00BB19D1 /* XCRemoteSwiftPackageReference "swift-markdown-ui" */,
 				ECE449722A67648E00E2A3B7 /* XCRemoteSwiftPackageReference "Popovers" */,
+				ECD2A37B2A69CBAD00EDD02D /* XCRemoteSwiftPackageReference "WaterfallGrid" */,
 			);
 			productRefGroup = EC593AD52A4673B2002D6454 /* Products */;
 			projectDirPath = "";
@@ -775,6 +782,7 @@
 				ECE449832A68A22200E2A3B7 /* favorite.swift in Sources */,
 				ECDBA8C52A4A835800FB42DB /* Subreddit.swift in Sources */,
 				EC0854242A4BFF6E00E88389 /* fetchPostComments.swift in Sources */,
+				ECD2A3772A69C26900EDD02D /* consts.swift in Sources */,
 				EC0854202A4BFF0700E88389 /* fetchUser.swift in Sources */,
 				EC2D27652A4FCE42006444D6 /* SubredditInfo.swift in Sources */,
 				EC0854132A4BE13000E88389 /* PostView.swift in Sources */,
@@ -1068,6 +1076,14 @@
 				minimumVersion = 2.0.0;
 			};
 		};
+		ECD2A37B2A69CBAD00EDD02D /* XCRemoteSwiftPackageReference "WaterfallGrid" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/paololeonardi/WaterfallGrid.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.0;
+			};
+		};
 		ECD6E9B92A5B32E100D499E7 /* XCRemoteSwiftPackageReference "Kingfisher" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/onevcat/Kingfisher.git";
@@ -1139,6 +1155,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = ECA30A332A62276B00BB19D1 /* XCRemoteSwiftPackageReference "swift-markdown-ui" */;
 			productName = MarkdownUI;
+		};
+		ECD2A37C2A69CBAD00EDD02D /* WaterfallGrid */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = ECD2A37B2A69CBAD00EDD02D /* XCRemoteSwiftPackageReference "WaterfallGrid" */;
+			productName = WaterfallGrid;
 		};
 		ECD6E9BA2A5B32E100D499E7 /* Kingfisher */ = {
 			isa = XCSwiftPackageProductDependency;

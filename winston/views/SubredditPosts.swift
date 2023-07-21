@@ -9,6 +9,7 @@ import SwiftUI
 import Defaults
 import SwiftUIIntrospect
 import Kingfisher
+import WaterfallGrid
 
 struct SubredditPosts: View {
   @Default(.preferenceShowPostsCards) var preferenceShowPostsCards
@@ -55,33 +56,52 @@ struct SubredditPosts: View {
   }
   
   var body: some View {
-    
-    List {
-      Group {
-        if loading && posts.data.count == 0 {
-          ProgressView()
-            .frame(maxWidth: .infinity, minHeight: 500)
-        } else {
-          ForEach(Array(posts.data.enumerated()), id: \.self.element.id) { i, post in
-            PostLink(post: post, sub: subreddit)
-              .if(Int(Double(posts.data.count) * 0.75) == i) { view in
-                view.onAppear {
-                  fetch(loadMore: true)
-                }
-              }
+    Group {
+      if IPAD {
+        ScrollView(.vertical) {
+          WaterfallGrid(posts.data, id: \.self.id) { el in
+            PostLink(post: el, sub: subreddit)
           }
+          .gridStyle(columns: 2, spacing: 16, animation: .easeInOut(duration: 0.5))
+          .scrollOptions(direction: .vertical)
+          .padding(.horizontal, 16)
         }
+        .introspect(.scrollView, on: .iOS(.v13, .v14, .v15, .v16, .v17)) { scrollView in
+          scrollView.backgroundColor = UIColor.systemGroupedBackground
+        }
+      } else {
+        List {
+          Group {
+            if loading && posts.data.count == 0 {
+              ProgressView()
+                .frame(maxWidth: .infinity, minHeight: 500)
+            } else {
+              ForEach(Array(posts.data.enumerated()), id: \.self.element.id) { i, post in
+                PostLink(post: post, sub: subreddit)
+                  .if(Int(Double(posts.data.count) * 0.75) == i) { view in
+                    view.onAppear {
+                      fetch(loadMore: true)
+                    }
+                  }
+              }
+            }
+          }
+          .listRowInsets(EdgeInsets(top: 8, leading: IPAD ? 0 : 8, bottom: 8, trailing: IPAD ? 0 : 8))
+          .listRowSeparator(preferenceShowPostsCards ? .hidden : .automatic)
+          .listRowBackground(Color.clear)
+        }
+        .introspect(.list, on: .iOS(.v15)) { list in
+          list.backgroundColor = UIColor.systemGroupedBackground
+        }
+        .introspect(.list, on: .iOS(.v16, .v17)) { list in
+          list.backgroundColor = UIColor.systemGroupedBackground
+        }
+        //    .listStyle(IPAD ? .grouped : .plain)
+        //    .scrollContentBackground(.hidden)
+        .if(!IPAD) { $0.listStyle(.plain) }
+        .if(IPAD) { $0.listStyle(.insetGrouped) }
       }
-      .listRowInsets(EdgeInsets(top: 8, leading: 8, bottom: 8, trailing: 8))
-      .listRowSeparator(preferenceShowPostsCards ? .hidden : .automatic)
-      .listRowBackground(Color.clear)
     }
-    .introspect(.list, on: .iOS(.v16, .v17)) { list in
-        list.backgroundColor = UIColor.systemGroupedBackground
-    }
-    .listStyle(.plain)
-//    .scrollContentBackground(.hidden)
-//    .if(!preferenceShowPostsCards) { $0.listStyle(.plain) }
     .overlay(
       Button {
         
@@ -168,3 +188,4 @@ struct SubredditPosts: View {
     //        }
   }
 }
+

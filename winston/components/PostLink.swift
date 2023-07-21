@@ -28,7 +28,7 @@ struct Flair: View {
 struct PostLink: View {
   @Default(.preferenceShowPostsCards) var preferenceShowPostsCards
   @Default(.preferenceShowPostsAvatars) var preferenceShowPostsAvatars
-  @StateObject var post: Post
+  @ObservedObject var post: Post
   @ObservedObject var sub: Subreddit
   var showSub = false
   var scrollPos: CGFloat?

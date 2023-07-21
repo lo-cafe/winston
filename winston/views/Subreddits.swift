@@ -16,6 +16,7 @@ struct SubItem: View {
   @Environment(\.editMode) var editMode
   var openSub: (Subreddit) -> ()
   @ObservedObject var sub: Subreddit
+  var selected: Bool
   var body: some View {
     if let data = sub.data {
       let favorite = data.user_has_favorited ?? false
@@ -25,12 +26,11 @@ struct SubItem: View {
         HStack {
           SubredditIcon(data: data)
           Text(data.display_name ?? "")
-            .foregroundColor(.primary)
           
           Spacer()
           
           Image(systemName: "star.fill")
-            .foregroundColor(favorite ? .blue : .secondary.opacity(0.35))
+            .foregroundColor(favorite ? selected ? .white : .blue : selected ? .white.opacity(0.3) : .gray.opacity(0.3))
             .highPriorityGesture(
               TapGesture()
                 .onEnded {
@@ -41,8 +41,11 @@ struct SubItem: View {
             )
         }
         .contentShape(Rectangle())
+        .foregroundColor(selected ? .white : .primary)
       }
       .buttonStyle(.automatic)
+      .background(RR(IPAD ? 13 : 0, selected ? .blue : .clear).padding(.horizontal, -16).padding(.vertical, -6))
+      
     } else {
       Text("Error")
     }
@@ -55,6 +58,7 @@ struct SubredditBigBtn: View {
   var iconColor: Color
   var label: String
   var destination: Subreddit
+  var selected: Bool
   var body: some View {
     Button {
       openSub(destination)
@@ -62,14 +66,14 @@ struct SubredditBigBtn: View {
       VStack(alignment: .leading, spacing: 8) {
         Image(systemName: icon)
           .fontSize(32)
-          .foregroundColor(iconColor)
+          .foregroundColor(selected ? .white : iconColor)
         Text(label)
           .fontSize(17, .semibold)
-          .foregroundColor(.primary)
       }
       .padding(.all, 10)
       .frame(maxWidth: .infinity, alignment: .leading)
-      .background(RR(13, .listBG))
+      .foregroundColor(selected ? .white : .primary)
+      .background(RR(13, selected ? IPAD ? .blue : .secondary : IPAD ? .secondary.opacity(0.2) : .listBG))
       .contentShape(RoundedRectangle(cornerRadius: 13))
       //    .onChange(of: reset) { _ in active = false }
     }
@@ -110,7 +114,7 @@ struct Subreddits: View {
   @State var searchText: String = ""
   @StateObject var subsDict = SubsDictContainer()
   @StateObject var selectedSubreddit = SelectedSubredditContainer()
-  @State var selectedSubActive = false
+  @State var selectedSubActive = IPAD
   @State var loaded = false
   @State var editMode: EditMode = .inactive
   
@@ -120,8 +124,10 @@ struct Subreddits: View {
   }
   
   func openSub(_ sub: Subreddit) {
-    selectedSubreddit.sub = sub
-    selectedSubActive = true
+    withAnimation {
+      selectedSubreddit.sub = sub
+      selectedSubActive = true
+    }
   }
   
   var subsArr: [Subreddit] {
@@ -142,9 +148,9 @@ struct Subreddits: View {
       List {
         HStack(spacing: 12) {
 
-          SubredditBigBtn(openSub: openSub, icon: "house.circle.fill", iconColor: .blue, label: "Home", destination: Subreddit(id: "home", api: redditAPI))
+          SubredditBigBtn(openSub: openSub, icon: "house.circle.fill", iconColor: .blue, label: "Home", destination: Subreddit(id: "home", api: redditAPI), selected: IPAD && selectedSubreddit.sub.id == "home")
 
-          SubredditBigBtn(openSub: openSub, icon: "bookmark.circle.fill", iconColor: .green, label: "Saved", destination: Subreddit(id: "home", api: redditAPI))
+          SubredditBigBtn(openSub: openSub, icon: "bookmark.circle.fill", iconColor: .green, label: "Saved", destination: Subreddit(id: "homes", api: redditAPI), selected: IPAD && selectedSubreddit.sub.id == "homes")
 
         }
         .frame(maxWidth: .infinity)
@@ -158,15 +164,15 @@ struct Subreddits: View {
             subsDict.data = sort(val)
           }
         }
-//
+
         if searchText != "" {
           ForEach(Array(subsArr.filter { ($0.data?.display_name ?? "").lowercased().contains(searchText.lowercased()) }).sorted { ($0.data?.display_name?.lowercased() ?? "") < ($1.data?.display_name?.lowercased() ?? "") }, id: \.self.id) { sub in
-            SubItem(openSub: openSub, sub: sub)
+            SubItem(openSub: openSub, sub: sub, selected: IPAD && selectedSubreddit.sub == sub)
           }
         } else {
-          Section("FAVORITES") {
+          Section("Favorites") {
             ForEach(favoritesArr, id: \.self.id) { sub in
-              SubItem(openSub: openSub, sub: sub)
+              SubItem(openSub: openSub, sub: sub, selected: IPAD && selectedSubreddit.sub == sub)
             }
             .onDelete(perform: deleteFromFavorites)
           }
@@ -174,7 +180,7 @@ struct Subreddits: View {
             if let subs = subsDictData[letter] {
               Section(header: Text(letter)) {
                 ForEach(subs) { sub in
-                  SubItem(openSub: openSub, sub: sub)
+                  SubItem(openSub: openSub, sub: sub, selected: IPAD && selectedSubreddit.sub == sub)
                 }
                 .onDelete(perform: { i in deleteFromList(at: i, letter: letter)})
               }
@@ -182,8 +188,9 @@ struct Subreddits: View {
           }
         }
       }
+      .listStyle(.sidebar)
       .background(
-        NavigationLink(destination: SubredditPosts(subreddit: selectedSubreddit.sub), isActive: $selectedSubActive, label: { EmptyView() }).buttonStyle(EmptyButtonStyle()).opacity(0).allowsHitTesting(false)
+        NavigationLink(destination: SubredditPosts(subreddit: selectedSubreddit.sub), isActive: $selectedSubActive, label: { EmptyView() }).buttonStyle(EmptyButtonStyle()).opacity(0).allowsHitTesting(false).if(IPAD) { $0.id(selectedSubreddit.sub.id) }
       )
       .searchable(text: $searchText, prompt: "Search my subreddits")
       .refreshable {

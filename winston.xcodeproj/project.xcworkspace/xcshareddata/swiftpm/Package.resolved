@@ -125,6 +125,15 @@
         "revision" : "3c5b9531ee20e34d3a86142ca2c076a5b99afdb2",
         "version" : "1.2.3"
       }
+    },
+    {
+      "identity" : "waterfallgrid",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/paololeonardi/WaterfallGrid.git",
+      "state" : {
+        "revision" : "944aa82832ed5a9eaaf50862cdd53e3c10ab55eb",
+        "version" : "1.0.1"
+      }
     }
   ],
   "version" : 2
