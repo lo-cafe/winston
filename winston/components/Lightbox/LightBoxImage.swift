@@ -139,6 +139,7 @@ struct LightBoxImage: View {
         }
         .frame(maxWidth: .infinity)
       }
+      .foregroundColor(.white)
       .padding(.bottom, 32)
       .padding(.top, 64)
       .overlay(

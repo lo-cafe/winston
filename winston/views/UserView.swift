@@ -115,7 +115,7 @@ struct UserView: View {
                     .padding(.horizontal, 12)
                     .padding(.top, 12)
                     .padding(.bottom, 10)
-                    .background(RR(20, .secondary.opacity(0.1)))
+                    .background(RR(20, .listBG))
                   }
                 }
               }
@@ -127,6 +127,12 @@ struct UserView: View {
           .transition(.opacity)
         }
         
+      }
+      .introspect(.list, on: .iOS(.v15)) { list in
+          list.backgroundColor = UIColor.systemGroupedBackground
+      }
+      .introspect(.list, on: .iOS(.v16, .v17)) { list in
+          list.backgroundColor = UIColor.systemGroupedBackground
       }
       .listStyle(.plain)
       .refreshable {

@@ -146,28 +146,33 @@ struct Subreddits: View {
     let subsDictData = subsDict.data
     GoodNavigator {
       List {
-        HStack(spacing: 12) {
-
-          SubredditBigBtn(openSub: openSub, icon: "house.circle.fill", iconColor: .blue, label: "Home", destination: Subreddit(id: "home", api: redditAPI), selected: IPAD && selectedSubreddit.sub.id == "home")
-
-          SubredditBigBtn(openSub: openSub, icon: "bookmark.circle.fill", iconColor: .green, label: "Saved", destination: Subreddit(id: "homes", api: redditAPI), selected: IPAD && selectedSubreddit.sub.id == "homes")
-
-        }
-        .frame(maxWidth: .infinity)
-        .id("upperPart")
-        .listRowSeparator(.hidden)
-        .listRowBackground(Color.clear)
-        .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
-        .listStyle(.plain)
-        .onChange(of: subreddits) { val in
-          withAnimation(nil) {
-            subsDict.data = sort(val)
+        
+        if searchText == "" {
+          HStack(spacing: 12) {
+            
+            SubredditBigBtn(openSub: openSub, icon: "house.circle.fill", iconColor: .blue, label: "Home", destination: Subreddit(id: "home", api: redditAPI), selected: IPAD && selectedSubreddit.sub.id == "home")
+            
+            SubredditBigBtn(openSub: openSub, icon: "bookmark.circle.fill", iconColor: .green, label: "Saved", destination: Subreddit(id: "homes", api: redditAPI), selected: IPAD && selectedSubreddit.sub.id == "homes")
+            
+          }
+          .frame(maxWidth: .infinity)
+          .id("upperPart")
+          .listRowSeparator(.hidden)
+          .listRowBackground(Color.clear)
+          .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
+          .listStyle(.plain)
+          .onChange(of: subreddits) { val in
+            withAnimation(nil) {
+              subsDict.data = sort(val)
+            }
           }
         }
-
+        
         if searchText != "" {
-          ForEach(Array(subsArr.filter { ($0.data?.display_name ?? "").lowercased().contains(searchText.lowercased()) }).sorted { ($0.data?.display_name?.lowercased() ?? "") < ($1.data?.display_name?.lowercased() ?? "") }, id: \.self.id) { sub in
-            SubItem(openSub: openSub, sub: sub, selected: IPAD && selectedSubreddit.sub == sub)
+          Section("Found subs") {
+            ForEach(Array(subsArr.filter { ($0.data?.display_name ?? "").lowercased().contains(searchText.lowercased()) }).sorted { ($0.data?.display_name?.lowercased() ?? "") < ($1.data?.display_name?.lowercased() ?? "") }, id: \.self.id) { sub in
+              SubItem(openSub: openSub, sub: sub, selected: IPAD && selectedSubreddit.sub == sub)
+            }
           }
         } else {
           Section("Favorites") {

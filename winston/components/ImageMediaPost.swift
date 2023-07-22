@@ -12,31 +12,12 @@ import VideoPlayer
 import CoreMedia
 
 struct ImageMediaPost: View {
-  var parentDragging: Binding<Bool>?
-  var parentOffsetX: Binding<CGFloat>?
   var prefix: String = ""
   var post: Post
-  var leftAction: (()->())?
-  var rightAction: (()->())?
   @State var pressing = false
   @State var contentWidth: CGFloat = .zero
   @State var isPresenting = false
   @Namespace var presentationNamespace
-  //  @EnvironmentObject var lightBoxType: ContentLightBox
-//  @EnvironmentObject var namespaceWrapper: TabberNamespaceWrapper
-  
-  init(parentDragging: Binding<Bool>? = nil, parentOffsetX: Binding<CGFloat>? = nil, prefix: String = "", post: Post, leftAction: (()->())? = nil, rightAction: (()->())? = nil) {
-    if let parentOffsetX = parentOffsetX {
-      self.parentOffsetX = parentOffsetX
-    }
-    if let parentDragging = parentDragging {
-      self.parentDragging = parentDragging
-    }
-    self.post = post
-    self.prefix = prefix
-    self.leftAction = leftAction
-    self.rightAction = rightAction
-  }
   
   var body: some View {
     let height: CGFloat = 150
@@ -58,21 +39,6 @@ struct ImageMediaPost: View {
       //      .mask(RR(12, .black).matchedGeometryEffect(id: "\(data.url)-\(prefix)mask", in: namespaceWrapper.namespace))
       .mask(RR(12, .black))
       .contentShape(Rectangle())
-      .swipyActions(
-        disableSwipe: parentOffsetX == nil,
-        disableFunctions: true,
-        pressing: $pressing,
-        parentDragging: parentDragging,
-        parentOffsetX: parentOffsetX,
-        onTap: {
-          withAnimation(.interpolatingSpring(stiffness: 300, damping: 25)) {
-            isPresenting.toggle()
-          }
-        }, leftActionHandler: {
-          leftAction?()
-        }, rightActionHandler: {
-          rightAction?()
-        })
       .transition(.offset(x: 0, y: 1))
       .background(
         GeometryReader { geo in
@@ -85,6 +51,11 @@ struct ImageMediaPost: View {
             }
         }
       )
+      .onTapGesture {
+        withAnimation(.interpolatingSpring(stiffness: 300, damping: 25)) {
+          isPresenting.toggle()
+        }
+      }
       .fullscreenPresent(show: $isPresenting) {
         LightBoxImage(imgURL: URL(string: data.url)!, post: post, namespace: presentationNamespace)
       }

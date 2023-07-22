@@ -61,15 +61,7 @@ struct PostLink: View {
           }
           
           if imgPost {
-//            ImageMediaPost(parentDragging: $dragging, parentOffsetX: $offsetX, post: post, leftAction: {
-//              Task {
-//                _ = await post.vote(action: .down)
-//              }
-//            }, rightAction: {
-//              Task {
-//                _ = await post.vote(action: .up)
-//              }
-//            })
+            ImageMediaPost(post: post)
           } else if data.selftext != "" {
 //            MD(str: data.selftext, lineLimit: 3)
             Text(data.selftext.md()).lineLimit(3)

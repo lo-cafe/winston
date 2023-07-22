@@ -267,6 +267,12 @@ struct PostView: View {
         }
         .listRowSeparator(.hidden)
       }
+      .introspect(.list, on: .iOS(.v15)) { list in
+          list.backgroundColor = UIColor.systemGroupedBackground
+      }
+      .introspect(.list, on: .iOS(.v16, .v17)) { list in
+          list.backgroundColor = UIColor.systemGroupedBackground
+      }
       .listStyle(.plain)
       .transition(.opacity)
       .environment(\.defaultMinListRowHeight, 1)
@@ -304,7 +310,7 @@ struct PostView: View {
               }
             }
             
-            if let data = subreddit.data {
+            if let data = subreddit.data, subreddit.id != "home" {
               NavigationLink {
                 SubredditInfo(subreddit: subreddit)
               } label: {
@@ -315,7 +321,7 @@ struct PostView: View {
           .animation(nil, value: sort)
       )
       .onAppear {
-        if subreddit.data == nil {
+        if subreddit.data == nil && subreddit.id != "home" {
           Task {
             await subreddit.refreshSubreddit()
           }
