@@ -53,7 +53,6 @@ class SubCommentsReferencesContainer: ObservableObject {
 }
 
 struct CommentLink: View {
-  //  @Default(.preferenceShowCommentsCards) var preferenceShowCommentsCards
   var post: Post?
   var subreddit: Subreddit?
   var arrowKinds: [ArrowKind] = []
@@ -67,10 +66,11 @@ struct CommentLink: View {
   
   var parentElement: CommentParentElement? = nil
   @ObservedObject var comment: Comment
-  @State var collapsed = false
+//  @State var collapsed = false
   
   var body: some View {
-    if let _ = comment.data {
+    if let data = comment.data {
+      let collapsed = data.collapsed ?? false
       Group {
         
         
@@ -84,7 +84,7 @@ struct CommentLink: View {
               CommentLinkMore(arrowKinds: arrowKinds, comment: comment, postFullname: postFullname, parentElement: parentElement, indentLines: indentLines)
             }
           } else {
-            CommentLinkContent(arrowKinds: arrowKinds, indentLines: indentLines, lineLimit: lineLimit, comment: comment, avatarsURL: avatarsURL, collapsed: $collapsed)
+            CommentLinkContent(arrowKinds: arrowKinds, indentLines: indentLines, lineLimit: lineLimit, comment: comment, avatarsURL: avatarsURL)
           }
         }
         

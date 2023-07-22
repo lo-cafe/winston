@@ -31,7 +31,7 @@ struct SwipeUI: ViewModifier {
   var disabled: Bool = false
   
   private let firstActionThreshold: CGFloat = 75
-  private let secondActionThreshold: CGFloat = 175
+  private let secondActionThreshold: CGFloat = 225
   private let minimumDragDistance: CGFloat = 30
   
   func body(content: Content) -> some View {
@@ -76,7 +76,7 @@ struct SwipeUI: ViewModifier {
         onTapAction?()
       }
       .gesture(
-        DragGesture(minimumDistance: minimumDragDistance)
+        DragGesture(minimumDistance: minimumDragDistance, coordinateSpace: .local)
           .onChanged { val in
             let x = val.translation.width
             if offset == nil && x != 0 {

@@ -39,8 +39,9 @@ extension Subreddit {
     }
   }
   
-  func subscribeToggle(optimistic: Bool = false, _ cb: ((Bool) -> ())? = nil) async {
-    if let data = data, let subscribedStatus = data.user_is_subscriber {
+  func subscribeToggle(optimistic: Bool = false) async {
+    if let data = data {
+      let subscribedStatus = Defaults[.subreddits].contains(where: { $0.data?.id == self.id })
       if optimistic {
         await MainActor.run {
           withAnimation(.default) {
@@ -56,21 +57,17 @@ extension Subreddit {
       }
       let result = await redditAPI.subscribe(subscribedStatus ? .unsub : .sub, subFullname: data.name)
       if result {
-        await MainActor.run {
-          if !optimistic {
-            withAnimation(spring) {
-              self.data?.user_is_subscriber = !subscribedStatus
-              cb?(true)
-            }
-            doThisAfter(0.4) {
-              if subscribedStatus {
-                Defaults[.subreddits] = Defaults[.subreddits].filter { sub in
-                  sub.data?.id != self.id
+        if !optimistic {
+          await MainActor.run {
+//            doThisAfter(0) {
+                if subscribedStatus {
+                  Defaults[.subreddits] = Defaults[.subreddits].filter { sub in
+                    sub.data?.id != self.id
+                  }
+                } else {
+                  Defaults[.subreddits].append(ListingChild(kind: "t5", data: data))
                 }
-              } else {
-                Defaults[.subreddits].append(ListingChild(kind: "t5", data: data))
-              }
-            }
+//            }
           }
         }
       } else {
@@ -82,12 +79,12 @@ extension Subreddit {
                   sub.data?.id != self.id
                 }
               } else if !Defaults[.subreddits].contains(where: { $0.data?.id == self.id }) {
+                print(Defaults[.subreddits].contains(where: { $0.data?.id == self.id }))
                 Defaults[.subreddits].append(ListingChild(kind: "t5", data: data))
               }
             }
           }
         }
-        cb?(false)
       }
     }
   }
@@ -109,25 +106,9 @@ extension Subreddit {
   
   func fetchPosts(sort: SubListingSortOption = .hot, after: String? = nil) async -> ([Post]?, String?)? {
     if let response = await redditAPI.fetchSubPosts(data?.url ?? (id == "home" ? "" : id), sort: sort, after: after), let data = response.0 {
-      return (data.map { x in
-        if let data = x.data {
-          return Post(data: data, api: redditAPI)
-        } else {
-          return nil
-        }
-      }.compactMap { $0 }, response.1)
+      return (Post.initMultiple(datas: data.compactMap { $0.data }, api: redditAPI), response.1)
     }
     return nil
-  }
-  
-  func toggleSubscribing(action: RedditAPI.SubscribeSubAction) async -> Bool? {
-    let oldValue = data?.user_is_subscriber
-    data?.user_is_subscriber = action == .sub ? true : false
-    let result = await redditAPI.subscribeSubs(action: (data?.user_is_subscriber ?? false) ? .unsub : .sub, subs: [id])
-    if let oldValue = oldValue, result == nil || !result! {
-      data?.user_is_subscriber = oldValue
-    }
-    return result
   }
 }
 

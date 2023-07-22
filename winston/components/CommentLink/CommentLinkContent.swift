@@ -10,13 +10,14 @@ import Defaults
 import MarkdownUI
 
 struct CommentLinkContent: View {
+  @Default(.preferenceShowCommentsCards) var preferenceShowCommentsCards
   @Default(.preferenceShowCommentsAvatars) var preferenceShowCommentsAvatars
   var arrowKinds: [ArrowKind]
   var indentLines: Int? = nil
   var lineLimit: Int?
   @ObservedObject var comment: Comment
   var avatarsURL: [String:String]?
-  @Binding var collapsed: Bool
+//  @Binding var collapsed: Bool
   @State var showReplyModal = false
   @State var pressing = false
   @State var dragging = false
@@ -24,6 +25,7 @@ struct CommentLinkContent: View {
   @State var bodySize: CGSize = .zero
   var body: some View {
     if let data = comment.data {
+      let collapsed = data.collapsed ?? false
       Group {
         HStack {
           if data.depth != 0 && indentLines != 0 {
@@ -82,16 +84,16 @@ struct CommentLinkContent: View {
           .swipyUI(
             controlledDragAmount: $offsetX,
             controlledIsSource: false,
-            onTap: { withAnimation(spring) { collapsed.toggle() } },
+            onTap: { withAnimation(spring) { comment.toggleCollapsed(optimistic: true) } },
             leftActionHandler: { Task { _ = await comment.vote(action: .down) } },
             rightActionHandler: { Task { _ = await comment.vote(action: .up) } },
             secondActionHandler: { showReplyModal = true }
           )
         }
-        .padding(.horizontal, 13)
+        .padding(.horizontal, !preferenceShowCommentsCards ? 0 : 13)
         .padding(.top, data.depth != 0 ? 6 : 0)
         .frame(height: data.depth != 0 ? 42 : 30, alignment: .leading)
-        .background(Color.listBG)
+        .background(preferenceShowCommentsCards ? Color.listBG : .clear)
         .mask(Color.listBG)
         .id("\(data.id)-header")
         
@@ -122,7 +124,7 @@ struct CommentLinkContent: View {
 //                .animation(nil, value: collapsed)
 //                .allowsHitTesting(false)
               }
-              .padding(.leading, 6)
+//              .padding(.leading, 6)
               .introspect(.listCell, on: .iOS(.v16, .v17)) { cell in
                 cell.layer.masksToBounds = false
               }
@@ -134,7 +136,7 @@ struct CommentLinkContent: View {
               .swipyUI(
                 offsetYAction: -15,
                 controlledDragAmount: $offsetX,
-                onTap: { withAnimation(spring) { collapsed.toggle() } },
+                onTap: { withAnimation(spring) { comment.toggleCollapsed(optimistic: true) } },
                 leftActionHandler: { Task { _ = await comment.vote(action: .down) } },
                 rightActionHandler: { Task { _ = await comment.vote(action: .up) } },
                 secondActionHandler: { showReplyModal = true }
@@ -143,8 +145,8 @@ struct CommentLinkContent: View {
               Spacer()
             }
           }
-          .padding(.horizontal, 13)
-          .background(Color.listBG)
+          .padding(.horizontal, !preferenceShowCommentsCards ? 0 : 13)
+          .background(preferenceShowCommentsCards ? Color.listBG : .clear)
           .mask(Color.listBG)
           .sheet(isPresented: $showReplyModal) {
             ReplyModalComment(comment: comment)

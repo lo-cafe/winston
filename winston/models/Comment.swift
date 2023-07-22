@@ -8,6 +8,7 @@
 import Foundation
 import Defaults
 import SwiftUI
+import CoreData
 
 typealias Comment = GenericRedditEntity<CommentData>
 
@@ -86,6 +87,52 @@ extension Comment {
       ), api: rawMessage.redditAPI, typePrefix: "t1_")
     } else {
       throw Oops.oops
+    }
+  }
+  
+  static func initMultiple(datas: [T], api: RedditAPI) -> [Comment] {
+    let context = PersistenceController.shared.container.viewContext
+    let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "CollapsedComment")
+    if let results = try? context.fetch(fetchRequest) as? [CollapsedComment] {
+      return datas.map { data in
+        let isCollapsed = results.contains(where: { $0.commentID == data.id })
+        let newPost = self.init(data: data, api: api, typePrefix: "t3_")
+        newPost.data?.collapsed = isCollapsed
+        return newPost
+      }
+    }
+    return []
+  }
+  
+  func toggleCollapsed(_ collapsed: Bool? = nil, optimistic: Bool = false) -> Void {
+    if optimistic {
+      let prev = data?.collapsed ?? false
+      let new = collapsed == nil ? !prev : collapsed
+      if prev != new { data?.collapsed = new }
+    }
+    let context = PersistenceController.shared.container.viewContext
+    let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "CollapsedComment")
+    do {
+      let results = try context.fetch(fetchRequest) as! [CollapsedComment]
+      let foundPost = results.first(where: { obj in obj.commentID == id })
+      
+      if let foundPost = foundPost {
+        if collapsed == nil || collapsed == false {
+            context.delete(foundPost)
+          if !optimistic {
+            data?.collapsed = false
+          }
+        }
+      } else if collapsed == nil || collapsed == true {
+        let newSeenPost = CollapsedComment(context: context)
+        newSeenPost.commentID = id
+        try? context.save()
+        if !optimistic {
+          data?.collapsed = true
+        }
+      }
+    } catch {
+      print("Error fetching data from Core Data: \(error)")
     }
   }
   
@@ -246,7 +293,7 @@ struct CommentData: GenericRedditEntityDataType {
   let approved_by: String?
   let mod_note: String?
   //  let all_awardings: [String]?
-  let collapsed: Bool?
+  var collapsed: Bool?
   let body: String?
   //  let edited: Bool?
   let top_awarded_type: String?

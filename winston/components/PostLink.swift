@@ -156,12 +156,13 @@ struct PostLink: View {
           .background(RR(20, .listBG).allowsHitTesting(false))
           .mask(RR(20, .black))
       }
-//      .offset(x: dragX)
-//      .scaleEffect(isPressing ? 0.975 : 1)
+      .compositingGroup()
+      .opacity((data.winstonSeen ?? false) ? 0.5 : 1)
       .contentShape(Rectangle())
       .swipyUI(onTap: {
         openedPost = true
-      }, leftActionHandler: {
+      }, secondActionIcon: (data.winstonSeen ?? false) ? "eye.slash.fill" : "eye.fill",
+      leftActionHandler: {
         Task {
           _ = await post.vote(action: .down)
         }
@@ -169,25 +170,11 @@ struct PostLink: View {
         Task {
           _ = await post.vote(action: .up)
         }
+      }, secondActionHandler: {
+        withAnimation {
+          post.toggleSeen(optimistic: true)
+        }
       })
-      //      .scaleEffect(pressing ? 0.975 : 1)
-      //      .offset(x: offsetX)
-      //      .swipyActions(
-      //        pressing: $pressing,
-      //        parentDragging: $dragging,
-//        parentOffsetX: $offsetX,
-//        onTap: {
-//          openedPost = true
-//        },
-//        leftActionHandler: {
-//          Task {
-//            _ = await post.vote(action: .down)
-//          }
-//        }, rightActionHandler: {
-//          Task {
-//            _ = await post.vote(action: .up)
-//          }
-//        })
       .foregroundColor(.primary)
       .multilineTextAlignment(.leading)
       .zIndex(Double(aboveAll))

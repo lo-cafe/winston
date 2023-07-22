@@ -61,7 +61,7 @@ class GenericRedditEntity<T: GenericRedditEntityDataType>: Identifiable, Hashabl
   var anyCancellable: AnyCancellable? = nil
   @Published var childrenWinston: ObservableArray<GenericRedditEntity<T>> = ObservableArray<GenericRedditEntity<T>>(array: [])
   
-  init(id: String, api: RedditAPI, typePrefix: String?) {
+  required init(id: String, api: RedditAPI, typePrefix: String?) {
     self.id = kind == "more" ? "\(id)-more" : id
     self.redditAPI = api
     self.typePrefix = typePrefix
@@ -70,7 +70,7 @@ class GenericRedditEntity<T: GenericRedditEntityDataType>: Identifiable, Hashabl
     }
   }
 
-  init(data: T, api: RedditAPI, typePrefix: String?) {
+  required init(data: T, api: RedditAPI, typePrefix: String?) {
     self.data = data
     self.id = data.id
     self.redditAPI = api

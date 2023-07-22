@@ -1,4 +1,6 @@
-- Favorite/unfavorite subreddits
-- Subscribe/unsubscribe from subreddits
-- A few dezign tweaks like the cards color
-- Added subreddit rules tab in sub info
+- Now you can mark posts as seen/unseen by visiting or doing a full left swipe in the post link before opening it.
+- Collapsed comments persist
+- Links are now clickable inside comments
+- Fixed comments layout (now the spacings are fine again)
+- Fixed clipped up/down vote indicator
+- Multiple bug fixes

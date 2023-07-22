@@ -7,6 +7,7 @@
 
 import Foundation
 import Defaults
+import CoreData
 
 typealias Post = GenericRedditEntity<PostData>
 
@@ -17,6 +18,52 @@ extension Post {
   
   convenience init(id: String, api: RedditAPI) {
     self.init(id: id, api: api, typePrefix: "t3_")
+  }
+  
+  static func initMultiple(datas: [T], api: RedditAPI) -> [Post] {
+    let context = PersistenceController.shared.container.viewContext
+    let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "SeenPost")
+    if let results = try? context.fetch(fetchRequest) as? [SeenPost] {
+      return datas.map { data in
+        let isSeen = results.contains(where: { $0.postID == data.id })
+        let newPost = self.init(data: data, api: api, typePrefix: "t3_")
+        newPost.data?.winstonSeen = isSeen
+        return newPost
+      }
+    }
+    return []
+  }
+  
+  func toggleSeen(_ seen: Bool? = nil, optimistic: Bool = false) -> Void {
+    if optimistic {
+      let prev = data?.winstonSeen ?? false
+      let new = seen == nil ? !prev : seen
+      if prev != new { data?.winstonSeen = new }
+    }
+    let context = PersistenceController.shared.container.viewContext
+    let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "SeenPost")
+    do {
+      let results = try context.fetch(fetchRequest) as! [SeenPost]
+      let foundPost = results.first(where: { obj in obj.postID == id })
+      
+      if let foundPost = foundPost {
+        if seen == nil || seen == false {
+            context.delete(foundPost)
+          if !optimistic {
+            data?.winstonSeen = false
+          }
+        }
+      } else if seen == nil || seen == true {
+        let newSeenPost = SeenPost(context: context)
+        newSeenPost.postID = id
+        try? context.save()
+        if !optimistic {
+          data?.winstonSeen = true
+        }
+      }
+    } catch {
+      print("Error fetching data from Core Data: \(error)")
+    }
   }
   
   func reply(_ text: String) async -> Bool {
@@ -55,14 +102,14 @@ extension Post {
           return nil
         case .second(let actualData):
           if let data = actualData.data {
-            let returnData = (data.children?.map { x in
-              if let data = x.data {
-                return Comment(data: data, api: redditAPI, kind: x.kind)
-              } else {
-                return nil
-              }
-            }.compactMap { $0 }, data.after)
-            return returnData
+            if let dataArr = data.children?.compactMap({ $0.data }) {
+              self.toggleSeen(true)
+              return (
+                Comment.initMultiple(datas: dataArr, api: redditAPI),
+                data.after
+              )
+            }
+            return nil
           }
         }
       }
@@ -179,6 +226,7 @@ struct PostData: GenericRedditEntityDataType, Defaults.Serializable {
   let link_flair_background_color: String?
   let report_reasons: [String]?
   let discussion_type: String?
+  var winstonSeen: Bool?
   let secure_media: Either<SecureMediaRedditVideo, SecureMediaAlt>?
   let secure_media_embed: SecureMediaEmbed?
 }
