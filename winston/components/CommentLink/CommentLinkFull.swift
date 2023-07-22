@@ -42,12 +42,15 @@ struct CommentLinkFull: View {
           .padding(.vertical, 12)
         }
         .contentShape(Rectangle())
-        .onTapGesture {
-          opened = true
-        }
         
       }
+      .padding(.horizontal, 13)
       .frame(maxWidth: .infinity, alignment: .leading)
+      .background(Color.listBG)
+      .contentShape(Rectangle())
+      .onTapGesture {
+        opened = true
+      }
       .allowsHitTesting(!loadMoreLoading)
       .opacity(loadMoreLoading ? 0.5 : 1)
       .id("\(comment.id)-\(id)")

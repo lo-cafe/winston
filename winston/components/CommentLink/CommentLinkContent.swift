@@ -73,24 +73,26 @@ struct CommentLinkContent: View {
 
             }
           }
-          .padding(.vertical, 6)
+          .padding(.top, data.depth != 0 ? 6 : 0)
           .compositingGroup()
           .opacity(collapsed ? 0.5 : 1)
           .offset(x: offsetX)
-          .animation(.interpolatingSpring(stiffness: 1000, damping: 100, initialVelocity: 0), value: offsetX)
-          .swipyActions(
-//            offsetY: (bodySize.height / 2),
-            disableFunctions: true,
-            pressing: $pressing,
-            parentDragging: $dragging,
-            parentOffsetX: $offsetX,
+          .animation(draggingAnimation, value: offsetX)
+          .contentShape(Rectangle())
+          .swipyUI(
+            controlledDragAmount: $offsetX,
+            controlledIsSource: false,
             onTap: { withAnimation(spring) { collapsed.toggle() } },
             leftActionHandler: { Task { _ = await comment.vote(action: .down) } },
             rightActionHandler: { Task { _ = await comment.vote(action: .up) } },
             secondActionHandler: { showReplyModal = true }
           )
         }
-        .frame(height: 44, alignment: .topLeading)
+        .padding(.horizontal, 13)
+        .padding(.top, data.depth != 0 ? 6 : 0)
+        .frame(height: data.depth != 0 ? 42 : 30, alignment: .leading)
+        .background(Color.listBG)
+        .mask(Color.listBG)
         .id("\(data.id)-header")
         
         if !collapsed {
@@ -120,25 +122,30 @@ struct CommentLinkContent: View {
 //                .animation(nil, value: collapsed)
 //                .allowsHitTesting(false)
               }
+              .padding(.leading, 6)
+              .introspect(.listCell, on: .iOS(.v16, .v17)) { cell in
+                cell.layer.masksToBounds = false
+              }
               .frame(maxWidth: .infinity, alignment: .topLeading)
               .offset(x: offsetX)
               .animation(.interpolatingSpring(stiffness: 1000, damping: 100, initialVelocity: 0), value: offsetX)
-              .swipyActions(
-                disableFunctions: false,
-                pressing: $pressing,
-                parentDragging: $dragging,
-                parentOffsetX: $offsetX,
+              .padding(.top, 6)
+              .contentShape(Rectangle())
+              .swipyUI(
+                offsetYAction: -15,
+                controlledDragAmount: $offsetX,
                 onTap: { withAnimation(spring) { collapsed.toggle() } },
                 leftActionHandler: { Task { _ = await comment.vote(action: .down) } },
                 rightActionHandler: { Task { _ = await comment.vote(action: .up) } },
                 secondActionHandler: { showReplyModal = true }
               )
-              .padding(.bottom, 6)
             } else {
               Spacer()
             }
-
           }
+          .padding(.horizontal, 13)
+          .background(Color.listBG)
+          .mask(Color.listBG)
           .sheet(isPresented: $showReplyModal) {
             ReplyModalComment(comment: comment)
           }

@@ -67,11 +67,13 @@
 		EC593B092A47B42D002D6454 /* KeychainAccess in Frameworks */ = {isa = PBXBuildFile; productRef = EC593B082A47B42D002D6454 /* KeychainAccess */; };
 		EC593B0C2A47B801002D6454 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = EC593B0B2A47B801002D6454 /* Alamofire */; };
 		EC593B922A494E7F002D6454 /* defaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC593B912A494E7F002D6454 /* defaults.swift */; };
-		EC5EDA712A4DA94A00140A08 /* SwipeActions.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC5EDA702A4DA94A00140A08 /* SwipeActions.swift */; };
+		EC5EDA712A4DA94A00140A08 /* SwipeActionsOld.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC5EDA702A4DA94A00140A08 /* SwipeActionsOld.swift */; };
 		EC5EDA732A4E8EC400140A08 /* fetchSub.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC5EDA722A4E8EC400140A08 /* fetchSub.swift */; };
 		EC5EDA752A4E937700140A08 /* GenericRedditEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC5EDA742A4E937700140A08 /* GenericRedditEntity.swift */; };
 		EC5EDA772A4EA03800140A08 /* subscribeSubs.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC5EDA762A4EA03800140A08 /* subscribeSubs.swift */; };
 		EC5EDA792A4F4D4200140A08 /* vote.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC5EDA782A4F4D4200140A08 /* vote.swift */; };
+		EC8F34662A6A348F00EB8249 /* SwipeActions.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC8F34652A6A348F00EB8249 /* SwipeActions.swift */; };
+		EC8F346D2A6C241B00EB8249 /* SwipeActions in Frameworks */ = {isa = PBXBuildFile; productRef = EC8F346C2A6C241B00EB8249 /* SwipeActions */; };
 		EC9269E82A514AA6003F33B1 /* DownAttributedString.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC9269E72A514AA6003F33B1 /* DownAttributedString.swift */; };
 		EC9269F22A51A732003F33B1 /* HighlightedTextEditor in Frameworks */ = {isa = PBXBuildFile; productRef = EC9269F12A51A732003F33B1 /* HighlightedTextEditor */; };
 		EC9269F72A52B02E003F33B1 /* Shrinkable.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC9269F62A52B02E003F33B1 /* Shrinkable.swift */; };
@@ -189,11 +191,12 @@
 		EC593AF92A47AE3E002D6454 /* Settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
 		EC593AFC2A47AEBC002D6454 /* RedditAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RedditAPI.swift; sourceTree = "<group>"; };
 		EC593B912A494E7F002D6454 /* defaults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = defaults.swift; sourceTree = "<group>"; };
-		EC5EDA702A4DA94A00140A08 /* SwipeActions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwipeActions.swift; sourceTree = "<group>"; };
+		EC5EDA702A4DA94A00140A08 /* SwipeActionsOld.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwipeActionsOld.swift; sourceTree = "<group>"; };
 		EC5EDA722A4E8EC400140A08 /* fetchSub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = fetchSub.swift; sourceTree = "<group>"; };
 		EC5EDA742A4E937700140A08 /* GenericRedditEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericRedditEntity.swift; sourceTree = "<group>"; };
 		EC5EDA762A4EA03800140A08 /* subscribeSubs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = subscribeSubs.swift; sourceTree = "<group>"; };
 		EC5EDA782A4F4D4200140A08 /* vote.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = vote.swift; sourceTree = "<group>"; };
+		EC8F34652A6A348F00EB8249 /* SwipeActions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwipeActions.swift; sourceTree = "<group>"; };
 		EC9269E72A514AA6003F33B1 /* DownAttributedString.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownAttributedString.swift; sourceTree = "<group>"; };
 		EC9269EF2A51A11B003F33B1 /* theme-markdown.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "theme-markdown.json"; sourceTree = "<group>"; };
 		EC9269F62A52B02E003F33B1 /* Shrinkable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shrinkable.swift; sourceTree = "<group>"; };
@@ -259,6 +262,7 @@
 				ECD6E9BB2A5B32E100D499E7 /* Kingfisher in Frameworks */,
 				EC08542E2A4CD76000E88389 /* VideoPlayer in Frameworks */,
 				EC593B0C2A47B801002D6454 /* Alamofire in Frameworks */,
+				EC8F346D2A6C241B00EB8249 /* SwipeActions in Frameworks */,
 				EC593B092A47B42D002D6454 /* KeychainAccess in Frameworks */,
 				EC0854332A4CF24600E88389 /* SwiftUIBackports in Frameworks */,
 				ECD2A37D2A69CBAD00EDD02D /* WaterfallGrid in Frameworks */,
@@ -330,12 +334,13 @@
 		EC2D275A2A4FBEF7006444D6 /* modifiers */ = {
 			isa = PBXGroup;
 			children = (
-				EC5EDA702A4DA94A00140A08 /* SwipeActions.swift */,
+				EC5EDA702A4DA94A00140A08 /* SwipeActionsOld.swift */,
 				ECE449702A67610A00E2A3B7 /* VotesPopover.swift */,
 				EC2D275B2A4FBF00006444D6 /* ShrinkOnTap.swift */,
 				EC9269F62A52B02E003F33B1 /* Shrinkable.swift */,
 				ECEFC26A2A5E00B30003C6C4 /* floating.swift */,
 				EC082F242A65FB4300BA2727 /* MeasureOnce.swift */,
+				EC8F34652A6A348F00EB8249 /* SwipeActions.swift */,
 			);
 			path = modifiers;
 			sourceTree = "<group>";
@@ -610,6 +615,7 @@
 				ECA30A342A62276B00BB19D1 /* MarkdownUI */,
 				ECE449732A67648E00E2A3B7 /* Popovers */,
 				ECD2A37C2A69CBAD00EDD02D /* WaterfallGrid */,
+				EC8F346C2A6C241B00EB8249 /* SwipeActions */,
 			);
 			productName = winston;
 			productReference = EC593AD42A4673B2002D6454 /* winston.app */;
@@ -653,6 +659,7 @@
 				ECA30A332A62276B00BB19D1 /* XCRemoteSwiftPackageReference "swift-markdown-ui" */,
 				ECE449722A67648E00E2A3B7 /* XCRemoteSwiftPackageReference "Popovers" */,
 				ECD2A37B2A69CBAD00EDD02D /* XCRemoteSwiftPackageReference "WaterfallGrid" */,
+				EC8F346B2A6C241B00EB8249 /* XCRemoteSwiftPackageReference "SwipeActions" */,
 			);
 			productRefGroup = EC593AD52A4673B2002D6454 /* Products */;
 			projectDirPath = "";
@@ -691,7 +698,8 @@
 				EC0854262A4C013B00E88389 /* Avatar.swift in Sources */,
 				ECE285A82A513342009CF9DD /* ReplyModal.swift in Sources */,
 				ECEFC2652A5DE5910003C6C4 /* SubredditLink.swift in Sources */,
-				EC5EDA712A4DA94A00140A08 /* SwipeActions.swift in Sources */,
+				EC8F34662A6A348F00EB8249 /* SwipeActions.swift in Sources */,
+				EC5EDA712A4DA94A00140A08 /* SwipeActionsOld.swift in Sources */,
 				ECF0B7E92A543795002B9FAD /* fetchUsers.swift in Sources */,
 				EC22A31C2A5C75AA0062A112 /* fetchInbox.swift in Sources */,
 				ECE4497D2A688A2A00E2A3B7 /* fetchSubRules.swift in Sources */,
@@ -929,7 +937,7 @@
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -965,7 +973,7 @@
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1060,6 +1068,14 @@
 				minimumVersion = 5.0.0;
 			};
 		};
+		EC8F346B2A6C241B00EB8249 /* XCRemoteSwiftPackageReference "SwipeActions" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/aheze/SwipeActions.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.0;
+			};
+		};
 		EC9269F02A51A732003F33B1 /* XCRemoteSwiftPackageReference "HighlightedTextEditor" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/kyle-n/HighlightedTextEditor";
@@ -1145,6 +1161,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = EC593B0A2A47B801002D6454 /* XCRemoteSwiftPackageReference "Alamofire" */;
 			productName = Alamofire;
+		};
+		EC8F346C2A6C241B00EB8249 /* SwipeActions */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = EC8F346B2A6C241B00EB8249 /* XCRemoteSwiftPackageReference "SwipeActions" */;
+			productName = SwipeActions;
 		};
 		EC9269F12A51A732003F33B1 /* HighlightedTextEditor */ = {
 			isa = XCSwiftPackageProductDependency;

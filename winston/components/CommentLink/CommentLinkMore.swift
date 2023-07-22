@@ -33,27 +33,30 @@ struct CommentLinkMore: View {
           Text(loadMoreLoading ? "Just a sec..." : "Load \(count == 0 ? "some" : String(count)) more")
         }
         .padding(.vertical, 12)
-        .onTapGesture { Task {
-          if let postFullname = postFullname {
-            await MainActor.run {
-              withAnimation(spring) {
-                loadMoreLoading = true
-              }
-            }
-            await comment.loadChildren(parent: parentElement, postFullname: postFullname)
-            await MainActor.run {
-              doThisAfter(0.5) {
-                withAnimation(spring) {
-                  loadMoreLoading = false
-                }
-              }
-            }
-          }
-        } }
         .compositingGroup()
         .opacity(loadMoreLoading ? 0.5 : 1)
       }
+      .padding(.horizontal, 13)
       .frame(maxWidth: .infinity, alignment: .leading)
+      .background(Color.listBG)
+      .contentShape(Rectangle())
+      .onTapGesture { Task {
+        if let postFullname = postFullname {
+          await MainActor.run {
+            withAnimation(spring) {
+              loadMoreLoading = true
+            }
+          }
+          await comment.loadChildren(parent: parentElement, postFullname: postFullname)
+          await MainActor.run {
+            doThisAfter(0.5) {
+              withAnimation(spring) {
+                loadMoreLoading = false
+              }
+            }
+          }
+        }
+      } }
       .allowsHitTesting(!loadMoreLoading)
       .id("\(comment.id)-more")
     } else {

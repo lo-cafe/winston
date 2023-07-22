@@ -118,6 +118,15 @@
       }
     },
     {
+      "identity" : "swipeactions",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/aheze/SwipeActions.git",
+      "state" : {
+        "revision" : "41e6f6dce02d8cfa164f8c5461a41340850ca3ab",
+        "version" : "1.1.0"
+      }
+    },
+    {
       "identity" : "videoplayer",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/wxxsw/VideoPlayer",

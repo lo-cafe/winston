@@ -21,10 +21,10 @@ struct MD: View {
       .markdownTextStyle(\.text) {
         FontSize(fontSize)
       }
-      .markdownBlockStyle(\.paragraph) { configuration in
-        configuration.label
-          .allowsHitTesting(false)
-      }
+//      .markdownBlockStyle(\.paragraph) { configuration in
+//        configuration.label
+//          .allowsHitTesting(false)
+//      }
       .markdownBlockStyle(\.blockquote) { configuration in
         configuration.label
           .padding()

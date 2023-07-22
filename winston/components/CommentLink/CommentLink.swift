@@ -59,7 +59,6 @@ struct CommentLink: View {
   var arrowKinds: [ArrowKind] = []
   var indentLines: Int? = nil
   var lineLimit: Int?
-  var lastOne = true
   var avatarsURL: [String:String]? = nil
   var disableShapeShift = true
   var postFullname: String?
@@ -68,38 +67,10 @@ struct CommentLink: View {
   
   var parentElement: CommentParentElement? = nil
   @ObservedObject var comment: Comment
-  @State var loadMoreLoading = false
   @State var collapsed = false
-  @State var wholeThingHeight: CGFloat?
-  
-  @State var isRoot = false
-  @State var hasChild = false
-  @State var actualLastOne = false
-  @State var initiated = false
-  
-  //  var getBGPos: CommentBGSide {
-  //    if !showReplies { return .single }
-  //    if let data = comment.data {
-  //      let isRoot = data.depth == 0
-  //      let hasChild = comment.childrenWinston.data.count != 0
-  //      let actualLastOne = (lastOne && !hasChild && !isRoot)
-  //
-  //      if isRoot && (!hasChild || collapsed) {
-  //        return .single
-  //      } else if isRoot && hasChild {
-  //        return .top
-  //      } else if (actualLastOne || (lastOne && collapsed)) && !isRoot {
-  //        return .bottom
-  //      } else {
-  //        return .middle
-  //      }
-  //    } else {
-  //      return .single
-  //    }
-  //  }
   
   var body: some View {
-    if let data = comment.data {
+    if let _ = comment.data {
       Group {
         
         
@@ -116,13 +87,6 @@ struct CommentLink: View {
             CommentLinkContent(arrowKinds: arrowKinds, indentLines: indentLines, lineLimit: lineLimit, comment: comment, avatarsURL: avatarsURL, collapsed: $collapsed)
           }
         }
-        //        .disclosureGroupStyle(CommentLinkDisclosure())
-        //        .frame(width: UIScreen.screenWidth - 16)
-        //        .fixedSize(horizontal: true, vertical: false)
-        //        .introspect(.listCell, on: .iOS(.v16, .v17)) { cell in
-        //          cell.frame.size.width = UIScreen.screenWidth - 16
-        //        }
-        //        .fixedSize(horizontal: true, vertical: false)
         
         if !collapsed && showReplies {
           ForEach(Array(comment.childrenWinston.data.enumerated()), id: \.element.id) { index, commentChild in
@@ -132,9 +96,7 @@ struct CommentLink: View {
             }
           }
         }
-        
-        
-        
+
       }
       
     } else {

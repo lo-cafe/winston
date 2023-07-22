@@ -20,12 +20,14 @@ struct GoodNavigator<Content: View>: View {
           NavigationView {
                 self.content()
             }
-//          .navigationViewStyle(.stack)
+          .if(!IPAD) { $0.navigationViewStyle(.stack) }
+//
         } else {
             NavigationView {
                 self.content()
             }
-//            .navigationViewStyle(.stack)
+          .if(!IPAD) { $0.navigationViewStyle(.stack) }
+          
         }
     }
 }
