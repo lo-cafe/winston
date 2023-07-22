@@ -118,12 +118,30 @@
       }
     },
     {
+      "identity" : "swipeactions",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/aheze/SwipeActions.git",
+      "state" : {
+        "revision" : "41e6f6dce02d8cfa164f8c5461a41340850ca3ab",
+        "version" : "1.1.0"
+      }
+    },
+    {
       "identity" : "videoplayer",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/wxxsw/VideoPlayer",
       "state" : {
         "revision" : "3c5b9531ee20e34d3a86142ca2c076a5b99afdb2",
         "version" : "1.2.3"
+      }
+    },
+    {
+      "identity" : "waterfallgrid",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/paololeonardi/WaterfallGrid.git",
+      "state" : {
+        "revision" : "944aa82832ed5a9eaaf50862cdd53e3c10ab55eb",
+        "version" : "1.0.1"
       }
     }
   ],

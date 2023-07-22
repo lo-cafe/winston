@@ -112,6 +112,12 @@ struct Search: View {
         .listRowBackground(Color.clear)
         .listRowInsets(EdgeInsets(top: 6, leading: 16, bottom: 6, trailing: 16))
       }
+      .introspect(.list, on: .iOS(.v15)) { list in
+          list.backgroundColor = UIColor.systemGroupedBackground
+      }
+      .introspect(.list, on: .iOS(.v16, .v17)) { list in
+          list.backgroundColor = UIColor.systemGroupedBackground
+      }
       .listStyle(.plain)
       .navigationTitle("Search")
       .searchable(text: $query, placement: .toolbar)

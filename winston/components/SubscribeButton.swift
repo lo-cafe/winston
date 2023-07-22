@@ -6,13 +6,16 @@
 //
 
 import SwiftUI
+import Defaults
 
 struct SubscribeButton: View {
+  @Default(.subreddits) var subs
   @ObservedObject var subreddit: Subreddit
   @State var loading = false
   @GestureState var pressing = false
     var body: some View {
-      if let data = subreddit.data, let subscribed = data.user_is_subscriber {
+      let subscribed = subs.contains(where: { $0.data?.id == subreddit.id })
+      if let _ = subreddit.data {
         HStack {
           Group {
             if loading {
@@ -23,7 +26,7 @@ struct SubscribeButton: View {
                 Image(systemName: "checkmark.circle.fill")
               }
             }
-            let label = data.user_is_subscriber ?? false ? "Subscribed" : "Not subscribed"
+            let label = subscribed ? "Subscribed" : "Not subscribed"
             Text(label)
               .id(label)
           }
@@ -31,12 +34,14 @@ struct SubscribeButton: View {
           
         }
         .fontSize(16, .semibold)
+        .foregroundColor(subscribed ? .white : .primary)
         .padding(.horizontal, 16)
         .padding(.vertical, 12)
         .background(RR(16, subscribed ? .green : .secondary.opacity(0.2)))
         .overlay(RoundedRectangle(cornerRadius: 16, style: .continuous).stroke(.secondary.opacity(subscribed ? 0 : 0.2)))
         .brightness(pressing ? -0.1 : 0)
         .contentShape(Rectangle())
+        .animation(spring, value: subs)
         .onTapGesture {
           withAnimation(spring) {
             loading = true

@@ -38,15 +38,15 @@ struct Arrows: View {
         case .curve:
           CurveShape()
             .stroke(Color("divider"), style: StrokeStyle(lineWidth: 2, lineCap: .round))
-            .padding(.top, -2)
+            .padding(.top, -8)
         case .straight:
           StraightShape()
             .stroke(Color("divider"), style: StrokeStyle(lineWidth: 2, lineCap: .round))
-            .padding(.vertical, -2)
+            .padding(.vertical, -8)
         case .straightCurve:
           StraightCurveShape()
             .stroke(Color("divider"), style: StrokeStyle(lineWidth: 2, lineCap: .round))
-            .padding(.vertical, -2)
+            .padding(.vertical, -8)
         case .empty:
           Color.clear
         }

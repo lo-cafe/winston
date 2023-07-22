@@ -80,6 +80,7 @@ struct PostContent: View {
 }
 
 struct PostReplies: View {
+  @Default(.preferenceShowCommentsCards) var preferenceShowCommentsCards
   @ObservedObject var post: Post
   @ObservedObject var subreddit: Subreddit
   var ignoreSpecificComment: Bool
@@ -117,9 +118,40 @@ struct PostReplies: View {
         Group {
           ForEach(Array(commentsData.enumerated()), id: \.element.id) { i, comment in
             Section {
+              if preferenceShowCommentsCards {
+                Spacer()
+                  .frame(maxWidth: .infinity, minHeight: 24, maxHeight: 24)
+                  .background(CommentBG(pos: .top).fill(Color.listBG))
+                  .frame(maxWidth: .infinity, minHeight: 13, maxHeight: 13, alignment: .top)
+                  .clipped()
+                  .id("\(comment.id)-top-decoration")
+                  .listRowInsets(EdgeInsets(top: 6, leading: 8, bottom: 0, trailing: 8))
+              } else {
+                Spacer()
+                  .frame(maxWidth: .infinity, minHeight: 8, maxHeight: 8)
+                  .id("\(comment.id)-top-spacer")
+              }
               CommentLink(post: post, subreddit: subreddit, postFullname: postFullname, parentElement: .post(comments), comment: comment)
+              if preferenceShowCommentsCards {
+                Spacer()
+                  .frame(maxWidth: .infinity, minHeight: 24, maxHeight: 24)
+                  .background(CommentBG(pos: .bottom).fill(Color.listBG))
+                  .frame(maxWidth: .infinity, minHeight: 13, maxHeight: 13, alignment: .bottom)
+                  .clipped()
+                  .id("\(comment.id)-bot-decoration")
+                  .listRowInsets(EdgeInsets(top: 0, leading: 8, bottom: 6, trailing: 8))
+              } else {
+                VStack {
+                  Spacer()
+                    .frame(maxWidth: .infinity, minHeight: 8, maxHeight: 8)
+                  if commentsData.count - 1 != i {
+                    Divider()
+                  }
+                }
+                .id("\(comment.id)-bot-spacer")
+              }
             }
-            .listRowInsets(EdgeInsets(top: 0, leading: 12, bottom: 0, trailing: 12))
+            .listRowInsets(EdgeInsets(top: 0, leading: 8, bottom: 0, trailing: 8))
           }
           Section {
             Spacer()
@@ -139,6 +171,7 @@ struct PostReplies: View {
           }
           .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
         }
+        .animation(spring, value: comments.data)
       } else {
         if loading {
           ProgressView()
@@ -206,7 +239,7 @@ struct PostView: View {
               .id("comments-header")
           }
           .listRowBackground(Color.clear)
-          .listRowInsets(EdgeInsets(top: 0, leading: preferenceShowCommentsCards ? 0 : 12, bottom: 0, trailing: preferenceShowCommentsCards ? 0 : 12))
+          .listRowInsets(EdgeInsets(top: 0, leading: 8, bottom: 0, trailing: 8))
           
           PostReplies(post: post, subreddit: subreddit, ignoreSpecificComment: ignoreSpecificComment, highlightID: highlightID, sort: sort, proxy: proxy)
           
@@ -234,17 +267,9 @@ struct PostView: View {
         }
         .listRowSeparator(.hidden)
       }
-      .introspect(.list, on: .iOS(.v16, .v17)) { collectionView in
-        //      collectionView.contentInset = UIEdgeInsets(top: 0, left: -8, bottom: 0, right: -8)
-        if let collectionViewLayout = collectionView.collectionViewLayout as? UICollectionViewCompositionalLayout {
-          if let newConfig = collectionViewLayout.configuration.copy() as? UICollectionViewCompositionalLayoutConfiguration {
-            newConfig.interSectionSpacing = preferenceShowCommentsCards ? -16 : 0
-            collectionViewLayout.configuration = newConfig
-          }
-        }
-      }
+      .listStyle(.plain)
       .transition(.opacity)
-      .environment(\.defaultMinListRowHeight, 5)
+      .environment(\.defaultMinListRowHeight, 1)
       .if(!preferenceShowCommentsCards) { $0.listStyle(.plain) }
       .refreshable {
         await asyncFetch(true)

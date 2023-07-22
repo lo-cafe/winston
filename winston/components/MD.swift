@@ -23,7 +23,7 @@ struct MD: View {
       }
       .markdownBlockStyle(\.paragraph) { configuration in
         configuration.label
-          .allowsHitTesting(false)
+//          .allowsHitTesting(false)
       }
       .markdownBlockStyle(\.blockquote) { configuration in
         configuration.label

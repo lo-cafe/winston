@@ -28,7 +28,7 @@ struct Flair: View {
 struct PostLink: View {
   @Default(.preferenceShowPostsCards) var preferenceShowPostsCards
   @Default(.preferenceShowPostsAvatars) var preferenceShowPostsAvatars
-  @StateObject var post: Post
+  @ObservedObject var post: Post
   @ObservedObject var sub: Subreddit
   var showSub = false
   var scrollPos: CGFloat?
@@ -43,14 +43,11 @@ struct PostLink: View {
   @State private var openedSub = false
   @State private var dragging = false
   
+  @GestureState private var isPressing = false
+  @GestureState private var dragX: CGFloat = 0
+  
   var body: some View {
-    //    NavigationLink {
-    //      PostView(post: post, subreddit: sub)
-    //    } label: {
     if let data = post.data {
-      //      Button {
-      //
-      //      } label: {
       VStack(alignment: .leading, spacing: 8) {
         VStack(alignment: .leading, spacing: 12) {
           Text(data.title)
@@ -64,15 +61,15 @@ struct PostLink: View {
           }
           
           if imgPost {
-            ImageMediaPost(parentDragging: $dragging, parentOffsetX: $offsetX, post: post, leftAction: {
-              Task {
-                _ = await post.vote(action: .down)
-              }
-            }, rightAction: {
-              Task {
-                _ = await post.vote(action: .up)
-              }
-            })
+//            ImageMediaPost(parentDragging: $dragging, parentOffsetX: $offsetX, post: post, leftAction: {
+//              Task {
+//                _ = await post.vote(action: .down)
+//              }
+//            }, rightAction: {
+//              Task {
+//                _ = await post.vote(action: .up)
+//              }
+//            })
           } else if data.selftext != "" {
 //            MD(str: data.selftext, lineLimit: 3)
             Text(data.selftext.md()).lineLimit(3)
@@ -147,20 +144,7 @@ struct PostLink: View {
           .fontSize(22, .medium)
         }
       }
-      //        .background(
-      //          NavigationLink(destination: PostView(post: post, subreddit: sub), isActive: $opened, label: { EmptyView() }).allowsHitTesting(false)
-      //        )
-      .background(
-        GeometryReader { geo in
-          Color.clear
-            .onAppear {
-              contentWidth = geo.size.width
-            }
-//            .onChange(of: geo.size.width) { val in
-//              contentWidth = val
-//            }
-        }
-      )
+      .background( GeometryReader { geo in Color.clear .onAppear { contentWidth = geo.size.width } } )
       .padding(.horizontal, preferenceShowPostsCards ? 18 : 0)
       .padding(.vertical, preferenceShowPostsCards ? 16 : 6)
       .frame(maxWidth: .infinity, alignment: .leading)
@@ -172,43 +156,33 @@ struct PostLink: View {
           .background(RR(20, .listBG).allowsHitTesting(false))
           .mask(RR(20, .black))
       }
+      .compositingGroup()
+      .opacity((data.winstonSeen ?? false) ? 0.5 : 1)
       .contentShape(Rectangle())
-      .scaleEffect(pressing ? 0.975 : 1)
-      .offset(x: offsetX)
-      .swipyActions(
-        pressing: $pressing,
-        parentDragging: $dragging,
-        parentOffsetX: $offsetX,
-        onTap: {
-          openedPost = true
-        },
-        leftActionHandler: {
-          Task {
-            _ = await post.vote(action: .down)
-          }
-        }, rightActionHandler: {
-          Task {
-            _ = await post.vote(action: .up)
-          }
-        })
+      .swipyUI(onTap: {
+        openedPost = true
+      }, secondActionIcon: (data.winstonSeen ?? false) ? "eye.slash.fill" : "eye.fill",
+      leftActionHandler: {
+        Task {
+          _ = await post.vote(action: .down)
+        }
+      }, rightActionHandler: {
+        Task {
+          _ = await post.vote(action: .up)
+        }
+      }, secondActionHandler: {
+        withAnimation {
+          post.toggleSeen(optimistic: true)
+        }
+      })
       .foregroundColor(.primary)
       .multilineTextAlignment(.leading)
       .zIndex(Double(aboveAll))
-      //      }
-      //      .buttonStyle(ShrinkableBtnStyle())
     } else {
       Text("Oops something went wrong")
     }
-    //    }
-    //    .buttonStyle(PlainButtonStyle())
   }
 }
-
-//struct Post_Previews: PreviewProvider {
-//    static var previews: some View {
-//        Post()
-//    }
-//}
 
 struct EmptyButtonStyle: ButtonStyle {
   func makeBody(configuration: Self.Configuration) -> some View {

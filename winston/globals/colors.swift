@@ -10,6 +10,6 @@ import SwiftUI
 
 extension Color {
   static var listBG: Color {
-    Color(UIColor.secondarySystemGroupedBackground)
+    Color("listBG")
   }
 }
