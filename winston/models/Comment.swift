@@ -34,7 +34,6 @@ extension Comment {
   convenience init(data: T, api: RedditAPI, kind: String? = nil) {
     self.init(data: data, api: api, typePrefix: "t1_")
     self.kind = kind
-    //    self.data?.repliesWinston =
     if let replies = self.data?.replies {
       switch replies {
       case .first(_):
@@ -47,6 +46,7 @@ extension Comment {
       }
     }
   }
+  
   convenience init(message: Message) throws {
     let rawMessage = message
     if let message = message.data {
@@ -90,15 +90,18 @@ extension Comment {
     }
   }
   
-  static func initMultiple(datas: [T], api: RedditAPI) -> [Comment] {
+  static func initMultiple(datas: [ListingChild<T>], api: RedditAPI) -> [Comment] {
     let context = PersistenceController.shared.container.viewContext
     let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "CollapsedComment")
     if let results = try? context.fetch(fetchRequest) as? [CollapsedComment] {
-      return datas.map { data in
-        let isCollapsed = results.contains(where: { $0.commentID == data.id })
-        let newPost = self.init(data: data, api: api, typePrefix: "t3_")
-        newPost.data?.collapsed = isCollapsed
-        return newPost
+      return datas.compactMap { x in
+        if let data = x.data {
+          let isCollapsed = results.contains(where: { $0.commentID == data.id })
+          let newPost = Comment.init(data: data, api: api, kind: x.kind)
+          newPost.data?.collapsed = isCollapsed
+          return newPost
+        }
+        return nil
       }
     }
     return []

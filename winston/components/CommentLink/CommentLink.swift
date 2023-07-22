@@ -59,14 +59,13 @@ struct CommentLink: View {
   var indentLines: Int? = nil
   var lineLimit: Int?
   var avatarsURL: [String:String]? = nil
-  var disableShapeShift = true
   var postFullname: String?
   var showReplies = true
   @EnvironmentObject private var haptics: SimpleHapticGenerator
   
   var parentElement: CommentParentElement? = nil
   @ObservedObject var comment: Comment
-//  @State var collapsed = false
+  //  @State var collapsed = false
   
   var body: some View {
     if let data = comment.data {
@@ -92,11 +91,11 @@ struct CommentLink: View {
           ForEach(Array(comment.childrenWinston.data.enumerated()), id: \.element.id) { index, commentChild in
             let childrenCount = comment.childrenWinston.data.count
             if let _ = commentChild.data {
-              CommentLink(arrowKinds: arrowKinds.map { $0.child } + [(childrenCount - 1 == index ? ArrowKind.curve : ArrowKind.straightCurve)], disableShapeShift: index == 0, postFullname: postFullname, parentElement: .comment(comment), comment: commentChild)
+              CommentLink(arrowKinds: arrowKinds.map { $0.child } + [(childrenCount - 1 == index ? ArrowKind.curve : ArrowKind.straightCurve)], postFullname: postFullname, parentElement: .comment(comment), comment: commentChild)
             }
           }
         }
-
+        
       }
       
     } else {

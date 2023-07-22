@@ -26,7 +26,7 @@ extension Post {
     if let results = try? context.fetch(fetchRequest) as? [SeenPost] {
       return datas.map { data in
         let isSeen = results.contains(where: { $0.postID == data.id })
-        let newPost = self.init(data: data, api: api, typePrefix: "t3_")
+        let newPost = Post.init(data: data, api: api)
         newPost.data?.winstonSeen = isSeen
         return newPost
       }
@@ -102,7 +102,7 @@ extension Post {
           return nil
         case .second(let actualData):
           if let data = actualData.data {
-            if let dataArr = data.children?.compactMap({ $0.data }) {
+            if let dataArr = data.children?.compactMap({ $0 }) {
               self.toggleSeen(true)
               return (
                 Comment.initMultiple(datas: dataArr, api: redditAPI),
