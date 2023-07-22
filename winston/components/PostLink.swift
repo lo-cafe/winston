@@ -157,7 +157,7 @@ struct PostLink: View {
           .mask(RR(20, .black))
       }
       .compositingGroup()
-      .opacity((data.winstonSeen ?? false) ? 0.5 : 1)
+      .opacity((data.winstonSeen ?? false) ? 0.65 : 1)
       .contentShape(Rectangle())
       .swipyUI(onTap: {
         openedPost = true

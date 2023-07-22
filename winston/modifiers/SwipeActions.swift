@@ -112,6 +112,7 @@ struct SwipeUI: ViewModifier {
               }
             }
           }
+        , including: disabled ? .none : .all
       )
       .onChange(of: (controlledDragAmount?.wrappedValue ?? dragAmount)) { newValue in
         if !controlledIsSource { return }

@@ -45,7 +45,7 @@ struct MessageLink: View {
           .mask(RR(20, .black))
       }
       .compositingGroup()
-      .opacity(!(data.new ?? false) ? 0.5 : 1)
+      .opacity(!(data.new ?? false) ? 0.65 : 1)
       .swipyActions(pressing: $pressed, onTap: {
         openedPost = true
       }, rightActionIcon: !(data.new ?? false) ? "eye.slash.fill" : "eye.fill", rightActionHandler: {

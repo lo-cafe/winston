@@ -12,6 +12,7 @@ import MarkdownUI
 struct CommentLinkContent: View {
   @Default(.preferenceShowCommentsCards) var preferenceShowCommentsCards
   @Default(.preferenceShowCommentsAvatars) var preferenceShowCommentsAvatars
+  var showReplies = true
   var arrowKinds: [ArrowKind]
   var indentLines: Int? = nil
   var lineLimit: Int?
@@ -93,7 +94,7 @@ struct CommentLinkContent: View {
         .padding(.horizontal, !preferenceShowCommentsCards ? 0 : 13)
         .padding(.top, data.depth != 0 ? 6 : 0)
         .frame(height: data.depth != 0 ? 42 : 30, alignment: .leading)
-        .background(preferenceShowCommentsCards ? Color.listBG : .clear)
+        .background(preferenceShowCommentsCards && showReplies ? Color.listBG : .clear)
         .mask(Color.listBG)
         .id("\(data.id)-header")
         
@@ -125,13 +126,11 @@ struct CommentLinkContent: View {
 //                .allowsHitTesting(false)
               }
 //              .padding(.leading, 6)
-              .introspect(.listCell, on: .iOS(.v16, .v17)) { cell in
-                cell.layer.masksToBounds = false
-              }
               .frame(maxWidth: .infinity, alignment: .topLeading)
               .offset(x: offsetX)
               .animation(.interpolatingSpring(stiffness: 1000, damping: 100, initialVelocity: 0), value: offsetX)
               .padding(.top, 6)
+              .mask(Color.listBG.padding(.horizontal, !preferenceShowCommentsCards ? 0 : -13))
               .contentShape(Rectangle())
               .swipyUI(
                 offsetYAction: -15,
@@ -145,9 +144,11 @@ struct CommentLinkContent: View {
               Spacer()
             }
           }
+          .introspect(.listCell, on: .iOS(.v16, .v17)) { cell in
+            cell.layer.masksToBounds = false
+          }
           .padding(.horizontal, !preferenceShowCommentsCards ? 0 : 13)
-          .background(preferenceShowCommentsCards ? Color.listBG : .clear)
-          .mask(Color.listBG)
+          .background(preferenceShowCommentsCards && showReplies ? Color.listBG : .clear)
           .sheet(isPresented: $showReplyModal) {
             ReplyModalComment(comment: comment)
           }
