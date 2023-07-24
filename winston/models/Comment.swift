@@ -142,11 +142,18 @@ extension Comment {
   func loadChildren(parent: CommentParentElement, postFullname: String) async {
     if let kind = kind, kind == "more", let data = data, let count = data.count, let parent_id = data.parent_id, let childrenIDS = data.children {
       var actualID = id
-      actualID.removeLast(5)
+      if actualID.hasSuffix("-more") {
+        actualID.removeLast(5)
+      }
       
+      print(id)
+      print(data.children)
+      print(data.children)
       let childrensLimit = 25
       
       if let children = await redditAPI.fetchMoreReplies(comments: count > 0 ? Array(childrenIDS.prefix(childrensLimit)) : [String(parent_id.dropFirst(3))], moreID: actualID, postFullname: postFullname, dropFirst: count == 0) {
+        
+        print(children.count)
         
         let parentID = data.parent_id ?? ""
 //        switch parent {
@@ -165,37 +172,39 @@ extension Comment {
         Task { [loadedComments] in
           await redditAPI.updateAvatarURLCacheFromComments(comments: loadedComments)
         }
-        await MainActor.run { [loadedComments, actualID] in
+        await MainActor.run { [loadedComments] in
           switch parent {
           case .comment(let comment):
-            if let index = comment.childrenWinston.data.firstIndex(where: { $0.data?.id == actualID }) {
+            if let index = comment.childrenWinston.data.firstIndex(where: { $0.id == id }) {
               withAnimation {
                 if (self.data?.children?.count ?? 0) <= 25 {
                   comment.childrenWinston.data.remove(at: index)
                 } else {
                   self.data?.children?.removeFirst(childrensLimit)
+                  if let _ = self.data?.count {
+                    self.data?.count! -= children.count
+                  }
                 }
                 comment.childrenWinston.data.insert(contentsOf: loadedComments, at: index)
               }
             }
           case .post(let postArr):
-            print(self.data?.children?.count)
-            if let index = postArr.data.firstIndex(where: { $0.data?.id == actualID }) {
+            if let index = postArr.data.firstIndex(where: { $0.id == id }) {
               withAnimation {
                 if (self.data?.children?.count ?? 0) <= 25 {
                   postArr.data.remove(at: index)
                 } else {
                   self.data?.children?.removeFirst(childrensLimit)
+                  if let _ = self.data?.count {
+                    self.data?.count! -= children.count
+                  }
                 }
-                postArr.data.remove(at: index)
                 postArr.data.insert(contentsOf: loadedComments, at: index)
               }
             }
           }
         }
-        
       }
-      
     }
   }
   
@@ -289,7 +298,7 @@ struct CommentData: GenericRedditEntityDataType {
   let archived: Bool?
   //  let collapsed_reason_code: String?
   //  let no_follow: Bool?
-  let count: Int?
+  var count: Int?
   let author: String?
   //  let can_mod_post: Bool?
   let created_utc: Double?

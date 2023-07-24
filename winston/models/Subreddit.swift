@@ -79,7 +79,6 @@ extension Subreddit {
                   sub.data?.id != self.id
                 }
               } else if !Defaults[.subreddits].contains(where: { $0.data?.id == self.id }) {
-                print(Defaults[.subreddits].contains(where: { $0.data?.id == self.id }))
                 Defaults[.subreddits].append(ListingChild(kind: "t5", data: data))
               }
             }

@@ -19,7 +19,7 @@ class GenericRedditEntity<T: GenericRedditEntityDataType>: Identifiable, Hashabl
   }
   
   static func == (lhs: GenericRedditEntity<T>, rhs: GenericRedditEntity<T>) -> Bool {
-    return lhs.id == rhs.id && lhs.kind == rhs.kind
+    return lhs.id == rhs.id && lhs.kind == rhs.kind && lhs.data == rhs.data && lhs.data?.id == rhs.data?.id
   }
   
   @Published var data: T? {

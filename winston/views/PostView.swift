@@ -171,7 +171,6 @@ struct PostReplies: View {
           }
           .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
         }
-        .animation(spring, value: comments.data)
       } else {
         if loading {
           ProgressView()
@@ -214,7 +213,6 @@ struct PostView: View {
   var highlightID: String?
   @State var ignoreSpecificComment = false
   @State var sort: CommentSortOption = Defaults[.preferredCommentSort]
-  @State var id = UUID()
   @EnvironmentObject var redditAPI: RedditAPI
   
   func asyncFetch(_ full: Bool = true) async {
