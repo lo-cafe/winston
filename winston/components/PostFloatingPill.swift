@@ -6,23 +6,50 @@
 //
 
 import SwiftUI
+import Defaults
 
 struct PostFloatingPill: View {
+  @Default(.postsInBox) var postsInBox
+  
   @ObservedObject var post: Post
+  @ObservedObject var subreddit: Subreddit
   @State var showReplyModal = false
+  
+  var thisPinnedPost: Bool { postsInBox.contains { $0.id == post.id } }
+  
   var body: some View {
-    HStack(spacing: 0) {
+    HStack(spacing: 2) {
       if let data = post.data {
         Group {
           
 //          LightBoxButton(icon: "bookmark.fill") {
 //
-//          }
+//          }µ
           HStack(spacing: -12) {
-            LightBoxButton(icon: "square.and.arrow.up.fill") {
-              //            if let data = post.data {
-              //              ShareLink(item: URL(data.url)!)
-              //            }
+            ShareLink(item: URL(string: "https://reddit.com\(data.permalink)")!) {
+              LightBoxButton(icon: "square.and.arrow.up.fill", disabled: true)
+            }
+            
+            LightBoxButton(icon: !thisPinnedPost ? "shippingbox" : "shippingbox.and.arrow.backward.fill") {
+              if thisPinnedPost {
+                withAnimation(spring) {
+                  postsInBox = postsInBox.filter({ $0.id != post.id })
+                }
+              } else {
+                if let subData = subreddit.data {
+                  let communityIcon = subData.community_icon.split(separator: "?")
+                  let subIcon = subData.icon_img == "" || subData.icon_img == nil ? communityIcon.count > 0 ? String(communityIcon[0]) : "" : subData.icon_img
+                  let newPostInBox = PostInBox(
+                    id: data.id, title: data.title,
+                    body: data.selftext, subredditIconURL: subIcon,
+                    img: data.url, subredditName: data.subreddit,
+                    authorName: data.author
+                  )
+                  withAnimation(spring) {
+                    postsInBox.append(newPostInBox)
+                  }
+                }
+              }
             }
             
             LightBoxButton(icon: "arrowshape.turn.up.left.fill") {
@@ -32,7 +59,7 @@ struct PostFloatingPill: View {
             }
           }
           
-          HStack(alignment: .center, spacing: 6) {
+          HStack(alignment: .center, spacing: 8) {
             Button {
               Task {
                 await post.vote(action: .up)
@@ -45,7 +72,7 @@ struct PostFloatingPill: View {
             let downup = Int(data.ups - data.downs)
             Text(formatBigNumber(downup))
               .foregroundColor(downup == 0 ? .gray : downup > 0 ? .orange : .blue)
-              .fontSize(16, .semibold)
+              .fontSize(17, .semibold)
             
             Button {
               Task {

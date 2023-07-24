@@ -229,6 +229,26 @@ struct PostData: GenericRedditEntityDataType, Defaults.Serializable {
   var winstonSeen: Bool?
   let secure_media: Either<SecureMediaRedditVideo, SecureMediaAlt>?
   let secure_media_embed: SecureMediaEmbed?
+  let preview: Preview?
+}
+
+struct PreviewImg: Codable, Hashable {
+  let url: String?
+  let width: Int?
+  let height: Int?
+  let id: String?
+}
+
+struct PreviewImgCollection: Codable, Hashable {
+  let source: PreviewImg?
+  let resolutions: [PreviewImg]?
+//  let variants: Oembed?
+  let id: String?
+}
+
+struct Preview: Codable, Hashable {
+  let images: [PreviewImgCollection]?
+  let enabled: Bool?
 }
 
 struct SecureMediaAlt: Codable, Hashable {

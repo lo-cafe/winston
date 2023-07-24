@@ -18,24 +18,32 @@ struct ImageMediaPost: View {
   @State var contentWidth: CGFloat = .zero
   @State var isPresenting = false
   @Namespace var presentationNamespace
+  @Default(.maxPostLinkImageHeightPercentage) var maxPostLinkImageHeightPercentage
+  
+  var safe: Double { getSafeArea().top + getSafeArea().bottom }
   
   var body: some View {
-    let height: CGFloat = 150
-    if let data = post.data {
+    let height: CGFloat = (maxPostLinkImageHeightPercentage / 100) * (UIScreen.screenHeight - safe)
+    if let data = post.data, let preview = data.preview, preview.images?.count ?? 0 > 0, let source = preview.images?[0].source, let _ = source.url, let sourceHeight = source.height, let sourceWidth = source.width {
       ZStack {
-        if !isPresenting {
-          KFImage(URL(string: data.url)!)
-            .resizable()
-            .fade(duration: 0.5)
-            .backgroundDecode()
-            .matchedGeometryEffect(id: "\(data.url)-img", in: presentationNamespace)
-            .scaledToFill()
-            .zIndex(1)
-            .frame(width: contentWidth, height: height)
-            .allowsHitTesting(false)
+        Group {
+          if !isPresenting {
+            KFImage(URL(string: data.url)!)
+              .resizable()
+              .fade(duration: 0.5)
+              .backgroundDecode()
+//              .matchedGeometryEffect(id: "\(data.url)-img", in: presentationNamespace)
+              .scaledToFill()
+              .zIndex(1)
+            //            .frame(width: contentWidth, height: CGFloat(sourceHeight) > height ? height : CGFloat(sourceHeight))
+              .allowsHitTesting(false)
+          } else {
+            Color.clear
+          }
         }
+        .frame(width: contentWidth, height: maxPostLinkImageHeightPercentage != 110 ? height : Double(sourceHeight))
       }
-      .frame(maxWidth: .infinity, minHeight: height, maxHeight: height)
+      .frame(maxWidth: .infinity)
       //      .mask(RR(12, .black).matchedGeometryEffect(id: "\(data.url)-\(prefix)mask", in: namespaceWrapper.namespace))
       .mask(RR(12, .black))
       .contentShape(Rectangle())
@@ -57,7 +65,7 @@ struct ImageMediaPost: View {
         }
       }
       .fullscreenPresent(show: $isPresenting) {
-        LightBoxImage(imgURL: URL(string: data.url)!, post: post, namespace: presentationNamespace)
+        LightBoxImage(size: CGSize(width: sourceWidth, height: sourceHeight), imgURL: URL(string: data.url)!, post: post, namespace: presentationNamespace)
       }
     } else {
       Color.clear

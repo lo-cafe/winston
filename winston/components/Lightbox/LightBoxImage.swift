@@ -13,7 +13,8 @@ import Kingfisher
 struct LightBoxButton: View {
   @GestureState var pressed = false
   var icon: String
-  var action: ()->()
+  var action: (()->())?
+  var disabled = false
   var body: some View {
     Image(systemName: icon)
       .fontSize(20)
@@ -21,21 +22,26 @@ struct LightBoxButton: View {
       .background(Circle().fill(.secondary.opacity(pressed ? 0.15 : 0)))
       .contentShape(Circle())
       .scaleEffect(pressed ? 0.95 : 1)
-      .onTapGesture {
-        action()
+      .if(!disabled) {
+        $0.onTapGesture {
+          action?()
+        }
+        .simultaneousGesture(
+          LongPressGesture(minimumDuration: 1)
+            .updating($pressed, body: { newPressed, state, transaction in
+              transaction.animation = .interpolatingSpring(stiffness: 250, damping: 15)
+              state = newPressed
+            })
+        )
       }
-      .simultaneousGesture(
-      LongPressGesture(minimumDuration: 1)
-        .updating($pressed, body: { newPressed, state, transaction in
-          transaction.animation = .interpolatingSpring(stiffness: 250, damping: 15)
-          state = newPressed
-        })
-      )
+      .transition(.scaleAndBlur)
+      .id(icon)
   }
 }
 
 struct LightBoxImage: View {
   @Environment(\.dismiss) var dismiss
+  var size: CGSize
   //  @Binding var switchImages: Bool
   @State var imgURL: URL
   //  var uiImage: UIImage?
@@ -80,30 +86,31 @@ struct LightBoxImage: View {
         KFImage(imgURL)
           .resizable()
           .fade(duration: 0.5)
-          .matchedGeometryEffect(id: "\(imgURL.absoluteString)-img", in: namespace)
+//          .matchedGeometryEffect(id: "\(imgURL.absoluteString)-img", in: namespace)
+          .pinchToZoom()
           .scaledToFit()
-        //          .mask(RR(12, .black).matchedGeometryEffect(id: "\(url)-mask", in: namespaceWrapper.namespace))
+//          .mask(RR(12, .black).matchedGeometryEffect(id: "\(imgURL.absoluteString)-mask", in: namespaceWrapper.namespace))
           .scaleEffect(interpolate([1, 0.9], true))
           .zIndex(1)
           .offset(drag)
           .blur(radius: loading ? 24 : 0)
-          .onTapGesture {
-            dismiss()
-          }
-          .simultaneousGesture(
-            DragGesture(minimumDistance: 0)
+//          .onTapGesture {
+//            dismiss()
+//          }
+          .gesture(
+            DragGesture(minimumDistance: 20)
               .onChanged { val in
                 var transaction = Transaction()
                 transaction.isContinuous = true
                 transaction.animation = .interpolatingSpring(stiffness: 1000, damping: 100)
-                
+
                 withTransaction(transaction) {
                   drag = val.translation
                 }
               }
               .onEnded { val in
                 let shouldClose = abs(val.translation.width) > 100 || abs(val.translation.height) > 100
-                
+
                 if shouldClose {
                   withAnimation(.easeOut) {
                     appearBlack = false
@@ -113,8 +120,6 @@ struct LightBoxImage: View {
                   drag = .zero
                   if shouldClose {
                     dismiss()
-                    //                    data.post = nil
-                    //                    data.time = nil
                   }
                 }
               }
@@ -133,10 +138,14 @@ struct LightBoxImage: View {
               }
             }
           }
-          LightBoxButton(icon: "square.and.arrow.up.fill") {
-            shareMedia(imgURL.absoluteString, .image)
+          ShareLink(item: imgURL) {
+            LightBoxButton(icon: "square.and.arrow.up.fill") {}
+            .allowsHitTesting(false)
+            .contentShape(Circle())
           }
         }
+        .compositingGroup()
+        .opacity(interpolate([1, 0], false))
         .frame(maxWidth: .infinity)
       }
       .foregroundColor(.white)

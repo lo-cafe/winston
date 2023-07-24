@@ -19,6 +19,24 @@
       }
     },
     {
+      "identity" : "displaylink",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/timdonnelly/DisplayLink",
+      "state" : {
+        "revision" : "e95f592a176246172324f10eb1bdc92f121d479f",
+        "version" : "0.2.0"
+      }
+    },
+    {
+      "identity" : "gltfscenekit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/frzi/GLTFSceneKit",
+      "state" : {
+        "revision" : "a9587ec5c6515ee7d036533fdd909815a9a718ef",
+        "version" : "0.4.1"
+      }
+    },
+    {
       "identity" : "gsplayer",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/wxxsw/GSPlayer.git",
@@ -52,6 +70,15 @@
       "state" : {
         "revision" : "c1f60c63f356d364f4284ba82961acbe7de79bcc",
         "version" : "7.8.1"
+      }
+    },
+    {
+      "identity" : "model3dview",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/frzi/Model3DView.git",
+      "state" : {
+        "revision" : "8b3ee58a9a752c11511f9ead61ec42c4d533109a",
+        "version" : "0.1.1"
       }
     },
     {
@@ -115,15 +142,6 @@
       "state" : {
         "revision" : "3042f0cf4b9f0d5b0bb08ad17f742a43bc4fdfc5",
         "version" : "2.8.0"
-      }
-    },
-    {
-      "identity" : "swipeactions",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/aheze/SwipeActions.git",
-      "state" : {
-        "revision" : "41e6f6dce02d8cfa164f8c5461a41340850ca3ab",
-        "version" : "1.1.0"
       }
     },
     {

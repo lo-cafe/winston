@@ -165,24 +165,28 @@ extension Comment {
         Task { [loadedComments] in
           await redditAPI.updateAvatarURLCacheFromComments(comments: loadedComments)
         }
-        await MainActor.run { [loadedComments] in
+        await MainActor.run { [loadedComments, actualID] in
           switch parent {
           case .comment(let comment):
-            if let index = comment.childrenWinston.data.firstIndex(where: { $0.data?.id == id }) {
+            if let index = comment.childrenWinston.data.firstIndex(where: { $0.data?.id == actualID }) {
               withAnimation {
                 if (self.data?.children?.count ?? 0) <= 25 {
                   comment.childrenWinston.data.remove(at: index)
                 } else {
                   self.data?.children?.removeFirst(childrensLimit)
                 }
-//                print(id, loadedComments[0].id)
                 comment.childrenWinston.data.insert(contentsOf: loadedComments, at: index)
-//                print(comment.data?.body)
               }
             }
           case .post(let postArr):
-            if let index = postArr.data.firstIndex(where: { $0.data?.id == id }) {
+            print(self.data?.children?.count)
+            if let index = postArr.data.firstIndex(where: { $0.data?.id == actualID }) {
               withAnimation {
+                if (self.data?.children?.count ?? 0) <= 25 {
+                  postArr.data.remove(at: index)
+                } else {
+                  self.data?.children?.removeFirst(childrensLimit)
+                }
                 postArr.data.remove(at: index)
                 postArr.data.insert(contentsOf: loadedComments, at: index)
               }

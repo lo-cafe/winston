@@ -10,10 +10,24 @@ import Defaults
 import UIKit
 import SwiftUI
 
+struct PostInBox: Codable, Identifiable, Hashable, Defaults.Serializable {
+  var id: String
+  var title: String
+  var body: String?
+  var subredditIconURL: String?
+  var img: String?
+  var subredditName: String
+  var authorName: String
+  var subColor: String?
+  var score: Int?
+  var commentsCount: Int?
+}
+
 extension Defaults.Keys {
   static let redditAPILastTokenRefreshDate = Key<Date?>("redditAPILastTokenRefreshDate", default: nil)
   static let redditAPITokenExpiration = Key<Int?>("redditAPITokenExpiration", default: nil)
   static let subreddits = Key<[ListingChild<SubredditData>]>("subreddits", default: [])
+  static let postsInBox = Key<[PostInBox]>("postsInBox", default: [])
   static let preferredSort = Key<SubListingSortOption>("preferredSort", default: .hot)
   static let preferredCommentSort = Key<CommentSortOption>("preferredCommentSort", default: .confidence)
   static let preferenceShowPostsAvatars = Key<Bool>("preferenceShowPostsAvatars", default: true)
@@ -21,6 +35,7 @@ extension Defaults.Keys {
   static let preferenceShowCommentsAvatars = Key<Bool>("preferenceShowCommentsAvatars", default: true)
   static let preferenceShowCommentsCards = Key<Bool>("preferenceShowCommentsCards", default: true)
   static let enableVotesPopover = Key<Bool>("preferenceShowCommentsCards", default: true)
+  static let maxPostLinkImageHeightPercentage = Key<Double>("maxPostLinkImageHeightPercentage", default: 100)
 }
 
 extension UIScreen {

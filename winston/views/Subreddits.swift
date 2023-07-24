@@ -114,9 +114,12 @@ struct Subreddits: View {
   @State var searchText: String = ""
   @StateObject var subsDict = SubsDictContainer()
   @StateObject var selectedSubreddit = SelectedSubredditContainer()
+  @State var selectedPost = PostInBox(id: "a", title: "a", body: "a", subredditIconURL: "a", img: "a", subredditName: "a", authorName: "a")
   @State var selectedSubActive = IPAD
+  @State var selectedPostActive = false
   @State var loaded = false
   @State var editMode: EditMode = .inactive
+  @Default(.postsInBox) var postsInBox
   
   func sort(_ subs: [ListingChild<SubredditData>]) -> [String: [Subreddit]] {
     return Dictionary(grouping: subs.compactMap { $0.data }, by: { String($0.display_name?.prefix(1) ?? "").uppercased() })
@@ -124,9 +127,20 @@ struct Subreddits: View {
   }
   
   func openSub(_ sub: Subreddit) {
-    withAnimation {
-      selectedSubreddit.sub = sub
-      selectedSubActive = true
+    selectedSubreddit.sub = sub
+    doThisAfter(0.05) {
+      withAnimation {
+        selectedSubActive = true
+      }
+    }
+  }
+  
+  func openQuickPost(_ post: PostInBox) {
+    selectedPost = post
+    doThisAfter(0.05) {
+      withAnimation {
+        selectedPostActive = true
+      }
     }
   }
   
@@ -160,11 +174,26 @@ struct Subreddits: View {
           .listRowSeparator(.hidden)
           .listRowBackground(Color.clear)
           .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
-          .listStyle(.plain)
           .onChange(of: subreddits) { val in
             withAnimation(nil) {
               subsDict.data = sort(val)
             }
+          }
+        }
+        
+        if postsInBox.count > 0 {
+          Section("Box") {
+            ScrollView(.horizontal) {
+              HStack(spacing: 12) {
+                ForEach(postsInBox, id: \.self.id) { post in
+                  PostInBoxLink(post: post, openPost: openQuickPost)
+                }
+              }
+              .fixedSize(horizontal: true, vertical: false)
+            }
+            .scrollIndicators(.hidden)
+            .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
+            .listRowBackground(Color.clear)
           }
         }
         
@@ -194,8 +223,12 @@ struct Subreddits: View {
         }
       }
       .listStyle(.sidebar)
+      .animation(spring, value: postsInBox)
       .background(
         NavigationLink(destination: SubredditPosts(subreddit: selectedSubreddit.sub), isActive: $selectedSubActive, label: { EmptyView() }).buttonStyle(EmptyButtonStyle()).opacity(0).allowsHitTesting(false).if(IPAD) { $0.id(selectedSubreddit.sub.id) }
+      )
+      .background(
+        NavigationLink(destination: PostViewContainer(post: Post(id: selectedPost.id, api: redditAPI), sub: Subreddit(id: selectedPost.subredditName, api: redditAPI)), isActive: $selectedPostActive, label: { EmptyView() }).buttonStyle(EmptyButtonStyle()).opacity(0).allowsHitTesting(false).if(IPAD) { $0.id(selectedSubreddit.sub.id) }.id(selectedPost.id)
       )
       .searchable(text: $searchText, prompt: "Search my subreddits")
       .refreshable {

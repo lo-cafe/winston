@@ -1,6 +1,3 @@
-- Now you can mark posts as seen/unseen by visiting or doing a full left swipe in the post link before opening it.
-- Collapsed comments persist
-- Links are now clickable inside comments
-- Fixed comments layout (now the spacings are fine again)
-- Fixed clipped up/down vote indicator
-- Multiple bug fixes
+- Posts images now have adjustable height
+- Image are now zoomable in lightbox (but it unzooms right afterwards like instagram for now)
+- We upgraded the food we give to Oeste, our cat that inspired winston, so now he should develop the app quicker.

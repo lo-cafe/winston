@@ -7,6 +7,7 @@
 
 import SwiftUI
 import Defaults
+//import SceneKit
 
 struct Settings: View {
   @Environment(\.openURL) var openURL
@@ -14,6 +15,7 @@ struct Settings: View {
     GoodNavigator {
       VStack {
         List {
+          
           Section {
             NavigationLink {
               BehaviorPanel()

@@ -281,7 +281,7 @@ struct PostView: View {
         await asyncFetch(true)
       }
       .overlay(
-        PostFloatingPill(post: post)
+        PostFloatingPill(post: post, subreddit: subreddit)
         , alignment: .bottomTrailing
       )
       .navigationBarTitle("\(post.data?.num_comments ?? 0) comments", displayMode: .inline)

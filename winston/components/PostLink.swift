@@ -50,7 +50,7 @@ struct PostLink: View {
     if let data = post.data {
       VStack(alignment: .leading, spacing: 8) {
         VStack(alignment: .leading, spacing: 12) {
-          Text(data.title)
+          Text(data.title.stringByDecodingHTMLEntities)
             .fontSize(17, .medium)
             .allowsHitTesting(false)
           
