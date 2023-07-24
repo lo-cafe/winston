@@ -7,7 +7,6 @@
 
 import SwiftUI
 import Kingfisher
-import SwiftUIDelayedGesture
 import Defaults
 import SimpleHaptics
 
