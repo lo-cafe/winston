@@ -8,7 +8,6 @@
 import SwiftUI
 import VideoPlayer
 import CoreMedia
-import SwiftUIBackports
 import Defaults
 
 struct Flair: View {
@@ -24,6 +23,8 @@ struct Flair: View {
       .fixedSize()
   }
 }
+
+let POSTLINK_INNER_H_PAD: CGFloat = 16
 
 struct PostLink: View {
   @Default(.preferenceShowPostsCards) var preferenceShowPostsCards
@@ -137,8 +138,8 @@ struct PostLink: View {
         }
       }
       .background( GeometryReader { geo in Color.clear .onAppear { contentWidth = geo.size.width } } )
-      .padding(.horizontal, preferenceShowPostsCards ? 18 : 0)
-      .padding(.vertical, preferenceShowPostsCards ? 16 : 6)
+      .padding(.horizontal, preferenceShowPostsCards ? POSTLINK_INNER_H_PAD : 0)
+      .padding(.vertical, preferenceShowPostsCards ? 14 : 6)
       .frame(maxWidth: .infinity, alignment: .leading)
       .background(
         NavigationLink(destination: PostView(post: post, subreddit: sub), isActive: $openedPost, label: { EmptyView() }).buttonStyle(EmptyButtonStyle()).opacity(0).allowsHitTesting(false)

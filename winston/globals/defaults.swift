@@ -36,6 +36,8 @@ extension Defaults.Keys {
   static let preferenceShowCommentsCards = Key<Bool>("preferenceShowCommentsCards", default: true)
   static let enableVotesPopover = Key<Bool>("preferenceShowCommentsCards", default: true)
   static let maxPostLinkImageHeightPercentage = Key<Double>("maxPostLinkImageHeightPercentage", default: 100)
+  static let replyModalBlurBackground = Key<Bool>("replyModalBlurBackground", default: true)
+  static let newPostModalBlurBackground = Key<Bool>("newPostModalBlurBackground", default: true)
 }
 
 extension UIScreen {

@@ -7,7 +7,7 @@
 
 import SwiftUI
 import HighlightedTextEditor
-import SwiftUIBackports
+import Defaults
 
 //class ReplyModalContent: Equatable, ObservableObject, Identifiable {
 //  static func ==(lhs: ReplyModalContent, rhs: ReplyModalContent) -> Bool {
@@ -20,7 +20,6 @@ import SwiftUIBackports
 //}
 
 class TextFieldObserver : ObservableObject {
-  
   @Published var debouncedTeplyText = ""
   @Published var replyText = ""
   
@@ -33,19 +32,22 @@ class TextFieldObserver : ObservableObject {
 
 struct ReplyModalComment: View {
   @ObservedObject var comment: Comment
-  var body: some View {
-    ReplyModal(thingFullname: comment.data?.name ?? "", action: { endLoading, text in
-      if let _ = comment.typePrefix {
-        Task {
-          let result = await comment.reply(text)
-          await MainActor.run {
-            withAnimation(spring) {
-              endLoading(result)
-            }
+  
+  func action(_ endLoading: (@escaping (Bool) -> ()), text: String) {
+    if let _ = comment.typePrefix {
+      Task {
+        let result = await comment.reply(text)
+        await MainActor.run {
+          withAnimation(spring) {
+            endLoading(result)
           }
         }
       }
-    }) {
+    }
+  }
+  
+  var body: some View {
+    ReplyModal(thingFullname: comment.data?.name ?? "", action: action) {
       VStack {
         CommentLink(indentLines: 0, showReplies: false, comment: comment)
       }
@@ -55,17 +57,20 @@ struct ReplyModalComment: View {
 
 struct ReplyModalPost: View {
   @ObservedObject var post: Post
-  var body: some View {
-    ReplyModal(thingFullname: post.data?.name ?? "", action: { endLoading, text in
-      Task {
-        let result = await post.reply(text)
-        await MainActor.run {
-          withAnimation(spring) {
-            endLoading(result)
-          }
+  
+  func action(_ endLoading: (@escaping (Bool) -> ()), text: String) {
+    Task {
+      let result = await post.reply(text)
+      await MainActor.run {
+        withAnimation(spring) {
+          endLoading(result)
         }
       }
-    }) {
+    }
+  }
+  
+  var body: some View {
+    ReplyModal(thingFullname: post.data?.name ?? "", action: action) {
       EmptyView()
     }
   }
@@ -77,12 +82,13 @@ struct ReplyModal<Content: View>: View {
   @EnvironmentObject var redditAPI: RedditAPI
   @State var alertExit = false
   @StateObject var textWrapper = TextFieldObserver(delay: 0.5)
-  @Environment(\.backportDismiss) private var dismiss
+  @Environment(\.dismiss) var dismiss
   @Environment(\.managedObjectContext) private var viewContext
   @State var currentDraft: ReplyDraft?
   @State var editorHeight: CGFloat = 200
   @State var loading = false
-  @State private var selection: Backport.PresentationDetent = .medium
+  @State private var selection: PresentationDetent = .medium
+  @Default(.replyModalBlurBackground) var replyModalBlurBackground
   
   @FetchRequest(sortDescriptors: []) var drafts: FetchedResults<ReplyDraft>
   var content: (() -> Content)?
@@ -96,7 +102,7 @@ struct ReplyModal<Content: View>: View {
             if let me = redditAPI.me?.data {
               Badge(author: me.name, fullname: me.name, created: Date().timeIntervalSince1970, avatarURL: me.icon_img ?? me.snoovatar_img)
             }
-            HighlightedTextEditor(text: $textWrapper.replyText, highlightRules: .markdown)
+            HighlightedTextEditor(text: $textWrapper.replyText, highlightRules: winstonMDEditorPreset)
               .introspect { editor in
                 editor.textView.backgroundColor = .clear
               }
@@ -138,7 +144,8 @@ struct ReplyModal<Content: View>: View {
           }, textWrapper.replyText)
         }
           .shrinkOnTap()
-          .offset(y: loading ? 64 : 0)
+          .offset(y: loading || selection == collapsedPresentation ? 90 : 0)
+          .animation(spring, value: selection)
           .padding(.horizontal, 16)
           .padding(.bottom, 8)
         , alignment: .bottom
@@ -169,10 +176,10 @@ struct ReplyModal<Content: View>: View {
           currentDraft = newDraft
         }
       }
-      .backport.navigationTitle("Replying")
+      .navigationTitle("Replying")
       .navigationBarTitleDisplayMode(.inline)
-      .backport.toolbar {
-        Backport.ToolbarItem {
+      .toolbar {
+        ToolbarItem {
           HStack(spacing: 0) {
             MasterButton(icon: "trash.fill", mode: .subtle, color: .primary, textColor: .red, shrinkHoverEffect: true, height: 52, proportional: .circle, disabled: textWrapper.replyText == "") {
               withAnimation(spring) {
@@ -204,18 +211,10 @@ struct ReplyModal<Content: View>: View {
         }
       }
     }
-    .backport.presentationDetents([.medium,.large], selection: $selection)
-    .backport.presentationCornerRadius(32)
-    .backport.presentationBackgroundInteraction(.enabled)
-    //    .backport.presentationDragIndicator(.visible)
-    .backport.interactiveDismissDisabled(alertExit) {
-      alertExit = true
-    }
+    .presentationDetents([.large, .fraction(0.75), .medium, collapsedPresentation], selection: $selection)
+    .presentationCornerRadius(32)
+    .presentationBackgroundInteraction(.enabled)
+    .if(replyModalBlurBackground) { $0.presentationBackground(.regularMaterial) }
+    .presentationDragIndicator(.hidden)
   }
 }
-
-//struct CommentModal_Previews: PreviewProvider {
-//    static var previews: some View {
-//        CommentModal()
-//    }
-//}

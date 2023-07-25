@@ -11,6 +11,8 @@ import SwiftUIIntrospect
 import Kingfisher
 import WaterfallGrid
 
+let POSTLINK_OUTER_H_PAD: CGFloat = IPAD ? 0 : 8
+
 struct SubredditPosts: View {
   @Default(.preferenceShowPostsCards) var preferenceShowPostsCards
   @ObservedObject var subreddit: Subreddit
@@ -21,6 +23,7 @@ struct SubredditPosts: View {
   @State var lastPostAfter: String?
   @State var searchText: String = ""
   @State var sort: SubListingSortOption = Defaults[.preferredSort]
+  @State var newPost = false
   //  @State var disableScroll = false
   @EnvironmentObject var redditAPI: RedditAPI
   
@@ -39,10 +42,10 @@ struct SubredditPosts: View {
           posts.data = newPosts
         }
         loading = false
+        lastPostAfter = result.1
+        loadingMore = false
       }
       await redditAPI.updateAvatarURLCacheFromPosts(posts: newPosts)
-      lastPostAfter = result.1
-      loadingMore = false
     }
   }
   
@@ -75,19 +78,31 @@ struct SubredditPosts: View {
             if loading && posts.data.count == 0 {
               ProgressView()
                 .frame(maxWidth: .infinity, minHeight: 500)
+                .listRowInsets(EdgeInsets(top: 8, leading: POSTLINK_OUTER_H_PAD, bottom: 8, trailing: POSTLINK_OUTER_H_PAD))
             } else {
               ForEach(Array(posts.data.enumerated()), id: \.self.element.id) { i, post in
                 PostLink(post: post, sub: subreddit)
+                  .listRowInsets(EdgeInsets(top: !preferenceShowPostsCards ? 16 : 8, leading: POSTLINK_OUTER_H_PAD, bottom: !preferenceShowPostsCards ? 16 : 8, trailing: POSTLINK_OUTER_H_PAD))
                   .if(Int(Double(posts.data.count) * 0.75) == i) { view in
                     view.onAppear {
                       fetch(loadMore: true)
                     }
                   }
+                if !preferenceShowPostsCards && i != (posts.data.count - 1) {
+                  VStack(spacing: 0) {
+                    Divider()
+                    Color.listBG
+                      .frame(maxWidth: .infinity, minHeight: 6, maxHeight: 6)
+                    Divider()
+                  }
+                  .id("\(post.id)-divider")
+                  .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
+                }
               }
             }
           }
-          .listRowInsets(EdgeInsets(top: 8, leading: IPAD ? 0 : 8, bottom: 8, trailing: IPAD ? 0 : 8))
-          .listRowSeparator(preferenceShowPostsCards ? .hidden : .automatic)
+          //          .listRowSeparator(preferenceShowPostsCards ? .hidden : .automatic)
+          .listRowSeparator(.hidden)
           .listRowBackground(Color.clear)
         }
         .introspect(.list, on: .iOS(.v15)) { list in
@@ -100,11 +115,12 @@ struct SubredditPosts: View {
         //    .scrollContentBackground(.hidden)
         .if(!IPAD) { $0.listStyle(.plain) }
         .if(IPAD) { $0.listStyle(.insetGrouped) }
+        .environment(\.defaultMinListRowHeight, 1)
       }
     }
     .overlay(
       Button {
-        
+        newPost = true
       } label: {
         Image(systemName: "newspaper.fill")
           .fontSize(22, .bold)
@@ -113,10 +129,14 @@ struct SubredditPosts: View {
           .floating()
           .contentShape(Circle())
       }
+        .buttonStyle(NoBtnStyle())
         .shrinkOnTap()
         .padding(.all, 12)
       , alignment: .bottomTrailing
     )
+    .sheet(isPresented: $newPost, content: {
+      NewPostModal(subreddit: subreddit)
+    })
     .navigationBarItems(
       trailing:
         HStack {
@@ -165,14 +185,6 @@ struct SubredditPosts: View {
         }
       }
     }
-    //    .onChange(of: lightBoxType.url) { val in
-    //      if val == nil {
-    //        disableScroll = false
-    //      }
-    //    }
-    //    .onChange(of: posts) { _ in
-    //      print("posts")
-    //    }
     .onChange(of: sort) { val in
       withAnimation {
         loading = true
@@ -180,12 +192,6 @@ struct SubredditPosts: View {
       }
       fetch()
     }
-    //    .onChange(of: vScrollWrapper.offset) { val in
-    //          //      print(val, contentHeight)
-    //          if val > contentHeight * 0.75 && !loading && !loadingMore {
-    //            fetch(loadMore: true)
-    //          }
-    //        }
   }
 }
 

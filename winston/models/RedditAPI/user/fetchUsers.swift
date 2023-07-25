@@ -7,6 +7,7 @@
 
 import Foundation
 import Alamofire
+import SwiftUI
 
 extension RedditAPI {
   func fetchUsers(_ ids: [String]) async -> MultipleUsersDictionary? {
@@ -64,7 +65,9 @@ extension RedditAPI {
     if let data = await self.fetchUsers(names) {
       let newDict = data.mapValues { val in val.profile_img ?? "" }
       await MainActor.run { [newDict] in
-        avatarURLCache.merge(newDict) { (_, new) in new }
+        withAnimation {
+          avatarURLCache.merge(newDict) { (_, new) in new }
+        }
       }
     }
   }

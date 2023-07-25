@@ -3,6 +3,16 @@
     <entity name="CollapsedComment" representedClassName="CollapsedComment" syncable="YES" codeGenerationType="class">
         <attribute name="commentID" optional="YES" attributeType="String"/>
     </entity>
+    <entity name="PostDraft" representedClassName="PostDraft" syncable="YES" codeGenerationType="class">
+        <attribute name="flairID" optional="YES" attributeType="String"/>
+        <attribute name="flairText" optional="YES" attributeType="String"/>
+        <attribute name="subredditName" optional="YES" attributeType="String"/>
+        <attribute name="text" attributeType="String" defaultValueString=""/>
+        <attribute name="timestamp" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="title" attributeType="String" defaultValueString=""/>
+        <attribute name="url" optional="YES" attributeType="String"/>
+        <attribute name="uuid" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+    </entity>
     <entity name="ReplyDraft" representedClassName="ReplyDraft" syncable="YES" codeGenerationType="class">
         <attribute name="commentID" optional="YES" attributeType="String"/>
         <attribute name="replyText" optional="YES" attributeType="String"/>

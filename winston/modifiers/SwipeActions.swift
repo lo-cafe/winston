@@ -31,7 +31,7 @@ struct SwipeUI: ViewModifier {
   var disabled: Bool = false
   
   private let firstActionThreshold: CGFloat = 75
-  private let secondActionThreshold: CGFloat = 225
+  private let secondActionThreshold: CGFloat = 200
   private let minimumDragDistance: CGFloat = 30
   
   func body(content: Content) -> some View {

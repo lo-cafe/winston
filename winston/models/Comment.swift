@@ -146,15 +146,10 @@ extension Comment {
         actualID.removeLast(5)
       }
       
-      print(id)
-      print(data.children)
-      print(data.children)
       let childrensLimit = 25
       
       if let children = await redditAPI.fetchMoreReplies(comments: count > 0 ? Array(childrenIDS.prefix(childrensLimit)) : [String(parent_id.dropFirst(3))], moreID: actualID, postFullname: postFullname, dropFirst: count == 0) {
-        
-        print(children.count)
-        
+                
         let parentID = data.parent_id ?? ""
 //        switch parent {
 //        case .comment(let comment):

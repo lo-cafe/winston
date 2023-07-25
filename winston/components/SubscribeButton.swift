@@ -9,6 +9,7 @@ import SwiftUI
 import Defaults
 
 struct SubscribeButton: View {
+  @Environment(\.colorScheme) var colorScheme: ColorScheme
   @Default(.subreddits) var subs
   @ObservedObject var subreddit: Subreddit
   @State var loading = false
@@ -21,6 +22,7 @@ struct SubscribeButton: View {
             if loading {
               ProgressView()
                 .padding(.trailing, 8)
+                .colorScheme(subscribed ? .dark : colorScheme)
             } else {
               if subscribed {
                 Image(systemName: "checkmark.circle.fill")

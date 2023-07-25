@@ -151,6 +151,7 @@ struct PostReplies: View {
                 .id("\(comment.id)-bot-spacer")
               }
             }
+            .listRowBackground(Color.clear)
             .listRowInsets(EdgeInsets(top: 0, leading: 8, bottom: 0, trailing: 8))
           }
           Section {
@@ -169,6 +170,7 @@ struct PostReplies: View {
               }
               .id("on-change-spacer")
           }
+          .listRowBackground(Color.clear)
           .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
         }
       } else {

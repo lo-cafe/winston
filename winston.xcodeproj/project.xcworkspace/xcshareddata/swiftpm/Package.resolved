@@ -19,24 +19,6 @@
       }
     },
     {
-      "identity" : "displaylink",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/timdonnelly/DisplayLink",
-      "state" : {
-        "revision" : "e95f592a176246172324f10eb1bdc92f121d479f",
-        "version" : "0.2.0"
-      }
-    },
-    {
-      "identity" : "gltfscenekit",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/frzi/GLTFSceneKit",
-      "state" : {
-        "revision" : "a9587ec5c6515ee7d036533fdd909815a9a718ef",
-        "version" : "0.4.1"
-      }
-    },
-    {
       "identity" : "gsplayer",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/wxxsw/GSPlayer.git",
@@ -73,15 +55,6 @@
       }
     },
     {
-      "identity" : "model3dview",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/frzi/Model3DView.git",
-      "state" : {
-        "revision" : "8b3ee58a9a752c11511f9ead61ec42c4d533109a",
-        "version" : "0.1.1"
-      }
-    },
-    {
       "identity" : "popovers",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/aheze/Popovers",
@@ -109,15 +82,6 @@
       }
     },
     {
-      "identity" : "swiftbackports",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/shaps80/SwiftBackports",
-      "state" : {
-        "revision" : "ddca6a237c1ba2291d5a3cc47ec8480ce6e9f805",
-        "version" : "1.0.3"
-      }
-    },
-    {
       "identity" : "swiftdate",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/malcommac/SwiftDate.git",
@@ -133,15 +97,6 @@
       "state" : {
         "revision" : "6dce3c8f5bfa8bc20120c7497da27e984a8813aa",
         "version" : "0.7.0"
-      }
-    },
-    {
-      "identity" : "swiftuibackports",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/shaps80/SwiftUIBackports.git",
-      "state" : {
-        "revision" : "3042f0cf4b9f0d5b0bb08ad17f742a43bc4fdfc5",
-        "version" : "2.8.0"
       }
     },
     {

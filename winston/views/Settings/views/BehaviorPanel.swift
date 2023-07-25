@@ -26,10 +26,10 @@ struct BehaviorPanel: View {
         }
         VStack(alignment: .leading) {
           HStack {
-            Text("Posts screen height allocation")
+            Text("Max posts image height")
             Spacer()
             Text(maxPostLinkImageHeightPercentage == 110 ? "Original" : "\(Int(maxPostLinkImageHeightPercentage))%")
-              .opacity(0.75)
+              .opacity(0.6)
           }
           Slider(value: $maxPostLinkImageHeightPercentage, in: 10...110, step: 10)
         }
