@@ -5,4 +5,4 @@
 - Replying modal has a blurry background option
 - Restyled markdown editor to look bear-like (it's cute as hell)
 - A preview of the new post modal is now available! (not working yet)
--
+- Now the Posts Box is always up to date :)

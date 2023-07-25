@@ -12,6 +12,7 @@ import SwiftUI
 
 struct PostInBox: Codable, Identifiable, Hashable, Defaults.Serializable {
   var id: String
+  var fullname: String
   var title: String
   var body: String?
   var subredditIconURL: String?
@@ -21,13 +22,15 @@ struct PostInBox: Codable, Identifiable, Hashable, Defaults.Serializable {
   var subColor: String?
   var score: Int?
   var commentsCount: Int?
+  var createdAt: Double?
+  var lastUpdatedAt: Double?
 }
 
 extension Defaults.Keys {
   static let redditAPILastTokenRefreshDate = Key<Date?>("redditAPILastTokenRefreshDate", default: nil)
   static let redditAPITokenExpiration = Key<Int?>("redditAPITokenExpiration", default: nil)
   static let subreddits = Key<[ListingChild<SubredditData>]>("subreddits", default: [])
-  static let postsInBox = Key<[PostInBox]>("postsInBox", default: [])
+  static let postsInBox = Key<[PostInBox]>("postsInBox-v2", default: [])
   static let preferredSort = Key<SubListingSortOption>("preferredSort", default: .hot)
   static let preferredCommentSort = Key<CommentSortOption>("preferredCommentSort", default: .confidence)
   static let preferenceShowPostsAvatars = Key<Bool>("preferenceShowPostsAvatars", default: true)

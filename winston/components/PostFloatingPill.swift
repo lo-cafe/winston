@@ -40,10 +40,12 @@ struct PostFloatingPill: View {
                   let communityIcon = subData.community_icon.split(separator: "?")
                   let subIcon = subData.icon_img == "" || subData.icon_img == nil ? communityIcon.count > 0 ? String(communityIcon[0]) : "" : subData.icon_img
                   let newPostInBox = PostInBox(
-                    id: data.id, title: data.title,
-                    body: data.selftext, subredditIconURL: subIcon,
-                    img: data.url, subredditName: data.subreddit,
-                    authorName: data.author
+                    id: data.id, fullname: data.name,
+                    title: data.title, body: data.selftext,
+                    subredditIconURL: subIcon, img: data.url,
+                    subredditName: data.subreddit, authorName: data.author,
+                    score: data.ups, commentsCount: data.num_comments,
+                    createdAt: data.created, lastUpdatedAt: Date().timeIntervalSince1970
                   )
                   withAnimation(spring) {
                     postsInBox.append(newPostInBox)

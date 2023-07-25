@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Defaults
 
 enum TabIdentifier {
   case posts, inbox, me, search, settings
@@ -22,6 +23,7 @@ struct Tabber: View {
     .search: true,
     .settings: true,
   ]
+  @Default(.postsInBox) var postsInBox
   var body: some View {
     TabView(selection: $activeTab.onUpdate { newTab in if activeTab == newTab { reset[newTab]!.toggle() } }) {
       
@@ -72,6 +74,7 @@ struct Tabber: View {
       
     }
     .onAppear {
+      Task { await updatePostsInBox(redditAPI) }
       if redditAPI.loggedUser.apiAppID == nil || redditAPI.loggedUser.apiAppSecret == nil {
         withAnimation(spring) {
           credModalOpen = true

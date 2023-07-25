@@ -114,7 +114,7 @@ struct Subreddits: View {
   @State var searchText: String = ""
   @StateObject var subsDict = SubsDictContainer()
   @StateObject var selectedSubreddit = SelectedSubredditContainer()
-  @State var selectedPost = PostInBox(id: "a", title: "a", body: "a", subredditIconURL: "a", img: "a", subredditName: "a", authorName: "a")
+  @State var selectedPost = PostInBox(id: "a", fullname: "a", title: "a", body: "a", subredditIconURL: "a", img: "a", subredditName: "a", authorName: "a")
   @State var selectedSubActive = IPAD
   @State var selectedPostActive = false
   @State var loaded = false
@@ -182,7 +182,7 @@ struct Subreddits: View {
         }
         
         if postsInBox.count > 0 {
-          Section("Box") {
+          Section("Posts Box") {
             ScrollView(.horizontal) {
               HStack(spacing: 12) {
                 ForEach(postsInBox, id: \.self.id) { post in
@@ -232,11 +232,20 @@ struct Subreddits: View {
       )
       .searchable(text: $searchText, prompt: "Search my subreddits")
       .refreshable {
+        Task {
+          await updatePostsInBox(redditAPI, force: true)
+        }
         await redditAPI.fetchSubs()
       }
       .navigationTitle("Subs")
-      .onChange(of: reset) { _ in selectedSubActive = false }
+      .onChange(of: reset) { _ in
+        selectedSubActive = false
+        selectedPostActive = false
+      }
       .onAppear {
+        Task {
+          await updatePostsInBox(redditAPI)
+        }
         if !loaded {
           if subreddits.count > 0 {
             subsDict.data = sort(subreddits)

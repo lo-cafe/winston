@@ -34,6 +34,7 @@ struct PostInBoxLink: View {
         .fixedSize(horizontal: false, vertical: true)
       
       Spacer()
+        .frame(maxHeight: .infinity)
       
       HStack {
         
@@ -41,12 +42,18 @@ struct PostInBoxLink: View {
         HStack(alignment: .center, spacing: 6) {
           HStack(alignment: .center, spacing: 2) {
             Image(systemName: "message.fill")
-            Text(formatBigNumber(2345))
+            Text(formatBigNumber(post.commentsCount ?? 0))
+              .transition(.asymmetric(insertion: .offset(y: 16), removal: .offset(y: -16)).combined(with: .opacity))
+              .id(post.commentsCount)
           }
           
-          HStack(alignment: .center, spacing: 2) {
-            Image(systemName: "hourglass.bottomhalf.filled")
-            Text("12h")
+          if let createdAt = post.createdAt {
+            HStack(alignment: .center, spacing: 2) {
+              Image(systemName: "hourglass.bottomhalf.filled")
+              Text(timeSince(Int(createdAt)))
+                .transition(.asymmetric(insertion: .offset(y: 16), removal: .offset(y: -16)).combined(with: .opacity))
+                .id(createdAt)
+            }
           }
         }
         .font(.system(size: 13, weight: .medium))
@@ -59,9 +66,11 @@ struct PostInBoxLink: View {
           Image(systemName: "arrow.up")
             .foregroundColor(.orange)
           
-          Text(formatBigNumber(12000))
-            .foregroundColor(.orange)
+          Text(formatBigNumber(post.score ?? 0))
+            .foregroundColor((post.score ?? 0) > 0 ? .orange : post.score == 0 ? .gray : .blue)
             .fontSize(13, .semibold)
+            .transition(.asymmetric(insertion: .offset(y: 16), removal: .offset(y: -16)).combined(with: .opacity))
+            .id(post.score)
           
           Image(systemName: "arrow.down")
             .foregroundColor(.gray)
@@ -73,7 +82,6 @@ struct PostInBoxLink: View {
       }
       
     }
-    .fixedSize(horizontal: false, vertical: true)
     .padding(.horizontal, 13)
     .padding(.vertical, 11)
     .frame(width: (UIScreen.screenWidth / 1.75), height: 120, alignment: .topLeading)
@@ -97,7 +105,7 @@ struct PostInBoxLink: View {
         .fontSize(14, .semibold)
         .foregroundColor(.red)
         .frame(height: abs(offsetY ?? 0))
-        .saturation(deleting ? 0 : 1)
+        .saturation(deleting ? 1 : 0)
         .scaleEffect(deleting ? 1 : 0.85)
     )
     .onTapGesture {
