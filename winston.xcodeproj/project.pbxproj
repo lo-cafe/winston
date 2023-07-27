@@ -104,6 +104,9 @@
 		ECDBA8C32A4A820800FB42DB /* Post.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECDBA8C22A4A820800FB42DB /* Post.swift */; };
 		ECDBA8C52A4A835800FB42DB /* Subreddit.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECDBA8C42A4A835800FB42DB /* Subreddit.swift */; };
 		ECDBA8C72A4A83DB00FB42DB /* SubredditPosts.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECDBA8C62A4A83DB00FB42DB /* SubredditPosts.swift */; };
+		ECDD514C2A72561500FD9498 /* getFlairs.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECDD514B2A72561500FD9498 /* getFlairs.swift */; };
+		ECDD514E2A726E5900FD9498 /* modifyColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECDD514D2A726E5900FD9498 /* modifyColor.swift */; };
+		ECDD51502A726F2600FD9498 /* debouncedText.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECDD514F2A726F2600FD9498 /* debouncedText.swift */; };
 		ECE285972A4FD6FC009CF9DD /* SwiftDate in Frameworks */ = {isa = PBXBuildFile; productRef = ECE285962A4FD6FC009CF9DD /* SwiftDate */; };
 		ECE285992A50086D009CF9DD /* UserView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECE285982A50086D009CF9DD /* UserView.swift */; };
 		ECE2859B2A5010E2009CF9DD /* DataBlock.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECE2859A2A5010E2009CF9DD /* DataBlock.swift */; };
@@ -232,6 +235,9 @@
 		ECDBA8C22A4A820800FB42DB /* Post.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Post.swift; sourceTree = "<group>"; };
 		ECDBA8C42A4A835800FB42DB /* Subreddit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Subreddit.swift; sourceTree = "<group>"; };
 		ECDBA8C62A4A83DB00FB42DB /* SubredditPosts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubredditPosts.swift; sourceTree = "<group>"; };
+		ECDD514B2A72561500FD9498 /* getFlairs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = getFlairs.swift; sourceTree = "<group>"; };
+		ECDD514D2A726E5900FD9498 /* modifyColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = modifyColor.swift; sourceTree = "<group>"; };
+		ECDD514F2A726F2600FD9498 /* debouncedText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = debouncedText.swift; sourceTree = "<group>"; };
 		ECE285982A50086D009CF9DD /* UserView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserView.swift; sourceTree = "<group>"; };
 		ECE2859A2A5010E2009CF9DD /* DataBlock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataBlock.swift; sourceTree = "<group>"; };
 		ECE2859C2A50130D009CF9DD /* fetchUserOverview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = fetchUserOverview.swift; sourceTree = "<group>"; };
@@ -513,6 +519,7 @@
 				ECE4497C2A688A2A00E2A3B7 /* fetchSubRules.swift */,
 				ECE449802A689C8A00E2A3B7 /* subscribe.swift */,
 				ECE449822A68A22200E2A3B7 /* favorite.swift */,
+				ECDD514B2A72561500FD9498 /* getFlairs.swift */,
 			);
 			path = subs;
 			sourceTree = "<group>";
@@ -576,6 +583,8 @@
 				ECA30A312A621B9A00BB19D1 /* decodeString.swift */,
 				EC8F34A02A6FC99000EB8249 /* updatePostsInBox.swift */,
 				EC8F34A22A6FCB3500EB8249 /* timeSince.swift */,
+				ECDD514D2A726E5900FD9498 /* modifyColor.swift */,
+				ECDD514F2A726F2600FD9498 /* debouncedText.swift */,
 			);
 			path = utils;
 			sourceTree = "<group>";
@@ -748,6 +757,7 @@
 				EC8F349D2A6F988900EB8249 /* Placeholder.swift in Sources */,
 				ECEFC25D2A5DADDC0003C6C4 /* searchInSubreddit.swift in Sources */,
 				ECA30A1B2A604FD600BB19D1 /* unreadMessage.swift in Sources */,
+				ECDD51502A726F2600FD9498 /* debouncedText.swift in Sources */,
 				ECF0B7DD2A53DD5C002B9FAD /* ImageMediaPost.swift in Sources */,
 				ECE4497B2A68898100E2A3B7 /* SubredditMyPostsTab.swift in Sources */,
 				EC8F34792A6CE79B00EB8249 /* PostInBoxLink.swift in Sources */,
@@ -755,6 +765,7 @@
 				EC08544A2A4D6EAE00E88389 /* blurTransitions.swift in Sources */,
 				ECEFC2752A5F72A40003C6C4 /* shareMedia.swift in Sources */,
 				ECEFC25B2A5DAA970003C6C4 /* searchUsers.swift in Sources */,
+				ECDD514C2A72561500FD9498 /* getFlairs.swift in Sources */,
 				ECE285992A50086D009CF9DD /* UserView.swift in Sources */,
 				ECD1FC072A56D46D00723016 /* ObservableArray.swift in Sources */,
 				EC8F34A12A6FC99000EB8249 /* updatePostsInBox.swift in Sources */,
@@ -831,6 +842,7 @@
 				EC08542B2A4C2B6B00E88389 /* if.swift in Sources */,
 				EC9269E82A514AA6003F33B1 /* DownAttributedString.swift in Sources */,
 				EC12D7182A59C7A800C300B3 /* Arrows.swift in Sources */,
+				ECDD514E2A726E5900FD9498 /* modifyColor.swift in Sources */,
 				EC593AF62A47AE30002D6454 /* Me.swift in Sources */,
 				EC12D71A2A59C81A00C300B3 /* CommentLinkContent.swift in Sources */,
 				ECE449832A68A22200E2A3B7 /* favorite.swift in Sources */,

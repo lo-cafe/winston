@@ -59,15 +59,15 @@ extension Subreddit {
       if result {
         if !optimistic {
           await MainActor.run {
-//            doThisAfter(0) {
-                if subscribedStatus {
-                  Defaults[.subreddits] = Defaults[.subreddits].filter { sub in
-                    sub.data?.id != self.id
-                  }
-                } else {
-                  Defaults[.subreddits].append(ListingChild(kind: "t5", data: data))
-                }
-//            }
+            //            doThisAfter(0) {
+            if subscribedStatus {
+              Defaults[.subreddits] = Defaults[.subreddits].filter { sub in
+                sub.data?.id != self.id
+              }
+            } else {
+              Defaults[.subreddits].append(ListingChild(kind: "t5", data: data))
+            }
+            //            }
           }
         }
       } else {
@@ -88,10 +88,23 @@ extension Subreddit {
     }
   }
   
+  func getFlairs() async -> [Flair]? {
+    if let data = (await redditAPI.getFlairs(data?.display_name ?? id)) {
+      await MainActor.run {
+        withAnimation {
+          self.data?.winstonFlairs = data
+        }
+      }
+    }
+    return nil
+  }
+  
   func refreshSubreddit() async {
     if let data = (await redditAPI.fetchSub(data?.display_name ?? id))?.data {
       await MainActor.run {
-        self.data = data
+        withAnimation {
+          self.data = data
+        }
       }
     }
   }
@@ -214,6 +227,7 @@ struct SubredditData: GenericRedditEntityDataType {
   let mobile_banner_image: String?
   let user_is_contributor: Bool?
   let allow_predictions_tournament: Bool?
+  var winstonFlairs: [Flair]?
 }
 
 struct CommentContributionSettings: Codable, Hashable {

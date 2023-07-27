@@ -12,12 +12,12 @@ import VideoPlayer
 import CoreMedia
 
 struct ImageMediaPost: View {
-  @Default(.preferenceShowPostsCards) var preferenceShowPostsCards
   var prefix: String = ""
   var post: Post
   @State var pressing = false
   @State var isPresenting = false
   @Namespace var presentationNamespace
+  @Default(.preferenceShowPostsCards) var preferenceShowPostsCards
   @Default(.maxPostLinkImageHeightPercentage) var maxPostLinkImageHeightPercentage
   
   var safe: Double { getSafeArea().top + getSafeArea().bottom }

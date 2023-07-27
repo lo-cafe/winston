@@ -13,6 +13,7 @@ import VideoPlayer
 import CoreMedia
 import Defaults
 import MarkdownUI
+import AVKit
 
 struct PostContent: View {
   @ObservedObject var post: Post
@@ -26,8 +27,15 @@ struct PostContent: View {
           
           let imgPost = data.url.hasSuffix("jpg") || data.url.hasSuffix("png")
           
-          if let _ = data.secure_media {
-            VideoPlayerPost(prefix: "postView", post: post)
+          if let media = data.secure_media {
+            switch media {
+            case .first(let datas):
+              if let url = datas.reddit_video?.fallback_url {
+                VideoPlayerPost(post: post, overrideWidth: UIScreen.screenWidth - 16, sharedVideo: SharedVideo(player: AVPlayer(url:  URL(string: url)!)))
+              }
+            case .second(_):
+              EmptyView()
+            }
           }
           
           if imgPost {

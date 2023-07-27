@@ -9,8 +9,9 @@ import SwiftUI
 import VideoPlayer
 import CoreMedia
 import Defaults
+import AVKit
 
-struct Flair: View {
+struct FlairTag: View {
   var text: String
   var blue = false
   var body: some View {
@@ -57,8 +58,15 @@ struct PostLink: View {
           
           let imgPost = data.url.hasSuffix("jpg") || data.url.hasSuffix("png")
           
-          if let _ = data.secure_media {
-            VideoPlayerPost(post: post)
+          if let media = data.secure_media {
+            switch media {
+            case .first(let datas):
+              if let url = datas.reddit_video?.fallback_url {
+                VideoPlayerPost(post: post, sharedVideo: SharedVideo(player: AVPlayer(url:  URL(string: url)!)))
+              }
+            case .second(_):
+              EmptyView()
+            }
           }
           
           if imgPost {
@@ -79,17 +87,16 @@ struct PostLink: View {
               Button {
                 openedSub = true
               } label: {
-                Flair(text: "r/\(sub.data?.display_name ?? "Error")", blue: true)
+                FlairTag(text: "r/\(sub.data?.display_name ?? "Error")", blue: true)
               }
             }
-            
             
             Rectangle()
               .fill(.primary.opacity(0.05))
               .frame(maxWidth: .infinity, maxHeight: 1)
               .allowsHitTesting(false)
             
-            Flair(text: link_flair_text)
+            FlairTag(text: link_flair_text)
               .allowsHitTesting(false)
           }
           

@@ -7,6 +7,7 @@
 
 import Foundation
 import Defaults
+import SwiftUI
 import CoreData
 
 typealias Post = GenericRedditEntity<PostData>
@@ -48,7 +49,7 @@ extension Post {
       
       if let foundPost = foundPost {
         if seen == nil || seen == false {
-            context.delete(foundPost)
+          context.delete(foundPost)
           if !optimistic {
             data?.winstonSeen = false
           }
@@ -58,7 +59,9 @@ extension Post {
         newSeenPost.postID = id
         try? context.save()
         if !optimistic {
-          data?.winstonSeen = true
+          DispatchQueue.main.async {
+            self.data?.winstonSeen = true
+          }
         }
       }
     } catch {
@@ -75,6 +78,47 @@ extension Post {
             await self.refreshPost()
           }
         }
+//        if let data = data {
+//          let newComment = CommentData(
+//            subreddit_id: data.subreddit_id,
+//            subreddit: data.subreddit,
+//            likes: true,
+//            saved: false,
+//            id: UUID().uuidString,
+//            archived: false,
+//            count: 0,
+//            author: redditAPI.me?.data?.name ?? "",
+//            created_utc: nil,
+//            send_replies: nil,
+//            parent_id: id,
+//            score: nil,
+//            author_fullname: "t2_\(redditAPI.me?.data?.id ?? "")",
+//            approved_by: nil,
+//            mod_note: nil,
+//            collapsed: nil,
+//            body: text,
+//            top_awarded_type: nil,
+//            name: nil,
+//            downs: 0,
+//            children: nil,
+//            body_html: nil,
+//            created: Double(Int(Date().timeIntervalSince1970)),
+//            link_id: data.id,
+//            link_title: data.title,
+//            subreddit_name_prefixed: data.subreddit_name_prefixed,
+//            depth: 0,
+//            author_flair_background_color: nil,
+//            collapsed_because_crowd_control: nil,
+//            mod_reports: nil,
+//            num_reports: nil,
+//            ups: 1
+//          )
+//          await MainActor.run {
+//            withAnimation {
+//              childrenWinston.data.append(Comment(data: newComment, api: self.redditAPI))
+//            }
+//          }
+//        }
       }
       return result
     }
@@ -242,7 +286,7 @@ struct PreviewImg: Codable, Hashable {
 struct PreviewImgCollection: Codable, Hashable {
   let source: PreviewImg?
   let resolutions: [PreviewImg]?
-//  let variants: Oembed?
+  //  let variants: Oembed?
   let id: String?
 }
 

@@ -220,7 +220,7 @@ extension Comment {
           send_replies: nil,
           parent_id: id,
           score: nil,
-          author_fullname: redditAPI.me?.data?.subreddit?.name ?? "",
+          author_fullname: "t2_\(redditAPI.me?.data?.id ?? "")",
           approved_by: nil,
           mod_note: nil,
           collapsed: nil,
@@ -242,7 +242,9 @@ extension Comment {
           ups: 1
         )
         await MainActor.run {
-          childrenWinston.data.append(Comment(data: newComment, api: self.redditAPI))
+          withAnimation {
+            childrenWinston.data.append(Comment(data: newComment, api: self.redditAPI))
+          }
         }
       }
       return result

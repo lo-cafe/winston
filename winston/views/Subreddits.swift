@@ -223,6 +223,7 @@ struct Subreddits: View {
         }
       }
       .listStyle(.sidebar)
+      .scrollDismissesKeyboard(.immediately)
       .animation(spring, value: postsInBox)
       .background(
         NavigationLink(destination: SubredditPosts(subreddit: selectedSubreddit.sub), isActive: $selectedSubActive, label: { EmptyView() }).buttonStyle(EmptyButtonStyle()).opacity(0).allowsHitTesting(false).if(IPAD) { $0.id(selectedSubreddit.sub.id) }

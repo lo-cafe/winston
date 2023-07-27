@@ -7,7 +7,6 @@
 
 import SwiftUI
 import CoreMedia
-import VideoPlayer
 import Kingfisher
 
 struct LightBoxButton: View {
@@ -42,10 +41,8 @@ struct LightBoxButton: View {
 struct LightBoxImage: View {
   @Environment(\.dismiss) var dismiss
   var size: CGSize
-  //  @Binding var switchImages: Bool
-  @State var imgURL: URL
-  //  var uiImage: UIImage?
-  @State var post: Post
+  var imgURL: URL
+  @ObservedObject var post: Post
   var namespace: Namespace.ID
   @State var appearBlack = false
   @State var drag: CGSize = .zero

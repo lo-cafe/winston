@@ -59,6 +59,8 @@ extension UIColor {
 
 extension Color {
   static func hex(_ h: String) -> Color {
-    Color(UIColor(hex: h))
+    var hex = h
+    if h.hasPrefix("#") { hex.removeFirst(1) }
+    return Color(UIColor(hex: hex))
   }
 }
