@@ -82,12 +82,12 @@ struct SubredditPosts: View {
             } else {
               ForEach(Array(posts.data.enumerated()), id: \.self.element.id) { i, post in
                 PostLink(post: post, sub: subreddit)
-                  .listRowInsets(EdgeInsets(top: !preferenceShowPostsCards ? 16 : 8, leading: POSTLINK_OUTER_H_PAD, bottom: !preferenceShowPostsCards ? 16 : 8, trailing: POSTLINK_OUTER_H_PAD))
                   .if(Int(Double(posts.data.count) * 0.75) == i) { view in
                     view.onAppear {
                       fetch(loadMore: true)
                     }
                   }
+                  .listRowInsets(EdgeInsets(top: !preferenceShowPostsCards ? 16 : 8, leading: POSTLINK_OUTER_H_PAD, bottom: !preferenceShowPostsCards ? 16 : 8, trailing: POSTLINK_OUTER_H_PAD))
                 if !preferenceShowPostsCards && i != (posts.data.count - 1) {
                   VStack(spacing: 0) {
                     Divider()

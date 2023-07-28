@@ -1,2 +1,6 @@
-- Now we can pick flairs in new posts
-- First version of video lightbox is live!
+- Now comments bodies when swiping aren't weirdly clipped anymore
+- Fixed a sttuter when navigating back to the subs list
+- Fixed padding issue in POSTS BOX section header
+- Added placeholder to new comments and posts body
+- Galleries now work!
+- Link posts are coming in the next update!

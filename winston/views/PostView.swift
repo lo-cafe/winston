@@ -17,6 +17,9 @@ import AVKit
 
 struct PostContent: View {
   @ObservedObject var post: Post
+  
+  var contentWidth: CGFloat { UIScreen.screenWidth - 16 }
+  
   var body: some View {
     if let data = post.data {
       VStack(spacing: 16) {
@@ -25,7 +28,7 @@ struct PostContent: View {
             .fontSize(20, .semibold)
             .fixedSize(horizontal: false, vertical: true)
           
-          let imgPost = data.url.hasSuffix("jpg") || data.url.hasSuffix("png")
+          let imgPost = data.is_gallery == true || data.url.hasSuffix("jpg") || data.url.hasSuffix("png")
           
           if let media = data.secure_media {
             switch media {
@@ -39,7 +42,7 @@ struct PostContent: View {
           }
           
           if imgPost {
-            ImageMediaPost(prefix: "postView", post: post)
+            ImageMediaPost(prefix: "postView", post: post, altContentWidth: contentWidth)
           }
           
           if data.selftext != "" {

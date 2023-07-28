@@ -102,6 +102,31 @@ class SubsDictContainer: ObservableObject {
   }
 }
 
+struct PostsInBoxView: View {
+  var openQuickPost: (PostInBox) -> ()
+  var someOpened: Bool
+  @EnvironmentObject var redditAPI: RedditAPI
+  @Default(.postsInBox) var postsInBox
+  
+  var body: some View {
+    if postsInBox.count > 0 {
+      Section("Posts Box") {
+        ScrollView(.horizontal) {
+          HStack(spacing: 12) {
+            ForEach(postsInBox, id: \.self.id) { post in
+              PostInBoxLink(post: post, openPost: openQuickPost)
+            }
+          }
+        }
+        .id("quickPosts")
+        .onChange(of: someOpened) { newValue in if !newValue { Task { await updatePostsInBox(redditAPI) } } }
+        .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
+      }
+      .animation(spring, value: postsInBox)
+    }
+  }
+}
+
 class SelectedSubredditContainer: ObservableObject {
   @Published var sub = Subreddit(id: "home", api: RedditAPI())
 }
@@ -119,7 +144,7 @@ struct Subreddits: View {
   @State var selectedPostActive = false
   @State var loaded = false
   @State var editMode: EditMode = .inactive
-  @Default(.postsInBox) var postsInBox
+
   
   func sort(_ subs: [ListingChild<SubredditData>]) -> [String: [Subreddit]] {
     return Dictionary(grouping: subs.compactMap { $0.data }, by: { String($0.display_name?.prefix(1) ?? "").uppercased() })
@@ -162,40 +187,31 @@ struct Subreddits: View {
       List {
         
         if searchText == "" {
-          HStack(spacing: 12) {
-            
-            SubredditBigBtn(openSub: openSub, icon: "house.circle.fill", iconColor: .blue, label: "Home", destination: Subreddit(id: "home", api: redditAPI), selected: IPAD && selectedSubreddit.sub.id == "home")
-            
-            SubredditBigBtn(openSub: openSub, icon: "bookmark.circle.fill", iconColor: .green, label: "Saved", destination: Subreddit(id: "homes", api: redditAPI), selected: IPAD && selectedSubreddit.sub.id == "homes")
-            
-          }
-          .frame(maxWidth: .infinity)
-          .id("upperPart")
-          .listRowSeparator(.hidden)
-          .listRowBackground(Color.clear)
-          .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
-          .onChange(of: subreddits) { val in
-            withAnimation(nil) {
-              subsDict.data = sort(val)
+            HStack(spacing: 12) {
+              
+              SubredditBigBtn(openSub: openSub, icon: "house.circle.fill", iconColor: .blue, label: "Home", destination: Subreddit(id: "home", api: redditAPI), selected: IPAD && selectedSubreddit.sub.id == "home")
+              
+              SubredditBigBtn(openSub: openSub, icon: "bookmark.circle.fill", iconColor: .green, label: "Saved", destination: Subreddit(id: "homes", api: redditAPI), selected: IPAD && selectedSubreddit.sub.id == "homes")
+              
             }
-          }
+            .frame(maxWidth: .infinity)
+            .id("upperPart")
+            .listRowSeparator(.hidden)
+            .listRowBackground(Color.clear)
+            .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
+            .onChange(of: subreddits) { val in
+              withAnimation(nil) {
+                subsDict.data = sort(val)
+              }
+            }
         }
         
-        if postsInBox.count > 0 {
-          Section("Posts Box") {
-            ScrollView(.horizontal) {
-              HStack(spacing: 12) {
-                ForEach(postsInBox, id: \.self.id) { post in
-                  PostInBoxLink(post: post, openPost: openQuickPost)
-                }
-              }
-              .fixedSize(horizontal: true, vertical: false)
-            }
+
+        PostsInBoxView(openQuickPost: openQuickPost, someOpened: selectedSubActive || selectedPostActive)
             .scrollIndicators(.hidden)
-            .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
+            .listRowInsets(EdgeInsets(top: 0, leading: 16, bottom: 0, trailing: 16))
             .listRowBackground(Color.clear)
-          }
-        }
+
         
         if searchText != "" {
           Section("Found subs") {
@@ -224,7 +240,6 @@ struct Subreddits: View {
       }
       .listStyle(.sidebar)
       .scrollDismissesKeyboard(.immediately)
-      .animation(spring, value: postsInBox)
       .background(
         NavigationLink(destination: SubredditPosts(subreddit: selectedSubreddit.sub), isActive: $selectedSubActive, label: { EmptyView() }).buttonStyle(EmptyButtonStyle()).opacity(0).allowsHitTesting(false).if(IPAD) { $0.id(selectedSubreddit.sub.id) }
       )
@@ -244,9 +259,6 @@ struct Subreddits: View {
         selectedPostActive = false
       }
       .onAppear {
-        Task {
-          await updatePostsInBox(redditAPI)
-        }
         if !loaded {
           if subreddits.count > 0 {
             subsDict.data = sort(subreddits)

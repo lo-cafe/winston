@@ -38,133 +38,222 @@ struct LightBoxButton: View {
   }
 }
 
+struct LightBoxElement: Identifiable, Equatable {
+  var url: String
+  var size: CGSize
+  var id: String { self.url }
+}
+
+private let SPACING = 24.0
+
 struct LightBoxImage: View {
   @Environment(\.dismiss) var dismiss
-  var size: CGSize
-  var imgURL: URL
   @ObservedObject var post: Post
+  var i: Int
   var namespace: Namespace.ID
   @State var appearBlack = false
   @State var drag: CGSize = .zero
+  @State var xPos: CGFloat = 0
+  @State var dragAxis: Axis?
+  @State var activeIndex = 0
   @State var loading = false
   @State var done = false
+  @State var showOverlay = true
+  
+  enum Axis {
+    case horizontal
+    case vertical
+  }
+  
   //  @State var zoom: CGSize = .zero
   //  @State var imgSize: CGSize = .zero
   
-  var body: some View {
-    let interpolate = interpolatorBuilder([0, 100], value: max(abs(drag.width), abs(drag.height)))
-    ZStack {
-      if appearBlack {
-        Color.black
-          .opacity(interpolate([1, 0], false))
-          .onTapGesture {
-            withAnimation(.easeOut) {
-              appearBlack = false
-            }
-            //            doThisAfter(0) {
-            //              withAnimation(.interpolatingSpring(stiffness: 300, damping: 25)) {
-            //                data.post = nil
-            //                data.time = nil
-            //              }
-            //            }
+  var imagesArr: [LightBoxElement] {
+    if post.data?.is_gallery == true {
+      if let data = post.data?.media_metadata?.values {
+        return data.compactMap { x in
+          if let extArr = x.m?.split(separator: "/") {
+            let ext = extArr[extArr.count - 1]
+            return LightBoxElement(url: "https://i.redd.it/\(x.id).\(ext)", size: CGSize())
           }
-          .allowsHitTesting(appearBlack)
-          .transition(.opacity)
+          return nil
+        }
       }
-      VStack {
+    } else {
+      if let data = post.data, let preview = data.preview, preview.images?.count ?? 0 > 0, let source = preview.images?[0].source, let _ = source.url, let sourceHeight = source.height, let sourceWidth = source.width {
+        return [LightBoxElement(url: data.url, size: CGSize(width: sourceWidth, height: sourceHeight))]
+      }
+      return []
+    }
+    return []
+  }
+  
+  var body: some View {
+    let interpolate = interpolatorBuilder([0, 100], value: abs(drag.height))
+    //    let imagesArr = post.data?.is_gallery == true ?
+      HStack(spacing: SPACING) {
+        ForEach(Array(imagesArr.enumerated()), id: \.element.id) { i, img in
+          let selected = i == activeIndex
+//          let propHeight = (UIScreen.screenWidth * img.size.height) /  img.size.width
+          KFImage(URL(string: img.url)!)
+            .resizable()
+            .fade(duration: 0.5)
+            .pinchToZoom()
+            .scaledToFit()
+            .frame(width: UIScreen.screenWidth)
+            .scaleEffect(!selected ? 1 : interpolate([1, 0.9], true))
+            .blur(radius: selected && loading ? 24 : 0)
+            .offset(x: !selected ? 0 : dragAxis == .vertical ? drag.width : 0, y: i != activeIndex ? 0 : dragAxis == .vertical ? drag.height : 0)
+            .id(img.url)
+        }
+      }
+      .fixedSize(horizontal: true, vertical: false)
+      .offset(x: xPos + (dragAxis == .horizontal ? drag.width : 0))
+      .frame(maxWidth: UIScreen.screenWidth, maxHeight: .infinity, alignment: .leading)
+      .clipped()
+      .onTapGesture {
+        withAnimation {
+          showOverlay.toggle()
+        }
+      }
+      .simultaneousGesture(
+        DragGesture(minimumDistance: 20)
+          .onChanged { val in
+            if dragAxis == nil {
+              if abs(val.predictedEndTranslation.width) > abs(val.predictedEndTranslation.height) {
+                dragAxis = .horizontal
+              } else if abs(val.predictedEndTranslation.width) < abs(val.predictedEndTranslation.height) {
+                dragAxis = .vertical
+              }
+            }
+            
+            if dragAxis != nil {
+              var transaction = Transaction()
+              transaction.isContinuous = true
+              transaction.animation = .interpolatingSpring(stiffness: 1000, damping: 100, initialVelocity: 0)
+              
+              var endPos = val.translation
+              if dragAxis == .horizontal {
+                endPos.height = 0
+              }
+              withTransaction(transaction) {
+                drag = endPos
+              }
+            }
+          }
+          .onEnded { val in
+            if dragAxis == .horizontal {
+              let predictedEnd = val.predictedEndTranslation.width
+              drag = .zero
+              xPos += val.translation.width
+              let newActiveIndex = min(imagesArr.count - 1, max(0, activeIndex + (predictedEnd < -(UIScreen.screenWidth / 2) ? 1 : predictedEnd > UIScreen.screenWidth / 2 ? -1 : 0)))
+              let finalXPos = -(CGFloat(newActiveIndex) * (UIScreen.screenWidth + (SPACING)))
+              let distance = abs(finalXPos - xPos)
+              activeIndex = newActiveIndex
+              var initialVel = abs(predictedEnd / distance)
+              initialVel = initialVel < 3.75 ? 0 : initialVel * 2
+              withAnimation(.interpolatingSpring(stiffness: 150, damping: 17, initialVelocity: initialVel)) {
+                xPos = finalXPos
+                dragAxis = nil
+              }
+            } else {
+              let shouldClose = abs(val.translation.width) > 100 || abs(val.translation.height) > 100
+              
+              if shouldClose {
+                withAnimation(.easeOut) {
+                  appearBlack = false
+                }
+              }
+              withAnimation(.interpolatingSpring(stiffness: 200, damping: 20, initialVelocity: 0)) {
+                drag = .zero
+                dragAxis = nil
+                if shouldClose {
+                  dismiss()
+                }
+              }
+            }
+          }
+      )
+    .background(
+      VStack(alignment: .leading) {
         if let title = post.data?.title, appearBlack {
           Text(title)
             .fontSize(20, .semibold)
-            .opacity(interpolate([1, 0], false))
         }
         
         Spacer()
         
-        KFImage(imgURL)
-          .resizable()
-          .fade(duration: 0.5)
-//          .matchedGeometryEffect(id: "\(imgURL.absoluteString)-img", in: namespace)
-          .pinchToZoom()
-          .scaledToFit()
-//          .mask(RR(12, .black).matchedGeometryEffect(id: "\(imgURL.absoluteString)-mask", in: namespaceWrapper.namespace))
-          .scaleEffect(interpolate([1, 0.9], true))
-          .zIndex(1)
-          .offset(drag)
-          .blur(radius: loading ? 24 : 0)
-//          .onTapGesture {
-//            dismiss()
-//          }
-          .gesture(
-            DragGesture(minimumDistance: 20)
-              .onChanged { val in
-                var transaction = Transaction()
-                transaction.isContinuous = true
-                transaction.animation = .interpolatingSpring(stiffness: 1000, damping: 100)
-
-                withTransaction(transaction) {
-                  drag = val.translation
-                }
-              }
-              .onEnded { val in
-                let shouldClose = abs(val.translation.width) > 100 || abs(val.translation.height) > 100
-
-                if shouldClose {
-                  withAnimation(.easeOut) {
-                    appearBlack = false
-                  }
-                }
-                withAnimation(.interpolatingSpring(stiffness: 200, damping: 20, initialVelocity: 0)) {
-                  drag = .zero
-                  if shouldClose {
-                    dismiss()
-                  }
-                }
-              }
-          )
-        
-        Spacer()
+        if imagesArr.count > 1 {
+          Text("\(activeIndex + 1)/\(imagesArr.count)")
+            .fontSize(16, .semibold)
+            .padding(.horizontal, 12)
+            .padding(.vertical, 8)
+            .background(Capsule(style: .continuous).fill(.regularMaterial))
+            .frame(maxWidth: .infinity)
+        }
         
         HStack(spacing: 12) {
           LightBoxButton(icon: "square.and.arrow.down.fill") {
             withAnimation(spring) {
               loading = true
             }
-            saveMedia(imgURL.absoluteString, .image) { result in
+            saveMedia(imagesArr[activeIndex].url, .image) { result in
               withAnimation(spring) {
                 done = true
               }
             }
           }
-          ShareLink(item: imgURL) {
+          ShareLink(item: imagesArr[activeIndex].url) {
             LightBoxButton(icon: "square.and.arrow.up.fill") {}
-            .allowsHitTesting(false)
-            .contentShape(Circle())
+              .allowsHitTesting(false)
+              .contentShape(Circle())
           }
         }
         .compositingGroup()
-        .opacity(interpolate([1, 0], false))
         .frame(maxWidth: .infinity)
       }
-      .foregroundColor(.white)
-      .padding(.bottom, 32)
-      .padding(.top, 64)
-      .overlay(
-        !loading && !done
-        ? nil
-        : ZStack {
-          if done {
-            Image(systemName: "checkmark.circle.fill")
-              .fontSize(40)
-              .transition(.scaleAndBlur)
-          } else {
-            ProgressView()
-              .transition(.scaleAndBlur)
+        .compositingGroup()
+        .opacity(interpolate([1, 0], false))
+        .multilineTextAlignment(.leading)
+        .foregroundColor(.white)
+        .padding(.horizontal, 12)
+        .padding(.bottom, 32)
+        .padding(.top, 64)
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+        .opacity(showOverlay ? 1 : 0)
+        .allowsHitTesting(showOverlay)
+    )
+    .background(
+      !appearBlack
+      ? nil
+      : Color.black
+          .opacity(interpolate([1, 0], false))
+          .onTapGesture {
+            withAnimation(.easeOut) {
+              appearBlack = false
+            }
           }
+          .allowsHitTesting(appearBlack)
+          .transition(.opacity)
+    )
+    .overlay(
+      !loading && !done
+      ? nil
+      : ZStack {
+        if done {
+          Image(systemName: "checkmark.circle.fill")
+            .fontSize(40)
+            .transition(.scaleAndBlur)
+        } else {
+          ProgressView()
+            .transition(.scaleAndBlur)
         }
-          .frame(maxWidth: .infinity, maxHeight: .infinity)
-          .background(.black.opacity(0.25))
-      )
-    }
+      }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(.black.opacity(0.25))
+    )
+    .frame(maxWidth: .infinity, maxHeight: .infinity)
+    .ignoresSafeArea(edges: .all)
     .onChange(of: done) { val in
       if val {
         doThisAfter(0.5) {
@@ -175,18 +264,14 @@ struct LightBoxImage: View {
         }
       }
     }
-    //    .frame(width: UIScreen.screenWidth, height: UIScreen.screenHeight)
-    .frame(maxWidth: .infinity, maxHeight: .infinity)
-    .ignoresSafeArea(edges: .all)
     .onAppear {
+      xPos = -CGFloat(i) * (UIScreen.screenWidth + SPACING)
+      activeIndex = i
       withAnimation(.easeOut) {
         appearBlack = true
       }
     }
-    //    .ignoresSafeArea(.all)
-    //    .zIndex(999)
     .transition(.opacity)
-    //    .transition(.offset(x: 0, y: 1))
   }
 }
 

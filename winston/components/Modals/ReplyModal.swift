@@ -102,10 +102,7 @@ struct ReplyModal<Content: View>: View {
             if let me = redditAPI.me?.data {
               Badge(author: me.name, fullname: me.name, created: Date().timeIntervalSince1970, avatarURL: me.icon_img ?? me.snoovatar_img)
             }
-            HighlightedTextEditor(text: $textWrapper.replyText, highlightRules: winstonMDEditorPreset)
-              .introspect { editor in
-                editor.textView.backgroundColor = .clear
-              }
+            MDEditor(text: $textWrapper.replyText)
           }
           .padding(.horizontal, 12)
           .padding(.vertical, 8)

@@ -130,7 +130,6 @@ struct CommentLinkContent: View {
               .offset(x: offsetX)
               .animation(.interpolatingSpring(stiffness: 1000, damping: 100, initialVelocity: 0), value: offsetX)
               .padding(.top, 6)
-              .mask(Color.listBG.padding(.horizontal, !preferenceShowCommentsCards ? 0 : -13))
               .contentShape(Rectangle())
               .swipyUI(
                 offsetYAction: -15,
@@ -149,11 +148,10 @@ struct CommentLinkContent: View {
           }
           .padding(.horizontal, !preferenceShowCommentsCards ? 0 : 13)
           .background(preferenceShowCommentsCards && showReplies ? Color.listBG : .clear)
+          .mask(Color.black)
           .sheet(isPresented: $showReplyModal) {
             ReplyModalComment(comment: comment)
           }
-//          .measureOnce($bodySize)
-//          .if(bodySize != .zero) { $0.frame(height: bodySize.height) }
           .id("\(data.id)-body")
         }
         

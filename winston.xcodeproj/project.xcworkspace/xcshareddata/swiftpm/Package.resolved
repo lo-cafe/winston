@@ -55,6 +55,15 @@
       }
     },
     {
+      "identity" : "linkpreview",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/NuPlay/LinkPreview.git",
+      "state" : {
+        "revision" : "14ed9e55ee4ce651de85ce3a86daceba10214fea",
+        "version" : "1.1.0"
+      }
+    },
+    {
       "identity" : "popovers",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/aheze/Popovers",

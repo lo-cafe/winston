@@ -73,7 +73,7 @@ struct FlairButton: View {
 struct FlairPicker: View {
   @ObservedObject var subreddit: Subreddit
   @Binding var selectedFlair: Flair?
-//  @State var searchQuery = ""
+  //  @State var searchQuery = ""
   @StateObject var searchQuery = DebouncedText(delay: 0.25)
   @FocusState var focused: Bool
   @State var searching = false
@@ -231,10 +231,7 @@ struct NewPostModal: View {
           .padding(.horizontal, 16)
         }
         
-        HighlightedTextEditor(text: $postData.text, highlightRules: winstonMDEditorPreset)
-          .introspect { editor in
-            editor.textView.backgroundColor = .clear
-          }
+        MDEditor(text: $postData.text)
           .padding(.horizontal, 16)
       }
       .padding(.vertical, 8)

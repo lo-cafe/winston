@@ -22,16 +22,17 @@ func updatePostsInBox(_ redditAPI: RedditAPI, force: Bool = false) async {
     posts.forEach { data in
       postsDict[data.name] = data
     }
-    await MainActor.run { [postsDict] in
+    let newPostsInBox = postsInBox.map({ post in
+      var newPost = post
+      if let newData = postsDict[post.fullname] {
+        newPost.score = newData.ups
+        newPost.commentsCount = newData.num_comments
+      }
+      return newPost
+    })
+    await MainActor.run { [newPostsInBox] in
       withAnimation {
-        Defaults[.postsInBox] = postsInBox.map({ post in
-          var newPost = post
-          if let newData = postsDict[post.fullname] {
-            newPost.score = newData.ups
-            newPost.commentsCount = newData.num_comments
-          }
-          return newPost
-        })
+        Defaults[.postsInBox] = newPostsInBox
       }
     }
   }

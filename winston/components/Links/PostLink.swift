@@ -10,6 +10,7 @@ import VideoPlayer
 import CoreMedia
 import Defaults
 import AVKit
+import LinkPreview
 
 struct FlairTag: View {
   var text: String
@@ -44,6 +45,7 @@ struct PostLink: View {
   @State private var openedPost = false
   @State private var openedSub = false
   @State private var dragging = false
+  @State var redrawPreview = false
   
   @GestureState private var isPressing = false
   @GestureState private var dragX: CGFloat = 0
@@ -56,7 +58,7 @@ struct PostLink: View {
             .fontSize(17, .medium)
             .allowsHitTesting(false)
           
-          let imgPost = data.url.hasSuffix("jpg") || data.url.hasSuffix("png")
+          let imgPost = data.is_gallery == true || data.url.hasSuffix("jpg") || data.url.hasSuffix("png")
           
           if let media = data.secure_media {
             switch media {
@@ -80,6 +82,14 @@ struct PostLink: View {
           }
         }
         .zIndex(1)
+        
+//        if let hint = data.post_hint, hint == "link" {
+////          LinkPreview(url: URL(string: data.url)!)
+////            .titleLineLimit(1)
+////            .type(.small)
+//          LinkRow(previewURL: URL(string: data.url)!, redraw: self.$redrawPreview)
+//            .frame(height: 200)
+//        }
         
         HStack(spacing: 0) {
           if let link_flair_text = data.link_flair_text {

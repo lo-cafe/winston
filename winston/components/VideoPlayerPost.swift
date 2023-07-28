@@ -24,9 +24,10 @@ struct VideoPlayerPost: View {
   @Namespace var namespace
   
   var safe: Double { getSafeArea().top + getSafeArea().bottom }
-  var contentWidth: CGFloat { UIScreen.screenWidth - (POSTLINK_OUTER_H_PAD * 2) - (preferenceShowPostsCards ? POSTLINK_INNER_H_PAD * 2 : 0) }
+  var rawContentWidth: CGFloat { UIScreen.screenWidth - (POSTLINK_OUTER_H_PAD * 2) - (preferenceShowPostsCards ? POSTLINK_INNER_H_PAD * 2 : 0) }
   
   var body: some View {
+    let contentWidth = overrideWidth ?? rawContentWidth
     let maxHeight: CGFloat = (maxPostLinkImageHeightPercentage / 100) * (UIScreen.screenHeight - safe)
     let media = post.data!.secure_media!
     switch media {
@@ -35,10 +36,9 @@ struct VideoPlayerPost: View {
         let propHeight = (Int(contentWidth) * sourceHeight) / sourceWidth
         let finalHeight = maxPostLinkImageHeightPercentage != 110 ? Double(min(Int(maxHeight), propHeight)) : Double(propHeight)
         ZStack {
-          AVPlayerControllerRepresentable(showFullScreen: $fullscreen, player: sharedVideo.player)
+          AVPlayerControllerRepresentable(showFullScreen: $fullscreen, player: sharedVideo.player, aspect: .resizeAspectFill)
             .allowsHitTesting(fullscreen)
             .frame(width: contentWidth, height: CGFloat(finalHeight))
-            .scaledToFill()
             .mask(RR(12, .black))
             .contentShape(Rectangle())
             .onTapGesture {
@@ -63,10 +63,12 @@ struct VideoPlayerPost: View {
 struct AVPlayerControllerRepresentable: UIViewControllerRepresentable {
   @Binding var showFullScreen: Bool
   let player: AVPlayer
+  let aspect: AVLayerVideoGravity
   
   func makeUIViewController(context: Context) -> AVPlayerViewControllerRotatable {
     let controller  = AVPlayerViewControllerRotatable(willDismiss: self.willDismiss)
     controller.player = player
+    controller.videoGravity = aspect
     chooseScreenType(controller: controller)
     return controller
   }

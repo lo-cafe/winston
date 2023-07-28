@@ -163,55 +163,55 @@ struct SubredditData: GenericRedditEntityDataType {
   let submit_text: String?
   let description_html: String?
   let spoilers_enabled: Bool?
-  let comment_contribution_settings: CommentContributionSettings
+//  let comment_contribution_settings: CommentContributionSettings
   let allow_talks: Bool?
-  let header_size: [Int]?
-  let user_flair_position: String?
-  let all_original_content: Bool?
-  let has_menu_widget: Bool?
+//  let header_size: [Int]?
+//  let user_flair_position: String?
+//  let all_original_content: Bool?
+//  let has_menu_widget: Bool?
   let is_enrolled_in_new_modmail: Bool?
   let key_color: String?
   let can_assign_user_flair: Bool?
   let created: Double
-  let wls: Int?
+//  let wls: Int?
   let show_media_preview: Bool?
-  let submission_type: String?
+//  let submission_type: String?
   var user_is_subscriber: Bool?
-  let allowed_media_in_comments: [String]
+//  let allowed_media_in_comments: [String]
   let allow_videogifs: Bool?
   let should_archive_posts: Bool?
   let user_flair_type: String?
   let allow_polls: Bool?
-  let collapse_deleted_comments: Bool?
-  let emojis_custom_size: [Int]?
+//  let collapse_deleted_comments: Bool?
+//  let emojis_custom_size: [Int]?
   let public_description_html: String?
   let allow_videos: Bool?
-  let is_crosspostable_subreddit: Bool?
-  let notification_level: String?
-  let should_show_media_in_comments_setting: Bool?
-  let can_assign_link_flair: Bool?
-  let accounts_active_is_fuzzed: Bool?
-  let allow_prediction_contributors: Bool?
-  let submit_text_label: String?
-  let link_flair_position: String?
-  let user_sr_flair_enabled: Bool?
-  let user_flair_enabled_in_sr: Bool?
-  let allow_chat_post_creation: Bool?
-  let allow_discovery: Bool?
-  let accept_followers: Bool?
-  let user_sr_theme_enabled: Bool?
-  let link_flair_enabled: Bool?
-  let disable_contributor_requests: Bool?
-  let subreddit_type: String?
-  let suggested_comment_sort: String?
+//  let is_crosspostable_subreddit: Bool?
+//  let notification_level: String?
+//  let should_show_media_in_comments_setting: Bool?
+//  let can_assign_link_flair: Bool?
+//  let accounts_active_is_fuzzed: Bool?
+//  let allow_prediction_contributors: Bool?
+//  let submit_text_label: String?
+//  let link_flair_position: String?
+//  let user_sr_flair_enabled: Bool?
+//  let user_flair_enabled_in_sr: Bool?
+//  let allow_chat_post_creation: Bool?
+//  let allow_discovery: Bool?
+//  let accept_followers: Bool?
+//  let user_sr_theme_enabled: Bool?
+//  let link_flair_enabled: Bool?
+//  let disable_contributor_requests: Bool?
+//  let subreddit_type: String?
+//  let suggested_comment_sort: String?
   let banner_img: String?
   let user_flair_text: String?
   let banner_background_color: String?
   let show_media: Bool?
   let id: String
   let user_is_moderator: Bool?
-  let over18: Bool?
-  let header_title: String?
+//  let over18: Bool?
+//  let header_title: String?
   let description: String?
   let is_chat_post_feature_enabled: Bool?
   let submit_link_label: String?
@@ -219,14 +219,14 @@ struct SubredditData: GenericRedditEntityDataType {
   let restrict_commenting: Bool?
   let user_flair_css_class: String?
   let allow_images: Bool?
-  let lang: String?
-  let whitelist_status: String?
+//  let lang: String?
+//  let whitelist_status: String?
   let url: String
   let created_utc: Double?
-  let banner_size: [Int]?
-  let mobile_banner_image: String?
+//  let banner_size: [Int]?
+//  let mobile_banner_image: String?
   let user_is_contributor: Bool?
-  let allow_predictions_tournament: Bool?
+//  let allow_predictions_tournament: Bool?
   var winstonFlairs: [Flair]?
 }
 

@@ -14,6 +14,7 @@ let IPAD = UIDevice.current.userInterfaceIdiom == .pad
 let spring = Animation.interpolatingSpring(stiffness: 300, damping: 30, initialVelocity: 0)
 let draggingAnimation = Animation.interpolatingSpring(stiffness: 1000, damping: 100, initialVelocity: 0)
 let collapsedPresentation = PresentationDetent.height(75)
+let screenScale = UIScreen.main.scale
 
 func getSafeArea()->UIEdgeInsets{
   let keyWindow = UIApplication

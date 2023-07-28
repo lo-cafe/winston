@@ -194,6 +194,7 @@ struct PostData: GenericRedditEntityDataType, Defaults.Serializable {
   var ups: Int
   var downs: Int
   let hide_score: Bool
+  let post_hint: String?
   let name: String
   let quarantine: Bool
   let link_flair_text_color: String?
@@ -217,8 +218,9 @@ struct PostData: GenericRedditEntityDataType, Defaults.Serializable {
   let subreddit_subscribers: Int
   let created_utc: Double?
   let num_crossposts: Int
-  let is_video: Bool
-  
+  let is_video: Bool?
+  let is_gallery: Bool?
+  var media_metadata: [String:MediaMetadataItem]?
   // Optional properties
   let wls: Int?
   let pwls: Int?
@@ -274,6 +276,21 @@ struct PostData: GenericRedditEntityDataType, Defaults.Serializable {
   let secure_media: Either<SecureMediaRedditVideo, SecureMediaAlt>?
   let secure_media_embed: SecureMediaEmbed?
   let preview: Preview?
+}
+
+struct MediaMetadataItem: Codable, Hashable, Identifiable {
+  let status: String?
+  let e: String?
+  let m: String?
+  let p: [MediaMetadataItemSize]?
+  let s: MediaMetadataItemSize?
+  let id: String
+}
+
+struct MediaMetadataItemSize: Codable, Hashable {
+  let x: Int
+  let y: Int
+  let u: String
 }
 
 struct PreviewImg: Codable, Hashable {
