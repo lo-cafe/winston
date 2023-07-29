@@ -13,12 +13,13 @@ import CoreData
 typealias Post = GenericRedditEntity<PostData>
 
 extension Post {
+  static var prefix = "t3"
   convenience init(data: T, api: RedditAPI) {
-    self.init(data: data, api: api, typePrefix: "t3_")
+    self.init(data: data, api: api, typePrefix: "\(Post.prefix)_")
   }
   
   convenience init(id: String, api: RedditAPI) {
-    self.init(id: id, api: api, typePrefix: "t3_")
+    self.init(id: id, api: api, typePrefix: "\(Post.prefix)_")
   }
   
   static func initMultiple(datas: [T], api: RedditAPI) -> [Post] {

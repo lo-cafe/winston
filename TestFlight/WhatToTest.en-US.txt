@@ -1,7 +1,9 @@
 - Link posts now work!
+- Internal routing for link posts work as well!
 - We now got a feedback alert when something goes wrong
 - A bunch of minor fixes not worth mentioning
 - Fixed a possible crash with subreddits icons
 - Removed new post button from Home
 - Added subreddit tag to home posts
 - Added subreddit icon to opened home posts
+- Fixed subreddit posts refresh not working

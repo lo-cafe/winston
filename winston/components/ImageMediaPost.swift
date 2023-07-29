@@ -21,10 +21,12 @@ struct GalleryThumb: View {
       .scaleFactor(screenScale)
       .resizable()
       .fade(duration: 0.5)
-      .backgroundDecode()
       .scaledToFill()
       .zIndex(1)
+      .allowsHitTesting(false)
       .frame(width: width, height: height)
+      .contentShape(Rectangle())
+      .clipped()
       .mask(RR(12, .black))
   }
 }
@@ -54,7 +56,7 @@ struct ImageMediaPost: View {
           let finalHeight = maxPostLinkImageHeightPercentage != 110 ? Double(min(Int(maxHeight), propHeight)) : Double(propHeight)
           GalleryThumb(width: contentWidth, height: finalHeight, url: URL(string: data.url)!)
             .onTapGesture { withAnimation(spring) { fullscreen.toggle() } }
-//            .frame(width: contentWidth, height: finalHeight)
+          //            .frame(width: contentWidth, height: finalHeight)
         } else if data.is_gallery == true, let metadatas = data.media_metadata?.values, metadatas.count > 1 {
           let urls: [String] = metadatas.compactMap { x in
             if let extArr = x.m?.split(separator: "/") {
@@ -83,7 +85,7 @@ struct ImageMediaPost: View {
             
             if urls.count > 2 {
               HStack(spacing: 8) {
-                GalleryThumb(width: urls.count == 3 ? contentWidth: width, height: height, url: URL(string: urls[2])!)
+                GalleryThumb(width: urls.count == 3 ? contentWidth : width, height: height, url: URL(string: urls[2])!)
                   .onTapGesture { withAnimation(spring) {
                     fullscreenIndex = 2
                     doThisAfter(0) { fullscreen.toggle() }
@@ -94,7 +96,7 @@ struct ImageMediaPost: View {
                       fullscreenIndex = 3
                       doThisAfter(0) { fullscreen.toggle() }
                     } }
-                } else {
+                } else if urls.count > 4 {
                   Text("\(urls.count - 3)+")
                     .fontSize(24, .medium)
                     .frame(width: width - 24, height: height - 24)
@@ -106,7 +108,7 @@ struct ImageMediaPost: View {
                     } }
                 }
               }
-//              .frame(width: contentWidth, height: height)
+              //              .frame(width: contentWidth, height: height)
             }
             
           }

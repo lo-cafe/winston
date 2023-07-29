@@ -54,16 +54,27 @@ final class PreviewViewModel: ObservableObject {
 
 struct PreviewLink: View {
   var url: String
+  var redditURL: RedditURLType?
   
   init(_ url: String) {
     self.url = url
-    if PreviewLinkCache.shared.cache[url] == nil {
-      PreviewLinkCache.shared.cache[url] = PreviewViewModel(url)
+//    print(url)
+    if let redditLink = parseRedditURL(url) {
+//      print(redditLink.self)
+      self.redditURL = redditLink
+    } else {
+      if PreviewLinkCache.shared.cache[url] == nil {
+        PreviewLinkCache.shared.cache[self.url] = PreviewViewModel(self.url)
+      }
     }
   }
   
   var body: some View {
-    PreviewLinkContent(viewModel: PreviewLinkCache.shared.cache[url]!, url: URL(string: url)!)
+    if let redditURL = redditURL {
+      PreviewRedditLinkContent(thing: redditURL)
+    } else {
+      PreviewLinkContent(viewModel: PreviewLinkCache.shared.cache[url]!, url: URL(string: url)!)
+    }
   }
 }
 
@@ -101,7 +112,6 @@ struct PreviewLinkContent: View {
         KFImage(URL(string: image)!)
           .resizable()
           .fade(duration: 0.5)
-          .backgroundDecode()
           .scaledToFill()
           .frame(width: 76, height: 76)
           .clipped()
@@ -117,8 +127,105 @@ struct PreviewLinkContent: View {
     .padding(.trailing, 6)
     .frame(maxWidth: .infinity, minHeight: height, maxHeight: height)
     .background(RR(16, .primary.opacity(0.05)))
-    .onTapGesture {
-      openURL(url)
+    .highPriorityGesture(TapGesture().onEnded { openURL(url) })
+  }
+}
+
+private enum ThingType {
+  case post(Post)
+  case comment(Comment)
+  case user(User)
+  case subreddit(Subreddit)
+}
+
+struct PreviewRedditLinkContent: View {
+  var thing: RedditURLType
+  @State private var thingEntity: ThingType?
+  private let height: CGFloat = 88
+  @EnvironmentObject var redditAPI: RedditAPI
+  
+  var body: some View {
+    HStack(spacing: 16) {
+      if let entity = thingEntity {
+        switch entity {
+        case .comment(let comment):
+          VStack {
+//            ShortCommentPostLink(comment: comment)
+            CommentLink(showReplies: false, comment: comment)
+          }
+          .padding(.vertical, 8)
+        case .post(let post):
+          ShortPostLink(reset: false, noHPad: true, post: post)
+        case .user(let user):
+          UserLinkContainer(reset: false, noHPad: true, user: user)
+        case .subreddit(let subreddit):
+          SubredditLinkContainer(reset: false, sub: subreddit)
+        }
+      } else {
+        ProgressView()
+          .frame(maxWidth: .infinity, minHeight: 88, maxHeight: 88)
+      }
+    }
+    .padding(.horizontal, 8)
+    .background(RoundedRectangle(cornerRadius: 12, style: .continuous).fill(.primary.opacity(0.05)))
+    //    .padding(.vertical, 6)
+    //    .padding(.leading, 10)
+    //    .padding(.trailing, 6)
+    //    .frame(maxWidth: .infinity, minHeight: height, maxHeight: height)
+    //    .background(RR(16, .primary.opacity(0.05)))
+    //    .highPriorityGesture(TapGesture().onEnded { openURL(url) })
+    .onAppear {
+      switch thing {
+      case .comment(let id, _, _):
+        Task {
+          if let data = await redditAPI.fetchInfo(fullnames: ["\(Comment.prefix)_\(id)"]) {
+            await MainActor.run { withAnimation {
+              switch data {
+              case .comment(let listing):
+                if let data = listing.data?.children?[0].data {
+                  thingEntity = .comment(Comment(data: data, api: redditAPI))
+                }
+              default:
+                break
+              }
+            } }
+          }
+        }
+      case .post(let id, _):
+        Task {
+//          print("maos", id)
+          if let data = await redditAPI.fetchInfo(fullnames: ["\(Post.prefix)_\(id)"]) {
+            await MainActor.run { withAnimation {
+              switch data {
+              case .post(let listing):
+                if let data = listing.data?.children?[0].data {
+                  thingEntity = .post(Post(data: data, api: redditAPI))
+                }
+              default:
+                break
+              }
+            } }
+          }
+        }
+      case .user(let username):
+        Task {
+          if let data = await redditAPI.fetchUser(username) {
+            await MainActor.run { withAnimation {
+              thingEntity = .user(User(data: data, api: redditAPI))
+            } }
+          }
+        }
+      case .subreddit(name: let name):
+        Task {
+          if let data = (await redditAPI.fetchSub(name))?.data  {
+            await MainActor.run { withAnimation {
+              thingEntity = .subreddit(Subreddit(data: data, api: redditAPI))
+            } }
+          }
+        }
+      case .other:
+        break
+      }
     }
   }
 }

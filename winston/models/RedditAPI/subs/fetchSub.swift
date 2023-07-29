@@ -9,11 +9,11 @@ import Foundation
 import Alamofire
 
 extension RedditAPI {
-  func fetchSub(_ id: String) async -> ListingChild<SubredditData>? {
+  func fetchSub(_ name: String) async -> ListingChild<SubredditData>? {
     await refreshToken()
     if let headers = self.getRequestHeaders() {
       let response = await AF.request(
-        "\(RedditAPI.redditApiURLBase)\(id.hasPrefix("/r/") ? id : "/r/\(id)/")about.json",
+        "\(RedditAPI.redditApiURLBase)\(name.hasPrefix("/r/") ? name : "/r/\(name)/")about.json",
         method: .get,
         headers: headers
       )

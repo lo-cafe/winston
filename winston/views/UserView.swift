@@ -109,7 +109,7 @@ struct UserView: View {
                     PostLink(post: Post(data: post, api: user.redditAPI), sub: Subreddit(id: post.subreddit, api: user.redditAPI), showSub: true)
                   case .second(let comment):
                     VStack {
-                      ShortPostLink(comment: Comment(data: comment, api: user.redditAPI))
+                      ShortCommentPostLink(comment: Comment(data: comment, api: user.redditAPI))
                       CommentLink(showReplies: false, comment: Comment(data: comment, api: user.redditAPI))
                     }
                     .padding(.horizontal, 12)

@@ -12,3 +12,12 @@ func rootURL(_ url: URL) -> URL? {
   components?.query = nil
   return components?.url
 }
+
+func rootURLString(_ url: String) -> String? {
+  if let urlURL = URL(string: url) {
+    var components = URLComponents(url: urlURL, resolvingAgainstBaseURL: false)
+    components?.query = nil
+    return components?.url?.absoluteString
+  }
+  return nil
+}

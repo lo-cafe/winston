@@ -276,8 +276,7 @@ extension String {
     /// Returns a new string made by replacing in the `String`
     /// all HTML character entity references with the corresponding
     /// character.
-    var stringByDecodingHTMLEntities : String {
-
+    var escape : String {
         // ===== Utility functions =====
 
         // Convert the number in the string to the corresponding

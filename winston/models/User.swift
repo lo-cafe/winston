@@ -10,11 +10,13 @@ import Foundation
 typealias User = GenericRedditEntity<UserData>
 
 extension User {
+  static var prefix = "t2"
+  
   convenience init(data: T, api: RedditAPI) {
-    self.init(data: data, api: api, typePrefix: "t2_")
+    self.init(data: data, api: api, typePrefix: "\(User.prefix)_")
   }
   convenience init(id: String, api: RedditAPI) {
-    self.init(id: id, api: api, typePrefix: "t2_")
+    self.init(id: id, api: api, typePrefix: "\(User.prefix)_")
   }
   
   func refetchOverview() async -> [Either<PostData, CommentData>]? {

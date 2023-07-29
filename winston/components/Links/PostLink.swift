@@ -53,7 +53,7 @@ struct PostLink: View {
     if let data = post.data {
       VStack(alignment: .leading, spacing: 8) {
         VStack(alignment: .leading, spacing: 12) {
-          Text(data.title.stringByDecodingHTMLEntities)
+          Text(data.title.escape)
             .fontSize(17, .medium)
             .allowsHitTesting(false)
           
@@ -82,8 +82,8 @@ struct PostLink: View {
         }
         .zIndex(1)
         
-        if let hint = data.post_hint, hint == "link" {
-          PreviewLink(data.url)
+        if !data.url.isEmpty && !data.is_self && !(data.is_video ?? false) && !(data.is_gallery ?? false) && data.post_hint != "image", let actualURL = rootURLString(data.url) {
+          PreviewLink(actualURL)
         }
         
         HStack(spacing: 0) {

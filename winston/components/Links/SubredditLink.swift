@@ -8,8 +8,18 @@
 import SwiftUI
 import Kingfisher
 
+struct SubredditLinkContainer: View {
+  var reset: Bool
+  var noHPad = false
+  @StateObject var sub: Subreddit
+  var body: some View {
+    SubredditLink(reset: reset, noHPad: true, sub: sub)
+  }
+}
+
 struct SubredditLink: View {
   var reset: Bool
+  var noHPad = false
   var sub: Subreddit
   @State var opened = false
     var body: some View {
@@ -26,10 +36,10 @@ struct SubredditLink: View {
               .fontSize(15).opacity(0.75)
           }
         }
-        .padding(.horizontal, 16)
+        .padding(.horizontal, noHPad ? 0 : 16)
         .padding(.vertical, 14)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(RR(20, .listBG))
+        .background(RR(20, noHPad ? .clear : .listBG))
         .onChange(of: reset) { _ in opened = false }
         .onTapGesture {
           opened = true

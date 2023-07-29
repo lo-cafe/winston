@@ -13,12 +13,13 @@ import SwiftUI
 typealias Subreddit = GenericRedditEntity<SubredditData>
 
 extension Subreddit {
+  static var prefix = "t5"
   convenience init(data: T, api: RedditAPI) {
-    self.init(data: data, api: api, typePrefix: "t5_")
+    self.init(data: data, api: api, typePrefix: "\(Subreddit.prefix)_")
   }
   
   convenience init(id: String, api: RedditAPI) {
-    self.init(id: id, api: api, typePrefix: "t5_")
+    self.init(id: id, api: api, typePrefix: "\(Subreddit.prefix)_")
   }
   
   func favoriteToggle() async {

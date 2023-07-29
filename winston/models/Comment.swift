@@ -31,8 +31,9 @@ enum CommentParentElement {
 }
 
 extension Comment {
+  static var prefix = "t1"
   convenience init(data: T, api: RedditAPI, kind: String? = nil) {
-    self.init(data: data, api: api, typePrefix: "t1_")
+    self.init(data: data, api: api, typePrefix: "\(Comment.prefix)_")
     self.kind = kind
     if let replies = self.data?.replies {
       switch replies {
@@ -84,7 +85,7 @@ extension Comment {
         mod_reports: nil,
         num_reports: nil,
         ups: nil
-      ), api: rawMessage.redditAPI, typePrefix: "t1_")
+      ), api: rawMessage.redditAPI, typePrefix: "\(Comment.prefix)_")
     } else {
       throw RandomErr.oops
     }

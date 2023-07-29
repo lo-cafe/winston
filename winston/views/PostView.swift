@@ -45,8 +45,8 @@ struct PostContent: View {
             ImageMediaPost(prefix: "postView", post: post, altContentWidth: contentWidth)
           }
           
-          if let hint = data.post_hint, hint == "link" {
-            PreviewLink(data.url)
+          if let hint = data.post_hint, hint == "link", let actualURL = rootURLString(data.url) {
+            PreviewLink(actualURL)
           }
           
           if data.selftext != "" {

@@ -8,8 +8,18 @@
 import SwiftUI
 import Kingfisher
 
+struct UserLinkContainer: View {
+  var reset: Bool
+  var noHPad = false
+  @StateObject var user: User
+  var body: some View {
+    UserLink(reset: reset, noHPad: noHPad, user: user)
+  }
+}
+
 struct UserLink: View {
   var reset: Bool
+  var noHPad = false
   var user: User
   @State var opened = false
     var body: some View {
@@ -28,10 +38,10 @@ struct UserLink: View {
             }
           }
         }
-        .padding(.horizontal, 16)
+        .padding(.horizontal, noHPad ? 0 : 16)
         .padding(.vertical, 14)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(RR(20, .listBG))
+        .background(RR(20, noHPad ? .clear : .listBG))
         .onChange(of: reset) { _ in opened = false }
         .onTapGesture {
           opened = true

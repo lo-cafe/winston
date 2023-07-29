@@ -27,11 +27,11 @@ struct SubredditPosts: View {
   //  @State var disableScroll = false
   @EnvironmentObject var redditAPI: RedditAPI
   
-  func asyncFetch(loadMore: Bool = false) async {
-    if subreddit.data == nil && subreddit.id != "home" {
+  func asyncFetch(force: Bool = false, loadMore: Bool = false) async {
+    if (subreddit.data == nil || force) && subreddit.id != "home" {
       await subreddit.refreshSubreddit()
     }
-    if posts.data.count > 0 && lastPostAfter == nil {
+    if posts.data.count > 0 && lastPostAfter == nil && !force {
       return
     }
     if let result = await subreddit.fetchPosts(sort: sort, after: loadMore ? lastPostAfter : nil), let newPosts = result.0 {
@@ -176,7 +176,7 @@ struct SubredditPosts: View {
     )
     .navigationTitle("\(subreddit.id == "home" ? "Home" : "r/\(subreddit.data?.display_name ?? subreddit.id)")")
     .refreshable {
-      await asyncFetch()
+      await asyncFetch(force: true)
     }
     .searchable(text: $searchText, prompt: "Search r/\(subreddit.data?.display_name ?? subreddit.id)")
     .onAppear {
