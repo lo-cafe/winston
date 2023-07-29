@@ -10,7 +10,6 @@ import VideoPlayer
 import CoreMedia
 import Defaults
 import AVKit
-import LinkPreview
 
 struct FlairTag: View {
   var text: String
