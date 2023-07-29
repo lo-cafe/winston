@@ -126,7 +126,7 @@ extension Subreddit {
 
 struct SubredditData: GenericRedditEntityDataType {
   let user_flair_background_color: String?
-  let submit_text_html: String?
+  var submit_text_html: String?
   let restrict_posting: Bool?
   var user_is_banned: Bool?
   let free_form_reports: Bool?
@@ -151,7 +151,7 @@ struct SubredditData: GenericRedditEntityDataType {
   let prediction_leaderboard_entry_type: String?
   let emojis_enabled: Bool?
   let advertiser_category: String?
-  let public_description: String
+  var public_description: String
   let comment_score_hide_mins: Int?
   let allow_predictions: Bool
   var user_has_favorited: Bool?
@@ -160,8 +160,8 @@ struct SubredditData: GenericRedditEntityDataType {
   let banner_background_image: String?
   let original_content_tag_enabled: Bool?
   let community_reviewed: Bool?
-  let submit_text: String?
-  let description_html: String?
+  var submit_text: String?
+  var description_html: String?
   let spoilers_enabled: Bool?
 //  let comment_contribution_settings: CommentContributionSettings
   let allow_talks: Bool?
@@ -184,7 +184,7 @@ struct SubredditData: GenericRedditEntityDataType {
   let allow_polls: Bool?
 //  let collapse_deleted_comments: Bool?
 //  let emojis_custom_size: [Int]?
-  let public_description_html: String?
+  var public_description_html: String?
   let allow_videos: Bool?
 //  let is_crosspostable_subreddit: Bool?
 //  let notification_level: String?
@@ -212,7 +212,7 @@ struct SubredditData: GenericRedditEntityDataType {
   let user_is_moderator: Bool?
 //  let over18: Bool?
 //  let header_title: String?
-  let description: String?
+  var description: String?
   let is_chat_post_feature_enabled: Bool?
   let submit_link_label: String?
   let user_flair_text_color: String?

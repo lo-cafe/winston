@@ -10,7 +10,7 @@ import Alamofire
 import Defaults
 
 extension RedditAPI {
-  func fetchSubs() async -> Void {
+  func fetchSubs(after: String? = nil) async -> String? {
     await refreshToken()
     if let headers = self.getRequestHeaders() {
       
@@ -28,17 +28,26 @@ extension RedditAPI {
       case .success(let data):
         await MainActor.run {
           if let children = data.data?.children {
-            Defaults[.subreddits] = children
+            Defaults[.subreddits] = children.compactMap({ y in
+              var x = y
+              x.data?.description = ""
+              x.data?.description_html = ""
+              x.data?.public_description = ""
+              x.data?.public_description_html = ""
+              x.data?.submit_text_html = ""
+              x.data?.submit_text = ""
+              return x
+            })
           }
         }
-        return
+        return data.data?.after
       case .failure(let error):
         Oops.shared.sendError(error)
         print(error)
-        return
+        return nil
       }
     } else {
-      return
+      return nil
     }
   }
   

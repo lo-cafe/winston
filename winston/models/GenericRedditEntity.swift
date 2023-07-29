@@ -90,6 +90,14 @@ class GenericRedditEntity<T: GenericRedditEntityDataType>: Identifiable, Hashabl
         self?.objectWillChange.send()
     }
   }
+  
+  func duplicate() -> GenericRedditEntity<T> {
+    let copy = GenericRedditEntity<T>(id: id, api: redditAPI, typePrefix: typePrefix)
+    copy.data = data
+    copy.kind = kind
+    copy.childrenWinston = childrenWinston
+    return copy
+  }
 }
 
 

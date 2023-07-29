@@ -87,25 +87,23 @@ struct PostLink: View {
         }
         
         HStack(spacing: 0) {
-          if let link_flair_text = data.link_flair_text {
-            if showSub {
-              Button {
-                openedSub = true
-              } label: {
-                FlairTag(text: "r/\(sub.data?.display_name ?? "Error")", blue: true)
-              }
-            }
+          
+          if showSub || sub.id == "home" {
+            FlairTag(text: "r/\(sub.data?.display_name ?? post.data?.subreddit ?? "Error")", blue: true)
+              .highPriorityGesture(TapGesture() .onEnded { openedSub = true })
             
             Rectangle()
               .fill(.primary.opacity(0.05))
               .frame(maxWidth: .infinity, maxHeight: 1)
               .allowsHitTesting(false)
-            
+          }
+          
+          if let link_flair_text = data.link_flair_text {
             FlairTag(text: link_flair_text)
               .allowsHitTesting(false)
           }
           
-          if !showSub {
+          if !showSub && sub.id != "home" {
             Rectangle()
               .fill(.primary.opacity(0.05))
               .frame(maxWidth: .infinity, maxHeight: 1)
@@ -113,6 +111,7 @@ struct PostLink: View {
           }
         }
         .padding(.horizontal, 2)
+        .padding(.vertical, 2)
         
         HStack {
           if let fullname = data.author_fullname {
@@ -153,16 +152,21 @@ struct PostLink: View {
       .padding(.horizontal, preferenceShowPostsCards ? POSTLINK_INNER_H_PAD : 0)
       .padding(.vertical, preferenceShowPostsCards ? 14 : 6)
       .frame(maxWidth: .infinity, alignment: .leading)
-      .background(
-        NavigationLink(destination: PostView(post: post, subreddit: sub), isActive: $openedPost, label: { EmptyView() }).buttonStyle(EmptyButtonStyle()).opacity(0).allowsHitTesting(false)
-      )
+      .if(sub.id == "home") {
+        $0
+          .background(NavigationLink(destination: PostViewContainer(post: post.duplicate(), sub: Subreddit(id: post.data?.subreddit ?? "", api: post.redditAPI)), isActive: $openedPost, label: { EmptyView() }).buttonStyle(EmptyButtonStyle()).opacity(0).allowsHitTesting(false))
+          .background(NavigationLink(destination: SubredditPostsContainer(sub: Subreddit(id: post.data?.subreddit ?? "", api: post.redditAPI)), isActive: $openedSub, label: { EmptyView() }).buttonStyle(EmptyButtonStyle()).opacity(0).allowsHitTesting(false))
+      }
+      .if(sub.id != "home") {
+        $0.background(NavigationLink(destination: PostView(post: post, subreddit: sub), isActive: $openedPost, label: { EmptyView() }).buttonStyle(EmptyButtonStyle()).opacity(0).allowsHitTesting(false))
+      }
       .if(preferenceShowPostsCards) { view in
         view
           .background(RR(20, .listBG).allowsHitTesting(false))
           .mask(RR(20, .black))
       }
       .compositingGroup()
-      .opacity((data.winstonSeen ?? false) ? 0.65 : 1)
+      .opacity((data.winstonSeen ?? false) ? 0.75 : 1)
       .contentShape(Rectangle())
       .swipyUI(onTap: {
         openedPost = true

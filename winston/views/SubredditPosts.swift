@@ -119,7 +119,9 @@ struct SubredditPosts: View {
       }
     }
     .overlay(
-      Button {
+      subreddit.id == "home"
+      ? nil
+      : Button {
         newPost = true
       } label: {
         Image(systemName: "newspaper.fill")
