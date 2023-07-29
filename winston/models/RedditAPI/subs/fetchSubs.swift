@@ -33,6 +33,7 @@ extension RedditAPI {
         }
         return
       case .failure(let error):
+        Oops.shared.sendError(error)
         print(error)
         return
       }

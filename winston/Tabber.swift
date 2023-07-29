@@ -8,11 +8,25 @@
 import SwiftUI
 import Defaults
 
+class Oops: ObservableObject {
+  static var shared = Oops()
+  @Published var asking = false
+  @Published var error: String?
+  
+  func sendError(_ error: Any) {
+    DispatchQueue.main.async {
+      Oops.shared.asking = true
+      Oops.shared.error = String(reflecting: error)
+    }
+  }
+}
+
 enum TabIdentifier {
   case posts, inbox, me, search, settings
 }
 
 struct Tabber: View {
+  @ObservedObject var errorAlert = Oops.shared
   @State var activeTab = TabIdentifier.posts
   @EnvironmentObject var redditAPI: RedditAPI
   @State var credModalOpen = false
@@ -73,6 +87,21 @@ struct Tabber: View {
         .tag(TabIdentifier.settings)
       
     }
+    .alert("Oops, Winston got a furball", isPresented: $errorAlert.asking) {
+      Button("Gratefully accept the weird gift") {
+        if let error = errorAlert.error {
+          sendEmail(error)
+        }
+        errorAlert.error = nil
+        errorAlert.asking = false
+      }
+      Button("Ignore the cat", role: .cancel) {
+        errorAlert.error = nil
+        errorAlert.asking = false
+      }
+    } message: {
+      Text("Something went wrong, but winston's is a fast cat, got the bug in his fangs and brought it to you. What do you wanna do?")
+    }
     .onAppear {
       Task { await updatePostsInBox(redditAPI) }
       if redditAPI.loggedUser.apiAppID == nil || redditAPI.loggedUser.apiAppSecret == nil {
@@ -96,16 +125,16 @@ struct Tabber: View {
       ChangeAuthAPIKey(open: $credModalOpen)
         .interactiveDismissDisabled(true)
     }
-//    .sheet(item: $credModalOpen) {
-//      ChangeAuthAPIKey()
-//    }
-//    .overlay(
-//      contentLightBox.post == nil
-//      ? nil
-//      : LightBox()
-//    )
-//    .environmentObject(TabberNamespaceWrapper(generalAnimations))
-//    .environmentObject(contentLightBox)
+    //    .sheet(item: $credModalOpen) {
+    //      ChangeAuthAPIKey()
+    //    }
+    //    .overlay(
+    //      contentLightBox.post == nil
+    //      ? nil
+    //      : LightBox()
+    //    )
+    //    .environmentObject(TabberNamespaceWrapper(generalAnimations))
+    //    .environmentObject(contentLightBox)
   }
 }
 

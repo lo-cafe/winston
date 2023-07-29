@@ -147,7 +147,6 @@ extension Post {
         case .second(let actualData):
           if let data = actualData.data {
             if let dataArr = data.children?.compactMap({ $0 }) {
-              self.toggleSeen(true)
               return (
                 Comment.initMultiple(datas: dataArr, api: redditAPI),
                 data.after

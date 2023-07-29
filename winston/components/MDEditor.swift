@@ -9,7 +9,7 @@ import SwiftUI
 import HighlightedTextEditor
 
 private let placeholders: [String] = [
-  "Say what again, SAY WAHT AGAIN! I dare you, I double dare you...",
+  "Say what again, SAY WHAT AGAIN! I dare you, I double dare you...",
   "Look, I get your point, but if we put a ruler in the horizon...",
   "Yesterday I found a horse in my room, then...",
   "This is the best placeholder you'll find...",
@@ -17,7 +17,7 @@ private let placeholders: [String] = [
   "I have a dream that one day this nation will rise up...",
   "It's gonna change the world for good. After years we finally found...",
   "The cosmos is within us. We are made of star-stuff. We are...",
-  "I like the way you die boy...",
+  "I like the way you die, boy...",
   "— Don’t you hate that?\n— What?\n— Uncomfortable silences...",
   "All we have to decide is what to do with the time that is given us...",
   "FLY, YOU FOOLS! ...yes, it's fly, not run...",
@@ -32,7 +32,7 @@ struct MDEditor: View {
       ZStack(alignment: .topLeading) {
         if text.isEmpty {
           Text(placeholder)
-            .opacity(0.45)
+            .opacity(0.35)
             .padding(.top, 8)
             .padding(.leading, 5)
         }

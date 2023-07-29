@@ -12,7 +12,7 @@ import CoreData
 
 typealias Comment = GenericRedditEntity<CommentData>
 
-enum Oops: Error {
+enum RandomErr: Error {
   case oops
 }
 
@@ -86,7 +86,7 @@ extension Comment {
         ups: nil
       ), api: rawMessage.redditAPI, typePrefix: "t1_")
     } else {
-      throw Oops.oops
+      throw RandomErr.oops
     }
   }
   

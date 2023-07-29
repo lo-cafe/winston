@@ -22,7 +22,8 @@ extension RedditAPI {
       switch response.result {
       case .success(let data):
         return data
-      case .failure(_):
+      case .failure(let error):
+        Oops.shared.sendError(error)
         return nil
       }
     }

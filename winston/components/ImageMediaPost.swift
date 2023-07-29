@@ -98,8 +98,8 @@ struct ImageMediaPost: View {
                   Text("\(urls.count - 3)+")
                     .fontSize(24, .medium)
                     .frame(width: width - 24, height: height - 24)
+                    .background(Circle().fill(.primary.opacity(0.05)))
                     .frame(width: width, height: height)
-                    .background(Circle().fill(.primary.opacity(0.075)))
                     .onTapGesture { withAnimation(spring) {
                       fullscreenIndex = 0
                       doThisAfter(0) { fullscreen.toggle() }

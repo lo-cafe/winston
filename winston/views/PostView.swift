@@ -45,6 +45,10 @@ struct PostContent: View {
             ImageMediaPost(prefix: "postView", post: post, altContentWidth: contentWidth)
           }
           
+          if let hint = data.post_hint, hint == "link" {
+            PreviewLink(data.url)
+          }
+          
           if data.selftext != "" {
             MD(str: data.selftext)
           }
@@ -79,6 +83,9 @@ struct PostContent: View {
         .padding(.horizontal, 2)
       }
       .id("post-content")
+      .onAppear {
+        post.toggleSeen(true)
+      }
     } else {
       VStack {
         ProgressView()

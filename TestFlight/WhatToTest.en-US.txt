@@ -1,6 +1,3 @@
-- Now comments bodies when swiping aren't weirdly clipped anymore
-- Fixed a sttuter when navigating back to the subs list
-- Fixed padding issue in POSTS BOX section header
-- Added placeholder to new comments and posts body
-- Galleries now work!
-- Link posts are coming in the next update!
+- Link posts now work!
+- We now got a feedback alert when something goes wrong
+- A bunch of minor fixes not worth mentioning

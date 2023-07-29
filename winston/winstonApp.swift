@@ -15,7 +15,6 @@ struct winstonApp: App {
   
   @State var haptics = SimpleHapticGenerator()
 
-
     var body: some Scene {
         WindowGroup {
             Tabber()

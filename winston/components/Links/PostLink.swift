@@ -83,13 +83,9 @@ struct PostLink: View {
         }
         .zIndex(1)
         
-//        if let hint = data.post_hint, hint == "link" {
-////          LinkPreview(url: URL(string: data.url)!)
-////            .titleLineLimit(1)
-////            .type(.small)
-//          LinkRow(previewURL: URL(string: data.url)!, redraw: self.$redrawPreview)
-//            .frame(height: 200)
-//        }
+        if let hint = data.post_hint, hint == "link" {
+          PreviewLink(data.url)
+        }
         
         HStack(spacing: 0) {
           if let link_flair_text = data.link_flair_text {

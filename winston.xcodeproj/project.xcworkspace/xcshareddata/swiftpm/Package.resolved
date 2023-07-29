@@ -55,12 +55,12 @@
       }
     },
     {
-      "identity" : "linkpreview",
+      "identity" : "opengraph",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/NuPlay/LinkPreview.git",
+      "location" : "https://github.com/satoshi-takano/OpenGraph.git",
       "state" : {
-        "revision" : "14ed9e55ee4ce651de85ce3a86daceba10214fea",
-        "version" : "1.1.0"
+        "revision" : "3ef2b8b9b4972b57e9e78c91c26be770c0110057",
+        "version" : "1.5.0"
       }
     },
     {
@@ -82,12 +82,30 @@
       }
     },
     {
+      "identity" : "skeletonui",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/CSolanaM/SkeletonUI.git",
+      "state" : {
+        "revision" : "e3cf87cb96a10562bc660c9d48418a395d8385ed",
+        "version" : "1.0.11"
+      }
+    },
+    {
       "identity" : "swift-markdown-ui",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/gonzalezreal/swift-markdown-ui",
       "state" : {
         "revision" : "12b351a75201a8124c2f2e1f9fc6ef5cd812c0b9",
         "version" : "2.1.0"
+      }
+    },
+    {
+      "identity" : "swift-snapshot-testing",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/pointfreeco/swift-snapshot-testing",
+      "state" : {
+        "revision" : "dc46eeb3928a75390651fac6c1ef7f93ad59a73b",
+        "version" : "1.11.1"
       }
     },
     {

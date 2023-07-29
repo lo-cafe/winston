@@ -26,6 +26,7 @@ extension RedditAPI {
       case .success(let data):
         return data.data?.children?.map { $0.data }.compactMap { $0 }
       case .failure(let error):
+        Oops.shared.sendError(error)
         print(error)
         return nil
       }

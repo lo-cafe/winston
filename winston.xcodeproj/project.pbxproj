@@ -109,8 +109,10 @@
 		ECDD51502A726F2600FD9498 /* debouncedText.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECDD514F2A726F2600FD9498 /* debouncedText.swift */; };
 		ECDD51522A7359D100FD9498 /* MDEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECDD51512A7359D100FD9498 /* MDEditor.swift */; };
 		ECDD51542A73889A00FD9498 /* rootURL.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECDD51532A73889A00FD9498 /* rootURL.swift */; };
-		ECDD51592A73A40200FD9498 /* LinkPreview in Frameworks */ = {isa = PBXBuildFile; productRef = ECDD51582A73A40200FD9498 /* LinkPreview */; };
-		ECDD515C2A73A90700FD9498 /* File.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECDD515B2A73A90700FD9498 /* File.swift */; };
+		ECDD515C2A73A90700FD9498 /* PreviewLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECDD515B2A73A90700FD9498 /* PreviewLink.swift */; };
+		ECDD515F2A748C5800FD9498 /* OpenGraph in Frameworks */ = {isa = PBXBuildFile; productRef = ECDD515E2A748C5800FD9498 /* OpenGraph */; };
+		ECDD51622A748DF600FD9498 /* SkeletonUI in Frameworks */ = {isa = PBXBuildFile; productRef = ECDD51612A748DF600FD9498 /* SkeletonUI */; };
+		ECDD51642A74C03C00FD9498 /* sendErrorEmail.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECDD51632A74C03C00FD9498 /* sendErrorEmail.swift */; };
 		ECE285972A4FD6FC009CF9DD /* SwiftDate in Frameworks */ = {isa = PBXBuildFile; productRef = ECE285962A4FD6FC009CF9DD /* SwiftDate */; };
 		ECE285992A50086D009CF9DD /* UserView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECE285982A50086D009CF9DD /* UserView.swift */; };
 		ECE2859B2A5010E2009CF9DD /* DataBlock.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECE2859A2A5010E2009CF9DD /* DataBlock.swift */; };
@@ -220,7 +222,6 @@
 		EC8F34A02A6FC99000EB8249 /* updatePostsInBox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = updatePostsInBox.swift; sourceTree = "<group>"; };
 		EC8F34A22A6FCB3500EB8249 /* timeSince.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = timeSince.swift; sourceTree = "<group>"; };
 		EC9269E72A514AA6003F33B1 /* DownAttributedString.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownAttributedString.swift; sourceTree = "<group>"; };
-		EC9269EF2A51A11B003F33B1 /* theme-markdown.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "theme-markdown.json"; sourceTree = "<group>"; };
 		EC9269F62A52B02E003F33B1 /* Shrinkable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shrinkable.swift; sourceTree = "<group>"; };
 		EC92FBDD2A589BE200391D1D /* SquircleUIKit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SquircleUIKit.swift; sourceTree = "<group>"; };
 		EC9EAEC32A4AAB470074D06B /* fromHex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = fromHex.swift; sourceTree = "<group>"; };
@@ -244,7 +245,8 @@
 		ECDD514F2A726F2600FD9498 /* debouncedText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = debouncedText.swift; sourceTree = "<group>"; };
 		ECDD51512A7359D100FD9498 /* MDEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MDEditor.swift; sourceTree = "<group>"; };
 		ECDD51532A73889A00FD9498 /* rootURL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = rootURL.swift; sourceTree = "<group>"; };
-		ECDD515B2A73A90700FD9498 /* File.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = File.swift; sourceTree = "<group>"; };
+		ECDD515B2A73A90700FD9498 /* PreviewLink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewLink.swift; sourceTree = "<group>"; };
+		ECDD51632A74C03C00FD9498 /* sendErrorEmail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = sendErrorEmail.swift; sourceTree = "<group>"; };
 		ECE285982A50086D009CF9DD /* UserView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserView.swift; sourceTree = "<group>"; };
 		ECE2859A2A5010E2009CF9DD /* DataBlock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataBlock.swift; sourceTree = "<group>"; };
 		ECE2859C2A50130D009CF9DD /* fetchUserOverview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = fetchUserOverview.swift; sourceTree = "<group>"; };
@@ -288,7 +290,6 @@
 			files = (
 				ECD6E9BB2A5B32E100D499E7 /* Kingfisher in Frameworks */,
 				EC08542E2A4CD76000E88389 /* VideoPlayer in Frameworks */,
-				ECDD51592A73A40200FD9498 /* LinkPreview in Frameworks */,
 				EC593B0C2A47B801002D6454 /* Alamofire in Frameworks */,
 				EC593B092A47B42D002D6454 /* KeychainAccess in Frameworks */,
 				ECD2A37D2A69CBAD00EDD02D /* WaterfallGrid in Frameworks */,
@@ -297,6 +298,8 @@
 				EC593B002A47AFC1002D6454 /* Defaults in Frameworks */,
 				EC08543D2A4CFE1C00E88389 /* SwiftUIIntrospect in Frameworks */,
 				ECA30A352A62276B00BB19D1 /* MarkdownUI in Frameworks */,
+				ECDD515F2A748C5800FD9498 /* OpenGraph in Frameworks */,
+				ECDD51622A748DF600FD9498 /* SkeletonUI in Frameworks */,
 				EC9269F22A51A732003F33B1 /* HighlightedTextEditor in Frameworks */,
 				EC0854462A4D6CC300E88389 /* SimpleHaptics in Frameworks */,
 			);
@@ -395,7 +398,6 @@
 			isa = PBXGroup;
 			children = (
 				EC8F34802A6D147000EB8249 /* assets */,
-				EC9269EE2A51A113003F33B1 /* jsons */,
 				ECC10C752A4A8746009124BE /* components */,
 				EC2D275A2A4FBEF7006444D6 /* modifiers */,
 				ECC10C722A4A8721009124BE /* utils */,
@@ -485,14 +487,6 @@
 				EC8F34962A6F667900EB8249 /* NewPostModal.swift */,
 			);
 			path = Modals;
-			sourceTree = "<group>";
-		};
-		EC9269EE2A51A113003F33B1 /* jsons */ = {
-			isa = PBXGroup;
-			children = (
-				EC9269EF2A51A11B003F33B1 /* theme-markdown.json */,
-			);
-			path = jsons;
 			sourceTree = "<group>";
 		};
 		ECA30A152A5FA06D00BB19D1 /* TestFlight */ = {
@@ -594,6 +588,7 @@
 				ECDD514D2A726E5900FD9498 /* modifyColor.swift */,
 				ECDD514F2A726F2600FD9498 /* debouncedText.swift */,
 				ECDD51532A73889A00FD9498 /* rootURL.swift */,
+				ECDD51632A74C03C00FD9498 /* sendErrorEmail.swift */,
 			);
 			path = utils;
 			sourceTree = "<group>";
@@ -601,11 +596,11 @@
 		ECC10C752A4A8746009124BE /* components */ = {
 			isa = PBXGroup;
 			children = (
-				ECDD515A2A73A8FE00FD9498 /* PreviewLink */,
 				EC8F34952A6F5A5400EB8249 /* Modals */,
 				EC8F34942A6F55C800EB8249 /* Links */,
 				ECEFC26D2A5F300E0003C6C4 /* Lightbox */,
 				ECC10C762A4A874C009124BE /* RR.swift */,
+				ECDD515B2A73A90700FD9498 /* PreviewLink.swift */,
 				EC08540D2A4BD26600E88389 /* ObservedScrollView.swift */,
 				EC0854252A4C013B00E88389 /* Avatar.swift */,
 				EC0854422A4D6A4800E88389 /* MasterButton.swift */,
@@ -627,14 +622,6 @@
 				ECDD51512A7359D100FD9498 /* MDEditor.swift */,
 			);
 			path = components;
-			sourceTree = "<group>";
-		};
-		ECDD515A2A73A8FE00FD9498 /* PreviewLink */ = {
-			isa = PBXGroup;
-			children = (
-				ECDD515B2A73A90700FD9498 /* File.swift */,
-			);
-			path = PreviewLink;
 			sourceTree = "<group>";
 		};
 		ECE449752A68893E00E2A3B7 /* SubredditInfo */ = {
@@ -686,7 +673,8 @@
 				ECA30A342A62276B00BB19D1 /* MarkdownUI */,
 				ECE449732A67648E00E2A3B7 /* Popovers */,
 				ECD2A37C2A69CBAD00EDD02D /* WaterfallGrid */,
-				ECDD51582A73A40200FD9498 /* LinkPreview */,
+				ECDD515E2A748C5800FD9498 /* OpenGraph */,
+				ECDD51612A748DF600FD9498 /* SkeletonUI */,
 			);
 			productName = winston;
 			productReference = EC593AD42A4673B2002D6454 /* winston.app */;
@@ -729,7 +717,8 @@
 				ECA30A332A62276B00BB19D1 /* XCRemoteSwiftPackageReference "swift-markdown-ui" */,
 				ECE449722A67648E00E2A3B7 /* XCRemoteSwiftPackageReference "Popovers" */,
 				ECD2A37B2A69CBAD00EDD02D /* XCRemoteSwiftPackageReference "WaterfallGrid" */,
-				ECDD51572A73A40200FD9498 /* XCRemoteSwiftPackageReference "LinkPreview" */,
+				ECDD515D2A748C5800FD9498 /* XCRemoteSwiftPackageReference "OpenGraph" */,
+				ECDD51602A748DF600FD9498 /* XCRemoteSwiftPackageReference "SkeletonUI" */,
 			);
 			productRefGroup = EC593AD52A4673B2002D6454 /* Products */;
 			projectDirPath = "";
@@ -768,7 +757,7 @@
 				ECE285A82A513342009CF9DD /* ReplyModal.swift in Sources */,
 				ECEFC2652A5DE5910003C6C4 /* SubredditLink.swift in Sources */,
 				EC8F34662A6A348F00EB8249 /* SwipeActions.swift in Sources */,
-				ECDD515C2A73A90700FD9498 /* File.swift in Sources */,
+				ECDD515C2A73A90700FD9498 /* PreviewLink.swift in Sources */,
 				EC5EDA712A4DA94A00140A08 /* SwipeActionsOld.swift in Sources */,
 				ECF0B7E92A543795002B9FAD /* fetchUsers.swift in Sources */,
 				EC22A31C2A5C75AA0062A112 /* fetchInbox.swift in Sources */,
@@ -797,6 +786,7 @@
 				EC9EAEC42A4AAB470074D06B /* fromHex.swift in Sources */,
 				EC08541E2A4BFEFE00E88389 /* fetchSubPosts.swift in Sources */,
 				ECF0B7DF2A53DD82002B9FAD /* VideoPlayerPost.swift in Sources */,
+				ECDD51642A74C03C00FD9498 /* sendErrorEmail.swift in Sources */,
 				EC0854172A4BF45C00E88389 /* Comment.swift in Sources */,
 				EC8F34A32A6FCB3500EB8249 /* timeSince.swift in Sources */,
 				EC8F349F2A6FC28400EB8249 /* fetchPosts.swift in Sources */,
@@ -1176,9 +1166,17 @@
 				minimumVersion = 7.0.0;
 			};
 		};
-		ECDD51572A73A40200FD9498 /* XCRemoteSwiftPackageReference "LinkPreview" */ = {
+		ECDD515D2A748C5800FD9498 /* XCRemoteSwiftPackageReference "OpenGraph" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/NuPlay/LinkPreview.git";
+			repositoryURL = "https://github.com/satoshi-takano/OpenGraph.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.0;
+			};
+		};
+		ECDD51602A748DF600FD9498 /* XCRemoteSwiftPackageReference "SkeletonUI" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/CSolanaM/SkeletonUI.git";
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 1.0.0;
@@ -1253,10 +1251,15 @@
 			package = ECD6E9B92A5B32E100D499E7 /* XCRemoteSwiftPackageReference "Kingfisher" */;
 			productName = Kingfisher;
 		};
-		ECDD51582A73A40200FD9498 /* LinkPreview */ = {
+		ECDD515E2A748C5800FD9498 /* OpenGraph */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = ECDD51572A73A40200FD9498 /* XCRemoteSwiftPackageReference "LinkPreview" */;
-			productName = LinkPreview;
+			package = ECDD515D2A748C5800FD9498 /* XCRemoteSwiftPackageReference "OpenGraph" */;
+			productName = OpenGraph;
+		};
+		ECDD51612A748DF600FD9498 /* SkeletonUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = ECDD51602A748DF600FD9498 /* XCRemoteSwiftPackageReference "SkeletonUI" */;
+			productName = SkeletonUI;
 		};
 		ECE285962A4FD6FC009CF9DD /* SwiftDate */ = {
 			isa = XCSwiftPackageProductDependency;
