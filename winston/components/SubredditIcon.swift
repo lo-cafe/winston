@@ -16,8 +16,8 @@ struct SubredditBaseIcon: View {
   var size: CGFloat = 30
   var color: String?
   var body: some View {
-    if let icon = iconURLStr {
-      KFImage(URL(string: icon)!)
+    if let icon = iconURLStr, !icon.isEmpty, let iconURL = URL(string: icon) {
+      KFImage(iconURL)
         .resizable()
         .fade(duration: 0.5)
         .scaledToFill()

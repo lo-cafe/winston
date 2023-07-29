@@ -1,3 +1,4 @@
 - Link posts now work!
 - We now got a feedback alert when something goes wrong
 - A bunch of minor fixes not worth mentioning
+- Fixed a possible crash with subreddits icons
