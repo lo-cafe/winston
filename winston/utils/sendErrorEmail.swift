@@ -24,7 +24,7 @@ class EmailHelper: NSObject, MFMailComposeViewControllerDelegate {
       
       let mail = MFMailComposeViewController()
       mail.mailComposeDelegate = self
-      mail.setToRecipients(["furball@lo.cafe"])
+      mail.setToRecipients(["weird-gift@lo.cafe"])
       mail.setSubject("Winston found a bug!")
       mail.setMessageBody("Here it is, inside a jar of course because ewww", isHTML: false)
       
