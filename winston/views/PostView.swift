@@ -28,12 +28,12 @@ struct PostContent: View {
             .fontSize(20, .semibold)
             .fixedSize(horizontal: false, vertical: true)
           
-          let imgPost = data.is_gallery == true || data.url.hasSuffix("jpg") || data.url.hasSuffix("png")
+          let imgPost = data.is_gallery == true || data.url.hasSuffix("jpg") || data.url.hasSuffix("png") || data.url.hasSuffix("webp")
           
           if let media = data.secure_media {
             switch media {
             case .first(let datas):
-              if let url = datas.reddit_video?.fallback_url {
+              if let url = datas.reddit_video.fallback_url {
                 VideoPlayerPost(post: post, overrideWidth: UIScreen.screenWidth - 16, sharedVideo: SharedVideo(player: AVPlayer(url:  URL(string: url)!)))
               }
             case .second(_):
@@ -42,11 +42,11 @@ struct PostContent: View {
           }
           
           if imgPost {
-            ImageMediaPost(prefix: "postView", post: post, altContentWidth: contentWidth)
+            ImageMediaPost(prefix: "postView", post: post, contentWidth: contentWidth)
           }
           
-          if let hint = data.post_hint, hint == "link", let actualURL = rootURLString(data.url) {
-            PreviewLink(actualURL)
+          if !data.url.isEmpty && !data.is_self && !(data.is_video ?? false) && !(data.is_gallery ?? false) && data.post_hint != "image" {
+            PreviewLink(data.url, contentWidth: contentWidth, media: data.secure_media)
           }
           
           if data.selftext != "" {

@@ -34,20 +34,16 @@ struct GalleryThumb: View {
 struct ImageMediaPost: View {
   var prefix: String = ""
   var post: Post
-  var altContentWidth: CGFloat?
+  var contentWidth: CGFloat
   @State var pressing = false
   @State var fullscreen = false
   @State var fullscreenIndex = 0
   @Namespace var presentationNamespace
-  @Default(.preferenceShowPostsCards) var preferenceShowPostsCards
   @Default(.maxPostLinkImageHeightPercentage) var maxPostLinkImageHeightPercentage
   
   var safe: Double { getSafeArea().top + getSafeArea().bottom }
   
-  var rawContentWidth: CGFloat { UIScreen.screenWidth - (POSTLINK_OUTER_H_PAD * 2) - (preferenceShowPostsCards ? POSTLINK_INNER_H_PAD * 2 : 0) }
-  
   var body: some View {
-    let contentWidth = altContentWidth ?? rawContentWidth
     let maxHeight: CGFloat = (maxPostLinkImageHeightPercentage / 100) * (UIScreen.screenHeight - safe)
     if let data = post.data {
       ZStack {

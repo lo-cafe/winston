@@ -11,6 +11,11 @@ import Alamofire
 import SwiftUI
 import Defaults
 
+class AvatarCache: ObservableObject {
+  static var shared = AvatarCache()
+  var data: [String:String] = [:]
+}
+
 
 class RedditAPI: ObservableObject {
   static let winstonAPIBase = "https://winston.lo.cafe/api"
@@ -22,7 +27,6 @@ class RedditAPI: ObservableObject {
   @Published var loggedUser: UserCredential = UserCredential()
   @Published var lastAuthState: String?
   @Published var me: User?
-  @Published var avatarURLCache: [String:String] = [:]
   
   func getRequestHeaders(includeAuth: Bool = true) -> HTTPHeaders? {
     var headers: HTTPHeaders = [

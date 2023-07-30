@@ -26,7 +26,6 @@ extension RedditAPI {
       case .success(let data):
         return data
       case .failure(let error):
-        print("manas", fullnames.joined(separator: ","))
         Oops.shared.sendError(error)
         print(error)
         return nil

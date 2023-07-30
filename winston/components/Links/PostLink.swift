@@ -34,7 +34,6 @@ struct PostLink: View {
   @ObservedObject var sub: Subreddit
   var showSub = false
   var scrollPos: CGFloat?
-  @State var contentWidth: CGFloat = .zero
   @State var playingVideo = true
   @State var offsetX: CGFloat = 0
   @State private var time: CMTime = .zero
@@ -49,6 +48,8 @@ struct PostLink: View {
   @GestureState private var isPressing = false
   @GestureState private var dragX: CGFloat = 0
   
+  var contentWidth: CGFloat { UIScreen.screenWidth - (POSTLINK_OUTER_H_PAD * 2) - (preferenceShowPostsCards ? POSTLINK_INNER_H_PAD * 2 : 0) }
+  
   var body: some View {
     if let data = post.data {
       VStack(alignment: .leading, spacing: 8) {
@@ -57,12 +58,12 @@ struct PostLink: View {
             .fontSize(17, .medium)
             .allowsHitTesting(false)
           
-          let imgPost = data.is_gallery == true || data.url.hasSuffix("jpg") || data.url.hasSuffix("png")
+          let imgPost = data.is_gallery == true || data.url.hasSuffix("jpg") || data.url.hasSuffix("png") || data.url.hasSuffix("webp")
           
           if let media = data.secure_media {
             switch media {
             case .first(let datas):
-              if let url = datas.reddit_video?.fallback_url {
+              if let url = datas.reddit_video.fallback_url {
                 VideoPlayerPost(post: post, sharedVideo: SharedVideo(player: AVPlayer(url:  URL(string: url)!)))
               }
             case .second(_):
@@ -71,20 +72,20 @@ struct PostLink: View {
           }
           
           if imgPost {
-            ImageMediaPost(post: post)
+            ImageMediaPost(post: post, contentWidth: contentWidth)
           } else if data.selftext != "" {
-//            MD(str: data.selftext, lineLimit: 3)
+            //            MD(str: data.selftext, lineLimit: 3)
             Text(data.selftext.md()).lineLimit(3)
               .fontSize(15)
               .opacity(0.75)
               .allowsHitTesting(false)
           }
+          
+          if !data.url.isEmpty && !data.is_self && !(data.is_video ?? false) && !(data.is_gallery ?? false) && data.post_hint != "image" {
+            PreviewLink(data.url, contentWidth: contentWidth, media: data.secure_media)
+          }
         }
         .zIndex(1)
-        
-        if !data.url.isEmpty && !data.is_self && !(data.is_video ?? false) && !(data.is_gallery ?? false) && data.post_hint != "image", let actualURL = rootURLString(data.url) {
-          PreviewLink(actualURL)
-        }
         
         HStack(spacing: 0) {
           
@@ -126,7 +127,7 @@ struct PostLink: View {
                 _ = await post.vote(action: .up)
               }
             }
-//            .shrinkOnTap()
+            //            .shrinkOnTap()
             .padding(.all, -8)
             
             let downup = Int(data.ups - data.downs)
@@ -142,13 +143,12 @@ struct PostLink: View {
                 _ = await post.vote(action: .down)
               }
             }
-//            .shrinkOnTap()
+            //            .shrinkOnTap()
             .padding(.all, -8)
           }
           .fontSize(22, .medium)
         }
       }
-      .background( GeometryReader { geo in Color.clear .onAppear { contentWidth = geo.size.width } } )
       .padding(.horizontal, preferenceShowPostsCards ? POSTLINK_INNER_H_PAD : 0)
       .padding(.vertical, preferenceShowPostsCards ? 14 : 6)
       .frame(maxWidth: .infinity, alignment: .leading)
@@ -171,7 +171,7 @@ struct PostLink: View {
       .swipyUI(onTap: {
         openedPost = true
       }, secondActionIcon: (data.winstonSeen ?? false) ? "eye.slash.fill" : "eye.fill",
-      leftActionHandler: {
+               leftActionHandler: {
         Task {
           _ = await post.vote(action: .down)
         }

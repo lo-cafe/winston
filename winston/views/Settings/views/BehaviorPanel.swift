@@ -10,11 +10,14 @@ import Defaults
 
 struct BehaviorPanel: View {
   @Default(.maxPostLinkImageHeightPercentage) var maxPostLinkImageHeightPercentage
+  @Default(.openYoutubeApp) var openYoutubeApp
   @Default(.preferredSort) var preferredSort
   
   var body: some View {
     List {
       Section {
+        Toggle("Open Youtube videos externally", isOn: $openYoutubeApp)
+
         Picker("Default posts sorting", selection: $preferredSort) {
           ForEach(SubListingSortOption.allCases, id: \.self) { val in
             HStack(spacing: 8) {
@@ -24,6 +27,7 @@ struct BehaviorPanel: View {
             .fixedSize()
           }
         }
+        
         VStack(alignment: .leading) {
           HStack {
             Text("Max posts image height")
@@ -33,6 +37,7 @@ struct BehaviorPanel: View {
           }
           Slider(value: $maxPostLinkImageHeightPercentage, in: 10...110, step: 10)
         }
+        
       }
       .navigationTitle("Behavior")
       .navigationBarTitleDisplayMode(.inline)

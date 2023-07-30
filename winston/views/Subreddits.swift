@@ -52,35 +52,6 @@ struct SubItem: View {
   }
 }
 
-struct SubredditBigBtn: View {
-  var openSub: (Subreddit) -> ()
-  var icon: String
-  var iconColor: Color
-  var label: String
-  var destination: Subreddit
-  var selected: Bool
-  var body: some View {
-    Button {
-      openSub(destination)
-    } label: {
-      VStack(alignment: .leading, spacing: 8) {
-        Image(systemName: icon)
-          .fontSize(32)
-          .foregroundColor(selected ? .white : iconColor)
-        Text(label)
-          .fontSize(17, .semibold)
-      }
-      .padding(.all, 10)
-      .frame(maxWidth: .infinity, alignment: .leading)
-      .foregroundColor(selected ? .white : .primary)
-      .background(RR(13, selected ? IPAD ? .blue : .secondary : IPAD ? .secondary.opacity(0.2) : .listBG))
-      .contentShape(RoundedRectangle(cornerRadius: 13))
-      //    .onChange(of: reset) { _ in active = false }
-    }
-    .buttonStyle(.plain)
-  }
-}
-
 class SubsDictContainer: ObservableObject {
   @Published var data: [String: [Subreddit]] = [:] {
     didSet { observeChildrenChanges() }
@@ -144,7 +115,6 @@ struct Subreddits: View {
   @State var selectedPostActive = false
   @State var loaded = false
   @State var editMode: EditMode = .inactive
-
   
   func sort(_ subs: [ListingChild<SubredditData>]) -> [String: [Subreddit]] {
     return Dictionary(grouping: subs.compactMap { $0.data }, by: { String($0.display_name?.prefix(1) ?? "").uppercased() })
@@ -189,9 +159,9 @@ struct Subreddits: View {
         if searchText == "" {
             HStack(spacing: 12) {
               
-              SubredditBigBtn(openSub: openSub, icon: "house.circle.fill", iconColor: .blue, label: "Home", destination: Subreddit(id: "home", api: redditAPI), selected: IPAD && selectedSubreddit.sub.id == "home")
+              ListBigBtn(openSub: openSub, icon: "house.circle.fill", iconColor: .blue, label: "Home", destination: Subreddit(id: "home", api: redditAPI), selected: IPAD && selectedSubreddit.sub.id == "home")
               
-              SubredditBigBtn(openSub: openSub, icon: "bookmark.circle.fill", iconColor: .green, label: "Saved", destination: Subreddit(id: "homes", api: redditAPI), selected: IPAD && selectedSubreddit.sub.id == "homes").allowsHitTesting(false).opacity(0.5)
+              ListBigBtn(openSub: openSub, icon: "bookmark.circle.fill", iconColor: .green, label: "Saved", destination: Subreddit(id: "homes", api: redditAPI), selected: IPAD && selectedSubreddit.sub.id == "homes").allowsHitTesting(false).opacity(0.5)
               
             }
             .frame(maxWidth: .infinity)
@@ -246,6 +216,7 @@ struct Subreddits: View {
       .background(
         NavigationLink(destination: PostViewContainer(post: Post(id: selectedPost.id, api: redditAPI), sub: Subreddit(id: selectedPost.subredditName, api: redditAPI)), isActive: $selectedPostActive, label: { EmptyView() }).buttonStyle(EmptyButtonStyle()).opacity(0).allowsHitTesting(false).if(IPAD) { $0.id(selectedSubreddit.sub.id) }.id(selectedPost.id)
       )
+      .background(OFWOpener(reset: reset))
       .searchable(text: $searchText, prompt: "Search my subreddits")
       .refreshable {
         Task {

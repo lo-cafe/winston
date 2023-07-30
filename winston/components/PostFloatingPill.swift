@@ -26,8 +26,10 @@ struct PostFloatingPill: View {
 //
 //          }µ
           HStack(spacing: -12) {
-            ShareLink(item: URL(string: "https://reddit.com\(data.permalink)")!) {
-              LightBoxButton(icon: "square.and.arrow.up.fill", disabled: true)
+            if let perma = URL(string: "https://reddit.com\(data.permalink.escape.urlEncoded)") {
+              ShareLink(item: perma) {
+                LightBoxButton(icon: "square.and.arrow.up.fill", disabled: true)
+              }
             }
             
             LightBoxButton(icon: !thisPinnedPost ? "shippingbox" : "shippingbox.and.arrow.backward.fill") {

@@ -8,13 +8,31 @@
 import Foundation
 import Alamofire
 import Defaults
+import SwiftUI
+
+private func cleanSubs(_ subs: [ListingChild<SubredditData>]) -> [ListingChild<SubredditData>] {
+  return subs.compactMap({ y in
+    var x = y
+    x.data?.description = ""
+    x.data?.description_html = ""
+    x.data?.public_description = ""
+    x.data?.public_description_html = ""
+    x.data?.submit_text_html = ""
+    x.data?.submit_text = ""
+    return x
+  })
+}
 
 extension RedditAPI {
-  func fetchSubs(after: String? = nil) async -> String? {
+  func fetchSubs(after: String? = nil) async -> [ListingChild<SubredditData>]? {
     await refreshToken()
     if let headers = self.getRequestHeaders() {
       
-      let params = ["limit": 100, "count": 0]
+      var params = FetchSubsPayload(limit: 100, count: 0)
+      
+      if let after = after {
+        params.after = after
+      }
       
       let response = await AF.request(
         "\(RedditAPI.redditApiURLBase)/subreddits/mine/subscriber.json",
@@ -26,21 +44,22 @@ extension RedditAPI {
         .serializingDecodable(Listing<SubredditData>.self).response
       switch response.result {
       case .success(let data):
-        await MainActor.run {
-          if let children = data.data?.children {
-            Defaults[.subreddits] = children.compactMap({ y in
-              var x = y
-              x.data?.description = ""
-              x.data?.description_html = ""
-              x.data?.public_description = ""
-              x.data?.public_description_html = ""
-              x.data?.submit_text_html = ""
-              x.data?.submit_text = ""
-              return x
-            })
+        var finalSubs: [ListingChild<SubredditData>] = []
+        if let dataAfter = data.data?.after, !dataAfter.isEmpty, let extraFetchedSubs = await fetchSubs(after: dataAfter) {
+          finalSubs += extraFetchedSubs
+        }
+        if let fetchedSubs = data.data?.children {
+          finalSubs += fetchedSubs
+        }
+        if !after.isNil {
+          return data.data?.children
+        }
+        await MainActor.run { [finalSubs] in
+          withAnimation {
+            Defaults[.subreddits] = cleanSubs(finalSubs)
           }
         }
-        return data.data?.after
+        return nil
       case .failure(let error):
         Oops.shared.sendError(error)
         print(error)

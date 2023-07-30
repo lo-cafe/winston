@@ -32,7 +32,7 @@ struct VideoPlayerPost: View {
     let media = post.data!.secure_media!
     switch media {
     case .first(let data):
-      if let sourceWidth = data.reddit_video?.width, let sourceHeight = data.reddit_video?.height {
+      if let sourceWidth = data.reddit_video.width, let sourceHeight = data.reddit_video.height {
         let propHeight = (Int(contentWidth) * sourceHeight) / sourceWidth
         let finalHeight = maxPostLinkImageHeightPercentage != 110 ? Double(min(Int(maxHeight), propHeight)) : Double(propHeight)
         ZStack {
@@ -121,7 +121,6 @@ class AVPlayerViewControllerRotatable: AVPlayerViewController, AVPlayerViewContr
     super.viewDidAppear(animated)
     
     if self.view.window == nil {
-      print("alms")
 //      self.view.window?.windowScene?.keyWindow?.rootViewController?.present(self, animated: true)
 //      print( self.view.window == nil, self.view.window?.windowScene == nil, self.view.window?.windowScene?.keyWindow? == nil, self.view.window?.windowScene?.keyWindow?.rootViewController? == nil)
 //      UIApplication.shared.windows.first?.rootViewController?.present(self, animated: true)
@@ -131,9 +130,9 @@ class AVPlayerViewControllerRotatable: AVPlayerViewController, AVPlayerViewContr
   override func viewWillDisappear(_ animated: Bool) {
     super.viewWillDisappear(animated)
     
-    if self.isBeingDismissed || (self.isMovingFromParent && !self.isBeingPresented) {
-      print("AVPlayerViewController is being dismissed!")
-    }
+//    if self.isBeingDismissed || (self.isMovingFromParent && !self.isBeingPresented) {
+//      print("AVPlayerViewController is being dismissed!")
+//    }
   }
 }
 

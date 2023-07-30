@@ -121,6 +121,21 @@ struct Tabber: View {
         }
       }
     }
+    .onOpenURL { url in
+      let parsed = parseRedditURL(url.absoluteString)
+      withAnimation {
+        switch parsed {
+        case .post(_, _):
+          OpenFromWeb.shared.data = parsed
+        case .subreddit(_):
+          OpenFromWeb.shared.data = parsed
+        case .user(_):
+          OpenFromWeb.shared.data = parsed
+        default:
+          break
+        }
+      }
+    }
     .sheet(isPresented: $credModalOpen) {
       ChangeAuthAPIKey(open: $credModalOpen)
         .interactiveDismissDisabled(true)

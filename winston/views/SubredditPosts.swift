@@ -18,7 +18,7 @@ struct SubredditPosts: View {
   @ObservedObject var subreddit: Subreddit
   @Environment(\.openURL) var openURL
   @State var loading = true
-  @State var loadingMore = false
+//  @State var loadingMore = false
   @StateObject var posts = ObservableArray<Post>()
   @State var lastPostAfter: String?
   @State var searchText: String = ""
@@ -43,16 +43,21 @@ struct SubredditPosts: View {
         }
         loading = false
         lastPostAfter = result.1
-        loadingMore = false
+//        loadingMore = false
       }
-      await redditAPI.updateAvatarURLCacheFromPosts(posts: newPosts)
+      Task {
+        await redditAPI.updateAvatarURLCacheFromPosts(posts: newPosts)
+      }
     }
   }
   
   func fetch(loadMore: Bool = false) {
-    if loadMore {
-      loadingMore = true
-    }
+//    if loadMore {
+//      withAnimation {
+//        <#code#>
+//        loadingMore = true
+//      }
+//    }
     Task {
       await asyncFetch(loadMore: loadMore)
     }
@@ -99,6 +104,13 @@ struct SubredditPosts: View {
                   .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
                 }
               }
+            }
+            
+            if !lastPostAfter.isNil {
+              ProgressView()
+                .progressViewStyle(.circular)
+                .frame(maxWidth: .infinity, minHeight: UIScreen.screenHeight - 200 )
+                .id("post-loading")
             }
           }
           //          .listRowSeparator(preferenceShowPostsCards ? .hidden : .automatic)

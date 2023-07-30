@@ -27,13 +27,13 @@ extension RedditAPI {
       case .failure(let err):
         Oops.shared.sendError(err)
         print(err)
-        var errorString: String?
-        if let data = response.data {
-          if let json = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: String] {
-            errorString = json["error"]
-          }
-        }
-        print(errorString)
+//        var errorString: String?
+//        if let data = response.data {
+//          if let json = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: String] {
+//            errorString = json["error"]
+//          }
+//        }
+//        print(errorString)
         return nil
       }
     } else {
@@ -44,7 +44,7 @@ extension RedditAPI {
   struct MoreRepliesPayload: Codable {
     var api_type = "json"
     let children: String
-    var depth = 7
+    var depth = 35
     var limit_children = false
     var link_id: String
     var sort: String

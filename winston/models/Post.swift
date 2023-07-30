@@ -356,7 +356,7 @@ struct RedditVideo: Codable, Hashable {
 }
 
 struct SecureMediaRedditVideo: Codable, Hashable {
-  let reddit_video: RedditVideo?
+  let reddit_video: RedditVideo
 }
 
 struct Awarding: Codable, Hashable {

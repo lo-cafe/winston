@@ -41,6 +41,7 @@ extension Defaults.Keys {
   static let maxPostLinkImageHeightPercentage = Key<Double>("maxPostLinkImageHeightPercentage", default: 100)
   static let replyModalBlurBackground = Key<Bool>("replyModalBlurBackground", default: true)
   static let newPostModalBlurBackground = Key<Bool>("newPostModalBlurBackground", default: true)
+  static let openYoutubeApp = Key<Bool>("openYoutubeApp", default: true)
 }
 
 extension UIScreen {

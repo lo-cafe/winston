@@ -66,7 +66,7 @@ extension RedditAPI {
       let newDict = data.mapValues { val in val.profile_img ?? "" }
       await MainActor.run { [newDict] in
         withAnimation {
-          avatarURLCache.merge(newDict) { (_, new) in new }
+          AvatarCache.shared.data.merge(newDict) { (_, new) in new }
         }
       }
     }

@@ -18,6 +18,10 @@ class GenericRedditEntity<T: GenericRedditEntityDataType>: Identifiable, Hashabl
     hasher.combine(childrenWinston.data)
   }
   
+  static func placeholder() -> GenericRedditEntity<T> {
+    GenericRedditEntity<T>(id: "none", api: RedditAPI(), typePrefix: nil)
+  }
+  
   static func == (lhs: GenericRedditEntity<T>, rhs: GenericRedditEntity<T>) -> Bool {
     return lhs.id == rhs.id && lhs.kind == rhs.kind && lhs.data == rhs.data && lhs.data?.id == rhs.data?.id
   }
