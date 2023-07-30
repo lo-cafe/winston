@@ -290,7 +290,7 @@ struct MediaMetadataItem: Codable, Hashable, Identifiable {
 struct MediaMetadataItemSize: Codable, Hashable {
   let x: Int
   let y: Int
-  let u: String
+  let u: String?
 }
 
 struct PreviewImg: Codable, Hashable {
