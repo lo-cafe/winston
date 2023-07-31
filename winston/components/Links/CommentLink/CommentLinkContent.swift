@@ -16,6 +16,7 @@ struct CommentLinkContent: View {
   var arrowKinds: [ArrowKind]
   var indentLines: Int? = nil
   var lineLimit: Int?
+  var post: Post?
   @ObservedObject var comment: Comment
   var avatarsURL: [String:String]?
 //  @Binding var collapsed: Bool
@@ -41,8 +42,8 @@ struct CommentLinkContent: View {
             }
           }
           HStack {
-            if let author = data.author, let created = data.created  {
-              Badge(showAvatar: preferenceShowCommentsAvatars, author: author, fullname: data.author_fullname, created: created, avatarURL: avatarsURL?[data.author_fullname!])
+            if let author = data.author, let created = data.created {
+              Badge(usernameColor: (post?.data?.author ?? "") == author ? Color.green : Color.blue, showAvatar: preferenceShowCommentsAvatars, author: author, fullname: data.author_fullname, created: created, avatarURL: avatarsURL?[data.author_fullname!])
             }
 
             Spacer()
@@ -90,6 +91,9 @@ struct CommentLinkContent: View {
             rightActionHandler: { Task { _ = await comment.vote(action: .up) } },
             secondActionHandler: { showReplyModal = true }
           )
+        }
+        .introspect(.listCell, on: .iOS(.v16, .v17)) { cell in
+          cell.layer.masksToBounds = false
         }
         .padding(.horizontal, !preferenceShowCommentsCards ? 0 : 13)
         .padding(.top, data.depth != 0 ? 6 : 0)
@@ -147,8 +151,8 @@ struct CommentLinkContent: View {
             cell.layer.masksToBounds = false
           }
           .padding(.horizontal, !preferenceShowCommentsCards ? 0 : 13)
-          .background(preferenceShowCommentsCards && showReplies ? Color.listBG : .clear)
           .mask(Color.black)
+          .background(preferenceShowCommentsCards && showReplies ? Color.listBG : .clear)
           .sheet(isPresented: $showReplyModal) {
             ReplyModalComment(comment: comment)
           }

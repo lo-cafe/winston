@@ -52,7 +52,7 @@ struct SwipeUI: ViewModifier {
               .scaleEffect(firstLeftAction ? 1 : max(0.001, offsetXInterpolate([-0.9, 0.85], false)))
               .opacity(max(0, offsetXInterpolate([-0.9, 1], false)))
               .frame(width: actualOffsetX < 0 ? 10 : abs(actualOffsetX))
-              .offset(x: -16)
+              .offset(x: -8)
             }
             
             Spacer()
@@ -64,11 +64,11 @@ struct SwipeUI: ViewModifier {
               .scaleEffect(secondAction ? 1.1 : firstRightAction ? 1 : max(0.001, offsetXNegativeInterpolate([-0.9, 0.85], false)))
               .opacity(max(0, offsetXNegativeInterpolate([-0.9, 1], false)))
               .frame(width: actualOffsetX > 0 ? 10 : abs(actualOffsetX))
-              .offset(x: 16)
+              .offset(x: 8)
             }
           }
-            .offset(y: offsetYAction)
             .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .offset(y: offsetYAction)
             .allowsHitTesting(false)
         )
       }

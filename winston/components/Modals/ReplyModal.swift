@@ -79,6 +79,7 @@ struct ReplyModalPost: View {
 struct ReplyModal<Content: View>: View {
   var thingFullname: String
   var action: ((@escaping (Bool) -> ()), String) -> ()
+  @EnvironmentObject var tempGlobalState: TempGlobalState
   @EnvironmentObject var redditAPI: RedditAPI
   @State var alertExit = false
   @StateObject var textWrapper = TextFieldObserver(delay: 0.5)
@@ -128,11 +129,13 @@ struct ReplyModal<Content: View>: View {
       }
       .overlay(
         MasterButton(icon: "paperplane.fill", label: "Send", height: 48, fullWidth: true, cornerRadius: 16) {
-          withAnimation { loading = true }
+          withAnimation(spring) {
+            dismiss()
+            tempGlobalState.loadingText = "Commenting..."
+          }
           action({ result in
-            withAnimation { loading = false }
+            tempGlobalState.loadingText = nil
             if result {
-              if result { dismiss() }
               if let currentDraft = currentDraft {
                 viewContext.delete(currentDraft)
                 try? viewContext.save()

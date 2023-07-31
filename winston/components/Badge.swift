@@ -11,6 +11,7 @@ import Defaults
 
 
 struct Badge: View {
+  var usernameColor: Color = .blue
   var showAvatar = true
   var author: String
   var fullname: String? = nil
@@ -38,7 +39,7 @@ struct Badge: View {
       VStack(alignment: .leading) {
         
         //          VStack {
-        (Text("by ").font(.system(size: nameSize, weight: .medium)).foregroundColor(.primary.opacity(0.5)) + Text(author).font(.system(size: nameSize, weight: .semibold)).foregroundColor(author == "[deleted]" ? .red : .blue))
+        (Text("by ").font(.system(size: nameSize, weight: .medium)).foregroundColor(.primary.opacity(0.5)) + Text(author).font(.system(size: nameSize, weight: .semibold)).foregroundColor(author == "[deleted]" ? .red : usernameColor))
           .onTapGesture {
             opened = true
           }

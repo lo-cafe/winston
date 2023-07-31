@@ -8,7 +8,6 @@
 import SwiftUI
 import Kingfisher
 import Defaults
-import VideoPlayer
 import CoreMedia
 
 struct GalleryThumb: View {
@@ -21,6 +20,7 @@ struct GalleryThumb: View {
       .scaleFactor(screenScale)
       .resizable()
       .fade(duration: 0.5)
+//      .backgroundDecode(true)
       .scaledToFill()
       .zIndex(1)
       .allowsHitTesting(false)

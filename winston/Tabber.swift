@@ -21,6 +21,10 @@ class Oops: ObservableObject {
   }
 }
 
+class TempGlobalState: ObservableObject {
+  @Published var loadingText: String?
+}
+
 enum TabIdentifier {
   case posts, inbox, me, search, settings
 }
@@ -28,6 +32,7 @@ enum TabIdentifier {
 struct Tabber: View {
   @ObservedObject var errorAlert = Oops.shared
   @State var activeTab = TabIdentifier.posts
+  @StateObject var tempGlobalState = TempGlobalState()
   @EnvironmentObject var redditAPI: RedditAPI
   @State var credModalOpen = false
   @State var reset: [TabIdentifier:Bool] = [
@@ -38,6 +43,7 @@ struct Tabber: View {
     .settings: true,
   ]
   @Default(.postsInBox) var postsInBox
+  
   var body: some View {
     TabView(selection: $activeTab.onUpdate { newTab in if activeTab == newTab { reset[newTab]!.toggle() } }) {
       
@@ -87,6 +93,23 @@ struct Tabber: View {
         .tag(TabIdentifier.settings)
       
     }
+    .overlay(
+      HStack(spacing: 8) {
+        ProgressView()
+          .progressViewStyle(CircularProgressViewStyle(tint: .teal))
+
+        Text(tempGlobalState.loadingText ?? "Commenting...")
+          .foregroundColor(.teal)
+          .fontSize(15, .medium)
+          
+      }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 8)
+        .floating()
+        .offset(y: tempGlobalState.loadingText.isNil ? 75 : -62)
+      , alignment: .bottom
+    )
+    .environmentObject(tempGlobalState)
     .alert("Oops, Winston got a furball", isPresented: $errorAlert.asking) {
       Button("Gratefully accept the weird gift") {
         if let error = errorAlert.error {
@@ -140,6 +163,10 @@ struct Tabber: View {
       ChangeAuthAPIKey(open: $credModalOpen)
         .interactiveDismissDisabled(true)
     }
+//    .sheet(isPresented: $credModalOpen) {
+//      Onboarding()
+//        .interactiveDismissDisabled(true)
+//    }
     //    .sheet(item: $credModalOpen) {
     //      ChangeAuthAPIKey()
     //    }

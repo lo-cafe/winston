@@ -6,10 +6,10 @@
 //
 
 import SwiftUI
-import VideoPlayer
 import CoreMedia
 import Defaults
 import AVKit
+import AVFoundation
 
 struct FlairTag: View {
   var text: String
@@ -63,8 +63,8 @@ struct PostLink: View {
           if let media = data.secure_media {
             switch media {
             case .first(let datas):
-              if let url = datas.reddit_video.fallback_url {
-                VideoPlayerPost(post: post, sharedVideo: SharedVideo(player: AVPlayer(url:  URL(string: url)!)))
+              if let url = datas.reddit_video.hls_url, let rootURL = rootURL(url) {
+                VideoPlayerPost(post: post, sharedVideo: SharedVideo(url: rootURL))
               }
             case .second(_):
               EmptyView()
@@ -100,7 +100,7 @@ struct PostLink: View {
           }
           
           if let link_flair_text = data.link_flair_text {
-            FlairTag(text: link_flair_text)
+            FlairTag(text: link_flair_text.emojied())
               .allowsHitTesting(false)
           }
           

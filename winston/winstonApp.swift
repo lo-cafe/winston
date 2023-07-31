@@ -10,6 +10,7 @@ import SimpleHaptics
 
 @main
 struct winstonApp: App {
+  @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
   let persistenceController = PersistenceController.shared
   @State var redditAPI = RedditAPI()
   

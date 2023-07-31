@@ -6,8 +6,6 @@
 //
 
 import SwiftUI
-import VideoPlayer
-import CoreMedia
 
 struct ShortCommentPostLink: View {
   var comment: Comment

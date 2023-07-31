@@ -19,15 +19,6 @@
       }
     },
     {
-      "identity" : "gsplayer",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/wxxsw/GSPlayer.git",
-      "state" : {
-        "revision" : "aa6dad7943d52f5207f7fcc2ad3e4274583443b8",
-        "version" : "0.2.26"
-      }
-    },
-    {
       "identity" : "highlightedtexteditor",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/kyle-n/HighlightedTextEditor",
@@ -124,15 +115,6 @@
       "state" : {
         "revision" : "6dce3c8f5bfa8bc20120c7497da27e984a8813aa",
         "version" : "0.7.0"
-      }
-    },
-    {
-      "identity" : "videoplayer",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/wxxsw/VideoPlayer",
-      "state" : {
-        "revision" : "3c5b9531ee20e34d3a86142ca2c076a5b99afdb2",
-        "version" : "1.2.3"
       }
     },
     {

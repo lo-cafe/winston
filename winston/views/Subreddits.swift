@@ -86,6 +86,7 @@ struct PostsInBoxView: View {
           HStack(spacing: 12) {
             ForEach(postsInBox, id: \.self.id) { post in
               PostInBoxLink(post: post, openPost: openQuickPost)
+                .animation(spring, value: postsInBox)
             }
           }
         }
@@ -93,7 +94,6 @@ struct PostsInBoxView: View {
         .onChange(of: someOpened) { newValue in if !newValue { Task { await updatePostsInBox(redditAPI) } } }
         .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
       }
-      .animation(spring, value: postsInBox)
     }
   }
 }
@@ -115,6 +115,7 @@ struct Subreddits: View {
   @State var selectedPostActive = false
   @State var loaded = false
   @State var editMode: EditMode = .inactive
+//  @StateObject var sharedVideo = SharedVideo(url: URL(string: "a")!)
   
   func sort(_ subs: [ListingChild<SubredditData>]) -> [String: [Subreddit]] {
     return Dictionary(grouping: subs.compactMap { $0.data }, by: { String($0.display_name?.prefix(1) ?? "").uppercased() })

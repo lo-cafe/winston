@@ -1,16 +1,20 @@
 import SwiftUI
 import Defaults
-import VideoPlayer
 import CoreMedia
 import AVKit
+import AVFoundation
 
 class SharedVideo: ObservableObject {
   @Published var time = CMTime()
   @Published var play = true
   @Published var player: AVPlayer
+  @Published var url: URL
   
-  init(player: AVPlayer) {
-    self.player = player
+  init(url: URL) {
+    self.url = url
+    let newPlayer = AVPlayer(url: url)
+    newPlayer.isMuted = true
+    self.player = newPlayer
   }
 }
 
@@ -21,6 +25,8 @@ struct VideoPlayerPost: View {
   @Default(.preferenceShowPostsCards) var preferenceShowPostsCards
   @Default(.maxPostLinkImageHeightPercentage) var maxPostLinkImageHeightPercentage
   @State private var fullscreen = false
+  @State private var initialized = false
+//  @State private var uuid = UUID()
   @Namespace var namespace
   
   var safe: Double { getSafeArea().top + getSafeArea().bottom }
@@ -35,22 +41,25 @@ struct VideoPlayerPost: View {
       if let sourceWidth = data.reddit_video.width, let sourceHeight = data.reddit_video.height {
         let propHeight = (Int(contentWidth) * sourceHeight) / sourceWidth
         let finalHeight = maxPostLinkImageHeightPercentage != 110 ? Double(min(Int(maxHeight), propHeight)) : Double(propHeight)
-        ZStack {
-          AVPlayerControllerRepresentable(showFullScreen: $fullscreen, player: sharedVideo.player, aspect: .resizeAspectFill)
+        
+        AVPlayerControllerRepresentable(showFullScreen: $fullscreen, player: sharedVideo.player, url:sharedVideo.url, aspect: .resizeAspectFill)
             .allowsHitTesting(fullscreen)
             .frame(width: contentWidth, height: CGFloat(finalHeight))
             .mask(RR(12, .black))
             .contentShape(Rectangle())
+            .onChange(of: fullscreen) { val in
+              sharedVideo.player.isMuted = !val
+            }
             .onTapGesture {
               fullscreen = true
             }
-            .onDisappear {
-              sharedVideo.player.pause()
-            }
             .onAppear {
-              sharedVideo.player.play()
+              if !initialized {
+                sharedVideo.player.play()
+                initialized = true
+              }
             }
-        }
+//            .id(uuid)
       } else {
         EmptyView()
       }
@@ -63,10 +72,11 @@ struct VideoPlayerPost: View {
 struct AVPlayerControllerRepresentable: UIViewControllerRepresentable {
   @Binding var showFullScreen: Bool
   let player: AVPlayer
+  var url: URL
   let aspect: AVLayerVideoGravity
   
   func makeUIViewController(context: Context) -> AVPlayerViewControllerRotatable {
-    let controller  = AVPlayerViewControllerRotatable(willDismiss: self.willDismiss)
+    let controller = AVPlayerViewControllerRotatable(willDismiss: self.willDismiss, url: url)
     controller.player = player
     controller.videoGravity = aspect
     chooseScreenType(controller: controller)
@@ -83,15 +93,18 @@ struct AVPlayerControllerRepresentable: UIViewControllerRepresentable {
   
   private func chooseScreenType(controller: AVPlayerViewControllerRotatable) {
     showFullScreen ? controller.enterFullScreen(animated: true) : controller.exitFullScreen(animated: true)
-    controller.player?.play()
   }
 }
 
+//class AVPlayerViewControllerRotatable: AVPlayerViewController, AVPlayerViewControllerDelegate, AVAssetDownloadDelegate {
 class AVPlayerViewControllerRotatable: AVPlayerViewController, AVPlayerViewControllerDelegate {
   var willDismiss: () -> ()
+  var observer: NSKeyValueObservation? = nil
+  var url: URL
   
-  init(willDismiss: @escaping () -> Void) {
+  init(willDismiss: @escaping () -> Void, url: URL) {
     self.willDismiss = willDismiss
+    self.url = url
     super.init(nibName: nil, bundle: nil)
   }
   
@@ -102,29 +115,75 @@ class AVPlayerViewControllerRotatable: AVPlayerViewController, AVPlayerViewContr
   override func viewDidLoad() {
     super.viewDidLoad()
     self.delegate = self
+//    self.setupAssetDownload()
   }
   
   func playerViewController(
     _ playerViewController: AVPlayerViewController,
     willEndFullScreenPresentationWithAnimationCoordinator coordinator: UIViewControllerTransitionCoordinator
   ) {
+    let isPlaying = self.player?.isPlaying ?? false
     coordinator.animate { _ in
       self.willDismiss()
     }
+    coordinator.animate(alongsideTransition: nil) { transitionContext in
+      if isPlaying { self.player?.play() }
+    }
   }
+  
+//  func setupAssetDownload() {
+//    // Create new background session configuration.
+//    let configuration = URLSessionConfiguration.background(withIdentifier: "AssetIDasas")
+//
+//    // Create a new AVAssetDownloadURLSession with background configuration, delegate, and queue
+//    let downloadSession = AVAssetDownloadURLSession(
+//      configuration: configuration,
+//      assetDownloadDelegate: self,
+//      delegateQueue: OperationQueue.main
+//    )
+//
+//    let asset = AVURLAsset(url: self.url)
+//
+//    // Create new AVAssetDownloadTask for the desired asset
+//    let downloadTask = downloadSession.makeAssetDownloadTask(
+//      asset: asset,
+//      assetTitle: "AssetTitlesasaqsq",
+//      assetArtworkData: nil,
+//      options: [AVAssetDownloadTaskMinimumRequiredMediaBitrateKey: NSNumber(value: 0)]
+//    )
+//    // Start task and begin download
+//    downloadTask?.resume()
+//    print("asmo")
+//  }
+  
+//  public func urlSession(_ session: URLSession, assetDownloadTask: AVAssetDownloadTask, didFinishDownloadingTo location: URL){
+//          print("DownloadedLocation:\(location.absoluteString)")
+//      }
+//
+//      public func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
+//        debugPrint("Task completed: \(task), error: \(String(describing: error))")
+//      }
+//
+//      public func urlSession(_ session: URLSession, didBecomeInvalidWithError error: Error?) {
+//          print("Error invalid", error)
+//      }
+//
+//      public func urlSession(_ session: URLSession, taskIsWaitingForConnectivity task: URLSessionTask) {
+//          print("Waiting")
+//      }
+//
+//      public func urlSession(_ session: URLSession, task: URLSessionTask, didFinishCollecting metrics: URLSessionTaskMetrics) {
+//          print("Finish collecting metrics:")
+//      }
   
   override var shouldAutorotate: Bool {
     return true
   }
   
   override func viewDidAppear(_ animated: Bool) {
+//    self.view.window?.rootViewController = UIApplication.shared.windows.first?.rootViewController
     super.viewDidAppear(animated)
-    
-    if self.view.window == nil {
-//      self.view.window?.windowScene?.keyWindow?.rootViewController?.present(self, animated: true)
-//      print( self.view.window == nil, self.view.window?.windowScene == nil, self.view.window?.windowScene?.keyWindow? == nil, self.view.window?.windowScene?.keyWindow?.rootViewController? == nil)
-//      UIApplication.shared.windows.first?.rootViewController?.present(self, animated: true)
-    }
+
   }
   
   override func viewWillDisappear(_ animated: Bool) {
@@ -138,16 +197,18 @@ class AVPlayerViewControllerRotatable: AVPlayerViewController, AVPlayerViewContr
 
 extension AVPlayerViewControllerRotatable {
   func enterFullScreen(animated: Bool) {
+//    self.view.window?.rootViewController?.present(self, animated: true)
     let selector = NSSelectorFromString("enterFullScreenAnimated:completionHandler:")
-    
+
     if self.responds(to: selector) {
       self.perform(selector, with: animated, with: nil)
     }
   }
   
   func exitFullScreen(animated: Bool) {
+//    self.view.window?.rootViewController?.present(self, animated: true)
     let selector = NSSelectorFromString("exitFullScreenAnimated:completionHandler:")
-    
+
     if self.responds(to: selector) {
       self.perform(selector, with: animated, with: nil)
     }

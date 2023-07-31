@@ -61,7 +61,6 @@ struct CommentLink: View {
   var avatarsURL: [String:String]? = nil
   var postFullname: String?
   var showReplies = true
-  @EnvironmentObject private var haptics: SimpleHapticGenerator
   
   var parentElement: CommentParentElement? = nil
   @ObservedObject var comment: Comment
@@ -83,7 +82,7 @@ struct CommentLink: View {
               CommentLinkMore(arrowKinds: arrowKinds, comment: comment, postFullname: postFullname, parentElement: parentElement, indentLines: indentLines)
             }
           } else {
-            CommentLinkContent(showReplies: showReplies, arrowKinds: arrowKinds, indentLines: indentLines, lineLimit: lineLimit, comment: comment, avatarsURL: avatarsURL)
+            CommentLinkContent(showReplies: showReplies, arrowKinds: arrowKinds, indentLines: indentLines, lineLimit: lineLimit, post: post, comment: comment, avatarsURL: avatarsURL)
           }
         }
         
@@ -91,7 +90,7 @@ struct CommentLink: View {
           ForEach(Array(comment.childrenWinston.data.enumerated()), id: \.element.id) { index, commentChild in
             let childrenCount = comment.childrenWinston.data.count
             if let _ = commentChild.data {
-              CommentLink(arrowKinds: arrowKinds.map { $0.child } + [(childrenCount - 1 == index ? ArrowKind.curve : ArrowKind.straightCurve)], postFullname: postFullname, parentElement: .comment(comment), comment: commentChild)
+              CommentLink(post: post, arrowKinds: arrowKinds.map { $0.child } + [(childrenCount - 1 == index ? ArrowKind.curve : ArrowKind.straightCurve)], postFullname: postFullname, parentElement: .comment(comment), comment: commentChild)
             }
           }
         }

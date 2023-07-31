@@ -37,7 +37,10 @@ final class PreviewViewModel: ObservableObject {
   private func fetchMetadata() {
     guard let previewURL else { return }
     Task {
-      if let og = try? await OpenGraph.fetch(url: previewURL) {
+      var headers = [String: String]()
+      headers["User-Agent"] = "facebookexternalhit/1.1"
+      headers["charset"] = "UTF-8"
+      if let og = try? await OpenGraph.fetch(url: previewURL, headers: headers) {
         await MainActor.run {
           withAnimation {
             image = og[.image]
@@ -46,6 +49,10 @@ final class PreviewViewModel: ObservableObject {
             url = og[.url]
             loading = false
           }
+        }
+      } else {
+        withAnimation {
+          loading = false
         }
       }
     }
@@ -63,16 +70,18 @@ struct PreviewLinkContent: View {
       
       VStack(alignment: .leading, spacing: 2) {
         VStack(alignment: .leading, spacing: 0) {
-          Text(viewModel.title?.escape ?? "")
+          Text(viewModel.title?.escape ?? "No title detected")
             .fontSize(17, .medium)
+            .lineLimit(1)
           
-          Text(viewModel.url ?? "")
+          Text(viewModel.url ?? url.absoluteString)
             .fontSize(13)
             .opacity(0.5)
+            .lineLimit(1)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         
-        Text(viewModel.description?.escape)
+        Text(viewModel.description?.escape ?? "No description detected")
           .fontSize(14)
           .lineLimit(2)
           .opacity(0.75)
@@ -110,6 +119,13 @@ struct PreviewLinkContent: View {
     .padding(.trailing, 6)
     .frame(maxWidth: .infinity, minHeight: height, maxHeight: height)
     .background(RR(16, .primary.opacity(0.05)))
+    .contextMenu {
+      Button {
+        UIPasteboard.general.string = viewModel.url ?? ""
+      } label: {
+        Label("Copy URL", systemImage: "link")
+      }
+    }
     .highPriorityGesture(TapGesture().onEnded { openURL(url) })
   }
 }

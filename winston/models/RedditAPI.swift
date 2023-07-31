@@ -13,7 +13,7 @@ import Defaults
 
 class AvatarCache: ObservableObject {
   static var shared = AvatarCache()
-  var data: [String:String] = [:]
+  @Published var data: [String:String] = [:]
 }
 
 
