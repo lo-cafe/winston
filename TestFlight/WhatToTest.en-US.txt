@@ -1,6 +1,2 @@
-- Fixed some link posts previews not showing up
-- Added copy URL to link previews on long press
-- Now videos have sound, finally
-- Fixed first avatars appearing not loading
-- Added new comment loader
-- OP name is now green in the comments
+- Fixed possible crash when loading link posts
+- New onboarding flow (logoff and reenter your API key if you wanna see it)

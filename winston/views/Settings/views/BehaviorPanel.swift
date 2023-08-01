@@ -39,9 +39,9 @@ struct BehaviorPanel: View {
         }
         
       }
-      .navigationTitle("Behavior")
-      .navigationBarTitleDisplayMode(.inline)
     }
+    .navigationTitle("Behavior")
+    .navigationBarTitleDisplayMode(.inline)
   }
 }
 //

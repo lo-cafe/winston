@@ -46,3 +46,35 @@ func sendEmail(_ text: String) {
     EmailHelper.shared.sendEmail(text)
   }
 }
+
+
+
+
+
+class CustomEmailHelper: NSObject, MFMailComposeViewControllerDelegate {
+  
+  static let shared = CustomEmailHelper()
+  
+  func sendEmail() {
+    if MFMailComposeViewController.canSendMail() {
+      
+      let mail = MFMailComposeViewController()
+      mail.mailComposeDelegate = self
+      mail.setToRecipients(["hi@lo.cafe"])
+      mail.setSubject("Hey, I just found a bug!")
+      mail.setMessageBody("Please describe what you were doing and what happened.", isHTML: false)
+      
+      UIApplication.shared.windows.first?.rootViewController?.present(mail, animated: true)
+    }
+  }
+  
+  func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Error?) {
+    controller.dismiss(animated: true)
+  }
+}
+
+func sendCustomEmail() {
+  DispatchQueue.main.async {
+    CustomEmailHelper.shared.sendEmail()
+  }
+}

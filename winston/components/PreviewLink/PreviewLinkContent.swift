@@ -74,7 +74,7 @@ struct PreviewLinkContent: View {
             .fontSize(17, .medium)
             .lineLimit(1)
           
-          Text(viewModel.url ?? url.absoluteString)
+          Text(viewModel.url == nil || viewModel.url?.isEmpty == true ? url.absoluteString : viewModel.url!)
             .fontSize(13)
             .opacity(0.5)
             .lineLimit(1)
@@ -93,8 +93,8 @@ struct PreviewLinkContent: View {
       .multilineTextAlignment(.leading)
       
       Group {
-        if let image = viewModel.image {
-          KFImage(URL(string: image)!)
+        if let image = viewModel.image, let imageURL = URL(string: image) {
+          KFImage(imageURL)
             .resizable()
             .fade(duration: 0.5)
             .scaledToFill()

@@ -33,6 +33,20 @@ struct Settings: View {
               Label("Account", systemImage: "person.crop.circle")
             }
           }
+          
+          Section {
+            NavigationLink {
+              AboutPanel()
+            } label: {
+              Label("About", systemImage: "cup.and.saucer.fill")
+            }
+            Button {
+              sendCustomEmail()
+            } label: {
+              Label("Report a bug", systemImage: "ladybug.fill")
+            }
+            
+          }
         }
       }
       .navigationTitle("Settings")

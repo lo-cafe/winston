@@ -81,22 +81,25 @@ struct CopiableValue: View {
   @State var copied = false
   var body: some View {
     HStack {
+      Text("Tap to copy")
+        .multilineTextAlignment(.leading)
+      Spacer()
       Text(value)
+        .multilineTextAlignment(.trailing)
     }
       .padding(.vertical, 12)
       .padding(.horizontal, 16)
       .opacity(0.75)
       .frame(maxWidth: .infinity, alignment: .leading)
-      .background(RR(12, .black.opacity(0.1)))
+      .background(RoundedRectangle(cornerRadius: 16, style: .continuous).fill(.ultraThinMaterial))
       .overlay(
         !copied
         ? nil
         : Text("Copied!")
           .foregroundColor(.white)
           .frame(maxWidth: .infinity, maxHeight: .infinity)
-          .background(RR(12, .black.opacity(0.5)))
+          .background(RR(16, .black.opacity(0.5)))
       )
-      .padding(.horizontal, -8)
       .fontSize(15)
       .onTapGesture {
         UIPasteboard.general.string = value

@@ -32,7 +32,7 @@ struct MasterButton: View {
   var label: String? = nil
   var mode: MasterButtonMode = .normal
   var color: Color = .blue
-  var colorHoverEffect: ColorHoverEffect = .normal
+  var colorHoverEffect: ColorHoverEffect = .none
   var textColor: Color = .white
   var textSize: CGFloat = 16
   var textWeight: Font.Weight = .semibold
@@ -131,12 +131,14 @@ struct MasterButton: View {
           }
         }
     )
-    //    .simultaneousGesture(
-    //      LongPressGesture(minimumDuration: 1, maximumDistance: 1)
-    //        .updating($pressing, body: { newPressing, pressing, transaction in
-    //          pressing = newPressing
-    //        })
-    //    )
+        .simultaneousGesture(
+          colorHoverEffect == .none
+          ? nil
+          : LongPressGesture(minimumDuration: 1, maximumDistance: 1)
+            .updating($pressing, body: { newPressing, pressing, transaction in
+              pressing = newPressing
+            })
+        )
     .disabled(disabled)
     .saturation(disabled ? 0 : 1)
     .opacity(disabled ? 0.65 : 1)

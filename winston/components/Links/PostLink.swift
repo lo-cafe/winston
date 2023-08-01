@@ -122,7 +122,7 @@ struct PostLink: View {
           Spacer()
           
           HStack(alignment: .center, spacing: 0) {
-            MasterButton(icon: "arrow.up", mode: .subtle, color: .white, colorHoverEffect: .animated, textColor: data.likes != nil && data.likes! ? .orange : .gray, textSize: 22, proportional: .circle) {
+            MasterButton(icon: "arrow.up", mode: .subtle, color: .white, colorHoverEffect: .none, textColor: data.likes != nil && data.likes! ? .orange : .gray, textSize: 22, proportional: .circle) {
               Task {
                 _ = await post.vote(action: .up)
               }
@@ -138,7 +138,7 @@ struct PostLink: View {
               .viewVotes(data.ups, data.downs)
               .zIndex(10)
             
-            MasterButton(icon: "arrow.down", mode: .subtle, color: .white, colorHoverEffect: .animated, textColor: data.likes != nil && !data.likes! ? .blue : .gray, textSize: 22, proportional: .circle) {
+            MasterButton(icon: "arrow.down", mode: .subtle, color: .white, colorHoverEffect: .none, textColor: data.likes != nil && !data.likes! ? .blue : .gray, textSize: 22, proportional: .circle) {
               Task {
                 _ = await post.vote(action: .down)
               }
