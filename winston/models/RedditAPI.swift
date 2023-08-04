@@ -30,7 +30,7 @@ class RedditAPI: ObservableObject {
   
   func getRequestHeaders(includeAuth: Bool = true) -> HTTPHeaders? {
     var headers: HTTPHeaders = [
-      "User-Agent": "ios:lo.cafe.winston:v0.1.0 (by /u/Kinark)"
+      "User-Agent": Defaults[.redditAPIUserAgent]
     ]
     if includeAuth, let accessToken = self.loggedUser.accessToken {
       headers["Authorization"] = "Bearer \(accessToken)"

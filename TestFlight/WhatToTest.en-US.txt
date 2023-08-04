@@ -1,2 +1,2 @@
-- Fixed possible crash when loading link posts
-- New onboarding flow (logoff and reenter your API key if you wanna see it)
+- Now Winston's a FOSS
+- Now you can change the user agent to avoid app blocking
