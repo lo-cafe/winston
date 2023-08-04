@@ -1,4 +1,2 @@
-- NSFW now has a tag and blurs content
-- A few crashes fix
-- Improved subreddit posts scrolling performance
-- Greatly improved posts scrolling performance
+- Now Winston's a FOSS
+- Now you can change the user agent to avoid app blocking

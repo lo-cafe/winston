@@ -9,6 +9,7 @@ import SwiftUI
 import Defaults
 
 struct AccountPanel: View {
+  @Default(.redditAPIUserAgent) var redditAPIUserAgent
   @Environment(\.openURL) var openURL
   @EnvironmentObject var redditAPI: RedditAPI
   @State private var isPresentingConfirm: Bool = false
@@ -26,7 +27,7 @@ struct AccountPanel: View {
             Text("Your API credentials are 👌")
           }
         }
-
+        
         if let accessToken = redditAPI.loggedUser.accessToken {
           Button("Copy current access token") {
             UIPasteboard.general.string = accessToken
@@ -38,6 +39,14 @@ struct AccountPanel: View {
           }
         }
         
+        Text("If Reddit ban the user-agent this app uses, you can change it to a custom one here:")
+        HStack {
+          Image(systemName: "person.crop.circle.fill")
+          TextField("User agent", text: $redditAPIUserAgent)
+        }
+      }
+      
+      Section {
         Button("Logout") {
           isPresentingConfirm = true
         }

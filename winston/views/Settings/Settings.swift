@@ -45,6 +45,11 @@ struct Settings: View {
             } label: {
               Label("Report a bug", systemImage: "ladybug.fill")
             }
+            Button {
+              openURL(URL(string: "https://patreon.com/user?u=93745105")!)
+            } label: {
+              Label("Support our work!", systemImage: "heart.fill")
+            }
             
           }
         }

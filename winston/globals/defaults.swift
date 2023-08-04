@@ -42,6 +42,7 @@ extension Defaults.Keys {
   static let replyModalBlurBackground = Key<Bool>("replyModalBlurBackground", default: true)
   static let newPostModalBlurBackground = Key<Bool>("newPostModalBlurBackground", default: true)
   static let openYoutubeApp = Key<Bool>("openYoutubeApp", default: true)
+  static let redditAPIUserAgent = Key<String>("redditAPIUserAgent", default: "ios:lo.cafe.winston:v0.1.0 (by /u/Kinark)")
 }
 
 extension UIScreen {
