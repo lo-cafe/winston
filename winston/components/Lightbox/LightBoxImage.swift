@@ -72,9 +72,9 @@ struct LightBoxImage: View {
     if post.data?.is_gallery == true {
       if let data = post.data?.media_metadata?.values {
         return data.compactMap { x in
-          if let extArr = x.m?.split(separator: "/") {
+          if let x = x, !x.id.isNil, let id = x.id, !id.isEmpty, let extArr = x.m?.split(separator: "/") {
             let ext = extArr[extArr.count - 1]
-            return LightBoxElement(url: "https://i.redd.it/\(x.id).\(ext)", size: CGSize())
+            return LightBoxElement(url: "https://i.redd.it/\(id).\(ext)", size: CGSize())
           }
           return nil
         }

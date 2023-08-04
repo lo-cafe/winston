@@ -73,7 +73,6 @@ struct PostView: View {
       .introspect(.list, on: .iOS(.v16, .v17)) { list in
           list.backgroundColor = UIColor.systemGroupedBackground
       }
-      .listStyle(.plain)
       .transition(.opacity)
       .environment(\.defaultMinListRowHeight, 1)
       .if(!preferenceShowCommentsCards) { $0.listStyle(.plain) }

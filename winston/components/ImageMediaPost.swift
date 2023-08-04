@@ -20,7 +20,7 @@ struct GalleryThumb: View {
       .scaleFactor(screenScale)
       .resizable()
       .fade(duration: 0.5)
-//      .backgroundDecode(true)
+    //      .backgroundDecode(true)
       .scaledToFill()
       .zIndex(1)
       .allowsHitTesting(false)
@@ -46,7 +46,7 @@ struct ImageMediaPost: View {
   var body: some View {
     let maxHeight: CGFloat = (maxPostLinkImageHeightPercentage / 100) * (UIScreen.screenHeight - safe)
     if let data = post.data {
-      ZStack {
+      VStack {
         if let preview = data.preview, preview.images?.count ?? 0 > 0, let source = preview.images?[0].source, let _ = source.url, let sourceHeight = source.height, let sourceWidth = source.width {
           let propHeight = (Int(contentWidth) * sourceHeight) / sourceWidth
           let finalHeight = maxPostLinkImageHeightPercentage != 110 ? Double(min(Int(maxHeight), propHeight)) : Double(propHeight)
@@ -55,9 +55,9 @@ struct ImageMediaPost: View {
           //            .frame(width: contentWidth, height: finalHeight)
         } else if data.is_gallery == true, let metadatas = data.media_metadata?.values, metadatas.count > 1 {
           let urls: [String] = metadatas.compactMap { x in
-            if let extArr = x.m?.split(separator: "/") {
+            if let x = x, !x.id.isNil, let id = x.id, !id.isEmpty, let extArr = x.m?.split(separator: "/") {
               let ext = extArr[extArr.count - 1]
-              return "https://i.redd.it/\(x.id).\(ext)"
+              return "https://i.redd.it/\(id).\(ext)"
             }
             return nil
           }

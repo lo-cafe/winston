@@ -27,7 +27,7 @@ struct ShortPostLink: View {
             Badge(showAvatar: preferenceShowPostsAvatars, author: data.author, fullname: fullname, created: data.created, extraInfo: ["message.fill":"\(data.num_comments)", "arrow.up.arrow.down":"\(data.ups)"])
           }
           Spacer()
-          FlairTag(text: "r/\(data.subreddit)", blue: true)
+          FlairTag(text: "r/\(data.subreddit)", color: .blue)
             .highPriorityGesture(TapGesture() .onEnded { opened = true })
         }
       }
@@ -36,9 +36,6 @@ struct ShortPostLink: View {
       .frame(maxWidth: .infinity, alignment: .leading)
       .background(RR(20, noHPad ? .clear : .listBG))
       .onChange(of: reset) { _ in opened = false }
-      .onAppear {
-        data.title
-      }
       .onTapGesture {
         opened = true
       }

@@ -9,6 +9,10 @@ import SwiftUI
 import Kingfisher
 
 struct Avatar: View {
+//  static func == (lhs: Avatar, rhs: Avatar) -> Bool {
+//    AvatarCache.shared.data[fullname ?? userID] == AvatarCache.shared.data[fullname ?? userID]
+//  }
+  
   var url: String?
   var userID: String
   var fullname: String? = nil
@@ -16,12 +20,13 @@ struct Avatar: View {
   @State var userData: UserData?
   @EnvironmentObject var redditAPI: RedditAPI
   @ObservedObject var avatarCache = AvatarCache.shared
+  
+  var avatarURL: String? {
+    let raw = url ?? avatarCache[fullname ?? userID] ?? userData?.subreddit?.icon_img
+    return raw == nil || raw == "" ? nil : String(raw?.split(separator: "?")[0] ?? "")
+  }
+  
   var body: some View {
-//    let userDataURL = userData?.subreddit?.icon_img?
-//    let avatarURL = url ?? redditAPI.avatarURLCache[fullname ?? userID] ?? (userDataURL == nil ? nil : String(userDataURL!))
-    let avatarURLRaw = url ?? avatarCache.data[fullname ?? userID] ?? userData?.subreddit?.icon_img
-    let avatarURL = avatarURLRaw == nil || avatarURLRaw == "" ? nil : String(avatarURLRaw?.split(separator: "?")[0] ?? "")
-    //    let avatarURL = "aksm"
     Group {
       if userID == "[deleted]" {
         Image(systemName: "trash")
@@ -37,6 +42,7 @@ struct Avatar: View {
           KFImage(URL(string: avatarURL)!)
             .resizable()
             .fade(duration: 0.25)
+//            .
             .scaledToFill()
 //            .id(avatarURL)
         } else {
@@ -54,7 +60,7 @@ struct Avatar: View {
                     let userDataURL = data.subreddit?.icon_img?.split(separator: "?")[0]
                     let url = userDataURL == nil ? "" : String(userDataURL!)
                     withAnimation {
-                      avatarCache.data[userID] = url
+                      avatarCache[userID] = url
                       userData = data
                     }
                   }

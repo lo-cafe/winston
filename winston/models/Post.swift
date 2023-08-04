@@ -220,7 +220,7 @@ struct PostData: GenericRedditEntityDataType, Defaults.Serializable {
   let num_crossposts: Int
   let is_video: Bool?
   let is_gallery: Bool?
-  var media_metadata: [String:MediaMetadataItem]?
+  var media_metadata: [String:MediaMetadataItem?]?
   // Optional properties
   let wls: Int?
   let pwls: Int?
@@ -279,12 +279,12 @@ struct PostData: GenericRedditEntityDataType, Defaults.Serializable {
 }
 
 struct MediaMetadataItem: Codable, Hashable, Identifiable {
-  let status: String?
+  let status: String
   let e: String?
   let m: String?
   let p: [MediaMetadataItemSize]?
   let s: MediaMetadataItemSize?
-  let id: String
+  let id: String?
 }
 
 struct MediaMetadataItemSize: Codable, Hashable {

@@ -1,2 +1,4 @@
-- Fixed possible crash when loading link posts
-- New onboarding flow (logoff and reenter your API key if you wanna see it)
+- NSFW now has a tag and blurs content
+- A few crashes fix
+- Improved subreddit posts scrolling performance
+- Greatly improved posts scrolling performance

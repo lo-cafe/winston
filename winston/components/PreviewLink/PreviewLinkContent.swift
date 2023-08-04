@@ -97,9 +97,9 @@ struct PreviewLinkContent: View {
           KFImage(imageURL)
             .resizable()
             .fade(duration: 0.5)
+            .backgroundDecode()
             .scaledToFill()
             .frame(width: 76, height: 76)
-          
             .mask(RR(12, .black))
         } else {
           if viewModel.loading {
@@ -121,7 +121,7 @@ struct PreviewLinkContent: View {
     .background(RR(16, .primary.opacity(0.05)))
     .contextMenu {
       Button {
-        UIPasteboard.general.string = viewModel.url ?? ""
+        UIPasteboard.general.string = viewModel.url ?? url.absoluteString
       } label: {
         Label("Copy URL", systemImage: "link")
       }
