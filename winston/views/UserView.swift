@@ -49,6 +49,7 @@ struct UserView: View {
                 LGImage(source: URL(string: icon), placeholder: {
                   ProgressView()
                 }, options: [.imageWithFadeAnimation])
+                .resizable()
                 //                    .placeholder {
                 //                      ProgressView()
                 //                        .progressViewStyle(.circular)

@@ -22,6 +22,7 @@ struct FlairTag: View {
       .background(Capsule(style: .continuous).fill(color.opacity(0.2)))
       .foregroundColor(.primary.opacity(0.5))
       .frame(maxWidth: 250, alignment: .leading)
+      .fixedSize(horizontal: true, vertical: false)
       .lineLimit(1)
   }
 }
@@ -169,11 +170,12 @@ struct PostLink: View, Equatable {
         ? nil
         : RR(20, .listBG).allowsHitTesting(false)
       )
-      .mask(
-        !preferenceShowPostsCards
-        ? nil
-        :RR(20, .black)
-      )
+      .padding(.vertical, !preferenceShowPostsCards ? 8 : 0)
+      .padding(.horizontal, !preferenceShowPostsCards ? POSTLINK_OUTER_H_PAD : 0 )
+      .overlay(Rectangle().fill(.primary.opacity(openedPost ? 0.1 : 0)).allowsHitTesting(false))
+      .mask(RR(preferenceShowPostsCards ? 20 : 0, .black))
+      .padding(.horizontal, preferenceShowPostsCards ? POSTLINK_OUTER_H_PAD : 0 )
+      .padding(.vertical, preferenceShowPostsCards ? 8 : 0)
       .compositingGroup()
       .opacity((data.winstonSeen ?? false) ? 0.75 : 1)
       .contentShape(Rectangle())

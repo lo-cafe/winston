@@ -63,7 +63,7 @@ class RedditAPI: ObservableObject {
     return headers
   }
   
-  func refreshToken(_ force: Bool = false) async -> Void {
+  func refreshToken(_ force: Bool = false, count: Int = 0) async -> Void {
     if force {
       await MainActor.run {
         loggedUser.lastRefresh = Date(seconds: Date().timeIntervalSince1970 - Double(loggedUser.expiration ?? 86400 * 10))
@@ -88,6 +88,9 @@ class RedditAPI: ObservableObject {
           }
           return
         case .failure(let error):
+          if count < 4 {
+            await self.refreshToken(force, count: count + 1)
+          }
           print(error)
           return
         }
