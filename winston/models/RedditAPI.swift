@@ -10,10 +10,35 @@ import KeychainAccess
 import Alamofire
 import SwiftUI
 import Defaults
+import Combine
+
+//class AvatarCache: ObservableObject {
+//  static var shared = AvatarCache()
+//  @Published var data: [String:String] = [:]
+//}
 
 class AvatarCache: ObservableObject {
-  static var shared = AvatarCache()
-  @Published var data: [String:String] = [:]
+
+    static let shared = AvatarCache()
+    private init() {}
+
+    private let _objectWillChange = PassthroughSubject<Void, Never>()
+    private var data = [String:String]()
+
+    var objectWillChange: AnyPublisher<Void, Never> { _objectWillChange.eraseToAnyPublisher() }
+
+    subscript(key: String) -> String? {
+        get { data[key] }
+        set {
+          data[key] = newValue
+            _objectWillChange.send()
+        }
+    }
+  
+  func merge(_ dict: [String:String]) {
+      data.merge(dict) { (_, new) in new }
+      _objectWillChange.send()
+  }
 }
 
 

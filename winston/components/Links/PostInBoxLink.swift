@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-import Kingfisher
+import LonginusSwiftUI
 import Defaults
 import SimpleHaptics
 
@@ -87,9 +87,10 @@ struct PostInBoxLink: View {
     .frame(width: (UIScreen.screenWidth / 1.75), height: 120, alignment: .topLeading)
     .if(post.img != nil && post.img != "") {
       $0.background(
-        KFImage(URL(string: post.img!)!)
+        LGImage(source: URL(string: post.img!)!, placeholder: {
+          ProgressView()
+        }, options: [.imageWithFadeAnimation])
           .resizable()
-          .fade(duration: 0.3)
           .scaledToFill()
           .opacity(0.15)
           .frame(width: (UIScreen.screenWidth / 1.75), height: 120)

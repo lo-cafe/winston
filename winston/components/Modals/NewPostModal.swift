@@ -334,7 +334,7 @@ struct NewPostModal: View {
     .presentationDetents([.large, .fraction(0.75), .medium, collapsedPresentation], selection: $selection)
     .presentationCornerRadius(32)
     .presentationBackgroundInteraction(.enabled)
-    .if(newPostModalBlurBackground) { $0.presentationBackground(.regularMaterial) }
+    .presentationBackground(newPostModalBlurBackground ? AnyShapeStyle(.bar) : AnyShapeStyle(Color.listBG))
     .presentationDragIndicator(.hidden)
     //    .backport.presentationDragIndicator(.visible)
     //    .backport.interactiveDismissDisabled(alertExit) {

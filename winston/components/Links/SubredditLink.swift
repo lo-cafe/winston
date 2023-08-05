@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import Kingfisher
 
 struct SubredditLinkContainer: View {
   var reset: Bool

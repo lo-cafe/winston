@@ -37,12 +37,12 @@
       }
     },
     {
-      "identity" : "kingfisher",
+      "identity" : "longinus",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/onevcat/Kingfisher.git",
+      "location" : "https://github.com/KittenYang/Longinus.git",
       "state" : {
-        "revision" : "c1f60c63f356d364f4284ba82961acbe7de79bcc",
-        "version" : "7.8.1"
+        "revision" : "20c1283b25047a333c1cb49b55b93380eab20d94",
+        "version" : "1.2.1"
       }
     },
     {

@@ -12,12 +12,8 @@ import MarkdownUI
 struct MD: View {
   var str: String
   var fontSize: CGFloat = 15
-  var lineLimit: Int?
   var body: some View {
     Markdown(str.escape)
-      .if(lineLimit != nil) { view in
-          view.lineLimit(lineLimit!)
-      }
       .markdownTextStyle(\.text) {
         FontSize(fontSize)
       }

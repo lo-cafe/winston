@@ -13,6 +13,8 @@ import AVFoundation
 struct PostContent: View {
   @ObservedObject var post: Post
   
+  @State private var height: CGFloat = 0
+  @State private var collapsed = false
   var contentWidth: CGFloat { UIScreen.screenWidth - 16 }
   
   var body: some View {
@@ -56,9 +58,41 @@ struct PostContent: View {
         }
         
         if data.selftext != "" {
-          MD(str: data.selftext)
-            .id("post-text")
-            .listRowInsets(EdgeInsets(top: 6, leading: 8, bottom: 6, trailing: 8))
+          VStack {
+            MD(str: data.selftext)
+          }
+          .fixedSize(horizontal: false, vertical: true)
+          .modifier(AnimatingCellHeight(height: collapsed ? 75 : height, disable: height == 0))
+          .clipped()
+          .allowsHitTesting(!collapsed)
+          .opacity(collapsed ? 0.75 : 1)
+          .contentShape(Rectangle())
+          .onTapGesture { withAnimation(spring) { collapsed.toggle() } }
+          .mask(
+            Rectangle()
+              .fill(LinearGradient(
+                gradient: Gradient(stops: [
+                  .init(color: Color.black.opacity(1), location: 0),
+                  .init(color: Color.black.opacity(collapsed ? 0 : 1), location: 1)
+                ]),
+                startPoint: .top,
+                endPoint: .bottom
+              ))
+          )
+          .overlay(
+            HStack {
+              Image(systemName: "eye.fill")
+              Text("Tap to expand").allowsHitTesting(false)
+            }
+              .foregroundColor(.blue)
+              .opacity(collapsed ? 1 : 0)
+            , alignment: .bottom
+          )
+          .background(GeometryReader { geo in Color.clear.onAppear {
+            if height == 0 { height = geo.size.height }
+          }})
+          .id("post-text")
+          .listRowInsets(EdgeInsets(top: 6, leading: 8, bottom: 6, trailing: 8))
         }
         
         if let fullname = data.author_fullname {

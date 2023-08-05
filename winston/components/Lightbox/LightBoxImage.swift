@@ -7,7 +7,7 @@
 
 import SwiftUI
 import CoreMedia
-import Kingfisher
+import LonginusSwiftUI
 
 struct LightBoxButton: View {
   @GestureState var pressed = false
@@ -59,6 +59,7 @@ struct LightBoxImage: View {
   @State var loading = false
   @State var done = false
   @State var showOverlay = true
+  @State var isPinching = false
   
   enum Axis {
     case horizontal
@@ -72,9 +73,9 @@ struct LightBoxImage: View {
     if post.data?.is_gallery == true {
       if let data = post.data?.media_metadata?.values {
         return data.compactMap { x in
-          if let extArr = x.m?.split(separator: "/") {
+          if let x = x, !x.id.isNil, let id = x.id, !id.isEmpty, let extArr = x.m?.split(separator: "/") {
             let ext = extArr[extArr.count - 1]
-            return LightBoxElement(url: "https://i.redd.it/\(x.id).\(ext)", size: CGSize())
+            return LightBoxElement(url: "https://i.redd.it/\(id).\(ext)", size: CGSize())
           }
           return nil
         }
@@ -95,10 +96,12 @@ struct LightBoxImage: View {
         ForEach(Array(imagesArr.enumerated()), id: \.element.id) { i, img in
           let selected = i == activeIndex
 //          let propHeight = (UIScreen.screenWidth * img.size.height) /  img.size.width
-          KFImage(URL(string: img.url)!)
+          LGImage(source: URL(string: img.url)!, placeholder: {
+            ProgressView()
+          }, options: [.imageWithFadeAnimation])
             .resizable()
-            .fade(duration: 0.5)
-            .pinchToZoom()
+//            .matchedGeometryEffect(id: img.url, in: namespace)
+            .pinchToZoom(isPinching: $isPinching)
             .scaledToFit()
             .frame(width: UIScreen.screenWidth)
             .scaleEffect(!selected ? 1 : interpolate([1, 0.9], true))
@@ -174,11 +177,12 @@ struct LightBoxImage: View {
             }
           }
       )
-    .background(
+    .overlay(
       VStack(alignment: .leading) {
         if let title = post.data?.title, appearBlack {
           Text(title)
             .fontSize(20, .semibold)
+            .allowsHitTesting(false)
         }
         
         Spacer()
@@ -190,6 +194,7 @@ struct LightBoxImage: View {
             .padding(.vertical, 8)
             .background(Capsule(style: .continuous).fill(.regularMaterial))
             .frame(maxWidth: .infinity)
+            .allowsHitTesting(false)
         }
         
         HStack(spacing: 12) {
@@ -212,15 +217,42 @@ struct LightBoxImage: View {
         .compositingGroup()
         .frame(maxWidth: .infinity)
       }
-        .compositingGroup()
-        .opacity(interpolate([1, 0], false))
         .multilineTextAlignment(.leading)
         .foregroundColor(.white)
         .padding(.horizontal, 12)
         .padding(.bottom, 32)
         .padding(.top, 64)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-        .opacity(showOverlay ? 1 : 0)
+        .background(
+          VStack(spacing: 0) {
+            Rectangle()
+              .fill(LinearGradient(
+                gradient: Gradient(stops: [
+                  .init(color: Color.black.opacity(1), location: 0),
+                  .init(color: Color.black.opacity(0), location: 1)
+                ]),
+                startPoint: .top,
+                endPoint: .bottom
+              ))
+              .frame(minHeight: 150)
+            Spacer()
+            Rectangle()
+              .fill(LinearGradient(
+                gradient: Gradient(stops: [
+                  .init(color: Color.black.opacity(1), location: 0),
+                  .init(color: Color.black.opacity(0), location: 1)
+                ]),
+                startPoint: .bottom,
+                endPoint: .top
+              ))
+              .frame(minHeight: 150)
+          }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .allowsHitTesting(false)
+        )
+        .compositingGroup()
+        .opacity(!showOverlay ? 0 : isPinching ? 0 : interpolate([1, 0], false))
+        .animation(.default, value: isPinching)
         .allowsHitTesting(showOverlay)
     )
     .background(

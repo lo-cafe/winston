@@ -7,7 +7,6 @@
 
 import SwiftUI
 import Defaults
-import Kingfisher
 import Combine
 
 let alphabetLetters = Array("ABCDEFGHIJKLMNOPQRSTUVWXYZ").map { String($0) }
@@ -158,23 +157,28 @@ struct Subreddits: View {
       List {
         
         if searchText == "" {
+          VStack(spacing: 12) {
             HStack(spacing: 12) {
-              
               ListBigBtn(openSub: openSub, icon: "house.circle.fill", iconColor: .blue, label: "Home", destination: Subreddit(id: "home", api: redditAPI), selected: IPAD && selectedSubreddit.sub.id == "home")
               
-              ListBigBtn(openSub: openSub, icon: "bookmark.circle.fill", iconColor: .green, label: "Saved", destination: Subreddit(id: "homes", api: redditAPI), selected: IPAD && selectedSubreddit.sub.id == "homes").allowsHitTesting(false).opacity(0.5)
+              ListBigBtn(openSub: openSub, icon: "chart.line.uptrend.xyaxis.circle.fill", iconColor: .red, label: "Popular", destination: Subreddit(id: "popular", api: redditAPI), selected: IPAD && selectedSubreddit.sub.id == "popular")
+            }
+            HStack(spacing: 12) {
+              ListBigBtn(openSub: openSub, icon: "globe.americas.fill", iconColor: .orange, label: "All", destination: Subreddit(id: "all", api: redditAPI), selected: IPAD && selectedSubreddit.sub.id == "all")
               
+              ListBigBtn(openSub: openSub, icon: "bookmark.circle.fill", iconColor: .green, label: "Saved", destination: Subreddit(id: "saved", api: redditAPI), selected: IPAD && selectedSubreddit.sub.id == "saved").allowsHitTesting(false).opacity(0.5)
             }
-            .frame(maxWidth: .infinity)
-            .id("upperPart")
-            .listRowSeparator(.hidden)
-            .listRowBackground(Color.clear)
-            .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
-            .onChange(of: subreddits) { val in
-              withAnimation(nil) {
-                subsDict.data = sort(val)
-              }
+          }
+          .frame(maxWidth: .infinity)
+          .id("bigButtons")
+          .listRowSeparator(.hidden)
+          .listRowBackground(Color.clear)
+          .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
+          .onChange(of: subreddits) { val in
+            withAnimation(nil) {
+              subsDict.data = sort(val)
             }
+          }
         }
         
 
@@ -212,10 +216,10 @@ struct Subreddits: View {
       .listStyle(.sidebar)
       .scrollDismissesKeyboard(.immediately)
       .background(
-        NavigationLink(destination: SubredditPosts(subreddit: selectedSubreddit.sub), isActive: $selectedSubActive, label: { EmptyView() }).buttonStyle(EmptyButtonStyle()).opacity(0).allowsHitTesting(false).if(IPAD) { $0.id(selectedSubreddit.sub.id) }
+        NavigationLink(destination: SubredditPosts(subreddit: selectedSubreddit.sub), isActive: $selectedSubActive, label: { EmptyView() }).buttonStyle(EmptyButtonStyle()).opacity(0).allowsHitTesting(false)
       )
       .background(
-        NavigationLink(destination: PostViewContainer(post: Post(id: selectedPost.id, api: redditAPI), sub: Subreddit(id: selectedPost.subredditName, api: redditAPI)), isActive: $selectedPostActive, label: { EmptyView() }).buttonStyle(EmptyButtonStyle()).opacity(0).allowsHitTesting(false).if(IPAD) { $0.id(selectedSubreddit.sub.id) }.id(selectedPost.id)
+        NavigationLink(destination: PostViewContainer(post: Post(id: selectedPost.id, api: redditAPI), sub: Subreddit(id: selectedPost.subredditName, api: redditAPI)), isActive: $selectedPostActive, label: { EmptyView() }).buttonStyle(EmptyButtonStyle()).opacity(0).allowsHitTesting(false).id(selectedPost.id)
       )
       .background(OFWOpener(reset: reset))
       .searchable(text: $searchText, prompt: "Search my subreddits")

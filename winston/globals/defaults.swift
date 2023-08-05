@@ -42,6 +42,10 @@ extension Defaults.Keys {
   static let replyModalBlurBackground = Key<Bool>("replyModalBlurBackground", default: true)
   static let newPostModalBlurBackground = Key<Bool>("newPostModalBlurBackground", default: true)
   static let openYoutubeApp = Key<Bool>("openYoutubeApp", default: true)
+  static let showHomeFeed = Key<Bool>("showHomeFeed", default: true)
+  static let showPopularFeed = Key<Bool>("showPopularFeed", default: true)
+  static let showAllFeed = Key<Bool>("showAllFeed", default: true)
+  static let showSavedFeed = Key<Bool>("showSavedFeed", default: true)
   static let redditAPIUserAgent = Key<String>("redditAPIUserAgent", default: "ios:lo.cafe.winston:v0.1.0 (by /u/Kinark)")
 }
 
