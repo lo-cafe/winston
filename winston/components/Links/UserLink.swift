@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import Kingfisher
 
 struct UserLinkContainer: View {
   var reset: Bool

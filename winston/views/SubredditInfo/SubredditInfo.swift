@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import Kingfisher
 import SwiftDate
 
 enum SubInfoTabs: String, CaseIterable, Identifiable {

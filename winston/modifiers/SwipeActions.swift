@@ -41,37 +41,37 @@ struct SwipeUI: ViewModifier {
     
     content
       .offset(x: controlledDragAmount != nil ? 0 : dragAmount)
-      .if(controlledIsSource) { view in
-        view.background(
-          HStack {
-            
-            if leftActionHandler != nil {
-              MasterButton(icon: leftActionIcon, color: firstLeftAction ? .blue : .gray, textColor: .white, proportional: .circle) {
-                
-              }
-              .scaleEffect(firstLeftAction ? 1 : max(0.001, offsetXInterpolate([-0.9, 0.85], false)))
-              .opacity(max(0, offsetXInterpolate([-0.9, 1], false)))
-              .frame(width: actualOffsetX < 0 ? 10 : abs(actualOffsetX))
-              .offset(x: -8)
+      .background(
+        !controlledIsSource
+        ? nil
+        : HStack {
+          
+          if leftActionHandler != nil {
+            MasterButton(icon: leftActionIcon, color: firstLeftAction ? .blue : .gray, textColor: .white, proportional: .circle) {
+              
             }
-            
-            Spacer()
-            
-            if rightActionHandler != nil {
-              MasterButton(icon: secondAction ? secondActionIcon : rightActionIcon, color: secondAction ? .secondary.opacity(0.2) : firstRightAction ? .orange : .gray, textColor: secondAction ? .blue : .white, proportional: .circle) {
-                
-              }
-              .scaleEffect(secondAction ? 1.1 : firstRightAction ? 1 : max(0.001, offsetXNegativeInterpolate([-0.9, 0.85], false)))
-              .opacity(max(0, offsetXNegativeInterpolate([-0.9, 1], false)))
-              .frame(width: actualOffsetX > 0 ? 10 : abs(actualOffsetX))
-              .offset(x: 8)
-            }
+            .scaleEffect(firstLeftAction ? 1 : max(0.001, offsetXInterpolate([-0.9, 0.85], false)))
+            .opacity(max(0, offsetXInterpolate([-0.9, 1], false)))
+            .frame(width: actualOffsetX < 0 ? 10 : abs(actualOffsetX))
+            .offset(x: -8)
           }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .offset(y: offsetYAction)
-            .allowsHitTesting(false)
-        )
-      }
+          
+          Spacer()
+          
+          if rightActionHandler != nil {
+            MasterButton(icon: secondAction ? secondActionIcon : rightActionIcon, color: secondAction ? .secondary.opacity(0.2) : firstRightAction ? .orange : .gray, textColor: secondAction ? .blue : .white, proportional: .circle) {
+              
+            }
+            .scaleEffect(secondAction ? 1.1 : firstRightAction ? 1 : max(0.001, offsetXNegativeInterpolate([-0.9, 0.85], false)))
+            .opacity(max(0, offsetXNegativeInterpolate([-0.9, 1], false)))
+            .frame(width: actualOffsetX > 0 ? 10 : abs(actualOffsetX))
+            .offset(x: 8)
+          }
+        }
+          .frame(maxWidth: .infinity, maxHeight: .infinity)
+          .offset(y: offsetYAction)
+          .allowsHitTesting(false)
+      )
       .onTapGesture {
         onTapAction?()
       }

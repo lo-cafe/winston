@@ -133,10 +133,10 @@ struct PinchZoom: UIViewRepresentable {
 }
 
 struct PinchToZoom: ViewModifier {
+  @Binding var isPinching: Bool
     @State var scale: CGFloat = 1.0
     @State var anchor: UnitPoint = .center
     @State var offset: CGSize = .zero
-    @State var isPinching: Bool = false
 
     func body(content: Content) -> some View {
         content
@@ -150,7 +150,7 @@ struct PinchToZoom: ViewModifier {
 }
 
 extension View {
-    func pinchToZoom() -> some View {
-        self.modifier(PinchToZoom())
+  func pinchToZoom(isPinching: Binding<Bool>) -> some View {
+    self.modifier(PinchToZoom(isPinching: isPinching))
     }
 }

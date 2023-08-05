@@ -110,7 +110,7 @@ struct Tabber: View {
       , alignment: .bottom
     )
     .environmentObject(tempGlobalState)
-    .alert("Oops, Winston got a furball", isPresented: $errorAlert.asking) {
+    .alert("OMG! Winston found a squirky bug!", isPresented: $errorAlert.asking) {
       Button("Gratefully accept the weird gift") {
         if let error = errorAlert.error {
           sendEmail(error)

@@ -13,45 +13,44 @@ import AVFoundation
 
 struct FlairTag: View {
   var text: String
-  var blue = false
+  var color: Color = .secondary
   var body: some View {
     Text(text)
       .fontSize(13)
       .padding(.horizontal, 9)
       .padding(.vertical, 2)
-      .background(Capsule(style: .continuous).fill((blue ? Color.blue : Color.secondary).opacity(0.2)))
+      .background(Capsule(style: .continuous).fill(color.opacity(0.2)))
       .foregroundColor(.primary.opacity(0.5))
-      .fixedSize()
+      .frame(maxWidth: 250, alignment: .leading)
+      .lineLimit(1)
   }
 }
 
 let POSTLINK_INNER_H_PAD: CGFloat = 16
 
-struct PostLink: View {
+private class Appeared: ObservableObject {
+  @Published var isIt: Bool = false
+}
+
+struct PostLink: View, Equatable {
+  static func == (lhs: PostLink, rhs: PostLink) -> Bool {
+    lhs.post == rhs.post && lhs.sub == rhs.sub
+  }
+  
   @Default(.preferenceShowPostsCards) var preferenceShowPostsCards
   @Default(.preferenceShowPostsAvatars) var preferenceShowPostsAvatars
   @ObservedObject var post: Post
   @ObservedObject var sub: Subreddit
   var showSub = false
-  var scrollPos: CGFloat?
-  @State var playingVideo = true
-  @State var offsetX: CGFloat = 0
-  @State private var time: CMTime = .zero
-  @State private var fullscreen = false
-  @State private var aboveAll = 0
-  @State private var pressing = false
   @State private var openedPost = false
   @State private var openedSub = false
-  @State private var dragging = false
-  @State var redrawPreview = false
-  
-  @GestureState private var isPressing = false
-  @GestureState private var dragX: CGFloat = 0
+  @StateObject private var appeared = Appeared()
   
   var contentWidth: CGFloat { UIScreen.screenWidth - (POSTLINK_OUTER_H_PAD * 2) - (preferenceShowPostsCards ? POSTLINK_INNER_H_PAD * 2 : 0) }
   
   var body: some View {
     if let data = post.data {
+      let over18 = data.over_18 ?? false
       VStack(alignment: .leading, spacing: 8) {
         VStack(alignment: .leading, spacing: 12) {
           Text(data.title.escape)
@@ -60,43 +59,47 @@ struct PostLink: View {
           
           let imgPost = data.is_gallery == true || data.url.hasSuffix("jpg") || data.url.hasSuffix("png") || data.url.hasSuffix("webp")
           
-          if let media = data.secure_media {
-            switch media {
-            case .first(let datas):
-              if let url = datas.reddit_video.hls_url, let rootURL = rootURL(url) {
-                VideoPlayerPost(post: post, sharedVideo: SharedVideo(url: rootURL))
+          Group {
+            if let media = data.secure_media {
+              switch media {
+              case .first(let datas):
+                if let url = datas.reddit_video.hls_url, let rootURL = rootURL(url) {
+                  VideoPlayerPost(post: post, sharedVideo: SharedVideo(url: rootURL))
+                }
+              case .second(_):
+                EmptyView()
               }
-            case .second(_):
-              EmptyView()
+            }
+            
+            if imgPost {
+              ImageMediaPost(post: post, contentWidth: contentWidth)
+            } else if data.selftext != "" {
+              Text(data.selftext.md()).lineLimit(3)
+                .fontSize(15)
+                .opacity(0.75)
+                .allowsHitTesting(false)
+            }
+            
+            if !data.url.isEmpty && !data.is_self && !(data.is_video ?? false) && !(data.is_gallery ?? false) && data.post_hint != "image" {
+              PreviewLink(data.url, contentWidth: contentWidth, media: data.secure_media)
             }
           }
-          
-          if imgPost {
-            ImageMediaPost(post: post, contentWidth: contentWidth)
-          } else if data.selftext != "" {
-            //            MD(str: data.selftext, lineLimit: 3)
-            Text(data.selftext.md()).lineLimit(3)
-              .fontSize(15)
-              .opacity(0.75)
-              .allowsHitTesting(false)
-          }
-          
-          if !data.url.isEmpty && !data.is_self && !(data.is_video ?? false) && !(data.is_gallery ?? false) && data.post_hint != "image" {
-            PreviewLink(data.url, contentWidth: contentWidth, media: data.secure_media)
-          }
+          .nsfw(over18)
         }
         .zIndex(1)
         
         HStack(spacing: 0) {
           
-          if showSub || sub.id == "home" {
-            FlairTag(text: "r/\(sub.data?.display_name ?? post.data?.subreddit ?? "Error")", blue: true)
+          if showSub || feedsAndSuch.contains(sub.id) {
+            FlairTag(text: "r/\(sub.data?.display_name ?? post.data?.subreddit ?? "Error")", color: .blue)
               .highPriorityGesture(TapGesture() .onEnded { openedSub = true })
             
-            Rectangle()
-              .fill(.primary.opacity(0.05))
-              .frame(maxWidth: .infinity, maxHeight: 1)
-              .allowsHitTesting(false)
+            WDivider()
+          }
+          
+          if over18 {
+            FlairTag(text: "NSFW", color: .red)
+            WDivider()
           }
           
           if let link_flair_text = data.link_flair_text {
@@ -104,11 +107,8 @@ struct PostLink: View {
               .allowsHitTesting(false)
           }
           
-          if !showSub && sub.id != "home" {
-            Rectangle()
-              .fill(.primary.opacity(0.05))
-              .frame(maxWidth: .infinity, maxHeight: 1)
-              .allowsHitTesting(false)
+          if !showSub && !feedsAndSuch.contains(sub.id) {
+            WDivider()
           }
         }
         .padding(.horizontal, 2)
@@ -152,19 +152,28 @@ struct PostLink: View {
       .padding(.horizontal, preferenceShowPostsCards ? POSTLINK_INNER_H_PAD : 0)
       .padding(.vertical, preferenceShowPostsCards ? 14 : 6)
       .frame(maxWidth: .infinity, alignment: .leading)
-      .if(sub.id == "home") {
-        $0
-          .background(NavigationLink(destination: PostViewContainer(post: post.duplicate(), sub: Subreddit(id: post.data?.subreddit ?? "", api: post.redditAPI)), isActive: $openedPost, label: { EmptyView() }).buttonStyle(EmptyButtonStyle()).opacity(0).allowsHitTesting(false))
-          .background(NavigationLink(destination: SubredditPostsContainer(sub: Subreddit(id: post.data?.subreddit ?? "", api: post.redditAPI)), isActive: $openedSub, label: { EmptyView() }).buttonStyle(EmptyButtonStyle()).opacity(0).allowsHitTesting(false))
-      }
-      .if(sub.id != "home") {
-        $0.background(NavigationLink(destination: PostView(post: post, subreddit: sub), isActive: $openedPost, label: { EmptyView() }).buttonStyle(EmptyButtonStyle()).opacity(0).allowsHitTesting(false))
-      }
-      .if(preferenceShowPostsCards) { view in
-        view
-          .background(RR(20, .listBG).allowsHitTesting(false))
-          .mask(RR(20, .black))
-      }
+      .background(
+        !feedsAndSuch.contains(sub.id)
+        ? nil
+        : VStack {
+          NavigationLink(destination: PostViewContainer(post: post.duplicate(), sub: Subreddit(id: post.data?.subreddit ?? "", api: post.redditAPI)), isActive: $openedPost, label: { EmptyView() }).buttonStyle(EmptyButtonStyle()).opacity(0).allowsHitTesting(false)
+          NavigationLink(destination: SubredditPostsContainer(sub: Subreddit(id: post.data?.subreddit ?? "", api: post.redditAPI)), isActive: $openedSub, label: { EmptyView() }).buttonStyle(EmptyButtonStyle()).opacity(0).allowsHitTesting(false)
+        }.opacity(0).allowsHitTesting(false)
+      )
+      .background(
+        feedsAndSuch.contains(sub.id)
+        ? nil
+        : NavigationLink(destination: PostView(post: post, subreddit: sub), isActive: $openedPost, label: { EmptyView() }).buttonStyle(EmptyButtonStyle()).opacity(0).allowsHitTesting(false))
+      .background(
+        !preferenceShowPostsCards
+        ? nil
+        : RR(20, .listBG).allowsHitTesting(false)
+      )
+      .mask(
+        !preferenceShowPostsCards
+        ? nil
+        :RR(20, .black)
+      )
       .compositingGroup()
       .opacity((data.winstonSeen ?? false) ? 0.75 : 1)
       .contentShape(Rectangle())
@@ -186,7 +195,16 @@ struct PostLink: View {
       })
       .foregroundColor(.primary)
       .multilineTextAlignment(.leading)
-      .zIndex(Double(aboveAll))
+      .zIndex(1)
+//      .opacity(appeared.isIt ? 1 : 0)
+//      .offset(y: appeared.isIt ? 0 : 32)
+//      .onAppear {
+//        if !appeared.isIt {
+//          withAnimation(spring) {
+//            appeared.isIt = true
+//          }
+//        }
+//      }
     } else {
       Text("Oops something went wrong")
     }
