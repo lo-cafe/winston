@@ -86,7 +86,7 @@ struct SubredditPosts: View {
                 .equatable()
                 .onAppear { if(Int(Double(posts.data.count) * 0.75) == i) { fetch(loadMore: true) } }
                 .id(post.id)
-                .listRowInsets(EdgeInsets(top: !preferenceShowPostsCards ? 16 : 8, leading: POSTLINK_OUTER_H_PAD, bottom: !preferenceShowPostsCards ? 16 : 8, trailing: POSTLINK_OUTER_H_PAD))
+                .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
                 .animation(.default, value: posts.data)
               
               if !preferenceShowPostsCards && i != (posts.data.count - 1) {
