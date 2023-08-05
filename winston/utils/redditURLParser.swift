@@ -16,13 +16,14 @@ enum RedditURLType: Equatable {
   case other(link: String)
 }
 
-func parseRedditURL(_ urlString: String) -> RedditURLType {
+func parseRedditURL(_ rawUrlString: String) -> RedditURLType {
+  let urlString = rawUrlString.replacingOccurrences(of: "winstonapp://", with: "https://app.winston.lo.cafe/")
   guard let urlComponents = URLComponents(string: urlString) else {
     return .other(link: urlString)
   }
   
   let pathComponents = urlComponents.path.components(separatedBy: "/").filter({ !$0.isEmpty })
-  
+    
   if urlComponents.host?.hasSuffix("reddit.com") == true || urlComponents.host?.hasSuffix("app.winston.lo.cafe") == true, pathComponents.count > 1 {
     switch pathComponents[0] {
     case "r":

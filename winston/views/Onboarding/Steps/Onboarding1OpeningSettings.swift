@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct Onboarding1OpeningSettings: View {
+  var prevStep: ()->()
   var nextStep: ()->()
   @Environment(\.openURL) var openURL
   var body: some View {
