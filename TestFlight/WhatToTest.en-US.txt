@@ -8,3 +8,5 @@
 - Added transition for appearing posts
 - Fixed giang flair tags
 - Fixed audio interruption on app opening
+- Added deeplinks, so no more 404 errors on auth
+- Disabled swipe in Onboarding (and added back buttons)

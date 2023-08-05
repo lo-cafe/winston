@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct Onboarding6Auth: View {
+  var prevStep: ()->()
   var nextStep: ()->()
   var appSecret: String
   var appID: String
@@ -27,14 +28,19 @@ struct Onboarding6Auth: View {
           .fixedSize(horizontal: false, vertical: true)
           .frame(maxWidth: 300)
         
-        MasterButton(icon: "flag.checkered", label: "Authorize API key", colorHoverEffect: .animated, textSize: 18, height: 48, fullWidth: true, cornerRadius: 16, action: {
-          withAnimation {
-          redditAPI.loggedUser.apiAppID = appID.trimmingCharacters(in: .whitespaces)
-          redditAPI.loggedUser.apiAppSecret = appSecret.trimmingCharacters(in: .whitespaces)
-            loading = true
-          }
-          openURL(redditAPI.getAuthorizationCodeURL(appID))
-        })
+        HStack {
+          MasterButton(icon: "arrowshape.backward.fill", label: "Go back", mode: .soft, color: .white, colorHoverEffect: .animated, textSize: 18, height: 48, cornerRadius: 16, action: {
+            prevStep()
+          })
+          MasterButton(icon: "flag.checkered", label: "Authorize API key", colorHoverEffect: .animated, textSize: 18, height: 48, fullWidth: true, cornerRadius: 16, action: {
+            withAnimation {
+              redditAPI.loggedUser.apiAppID = appID.trimmingCharacters(in: .whitespaces)
+              redditAPI.loggedUser.apiAppSecret = appSecret.trimmingCharacters(in: .whitespaces)
+              loading = true
+            }
+            openURL(redditAPI.getAuthorizationCodeURL(appID))
+          })
+        }
         .padding(.top, 32)
         
         if error {

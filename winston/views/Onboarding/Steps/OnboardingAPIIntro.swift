@@ -36,6 +36,7 @@ private struct Feature: View {
 }
 
 struct OnboardingAPIIntro: View {
+  var prevStep: ()->()
   var nextStep: ()->()
   var body: some View {
     ScrollView {
