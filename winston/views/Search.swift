@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import Kingfisher
 
 enum SearchType: String {
   case subreddit = "Subreddit"

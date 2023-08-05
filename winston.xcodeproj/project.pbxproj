@@ -135,6 +135,7 @@
 		ECAEFF692A77DE2B0052FCD3 /* StringEmojize.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECAEFF682A77DE2B0052FCD3 /* StringEmojize.swift */; };
 		ECAEFF6B2A77DE490052FCD3 /* emojiCodes.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECAEFF6A2A77DE490052FCD3 /* emojiCodes.swift */; };
 		ECAEFF6D2A77E8CA0052FCD3 /* Onboarding.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECAEFF6C2A77E8CA0052FCD3 /* Onboarding.swift */; };
+		ECB5E1C62A7DC24D0063AB64 /* LonginusSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = ECB5E1C52A7DC24D0063AB64 /* LonginusSwiftUI */; };
 		ECC10C742A4A8729009124BE /* fontSize.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECC10C732A4A8729009124BE /* fontSize.swift */; };
 		ECC10C772A4A874C009124BE /* RR.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECC10C762A4A874C009124BE /* RR.swift */; };
 		ECC68D412A799CDD005BC7B4 /* SelectableText.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECC68D402A799CDD005BC7B4 /* SelectableText.swift */; };
@@ -144,7 +145,6 @@
 		ECD1FC092A570B4F00723016 /* PostFloatingPill.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECD1FC082A570B4F00723016 /* PostFloatingPill.swift */; };
 		ECD2A3772A69C26900EDD02D /* consts.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECD2A3762A69C26900EDD02D /* consts.swift */; };
 		ECD2A37D2A69CBAD00EDD02D /* WaterfallGrid in Frameworks */ = {isa = PBXBuildFile; productRef = ECD2A37C2A69CBAD00EDD02D /* WaterfallGrid */; };
-		ECD6E9BB2A5B32E100D499E7 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = ECD6E9BA2A5B32E100D499E7 /* Kingfisher */; };
 		ECDBA8C32A4A820800FB42DB /* Post.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECDBA8C22A4A820800FB42DB /* Post.swift */; };
 		ECDBA8C52A4A835800FB42DB /* Subreddit.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECDBA8C42A4A835800FB42DB /* Subreddit.swift */; };
 		ECDBA8C72A4A83DB00FB42DB /* SubredditPosts.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECDBA8C62A4A83DB00FB42DB /* SubredditPosts.swift */; };
@@ -403,9 +403,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				ECD6E9BB2A5B32E100D499E7 /* Kingfisher in Frameworks */,
 				ECAA8B842A76421000D9D636 /* YouTubePlayerKit in Frameworks */,
 				EC593B0C2A47B801002D6454 /* Alamofire in Frameworks */,
+				ECB5E1C62A7DC24D0063AB64 /* LonginusSwiftUI in Frameworks */,
 				EC593B092A47B42D002D6454 /* KeychainAccess in Frameworks */,
 				ECD2A37D2A69CBAD00EDD02D /* WaterfallGrid in Frameworks */,
 				ECE285972A4FD6FC009CF9DD /* SwiftDate in Frameworks */,
@@ -513,12 +513,12 @@
 		EC593ACB2A4673B2002D6454 = {
 			isa = PBXGroup;
 			children = (
-				EC6CBE342A7D6E760089EAA0 /* LICENSE.md */,
-				EC6CBE322A7D6BF80089EAA0 /* README.md */,
 				ECA30A152A5FA06D00BB19D1 /* TestFlight */,
 				EC22A3152A5B74AC0062A112 /* ci_scripts */,
 				EC593AD62A4673B2002D6454 /* winston */,
 				ECAA8B662A75261000D9D636 /* winston-everywhere */,
+				EC6CBE342A7D6E760089EAA0 /* LICENSE.md */,
+				EC6CBE322A7D6BF80089EAA0 /* README.md */,
 				EC593AD52A4673B2002D6454 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -894,13 +894,13 @@
 				EC0854452A4D6CC300E88389 /* SimpleHaptics */,
 				ECE285962A4FD6FC009CF9DD /* SwiftDate */,
 				EC9269F12A51A732003F33B1 /* HighlightedTextEditor */,
-				ECD6E9BA2A5B32E100D499E7 /* Kingfisher */,
 				ECA30A342A62276B00BB19D1 /* MarkdownUI */,
 				ECE449732A67648E00E2A3B7 /* Popovers */,
 				ECD2A37C2A69CBAD00EDD02D /* WaterfallGrid */,
 				ECDD515E2A748C5800FD9498 /* OpenGraph */,
 				ECDD51612A748DF600FD9498 /* SkeletonUI */,
 				ECAA8B832A76421000D9D636 /* YouTubePlayerKit */,
+				ECB5E1C52A7DC24D0063AB64 /* LonginusSwiftUI */,
 			);
 			productName = winston;
 			productReference = EC593AD42A4673B2002D6454 /* winston.app */;
@@ -958,13 +958,13 @@
 				EC0854442A4D6CC300E88389 /* XCRemoteSwiftPackageReference "simple-haptics" */,
 				ECE285952A4FD6FC009CF9DD /* XCRemoteSwiftPackageReference "SwiftDate" */,
 				EC9269F02A51A732003F33B1 /* XCRemoteSwiftPackageReference "HighlightedTextEditor" */,
-				ECD6E9B92A5B32E100D499E7 /* XCRemoteSwiftPackageReference "Kingfisher" */,
 				ECA30A332A62276B00BB19D1 /* XCRemoteSwiftPackageReference "swift-markdown-ui" */,
 				ECE449722A67648E00E2A3B7 /* XCRemoteSwiftPackageReference "Popovers" */,
 				ECD2A37B2A69CBAD00EDD02D /* XCRemoteSwiftPackageReference "WaterfallGrid" */,
 				ECDD515D2A748C5800FD9498 /* XCRemoteSwiftPackageReference "OpenGraph" */,
 				ECDD51602A748DF600FD9498 /* XCRemoteSwiftPackageReference "SkeletonUI" */,
 				ECAA8B822A76421000D9D636 /* XCRemoteSwiftPackageReference "YouTubePlayerKit" */,
+				ECB5E1C42A7DC24D0063AB64 /* XCRemoteSwiftPackageReference "Longinus" */,
 			);
 			productRefGroup = EC593AD52A4673B2002D6454 /* Products */;
 			projectDirPath = "";
@@ -1534,20 +1534,20 @@
 				minimumVersion = 1.0.0;
 			};
 		};
+		ECB5E1C42A7DC24D0063AB64 /* XCRemoteSwiftPackageReference "Longinus" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/KittenYang/Longinus.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.0;
+			};
+		};
 		ECD2A37B2A69CBAD00EDD02D /* XCRemoteSwiftPackageReference "WaterfallGrid" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/paololeonardi/WaterfallGrid.git";
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 1.0.0;
-			};
-		};
-		ECD6E9B92A5B32E100D499E7 /* XCRemoteSwiftPackageReference "Kingfisher" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/onevcat/Kingfisher.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 7.0.0;
 			};
 		};
 		ECDD515D2A748C5800FD9498 /* XCRemoteSwiftPackageReference "OpenGraph" */ = {
@@ -1625,15 +1625,15 @@
 			package = ECAA8B822A76421000D9D636 /* XCRemoteSwiftPackageReference "YouTubePlayerKit" */;
 			productName = YouTubePlayerKit;
 		};
+		ECB5E1C52A7DC24D0063AB64 /* LonginusSwiftUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = ECB5E1C42A7DC24D0063AB64 /* XCRemoteSwiftPackageReference "Longinus" */;
+			productName = LonginusSwiftUI;
+		};
 		ECD2A37C2A69CBAD00EDD02D /* WaterfallGrid */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = ECD2A37B2A69CBAD00EDD02D /* XCRemoteSwiftPackageReference "WaterfallGrid" */;
 			productName = WaterfallGrid;
-		};
-		ECD6E9BA2A5B32E100D499E7 /* Kingfisher */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = ECD6E9B92A5B32E100D499E7 /* XCRemoteSwiftPackageReference "Kingfisher" */;
-			productName = Kingfisher;
 		};
 		ECDD515E2A748C5800FD9498 /* OpenGraph */ = {
 			isa = XCSwiftPackageProductDependency;

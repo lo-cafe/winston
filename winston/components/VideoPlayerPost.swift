@@ -114,9 +114,9 @@ class AVPlayerViewControllerRotatable: AVPlayerViewController, AVPlayerViewContr
   }
   
   override func viewDidLoad() {
+    
     super.viewDidLoad()
     self.delegate = self
-    //    self.setupAssetDownload()
   }
   
   func playerViewController(
@@ -203,13 +203,17 @@ extension AVPlayerViewControllerRotatable {
     
     if self.responds(to: selector) {
       self.perform(selector, with: animated, with: nil)
+      
+//      try? AVAudioSession.sharedInstance().setActive(false)
+//      try? AVAudioSession.sharedInstance().setCategory(.playAndRecord, mode: .default, options: [.allowAirPlay, .allowBluetooth, .duckOthers, .allowBluetoothA2DP, .defaultToSpeaker])
+//      try? AVAudioSession.sharedInstance().setActive(true)
     }
   }
   
   func exitFullScreen(animated: Bool) {
     //    self.view.window?.rootViewController?.present(self, animated: true)
     let selector = NSSelectorFromString("exitFullScreenAnimated:completionHandler:")
-    
+//    try? AVAudioSession.sharedInstance().setActive(false)
     if self.responds(to: selector) {
       self.perform(selector, with: animated, with: nil)
     }

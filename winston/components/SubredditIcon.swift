@@ -7,7 +7,7 @@
 
 import Foundation
 import SwiftUI
-import Kingfisher
+import LonginusSwiftUI
 
 struct SubredditBaseIcon: View {
   var name: String
@@ -17,9 +17,10 @@ struct SubredditBaseIcon: View {
   var color: String?
   var body: some View {
     if let icon = iconURLStr, !icon.isEmpty, let iconURL = URL(string: icon) {
-      KFImage(iconURL)
+      LGImage(source: iconURL, placeholder: {
+        ProgressView()
+      }, options: [.imageWithFadeAnimation])
         .resizable()
-        .fade(duration: 0.5)
         .scaledToFill()
         .frame(width: size, height: size)
         .mask(Circle())

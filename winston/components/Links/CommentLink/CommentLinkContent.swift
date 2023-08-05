@@ -191,9 +191,7 @@ struct CommentLinkContent: View {
                 rightActionHandler: { Task { _ = await comment.vote(action: .up) } },
                 secondActionHandler: { showReplyModal = true }
               )
-              .if(forcedBodySize == nil) {
-                $0.background( GeometryReader { geo in Color.clear.onAppear { sizer.size = geo.size } } )
-              }
+              .background(forcedBodySize != nil ? nil : GeometryReader { geo in Color.clear.onAppear { sizer.size = geo.size } } )
             } else {
               Spacer()
             }
@@ -204,28 +202,26 @@ struct CommentLinkContent: View {
           .padding(.horizontal, !preferenceShowCommentsCards ? 0 : 13)
           .mask(Color.black)
           .background(preferenceShowCommentsCards && showReplies ? Color.listBG : .clear)
-          .if(forcedBodySize == nil) {
-            $0.contextMenu {
-              if !selectable {
-                Button {
-                  withAnimation { selectable = true }
-                } label: {
-                  Label("Select text", systemImage: "selection.pin.in.out")
-                }
-                Button {
-                  withAnimation { selectable = true }
-                } label: {
-                  Label("Edit", systemImage: "pencil")
-                }
-                Button(role: .destructive) {
-                } label: {
-                  Label("Delete", systemImage: "trash.fill")
-                }
+          .contextMenu {
+            if !selectable && forcedBodySize == nil {
+              Button {
+                withAnimation { selectable = true }
+              } label: {
+                Label("Select text", systemImage: "selection.pin.in.out")
               }
-            } preview: {
-                CommentLinkContentPreview(sizer: sizer, forcedBodySize: sizer.size, showReplies: showReplies, arrowKinds: arrowKinds, indentLines: indentLines, lineLimit: lineLimit, post: post, comment: comment, avatarsURL: avatarsURL)
-              .id("\(data.id)-preview")
+              Button {
+                withAnimation { selectable = true }
+              } label: {
+                Label("Edit", systemImage: "pencil")
+              }
+              Button(role: .destructive) {
+              } label: {
+                Label("Delete", systemImage: "trash.fill")
+              }
             }
+          } preview: {
+            CommentLinkContentPreview(sizer: sizer, forcedBodySize: sizer.size, showReplies: showReplies, arrowKinds: arrowKinds, indentLines: indentLines, lineLimit: lineLimit, post: post, comment: comment, avatarsURL: avatarsURL)
+              .id("\(data.id)-preview")
           }
           
           .sheet(isPresented: $showReplyModal) {
@@ -249,7 +245,7 @@ struct CommentLinkContent: View {
 
 struct AnimatingCellHeight: AnimatableModifier {
   var height: CGFloat = 0
-  var disable: Bool
+  var disable: Bool = false
   
   var animatableData: CGFloat {
     get { height }

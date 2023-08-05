@@ -7,7 +7,7 @@
 
 import Foundation
 import SwiftUI
-import Kingfisher
+import LonginusSwiftUI
 import OpenGraph
 import SkeletonUI
 import YouTubePlayerKit
@@ -94,13 +94,14 @@ struct PreviewLinkContent: View {
       
       Group {
         if let image = viewModel.image, let imageURL = URL(string: image) {
-          KFImage(imageURL)
-            .resizable()
-            .fade(duration: 0.5)
-            .backgroundDecode()
-            .scaledToFill()
-            .frame(width: 76, height: 76)
-            .mask(RR(12, .black))
+          LGImage(source: imageURL, placeholder: {
+            ProgressView()
+          }, options: [.imageWithFadeAnimation])
+          .resizable()
+          .cancelOnDisappear(true)
+          .scaledToFill()
+          .frame(width: 76, height: 76)
+          .mask(RR(12, .black))
         } else {
           if viewModel.loading {
             ProgressView()

@@ -8,7 +8,6 @@
 import SwiftUI
 import Defaults
 import SwiftUIIntrospect
-import Kingfisher
 import WaterfallGrid
 
 let POSTLINK_OUTER_H_PAD: CGFloat = IPAD ? 0 : 8
@@ -28,7 +27,7 @@ struct SubredditPosts: View {
   @EnvironmentObject var redditAPI: RedditAPI
   
   func asyncFetch(force: Bool = false, loadMore: Bool = false) async {
-    if (subreddit.data == nil || force) && subreddit.id != "home" {
+    if (subreddit.data == nil || force) && !feedsAndSuch.contains(subreddit.id) {
       await subreddit.refreshSubreddit()
     }
     if posts.data.count > 0 && lastPostAfter == nil && !force {
@@ -122,7 +121,6 @@ struct SubredditPosts: View {
       //    .listStyle(IPAD ? .grouped : .plain)
       //    .scrollContentBackground(.hidden)
       .listStyle(.plain)
-      .if(!IPAD) { $0.listStyle(.plain) }
       //        .if(IPAD) { $0.listStyle(.insetGrouped) }
       .environment(\.defaultMinListRowHeight, 1)
       //      }
@@ -133,7 +131,7 @@ struct SubredditPosts: View {
         .frame(maxWidth: .infinity, minHeight: UIScreen.screenHeight)
       : nil)
     .overlay(
-      subreddit.id == "home"
+      feedsAndSuch.contains(subreddit.id)
       ? nil
       : Button {
         newPost = true
@@ -188,7 +186,7 @@ struct SubredditPosts: View {
         }
         .animation(nil, value: sort)
     )
-    .navigationTitle("\(subreddit.id == "home" ? "Home" : "r/\(subreddit.data?.display_name ?? subreddit.id)")")
+    .navigationTitle("\(feedsAndSuch.contains(subreddit.id) ? subreddit.id.capitalized : "r/\(subreddit.data?.display_name ?? subreddit.id)")")
     .refreshable {
       await asyncFetch(force: true)
     }

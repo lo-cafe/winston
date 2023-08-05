@@ -20,18 +20,14 @@ struct PreviewYTLink: View {
   var body: some View {
     switch media {
     case .second(let data):
-      if let oembed = data.oembed, let width = oembed.width, let height = oembed.height {
+      if let oembed = data.oembed, let width = oembed.width, let height = oembed.height, let ytURL = URL(string: url) {
         let actualHeight = (contentWidth * CGFloat(height)) / CGFloat(width)
         YouTubePlayerView(player)
           .frame(width: contentWidth, height: actualHeight)
           .mask(RR(12, .black))
-          .highPriorityGesture( TapGesture().onEnded { } )
-          .if(openYoutubeApp) {
-            $0.allowsHitTesting(false).contentShape(Rectangle()).highPriorityGesture( TapGesture().onEnded { openURL(URL(string: url)!) } )
-          }
-          .if(!openYoutubeApp) {
-            $0.highPriorityGesture( TapGesture().onEnded { } )
-          }
+          .allowsHitTesting(!openYoutubeApp)
+          .contentShape(Rectangle())
+          .highPriorityGesture(!openYoutubeApp ? TapGesture().onEnded { } : TapGesture().onEnded { openURL(ytURL) })
       }
     default:
      EmptyView()

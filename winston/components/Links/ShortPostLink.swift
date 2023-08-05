@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import Kingfisher
 import Defaults
 
 struct ShortPostLink: View {

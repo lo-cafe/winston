@@ -75,7 +75,7 @@ struct PostView: View {
       }
       .transition(.opacity)
       .environment(\.defaultMinListRowHeight, 1)
-      .if(!preferenceShowCommentsCards) { $0.listStyle(.plain) }
+      .listStyle(.plain)
       .refreshable {
         await asyncFetch(true)
       }
@@ -109,7 +109,7 @@ struct PostView: View {
               }
             }
             
-            if let data = subreddit.data, subreddit.id != "home" {
+            if let data = subreddit.data, !feedsAndSuch.contains(subreddit.id) {
               NavigationLink {
                 SubredditInfo(subreddit: subreddit)
               } label: {

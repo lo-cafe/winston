@@ -30,7 +30,7 @@ struct NSFWMod: ViewModifier {
           Text("Tap to unblur")
         }
       )
-      .allowsHitTesting(false)
+      .allowsHitTesting(!blur)
       .contentShape(Rectangle())
       .highPriorityGesture(blur ? TapGesture().onEnded { withAnimation { unblur = true } } : nil )
   }

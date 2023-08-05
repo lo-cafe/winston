@@ -6,20 +6,28 @@
 //
 
 import SwiftUI
-import Kingfisher
 import Defaults
 import CoreMedia
+import LonginusSwiftUI
+
+private var safe = getSafeArea().top + getSafeArea().bottom
 
 struct GalleryThumb: View {
+  var ns: Namespace.ID
   var width: CGFloat
   var height: CGFloat
   var url: URL
   var body: some View {
-    KFImage(url)
-      .downsampling(size: CGSize(width: width * screenScale, height: height * screenScale))
-      .scaleFactor(screenScale)
+    LGImage(source: url, placeholder: {
+      ProgressView()
+    }, options: [.progressiveBlur, .imageWithFadeAnimation])
+//      .downsampling(size: CGSize(width: width * screenScale, height: height * screenScale))
+//      .scaleFactor(screenScale)
       .resizable()
-      .fade(duration: 0.5)
+      .cancelOnDisappear(true)
+//      .matchedGeometryEffect(id: url.absoluteString, in: ns)
+//      .fade(duration: 0.5)
+//      .backgroundDecode()
     //      .backgroundDecode(true)
       .scaledToFill()
       .zIndex(1)
@@ -41,16 +49,14 @@ struct ImageMediaPost: View {
   @Namespace var presentationNamespace
   @Default(.maxPostLinkImageHeightPercentage) var maxPostLinkImageHeightPercentage
   
-  var safe: Double { getSafeArea().top + getSafeArea().bottom }
-  
   var body: some View {
     let maxHeight: CGFloat = (maxPostLinkImageHeightPercentage / 100) * (UIScreen.screenHeight - safe)
     if let data = post.data {
       VStack {
-        if let preview = data.preview, preview.images?.count ?? 0 > 0, let source = preview.images?[0].source, let _ = source.url, let sourceHeight = source.height, let sourceWidth = source.width {
+        if let preview = data.preview, preview.images?.count ?? 0 > 0, let source = preview.images?[0].source, let _ = source.url, let sourceHeight = source.height, let sourceWidth = source.width, let imgURL = URL(string: data.url) {
           let propHeight = (Int(contentWidth) * sourceHeight) / sourceWidth
           let finalHeight = maxPostLinkImageHeightPercentage != 110 ? Double(min(Int(maxHeight), propHeight)) : Double(propHeight)
-          GalleryThumb(width: contentWidth, height: finalHeight, url: URL(string: data.url)!)
+          GalleryThumb(ns: presentationNamespace, width: contentWidth, height: finalHeight, url: imgURL)
             .onTapGesture { withAnimation(spring) { fullscreen.toggle() } }
           //            .frame(width: contentWidth, height: finalHeight)
         } else if data.is_gallery == true, let metadatas = data.media_metadata?.values, metadatas.count > 1 {
@@ -66,12 +72,12 @@ struct ImageMediaPost: View {
           
           VStack(spacing: 8) {
             HStack(spacing: 8) {
-              GalleryThumb(width: width, height: height, url: URL(string: urls[0])!)
+              GalleryThumb(ns: presentationNamespace, width: width, height: height, url: URL(string: urls[0])!)
                 .onTapGesture { withAnimation(spring) {
                   fullscreenIndex = 0
                   doThisAfter(0) { fullscreen.toggle() }
                 } }
-              GalleryThumb(width: width, height: height, url: URL(string: urls[1])!)
+              GalleryThumb(ns: presentationNamespace, width: width, height: height, url: URL(string: urls[1])!)
                 .onTapGesture { withAnimation(spring) {
                   fullscreenIndex = 1
                   doThisAfter(0) { fullscreen.toggle() }
@@ -81,13 +87,13 @@ struct ImageMediaPost: View {
             
             if urls.count > 2 {
               HStack(spacing: 8) {
-                GalleryThumb(width: urls.count == 3 ? contentWidth : width, height: height, url: URL(string: urls[2])!)
+                GalleryThumb(ns: presentationNamespace, width: urls.count == 3 ? contentWidth : width, height: height, url: URL(string: urls[2])!)
                   .onTapGesture { withAnimation(spring) {
                     fullscreenIndex = 2
                     doThisAfter(0) { fullscreen.toggle() }
                   } }
                 if urls.count == 4 {
-                  GalleryThumb(width: width, height: height, url: URL(string: urls[3])!)
+                  GalleryThumb(ns: presentationNamespace, width: width, height: height, url: URL(string: urls[3])!)
                     .onTapGesture { withAnimation(spring) {
                       fullscreenIndex = 3
                       doThisAfter(0) { fullscreen.toggle() }

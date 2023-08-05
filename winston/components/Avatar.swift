@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-import Kingfisher
+import LonginusSwiftUI
 
 struct Avatar: View {
 //  static func == (lhs: Avatar, rhs: Avatar) -> Bool {
@@ -37,12 +37,13 @@ struct Avatar: View {
               .frame(width: avatarSize, height: avatarSize)
           )
       } else {
-        if let avatarURL = avatarURL, avatarURL != "" {
+        if let avatarURL = avatarURL, avatarURL != "", let avatarURLURL = URL(string: avatarURL) {
 //          EmptyView()
-          KFImage(URL(string: avatarURL)!)
+          LGImage(source: avatarURLURL, placeholder: {
+            ProgressView()
+          }, options: [.imageWithFadeAnimation])
             .resizable()
-            .fade(duration: 0.25)
-//            .
+            .cancelOnDisappear(true)
             .scaledToFill()
 //            .id(avatarURL)
         } else {

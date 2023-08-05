@@ -21,11 +21,16 @@ struct FlairTag: View {
       .padding(.vertical, 2)
       .background(Capsule(style: .continuous).fill(color.opacity(0.2)))
       .foregroundColor(.primary.opacity(0.5))
-      .fixedSize()
+      .frame(maxWidth: 250, alignment: .leading)
+      .lineLimit(1)
   }
 }
 
 let POSTLINK_INNER_H_PAD: CGFloat = 16
+
+private class Appeared: ObservableObject {
+  @Published var isIt: Bool = false
+}
 
 struct PostLink: View, Equatable {
   static func == (lhs: PostLink, rhs: PostLink) -> Bool {
@@ -39,6 +44,7 @@ struct PostLink: View, Equatable {
   var showSub = false
   @State private var openedPost = false
   @State private var openedSub = false
+  @StateObject private var appeared = Appeared()
   
   var contentWidth: CGFloat { UIScreen.screenWidth - (POSTLINK_OUTER_H_PAD * 2) - (preferenceShowPostsCards ? POSTLINK_INNER_H_PAD * 2 : 0) }
   
@@ -68,7 +74,6 @@ struct PostLink: View, Equatable {
             if imgPost {
               ImageMediaPost(post: post, contentWidth: contentWidth)
             } else if data.selftext != "" {
-              //            MD(str: data.selftext, lineLimit: 3)
               Text(data.selftext.md()).lineLimit(3)
                 .fontSize(15)
                 .opacity(0.75)
@@ -85,7 +90,7 @@ struct PostLink: View, Equatable {
         
         HStack(spacing: 0) {
           
-          if showSub || sub.id == "home" {
+          if showSub || feedsAndSuch.contains(sub.id) {
             FlairTag(text: "r/\(sub.data?.display_name ?? post.data?.subreddit ?? "Error")", color: .blue)
               .highPriorityGesture(TapGesture() .onEnded { openedSub = true })
             
@@ -102,7 +107,7 @@ struct PostLink: View, Equatable {
               .allowsHitTesting(false)
           }
           
-          if !showSub && sub.id != "home" {
+          if !showSub && !feedsAndSuch.contains(sub.id) {
             WDivider()
           }
         }
@@ -148,7 +153,7 @@ struct PostLink: View, Equatable {
       .padding(.vertical, preferenceShowPostsCards ? 14 : 6)
       .frame(maxWidth: .infinity, alignment: .leading)
       .background(
-        sub.id != "home"
+        !feedsAndSuch.contains(sub.id)
         ? nil
         : VStack {
           NavigationLink(destination: PostViewContainer(post: post.duplicate(), sub: Subreddit(id: post.data?.subreddit ?? "", api: post.redditAPI)), isActive: $openedPost, label: { EmptyView() }).buttonStyle(EmptyButtonStyle()).opacity(0).allowsHitTesting(false)
@@ -156,7 +161,7 @@ struct PostLink: View, Equatable {
         }.opacity(0).allowsHitTesting(false)
       )
       .background(
-        sub.id == "home"
+        feedsAndSuch.contains(sub.id)
         ? nil
         : NavigationLink(destination: PostView(post: post, subreddit: sub), isActive: $openedPost, label: { EmptyView() }).buttonStyle(EmptyButtonStyle()).opacity(0).allowsHitTesting(false))
       .background(
@@ -190,8 +195,16 @@ struct PostLink: View, Equatable {
       })
       .foregroundColor(.primary)
       .multilineTextAlignment(.leading)
-      .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
       .zIndex(1)
+//      .opacity(appeared.isIt ? 1 : 0)
+//      .offset(y: appeared.isIt ? 0 : 32)
+//      .onAppear {
+//        if !appeared.isIt {
+//          withAnimation(spring) {
+//            appeared.isIt = true
+//          }
+//        }
+//      }
     } else {
       Text("Oops something went wrong")
     }
