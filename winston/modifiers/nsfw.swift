@@ -14,7 +14,7 @@ struct NSFWMod: ViewModifier {
   func body(content: Content) -> some View {
     let blur = !unblur && isIt
     content
-//      .saturation(blur ? 0.5 : 1)
+      .frame(minHeight: isIt ? 75 : 0)
       .opacity(blur ? 0.75 : 1)
       .blur(radius: blur ? 30 : 0)
       .overlay(

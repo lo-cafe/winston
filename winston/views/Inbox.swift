@@ -40,7 +40,7 @@ struct Inbox: View {
               .id("loading")
           } else {
             ForEach(messages.data, id: \.self.id) { message in
-              MessageLink(reset: reset, message: message)
+              MessageLink(message: message)
             }
           }
         }

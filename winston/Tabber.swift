@@ -83,7 +83,7 @@ struct Tabber: View {
         }
         .tag(TabIdentifier.search)
       
-      Settings()
+      Settings(reset: reset[.settings]!)
         .tabItem {
           VStack {
             Image(systemName: "gearshape.fill")

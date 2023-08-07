@@ -12,19 +12,23 @@ import WaterfallGrid
 
 let POSTLINK_OUTER_H_PAD: CGFloat = IPAD ? 0 : 8
 
+enum SubViewType: Hashable {
+  case posts(Subreddit)
+  case info(Subreddit)
+}
+
 struct SubredditPosts: View {
-  @Default(.preferenceShowPostsCards) var preferenceShowPostsCards
+  @Default(.preferenceShowPostsCards) private var preferenceShowPostsCards
   @ObservedObject var subreddit: Subreddit
-  @Environment(\.openURL) var openURL
-  @State var loading = true
-  //  @State var loadingMore = false
-  @StateObject var posts = ObservableArray<Post>()
-  @State var lastPostAfter: String?
-  @State var searchText: String = ""
-  @State var sort: SubListingSortOption = Defaults[.preferredSort]
-  @State var newPost = false
-  //  @State var disableScroll = false
-  @EnvironmentObject var redditAPI: RedditAPI
+  @Environment(\.openURL) private var openURL
+  @State private var loading = true
+  @StateObject private var posts = ObservableArray<Post>()
+  @State private var lastPostAfter: String?
+  @State private var searchText: String = ""
+  @State private var sort: SubListingSortOption = Defaults[.preferredSort]
+  @State private var newPost = false
+  @EnvironmentObject private var redditAPI: RedditAPI
+  @EnvironmentObject private var router: Router
   
   func asyncFetch(force: Bool = false, loadMore: Bool = false) async {
     if (subreddit.data == nil || force) && !feedsAndSuch.contains(subreddit.id) {
@@ -177,8 +181,8 @@ struct SubredditPosts: View {
           }
           
           if let data = subreddit.data {
-            NavigationLink {
-              SubredditInfo(subreddit: subreddit)
+            Button {
+              router.path.append(SubViewType.info(subreddit))
             } label: {
               SubredditIcon(data: data)
             }
@@ -190,7 +194,6 @@ struct SubredditPosts: View {
     .refreshable {
       await asyncFetch(force: true)
     }
-    .searchable(text: $searchText, prompt: "Search r/\(subreddit.data?.display_name ?? subreddit.id)")
     .onAppear {
       //      sort = Defaults[.preferredSort]
       doThisAfter(0) {
@@ -206,6 +209,7 @@ struct SubredditPosts: View {
       }
       fetch()
     }
+    .searchable(text: $searchText, prompt: "Search r/\(subreddit.data?.display_name ?? subreddit.id)")
   }
 }
 

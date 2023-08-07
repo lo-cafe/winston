@@ -169,12 +169,6 @@ class RedditAPI: ObservableObject {
     return URL(string: "https://www.reddit.com/api/v1/authorize?client_id=\(appID.trimmingCharacters(in: .whitespaces))&response_type=\(response_type)&state=\(state)&redirect_uri=\(redirect_uri)&duration=\(duration)&scope=\(scope)".addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!)!
   }
   
-  func getModHash() async {
-    if loggedUser.modhash == nil {
-      await fetchSubs()
-    }
-  }
-  
   struct RefreshAccessTokenResponse: Decodable {
     let access_token: String
     let token_type: String
