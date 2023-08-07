@@ -9,9 +9,10 @@ import SwiftUI
 import Defaults
 
 struct PostReplies: View {
-  @Default(.preferenceShowCommentsCards) var preferenceShowCommentsCards
-  @Default(.commentsInnerHPadding) var commentsInnerHPadding
-  @Default(.cardedCommentsOuterHPadding) var cardedCommentsOuterHPadding
+  @Default(.preferenceShowCommentsCards) private var preferenceShowCommentsCards
+  @Default(.commentsInnerHPadding) private var commentsInnerHPadding
+  @Default(.cardedCommentsOuterHPadding) private var cardedCommentsOuterHPadding
+  var update: Bool
   @ObservedObject var post: Post
   @ObservedObject var subreddit: Subreddit
   var ignoreSpecificComment: Bool
@@ -90,6 +91,11 @@ struct PostReplies: View {
             Spacer()
               .frame(height: 1)
               .listRowBackground(Color.clear)
+              .onChange(of: update) { _ in
+                Task {
+                  await asyncFetch(post.data == nil)
+                }
+              }
               .onChange(of: ignoreSpecificComment) { val in
                 Task {
                   await asyncFetch(post.data == nil, val)
