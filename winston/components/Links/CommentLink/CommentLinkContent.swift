@@ -52,7 +52,11 @@ struct CommentLinkContent: View {
   @State var offsetX: CGFloat = 0
   @State var bodySize: CGSize = .zero
   @State var selectable = false
+  
+  @Default(.cardedCommentsInnerHPadding) var cardedCommentsInnerHPadding
+  
   var body: some View {
+    let horPad = preferenceShowCommentsCards ? cardedCommentsInnerHPadding : 0
     if let data = comment.data {
       let collapsed = data.collapsed ?? false
       Group {
@@ -137,7 +141,7 @@ struct CommentLinkContent: View {
         .introspect(.listCell, on: .iOS(.v16, .v17)) { cell in
           cell.layer.masksToBounds = false
         }
-        .padding(.horizontal, !preferenceShowCommentsCards ? 0 : 13)
+        .padding(.horizontal, horPad)
         .padding(.top, data.depth != 0 ? 6 : 0)
         .frame(height: data.depth != 0 ? 42 : 30, alignment: .leading)
         .background(preferenceShowCommentsCards && showReplies ? Color.listBG : .clear)
@@ -156,6 +160,7 @@ struct CommentLinkContent: View {
                   }
                 }
               }
+              .mask(Rectangle())
             }
             if let body = data.body {
               VStack {
@@ -199,8 +204,9 @@ struct CommentLinkContent: View {
           .introspect(.listCell, on: .iOS(.v16, .v17)) { cell in
             cell.layer.masksToBounds = false
           }
-          .padding(.horizontal, !preferenceShowCommentsCards ? 0 : 13)
-          .mask(Color.black)
+//          .padding(.horizontal, preferenceShowCommentsCards ? 13 : 0)
+          .padding(.horizontal, horPad)
+          .mask(Color.black.padding(.top, -(data.depth != 0 ? 42 : 30)).padding(.bottom, -8))
           .background(preferenceShowCommentsCards && showReplies ? Color.listBG : .clear)
           .contextMenu {
             if !selectable && forcedBodySize == nil {

@@ -9,12 +9,11 @@ import SwiftUI
 import Defaults
 
 struct MessageLink: View {
-  var reset: Bool
-  @Default(.preferenceShowPostsCards) var preferenceShowPostsCards
-  @Default(.preferenceShowPostsAvatars) var preferenceShowPostsAvatars
-  @State var openedPost = false
-  @State var pressed = false
+  @Default(.preferenceShowPostsCards) private var preferenceShowPostsCards
+  @Default(.preferenceShowPostsAvatars) private var preferenceShowPostsAvatars
+  @State private var pressed = false
   @ObservedObject var message: Message
+  @EnvironmentObject private var router: Router
   
   var body: some View {
     if let data = message.data, let author = data.author, let subreddit = data.subreddit, let parentID = data.parent_id, let name = data.name {
@@ -30,12 +29,6 @@ struct MessageLink: View {
         }
       }
       .allowsHitTesting(false)
-      .onChange(of: reset) { _ in openedPost = false }
-      .background(
-        data.context == nil
-        ? nil
-        : NavigationLink(destination: PostViewContainer(post: Post(id: getPostId(from: data.context!) ?? "lol", api: message.redditAPI), sub: Subreddit(id: subreddit, api: message.redditAPI), highlightID: actualParentID), isActive: $openedPost, label: { EmptyView() }).buttonStyle(EmptyButtonStyle()).opacity(0).allowsHitTesting(false)
-      )
       .padding(.horizontal, preferenceShowPostsCards ? 16 : 0)
       .padding(.vertical, preferenceShowPostsCards ? 12 : 0)
       .frame(maxWidth: .infinity, alignment: .topLeading)
@@ -47,7 +40,9 @@ struct MessageLink: View {
       .compositingGroup()
       .opacity(!(data.new ?? false) ? 0.65 : 1)
       .swipyActions(pressing: $pressed, onTap: {
-        openedPost = true
+        if data.context != nil {
+          router.path.append(PostViewPayload(post: Post(id: getPostId(from: data.context!) ?? "lol", api: message.redditAPI), sub: Subreddit(id: subreddit, api: message.redditAPI), highlightID: actualParentID))
+        }
       }, rightActionIcon: !(data.new ?? false) ? "eye.slash.fill" : "eye.fill", rightActionHandler: {
         Task {
           await message.toggleRead()

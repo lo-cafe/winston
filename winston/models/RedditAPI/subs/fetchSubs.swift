@@ -28,7 +28,7 @@ extension RedditAPI {
     await refreshToken()
     if let headers = self.getRequestHeaders() {
       
-      var params = FetchSubsPayload(limit: 100, count: 0)
+      var params = FetchSubsPayload(limit: 100)
       
       if let after = after {
         params.after = after
@@ -72,7 +72,8 @@ extension RedditAPI {
   
   struct FetchSubsPayload: Codable {
     var limit: Int
-    var count: Int
     var after: String?
+    var show = "all"
+    var count = 100
   }
 }

@@ -6,17 +6,21 @@
 //
 
 import SwiftUI
+import Defaults
 
 struct CommentLinkFull: View {
+  @EnvironmentObject private var router: Router
+  @Default(.preferenceShowCommentsCards) private var preferenceShowCommentsCards
   var post: Post
   var subreddit: Subreddit
   var arrowKinds: [ArrowKind]
   var comment: Comment
   var indentLines: Int?
-  @State var loadMoreLoading = false
-  @State var opened = false
-  @State var id = UUID().uuidString
+  @State private var loadMoreLoading = false
+  @State private var id = UUID().uuidString
+  @Default(.cardedCommentsInnerHPadding) var cardedCommentsInnerHPadding
   var body: some View {
+    let horPad = preferenceShowCommentsCards ? cardedCommentsInnerHPadding : 0
     if let data = comment.data {
       HStack {
         if data.depth != 0 && indentLines != 0 {
@@ -35,21 +39,18 @@ struct CommentLinkFull: View {
             Image(systemName: "plus.message.fill")
             Text(loadMoreLoading ? "Just a sec..." : "View full conversation")
           }
-          .background(
-            NavigationLink(destination: PostView(post: post, subreddit: subreddit), isActive: $opened, label: { EmptyView().opacity(0).allowsHitTesting(false).disabled(true) }).buttonStyle(PlainButtonStyle()).opacity(0).frame(width: 0, height: 0).allowsHitTesting(false).disabled(true)
-          )
           .allowsHitTesting(false)
           .padding(.vertical, 12)
         }
         .contentShape(Rectangle())
         
       }
-      .padding(.horizontal, 13)
+      .padding(.horizontal, horPad)
       .frame(maxWidth: .infinity, alignment: .leading)
-      .background(Color.listBG)
+      .background(preferenceShowCommentsCards ? Color.listBG : .clear)
       .contentShape(Rectangle())
       .onTapGesture {
-        opened = true
+        router.path.append(PostViewPayload(post: post, sub: subreddit))
       }
       .allowsHitTesting(!loadMoreLoading)
       .opacity(loadMoreLoading ? 0.5 : 1)

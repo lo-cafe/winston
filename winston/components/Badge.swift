@@ -21,37 +21,24 @@ struct Badge: View {
   var nameSize: CGFloat = 13
   var labelSize: CGFloat = 12
   var extraInfo: [String:String] = [:]
-  @State var opened = false
-  @EnvironmentObject var redditAPI: RedditAPI
+  @EnvironmentObject private var router: Router
+  @EnvironmentObject private var redditAPI: RedditAPI
   var body: some View {
-    //    Button {
-    //      opened = true
-    //    } label: {
     HStack(spacing: 5) {
       if showAvatar {
         Avatar(url: avatarURL, userID: author, fullname: fullname, avatarSize: avatarSize)
           .onTapGesture {
-            opened = true
+            router.path.append(User(id: author, api: redditAPI))
           }
         //            .shrinkOnTap()
       }
       
       VStack(alignment: .leading) {
         
-        //          VStack {
         (Text("by ").font(.system(size: nameSize, weight: .medium)).foregroundColor(.primary.opacity(0.5)) + Text(author).font(.system(size: nameSize, weight: .semibold)).foregroundColor(author == "[deleted]" ? .red : usernameColor))
           .onTapGesture {
-            opened = true
+            router.path.append(User(id: author, api: redditAPI))
           }
-          .background(
-            NavigationLink(destination: UserView(user: User(id: author, api: redditAPI)), isActive: $opened, label: { EmptyView().opacity(0).allowsHitTesting(false).disabled(true) }).buttonStyle(PlainButtonStyle()).opacity(0).frame(width: 0, height: 0).allowsHitTesting(false).disabled(true)
-          )
-        //              .allowsHitTesting(false)
-        //          }
-        //          .contentShape(Rectangle())
-        //          .onTapGesture {
-        //            opened = true
-        //          }
         
         HStack(alignment: .center, spacing: 6) {
           ForEach(Array(extraInfo.keys), id: \.self) { icon in

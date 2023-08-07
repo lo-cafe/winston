@@ -14,9 +14,9 @@ import LonginusSwiftUI
 
 struct UserView: View {
   @StateObject var user: User
-  @State var loading = true
-  @State var lastActivities: [Either<PostData, CommentData>]?
-  @State var contentWidth: CGFloat = 0
+  @State private var loading = true
+  @State private var lastActivities: [Either<PostData, CommentData>]?
+  @State private var contentWidth: CGFloat = 0
   
   func refresh(_ force: Bool = false, _ full: Bool = true) async {
     await user.refetchUser()
