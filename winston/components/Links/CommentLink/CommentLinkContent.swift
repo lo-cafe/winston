@@ -34,8 +34,9 @@ struct CommentLinkContentPreview: View {
 }
 
 struct CommentLinkContent: View {
-  @Default(.preferenceShowCommentsCards) var preferenceShowCommentsCards
-  @Default(.preferenceShowCommentsAvatars) var preferenceShowCommentsAvatars
+  var highlightID: String?
+  @Default(.preferenceShowCommentsCards) private var preferenceShowCommentsCards
+  @Default(.preferenceShowCommentsAvatars) private var preferenceShowCommentsAvatars
   var forcedBodySize: CGSize?
   var showReplies = true
   var arrowKinds: [ArrowKind]
@@ -52,6 +53,7 @@ struct CommentLinkContent: View {
   @State var offsetX: CGFloat = 0
   @State var bodySize: CGSize = .zero
   @State var selectable = false
+  @State var highlight = false
   
   @Default(.cardedCommentsInnerHPadding) var cardedCommentsInnerHPadding
   
@@ -144,8 +146,18 @@ struct CommentLinkContent: View {
         .padding(.horizontal, horPad)
         .padding(.top, data.depth != 0 ? 6 : 0)
         .frame(height: data.depth != 0 ? 42 : 30, alignment: .leading)
+        .background(Color.blue.opacity(highlight ? 0.2 : 0))
         .background(preferenceShowCommentsCards && showReplies ? Color.listBG : .clear)
         .mask(Color.listBG)
+        .onAppear {
+          if var specificID = highlightID {
+            specificID = specificID.hasPrefix("t1_") ? String(specificID.dropFirst(3)) : specificID
+            if specificID == data.id { withAnimation { highlight = true } }
+            doThisAfter(0.1) {
+              withAnimation(.easeOut(duration: 4)) { highlight = false }
+            }
+          }
+        }
         .id("\(data.id)-header\(forcedBodySize == nil ? "" : "-preview")")
         
         if !collapsed {
@@ -204,8 +216,9 @@ struct CommentLinkContent: View {
           .introspect(.listCell, on: .iOS(.v16, .v17)) { cell in
             cell.layer.masksToBounds = false
           }
-//          .padding(.horizontal, preferenceShowCommentsCards ? 13 : 0)
+          .padding(.horizontal, preferenceShowCommentsCards ? 13 : 0)
           .padding(.horizontal, horPad)
+          .background(Color.blue.opacity(highlight ? 0.2 : 0))
           .mask(Color.black.padding(.top, -(data.depth != 0 ? 42 : 30)).padding(.bottom, -8))
           .background(preferenceShowCommentsCards && showReplies ? Color.listBG : .clear)
           .contextMenu {
@@ -233,7 +246,7 @@ struct CommentLinkContent: View {
           .sheet(isPresented: $showReplyModal) {
             ReplyModalComment(comment: comment)
           }
-          .id("\(data.id)-body-\(forcedBodySize == nil ? "" : "-preview")")
+          .id("\(data.id)-body\(forcedBodySize == nil ? "" : "-preview")")
         }
         
       }

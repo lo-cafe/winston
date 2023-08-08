@@ -64,7 +64,7 @@ struct PostReplies: View {
                   .frame(maxWidth: .infinity, minHeight: 8, maxHeight: 8)
                   .id("\(comment.id)-top-spacer")
               }
-              CommentLink(post: post, subreddit: subreddit, postFullname: postFullname, parentElement: .post(comments), comment: comment)
+              CommentLink(highlightID: ignoreSpecificComment ? nil : highlightID, post: post, subreddit: subreddit, postFullname: postFullname, parentElement: .post(comments), comment: comment)
               if preferenceShowCommentsCards {
                 Spacer()
                   .frame(maxWidth: .infinity, minHeight: 24, maxHeight: 24)
