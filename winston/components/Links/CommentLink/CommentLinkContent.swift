@@ -146,9 +146,9 @@ struct CommentLinkContent: View {
         .padding(.horizontal, horPad)
         .padding(.top, data.depth != 0 ? 6 : 0)
         .frame(height: data.depth != 0 ? 42 : 30, alignment: .leading)
+        .mask(Color.listBG)
         .background(Color.blue.opacity(highlight ? 0.2 : 0))
         .background(preferenceShowCommentsCards && showReplies ? Color.listBG : .clear)
-        .mask(Color.listBG)
         .onAppear {
           if var specificID = highlightID {
             specificID = specificID.hasPrefix("t1_") ? String(specificID.dropFirst(3)) : specificID
@@ -218,8 +218,8 @@ struct CommentLinkContent: View {
           }
           .padding(.horizontal, preferenceShowCommentsCards ? 13 : 0)
           .padding(.horizontal, horPad)
-          .background(Color.blue.opacity(highlight ? 0.2 : 0))
           .mask(Color.black.padding(.top, -(data.depth != 0 ? 42 : 30)).padding(.bottom, -8))
+          .background(Color.blue.opacity(highlight ? 0.2 : 0))
           .background(preferenceShowCommentsCards && showReplies ? Color.listBG : .clear)
           .contextMenu {
             if !selectable && forcedBodySize == nil {

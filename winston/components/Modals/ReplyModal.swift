@@ -79,7 +79,7 @@ struct ReplyModalPost: View {
 struct ReplyModal<Content: View>: View {
   var thingFullname: String
   var action: ((@escaping (Bool) -> ()), String) -> ()
-  @EnvironmentObject var tempGlobalState: TempGlobalState
+  @ObservedObject private var globalLoader = TempGlobalState.shared.globalLoader
   @EnvironmentObject var redditAPI: RedditAPI
   @State var alertExit = false
   @StateObject var textWrapper = TextFieldObserver(delay: 0.5)
@@ -131,10 +131,10 @@ struct ReplyModal<Content: View>: View {
         MasterButton(icon: "paperplane.fill", label: "Send", height: 48, fullWidth: true, cornerRadius: 16) {
           withAnimation(spring) {
             dismiss()
-            tempGlobalState.loadingText = "Commenting..."
           }
+          globalLoader.enable("Commenting...")
           action({ result in
-            tempGlobalState.loadingText = nil
+            globalLoader.dismiss()
             if result {
               if let currentDraft = currentDraft {
                 viewContext.delete(currentDraft)
