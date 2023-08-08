@@ -43,7 +43,7 @@ struct Tabber: View {
     .settings: true,
   ]
   @Default(.postsInBox) var postsInBox
-  
+  @Default(.showUsernameInTabBar) var showUsernameInTabBar
   var body: some View {
     TabView(selection: $activeTab.onUpdate { newTab in if activeTab == newTab { reset[newTab]!.toggle() } }) {
       
@@ -69,7 +69,13 @@ struct Tabber: View {
         .tabItem {
           VStack {
             Image(systemName: "person.fill")
-            Text("Me")
+              if let me = redditAPI.me {
+                  if let data = me.data {
+                      Text(showUsernameInTabBar ? data.name : "Me")
+                  }
+              } else {
+                  Text("Me")
+              }
           }
         }
         .tag(TabIdentifier.me)
