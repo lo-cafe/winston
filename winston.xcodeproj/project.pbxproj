@@ -43,6 +43,7 @@
 		EC1E7B682A815BE100DB459A /* LightboxButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC1E7B672A815BE100DB459A /* LightboxButton.swift */; };
 		EC1E7B6A2A815BF300DB459A /* LightBoxOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC1E7B692A815BF300DB459A /* LightBoxOverlay.swift */; };
 		EC1E7B6C2A81650700DB459A /* loader.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC1E7B6B2A81650700DB459A /* loader.swift */; };
+		EC1E7B6E2A82CC2A00DB459A /* defaultNavDestinations.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC1E7B6D2A82CC2A00DB459A /* defaultNavDestinations.swift */; };
 		EC200C862A7795B500E69543 /* PostReplies.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC200C852A7795B500E69543 /* PostReplies.swift */; };
 		EC200C882A7795BA00E69543 /* PostContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC200C872A7795BA00E69543 /* PostContent.swift */; };
 		EC22A3142A5B4B9C0062A112 /* ChangeAuthAPIKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC22A3132A5B4B9C0062A112 /* ChangeAuthAPIKey.swift */; };
@@ -263,6 +264,7 @@
 		EC1E7B672A815BE100DB459A /* LightboxButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightboxButton.swift; sourceTree = "<group>"; };
 		EC1E7B692A815BF300DB459A /* LightBoxOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightBoxOverlay.swift; sourceTree = "<group>"; };
 		EC1E7B6B2A81650700DB459A /* loader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = loader.swift; sourceTree = "<group>"; };
+		EC1E7B6D2A82CC2A00DB459A /* defaultNavDestinations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = defaultNavDestinations.swift; sourceTree = "<group>"; };
 		EC200C852A7795B500E69543 /* PostReplies.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostReplies.swift; sourceTree = "<group>"; };
 		EC200C872A7795BA00E69543 /* PostContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostContent.swift; sourceTree = "<group>"; };
 		EC22A3132A5B4B9C0062A112 /* ChangeAuthAPIKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangeAuthAPIKey.swift; sourceTree = "<group>"; };
@@ -525,6 +527,7 @@
 				EC8F349C2A6F988900EB8249 /* Placeholder.swift */,
 				ECC68D4A2A7A9554005BC7B4 /* nsfw.swift */,
 				EC1E7B6B2A81650700DB459A /* loader.swift */,
+				EC1E7B6D2A82CC2A00DB459A /* defaultNavDestinations.swift */,
 			);
 			path = modifiers;
 			sourceTree = "<group>";
@@ -1203,6 +1206,7 @@
 				ECD2A3772A69C26900EDD02D /* consts.swift in Sources */,
 				EC8F348F2A6E61B900EB8249 /* PinchToZoom.swift in Sources */,
 				EC0854202A4BFF0700E88389 /* fetchUser.swift in Sources */,
+				EC1E7B6E2A82CC2A00DB459A /* defaultNavDestinations.swift in Sources */,
 				EC8F347C2A6CEBD600EB8249 /* winston.xcdatamodeld in Sources */,
 				EC6373552A791855000A03A3 /* Onboarding4GettingAppID.swift in Sources */,
 				ECAEFF692A77DE2B0052FCD3 /* StringEmojize.swift in Sources */,
