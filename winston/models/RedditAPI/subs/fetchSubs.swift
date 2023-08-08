@@ -52,7 +52,7 @@ extension RedditAPI {
           finalSubs += fetchedSubs
         }
         if !after.isNil {
-          return data.data?.children
+          return finalSubs
         }
         await MainActor.run { [finalSubs] in
           withAnimation {
