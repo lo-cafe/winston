@@ -41,6 +41,7 @@ struct Subreddits: View {
   @Environment(\.openURL) private var openURL
   @EnvironmentObject private var redditAPI: RedditAPI
   @Default(.subreddits) private var subreddits
+  @Default(.openHomeSubOnLaunch) private var openHomeSubOnLaunch
   @State private var searchText: String = ""
   @StateObject private var subsDict = SubsDictContainer()
   @State private var loaded = false
@@ -145,6 +146,7 @@ struct Subreddits: View {
       }
       .onAppear {
         if !loaded {
+          if openHomeSubOnLaunch { router.path.append(SubViewType.posts(Subreddit(id: "home", api: redditAPI))) }
           if subreddits.count > 0 {
             subsDict.data = sort(subreddits)
           }

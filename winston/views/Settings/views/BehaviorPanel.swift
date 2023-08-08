@@ -15,10 +15,12 @@ struct BehaviorPanel: View {
   @Default(.preferredCommentSort) var preferredCommentSort
   @Default(.blurPostLinkNSFW) var blurPostLinkNSFW
   @Default(.blurPostNSFW) var blurPostNSFW
+  @Default(.openHomeSubOnLaunch) var openHomeSubOnLaunch
   
   var body: some View {
     List {
       Section("General") {
+        Toggle("Open Home on app launch", isOn: $openHomeSubOnLaunch)
         Toggle("Open Youtube videos externally", isOn: $openYoutubeApp)
         
         VStack(alignment: .leading) {
