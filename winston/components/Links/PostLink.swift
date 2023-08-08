@@ -191,7 +191,9 @@ struct PostLink: View, Equatable {
       .opacity((data.winstonSeen ?? false) ? 0.75 : 1)
       .contentShape(Rectangle())
       .swipyUI(onTap: {
-        router.path.append(PostViewPayload(post: post, sub: feedsAndSuch.contains(sub.id) ? sub : sub))
+        withAnimation {
+          router.path.append(PostViewPayload(post: post, sub: feedsAndSuch.contains(sub.id) ? sub : sub))
+        }
       }, secondActionIcon: (data.winstonSeen ?? false) ? "eye.slash.fill" : "eye.fill",
                leftActionHandler: {
         Task {
