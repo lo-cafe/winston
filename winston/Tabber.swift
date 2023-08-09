@@ -60,8 +60,8 @@ struct Tabber: View {
       Inbox(reset: reset[.inbox]!)
         .tabItem {
           VStack {
-            Image(systemName: "message.fill")
-            Text("Inbox")
+            Image(systemName: "bell.fill")
+            Text("Notifications")
           }
         }
         .tag(TabIdentifier.inbox)
