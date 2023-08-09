@@ -25,7 +25,7 @@ struct UserLink: View {
           Avatar(url: data.icon_img, userID: data.name, avatarSize: 64)
           
           VStack(alignment: .leading) {
-            Text("r/\(data.name)")
+            Text("u/\(data.name)")
               .fontSize(18, .semibold)
             Text("\(formatBigNumber(data.total_karma ?? ((data.link_karma ?? 0) + (data.comment_karma ?? 0)))) karma")
               .fontSize(14).opacity(0.5)

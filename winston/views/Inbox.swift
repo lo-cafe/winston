@@ -12,6 +12,7 @@ struct Inbox: View {
   @StateObject var messages = ObservableArray<Message>()
   @State var loading = false
   @EnvironmentObject var redditAPI: RedditAPI
+  @StateObject private var router = Router()
   
   func fetch(_ loadMore: Bool = false, _ force: Bool = false) async {
     if messages.data.count > 0 && !force { return }
@@ -31,7 +32,7 @@ struct Inbox: View {
   }
   
   var body: some View {
-    GoodNavigator {
+    NavigationStack(path: $router.path) {
       List {
         Group {
           if loading {
@@ -57,6 +58,7 @@ struct Inbox: View {
       .refreshable {
         await fetch(false, true)
       }
+      .defaultNavDestinations(router)
     }
   }
 }

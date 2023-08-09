@@ -14,9 +14,7 @@ struct SubItem: View {
   var body: some View {
     if let data = sub.data {
       let favorite = data.user_has_favorited ?? false
-      Button {
-        router.path.append(SubViewType.posts(sub))
-      } label: {
+      NavigationLink(value: SubViewType.posts(sub)) {
         HStack {
           SubredditIcon(data: data)
           Text(data.display_name ?? "")

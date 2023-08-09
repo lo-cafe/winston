@@ -22,7 +22,8 @@ class Oops: ObservableObject {
 }
 
 class TempGlobalState: ObservableObject {
-  @Published var loadingText: String?
+  static var shared = TempGlobalState()
+  @Published var globalLoader = GlobalLoader()
 }
 
 enum TabIdentifier {
@@ -30,9 +31,9 @@ enum TabIdentifier {
 }
 
 struct Tabber: View {
+  @ObservedObject var tempGlobalState = TempGlobalState.shared
   @ObservedObject var errorAlert = Oops.shared
   @State var activeTab = TabIdentifier.posts
-  @StateObject var tempGlobalState = TempGlobalState()
   @EnvironmentObject var redditAPI: RedditAPI
   @State var credModalOpen = false
   @State var reset: [TabIdentifier:Bool] = [
@@ -94,19 +95,7 @@ struct Tabber: View {
       
     }
     .overlay(
-      HStack(spacing: 8) {
-        ProgressView()
-          .progressViewStyle(CircularProgressViewStyle(tint: .teal))
-
-        Text(tempGlobalState.loadingText ?? "Commenting...")
-          .foregroundColor(.teal)
-          .fontSize(15, .medium)
-          
-      }
-        .padding(.horizontal, 12)
-        .padding(.vertical, 8)
-        .floating()
-        .offset(y: tempGlobalState.loadingText.isNil ? 75 : -62)
+GlobalLoaderView()
       , alignment: .bottom
     )
     .environmentObject(tempGlobalState)

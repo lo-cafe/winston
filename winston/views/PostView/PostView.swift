@@ -25,9 +25,12 @@ struct PostView: View {
   @State private var sort: CommentSortOption = Defaults[.preferredCommentSort]
   @EnvironmentObject private var redditAPI: RedditAPI
   @EnvironmentObject private var router: Router
+  @ObservedObject private var globalLoader = TempGlobalState.shared.globalLoader
+  @State var update = false
   
   func asyncFetch(_ full: Bool = true) async {
     if let result = await post.refreshPost(commentID: ignoreSpecificComment ? nil : highlightID, sort: sort, after: nil, subreddit: subreddit.data?.display_name ?? subreddit.id, full: full), let newComments = result.0 {
+      
       Task {
         await redditAPI.updateAvatarURLCacheFromComments(comments: newComments)
       }
@@ -49,11 +52,12 @@ struct PostView: View {
           }
           .listRowBackground(Color.clear)
           
-          PostReplies(post: post, subreddit: subreddit, ignoreSpecificComment: ignoreSpecificComment, highlightID: highlightID, sort: sort, proxy: proxy)
+          PostReplies(update: update, post: post, subreddit: subreddit, ignoreSpecificComment: ignoreSpecificComment, highlightID: highlightID, sort: sort, proxy: proxy)
           
           if !ignoreSpecificComment && highlightID != nil {
             Section {
               Button {
+                globalLoader.enable("Loading full post...")
                 withAnimation {
                   ignoreSpecificComment = true
                 }
@@ -128,6 +132,7 @@ struct PostView: View {
           .animation(nil, value: sort)
       )
       .onChange(of: sort) { val in
+        update.toggle()
         Task { await asyncFetch() }
       }
       .onAppear {

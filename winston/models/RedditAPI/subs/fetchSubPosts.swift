@@ -12,11 +12,16 @@ extension RedditAPI {
   func fetchSubPosts(_ id: String, sort: SubListingSortOption = .hot, after: String? = nil) async -> ([ListingChild<PostData>]?, String?)? {
     await refreshToken()
     if let headers = self.getRequestHeaders() {
-      let params = FetchSubsPayload(limit: 15, after: after)
+      let params = FetchSubsPayload(limit: 25, after: after)
       var subID = id == "" ? "/" : id.hasPrefix("/r/") ? id : "/r/\(id)"
       subID = !subID.hasSuffix("/") ? "\(subID)/" : subID
+      subID = "\(subID)\(sort.rawVal.value)"
+      if id == "saved", let myName = me?.data?.name {
+        subID = "/user/\(myName)/saved/"
+      }
+      
       let response = await AF.request(
-        "\(RedditAPI.redditApiURLBase)\(subID)\(sort.rawVal.value)/.json",
+        "\(RedditAPI.redditApiURLBase)\(subID).json",
         method: .get,
         parameters: params,
         encoder: URLEncodedFormParameterEncoder(destination: .queryString),
@@ -25,9 +30,6 @@ extension RedditAPI {
         .serializingDecodable(Listing<PostData>.self).response
       switch response.result {
       case .success(let data):
-        //        if let modhash = data.data?.modhash {
-        //          loggedUser.modhash = modhash
-        //        }
         return (data.data?.children, data.data?.after)
       case .failure(let error):
         Oops.shared.sendError(error)

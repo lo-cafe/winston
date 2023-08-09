@@ -9,18 +9,20 @@ import SwiftUI
 import Defaults
 
 struct PostReplies: View {
-  @Default(.preferenceShowCommentsCards) var preferenceShowCommentsCards
-  @Default(.commentsInnerHPadding) var commentsInnerHPadding
-  @Default(.cardedCommentsOuterHPadding) var cardedCommentsOuterHPadding
+  @Default(.preferenceShowCommentsCards) private var preferenceShowCommentsCards
+  @Default(.commentsInnerHPadding) private var commentsInnerHPadding
+  @Default(.cardedCommentsOuterHPadding) private var cardedCommentsOuterHPadding
+  var update: Bool
   @ObservedObject var post: Post
   @ObservedObject var subreddit: Subreddit
   var ignoreSpecificComment: Bool
   var highlightID: String?
   var sort: CommentSortOption
   var proxy: ScrollViewProxy
-  @EnvironmentObject var redditAPI: RedditAPI
-  @StateObject var comments = ObservableArray<Comment>()
-  @State var loading = true
+  @EnvironmentObject private var redditAPI: RedditAPI
+  @StateObject private var comments = ObservableArray<Comment>()
+  @ObservedObject private var globalLoader = TempGlobalState.shared.globalLoader
+  @State private var loading = true
   
   func asyncFetch(_ full: Bool, _ altIgnoreSpecificComment: Bool? = nil) async {
     if let result = await post.refreshPost(commentID: (altIgnoreSpecificComment ?? ignoreSpecificComment) ? nil : highlightID, sort: sort, after: nil, subreddit: subreddit.data?.display_name ?? subreddit.id, full: full), let newComments = result.0 {
@@ -63,7 +65,7 @@ struct PostReplies: View {
                   .frame(maxWidth: .infinity, minHeight: 8, maxHeight: 8)
                   .id("\(comment.id)-top-spacer")
               }
-              CommentLink(post: post, subreddit: subreddit, postFullname: postFullname, parentElement: .post(comments), comment: comment)
+              CommentLink(highlightID: ignoreSpecificComment ? nil : highlightID, post: post, subreddit: subreddit, postFullname: postFullname, parentElement: .post(comments), comment: comment)
               if preferenceShowCommentsCards {
                 Spacer()
                   .frame(maxWidth: .infinity, minHeight: 24, maxHeight: 24)
@@ -90,9 +92,15 @@ struct PostReplies: View {
             Spacer()
               .frame(height: 1)
               .listRowBackground(Color.clear)
+              .onChange(of: update) { _ in
+                Task {
+                  await asyncFetch(post.data == nil)
+                }
+              }
               .onChange(of: ignoreSpecificComment) { val in
                 Task {
                   await asyncFetch(post.data == nil, val)
+                  globalLoader.dismiss()
                 }
                 if val {
                   withAnimation(spring) {

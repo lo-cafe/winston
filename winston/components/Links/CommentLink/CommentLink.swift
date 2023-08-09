@@ -53,6 +53,7 @@ class SubCommentsReferencesContainer: ObservableObject {
 }
 
 struct CommentLink: View {
+  var highlightID: String?
   var post: Post?
   var subreddit: Subreddit?
   var arrowKinds: [ArrowKind] = []
@@ -70,8 +71,6 @@ struct CommentLink: View {
     if let data = comment.data {
       let collapsed = data.collapsed ?? false
       Group {
-        
-        
         Group {
           if let kind = comment.kind, kind == "more" {
             if comment.id == "_" {
@@ -82,7 +81,7 @@ struct CommentLink: View {
               CommentLinkMore(arrowKinds: arrowKinds, comment: comment, postFullname: postFullname, parentElement: parentElement, indentLines: indentLines)
             }
           } else {
-              CommentLinkContent(showReplies: showReplies, arrowKinds: arrowKinds, indentLines: indentLines, lineLimit: lineLimit, post: post, comment: comment, avatarsURL: avatarsURL)
+            CommentLinkContent(highlightID: highlightID, showReplies: showReplies, arrowKinds: arrowKinds, indentLines: indentLines, lineLimit: lineLimit, post: post, comment: comment, avatarsURL: avatarsURL)
           }
         }
         
