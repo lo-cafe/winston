@@ -12,9 +12,12 @@ extension RedditAPI {
   func fetchSubPosts(_ id: String, sort: SubListingSortOption = .hot, after: String? = nil) async -> ([ListingChild<PostData>]?, String?)? {
     await refreshToken()
     if let headers = self.getRequestHeaders() {
-      let params = FetchSubsPayload(limit: 15, after: after)
+      let params = FetchSubsPayload(limit: 25, after: after)
       var subID = id == "" ? "/" : id.hasPrefix("/r/") ? id : "/r/\(id)"
       subID = !subID.hasSuffix("/") ? "\(subID)/" : subID
+      if id == "saved", let me = me?.data?.name {
+        subID = "/user/\(me)/saved"
+      }
       let response = await AF.request(
         "\(RedditAPI.redditApiURLBase)\(subID)\(sort.rawVal.value)/.json",
         method: .get,
