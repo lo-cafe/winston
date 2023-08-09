@@ -30,7 +30,7 @@ struct Onboarding5GettingSecret: View {
           .fixedSize(horizontal: false, vertical: true)
           .frame(maxWidth: 300)
         
-        TextField("", text: $appSecret, prompt: Text("Paste here the secret key"))
+        TextField("", text: $appSecret, prompt: Text("Paste the secret key here"))
           .fontSize(16, .medium)
           .frame(maxWidth: .infinity)
           .padding(.vertical, 12)
