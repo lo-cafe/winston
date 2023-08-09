@@ -69,10 +69,8 @@ struct Tabber: View {
         .tabItem {
           VStack {
             Image(systemName: "person.fill")
-              if let me = redditAPI.me {
-                  if let data = me.data {
-                      Text(showUsernameInTabBar ? data.name : "Me")
-                  }
+              if showUsernameInTabBar, let me = redditAPI.me, let data = me.data {
+                  Text(data.name)
               } else {
                   Text("Me")
               }
