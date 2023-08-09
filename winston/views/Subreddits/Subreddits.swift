@@ -193,11 +193,11 @@ struct Subreddits: View {
         }
         .onAppear {
           if !loaded {
-            if openHomeSubOnLaunch { router.path.append(SubViewType.posts(Subreddit(id: "home", api: redditAPI))) }
             if subreddits.count > 0 {
               subsDict.data = sort(subreddits)
             }
             Task {
+              if openHomeSubOnLaunch && router.path.count == 0 { router.path.append(SubViewType.posts(Subreddit(id: "home", api: redditAPI))) }
               await redditAPI.fetchSubs()
               withAnimation {
                 loaded = true
