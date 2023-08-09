@@ -74,6 +74,6 @@ extension RedditAPI {
     var limit: Int
     var after: String?
     var show = "all"
-    var count = 100
+    var count = 0
   }
 }
