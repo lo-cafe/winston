@@ -27,12 +27,12 @@ struct AppearancePanel: View {
   @Default(.cardedPostLinksInnerVPadding) var cardedPostLinksInnerVPadding
   
   @Default(.commentsInnerHPadding) var commentsInnerHPadding
-//  @Default(.commentsInnerVPadding) var commentsInnerVPadding
+  //  @Default(.commentsInnerVPadding) var commentsInnerVPadding
   
   @Default(.cardedCommentsOuterHPadding) var cardedCommentsOuterHPadding
-//  @Default(.cardedCommentsOuterVPadding) var cardedCommentsOuterVPadding
+  //  @Default(.cardedCommentsOuterVPadding) var cardedCommentsOuterVPadding
   @Default(.cardedCommentsInnerHPadding) var cardedCommentsInnerHPadding
-//  @Default(.cardedCommentsInnerVPadding) var cardedCommentsInnerVPadding
+  //  @Default(.cardedCommentsInnerVPadding) var cardedCommentsInnerVPadding
   
   
   var body: some View {
@@ -40,7 +40,7 @@ struct AppearancePanel: View {
       Section("General") {
         Toggle("Blur reply background", isOn: $replyModalBlurBackground)
         Toggle("Blur new post background", isOn: $newPostModalBlurBackground)
-          Toggle("Show Username in Tabbar", isOn: $showUsernameInTabBar)
+        Toggle("Show username in tab bar", isOn: $showUsernameInTabBar)
         
       }
       
@@ -144,15 +144,15 @@ struct AppearancePanel: View {
             }
             Slider(value: $cardedCommentsOuterHPadding, in: 0...32, step: 1)
           }
-//          VStack(alignment: .leading) {
-//            HStack {
-//              Text("Outer vertical spacing")
-//              Spacer()
-//              Text("\(Int(cardedCommentsOuterVPadding))")
-//                .opacity(0.6)
-//            }
-//            Slider(value: $cardedCommentsOuterVPadding, in: 0...32, step: 1)
-//          }
+          //          VStack(alignment: .leading) {
+          //            HStack {
+          //              Text("Outer vertical spacing")
+          //              Spacer()
+          //              Text("\(Int(cardedCommentsOuterVPadding))")
+          //                .opacity(0.6)
+          //            }
+          //            Slider(value: $cardedCommentsOuterVPadding, in: 0...32, step: 1)
+          //          }
           VStack(alignment: .leading) {
             HStack {
               Text("Inner horizontal spacing")
@@ -162,15 +162,15 @@ struct AppearancePanel: View {
             }
             Slider(value: $cardedCommentsInnerHPadding, in: 0...32, step: 1)
           }
-//          VStack(alignment: .leading) {
-//            HStack {
-//              Text("Inner vertical spacing")
-//              Spacer()
-//              Text("\(Int(cardedCommentsInnerVPadding))")
-//                .opacity(0.6)
-//            }
-//            Slider(value: $cardedCommentsInnerVPadding, in: 0...32, step: 1)
-//          }
+          //          VStack(alignment: .leading) {
+          //            HStack {
+          //              Text("Inner vertical spacing")
+          //              Spacer()
+          //              Text("\(Int(cardedCommentsInnerVPadding))")
+          //                .opacity(0.6)
+          //            }
+          //            Slider(value: $cardedCommentsInnerVPadding, in: 0...32, step: 1)
+          //          }
         } else {
           VStack(alignment: .leading) {
             HStack {
@@ -182,15 +182,15 @@ struct AppearancePanel: View {
             Slider(value: $commentsInnerHPadding, in: 0...32, step: 1)
           }
           
-//          VStack(alignment: .leading) {
-//            HStack {
-//              Text("Vertical spacing")
-//              Spacer()
-//              Text("\(Int(commentsInnerHPadding))")
-//                .opacity(0.6)
-//            }
-//            Slider(value: $commentsInnerVPadding, in: 10...110, step: 1)
-//          }
+          //          VStack(alignment: .leading) {
+          //            HStack {
+          //              Text("Vertical spacing")
+          //              Spacer()
+          //              Text("\(Int(commentsInnerHPadding))")
+          //                .opacity(0.6)
+          //            }
+          //            Slider(value: $commentsInnerVPadding, in: 10...110, step: 1)
+          //          }
         }
       }
     }
