@@ -9,3 +9,4 @@
 - Fixed some images loading forever
 - Increate the number of posts fetched in each chunk for posts lists
 - Added alphabet jumper to subs list
+- Added Saved posts section
