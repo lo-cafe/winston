@@ -9,14 +9,22 @@ import SwiftUI
 import Defaults
 import AVFoundation
 
+struct PostViewPayload: Hashable {
+  let post: Post
+  let sub: Subreddit
+  var highlightID: String? = nil
+}
+
 struct PostView: View {
-  @Default(.preferenceShowCommentsCards) var preferenceShowCommentsCards
   var post: Post
   @ObservedObject var subreddit: Subreddit
   var highlightID: String?
-  @State var ignoreSpecificComment = false
-  @State var sort: CommentSortOption = Defaults[.preferredCommentSort]
-  @EnvironmentObject var redditAPI: RedditAPI
+  var forceCollapse: Bool = false
+  @Default(.preferenceShowCommentsCards) private var preferenceShowCommentsCards
+  @State private var ignoreSpecificComment = false
+  @State private var sort: CommentSortOption = Defaults[.preferredCommentSort]
+  @EnvironmentObject private var redditAPI: RedditAPI
+  @EnvironmentObject private var router: Router
   
   func asyncFetch(_ full: Bool = true) async {
     if let result = await post.refreshPost(commentID: ignoreSpecificComment ? nil : highlightID, sort: sort, after: nil, subreddit: subreddit.data?.display_name ?? subreddit.id, full: full), let newComments = result.0 {
@@ -31,8 +39,8 @@ struct PostView: View {
       List {
         Group {
           Section {
-            PostContent(post: post)
-
+            PostContent(post: post, forceCollapse: forceCollapse)
+            
             Text("Comments")
               .fontSize(20, .bold)
               .frame(maxWidth: .infinity, alignment: .leading)
@@ -68,15 +76,14 @@ struct PostView: View {
         .listRowSeparator(.hidden)
       }
       .introspect(.list, on: .iOS(.v15)) { list in
-          list.backgroundColor = UIColor.systemGroupedBackground
+        list.backgroundColor = UIColor.systemGroupedBackground
       }
       .introspect(.list, on: .iOS(.v16, .v17)) { list in
-          list.backgroundColor = UIColor.systemGroupedBackground
+        list.backgroundColor = UIColor.systemGroupedBackground
       }
-      .listStyle(.plain)
       .transition(.opacity)
       .environment(\.defaultMinListRowHeight, 1)
-      .if(!preferenceShowCommentsCards) { $0.listStyle(.plain) }
+      .listStyle(.plain)
       .refreshable {
         await asyncFetch(true)
       }
@@ -110,9 +117,9 @@ struct PostView: View {
               }
             }
             
-            if let data = subreddit.data, subreddit.id != "home" {
-              NavigationLink {
-                SubredditInfo(subreddit: subreddit)
+            if let data = subreddit.data, !feedsAndSuch.contains(subreddit.id) {
+              Button {
+                router.path.append(SubViewType.info(subreddit))
               } label: {
                 SubredditIcon(data: data)
               }
@@ -120,11 +127,12 @@ struct PostView: View {
           }
           .animation(nil, value: sort)
       )
+      .onChange(of: sort) { val in
+        Task { await asyncFetch() }
+      }
       .onAppear {
         if subreddit.data == nil && subreddit.id != "home" {
-          Task {
-            await subreddit.refreshSubreddit()
-          }
+          Task { await subreddit.refreshSubreddit() }
         }
       }
     }

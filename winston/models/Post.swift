@@ -127,7 +127,7 @@ extension Post {
   }
   
   func refreshPost(commentID: String? = nil, sort: CommentSortOption = .confidence, after: String? = nil, subreddit: String? = nil, full: Bool = true) async -> ([Comment]?, String?)? {
-    if let subreddit = data?.subreddit ?? subreddit, let response = await redditAPI.fetchPost(subreddit: subreddit, postID: id, commentID: commentID) {
+    if let subreddit = data?.subreddit ?? subreddit, let response = await redditAPI.fetchPost(subreddit: subreddit, postID: id, commentID: commentID, sort: sort) {
       if let post = response[0] {
         switch post {
         case .first(let actualData):
@@ -220,7 +220,7 @@ struct PostData: GenericRedditEntityDataType, Defaults.Serializable {
   let num_crossposts: Int
   let is_video: Bool?
   let is_gallery: Bool?
-  var media_metadata: [String:MediaMetadataItem]?
+  var media_metadata: [String:MediaMetadataItem?]?
   // Optional properties
   let wls: Int?
   let pwls: Int?
@@ -272,19 +272,19 @@ struct PostData: GenericRedditEntityDataType, Defaults.Serializable {
   let link_flair_background_color: String?
   let report_reasons: [String]?
   let discussion_type: String?
-  var winstonSeen: Bool?
   let secure_media: Either<SecureMediaRedditVideo, SecureMediaAlt>?
   let secure_media_embed: SecureMediaEmbed?
   let preview: Preview?
+  var winstonSeen: Bool?
 }
 
 struct MediaMetadataItem: Codable, Hashable, Identifiable {
-  let status: String?
+  let status: String
   let e: String?
   let m: String?
   let p: [MediaMetadataItemSize]?
   let s: MediaMetadataItemSize?
-  let id: String
+  let id: String?
 }
 
 struct MediaMetadataItemSize: Codable, Hashable {
@@ -307,8 +307,22 @@ struct PreviewImgCollection: Codable, Hashable {
   let id: String?
 }
 
+struct RedditVideoPreview: Codable, Hashable {
+    let bitrate_kbps: Double?
+    let fallback_url: String?
+    let height: Double?
+    let width: Double?
+    let scrubber_media_url: String?
+    let dash_url: String?
+    let duration: Double?
+    let hls_url: String?
+    let is_gif: Bool?
+    let transcoding_status: String?
+}
+
 struct Preview: Codable, Hashable {
   let images: [PreviewImgCollection]?
+  let reddit_video_preview: RedditVideoPreview?
   let enabled: Bool?
 }
 

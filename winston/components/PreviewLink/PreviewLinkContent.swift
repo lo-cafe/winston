@@ -7,7 +7,7 @@
 
 import Foundation
 import SwiftUI
-import Kingfisher
+import LonginusSwiftUI
 import OpenGraph
 import SkeletonUI
 import YouTubePlayerKit
@@ -59,6 +59,8 @@ final class PreviewViewModel: ObservableObject {
   }
 }
 
+
+
 struct PreviewLinkContent: View {
   @StateObject var viewModel: PreviewViewModel
   var url: URL
@@ -94,13 +96,14 @@ struct PreviewLinkContent: View {
       
       Group {
         if let image = viewModel.image, let imageURL = URL(string: image) {
-          KFImage(imageURL)
-            .resizable()
-            .fade(duration: 0.5)
-            .scaledToFill()
-            .frame(width: 76, height: 76)
-          
-            .mask(RR(12, .black))
+          LGImage(source: imageURL, placeholder: {
+            ProgressView()
+          }, options: [.imageWithFadeAnimation])
+          .resizable()
+          .cancelOnDisappear(true)
+          .scaledToFill()
+          .frame(width: 76, height: 76)
+          .mask(RR(12, .black))
         } else {
           if viewModel.loading {
             ProgressView()
@@ -121,7 +124,7 @@ struct PreviewLinkContent: View {
     .background(RR(16, .primary.opacity(0.05)))
     .contextMenu {
       Button {
-        UIPasteboard.general.string = viewModel.url ?? ""
+        UIPasteboard.general.string = viewModel.url ?? url.absoluteString
       } label: {
         Label("Copy URL", systemImage: "link")
       }

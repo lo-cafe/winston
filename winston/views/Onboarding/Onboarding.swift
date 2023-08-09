@@ -30,29 +30,62 @@ struct Onboarding: View {
     }
   }
   
+  func prevStep() {
+    withAnimation(.spring()) {
+      currentTab -= 1
+    }
+  }
+  
   var body: some View {
     let BG_GRAD = colorScheme == .dark ? BG_GRAD_DARK : BG_GRAD_LIGHT
     TabView(selection: $currentTab) {
-        OnboardingWelcome(nextStep: nextStep)
+      OnboardingWelcome(nextStep: nextStep)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .contentShape(Rectangle())
+        .simultaneousGesture(DragGesture())
           .tag(0)
-        OnboardingAPIIntro(nextStep: nextStep)
+        OnboardingAPIIntro(prevStep: prevStep, nextStep: nextStep)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .contentShape(Rectangle())
+        .simultaneousGesture(DragGesture())
           .tag(1)
-        Onboarding1OpeningSettings(nextStep: nextStep)
+        Onboarding1OpeningSettings(prevStep: prevStep, nextStep: nextStep)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .contentShape(Rectangle())
+        .simultaneousGesture(DragGesture())
           .tag(2)
-        Onboarding2CreateApp(nextStep: nextStep)
+        Onboarding2CreateApp(prevStep: prevStep, nextStep: nextStep)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .contentShape(Rectangle())
+        .simultaneousGesture(DragGesture())
           .tag(3)
-        Onboarding3FillingInfo(nextStep: nextStep)
+        Onboarding3FillingInfo(prevStep: prevStep, nextStep: nextStep)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .contentShape(Rectangle())
+        .simultaneousGesture(DragGesture())
           .tag(4)
-        Onboarding4GettingAppID(nextStep: nextStep, appID: $appID)
+        Onboarding4GettingAppID(prevStep: prevStep, nextStep: nextStep, appID: $appID)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .contentShape(Rectangle())
+        .simultaneousGesture(DragGesture())
           .tag(5)
-        Onboarding5GettingSecret(nextStep: nextStep, appSecret: $appSecret)
+        Onboarding5GettingSecret(prevStep: prevStep, nextStep: nextStep, appSecret: $appSecret)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .contentShape(Rectangle())
+        .simultaneousGesture(DragGesture())
           .tag(6)
-        Onboarding6Auth(nextStep: nextStep, appSecret: appSecret, appID: appID)
+        Onboarding6Auth(prevStep: prevStep, nextStep: nextStep, appSecret: appSecret, appID: appID)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .contentShape(Rectangle())
+        .simultaneousGesture(DragGesture())
           .tag(7)
         Onboarding7Ending(open: $open)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .contentShape(Rectangle())
+        .simultaneousGesture(DragGesture())
           .tag(8)
     }
-    .tabViewStyle(PageTabViewStyle(indexDisplayMode: .always))
+    .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
 //    .padding(.bottom, 16)
     .onChange(of: currentTab) { _ in withAnimation { UIApplication.shared.dismissKeyboard() } }
     .background(

@@ -31,11 +31,11 @@ struct PreviewRedditLinkContent: View {
           }
           .padding(.vertical, 8)
         case .post(let post):
-          ShortPostLink(reset: false, noHPad: true, post: post)
+          ShortPostLink(noHPad: true, post: post)
         case .user(let user):
-          UserLinkContainer(reset: false, noHPad: true, user: user)
+          UserLinkContainer(noHPad: true, user: user)
         case .subreddit(let subreddit):
-          SubredditLinkContainer(reset: false, sub: subreddit)
+          SubredditLinkContainer(sub: subreddit)
         }
       } else {
         ProgressView()

@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import Kingfisher
 import SwiftDate
 
 enum SubInfoTabs: String, CaseIterable, Identifiable {
@@ -22,10 +21,10 @@ enum SubInfoTabs: String, CaseIterable, Identifiable {
 struct SubredditInfo: View {
   @ObservedObject var subreddit: Subreddit
 
-  @State var selectedTab: SubInfoTabs = .info
+  @State private var selectedTab: SubInfoTabs = .info
   
-  @StateObject var myPosts = ObservableArray<Post>()
-  @State var myPostsLoaded = false
+  @StateObject private var myPosts = ObservableArray<Post>()
+  @State private var myPostsLoaded = false
   
   var body: some View {
     List {

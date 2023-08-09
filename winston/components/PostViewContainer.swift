@@ -7,6 +7,12 @@
 
 import SwiftUI
 
+struct PostViewContainerPayload: Hashable {
+  let post: Post
+  let sub: Subreddit
+  var highlightID: String? = nil
+}
+
 struct PostViewContainer: View {
   @StateObject var post: Post
   @StateObject var sub: Subreddit

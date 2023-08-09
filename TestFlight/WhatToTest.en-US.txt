@@ -1,2 +1,27 @@
-- Fixed possible crash when loading link posts
-- New onboarding flow (logoff and reenter your API key if you wanna see it)
+💣 BIG UPDATE!
+--- HELP NOTE IN THE BOTTOM ---
+
+Changelog:
+- Fixed clipped feedback swipe actions
+- New navigation system, it should be way more stable but there may be bugs
+- Many design tweaks
+- ✨ Images are now zoomable, pannable and enjoyable
+- ✨ Customizable spacings for post links and comments (in-settings preview soon)
+- Comment sorting now works
+- ✨ Long press on posts bring a quick preview of post and comments!
+- Tried to fix the missing of some subreddits for some people
+- Tried to fix "Me" tab not working after first login
+- Added option to disable NSFW blur (opened posts and posts lists)
+- GIFs now play in-app!
+- Imgur now show up in-app!
+- Greatly improved posts collapsing animation
+
+---------------------
+🆘 REDDIT IS CHASING ME! PLEASE READ THIS IF YOU GOT TIME :(
+Hello, I'm Igor, developer of Winston. Reddit recently banned my Reddit account u/Kinark, took r/winstonapp sub down and now my new account u/SusKinark was banned (and muted, so I can't ask why) from r/iphone for explaining to a random guy in a month old post what happened to my old account and the sub. That was my first interaction in the sub.
+
+The consequence of that is that is that Winston is now free and open source forever, I'm counting with donations only. But as you have noticed, I lost my account, so I can't let people know about Winston in Reddit anymore (I never posted about it after it turned open source, for example), so if you'd like to help the project, spread the word! Let people know about Winston 😺, that'll bring a bunch of people to our community and we'll be able to thrive together against Reddit bullship.
+
+
+Thanks, that's it, sorry for using your time and super thank you for using Winston!
+---------------------

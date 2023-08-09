@@ -12,21 +12,14 @@ struct BehaviorPanel: View {
   @Default(.maxPostLinkImageHeightPercentage) var maxPostLinkImageHeightPercentage
   @Default(.openYoutubeApp) var openYoutubeApp
   @Default(.preferredSort) var preferredSort
+  @Default(.preferredCommentSort) var preferredCommentSort
+  @Default(.blurPostLinkNSFW) var blurPostLinkNSFW
+  @Default(.blurPostNSFW) var blurPostNSFW
   
   var body: some View {
     List {
-      Section {
+      Section("General") {
         Toggle("Open Youtube videos externally", isOn: $openYoutubeApp)
-
-        Picker("Default posts sorting", selection: $preferredSort) {
-          ForEach(SubListingSortOption.allCases, id: \.self) { val in
-            HStack(spacing: 8) {
-              Image(systemName: val.rawVal.icon)
-              Text(val.rawVal.id.capitalized)
-            }
-            .fixedSize()
-          }
-        }
         
         VStack(alignment: .leading) {
           HStack {
@@ -37,8 +30,25 @@ struct BehaviorPanel: View {
           }
           Slider(value: $maxPostLinkImageHeightPercentage, in: 10...110, step: 10)
         }
-        
       }
+
+        Section("Posts list") {
+          Picker("Sorting", selection: $preferredSort) {
+            ForEach(SubListingSortOption.allCases, id: \.self) { val in
+              Label(val.rawVal.id.capitalized, systemImage: val.rawVal.icon)
+            }
+          }
+          Toggle("Blur NSFW content", isOn: $blurPostLinkNSFW)
+        }
+
+        Section("Opened posts") {
+            Picker("Comments sorting", selection: $preferredCommentSort) {
+              ForEach(CommentSortOption.allCases, id: \.self) { val in
+                Label(val.rawVal.id.capitalized, systemImage: val.rawVal.icon)
+              }
+            }
+          Toggle("Blur NSFW content", isOn: $blurPostNSFW)
+        }
     }
     .navigationTitle("Behavior")
     .navigationBarTitleDisplayMode(.inline)

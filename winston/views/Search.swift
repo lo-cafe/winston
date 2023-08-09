@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import Kingfisher
 
 enum SearchType: String {
   case subreddit = "Subreddit"
@@ -38,12 +37,13 @@ typealias SearchTypeArr = Either<[Subreddit], [User]>
 
 struct Search: View {
   var reset: Bool
-  @State var searchType: SearchType = .subreddit
-  @StateObject var resultsSubs = ObservableArray<Subreddit>()
-  @StateObject var resultsUsers = ObservableArray<User>()
-  @State var loading = false
-  @State var query = ""
-  @EnvironmentObject var redditAPI: RedditAPI
+  @State private var searchType: SearchType = .subreddit
+  @StateObject private var resultsSubs = ObservableArray<Subreddit>()
+  @StateObject private var resultsUsers = ObservableArray<User>()
+  @State private var loading = false
+  @State private var query = ""
+  @EnvironmentObject private var redditAPI: RedditAPI
+  @StateObject private var router = Router()
   
   func fetch() {
     if query == "" { return }
@@ -79,7 +79,7 @@ struct Search: View {
   }
   
   var body: some View {
-    GoodNavigator {
+    NavigationStack(path: $router.path) {
       List {
         Group {
           Section {
@@ -91,21 +91,16 @@ struct Search: View {
           }
           
           Section {
-            if loading {
-              ProgressView()
-                .frame(maxWidth: .infinity, minHeight: 500)
-            } else {
               switch searchType {
               case .subreddit:
                 ForEach(resultsSubs.data) { sub in
-                  SubredditLink(reset: reset, sub: sub)
+                  SubredditLink(sub: sub)
                 }
               case .user:
                 ForEach(resultsUsers.data) { user in
-                  UserLink(reset: reset, user: user)
+                  UserLink(user: user)
                 }
               }
-            }
           }
         }
         .listRowSeparator(.hidden)
@@ -113,17 +108,17 @@ struct Search: View {
         .listRowInsets(EdgeInsets(top: 6, leading: 16, bottom: 6, trailing: 16))
       }
       .introspect(.list, on: .iOS(.v15)) { list in
-          list.backgroundColor = UIColor.systemGroupedBackground
+        list.backgroundColor = UIColor.systemGroupedBackground
       }
       .introspect(.list, on: .iOS(.v16, .v17)) { list in
-          list.backgroundColor = UIColor.systemGroupedBackground
+        list.backgroundColor = UIColor.systemGroupedBackground
       }
       .listStyle(.plain)
+      .loader(loading)
       .navigationTitle("Search")
       .searchable(text: $query, placement: .toolbar)
-      .onChange(of: searchType) { _ in
-        fetch()
-      }
+      .onChange(of: searchType) { _ in fetch() }
+      .onChange(of: reset) { _ in router.path = NavigationPath() }
       .onChange(of: query) { val in
         if val == "" {
           resultsSubs.data = []
@@ -132,6 +127,33 @@ struct Search: View {
       }
       .refreshable { fetch() }
       .onSubmit(of: .search) { fetch() }
+      .navigationDestination(for: PostViewPayload.self) { postPayload in
+        PostView(post: postPayload.post, subreddit: postPayload.sub, highlightID: postPayload.highlightID)
+          .environmentObject(router)
+      }
+      .navigationDestination(for: PostViewContainerPayload.self) { postPayload in
+        PostViewContainer(post: postPayload.post, sub: postPayload.sub, highlightID: postPayload.highlightID)
+          .environmentObject(router)
+      }
+      .navigationDestination(for: SubViewType.self) { sub in
+        switch sub {
+        case .posts(let sub):
+          SubredditPosts(subreddit: sub)
+            .environmentObject(router)
+        case .info(let sub):
+          SubredditInfo(subreddit: sub)
+            .environmentObject(router)
+        }
+      }
+      .navigationDestination(for: SubredditPostsContainerPayload.self) { payload in
+        SubredditPostsContainer(sub: payload.sub, highlightID: payload.highlightID)
+          .environmentObject(router)
+      }
+      .navigationDestination(for: User.self) { user in
+        UserView(user: user)
+          .environmentObject(router)
+      }
+      .environmentObject(router)
     }
   }
 }

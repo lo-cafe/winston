@@ -10,6 +10,8 @@ import Defaults
 
 struct PostReplies: View {
   @Default(.preferenceShowCommentsCards) var preferenceShowCommentsCards
+  @Default(.commentsInnerHPadding) var commentsInnerHPadding
+  @Default(.cardedCommentsOuterHPadding) var cardedCommentsOuterHPadding
   @ObservedObject var post: Post
   @ObservedObject var subreddit: Subreddit
   var ignoreSpecificComment: Bool
@@ -41,6 +43,7 @@ struct PostReplies: View {
   }
   
   var body: some View {
+    let horPad = preferenceShowCommentsCards ? cardedCommentsOuterHPadding : commentsInnerHPadding
     Group {
       let commentsData = comments.data
       if commentsData.count > 0, let postFullname = post.data?.name {
@@ -54,7 +57,7 @@ struct PostReplies: View {
                   .frame(maxWidth: .infinity, minHeight: 13, maxHeight: 13, alignment: .top)
                   .clipped()
                   .id("\(comment.id)-top-decoration")
-                  .listRowInsets(EdgeInsets(top: 6, leading: 8, bottom: 0, trailing: 8))
+                  .listRowInsets(EdgeInsets(top: 6, leading: horPad, bottom: 0, trailing: horPad))
               } else {
                 Spacer()
                   .frame(maxWidth: .infinity, minHeight: 8, maxHeight: 8)
@@ -68,7 +71,7 @@ struct PostReplies: View {
                   .frame(maxWidth: .infinity, minHeight: 13, maxHeight: 13, alignment: .bottom)
                   .clipped()
                   .id("\(comment.id)-bot-decoration")
-                  .listRowInsets(EdgeInsets(top: 0, leading: 8, bottom: 6, trailing: 8))
+                  .listRowInsets(EdgeInsets(top: 0, leading: horPad, bottom: 6, trailing: horPad))
               } else {
                 VStack {
                   Spacer()
@@ -81,7 +84,7 @@ struct PostReplies: View {
               }
             }
             .listRowBackground(Color.clear)
-            .listRowInsets(EdgeInsets(top: 0, leading: 8, bottom: 0, trailing: 8))
+            .listRowInsets(EdgeInsets(top: 0, leading: horPad, bottom: 0, trailing: horPad))
           }
           Section {
             Spacer()

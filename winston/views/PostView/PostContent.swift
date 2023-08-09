@@ -12,11 +12,16 @@ import AVFoundation
 
 struct PostContent: View {
   @ObservedObject var post: Post
-  
-  var contentWidth: CGFloat { UIScreen.screenWidth - 16 }
+  var forceCollapse: Bool = false
+  @State private var height: CGFloat = 0
+  @State private var collapsed = false
+  @Default(.blurPostNSFW) private var blurPostNSFW
+  private var contentWidth: CGFloat { UIScreen.screenWidth - 16 }
   
   var body: some View {
+    let isCollapsed = forceCollapse || collapsed
     if let data = post.data {
+      let over18 = data.over_18 ?? false
       Group {
         Text(data.title)
           .fontSize(20, .semibold)
@@ -29,37 +34,78 @@ struct PostContent: View {
         
         let imgPost = data.is_gallery == true || data.url.hasSuffix("jpg") || data.url.hasSuffix("png") || data.url.hasSuffix("webp")
         
-        if let media = data.secure_media {
-          switch media {
-          case .first(let datas):
-            if let url = datas.reddit_video.hls_url, let rootURL = rootURL(url) {
-              VideoPlayerPost(post: post, overrideWidth: UIScreen.screenWidth - 16, sharedVideo: SharedVideo(url: rootURL))
-                .id("post-video-player")
-                .listRowInsets(EdgeInsets(top: 6, leading: 8, bottom: 6, trailing: 8))
+        VStack(spacing: 0) {
+          VStack(spacing: 12) {
+            if let media = data.secure_media {
+              switch media {
+              case .first(let datas):
+                let vid = datas.reddit_video
+                if let url = vid.hls_url, let rootURL = rootURL(url), let width = vid.width, let height = vid.height {
+                  VideoPlayerPost(overrideWidth: UIScreen.screenWidth - 16, sharedVideo: SharedVideo(url: rootURL, size: CGSize(width: width, height: height)))
+                    .id("post-video-player")
+                    .allowsHitTesting(!isCollapsed)
+                }
+              case .second(_):
+                EmptyView()
+              }
             }
-          case .second(_):
-            EmptyView()
-              .id("post-video-player")
+            
+            if imgPost {
+              ImageMediaPost(prefix: "postView", post: post, contentWidth: contentWidth)
+                .allowsHitTesting(!isCollapsed)
+            }
+            
+            if !data.url.isEmpty && !data.is_self && !(data.is_video ?? false) && !(data.is_gallery ?? false) && data.post_hint != "image" {
+              PreviewLink(data.url, contentWidth: contentWidth, media: data.secure_media)
+                .allowsHitTesting(!isCollapsed)
+            }
+            
+            
+            if data.selftext != "" {
+              VStack {
+                MD(str: data.selftext)
+              }
+              .contentShape(Rectangle())
+              .onTapGesture { withAnimation(spring) { collapsed.toggle() } }
+              .allowsHitTesting(!isCollapsed)
+
+            }
           }
+          .fixedSize(horizontal: false, vertical: true)
+          .modifier(AnimatingCellHeight(height: isCollapsed ? 75 : height, disable: !forceCollapse && height == 0))
+          .clipped()
+          .opacity(isCollapsed ? 0.3 : 1)
+          .mask(
+            Rectangle()
+              .fill(LinearGradient(
+                gradient: Gradient(stops: [
+                  .init(color: Color.black.opacity(1), location: 0),
+                  .init(color: Color.black.opacity(isCollapsed ? 0 : 1), location: 1)
+                ]),
+                startPoint: .top,
+                endPoint: .bottom
+              ))
+          )
+          .overlay(
+            HStack {
+              Image(systemName: "eye.fill")
+              Text("Tap to expand").allowsHitTesting(false)
+            }
+              .frame(maxWidth: .infinity, maxHeight: .infinity)
+              .contentShape(Rectangle())
+              .onTapGesture { withAnimation(spring) { collapsed.toggle() } }
+              .foregroundColor(.blue)
+              .allowsHitTesting(isCollapsed)
+              .opacity(isCollapsed ? 1 : 0)
+            , alignment: .bottom
+          )
+          .background(GeometryReader { geo in Color.clear.onAppear {
+            if height == 0 && !forceCollapse { height = geo.size.height }
+          }})
+          .nsfw(over18 && blurPostNSFW)
         }
-        
-        if imgPost {
-          ImageMediaPost(prefix: "postView", post: post, contentWidth: contentWidth)
-            .id("post-image")
-            .listRowInsets(EdgeInsets(top: 6, leading: 8, bottom: 6, trailing: 8))
-        }
-        
-        if !data.url.isEmpty && !data.is_self && !(data.is_video ?? false) && !(data.is_gallery ?? false) && data.post_hint != "image" {
-          PreviewLink(data.url, contentWidth: contentWidth, media: data.secure_media)
-            .id("post-link-preview")
-            .listRowInsets(EdgeInsets(top: 6, leading: 8, bottom: 6, trailing: 8))
-        }
-        
-        if data.selftext != "" {
-          MD(str: data.selftext)
-            .id("post-text")
-            .listRowInsets(EdgeInsets(top: 6, leading: 8, bottom: 6, trailing: 8))
-        }
+        .id("post-content")
+        .listRowInsets(EdgeInsets(top: 6, leading: 8, bottom: 6, trailing: 8))
         
         if let fullname = data.author_fullname {
           Badge(author: data.author, fullname: fullname, created: data.created)

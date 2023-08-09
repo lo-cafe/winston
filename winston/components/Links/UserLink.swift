@@ -6,22 +6,19 @@
 //
 
 import SwiftUI
-import Kingfisher
 
 struct UserLinkContainer: View {
-  var reset: Bool
   var noHPad = false
   @StateObject var user: User
   var body: some View {
-    UserLink(reset: reset, noHPad: noHPad, user: user)
+    UserLink(noHPad: noHPad, user: user)
   }
 }
 
 struct UserLink: View {
-  var reset: Bool
   var noHPad = false
   var user: User
-  @State var opened = false
+  @EnvironmentObject private var router: Router
     var body: some View {
       if let data = user.data {
         HStack(spacing: 12) {
@@ -42,13 +39,9 @@ struct UserLink: View {
         .padding(.vertical, 14)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(RR(20, noHPad ? .clear : .listBG))
-        .onChange(of: reset) { _ in opened = false }
         .onTapGesture {
-          opened = true
+          router.path.append(user)
         }
-        .background(
-          NavigationLink(destination: UserView(user: user), isActive: $opened, label: { EmptyView() }).buttonStyle(EmptyButtonStyle()).opacity(0).allowsHitTesting(false)
-        )
       }
     }
 }

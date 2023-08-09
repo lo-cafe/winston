@@ -10,10 +10,35 @@ import KeychainAccess
 import Alamofire
 import SwiftUI
 import Defaults
+import Combine
+
+//class AvatarCache: ObservableObject {
+//  static var shared = AvatarCache()
+//  @Published var data: [String:String] = [:]
+//}
 
 class AvatarCache: ObservableObject {
-  static var shared = AvatarCache()
-  @Published var data: [String:String] = [:]
+
+    static let shared = AvatarCache()
+    private init() {}
+
+    private let _objectWillChange = PassthroughSubject<Void, Never>()
+    private var data = [String:String]()
+
+    var objectWillChange: AnyPublisher<Void, Never> { _objectWillChange.eraseToAnyPublisher() }
+
+    subscript(key: String) -> String? {
+        get { data[key] }
+        set {
+          data[key] = newValue
+            _objectWillChange.send()
+        }
+    }
+  
+  func merge(_ dict: [String:String]) {
+      data.merge(dict) { (_, new) in new }
+      _objectWillChange.send()
+  }
 }
 
 
@@ -30,7 +55,7 @@ class RedditAPI: ObservableObject {
   
   func getRequestHeaders(includeAuth: Bool = true) -> HTTPHeaders? {
     var headers: HTTPHeaders = [
-      "User-Agent": "ios:lo.cafe.winston:v0.1.0 (by /u/Kinark)"
+      "User-Agent": Defaults[.redditAPIUserAgent]
     ]
     if includeAuth, let accessToken = self.loggedUser.accessToken {
       headers["Authorization"] = "Bearer \(accessToken)"
@@ -38,7 +63,7 @@ class RedditAPI: ObservableObject {
     return headers
   }
   
-  func refreshToken(_ force: Bool = false) async -> Void {
+  func refreshToken(_ force: Bool = false, count: Int = 0) async -> Void {
     if force {
       await MainActor.run {
         loggedUser.lastRefresh = Date(seconds: Date().timeIntervalSince1970 - Double(loggedUser.expiration ?? 86400 * 10))
@@ -63,6 +88,9 @@ class RedditAPI: ObservableObject {
           }
           return
         case .failure(let error):
+          if count < 4 {
+            await self.refreshToken(force, count: count + 1)
+          }
           print(error)
           return
         }
@@ -118,11 +146,13 @@ class RedditAPI: ObservableObject {
     }
   }
   
-  func monitorAuthCallback(_ url: URL, callback: ((Bool) -> Void)? = nil) {
-    if url.lastPathComponent == "auth-success", let query = URLComponents(url: url, resolvingAgainstBaseURL: false), let state = query.queryItems?.first(where: { $0.name == "state" })?.value, let code = query.queryItems?.first(where: { $0.name == "code" })?.value {
-      if state == lastAuthState {
-        getAccessToken(authCode: code, callback: callback)
-        lastAuthState = nil
+  func monitorAuthCallback(_ rawUrl: URL, callback: ((Bool) -> Void)? = nil) {
+    if let url = URL(string: rawUrl.absoluteString.replacingOccurrences(of: "winstonapp://", with: "https://app.winston.lo.cafe/")) {
+      if url.lastPathComponent == "auth-success", let query = URLComponents(url: url, resolvingAgainstBaseURL: false), let state = query.queryItems?.first(where: { $0.name == "state" })?.value, let code = query.queryItems?.first(where: { $0.name == "code" })?.value {
+        if state == lastAuthState {
+          getAccessToken(authCode: code, callback: callback)
+          lastAuthState = nil
+        }
       }
     }
   }
@@ -137,12 +167,6 @@ class RedditAPI: ObservableObject {
     lastAuthState = state
     
     return URL(string: "https://www.reddit.com/api/v1/authorize?client_id=\(appID.trimmingCharacters(in: .whitespaces))&response_type=\(response_type)&state=\(state)&redirect_uri=\(redirect_uri)&duration=\(duration)&scope=\(scope)".addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!)!
-  }
-  
-  func getModHash() async {
-    if loggedUser.modhash == nil {
-      await fetchSubs()
-    }
   }
   
   struct RefreshAccessTokenResponse: Decodable {

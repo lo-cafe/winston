@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct Onboarding1OpeningSettings: View {
+  var prevStep: ()->()
   var nextStep: ()->()
   @Environment(\.openURL) var openURL
   var body: some View {
@@ -20,7 +21,7 @@ struct Onboarding1OpeningSettings: View {
       
       MasterButton(icon: "safari.fill", label: "Open Reddit API settings", colorHoverEffect: .animated, textSize: 18, height: 48, fullWidth: true, cornerRadius: 16, action: {
         nextStep()
-        openURL(URL(string: "https://www.reddit.com/prefs/apps")!)
+        openURL(URL(string: "https://reddit.com/prefs/apps")!)
       })
         .padding(.top, 32)
     }

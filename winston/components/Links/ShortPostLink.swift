@@ -6,15 +6,13 @@
 //
 
 import SwiftUI
-import Kingfisher
 import Defaults
 
 struct ShortPostLink: View {
-  var reset: Bool
   var noHPad = false
   var post: Post
-  @Default(.preferenceShowPostsAvatars) var preferenceShowPostsAvatars
-  @State var opened = false
+  @Default(.preferenceShowPostsAvatars) private var preferenceShowPostsAvatars
+  @EnvironmentObject private var router: Router
   var body: some View {
     if let data = post.data {
       VStack(alignment: .leading) {
@@ -27,24 +25,19 @@ struct ShortPostLink: View {
             Badge(showAvatar: preferenceShowPostsAvatars, author: data.author, fullname: fullname, created: data.created, extraInfo: ["message.fill":"\(data.num_comments)", "arrow.up.arrow.down":"\(data.ups)"])
           }
           Spacer()
-          FlairTag(text: "r/\(data.subreddit)", blue: true)
-            .highPriorityGesture(TapGesture() .onEnded { opened = true })
+          FlairTag(text: "r/\(data.subreddit)", color: .blue)
+            .highPriorityGesture(TapGesture().onEnded {
+              router.path.append(SubViewType.posts(Subreddit(id: data.subreddit, api: post.redditAPI)))
+            })
         }
       }
       .padding(.horizontal, noHPad ? 0 : 16)
       .padding(.vertical, 14)
       .frame(maxWidth: .infinity, alignment: .leading)
       .background(RR(20, noHPad ? .clear : .listBG))
-      .onChange(of: reset) { _ in opened = false }
-      .onAppear {
-        data.title
-      }
       .onTapGesture {
-        opened = true
+        router.path.append(PostViewPayload(post: post, sub: Subreddit(id: data.subreddit, api: post.redditAPI)))
       }
-      .background(
-        NavigationLink(destination: PostViewContainer(post: post, sub: Subreddit(id: data.subreddit, api: post.redditAPI)), isActive: $opened, label: { EmptyView() }).buttonStyle(EmptyButtonStyle()).opacity(0).allowsHitTesting(false)
-      )
     }
   }
 }

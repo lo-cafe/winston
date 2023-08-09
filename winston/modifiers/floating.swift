@@ -11,7 +11,7 @@ import SwiftUI
 
 extension View {
     func floating() -> some View {
-        self.background(Capsule(style: .continuous).fill(.ultraThinMaterial).shadow(radius: 8))
+        self.background(Capsule(style: .continuous).fill(.bar).shadow(radius: 8))
             .overlay(Capsule(style: .continuous).stroke(Color.white.opacity(0.05), lineWidth: 0.5).padding(.all, 0.5))
             
     }

@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct Onboarding4GettingAppID: View {
+  var prevStep: ()->()
   var nextStep: ()->()
   @Binding var appID: String
   var body: some View {
@@ -35,9 +36,14 @@ struct Onboarding4GettingAppID: View {
           .padding(.vertical, 12)
           .background(RR(16, .black.opacity(0.1)))
         
-        MasterButton(icon: "checkmark.circle.fill", label: "Done", colorHoverEffect: .animated, textSize: 18, height: 48, fullWidth: true, cornerRadius: 16, action: {
-          nextStep()
-        })
+        HStack {
+          MasterButton(icon: "arrowshape.backward.fill", label: "Go back", mode: .soft, color: .white, colorHoverEffect: .animated, textSize: 18, height: 48, cornerRadius: 16, action: {
+            prevStep()
+          })
+          MasterButton(icon: "checkmark.circle.fill", label: "Done", colorHoverEffect: .animated, textSize: 18, height: 48, fullWidth: true, cornerRadius: 16, action: {
+            nextStep()
+          })
+        }
         .padding(.top, 32)
       }
       .padding(.vertical, 64)

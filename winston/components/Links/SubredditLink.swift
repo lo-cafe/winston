@@ -6,22 +6,20 @@
 //
 
 import SwiftUI
-import Kingfisher
 
 struct SubredditLinkContainer: View {
-  var reset: Bool
   var noHPad = false
   @StateObject var sub: Subreddit
   var body: some View {
-    SubredditLink(reset: reset, noHPad: true, sub: sub)
+    SubredditLink(noHPad: true, sub: sub)
   }
 }
 
 struct SubredditLink: View {
-  var reset: Bool
   var noHPad = false
   var sub: Subreddit
   @State var opened = false
+  @EnvironmentObject private var router: Router
     var body: some View {
       if let data = sub.data {
         HStack(spacing: 12) {
@@ -40,13 +38,9 @@ struct SubredditLink: View {
         .padding(.vertical, 14)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(RR(20, noHPad ? .clear : .listBG))
-        .onChange(of: reset) { _ in opened = false }
         .onTapGesture {
-          opened = true
+          router.path.append(SubViewType.posts(sub))
         }
-        .background(
-          NavigationLink(destination: SubredditPosts(subreddit: sub), isActive: $opened, label: { EmptyView() }).buttonStyle(EmptyButtonStyle()).opacity(0).allowsHitTesting(false)
-        )
       }
     }
 }

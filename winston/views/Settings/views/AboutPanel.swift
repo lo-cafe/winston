@@ -35,6 +35,20 @@ struct AboutPanel: View {
           } label: {
             Label("Join the Discord server", systemImage: "person.3.fill")
           }
+          Button {
+            openURL(URL(string: "https://patreon.com/user?u=93745105")!)
+          } label: {
+            Label("Support our work!", systemImage: "heart.fill")
+          }
+        }
+        
+        Section {
+          Text("Winston is a free and open source software, therefore it isn't against Reddit's policies.")
+          Button {
+            openURL(URL(string: "https://github.com/Kinark/winston")!)
+          } label: {
+            Label("Check Winston's source code", systemImage: "arrow.branch")
+          }
         }
       }
     }

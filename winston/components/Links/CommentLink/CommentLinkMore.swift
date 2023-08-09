@@ -6,15 +6,21 @@
 //
 
 import SwiftUI
+import Defaults
 
 struct CommentLinkMore: View {
+  @Default(.preferenceShowCommentsCards) var preferenceShowCommentsCards
   var arrowKinds: [ArrowKind]
   var comment: Comment
   var postFullname: String?
   var parentElement: CommentParentElement?
   var indentLines: Int?
   @State var loadMoreLoading = false
+  
+  @Default(.cardedCommentsInnerHPadding) var cardedCommentsInnerHPadding
+
   var body: some View {
+    let horPad = preferenceShowCommentsCards ? cardedCommentsInnerHPadding : 0
     if let data = comment.data, let count = data.count, let parentElement = parentElement, count > 0 {
       HStack {
         if data.depth != 0 && indentLines != 0 {
@@ -36,9 +42,9 @@ struct CommentLinkMore: View {
         .compositingGroup()
         .opacity(loadMoreLoading ? 0.5 : 1)
       }
-      .padding(.horizontal, 13)
+      .padding(.horizontal, cardedCommentsInnerHPadding)
       .frame(maxWidth: .infinity, alignment: .leading)
-      .background(Color.listBG)
+      .background(preferenceShowCommentsCards ? Color.listBG : .clear)
       .contentShape(Rectangle())
       .onTapGesture { Task {
         if let postFullname = postFullname {
