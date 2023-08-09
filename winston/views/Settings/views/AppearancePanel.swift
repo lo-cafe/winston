@@ -13,6 +13,7 @@ struct AppearancePanel: View {
   @Default(.preferenceShowCommentsAvatars) var preferenceShowCommentsAvatars
   @Default(.replyModalBlurBackground) var replyModalBlurBackground
   @Default(.newPostModalBlurBackground) var newPostModalBlurBackground
+  @Default(.showUsernameInTabBar) var showUsernameInTabBar
   
   @Default(.preferenceShowPostsCards) var preferenceShowPostsCards
   @Default(.preferenceShowCommentsCards) var preferenceShowCommentsCards
@@ -39,6 +40,8 @@ struct AppearancePanel: View {
       Section("General") {
         Toggle("Blur reply background", isOn: $replyModalBlurBackground)
         Toggle("Blur new post background", isOn: $newPostModalBlurBackground)
+          Toggle("Show Username in Tabbar", isOn: $showUsernameInTabBar)
+        
       }
       
       Section("Posts") {
