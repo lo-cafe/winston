@@ -138,7 +138,16 @@ struct UserView: View {
     }
     .listStyle(.plain)
     .refreshable {
-      await refresh()
+        await refresh()
+        
+        if let data = await user.refetchOverview() {
+          DispatchQueue.main.async { // fetching posts on non-main thread
+            withAnimation {
+              lastActivities = data
+            }
+          }
+          await user.redditAPI.updateAvatarURLCacheFromOverview(subjects: data)
+        }
     }
     .navigationTitle(user.data?.name ?? "Loading...")
     .navigationBarTitleDisplayMode(.inline)
