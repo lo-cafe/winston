@@ -22,9 +22,9 @@ struct PostFloatingPill: View {
       if let data = post.data {
         Group {
           
-//          LightBoxButton(icon: "bookmark.fill") {
-//
-//          }µ
+          //          LightBoxButton(icon: "bookmark.fill") {
+          //
+          //          }µ
           HStack(spacing: -12) {
             if let perma = URL(string: "https://reddit.com\(data.permalink.escape.urlEncoded)") {
               ShareLink(item: perma) {
@@ -38,20 +38,21 @@ struct PostFloatingPill: View {
                   postsInBox = postsInBox.filter({ $0.id != post.id })
                 }
               } else {
+                var subIcon: String?
                 if let subData = subreddit.data {
                   let communityIcon = subData.community_icon.split(separator: "?")
-                  let subIcon = subData.icon_img == "" || subData.icon_img == nil ? communityIcon.count > 0 ? String(communityIcon[0]) : "" : subData.icon_img
-                  let newPostInBox = PostInBox(
-                    id: data.id, fullname: data.name,
-                    title: data.title, body: data.selftext,
-                    subredditIconURL: subIcon, img: data.url,
-                    subredditName: data.subreddit, authorName: data.author,
-                    score: data.ups, commentsCount: data.num_comments,
-                    createdAt: data.created, lastUpdatedAt: Date().timeIntervalSince1970
-                  )
-                  withAnimation(spring) {
-                    postsInBox.append(newPostInBox)
-                  }
+                  subIcon = subData.icon_img == "" || subData.icon_img == nil ? communityIcon.count > 0 ? String(communityIcon[0]) : "" : subData.icon_img
+                }
+                let newPostInBox = PostInBox(
+                  id: data.id, fullname: data.name,
+                  title: data.title, body: data.selftext,
+                  subredditIconURL: subIcon, img: data.url,
+                  subredditName: data.subreddit, authorName: data.author,
+                  score: data.ups, commentsCount: data.num_comments,
+                  createdAt: data.created, lastUpdatedAt: Date().timeIntervalSince1970
+                )
+                withAnimation(spring) {
+                  postsInBox.append(newPostInBox)
                 }
               }
             }
@@ -95,7 +96,7 @@ struct PostFloatingPill: View {
     .fontSize(20, .semibold)
     .foregroundColor(.blue)
     .padding(.trailing, 14)
-//    .padding(.vertical, 8)
+    //    .padding(.vertical, 8)
     .floating()
     .padding(.all, 8)
     .sheet(isPresented: $showReplyModal) {
