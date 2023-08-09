@@ -216,7 +216,7 @@ struct CommentLinkContent: View {
           .introspect(.listCell, on: .iOS(.v16, .v17)) { cell in
             cell.layer.masksToBounds = false
           }
-          .padding(.horizontal, preferenceShowCommentsCards ? 13 : 0)
+//          .padding(.horizontal, preferenceShowCommentsCards ? 13 : 0)
           .padding(.horizontal, horPad)
           .mask(Color.black.padding(.top, -(data.depth != 0 ? 42 : 30)).padding(.bottom, -8))
           .background(Color.blue.opacity(highlight ? 0.2 : 0))
