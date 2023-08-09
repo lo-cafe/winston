@@ -135,7 +135,7 @@ struct ChangeAuthAPIKey: View {
           CardStep(currentStep: 1, title: "Getting credentials", subTitle: "Generating your own API credentials", step: $step) {
             VStack (alignment: .leading) {
               Text("In order to be able to use Reddit, you'll need to provide your own API credentials.")
-              Text("Don't worry, there will be no costs, there's a free tier of 60 requests/minute and it's kinda impossible for you to go beyond that.")
+              Text("Don't worry, there will be no costs, there's a free tier of 100 requests/minute and it's kinda impossible for you to go beyond that.")
               
               SmallStep {
                 VStack (alignment: .leading) {

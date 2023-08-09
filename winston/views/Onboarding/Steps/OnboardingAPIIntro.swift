@@ -56,7 +56,7 @@ struct OnboardingAPIIntro: View {
         .multilineTextAlignment(.center)
         
         VStack(spacing: 6) {
-          Feature(icon: "arrow.up", title: "Huge limit", description: "Reddit API limit is 60 requests per second, it's impossible to reach.")
+          Feature(icon: "arrow.up", title: "Huge limit", description: "Reddit API limit is 100 requests per second, it's impossible to reach.")
           Feature(icon: "dollarsign", title: "No costs at all", description: "Even if you pass the limit, there will be no charges, you only get an error.")
           Feature(icon: "point.topleft.down.curvedto.point.bottomright.up.fill", title: "Easy to setup", description: "It's really easy to get set Winston up. We'll guide all the way!")
           Feature(icon: "eye.slash.fill", title: "Safe and private", description: "The key is **only** stored in your iCloud keychain, we can't read it.")
