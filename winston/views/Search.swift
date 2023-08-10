@@ -41,6 +41,7 @@ struct Search: View {
   @StateObject private var resultsSubs = ObservableArray<Subreddit>()
   @StateObject private var resultsUsers = ObservableArray<User>()
   @State private var loading = false
+  @State private var hideSpinner = false
   @State private var query = ""
   @State private var debounceTimer: Timer?
   @EnvironmentObject private var redditAPI: RedditAPI
@@ -61,6 +62,8 @@ struct Search: View {
             withAnimation {
               resultsSubs.data = sortedSubs
               loading = false
+              
+              hideSpinner = resultsSubs.data.isEmpty
             }
           }
         }
@@ -73,6 +76,8 @@ struct Search: View {
             withAnimation {
               resultsUsers.data = users
               loading = false
+              
+              hideSpinner = resultsUsers.data.isEmpty
             }
           }
         }
@@ -105,22 +110,12 @@ struct Search: View {
           Section {
             switch searchType {
             case .subreddit:
-              if resultsSubs.data.isEmpty && !loading {
-                Text(query.isEmpty ? "Search something!" : "No subreddit results found")
-                  .foregroundColor(.gray)
-              } else {
-                ForEach(resultsSubs.data) { sub in
-                  SubredditLink(sub: sub)
-                }
+              ForEach(resultsSubs.data) { sub in
+                SubredditLink(sub: sub)
               }
             case .user:
-              if resultsUsers.data.isEmpty && !loading {
-                Text(query.isEmpty ? "Search something!" : "No user results found")
-                  .foregroundColor(.gray)
-              } else {
-                ForEach(resultsUsers.data) { user in
-                  UserLink(user: user)
-                }
+              ForEach(resultsUsers.data) { user in
+                UserLink(user: user)
               }
             }
           }
@@ -136,7 +131,7 @@ struct Search: View {
         list.backgroundColor = UIColor.systemGroupedBackground
       }
       .listStyle(.plain)
-      .loader(loading)
+      .loader(loading, hideSpinner && !query.isEmpty)
       .navigationTitle("Search")
       .searchable(text: $query, placement: .toolbar)
       .onChange(of: searchType) { _ in fetch() }

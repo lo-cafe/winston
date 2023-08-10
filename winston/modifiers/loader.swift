@@ -8,15 +8,33 @@
 import SwiftUI
 
 extension View {
-  func loader(_ loading: Bool, _ onAppear: (()->())? = nil) -> some View {
+  func loader(_ loading: Bool, _ hideSpinner: Bool = false, _ onAppear: (()->())? = nil) -> some View {
     self
       .overlay(
-        !loading
-        ? nil
-        : ProgressView()
-          .frame(width: UIScreen.screenWidth, height: UIScreen.screenHeight)
-          .ignoresSafeArea()
-          .onAppear { onAppear?() }
+        Group {
+          if loading {
+            ProgressView()
+              .frame(width: UIScreen.screenWidth, height: UIScreen.screenHeight)
+              .ignoresSafeArea()
+              .onAppear {
+                if let onAppear = onAppear {
+                  onAppear()
+                }
+              }
+          } else if hideSpinner {
+            Text("*No results found*")
+              .foregroundColor(.secondary)
+              .frame(width: UIScreen.screenWidth, height: UIScreen.screenHeight)
+              .ignoresSafeArea()
+              .onAppear {
+                if let onAppear = onAppear {
+                  onAppear()
+                }
+              }
+          } else {
+            EmptyView()
+          }
+        }
       )
-    }
+  }
 }
