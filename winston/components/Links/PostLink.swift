@@ -146,17 +146,12 @@ struct PostLink: View, Equatable {
               Task {
                 _ = await post.vote(action: .up)
               }
+              
             }
             //            .shrinkOnTap()
             .padding(.all, -8)
             
-            let downup = Int(data.ups - data.downs)
-            Text(formatBigNumber(downup))
-              .foregroundColor(downup == 0 ? .gray : downup > 0 ? .orange : .blue)
-              .fontSize(16, .semibold)
-              .padding(.horizontal, 12)
-              .viewVotes(data.ups, data.downs)
-              .zIndex(10)
+            VotesCluster(data: data)
             
             MasterButton(icon: "arrow.down", mode: .subtle, color: .white, colorHoverEffect: .none, textColor: data.likes != nil && !data.likes! ? .blue : .gray, textSize: 22, proportional: .circle) {
               Task {
@@ -240,5 +235,16 @@ struct PostLink: View, Equatable {
 struct EmptyButtonStyle: ButtonStyle {
   func makeBody(configuration: Self.Configuration) -> some View {
     configuration.label
+  }
+}
+
+struct CustomLabel: LabelStyle {
+  var spacing: Double = 0.0
+  
+  func makeBody(configuration: Configuration) -> some View {
+    HStack(spacing: spacing) {
+      configuration.icon
+      configuration.title
+    }
   }
 }

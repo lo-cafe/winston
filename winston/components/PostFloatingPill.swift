@@ -74,10 +74,7 @@ struct PostFloatingPill: View {
             }
             .foregroundColor(data.likes != nil && data.likes! ? .orange : .gray)
             
-            let downup = Int(data.ups - data.downs)
-            Text(formatBigNumber(downup))
-              .foregroundColor(downup == 0 ? .gray : downup > 0 ? .orange : .blue)
-              .fontSize(17, .semibold)
+            VotesCluster(data: data)
             
             Button {
               Task {
