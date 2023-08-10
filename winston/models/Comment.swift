@@ -377,21 +377,21 @@ enum CommentSortOption: Codable, CaseIterable, Identifiable, Defaults.Serializab
   var rawVal: SubListingSort {
     switch self {
     case .confidence:
-      return SubListingSort(icon: "flame.fill", value: "confidence")
+      return SubListingSort(icon: "flame", value: "confidence")
     case .new:
-      return SubListingSort(icon: "newspaper.fill", value: "new")
+      return SubListingSort(icon: "newspaper", value: "new")
     case .top:
-      return SubListingSort(icon: "arrow.up.forward.app.fill", value: "top")
+      return SubListingSort(icon: "trophy", value: "top")
     case .controversial:
-      return SubListingSort(icon: "arrow.up.forward.app.fill", value: "controversial")
+      return SubListingSort(icon: "figure.fencing", value: "controversial")
     case .old:
-      return SubListingSort(icon: "arrow.up.forward.app.fill", value: "old")
+      return SubListingSort(icon: "clock.arrow.circlepath", value: "old")
     case .random:
-      return SubListingSort(icon: "arrow.up.forward.app.fill", value: "random")
+      return SubListingSort(icon: "dice", value: "random")
     case .qa:
-      return SubListingSort(icon: "arrow.up.forward.app.fill", value: "qa")
+      return SubListingSort(icon: "bubble.left.and.bubble.right", value: "qa")
     case .live:
-      return SubListingSort(icon: "arrow.up.forward.app.fill", value: "live")
+      return SubListingSort(icon: "dot.radiowaves.left.and.right", value: "live")
     }
   }
 }

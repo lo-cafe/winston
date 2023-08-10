@@ -11,7 +11,7 @@ import Defaults
 
 
 struct Badge: View {
-  var usernameColor: Color = .blue
+  var usernameColor: Color = .green
   var showAvatar = true
   var author: String
   var fullname: String? = nil

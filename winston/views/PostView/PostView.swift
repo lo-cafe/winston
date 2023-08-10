@@ -38,7 +38,7 @@ struct PostView: View {
   }
   
   var body: some View {
-    ScrollViewReader { proxy in
+    ScrollViewReader{ proxy in
       List {
         Group {
           Section {
@@ -53,6 +53,7 @@ struct PostView: View {
           .listRowBackground(Color.clear)
           
           PostReplies(update: update, post: post, subreddit: subreddit, ignoreSpecificComment: ignoreSpecificComment, highlightID: highlightID, sort: sort, proxy: proxy)
+          
           
           if !ignoreSpecificComment && highlightID != nil {
             Section {
@@ -93,8 +94,7 @@ struct PostView: View {
       }
       .overlay(
         PostFloatingPill(post: post, subreddit: subreddit)
-        , alignment: .bottomTrailing
-      )
+        , alignment: .bottomTrailing)
       .navigationBarTitle("\(post.data?.num_comments ?? 0) comments", displayMode: .inline)
       .navigationBarItems(
         trailing:
@@ -141,10 +141,11 @@ struct PostView: View {
         }
       }
     }
+    
+    .coordinateSpace(name: "scroll")
+
   }
 }
-
-
 
 //struct Post_Previews: PreviewProvider {
 //    static var previews: some View {

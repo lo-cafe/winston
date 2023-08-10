@@ -61,7 +61,7 @@ struct Tabber: View {
         .tabItem {
           VStack {
             Image(systemName: "bell.fill")
-            Text("Notifications")
+            Text("Inbox")
           }
         }
         .tag(TabIdentifier.inbox)
