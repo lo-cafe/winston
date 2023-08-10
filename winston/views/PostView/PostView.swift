@@ -141,8 +141,6 @@ struct PostView: View {
         }
       }
     }
-    
-    .coordinateSpace(name: "scroll")
 
   }
 }
