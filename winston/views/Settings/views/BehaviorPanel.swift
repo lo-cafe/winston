@@ -39,7 +39,7 @@ struct BehaviorPanel: View {
           Text("Popular").tag("popular")
           Text("All").tag("all")
             
-          Text("Subscription List").tag("subDrawer")
+          Text("Subscription List").tag("subList")
         }
         .pickerStyle(DefaultPickerStyle())
       }

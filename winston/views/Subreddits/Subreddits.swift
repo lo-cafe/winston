@@ -183,7 +183,7 @@ struct Subreddits: View {
           }
           
           // MARK: Route to default feed
-          if preferenceDefaultFeed != "subDrawer" { // explicitally ignore "subDrawer" since we are in the sub drawer...
+          if preferenceDefaultFeed != "subList" { // we are in subList, can ignore
             let tempSubreddit = Subreddit(id: preferenceDefaultFeed, api: redditAPI)
             router.path.append(SubViewType.posts(tempSubreddit))
           }
