@@ -42,6 +42,7 @@ struct Search: View {
   @StateObject private var resultsUsers = ObservableArray<User>()
   @State private var loading = false
   @State private var query = ""
+  @State private var debounceTimer: Timer?
   @EnvironmentObject private var redditAPI: RedditAPI
   @StateObject private var router = Router()
   
@@ -55,9 +56,10 @@ struct Search: View {
       resultsSubs.data.removeAll()
       Task {
         if let subs = await redditAPI.searchSubreddits(query)?.map({ Subreddit(data: $0, api: redditAPI) }) {
+          let sortedSubs = subs.sorted(by: { ($0.data?.subscribers ?? 0) > ($1.data?.subscribers ?? 0) })
           await MainActor.run {
             withAnimation {
-              resultsSubs.data = subs
+              resultsSubs.data = sortedSubs
               loading = false
             }
           }
@@ -78,6 +80,16 @@ struct Search: View {
     }
   }
   
+  func debounceFetch() {
+    // Invalidate existing timer
+    debounceTimer?.invalidate()
+
+    // Create a new timer
+    debounceTimer = Timer.scheduledTimer(withTimeInterval: 0.25, repeats: false) { _ in
+      fetch()
+    }
+  }
+  
   var body: some View {
     NavigationStack(path: $router.path) {
       List {
@@ -91,16 +103,26 @@ struct Search: View {
           }
           
           Section {
-              switch searchType {
-              case .subreddit:
+            switch searchType {
+            case .subreddit:
+              if resultsSubs.data.isEmpty && !loading {
+                Text(query.isEmpty ? "Search something!" : "No subreddit results found")
+                  .foregroundColor(.gray)
+              } else {
                 ForEach(resultsSubs.data) { sub in
                   SubredditLink(sub: sub)
                 }
-              case .user:
+              }
+            case .user:
+              if resultsUsers.data.isEmpty && !loading {
+                Text(query.isEmpty ? "Search something!" : "No user results found")
+                  .foregroundColor(.gray)
+              } else {
                 ForEach(resultsUsers.data) { user in
                   UserLink(user: user)
                 }
               }
+            }
           }
         }
         .listRowSeparator(.hidden)
@@ -124,6 +146,8 @@ struct Search: View {
           resultsSubs.data = []
           resultsUsers.data = []
         }
+        
+        debounceFetch()
       }
       .refreshable { fetch() }
       .onSubmit(of: .search) { fetch() }
