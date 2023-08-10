@@ -76,7 +76,7 @@ struct UserData: GenericRedditEntityDataType {
   var comment_karma: Int?
   var awardee_karma: Int?
   var awarder_karma: Int?
-  var gold_expiration: String?
+  var gold_expiration: Double?
   var has_ios_subscription: Bool?
   var created_utc: Double?
   var created: Double?
@@ -144,7 +144,7 @@ struct UserDataSubreddit: Codable, Hashable {
   let restrict_posting: Bool?
   let user_is_banned: Bool?
   let free_form_reports: Bool?
-  let community_icon: String??
+  let community_icon: String?
   let show_media: Bool?
   let icon_color: String?
   let user_is_muted: Bool?

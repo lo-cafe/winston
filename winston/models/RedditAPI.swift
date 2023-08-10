@@ -147,13 +147,11 @@ class RedditAPI: ObservableObject {
   }
   
   func monitorAuthCallback(_ rawUrl: URL, callback: ((Bool) -> Void)? = nil) {
-    if let url = URL(string: rawUrl.absoluteString.replacingOccurrences(of: "winstonapp://", with: "https://app.winston.lo.cafe/")) {
-      if url.lastPathComponent == "auth-success", let query = URLComponents(url: url, resolvingAgainstBaseURL: false), let state = query.queryItems?.first(where: { $0.name == "state" })?.value, let code = query.queryItems?.first(where: { $0.name == "code" })?.value {
-        if state == lastAuthState {
-          getAccessToken(authCode: code, callback: callback)
-          lastAuthState = nil
-        }
-      }
+    if let url = URL(string: rawUrl.absoluteString.replacingOccurrences(of: "winstonapp://", with: "https://app.winston.lo.cafe/")), url.lastPathComponent == "auth-success", let query = URLComponents(url: url, resolvingAgainstBaseURL: false), let state = query.queryItems?.first(where: { $0.name == "state" })?.value, let code = query.queryItems?.first(where: { $0.name == "code" })?.value, state == lastAuthState {
+      getAccessToken(authCode: code, callback: callback)
+      lastAuthState = nil
+    } else {
+      callback?(false)
     }
   }
   

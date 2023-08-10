@@ -44,7 +44,7 @@ struct Tabber: View {
     .settings: true,
   ]
   @Default(.postsInBox) var postsInBox
-  
+  @Default(.showUsernameInTabBar) var showUsernameInTabBar
   var body: some View {
     TabView(selection: $activeTab.onUpdate { newTab in if activeTab == newTab { reset[newTab]!.toggle() } }) {
       
@@ -60,8 +60,8 @@ struct Tabber: View {
       Inbox(reset: reset[.inbox]!)
         .tabItem {
           VStack {
-            Image(systemName: "message.fill")
-            Text("Inbox")
+            Image(systemName: "bell.fill")
+            Text("Notifications")
           }
         }
         .tag(TabIdentifier.inbox)
@@ -70,7 +70,11 @@ struct Tabber: View {
         .tabItem {
           VStack {
             Image(systemName: "person.fill")
-            Text("Me")
+              if showUsernameInTabBar, let me = redditAPI.me, let data = me.data {
+                  Text(data.name)
+              } else {
+                  Text("Me")
+              }
           }
         }
         .tag(TabIdentifier.me)

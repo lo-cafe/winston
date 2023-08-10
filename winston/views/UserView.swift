@@ -18,8 +18,16 @@ struct UserView: View {
   @State private var lastActivities: [Either<PostData, CommentData>]?
   @State private var contentWidth: CGFloat = 0
   
-  func refresh(_ force: Bool = false, _ full: Bool = true) async {
+  func refresh() async {
     await user.refetchUser()
+    if let data = await user.refetchOverview() {
+      await MainActor.run {
+        withAnimation {
+          lastActivities = data
+        }
+      }
+      await user.redditAPI.updateAvatarURLCacheFromOverview(subjects: data)
+    }
   }
   
   var body: some View {
@@ -144,16 +152,8 @@ struct UserView: View {
     .navigationBarTitleDisplayMode(.inline)
     .onAppear {
       Task {
-        if user.data == nil {
-          await user.refetchUser()
-        }
-        if lastActivities == nil, let data = await user.refetchOverview() {
-          await MainActor.run {
-            withAnimation {
-              lastActivities = data
-            }
-          }
-          await user.redditAPI.updateAvatarURLCacheFromOverview(subjects: data)
+        if user.data == nil || lastActivities == nil {
+          await refresh()
         }
       }
     }
