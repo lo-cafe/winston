@@ -51,6 +51,8 @@ struct Subreddits: View {
   @State private var scrollLetter = "A"
   @EnvironmentObject private var haptics: SimpleHapticGenerator
   
+  @Default(.preferenceDefaultFeed) var preferenceDefaultFeed // handle default feed selection routing
+  
   func sort(_ subs: [ListingChild<SubredditData>]) -> [String: [Subreddit]] {
     return Dictionary(grouping: subs.compactMap { $0.data }, by: { String($0.display_name?.prefix(1) ?? "").uppercased() })
       .mapValues { items in items.sorted { ($0.display_name ?? "") < ($1.display_name ?? "") }.map { Subreddit(data: $0, api: redditAPI) } }
@@ -178,6 +180,12 @@ struct Subreddits: View {
             withAnimation(.interactiveSpring()) {
               proxy.scrollTo("\(id)-main", anchor: .top)
             }
+          }
+          
+          // MARK: Route to default feed
+          if preferenceDefaultFeed != "subDrawer" { // explicitally ignore "subDrawer" since we are in the sub drawer...
+            let tempSubreddit = Subreddit(id: preferenceDefaultFeed, api: redditAPI)
+            router.path.append(SubViewType.posts(tempSubreddit))
           }
         }
         .refreshable {

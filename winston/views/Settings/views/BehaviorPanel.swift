@@ -11,6 +11,7 @@ import Defaults
 struct BehaviorPanel: View {
   @Default(.maxPostLinkImageHeightPercentage) var maxPostLinkImageHeightPercentage
   @Default(.openYoutubeApp) var openYoutubeApp
+  @Default(.preferenceDefaultFeed) var preferenceDefaultFeed
   @Default(.preferredSort) var preferredSort
   @Default(.preferredCommentSort) var preferredCommentSort
   @Default(.blurPostLinkNSFW) var blurPostLinkNSFW
@@ -32,6 +33,15 @@ struct BehaviorPanel: View {
           }
           Slider(value: $maxPostLinkImageHeightPercentage, in: 10...110, step: 10)
         }
+        
+        Picker("Default Launch Feed", selection: $preferenceDefaultFeed) {
+          Text("Home").tag("home")
+          Text("Popular").tag("popular")
+          Text("All").tag("all")
+            
+          Text("Subscription List").tag("subDrawer")
+        }
+        .pickerStyle(DefaultPickerStyle())
       }
 
         Section("Posts list") {
