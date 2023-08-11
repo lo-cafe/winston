@@ -42,13 +42,12 @@ struct Search: View {
   @StateObject private var resultsUsers = ObservableArray<User>()
   @State private var loading = false
   @State private var hideSpinner = false
-  @State private var query = ""
-  @State private var debounceTimer: Timer?
+  @StateObject var searchQuery = DebouncedText(delay: 0.25)
   @EnvironmentObject private var redditAPI: RedditAPI
   @StateObject private var router = Router()
   
   func fetch() {
-    if query == "" { return }
+    if searchQuery.text == "" { return }
     withAnimation {
       loading = true
     }
@@ -56,7 +55,7 @@ struct Search: View {
     case .subreddit:
       resultsSubs.data.removeAll()
       Task {
-        if let subs = await redditAPI.searchSubreddits(query)?.map({ Subreddit(data: $0, api: redditAPI) }) {
+        if let subs = await redditAPI.searchSubreddits(searchQuery.text)?.map({ Subreddit(data: $0, api: redditAPI) }) {
           await MainActor.run {
             withAnimation {
               resultsSubs.data = subs
@@ -70,7 +69,7 @@ struct Search: View {
     case .user:
       resultsUsers.data.removeAll()
       Task {
-        if let users = await redditAPI.searchUsers(query)?.map({ User(data: $0, api: redditAPI) }) {
+        if let users = await redditAPI.searchUsers(searchQuery.text)?.map({ User(data: $0, api: redditAPI) }) {
           await MainActor.run {
             withAnimation {
               resultsUsers.data = users
@@ -81,16 +80,6 @@ struct Search: View {
           }
         }
       }
-    }
-  }
-  
-  func debounceFetch() {
-    // Invalidate existing timer
-    debounceTimer?.invalidate()
-
-    // Create a new timer
-    debounceTimer = Timer.scheduledTimer(withTimeInterval: 0.25, repeats: false) { _ in
-      fetch()
     }
   }
   
@@ -130,18 +119,18 @@ struct Search: View {
         list.backgroundColor = UIColor.systemGroupedBackground
       }
       .listStyle(.plain)
-      .loader(loading, hideSpinner && !query.isEmpty)
+      .loader(loading, hideSpinner && !searchQuery.text.isEmpty)
       .navigationTitle("Search")
-      .searchable(text: $query, placement: .toolbar)
+      .searchable(text: $searchQuery.text, placement: .toolbar)
       .onChange(of: searchType) { _ in fetch() }
       .onChange(of: reset) { _ in router.path = NavigationPath() }
-      .onChange(of: query) { val in
+      .onChange(of: searchQuery.debounced) { val in
         if val == "" {
           resultsSubs.data = []
           resultsUsers.data = []
         }
         
-        debounceFetch()
+        fetch()
       }
       .refreshable { fetch() }
       .onSubmit(of: .search) { fetch() }
