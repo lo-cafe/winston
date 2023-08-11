@@ -57,10 +57,9 @@ struct Search: View {
       resultsSubs.data.removeAll()
       Task {
         if let subs = await redditAPI.searchSubreddits(query)?.map({ Subreddit(data: $0, api: redditAPI) }) {
-          let sortedSubs = subs.sorted(by: { ($0.data?.subscribers ?? 0) > ($1.data?.subscribers ?? 0) })
           await MainActor.run {
             withAnimation {
-              resultsSubs.data = sortedSubs
+              resultsSubs.data = subs
               loading = false
               
               hideSpinner = resultsSubs.data.isEmpty
