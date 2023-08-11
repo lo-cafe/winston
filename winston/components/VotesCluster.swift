@@ -19,7 +19,6 @@ struct VotesCluster: View {
       
         VStack{
           Text(formatBigNumber(data.ups))
-  //              .foregroundColor(downup == 0 ? .gray : downup > 0 ? .orange : .blue)
             .foregroundColor(data.likes != nil ? (data.likes! ? .orange : .blue) : .gray)
             .fontSize(16, .semibold)
             .viewVotes(data.ups, data.downs)
@@ -42,9 +41,6 @@ struct VotesCluster: View {
     }
 }
 
-
-  
-  
 struct VoteButton: View {
   var color: Color
   var voteAction: RedditAPI.VoteAction
