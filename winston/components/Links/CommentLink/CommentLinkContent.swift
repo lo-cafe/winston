@@ -63,6 +63,8 @@ struct CommentLinkContent: View {
   @Default(.cardedCommentsInnerHPadding) var cardedCommentsInnerHPadding
   @Default(.coloredCommentNames) var coloredCommenNames
   
+  @State var viewLoaded = false
+  
   var body: some View {
     let selectable = (comment.data?.winstonSelecting ?? false)
     let horPad = preferenceShowCommentsCards ? cardedCommentsInnerHPadding : 0
@@ -257,7 +259,16 @@ struct CommentLinkContent: View {
 //          }
           .id("\(data.id)-body\(forcedBodySize == nil ? "" : "-preview")")
         }
-        
+      }
+      .onAppear() {
+        print("triggered")
+        if !viewLoaded {
+          if data.author == "AutoModerator" && !(data.collapsed ?? false) {
+            comment.toggleCollapsed(optimistic: true)
+          }
+        } else {
+          viewLoaded = true
+        }
       }
     } else {
       Text("oops")
