@@ -62,9 +62,9 @@ struct VoteButton: View {
     } label: {
       Image(systemName: image)
     }
-    .buttonStyle(ScaleButtonStyle(scaleDepressed: 1, scalePressed: 1.2))
+    .buttonStyle(ScaleButtonStyle(scaleDepressed: 1, scalePressed: 1.2)) //Deperecated, but when I delete it the buttons in the feed stop working -_-
     .foregroundColor(color)
-    .scaleEffect(animate ? 1 : 1.4)
+    .scaleEffect(animate ? 1 : 1.3)
     }
   }
 }
