@@ -9,7 +9,15 @@ import Foundation
 import SwiftUI
 import SimpleHaptics
 
-struct SwipeUI: ViewModifier {
+struct SwipeUI<T: GenericRedditEntityDataType>: ViewModifier {
+  private enum TriggeredAction: Int {
+    case leftFirst = 1
+    case leftSecond = 2
+    case rightFirst = 3
+    case rightSecond = 4
+    case none = 0
+  }
+  
   @EnvironmentObject private var haptics: SimpleHapticGenerator
   @State private var pressing: Bool = false
   @State private var dragAmount: CGFloat = 0
@@ -17,22 +25,63 @@ struct SwipeUI: ViewModifier {
   @State private var firstLeftAction = false
   @State private var firstRightAction = false
   @State private var secondAction = false
+  @State private var triggeredAction: TriggeredAction = .none
   
   var offsetYAction: CGFloat = 0
   var controlledDragAmount: Binding<CGFloat>?
   var controlledIsSource = true
   var onTapAction: (() -> Void)?
-  var leftActionIcon: String
-  var rightActionIcon: String
-  var secondActionIcon: String
-  var leftActionHandler: (()->())?
-  var rightActionHandler: (()->())?
-  var secondActionHandler: (()->())?
+  var actionsSet: SwipeActionsSet
+  @ObservedObject var entity: GenericRedditEntity<T>
+  //  var leftActionIcon: String
+  //  var rightActionIcon: String
+  //  var secondActionIcon: String
+  //  var leftActionHandler: (()->())?
+  //  var rightActionHandler: (()->())?
+  //  var secondActionHandler: (()->())?
   var disabled: Bool = false
   
   private let firstActionThreshold: CGFloat = 75
-  private let secondActionThreshold: CGFloat = 200
+  private let secondActionThreshold: CGFloat = 175
   private let minimumDragDistance: CGFloat = 30
+  
+  func infoRight() -> (SwipeActionItem, SwipeActionItem, SwipeActionItem, Bool)? {
+    let rightFirstNil = actionsSet.rightFirst.id == "none"
+    let rightSecondNil = actionsSet.rightSecond.id == "none"
+    var isSecond = false
+    if !rightFirstNil || !rightSecondNil {
+      var icon = !rightFirstNil ? actionsSet.rightFirst.icon : actionsSet.rightSecond.icon
+      var textColor = !rightFirstNil ? actionsSet.rightFirst.color : actionsSet.rightSecond.color
+      var bgColor = !rightFirstNil ? actionsSet.rightFirst.bgColor : actionsSet.rightSecond.bgColor
+      if actionsSet.rightSecond.id != "none" && triggeredAction == .rightSecond {
+        icon = actionsSet.rightSecond.icon
+        textColor = actionsSet.rightSecond.color
+        bgColor = actionsSet.rightSecond.bgColor
+        isSecond = true
+      }
+      return (icon, textColor, bgColor, isSecond)
+    }
+    return nil
+  }
+  
+  func infoLeft() -> (SwipeActionItem, SwipeActionItem, SwipeActionItem, Bool)? {
+    let leftFirstNil = actionsSet.leftFirst.id == "none"
+    let leftSecondNil = actionsSet.leftSecond.id == "none"
+    var isSecond = false
+    if !leftFirstNil || !leftSecondNil {
+      var icon = !leftFirstNil ? actionsSet.leftFirst.icon : actionsSet.leftSecond.icon
+      var textColor = !leftFirstNil ? actionsSet.leftFirst.color : actionsSet.leftSecond.color
+      var bgColor = !leftFirstNil ? actionsSet.leftFirst.bgColor : actionsSet.leftSecond.bgColor
+      if actionsSet.leftSecond.id != "none" && triggeredAction == .leftSecond {
+        icon = actionsSet.leftSecond.icon
+        textColor = actionsSet.leftSecond.color
+        bgColor = actionsSet.leftSecond.bgColor
+        isSecond = true
+      }
+      return (icon, textColor, bgColor, isSecond)
+    }
+    return nil
+  }
   
   func body(content: Content) -> some View {
     let actualOffsetX = controlledDragAmount?.wrappedValue ?? dragAmount
@@ -46,26 +95,24 @@ struct SwipeUI: ViewModifier {
         ? nil
         : HStack {
           
-          if leftActionHandler != nil {
-            MasterButton(icon: leftActionIcon, color: firstLeftAction ? .blue : .gray, textColor: .white, proportional: .circle) {
-              
-            }
-            .scaleEffect(firstLeftAction ? 1 : max(0.001, offsetXInterpolate([-0.9, 0.85], false)))
-            .opacity(max(0, offsetXInterpolate([-0.9, 1], false)))
-            .frame(width: actualOffsetX < 0 ? 10 : abs(actualOffsetX))
-            .offset(x: -8)
+          if let infoLeft = infoLeft() {
+            let active = infoLeft.3 ? actionsSet.leftSecond.active(entity) : actionsSet.leftFirst.active(entity)
+            MasterButton(icon: active ? infoLeft.0.active : infoLeft.0.normal, color: Color.hex(active ? infoLeft.2.active : infoLeft.2.normal), textColor: Color.hex(active ? infoLeft.1.active : infoLeft.1.normal), proportional: .circle) {}
+              .scaleEffect(triggeredAction == .leftSecond ? 1.1 : triggeredAction == .leftFirst ? 1 : max(0.001, offsetXInterpolate([-0.9, 0.85], false)))
+              .opacity(max(0, offsetXInterpolate([-0.9, 1], false)))
+              .frame(width: actualOffsetX < 0 ? 10 : abs(actualOffsetX))
+              .offset(x: -8)
           }
           
           Spacer()
           
-          if rightActionHandler != nil {
-            MasterButton(icon: secondAction ? secondActionIcon : rightActionIcon, color: secondAction ? .secondary.opacity(0.2) : firstRightAction ? .orange : .gray, textColor: secondAction ? .blue : .white, proportional: .circle) {
-              
-            }
-            .scaleEffect(secondAction ? 1.1 : firstRightAction ? 1 : max(0.001, offsetXNegativeInterpolate([-0.9, 0.85], false)))
-            .opacity(max(0, offsetXNegativeInterpolate([-0.9, 1], false)))
-            .frame(width: actualOffsetX > 0 ? 10 : abs(actualOffsetX))
-            .offset(x: 8)
+          if let infoRight = infoRight() {
+            let active = infoRight.3 ? actionsSet.rightSecond.active(entity) : actionsSet.rightFirst.active(entity)
+            MasterButton(icon: active ? infoRight.0.active : infoRight.0.normal, color: Color.hex(active ? infoRight.2.active : infoRight.2.normal), textColor: Color.hex(active ? infoRight.1.active : infoRight.1.normal), proportional: .circle) {}
+              .scaleEffect(triggeredAction == .rightSecond ? 1.1 : triggeredAction == .rightFirst ? 1 : max(0.001, offsetXNegativeInterpolate([-0.9, 0.85], false)))
+              .opacity(max(0, offsetXNegativeInterpolate([-0.9, 1], false)))
+              .frame(width: actualOffsetX > 0 ? 10 : abs(actualOffsetX))
+              .offset(x: 8)
           }
         }
           .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -117,42 +164,46 @@ struct SwipeUI: ViewModifier {
       .onChange(of: (controlledDragAmount?.wrappedValue ?? dragAmount)) { newValue in
         if !controlledIsSource { return }
         if newValue == 0 {
-          if firstLeftAction {
-            withAnimation(.interpolatingSpring(stiffness: 150, damping: 17)) {
-              firstLeftAction = false
-            }
-            leftActionHandler?()
-          } else if firstRightAction {
-            if secondAction {
-              withAnimation(.interpolatingSpring(stiffness: 150, damping: 17)) {
-                secondAction = false
-              }
-              secondActionHandler?()
-            } else {
-              rightActionHandler?()
+          Task { [triggeredAction] in
+            
+            switch triggeredAction {
+            case .leftFirst:
+              await actionsSet.leftFirst.action(entity)
+            case .leftSecond:
+              await actionsSet.leftSecond.action(entity)
+            case .rightFirst:
+              await actionsSet.rightFirst.action(entity)
+            case .rightSecond:
+              await actionsSet.rightSecond.action(entity)
+            default:
+              break
             }
           }
+          withAnimation(.interpolatingSpring(stiffness: 150, damping: 17)) { triggeredAction = .none }
           return
         }
-        let firstLeftActioning = (leftActionHandler != nil && newValue > firstActionThreshold - 1)
-        let firstRightActioning = (rightActionHandler != nil && newValue < -firstActionThreshold + 1)
-        let firstActioning = firstLeftActioning || firstRightActioning
-        let secondActioning = (newValue) < -secondActionThreshold + 1
-        if firstLeftAction != firstLeftActioning || firstRightAction != firstRightActioning {
-          withAnimation(.interpolatingSpring(stiffness: 200, damping: 15, initialVelocity: firstActioning ? 35 : 0)) {
-            firstLeftAction = firstLeftActioning
-            firstRightAction = firstRightActioning
-          }
-          if abs(newValue) > 20 {
-            try? haptics.fire(intensity: firstActioning ? 0.5 : 0.35, sharpness: firstActioning ? 0.25 : 0.5)
-          }
+        
+        var triggering: TriggeredAction = .none
+        
+        if (actionsSet.leftFirst.id != "none" && newValue > firstActionThreshold - 1) {
+          triggering = .leftFirst
         }
-        if secondActionHandler != nil {
-          if secondAction != secondActioning {
-            withAnimation(.interpolatingSpring(stiffness: 200, damping: 15, initialVelocity: secondActioning ? 35 : 0)) {
-              secondAction = secondActioning
-            }
-            try? haptics.fire(intensity: secondActioning ? 0.5 : 0.35, sharpness: secondActioning ? 0.25 : 0.5)
+        if actionsSet.leftSecond.id != "none" && (newValue) > secondActionThreshold - 1 {
+          triggering = .leftSecond
+        }
+        if (actionsSet.rightFirst.id != "none" && newValue < -firstActionThreshold + 1) {
+          triggering = .rightFirst
+        }
+        if actionsSet.rightSecond.id != "none" && (newValue) < -secondActionThreshold + 1 {
+          triggering = .rightSecond
+        }
+        
+        if triggering != triggeredAction {
+          let increasing = triggering.rawValue > triggeredAction.rawValue
+          let isSecond = triggering == .leftSecond || triggering == .rightSecond
+          try? haptics.fire(intensity: increasing ? 0.5 : 0.35, sharpness: increasing ? 0.25 : 0.5)
+          withAnimation(isSecond ? .default.speed(2) : .interpolatingSpring(stiffness: 200, damping: 15, initialVelocity: increasing ? 35 : 0)) {
+            triggeredAction = triggering
           }
         }
       }
@@ -161,17 +212,13 @@ struct SwipeUI: ViewModifier {
 }
 
 extension View {
-  func swipyUI(
+  func swipyUI<T: GenericRedditEntityDataType>(
     offsetYAction: CGFloat = 0,
     controlledDragAmount: Binding<CGFloat>? = nil,
     controlledIsSource: Bool = true,
     onTap: (() -> Void)? = nil,
-    leftActionIcon: String = "arrow.down",
-    rightActionIcon: String = "arrow.up",
-    secondActionIcon: String = "arrowshape.turn.up.left.fill",
-    leftActionHandler: (()->())? = nil,
-    rightActionHandler: (()->())? = nil,
-    secondActionHandler: (()->())? = nil,
+    actionsSet: SwipeActionsSet,
+    entity: GenericRedditEntity<T>,
     disabled: Bool = false
   ) -> some View {
     self.modifier(SwipeUI(
@@ -179,12 +226,8 @@ extension View {
       controlledDragAmount: controlledDragAmount,
       controlledIsSource: controlledIsSource,
       onTapAction: onTap,
-      leftActionIcon: leftActionIcon,
-      rightActionIcon: rightActionIcon,
-      secondActionIcon: secondActionIcon,
-      leftActionHandler: leftActionHandler,
-      rightActionHandler: rightActionHandler,
-      secondActionHandler: secondActionHandler,
+      actionsSet: actionsSet,
+      entity: entity,
       disabled: disabled))
   }
 }

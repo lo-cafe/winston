@@ -26,6 +26,20 @@ struct PostInBox: Codable, Identifiable, Hashable, Defaults.Serializable {
   var lastUpdatedAt: Double?
 }
 
+let DEFAULT_POST_SWIPE_ACTIONS = SwipeActionsSet(
+    leftFirst: AnySwipeAction(UpvotePostAction()),
+    leftSecond: AnySwipeAction(SavePostAction()),
+    rightFirst: AnySwipeAction(DownvotePostAction()),
+    rightSecond: AnySwipeAction(SeenPostAction())
+)
+
+let DEFAULT_COMMENT_SWIPE_ACTIONS = SwipeActionsSet(
+    leftFirst: AnySwipeAction(UpvoteCommentAction()),
+    leftSecond: AnySwipeAction(SaveCommentAction()),
+    rightFirst: AnySwipeAction(DownvoteCommentAction()),
+    rightSecond: AnySwipeAction(ReplyCommentAction())
+)
+
 extension Defaults.Keys {
   static let redditAPILastTokenRefreshDate = Key<Date?>("redditAPILastTokenRefreshDate", default: nil)
   static let redditAPITokenExpiration = Key<Int?>("redditAPITokenExpiration", default: nil)
@@ -35,6 +49,11 @@ extension Defaults.Keys {
   static let blurPostLinkNSFW = Key<Bool>("blurPostLinkNSFW", default: true)
   static let blurPostNSFW = Key<Bool>("blurPostNSFW", default: false)
   static let preferredCommentSort = Key<CommentSortOption>("preferredCommentSort", default: .confidence)
+  
+  static let compactMode = Key<Bool>("compactMode", default: false)
+  
+  static let postSwipeActions = Key<SwipeActionsSet>("postSwipeActions", default: DEFAULT_POST_SWIPE_ACTIONS)
+  static let commentSwipeActions = Key<SwipeActionsSet>("commentSwipeActions", default: DEFAULT_COMMENT_SWIPE_ACTIONS)
   
 //  static let postLinksOuterHPadding = Key<CGFloat>("postLinksOuterHPadding", default: 0)
 //  static let postLinksOuterVPadding = Key<CGFloat>("postLinksOuterVPadding", default: 8)
