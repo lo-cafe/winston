@@ -253,6 +253,28 @@ extension Comment {
     return false
   }
   
+  func saveToggle() async -> Bool {
+    if let data = data, let fullname = data.name {
+      let prev = data.saved ?? false
+      await MainActor.run {
+        withAnimation {
+          self.data?.saved = !prev
+        }
+      }
+      let success = await redditAPI.save(!prev, id: fullname)
+      if !(success ?? false) {
+        await MainActor.run {
+          withAnimation {
+            self.data?.saved = prev
+          }
+        }
+        return false
+      }
+      return true
+    }
+    return false
+  }
+  
   func vote(action: RedditAPI.VoteAction) async -> Bool? {
     let oldLikes = data?.likes
     let oldUps = data?.ups ?? 0
@@ -288,7 +310,7 @@ struct CommentData: GenericRedditEntityDataType {
   var likes: Bool?
   var replies: Either<String, Listing<CommentData>>?
   //  let user_reports: [String]?
-  let saved: Bool?
+  var saved: Bool?
   let id: String
   //  let banned_at_utc: String?
   //  let mod_reason_title: String?
@@ -347,6 +369,7 @@ struct CommentData: GenericRedditEntityDataType {
   let mod_reports: [String]?
   let num_reports: Int?
   var ups: Int?
+  var winstonSelecting: Bool? = false
 }
 
 struct Gildings: Codable {

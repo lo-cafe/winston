@@ -9,16 +9,6 @@ import SwiftUI
 import HighlightedTextEditor
 import Defaults
 
-//class ReplyModalContent: Equatable, ObservableObject, Identifiable {
-//  static func ==(lhs: ReplyModalContent, rhs: ReplyModalContent) -> Bool {
-//    return lhs.id == rhs.id
-//  }
-//  @Published var comment: Comment?
-//  var id: String {
-//    return comment?.id ?? UUID().uuidString
-//  }
-//}
-
 class TextFieldObserver : ObservableObject {
   @Published var debouncedTeplyText = ""
   @Published var replyText = ""

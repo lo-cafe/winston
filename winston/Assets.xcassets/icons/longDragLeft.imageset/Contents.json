@@ -1,0 +1,22 @@
+{
+  "images" : [
+    {
+      "filename" : "swipe-two-fingers-left-gesture.svg",
+      "idiom" : "universal"
+    },
+    {
+      "appearances" : [
+        {
+          "appearance" : "luminosity",
+          "value" : "dark"
+        }
+      ],
+      "filename" : "swipe-two-fingers-left-gesture 1.svg",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}

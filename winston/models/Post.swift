@@ -79,47 +79,47 @@ extension Post {
             await self.refreshPost()
           }
         }
-//        if let data = data {
-//          let newComment = CommentData(
-//            subreddit_id: data.subreddit_id,
-//            subreddit: data.subreddit,
-//            likes: true,
-//            saved: false,
-//            id: UUID().uuidString,
-//            archived: false,
-//            count: 0,
-//            author: redditAPI.me?.data?.name ?? "",
-//            created_utc: nil,
-//            send_replies: nil,
-//            parent_id: id,
-//            score: nil,
-//            author_fullname: "t2_\(redditAPI.me?.data?.id ?? "")",
-//            approved_by: nil,
-//            mod_note: nil,
-//            collapsed: nil,
-//            body: text,
-//            top_awarded_type: nil,
-//            name: nil,
-//            downs: 0,
-//            children: nil,
-//            body_html: nil,
-//            created: Double(Int(Date().timeIntervalSince1970)),
-//            link_id: data.id,
-//            link_title: data.title,
-//            subreddit_name_prefixed: data.subreddit_name_prefixed,
-//            depth: 0,
-//            author_flair_background_color: nil,
-//            collapsed_because_crowd_control: nil,
-//            mod_reports: nil,
-//            num_reports: nil,
-//            ups: 1
-//          )
-//          await MainActor.run {
-//            withAnimation {
-//              childrenWinston.data.append(Comment(data: newComment, api: self.redditAPI))
-//            }
-//          }
-//        }
+        //        if let data = data {
+        //          let newComment = CommentData(
+        //            subreddit_id: data.subreddit_id,
+        //            subreddit: data.subreddit,
+        //            likes: true,
+        //            saved: false,
+        //            id: UUID().uuidString,
+        //            archived: false,
+        //            count: 0,
+        //            author: redditAPI.me?.data?.name ?? "",
+        //            created_utc: nil,
+        //            send_replies: nil,
+        //            parent_id: id,
+        //            score: nil,
+        //            author_fullname: "t2_\(redditAPI.me?.data?.id ?? "")",
+        //            approved_by: nil,
+        //            mod_note: nil,
+        //            collapsed: nil,
+        //            body: text,
+        //            top_awarded_type: nil,
+        //            name: nil,
+        //            downs: 0,
+        //            children: nil,
+        //            body_html: nil,
+        //            created: Double(Int(Date().timeIntervalSince1970)),
+        //            link_id: data.id,
+        //            link_title: data.title,
+        //            subreddit_name_prefixed: data.subreddit_name_prefixed,
+        //            depth: 0,
+        //            author_flair_background_color: nil,
+        //            collapsed_because_crowd_control: nil,
+        //            mod_reports: nil,
+        //            num_reports: nil,
+        //            ups: 1
+        //          )
+        //          await MainActor.run {
+        //            withAnimation {
+        //              childrenWinston.data.append(Comment(data: newComment, api: self.redditAPI))
+        //            }
+        //          }
+        //        }
       }
       return result
     }
@@ -161,6 +161,28 @@ extension Post {
     return nil
   }
   
+  func saveToggle() async -> Bool {
+    if let data = data {
+      let prev = data.saved
+      await MainActor.run {
+        withAnimation {
+          self.data?.saved = !prev
+        }
+      }
+      let success = await redditAPI.save(!prev, id: data.name)
+      if !(success ?? false) {
+        await MainActor.run {
+          withAnimation {
+            self.data?.saved = prev
+          }
+        }
+        return false
+      }
+      return true
+    }
+    return false
+  }
+  
   func vote(action: RedditAPI.VoteAction) async -> Bool? {
     let oldLikes = data?.likes
     let oldUps = data?.ups ?? 0
@@ -185,7 +207,7 @@ struct PostData: GenericRedditEntityDataType, Defaults.Serializable {
   let subreddit: String
   let selftext: String
   let author_fullname: String?
-  let saved: Bool
+  var saved: Bool
   let gilded: Int
   let clicked: Bool
   let title: String
@@ -308,16 +330,16 @@ struct PreviewImgCollection: Codable, Hashable {
 }
 
 struct RedditVideoPreview: Codable, Hashable {
-    let bitrate_kbps: Double?
-    let fallback_url: String?
-    let height: Double?
-    let width: Double?
-    let scrubber_media_url: String?
-    let dash_url: String?
-    let duration: Double?
-    let hls_url: String?
-    let is_gif: Bool?
-    let transcoding_status: String?
+  let bitrate_kbps: Double?
+  let fallback_url: String?
+  let height: Double?
+  let width: Double?
+  let scrubber_media_url: String?
+  let dash_url: String?
+  let duration: Double?
+  let hls_url: String?
+  let is_gif: Bool?
+  let transcoding_status: String?
 }
 
 struct Preview: Codable, Hashable {

@@ -70,11 +70,11 @@ struct Tabber: View {
         .tabItem {
           VStack {
             Image(systemName: "person.fill")
-              if showUsernameInTabBar, let me = redditAPI.me, let data = me.data {
-                  Text(data.name)
-              } else {
-                  Text("Me")
-              }
+            if showUsernameInTabBar, let me = redditAPI.me, let data = me.data {
+              Text(data.name)
+            } else {
+              Text("Me")
+            }
           }
         }
         .tag(TabIdentifier.me)
@@ -98,8 +98,9 @@ struct Tabber: View {
         .tag(TabIdentifier.settings)
       
     }
+    .replyModalPresenter()
     .overlay(
-GlobalLoaderView()
+      GlobalLoaderView()
       , alignment: .bottom
     )
     .environmentObject(tempGlobalState)
@@ -152,10 +153,10 @@ GlobalLoaderView()
         }
       }
     }
-//    .sheet(isPresented: $credModalOpen) {
-//      ChangeAuthAPIKey(open: $credModalOpen)
-//        .interactiveDismissDisabled(true)
-//    }
+    //    .sheet(isPresented: $credModalOpen) {
+    //      ChangeAuthAPIKey(open: $credModalOpen)
+    //        .interactiveDismissDisabled(true)
+    //    }
     .sheet(isPresented: $credModalOpen) {
       Onboarding(open: $credModalOpen)
         .interactiveDismissDisabled(true)

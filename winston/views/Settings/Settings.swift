@@ -10,7 +10,7 @@ import Defaults
 //import SceneKit
 
 enum SettingsPages {
-  case behavior, appearance, account, about
+  case behavior, appearance, account, about, commentSwipe, postSwipe
 }
 
 struct Settings: View {
@@ -53,16 +53,23 @@ struct Settings: View {
         }
       }
       .navigationDestination(for: SettingsPages.self) { x in
-        switch x {
-        case .behavior:
-          BehaviorPanel()
-        case .appearance:
-          AppearancePanel()
-        case .account:
-          AccountPanel()
-        case .about:
-          AboutPanel()
+        Group {
+          switch x {
+          case .behavior:
+            BehaviorPanel()
+          case .appearance:
+            AppearancePanel()
+          case .account:
+            AccountPanel()
+          case .about:
+            AboutPanel()
+          case .commentSwipe:
+            CommentSwipePanel()
+          case .postSwipe:
+            PostSwipePanel()
+          }
         }
+        .environmentObject(router)
       }
       .navigationTitle("Settings")
       .environmentObject(router)
