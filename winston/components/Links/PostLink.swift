@@ -145,27 +145,8 @@ struct PostLink: View, Equatable {
           
           Spacer()
           
-          HStack(alignment: .center, spacing: 0) {
-            MasterButton(icon: "arrow.up", mode: .subtle, color: .white, colorHoverEffect: .none, textColor: data.likes != nil && data.likes! ? .orange : .gray, textSize: 22, proportional: .circle) {
-              Task {
-                try? haptics.fire(intensity: 0.35, sharpness: 0.5)
-                _ = await post.vote(action: .up)
-              }
-              
-            }
-            //            .shrinkOnTap()
-            .padding(.all, -8)
-            
-            VotesCluster(data: data, likeRatio: showUpvoteRatio ? data.upvote_ratio : nil)
-            
-            MasterButton(icon: "arrow.down", mode: .subtle, color: .white, colorHoverEffect: .none, textColor: data.likes != nil && !data.likes! ? .blue : .gray, textSize: 22, proportional: .circle) {
-              Task {
-                try? haptics.fire(intensity: 0.35, sharpness: 0.5)
-                _ = await post.vote(action: .down)
-              }
-            }
-            //            .shrinkOnTap()
-            .padding(.all, -8)
+          HStack(alignment: .center) {
+            VotesCluster(data: data, likeRatio: showUpvoteRatio ? data.upvote_ratio : nil, post: post)
           }
           .fontSize(22, .medium)
         }

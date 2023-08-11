@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		65978D022A861ECF00B6BDFC /* scaleEffectButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65978D012A861ECF00B6BDFC /* scaleEffectButtonStyle.swift */; };
 		659F68022A84E32300989300 /* VotesCluster.swift in Sources */ = {isa = PBXBuildFile; fileRef = 659F68012A84E32300989300 /* VotesCluster.swift */; };
 		EC082F252A65FB4300BA2727 /* MeasureOnce.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC082F242A65FB4300BA2727 /* MeasureOnce.swift */; };
 		EC082F272A66132600BA2727 /* CommentLinkMore.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC082F262A66132600BA2727 /* CommentLinkMore.swift */; };
@@ -232,6 +233,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		65978D012A861ECF00B6BDFC /* scaleEffectButtonStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = scaleEffectButtonStyle.swift; sourceTree = "<group>"; };
 		659F68012A84E32300989300 /* VotesCluster.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VotesCluster.swift; sourceTree = "<group>"; };
 		EC082F242A65FB4300BA2727 /* MeasureOnce.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeasureOnce.swift; sourceTree = "<group>"; };
 		EC082F262A66132600BA2727 /* CommentLinkMore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentLinkMore.swift; sourceTree = "<group>"; };
@@ -836,6 +838,7 @@
 				ECF064EA2A7F2AC50088C2C0 /* Router.swift */,
 				ECF064EC2A7F405C0088C2C0 /* KeyWindow.swift */,
 				ECF064EE2A80383C0088C2C0 /* sumCGSize.swift */,
+				65978D012A861ECF00B6BDFC /* scaleEffectButtonStyle.swift */,
 			);
 			path = utils;
 			sourceTree = "<group>";
@@ -1068,6 +1071,7 @@
 				EC8F34662A6A348F00EB8249 /* SwipeActions.swift in Sources */,
 				ECAA8B5A2A75004300D9D636 /* redditURLParser.swift in Sources */,
 				EC63735D2A791E47000A03A3 /* Onboarding7Ending.swift in Sources */,
+				65978D022A861ECF00B6BDFC /* scaleEffectButtonStyle.swift in Sources */,
 				ECC68D412A799CDD005BC7B4 /* SelectableText.swift in Sources */,
 				ECDD515C2A73A90700FD9498 /* PreviewLink.swift in Sources */,
 				EC5EDA712A4DA94A00140A08 /* SwipeActionsOld.swift in Sources */,

@@ -14,7 +14,6 @@ struct PostFloatingPill: View {
   @ObservedObject var post: Post
   @ObservedObject var subreddit: Subreddit
   @State var showReplyModal = false
-  @EnvironmentObject private var haptics: SimpleHapticGenerator
 
   var thisPinnedPost: Bool { postsInBox.contains { $0.id == post.id } }
   
@@ -66,27 +65,12 @@ struct PostFloatingPill: View {
           }
           
           HStack(alignment: .center, spacing: 8) {
-            Button {
-              Task {
-                try? haptics.fire(intensity: 0.35, sharpness: 0.5)
-                await post.vote(action: .up)
-              }
-            } label: {
-              Image(systemName: "arrow.up")
-            }
-            .foregroundColor(data.likes != nil && data.likes! ? .orange : .gray)
+           
+
             
-            VotesCluster(data: data, likeRatio: showUpvoteRatio ? data.upvote_ratio : nil)
+            VotesCluster(data: data, likeRatio: showUpvoteRatio ? data.upvote_ratio : nil, post: post)
             
-            Button {
-              Task {
-                try? haptics.fire(intensity:  0.35, sharpness: 0.5)
-                await post.vote(action: .down)
-              }
-            } label: {
-              Image(systemName: "arrow.down")
-            }
-            .foregroundColor(data.likes != nil && !data.likes! ? .blue : .gray)
+            
           }
           
         }
