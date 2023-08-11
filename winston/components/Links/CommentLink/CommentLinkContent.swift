@@ -56,6 +56,7 @@ struct CommentLinkContent: View {
   @State var highlight = false
   
   @Default(.cardedCommentsInnerHPadding) var cardedCommentsInnerHPadding
+  @Default(.coloredCommentNames) var coloredCommenNames
   
   var body: some View {
     let horPad = preferenceShowCommentsCards ? cardedCommentsInnerHPadding : 0
@@ -76,7 +77,7 @@ struct CommentLinkContent: View {
           }
           HStack {
             if let author = data.author, let created = data.created {
-              Badge(usernameColor: (post?.data?.author ?? "") == author ? Color.green : Color.blue, showAvatar: preferenceShowCommentsAvatars, author: author, fullname: data.author_fullname, created: created, avatarURL: avatarsURL?[data.author_fullname!])
+              Badge(usernameColor: (post?.data?.author ?? "") == author ? Color.green : (coloredCommenNames ? Color.blue : Color.primary), showAvatar: preferenceShowCommentsAvatars, author: author, fullname: data.author_fullname, created: created, avatarURL: avatarsURL?[data.author_fullname!])
             }
             
             Spacer()

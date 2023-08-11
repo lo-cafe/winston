@@ -255,11 +255,11 @@ enum SubListingSortOption: Codable, CaseIterable, Identifiable, Defaults.Seriali
   var rawVal: SubListingSort {
     switch self {
     case .hot:
-      return SubListingSort(icon: "flame.fill", value: "hot")
+      return SubListingSort(icon: "flame", value: "hot")
     case .new:
-      return SubListingSort(icon: "newspaper.fill", value: "new")
+      return SubListingSort(icon: "newspaper", value: "new")
     case .top:
-      return SubListingSort(icon: "arrow.up.forward.app.fill", value: "top")
+      return SubListingSort(icon: "trophy", value: "top")
     }
   }
 }
