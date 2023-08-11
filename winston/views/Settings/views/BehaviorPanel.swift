@@ -16,6 +16,7 @@ struct BehaviorPanel: View {
   @Default(.preferredCommentSort) var preferredCommentSort
   @Default(.blurPostLinkNSFW) var blurPostLinkNSFW
   @Default(.blurPostNSFW) var blurPostNSFW
+  @Default(.collapseAutoModerator) var collapseAutoModerator
   @Default(.openHomeSubOnLaunch) var openHomeSubOnLaunch
   
   var body: some View {
@@ -60,6 +61,8 @@ struct BehaviorPanel: View {
               }
             }
           Toggle("Blur NSFW content", isOn: $blurPostNSFW)
+          
+          Toggle("Collapse AutoModerator comments", isOn: $collapseAutoModerator)
         }
     }
     .navigationTitle("Behavior")
