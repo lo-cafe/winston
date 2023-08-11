@@ -16,14 +16,12 @@ struct BehaviorPanel: View {
   @Default(.preferredCommentSort) var preferredCommentSort
   @Default(.blurPostLinkNSFW) var blurPostLinkNSFW
   @Default(.blurPostNSFW) var blurPostNSFW
-  @Default(.openHomeSubOnLaunch) var openHomeSubOnLaunch
   @Default(.compactMode) var compactMode
   
   var body: some View {
     List {
       
       Section("General") {
-        Toggle("Open Home on app launch", isOn: $openHomeSubOnLaunch)
         Toggle("Open Youtube videos externally", isOn: $openYoutubeApp)
         
         Picker("Default Launch Feed", selection: $preferenceDefaultFeed) {

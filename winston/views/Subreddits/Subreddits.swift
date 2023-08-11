@@ -42,7 +42,6 @@ struct Subreddits: View {
   @Environment(\.openURL) private var openURL
   @EnvironmentObject private var redditAPI: RedditAPI
   @Default(.subreddits) private var subreddits
-  @Default(.openHomeSubOnLaunch) private var openHomeSubOnLaunch
   @State private var searchText: String = ""
   @StateObject private var subsDict = SubsDictContainer()
   @State private var loaded = false
@@ -182,12 +181,6 @@ struct Subreddits: View {
               proxy.scrollTo("\(id)-main", anchor: .top)
             }
           }
-          
-          // MARK: Route to default feed
-          if preferenceDefaultFeed != "subList" { // we are in subList, can ignore
-            let tempSubreddit = Subreddit(id: preferenceDefaultFeed, api: redditAPI)
-            router.path.append(SubViewType.posts(tempSubreddit))
-          }
         }
         .refreshable {
           Task {
@@ -205,8 +198,13 @@ struct Subreddits: View {
             if subreddits.count > 0 {
               subsDict.data = sort(subreddits)
             }
-            Task {
-              if openHomeSubOnLaunch && router.path.count == 0 { router.path.append(SubViewType.posts(Subreddit(id: "home", api: redditAPI))) }
+            Task {              
+              // MARK: Route to default feed
+              if preferenceDefaultFeed != "subList" && router.path.count == 0 { // we are in subList, can ignore
+                let tempSubreddit = Subreddit(id: preferenceDefaultFeed, api: redditAPI)
+                router.path.append(SubViewType.posts(tempSubreddit))
+              }
+              
               await redditAPI.fetchSubs()
               withAnimation {
                 loaded = true
