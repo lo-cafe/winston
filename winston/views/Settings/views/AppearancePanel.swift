@@ -35,7 +35,7 @@ struct AppearancePanel: View {
   //  @Default(.cardedCommentsInnerVPadding) var cardedCommentsInnerVPadding
   
   @Default(.coloredCommentNames) var coloredCommentNames
-  
+  @Default(.showUpvoteRatio) var showUpvoteRatio
   var body: some View {
     List {
       Section("General") {
@@ -61,6 +61,7 @@ struct AppearancePanel: View {
         
         Toggle("Show avatars", isOn: $preferenceShowPostsAvatars)
         Toggle("Colored usernames", isOn: $coloredCommentNames)
+        Toggle("Show upvote ratio", isOn: $showUpvoteRatio)
         if preferenceShowCommentsCards {
           VStack(alignment: .leading) {
             HStack {

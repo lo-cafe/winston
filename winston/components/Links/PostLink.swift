@@ -10,6 +10,7 @@ import CoreMedia
 import Defaults
 import AVKit
 import AVFoundation
+import SimpleHaptics
 
 struct FlairTag: View {
   var text: String
@@ -42,6 +43,8 @@ struct PostLink: View, Equatable {
   @ObservedObject var sub: Subreddit
   var showSub = false
   @EnvironmentObject private var router: Router
+  @EnvironmentObject private var haptics: SimpleHapticGenerator
+
   @Default(.preferenceShowPostsCards) private var preferenceShowPostsCards
   @Default(.preferenceShowPostsAvatars) private var preferenceShowPostsAvatars
   @Default(.blurPostLinkNSFW) private var blurPostLinkNSFW
@@ -56,6 +59,7 @@ struct PostLink: View, Equatable {
   @Default(.cardedPostLinksInnerHPadding) private var cardedPostLinksInnerHPadding
   @Default(.cardedPostLinksInnerVPadding) private var cardedPostLinksInnerVPadding
   
+  @Default(.showUpvoteRatio) var showUpvoteRatio
   @StateObject private var appeared = Appeared()
   
   var contentWidth: CGFloat { UIScreen.screenWidth - ((preferenceShowPostsCards ? cardedPostLinksOuterHPadding : postLinksInnerHPadding) * 2) - (preferenceShowPostsCards ? (preferenceShowPostsCards ? cardedPostLinksInnerHPadding : 0) * 2 : 0) }
@@ -144,6 +148,7 @@ struct PostLink: View, Equatable {
           HStack(alignment: .center, spacing: 0) {
             MasterButton(icon: "arrow.up", mode: .subtle, color: .white, colorHoverEffect: .none, textColor: data.likes != nil && data.likes! ? .orange : .gray, textSize: 22, proportional: .circle) {
               Task {
+                try? haptics.fire(intensity: 0.35, sharpness: 0.5)
                 _ = await post.vote(action: .up)
               }
               
@@ -151,10 +156,11 @@ struct PostLink: View, Equatable {
             //            .shrinkOnTap()
             .padding(.all, -8)
             
-            VotesCluster(data: data)
+            VotesCluster(data: data, likeRatio: showUpvoteRatio ? data.upvote_ratio : nil)
             
             MasterButton(icon: "arrow.down", mode: .subtle, color: .white, colorHoverEffect: .none, textColor: data.likes != nil && !data.likes! ? .blue : .gray, textSize: 22, proportional: .circle) {
               Task {
+                try? haptics.fire(intensity: 0.35, sharpness: 0.5)
                 _ = await post.vote(action: .down)
               }
             }
