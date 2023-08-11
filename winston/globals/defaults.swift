@@ -67,6 +67,7 @@ extension Defaults.Keys {
   static let newPostModalBlurBackground = Key<Bool>("newPostModalBlurBackground", default: true)
   static let showUsernameInTabBar = Key<Bool>("showUsernameInTabBar", default: false)
   static let openYoutubeApp = Key<Bool>("openYoutubeApp", default: true)
+  static let preferenceDefaultFeed = Key<String>("preferenceDefaultFeed", default: "subList")
   static let showHomeFeed = Key<Bool>("showHomeFeed", default: true)
   static let showPopularFeed = Key<Bool>("showPopularFeed", default: true)
   static let showAllFeed = Key<Bool>("showAllFeed", default: true)
