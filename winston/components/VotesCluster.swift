@@ -14,7 +14,7 @@ struct VotesCluster: View {
   var post: Post
 
   var body: some View {
-    HStack(spacing: 0){
+    HStack(){
       VoteButton(color: data.likes != nil && data.likes! ? .orange : .gray, voteAction: .up,image: "arrow.up", post: post)
       
         VStack{
