@@ -6,12 +6,13 @@
 //
 
 import SwiftUI
-
+import Defaults
 struct ShortCommentPostLink: View {
   @EnvironmentObject private var router: Router
   var comment: Comment
   @State var openedPost = false
   @State var openedSub = false
+  @Default(.coloredCommentNames) var coloredCommentNames
   var body: some View {
     if let data = comment.data, let _ = data.link_id, let _ = data.subreddit {
       //      Button {
@@ -29,7 +30,7 @@ struct ShortCommentPostLink: View {
         
         VStack(alignment: .leading, spacing: 2) {
           if let author = data.author {
-            (Text("by ").font(.system(size: 13, weight: .medium)).foregroundColor(.primary.opacity(0.5)) + Text(author).font(.system(size: 13, weight: .semibold)).foregroundColor(.blue))
+            (Text("by ").font(.system(size: 13, weight: .medium)).foregroundColor(.primary.opacity(0.5)) + Text(author).font(.system(size: 13, weight: .semibold)).foregroundColor(coloredCommentNames ? .blue : .primary))
               .onTapGesture { router.path.append(User(id: data.author!, api: comment.redditAPI)) }
           }
           

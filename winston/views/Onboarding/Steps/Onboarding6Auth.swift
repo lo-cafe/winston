@@ -20,7 +20,7 @@ struct Onboarding6Auth: View {
       VStack(spacing: 16) {
         OnboardingBigStep(step: 6)
         
-        Text("Last step, now you need to allow the new API key to access your account (yes, it's confuse).")
+        Text("Last step, now you need to allow the new API key to access your account (yes, it's confusing).")
           .fixedSize(horizontal: false, vertical: true)
           .frame(maxWidth: 300)
         

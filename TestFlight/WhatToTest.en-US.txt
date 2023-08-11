@@ -1,12 +1,5 @@
-- Fixed a few typos
-- Highlight comments on auto scrolling to them
-- Fix crash on Inbox link opening
-- Renewed global loader (appears sometimes)
-- Fix winston only showing the first 2 pages of subreddits
-- Subreddits now have arrows and glow when selected
-- Added open "Home" on launch option
-- Fixed Post Box not working on Home posts
-- Fixed some images loading forever
-- Increate the number of posts fetched in each chunk for posts lists
-- Added alphabet jumper to subs list
-- Added Saved posts section
+Express update with some quick fixes:
+- Inbox is now "Notifications" ans has a bell icon
+- Added show username in tab bar option
+- Fixes overview manual refreshes not working
+- Fixed bugs related to premium users (like "me" tab not loading up)

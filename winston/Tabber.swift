@@ -60,7 +60,7 @@ struct Tabber: View {
       Inbox(reset: reset[.inbox]!)
         .tabItem {
           VStack {
-            Image(systemName: "message.fill")
+            Image(systemName: "bell.fill")
             Text("Inbox")
           }
         }

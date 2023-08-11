@@ -48,6 +48,7 @@ extension Defaults.Keys {
   
   static let commentsInnerHPadding = Key<CGFloat>("commentsInnerHPadding", default: 8)
 //  static let commentsInnerVPadding = Key<CGFloat>("commentsInnerVPadding", default: 0)
+  static let coloredCommentNames = Key<Bool>("coloredCommentNames", default: false)
   
   static let cardedCommentsOuterHPadding = Key<CGFloat>("cardedCommentsOuterHPadding", default: 8)
 //  static let cardedCommentsOuterVPadding = Key<CGFloat>("cardedCommentsOuterVPadding", default: 0)
@@ -64,8 +65,7 @@ extension Defaults.Keys {
   static let maxPostLinkImageHeightPercentage = Key<Double>("maxPostLinkImageHeightPercentage", default: 100)
   static let replyModalBlurBackground = Key<Bool>("replyModalBlurBackground", default: true)
   static let newPostModalBlurBackground = Key<Bool>("newPostModalBlurBackground", default: true)
-  static let showUsernameInTabBar =
-    Key<Bool>("showUsernameInTabBar", default: true)
+  static let showUsernameInTabBar = Key<Bool>("showUsernameInTabBar", default: false)
   static let openYoutubeApp = Key<Bool>("openYoutubeApp", default: true)
   static let showHomeFeed = Key<Bool>("showHomeFeed", default: true)
   static let showPopularFeed = Key<Bool>("showPopularFeed", default: true)
