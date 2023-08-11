@@ -87,6 +87,7 @@ struct Subreddits: View {
                 ListBigBtn(icon: "signpost.right.and.left.circle.fill", iconColor: .orange, label: "All", destination: Subreddit(id: "all", api: redditAPI))
                 
                 ListBigBtn(icon: "bookmark.circle.fill", iconColor: .green, label: "Saved", destination: Subreddit(id: "saved", api: redditAPI))
+                  .opacity(0.5).allowsHitTesting(false)
               }
             }
             .frame(maxWidth: .infinity)
