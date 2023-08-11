@@ -63,7 +63,9 @@ struct CommentLinkContent: View {
   @Default(.cardedCommentsInnerHPadding) var cardedCommentsInnerHPadding
   @Default(.coloredCommentNames) var coloredCommenNames
   
-  @State var viewLoaded = false
+  @Default(.collapseAutoModerator) var collapseAutoModerator
+  
+  @State var commentViewLoaded = false
   
   var body: some View {
     let selectable = (comment.data?.winstonSelecting ?? false)
@@ -261,13 +263,12 @@ struct CommentLinkContent: View {
         }
       }
       .onAppear() {
-        print("triggered")
-        if !viewLoaded {
+        if !commentViewLoaded && collapseAutoModerator {
           if data.author == "AutoModerator" && !(data.collapsed ?? false) {
             comment.toggleCollapsed(optimistic: true)
           }
         } else {
-          viewLoaded = true
+          commentViewLoaded = true
         }
       }
     } else {
