@@ -264,7 +264,7 @@ struct CommentLinkContent: View {
       }
       .onAppear() {
         if !commentViewLoaded && collapseAutoModerator {
-          if data.author == "AutoModerator" && !(data.collapsed ?? false) {
+          if data.depth == 0 && data.author == "AutoModerator" && !(data.collapsed ?? false) {
             comment.toggleCollapsed(optimistic: true)
           }
         } else {
