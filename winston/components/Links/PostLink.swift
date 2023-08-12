@@ -86,7 +86,6 @@ struct PostLink: View, Equatable {
               }
             }
           }
-          .fixedSize(horizontal: false, vertical: compactMode)
           .frame(maxWidth: compactMode ? .infinity : nil, alignment: .topLeading)
           
           let imgPost = data.is_gallery == true || data.url.hasSuffix("jpg") || data.url.hasSuffix("png") || data.url.hasSuffix("webp") || data.url.contains("imgur.com")
@@ -152,7 +151,6 @@ struct PostLink: View, Equatable {
           }
         }
         .zIndex(1)
-        .fixedSize(horizontal: false, vertical: compactMode)
         .frame(maxWidth: .infinity, alignment: .topLeading)
         
         HStack(spacing: 0) {

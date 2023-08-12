@@ -177,9 +177,7 @@ struct Subreddits: View {
         .onChange(of: scrollLetter) { x in
           try? haptics.fire(intensity: 0.5, sharpness: 0.5)
           if let id = subsDictData[x]?[0].id {
-            withAnimation(.interactiveSpring()) {
-              proxy.scrollTo("\(id)-main", anchor: .top)
-            }
+            proxy.scrollTo("\(id)-main", anchor: .top)
           }
         }
         .refreshable {
