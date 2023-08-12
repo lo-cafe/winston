@@ -102,6 +102,7 @@ struct PostLink: View, Equatable {
                   let vid = datas.reddit_video
                   if let url = vid.hls_url, let width = vid.width, let height = vid.height, let rootURL = rootURL(url) {
                     VideoPlayerPost(sharedVideo: SharedVideo(url: rootURL, size: CGSize(width: width, height: height)))
+                      .scaledToFill()
                   }
                 case .second(_):
                   EmptyView()
@@ -110,13 +111,13 @@ struct PostLink: View, Equatable {
               
               if let redditVidPreview = data.preview?.reddit_video_preview, let status = redditVidPreview.transcoding_status, status == "completed", let url = redditVidPreview.hls_url, let rootURL = rootURL(url), let width = redditVidPreview.width, let height = redditVidPreview.height {
                 VideoPlayerPost(sharedVideo: SharedVideo(url: rootURL, size: CGSize(width: width, height: height)))
+                  .scaledToFill()
               } else if !imgPost {
                 if isLinkPost {
                   PreviewLink(data.url, compact: compactMode, contentWidth: contentWidth, media: data.secure_media)
                 }
               }
             }
-            .scaledToFill()
             .frame(maxWidth: compactMode ? compactModeThumbSize : .infinity, maxHeight: compactMode ? compactModeThumbSize : nil, alignment: .leading)
             .clipped()
             .nsfw(over18 && blurPostLinkNSFW)
@@ -220,11 +221,28 @@ struct PostLink: View, Equatable {
       }
       .padding(.horizontal, preferenceShowPostsCards ? cardedPostLinksInnerHPadding : postLinksInnerHPadding)
       .padding(.vertical, preferenceShowPostsCards ? cardedPostLinksInnerVPadding : postLinksInnerVPadding)
+//      .overlay(
+//        (data.winstonSeen ?? false)
+//        ? nil
+//        : ZStack {
+//          Circle()
+//            .fill(Color.hex("CFFFDE"))
+//            .frame(width: 5, height: 5)
+//          Circle()
+//            .fill(Color.hex("4FFF85"))
+//            .frame(width: 10, height: 10)
+//            .blur(radius: 8)
+//        }
+//          .padding(.all, 8)
+//        , alignment: .topLeading
+//      )
       .frame(maxWidth: .infinity, alignment: .leading)
+//      .fixedSize()
       .background(
         !preferenceShowPostsCards
         ? nil
-        : RR(20, .listBG).allowsHitTesting(false)
+        : RR(20, .listBG)
+          .allowsHitTesting(false)
       )
 //      .padding(.vertical, !preferenceShowPostsCards ? 8 : 0)
 //      .padding(.vertical, !preferenceShowPostsCards ? postLinksOuterVPadding : 0)
@@ -237,7 +255,7 @@ struct PostLink: View, Equatable {
 //      .padding(.vertical, preferenceShowPostsCards ? 8 : 0)
       .padding(.vertical, preferenceShowPostsCards ? cardedPostLinksOuterVPadding : 0)
       .compositingGroup()
-      .opacity((data.winstonSeen ?? false) ? 0.75 : 1)
+//      .opacity((data.winstonSeen ?? false) ? 0.75 : 1)
       .contentShape(Rectangle())
       .swipyUI(
         onTap: {
