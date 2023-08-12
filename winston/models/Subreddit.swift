@@ -117,7 +117,7 @@ extension Subreddit {
     return nil
   }
   
-  func fetchPosts(sort: SubListingSortOption = .hot, after: String? = nil) async -> ([Post]?, String?)? {
+  func fetchPosts(sort: SubListingSortOption = .best, after: String? = nil) async -> ([Post]?, String?)? {
     if let response = await redditAPI.fetchSubPosts(data?.url ?? (id == "home" ? "" : id), sort: sort, after: after), let data = response.0 {
       return (Post.initMultiple(datas: data.compactMap { $0.data }, api: redditAPI), response.1)
     }
@@ -247,19 +247,23 @@ enum SubListingSortOption: Codable, CaseIterable, Identifiable, Defaults.Seriali
   var id: String {
     self.rawVal.id
   }
-  
+
+  case best
   case hot
   case new
   case top
   
   var rawVal: SubListingSort {
     switch self {
+      case .best:
+      return SubListingSort(icon: "trophy", value: "best")
     case .hot:
       return SubListingSort(icon: "flame", value: "hot")
     case .new:
       return SubListingSort(icon: "newspaper", value: "new")
     case .top:
-      return SubListingSort(icon: "trophy", value: "top")
+      return SubListingSort(icon: "chart.line.uptrend.xyaxis", value: "top")
+
     }
   }
 }
