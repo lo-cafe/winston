@@ -12,12 +12,14 @@ import YouTubePlayerKit
 
 struct PreviewLink: View {
   var url: String
+  var compact = false
   var redditURL: RedditURLType
   var media: Either<SecureMediaRedditVideo, SecureMediaAlt>?
   var contentWidth: CGFloat
   
-  init(_ url: String, contentWidth: CGFloat, media: Either<SecureMediaRedditVideo, SecureMediaAlt>?) {
+  init(_ url: String, compact: Bool = false, contentWidth: CGFloat, media: Either<SecureMediaRedditVideo, SecureMediaAlt>?) {
     self.url = url.hasPrefix("http") ? url : "https://www.reddit.com\(url)"
+    self.compact = compact
     self.media = media
     self.contentWidth = contentWidth
     self.redditURL = parseRedditURL(self.url)

@@ -21,11 +21,9 @@ struct ShortCommentPostLink: View {
       VStack(alignment: .leading, spacing: 6) {
         Text(data.link_title ?? "Error")
           .fontSize(15, .medium)
-          .allowsHitTesting(false)
           .opacity(0.75)
           .lineLimit(2)
           .multilineTextAlignment(.leading)
-          .allowsHitTesting(false)
           .fixedSize(horizontal: false, vertical: true)
         
         VStack(alignment: .leading, spacing: 2) {
@@ -50,10 +48,14 @@ struct ShortCommentPostLink: View {
             openedPost = true
           }
       )
-      .onTapGesture {
-        router.path.append(PostViewPayload(post: Post(id: data.link_id!, api: comment.redditAPI), sub: Subreddit(id: data.subreddit!, api: comment.redditAPI)))
-      }
       .mask(RR(14, .black))
+      .contentShape(Rectangle())
+      .highPriorityGesture (
+        TapGesture().onEnded {
+          print("akmskas")
+          router.path.append(PostViewPayload(post: Post(id: data.link_id!, api: comment.redditAPI), sub: Subreddit(id: data.subreddit!, api: comment.redditAPI)))
+        }
+      )
       .foregroundColor(.primary)
       .multilineTextAlignment(.leading)
     } else {

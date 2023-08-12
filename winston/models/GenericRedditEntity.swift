@@ -8,7 +8,7 @@
 import Foundation
 import Combine
 
-protocol GenericRedditEntityDataType: Codable, Hashable {
+protocol GenericRedditEntityDataType: Codable, Hashable, Identifiable {
   var id: String { get }
 }
 

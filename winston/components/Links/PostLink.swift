@@ -48,9 +48,9 @@ struct PostLink: View, Equatable {
   @Default(.preferenceShowPostsCards) private var preferenceShowPostsCards
   @Default(.preferenceShowPostsAvatars) private var preferenceShowPostsAvatars
   @Default(.blurPostLinkNSFW) private var blurPostLinkNSFW
+  @State private var postSwipeActions: SwipeActionsSet = Defaults[.postSwipeActions]
+  @Default(.compactMode) var compactMode
   
-//  @Default(.postLinksOuterHPadding) private var postLinksOuterHPadding
-//  @Default(.postLinksOuterVPadding) private var postLinksOuterVPadding
   @Default(.postLinksInnerHPadding) private var postLinksInnerHPadding
   @Default(.postLinksInnerVPadding) private var postLinksInnerVPadding
   
@@ -65,50 +65,97 @@ struct PostLink: View, Equatable {
   var contentWidth: CGFloat { UIScreen.screenWidth - ((preferenceShowPostsCards ? cardedPostLinksOuterHPadding : postLinksInnerHPadding) * 2) - (preferenceShowPostsCards ? (preferenceShowPostsCards ? cardedPostLinksInnerHPadding : 0) * 2 : 0) }
   
   var body: some View {
+    let layout = compactMode ? AnyLayout(HStackLayout(alignment: .top, spacing: 12)) : AnyLayout(VStackLayout(alignment: .leading, spacing: 12))
     if let data = post.data {
+      let isLinkPost = !data.url.isEmpty && !data.is_self && !(data.is_video ?? false) && !(data.is_gallery ?? false) && data.post_hint != "image"
       let over18 = data.over_18 ?? false
       VStack(alignment: .leading, spacing: 8) {
-        VStack(alignment: .leading, spacing: 12) {
-          Text(data.title.escape)
-            .fontSize(17, .medium)
-            .allowsHitTesting(false)
-          
-          let imgPost = data.is_gallery == true || data.url.hasSuffix("jpg") || data.url.hasSuffix("png") || data.url.hasSuffix("webp") || data.url.contains("imgur.com")
-          
-          Group {
-            if let media = data.secure_media {
-              switch media {
-              case .first(let datas):
-                let vid = datas.reddit_video
-                if let url = vid.hls_url, let width = vid.width, let height = vid.height, let rootURL = rootURL(url) {
-                  VideoPlayerPost(sharedVideo: SharedVideo(url: rootURL, size: CGSize(width: width, height: height)))
-                }
-              case .second(_):
-                EmptyView()
-              }
-            }
+        layout {
+          VStack(alignment: .leading, spacing: compactMode ? 4 : 10) {
+            Text(data.title.escape)
+              .lineLimit(compactMode ? 2 : nil)
+              .fontSize(compactMode ? 16 : 17, .medium)
+              .frame(maxWidth: .infinity, alignment: .topLeading)
             
-            if imgPost {
-              ImageMediaPost(post: post, contentWidth: contentWidth)
-            } else if data.selftext != "" {
-              Text(data.selftext.md()).lineLimit(3)
-                .fontSize(15)
+            if data.selftext != "" {
+              Text(data.selftext.md()).lineLimit(compactMode ? 2 : 3)
+                .fontSize(14)
                 .opacity(0.75)
-                .allowsHitTesting(false)
+                .frame(maxWidth: .infinity, alignment: .topLeading)
             }
             
-            if let redditVidPreview = data.preview?.reddit_video_preview, let status = redditVidPreview.transcoding_status, status == "completed", let url = redditVidPreview.hls_url, let rootURL = rootURL(url), let width = redditVidPreview.width, let height = redditVidPreview.height {
-              VideoPlayerPost(sharedVideo: SharedVideo(url: rootURL, size: CGSize(width: width, height: height)))
-            } else if !imgPost {
-              if !data.url.isEmpty && !data.is_self && !(data.is_video ?? false) && !(data.is_gallery ?? false) && data.post_hint != "image" {
-                PreviewLink(data.url, contentWidth: contentWidth, media: data.secure_media)
+            if compactMode {
+              if let fullname = data.author_fullname {
+                Badge(showAvatar: preferenceShowPostsAvatars, author: data.author, fullname: fullname, created: data.created, extraInfo: ["message.fill":"\(data.num_comments)", (data.ups >= 0 ? "arrow.up" : "arrow.down"): "\(formatBigNumber(data.ups))"])
               }
             }
           }
-          .frame(maxWidth: .infinity, alignment: .leading)
-          .nsfw(over18 && blurPostLinkNSFW)
+          .frame(maxWidth: compactMode ? .infinity : nil, alignment: .topLeading)
+          
+          let imgPost = data.is_gallery == true || data.url.hasSuffix("jpg") || data.url.hasSuffix("png") || data.url.hasSuffix("webp") || data.url.contains("imgur.com")
+          
+          if imgPost {
+            ImageMediaPost(compact: compactMode, post: post, contentWidth: contentWidth)
+          }
+          
+          if !compactMode {
+            Group {
+              if let media = data.secure_media {
+                switch media {
+                case .first(let datas):
+                  let vid = datas.reddit_video
+                  if let url = vid.hls_url, let width = vid.width, let height = vid.height, let rootURL = rootURL(url) {
+                    VideoPlayerPost(sharedVideo: SharedVideo(url: rootURL, size: CGSize(width: width, height: height)))
+                  }
+                case .second(_):
+                  EmptyView()
+                }
+              }
+              
+              if let redditVidPreview = data.preview?.reddit_video_preview, let status = redditVidPreview.transcoding_status, status == "completed", let url = redditVidPreview.hls_url, let rootURL = rootURL(url), let width = redditVidPreview.width, let height = redditVidPreview.height {
+                VideoPlayerPost(sharedVideo: SharedVideo(url: rootURL, size: CGSize(width: width, height: height)))
+              } else if !imgPost {
+                if isLinkPost {
+                  PreviewLink(data.url, compact: compactMode, contentWidth: contentWidth, media: data.secure_media)
+                }
+              }
+            }
+            .scaledToFill()
+            .frame(maxWidth: compactMode ? compactModeThumbSize : .infinity, maxHeight: compactMode ? compactModeThumbSize : nil, alignment: .leading)
+            .clipped()
+            .nsfw(over18 && blurPostLinkNSFW)
+          }
+          
+          if compactMode {
+            VStack(alignment: .center, spacing: 2) {
+                          
+              MasterButton(icon: "arrow.up", mode: .subtle, color: .white, colorHoverEffect: .none, textColor: data.likes != nil && data.likes! ? .orange : .gray, textSize: 22, proportional: .circle) {
+                Task {
+                  _ = await post.vote(action: .up)
+                }
+              }
+              //            .shrinkOnTap()
+              .padding(.all, -8)
+              
+              Spacer()
+              
+              MasterButton(icon: "arrow.down", mode: .subtle, color: .white, colorHoverEffect: .none, textColor: data.likes != nil && !data.likes! ? .blue : .gray, textSize: 22, proportional: .circle) {
+                Task {
+                  _ = await post.vote(action: .down)
+                }
+              }
+              //            .shrinkOnTap()
+              .padding(.all, -8)
+              
+              Spacer()
+              
+            }
+            .frame(maxHeight: .infinity)
+            .fontSize(22, .medium)
+          }
         }
         .zIndex(1)
+        .frame(maxWidth: .infinity, alignment: .topLeading)
         
         HStack(spacing: 0) {
           
@@ -138,17 +185,21 @@ struct PostLink: View, Equatable {
         .padding(.horizontal, 2)
         .padding(.vertical, 2)
         
-        HStack {
-          if let fullname = data.author_fullname {
-            Badge(showAvatar: preferenceShowPostsAvatars, author: data.author, fullname: fullname, created: data.created, extraInfo: ["message.fill":"\(data.num_comments)"])
-          }
+        
           
-          Spacer()
-          
-          HStack(alignment: .center) {
-            VotesCluster(data: data, likeRatio: showUpvoteRatio ? data.upvote_ratio : nil, post: post)
+        if !compactMode {
+          HStack {
+            if let fullname = data.author_fullname {
+              Badge(showAvatar: preferenceShowPostsAvatars, author: data.author, fullname: fullname, created: data.created, extraInfo: ["message.fill":"\(data.num_comments)"])
+            }
+            
+            Spacer()
+            
+            HStack(alignment: .center) {
+              VotesCluster(data: data, likeRatio: showUpvoteRatio ? data.upvote_ratio : nil, post: post)
+            }
+            .fontSize(22, .medium)
           }
-          .fontSize(22, .medium)
         }
       }
       .padding(.horizontal, preferenceShowPostsCards ? cardedPostLinksInnerHPadding : postLinksInnerHPadding)
@@ -172,24 +223,15 @@ struct PostLink: View, Equatable {
       .compositingGroup()
       .opacity((data.winstonSeen ?? false) ? 0.75 : 1)
       .contentShape(Rectangle())
-      .swipyUI(onTap: {
-        withAnimation {
-          router.path.append(PostViewPayload(post: post, sub: feedsAndSuch.contains(sub.id) ? sub : sub))
-        }
-      }, secondActionIcon: (data.winstonSeen ?? false) ? "eye.slash.fill" : "eye.fill",
-               leftActionHandler: {
-        Task {
-          _ = await post.vote(action: .down)
-        }
-      }, rightActionHandler: {
-        Task {
-          _ = await post.vote(action: .up)
-        }
-      }, secondActionHandler: {
-        withAnimation {
-          post.toggleSeen(optimistic: true)
-        }
-      })
+      .swipyUI(
+        onTap: {
+          withAnimation {
+            router.path.append(PostViewPayload(post: post, sub: feedsAndSuch.contains(sub.id) ? sub : sub))
+          }
+        },
+        actionsSet: postSwipeActions,
+        entity: post
+      )
       .contextMenu(menuItems: {
         VStack {
           if let perma = URL(string: "https://reddit.com\(data.permalink.escape.urlEncoded)") {
@@ -204,6 +246,12 @@ struct PostLink: View, Equatable {
       .foregroundColor(.primary)
       .multilineTextAlignment(.leading)
       .zIndex(1)
+      .onAppear {
+        let newPostSwipeActions = Defaults[.postSwipeActions]
+        if postSwipeActions != newPostSwipeActions {
+          postSwipeActions = newPostSwipeActions
+        }
+      }
       //      .opacity(appeared.isIt ? 1 : 0)
       //      .offset(y: appeared.isIt ? 0 : 32)
       //      .onAppear {

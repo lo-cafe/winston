@@ -36,6 +36,7 @@ struct GalleryThumb: View {
 let IMAGES_FORMATS = [".png", ".jpg", ".jpeg", ".webp", ".gif", ".bmp"]
 
 struct ImageMediaPost: View {
+  var compact = false
   var prefix: String = ""
   var post: Post
   var contentWidth: CGFloat
@@ -50,10 +51,13 @@ struct ImageMediaPost: View {
     if let data = post.data {
       VStack {
         if let preview = data.preview, preview.images?.count ?? 0 > 0, let source = preview.images?[0].source, let srcURL = source.url, let sourceHeight = source.height, let sourceWidth = source.width, let imgURL = URL(string: (data.url.contains("imgur.com") && !IMAGES_FORMATS.contains(String(data.url.suffix(4)))) ? srcURL : data.url) {
+          
           let propHeight = (Int(contentWidth) * sourceHeight) / sourceWidth
           let finalHeight = maxPostLinkImageHeightPercentage != 110 ? Double(min(Int(maxHeight), propHeight)) : Double(propHeight)
-          GalleryThumb(ns: presentationNamespace, width: contentWidth, height: finalHeight, url: imgURL)
+          
+          GalleryThumb(ns: presentationNamespace, width: compact ? compactModeThumbSize : contentWidth, height: compact ? compactModeThumbSize : finalHeight, url: imgURL)
             .onTapGesture { withAnimation(spring) { fullscreen.toggle() } }
+          
         } else if data.is_gallery == true, let metadatas = data.media_metadata?.values, metadatas.count > 1 {
           let urls: [String] = metadatas.compactMap { x in
             if let x = x, !x.id.isNil, let id = x.id, !id.isEmpty, let extArr = x.m?.split(separator: "/") {
@@ -67,20 +71,31 @@ struct ImageMediaPost: View {
           
           VStack(spacing: 8) {
             HStack(spacing: 8) {
-              GalleryThumb(ns: presentationNamespace, width: width, height: height, url: URL(string: urls[0])!)
+              GalleryThumb(ns: presentationNamespace, width: compact ? compactModeThumbSize : width, height: compact ? compactModeThumbSize : height, url: URL(string: urls[0])!)
                 .onTapGesture { withAnimation(spring) {
                   fullscreenIndex = 0
                   doThisAfter(0) { fullscreen.toggle() }
                 } }
-              GalleryThumb(ns: presentationNamespace, width: width, height: height, url: URL(string: urls[1])!)
-                .onTapGesture { withAnimation(spring) {
-                  fullscreenIndex = 1
-                  doThisAfter(0) { fullscreen.toggle() }
-                } }
+                .overlay(
+                  !compact
+                  ? nil
+                  : Text("\(urls.count - 1)+")
+                    .fontSize(24, .semibold)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .background(RR(12, .black.opacity(0.2)))
+                    .allowsHitTesting(false)
+                )
+              if !compact {
+                GalleryThumb(ns: presentationNamespace, width: width, height: height, url: URL(string: urls[1])!)
+                  .onTapGesture { withAnimation(spring) {
+                    fullscreenIndex = 1
+                    doThisAfter(0) { fullscreen.toggle() }
+                  } }
+              }
             }
             
             
-            if urls.count > 2 {
+            if urls.count > 2 && !compact {
               HStack(spacing: 8) {
                 GalleryThumb(ns: presentationNamespace, width: urls.count == 3 ? contentWidth : width, height: height, url: URL(string: urls[2])!)
                   .onTapGesture { withAnimation(spring) {
@@ -111,7 +126,7 @@ struct ImageMediaPost: View {
           }
         }
       }
-      .frame(maxWidth: .infinity)
+      .frame(maxWidth: compact ? nil : .infinity)
       .fullscreenPresent(show: $fullscreen) {
         LightBoxImage(post: post, i: fullscreenIndex, namespace: presentationNamespace)
       }

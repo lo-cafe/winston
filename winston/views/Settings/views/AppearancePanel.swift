@@ -36,6 +36,8 @@ struct AppearancePanel: View {
   
   @Default(.coloredCommentNames) var coloredCommentNames
   @Default(.showUpvoteRatio) var showUpvoteRatio
+  @Default(.compactMode) var compactMode
+  
   var body: some View {
     List {
       Section("General") {
@@ -59,6 +61,7 @@ struct AppearancePanel: View {
         .pickerStyle(.segmented)
         .frame(maxWidth: .infinity)
         
+        Toggle("Compact mode", isOn: $compactMode)
         Toggle("Show avatars", isOn: $preferenceShowPostsAvatars)
         Toggle("Colored usernames", isOn: $coloredCommentNames)
         Toggle("Show upvote ratio", isOn: $showUpvoteRatio)

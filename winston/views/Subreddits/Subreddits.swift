@@ -42,7 +42,6 @@ struct Subreddits: View {
   @Environment(\.openURL) private var openURL
   @EnvironmentObject private var redditAPI: RedditAPI
   @Default(.subreddits) private var subreddits
-  @Default(.openHomeSubOnLaunch) private var openHomeSubOnLaunch
   @State private var searchText: String = ""
   @StateObject private var subsDict = SubsDictContainer()
   @State private var loaded = false
@@ -87,6 +86,7 @@ struct Subreddits: View {
                 ListBigBtn(icon: "signpost.right.and.left.circle.fill", iconColor: .orange, label: "All", destination: Subreddit(id: "all", api: redditAPI))
                 
                 ListBigBtn(icon: "bookmark.circle.fill", iconColor: .green, label: "Saved", destination: Subreddit(id: "saved", api: redditAPI))
+                  .opacity(0.5).allowsHitTesting(false)
               }
             }
             .frame(maxWidth: .infinity)
@@ -177,15 +177,7 @@ struct Subreddits: View {
         .onChange(of: scrollLetter) { x in
           try? haptics.fire(intensity: 0.5, sharpness: 0.5)
           if let id = subsDictData[x]?[0].id {
-            withAnimation(.interactiveSpring()) {
-              proxy.scrollTo("\(id)-main", anchor: .top)
-            }
-          }
-          
-          // MARK: Route to default feed
-          if preferenceDefaultFeed != "subList" { // we are in subList, can ignore
-            let tempSubreddit = Subreddit(id: preferenceDefaultFeed, api: redditAPI)
-            router.path.append(SubViewType.posts(tempSubreddit))
+            proxy.scrollTo("\(id)-main", anchor: .top)
           }
         }
         .refreshable {
@@ -204,8 +196,13 @@ struct Subreddits: View {
             if subreddits.count > 0 {
               subsDict.data = sort(subreddits)
             }
-            Task {
-              if openHomeSubOnLaunch && router.path.count == 0 { router.path.append(SubViewType.posts(Subreddit(id: "home", api: redditAPI))) }
+            Task {              
+              // MARK: Route to default feed
+              if preferenceDefaultFeed != "subList" && router.path.count == 0 { // we are in subList, can ignore
+                let tempSubreddit = Subreddit(id: preferenceDefaultFeed, api: redditAPI)
+                router.path.append(SubViewType.posts(tempSubreddit))
+              }
+              
               await redditAPI.fetchSubs()
               withAnimation {
                 loaded = true
