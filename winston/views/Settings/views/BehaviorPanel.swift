@@ -16,6 +16,7 @@ struct BehaviorPanel: View {
   @Default(.preferredCommentSort) var preferredCommentSort
   @Default(.blurPostLinkNSFW) var blurPostLinkNSFW
   @Default(.blurPostNSFW) var blurPostNSFW
+  @Default(.collapseAutoModerator) var collapseAutoModerator
 
   
   var body: some View {
@@ -61,6 +62,8 @@ struct BehaviorPanel: View {
             Label(val.rawVal.id.capitalized, systemImage: val.rawVal.icon)
           }
         }
+        
+        Toggle("Collapse AutoModerator comments", isOn: $collapseAutoModerator)
       }
       
     }
