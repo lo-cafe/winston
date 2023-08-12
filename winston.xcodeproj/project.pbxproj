@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		659FDEAC2A879E7A00103414 /* VotesCalc.swift in Sources */ = {isa = PBXBuildFile; fileRef = 659FDEAB2A879E7A00103414 /* VotesCalc.swift */; };
 		EC082F252A65FB4300BA2727 /* MeasureOnce.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC082F242A65FB4300BA2727 /* MeasureOnce.swift */; };
 		EC082F272A66132600BA2727 /* CommentLinkMore.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC082F262A66132600BA2727 /* CommentLinkMore.swift */; };
 		EC082F292A66134C00BA2727 /* CommentLinkFull.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC082F282A66134C00BA2727 /* CommentLinkFull.swift */; };
@@ -237,7 +236,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		659FDEAB2A879E7A00103414 /* VotesCalc.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VotesCalc.swift; sourceTree = "<group>"; };
 		EC082F242A65FB4300BA2727 /* MeasureOnce.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeasureOnce.swift; sourceTree = "<group>"; };
 		EC082F262A66132600BA2727 /* CommentLinkMore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentLinkMore.swift; sourceTree = "<group>"; };
 		EC082F282A66134C00BA2727 /* CommentLinkFull.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentLinkFull.swift; sourceTree = "<group>"; };
@@ -868,7 +866,6 @@
 				EC2D27582A4F782F006444D6 /* GoodNavigator.swift */,
 				EC2D275D2A4FC512006444D6 /* TappableView.swift */,
 				ECE2859A2A5010E2009CF9DD /* DataBlock.swift */,
-				659FDEAB2A879E7A00103414 /* VotesCalc.swift */,
 				ECE285A02A50EC9E009CF9DD /* Badge.swift */,
 				EC9269E72A514AA6003F33B1 /* DownAttributedString.swift */,
 				ECF0B7DC2A53DD5C002B9FAD /* ImageMediaPost.swift */,
@@ -1203,7 +1200,6 @@
 				EC0854152A4BE1D800E88389 /* PostLink.swift in Sources */,
 				ECC68D4B2A7A9554005BC7B4 /* nsfw.swift in Sources */,
 				EC22A3202A5C7FB50062A112 /* Message.swift in Sources */,
-				659FDEAC2A879E7A00103414 /* VotesCalc.swift in Sources */,
 				EC593ADA2A4673B2002D6454 /* ContentView.swift in Sources */,
 				EC593AFD2A47AEBC002D6454 /* RedditAPI.swift in Sources */,
 				EC6373492A78E49A000A03A3 /* OnboardingWelcome.swift in Sources */,
