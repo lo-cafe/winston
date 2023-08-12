@@ -129,23 +129,11 @@ struct PostLink: View, Equatable {
           if compactMode {
             VStack(alignment: .center, spacing: 2) {
                           
-              MasterButton(icon: "arrow.up", mode: .subtle, color: .white, colorHoverEffect: .none, textColor: data.likes != nil && data.likes! ? .orange : .gray, textSize: 22, proportional: .circle) {
-                Task {
-                  _ = await post.vote(action: .up)
-                }
-              }
-              //            .shrinkOnTap()
-              .padding(.all, -8)
+              VoteButton(color: data.likes != nil && data.likes! ? .orange : .gray, voteAction: .up, image: "arrow.up", post: post)
               
               Spacer()
               
-              MasterButton(icon: "arrow.down", mode: .subtle, color: .white, colorHoverEffect: .none, textColor: data.likes != nil && !data.likes! ? .blue : .gray, textSize: 22, proportional: .circle) {
-                Task {
-                  _ = await post.vote(action: .down)
-                }
-              }
-              //            .shrinkOnTap()
-              .padding(.all, -8)
+              VoteButton(color: data.likes != nil && !data.likes! ? .blue : .gray, voteAction: .down, image: "arrow.down", post: post)
               
               Spacer()
               
