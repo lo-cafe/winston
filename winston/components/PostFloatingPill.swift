@@ -7,14 +7,14 @@
 
 import SwiftUI
 import Defaults
-
+import SimpleHaptics
 struct PostFloatingPill: View {
   @Default(.postsInBox) var postsInBox
-  
+  @Default(.showUpvoteRatio) var showUpvoteRatio
   @ObservedObject var post: Post
   @ObservedObject var subreddit: Subreddit
   @State var showReplyModal = false
-  
+
   var thisPinnedPost: Bool { postsInBox.contains { $0.id == post.id } }
   
   var body: some View {
@@ -65,28 +65,12 @@ struct PostFloatingPill: View {
           }
           
           HStack(alignment: .center, spacing: 8) {
-            Button {
-              Task {
-                await post.vote(action: .up)
-              }
-            } label: {
-              Image(systemName: "arrow.up")
-            }
-            .foregroundColor(data.likes != nil && data.likes! ? .orange : .gray)
+           
+
             
-            let downup = Int(data.ups - data.downs)
-            Text(formatBigNumber(downup))
-              .foregroundColor(downup == 0 ? .gray : downup > 0 ? .orange : .blue)
-              .fontSize(17, .semibold)
+            VotesCluster(data: data, likeRatio: showUpvoteRatio ? data.upvote_ratio : nil, post: post)
             
-            Button {
-              Task {
-                await post.vote(action: .down)
-              }
-            } label: {
-              Image(systemName: "arrow.down")
-            }
-            .foregroundColor(data.likes != nil && !data.likes! ? .blue : .gray)
+            
           }
           
         }
