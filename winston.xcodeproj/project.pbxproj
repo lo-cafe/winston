@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		650ACAFC2A87A36900A7C600 /* calcVotes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 650ACAFB2A87A36900A7C600 /* calcVotes.swift */; };
 		65978D022A861ECF00B6BDFC /* scaleEffectButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65978D012A861ECF00B6BDFC /* scaleEffectButtonStyle.swift */; };
 		659F68022A84E32300989300 /* VotesCluster.swift in Sources */ = {isa = PBXBuildFile; fileRef = 659F68012A84E32300989300 /* VotesCluster.swift */; };
 		659FDEA82A87798300103414 /* VoteButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 659FDEA72A87798300103414 /* VoteButton.swift */; };
@@ -239,6 +240,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		650ACAFB2A87A36900A7C600 /* calcVotes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = calcVotes.swift; sourceTree = "<group>"; };
 		65978D012A861ECF00B6BDFC /* scaleEffectButtonStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = scaleEffectButtonStyle.swift; sourceTree = "<group>"; };
 		659F68012A84E32300989300 /* VotesCluster.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VotesCluster.swift; sourceTree = "<group>"; };
 		659FDEA72A87798300103414 /* VoteButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoteButton.swift; sourceTree = "<group>"; };
@@ -839,6 +841,7 @@
 				ECEFC2622A5DDBE00003C6C4 /* onBindingUpdate.swift */,
 				ECEFC2682A5DFA4B0003C6C4 /* formatBigNumber.swift */,
 				ECEFC2722A5F70B70003C6C4 /* saveMedia.swift */,
+				650ACAFB2A87A36900A7C600 /* calcVotes.swift */,
 				ECEFC2742A5F72A40003C6C4 /* shareMedia.swift */,
 				ECA30A312A621B9A00BB19D1 /* decodeString.swift */,
 				EC8F34A02A6FC99000EB8249 /* updatePostsInBox.swift */,
@@ -1195,6 +1198,7 @@
 				ECDD51522A7359D100FD9498 /* MDEditor.swift in Sources */,
 				EC1906ED2A55293500A0300E /* AppearancePanel.swift in Sources */,
 				ECC10C772A4A874C009124BE /* RR.swift in Sources */,
+				650ACAFC2A87A36900A7C600 /* calcVotes.swift in Sources */,
 				ECF064EB2A7F2AC50088C2C0 /* Router.swift in Sources */,
 				ECE2859B2A5010E2009CF9DD /* DataBlock.swift in Sources */,
 				ECEFC2612A5DBC6A0003C6C4 /* PostViewContainer.swift in Sources */,

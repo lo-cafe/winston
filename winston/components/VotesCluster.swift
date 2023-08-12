@@ -14,6 +14,7 @@ struct VotesCluster: View {
   var post: Post
   
   var body: some View {
+    let votes = calculateUpAndDownVotes(upvoteRatio: data.upvote_ratio, score: data.ups)
     HStack(){
       VoteButton(color: data.likes != nil && data.likes! ? .orange : .gray, voteAction: .up,image: "arrow.up", post: post)
       
@@ -21,7 +22,7 @@ struct VotesCluster: View {
         Text(formatBigNumber(data.ups))
           .foregroundColor(data.likes != nil ? (data.likes! ? .orange : .blue) : .gray)
           .fontSize(16, .semibold)
-          .viewVotes(data.ups, data.downs)
+          .viewVotes(votes.upvotes, votes.downvotes)
           .zIndex(10)
         
         if likeRatio != nil, let ratio = likeRatio {
