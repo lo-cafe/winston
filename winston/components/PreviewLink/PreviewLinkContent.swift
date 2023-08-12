@@ -77,11 +77,14 @@ struct PreviewLinkContent: View {
           Text(viewModel.title?.escape ?? "No title detected")
             .fontSize(17, .medium)
             .lineLimit(1)
+            .truncationMode(.tail)
+            .fixedSize(horizontal: false, vertical: true)
           
           Text(viewModel.url == nil || viewModel.url?.isEmpty == true ? url.absoluteString : viewModel.url!)
             .fontSize(13)
             .opacity(0.5)
             .lineLimit(1)
+            .fixedSize(horizontal: false, vertical: true)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         
