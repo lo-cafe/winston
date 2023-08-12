@@ -6,10 +6,10 @@
 //
 
 import SwiftUI
-
+import AlertToast
 extension View {
   func defaultNavDestinations(_ router: Router) -> some View {
-    self
+    return self
       .navigationDestination(for: PostViewPayload.self) { postPayload in
         PostView(post: postPayload.post, subreddit: postPayload.sub, highlightID: postPayload.highlightID)
           .environmentObject(router)
@@ -37,6 +37,7 @@ extension View {
           .environmentObject(router)
       }
       .environmentObject(router)
+
 
   }
 }
