@@ -45,7 +45,7 @@ struct PostLink: View, Equatable {
   @Default(.preferenceShowPostsCards) private var preferenceShowPostsCards
   @Default(.preferenceShowPostsAvatars) private var preferenceShowPostsAvatars
   @Default(.blurPostLinkNSFW) private var blurPostLinkNSFW
-  @Default(.postSwipeActions) private var postSwipeActions
+  @State private var postSwipeActions: SwipeActionsSet = Defaults[.postSwipeActions]
   @Default(.compactMode) var compactMode
   
   @Default(.postLinksInnerHPadding) private var postLinksInnerHPadding
@@ -264,6 +264,12 @@ struct PostLink: View, Equatable {
       .foregroundColor(.primary)
       .multilineTextAlignment(.leading)
       .zIndex(1)
+      .onAppear {
+        let newPostSwipeActions = Defaults[.postSwipeActions]
+        if postSwipeActions != newPostSwipeActions {
+          postSwipeActions = newPostSwipeActions
+        }
+      }
       //      .opacity(appeared.isIt ? 1 : 0)
       //      .offset(y: appeared.isIt ? 0 : 32)
       //      .onAppear {

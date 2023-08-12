@@ -158,7 +158,7 @@ struct SavePostAction: SwipeAction {
   var color = SwipeActionItem(normal: "FFFFFF")
   var bgColor = SwipeActionItem(normal: "2FD058", active: "FF463B")
   func action(_ entity: Post) async { _ = await entity.saveToggle() }
-  func active(_ entity: Post) -> Bool { return entity.data?.saved == false }
+  func active(_ entity: Post) -> Bool { return entity.data?.saved == true }
 }
 
 struct ReplyPostAction: SwipeAction {
@@ -235,7 +235,7 @@ struct SaveCommentAction: SwipeAction {
   var color = SwipeActionItem(normal: "FFFFFF")
   var bgColor = SwipeActionItem(normal: "2FD058", active: "FF463B")
   func action(_ entity: Comment) async { _ = await entity.saveToggle() }
-  func active(_ entity: Comment) -> Bool { return entity.data?.saved == false }
+  func active(_ entity: Comment) -> Bool { return entity.data?.saved == true }
 }
 
 struct SelectTextCommentAction: SwipeAction {

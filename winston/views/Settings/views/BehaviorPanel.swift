@@ -16,7 +16,7 @@ struct BehaviorPanel: View {
   @Default(.preferredCommentSort) var preferredCommentSort
   @Default(.blurPostLinkNSFW) var blurPostLinkNSFW
   @Default(.blurPostNSFW) var blurPostNSFW
-  @Default(.compactMode) var compactMode
+
   
   var body: some View {
     List {
@@ -36,7 +36,6 @@ struct BehaviorPanel: View {
       
       Section("Posts") {
         NavigationLink("Posts swipe settings", value: SettingsPages.postSwipe)
-        Toggle("Compact mode", isOn: $compactMode)
         Toggle("Blur NSFW in opened posts", isOn: $blurPostNSFW)
         Toggle("Blur NSFW in posts links", isOn: $blurPostLinkNSFW)
         Picker("Posts sorting", selection: $preferredSort) {
