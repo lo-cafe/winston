@@ -26,6 +26,20 @@ struct PostInBox: Codable, Identifiable, Hashable, Defaults.Serializable {
   var lastUpdatedAt: Double?
 }
 
+let DEFAULT_POST_SWIPE_ACTIONS = SwipeActionsSet(
+    leftFirst: AnySwipeAction(UpvotePostAction()),
+    leftSecond: AnySwipeAction(SavePostAction()),
+    rightFirst: AnySwipeAction(DownvotePostAction()),
+    rightSecond: AnySwipeAction(SeenPostAction())
+)
+
+let DEFAULT_COMMENT_SWIPE_ACTIONS = SwipeActionsSet(
+    leftFirst: AnySwipeAction(UpvoteCommentAction()),
+    leftSecond: AnySwipeAction(SaveCommentAction()),
+    rightFirst: AnySwipeAction(DownvoteCommentAction()),
+    rightSecond: AnySwipeAction(ReplyCommentAction())
+)
+
 extension Defaults.Keys {
   static let redditAPILastTokenRefreshDate = Key<Date?>("redditAPILastTokenRefreshDate", default: nil)
   static let redditAPITokenExpiration = Key<Int?>("redditAPITokenExpiration", default: nil)
@@ -35,6 +49,11 @@ extension Defaults.Keys {
   static let blurPostLinkNSFW = Key<Bool>("blurPostLinkNSFW", default: true)
   static let blurPostNSFW = Key<Bool>("blurPostNSFW", default: false)
   static let preferredCommentSort = Key<CommentSortOption>("preferredCommentSort", default: .confidence)
+  
+  static let compactMode = Key<Bool>("compactMode", default: false)
+  
+  static let postSwipeActions = Key<SwipeActionsSet>("postSwipeActions", default: DEFAULT_POST_SWIPE_ACTIONS)
+  static let commentSwipeActions = Key<SwipeActionsSet>("commentSwipeActions", default: DEFAULT_COMMENT_SWIPE_ACTIONS)
   
 //  static let postLinksOuterHPadding = Key<CGFloat>("postLinksOuterHPadding", default: 0)
 //  static let postLinksOuterVPadding = Key<CGFloat>("postLinksOuterVPadding", default: 8)
@@ -48,14 +67,13 @@ extension Defaults.Keys {
   
   static let commentsInnerHPadding = Key<CGFloat>("commentsInnerHPadding", default: 8)
 //  static let commentsInnerVPadding = Key<CGFloat>("commentsInnerVPadding", default: 0)
+  static let coloredCommentNames = Key<Bool>("coloredCommentNames", default: false)
   
   static let cardedCommentsOuterHPadding = Key<CGFloat>("cardedCommentsOuterHPadding", default: 8)
 //  static let cardedCommentsOuterVPadding = Key<CGFloat>("cardedCommentsOuterVPadding", default: 0)
   static let cardedCommentsInnerHPadding = Key<CGFloat>("cardedCommentsInnerHPadding", default: 13)
 //  static let cardedCommentsInnerVPadding = Key<CGFloat>("cardedCommentsInnerVPadding", default: 0)
-  
-  static let openHomeSubOnLaunch = Key<Bool>("openHomeSubOnLaunch", default: false)
-  
+    
   static let preferenceShowPostsAvatars = Key<Bool>("preferenceShowPostsAvatars", default: true)
   static let preferenceShowPostsCards = Key<Bool>("preferenceShowPostsCards", default: true)
   static let preferenceShowCommentsAvatars = Key<Bool>("preferenceShowCommentsAvatars", default: true)
@@ -66,6 +84,7 @@ extension Defaults.Keys {
   static let newPostModalBlurBackground = Key<Bool>("newPostModalBlurBackground", default: true)
   static let showUsernameInTabBar = Key<Bool>("showUsernameInTabBar", default: false)
   static let openYoutubeApp = Key<Bool>("openYoutubeApp", default: true)
+  static let preferenceDefaultFeed = Key<String>("preferenceDefaultFeed", default: "subList")
   static let showHomeFeed = Key<Bool>("showHomeFeed", default: true)
   static let showPopularFeed = Key<Bool>("showPopularFeed", default: true)
   static let showAllFeed = Key<Bool>("showAllFeed", default: true)

@@ -34,6 +34,8 @@ struct AppearancePanel: View {
   @Default(.cardedCommentsInnerHPadding) var cardedCommentsInnerHPadding
   //  @Default(.cardedCommentsInnerVPadding) var cardedCommentsInnerVPadding
   
+  @Default(.coloredCommentNames) var coloredCommentNames
+  @Default(.compactMode) var compactMode
   
   var body: some View {
     List {
@@ -58,7 +60,9 @@ struct AppearancePanel: View {
         .pickerStyle(.segmented)
         .frame(maxWidth: .infinity)
         
+        Toggle("Compact mode", isOn: $compactMode)
         Toggle("Show avatars", isOn: $preferenceShowPostsAvatars)
+        Toggle("Colored usernames", isOn: $coloredCommentNames)
         if preferenceShowCommentsCards {
           VStack(alignment: .leading) {
             HStack {

@@ -51,8 +51,10 @@ final class PreviewViewModel: ObservableObject {
           }
         }
       } else {
-        withAnimation {
-          loading = false
+        await MainActor.run {
+          withAnimation {
+            loading = false
+          }
         }
       }
     }

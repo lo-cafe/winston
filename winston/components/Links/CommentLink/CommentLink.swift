@@ -53,12 +53,12 @@ class SubCommentsReferencesContainer: ObservableObject {
 }
 
 struct CommentLink: View {
+  var lineLimit: Int?
   var highlightID: String?
   var post: Post?
   var subreddit: Subreddit?
   var arrowKinds: [ArrowKind] = []
   var indentLines: Int? = nil
-  var lineLimit: Int?
   var avatarsURL: [String:String]? = nil
   var postFullname: String?
   var showReplies = true

@@ -42,7 +42,6 @@ struct Subreddits: View {
   @Environment(\.openURL) private var openURL
   @EnvironmentObject private var redditAPI: RedditAPI
   @Default(.subreddits) private var subreddits
-  @Default(.openHomeSubOnLaunch) private var openHomeSubOnLaunch
   @State private var searchText: String = ""
   @StateObject private var subsDict = SubsDictContainer()
   @State private var loaded = false
@@ -50,6 +49,8 @@ struct Subreddits: View {
   @StateObject private var router = Router()
   @State private var scrollLetter = "A"
   @EnvironmentObject private var haptics: SimpleHapticGenerator
+  
+  @Default(.preferenceDefaultFeed) var preferenceDefaultFeed // handle default feed selection routing
   
   func sort(_ subs: [ListingChild<SubredditData>]) -> [String: [Subreddit]] {
     return Dictionary(grouping: subs.compactMap { $0.data }, by: { String($0.display_name?.prefix(1) ?? "").uppercased() })
@@ -85,6 +86,7 @@ struct Subreddits: View {
                 ListBigBtn(icon: "signpost.right.and.left.circle.fill", iconColor: .orange, label: "All", destination: Subreddit(id: "all", api: redditAPI))
                 
                 ListBigBtn(icon: "bookmark.circle.fill", iconColor: .green, label: "Saved", destination: Subreddit(id: "saved", api: redditAPI))
+                  .opacity(0.5).allowsHitTesting(false)
               }
             }
             .frame(maxWidth: .infinity)
@@ -196,8 +198,13 @@ struct Subreddits: View {
             if subreddits.count > 0 {
               subsDict.data = sort(subreddits)
             }
-            Task {
-              if openHomeSubOnLaunch && router.path.count == 0 { router.path.append(SubViewType.posts(Subreddit(id: "home", api: redditAPI))) }
+            Task {              
+              // MARK: Route to default feed
+              if preferenceDefaultFeed != "subList" && router.path.count == 0 { // we are in subList, can ignore
+                let tempSubreddit = Subreddit(id: preferenceDefaultFeed, api: redditAPI)
+                router.path.append(SubViewType.posts(tempSubreddit))
+              }
+              
               await redditAPI.fetchSubs()
               withAnimation {
                 loaded = true

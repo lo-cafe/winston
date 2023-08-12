@@ -33,10 +33,16 @@ struct CommentLinkContentPreview: View {
   }
 }
 
+class MyDefaults {
+  @Default(.commentSwipeActions) static var commentSwipeActions: SwipeActionsSet
+}
+
 struct CommentLinkContent: View {
   var highlightID: String?
   @Default(.preferenceShowCommentsCards) private var preferenceShowCommentsCards
   @Default(.preferenceShowCommentsAvatars) private var preferenceShowCommentsAvatars
+//  @Default(.commentSwipeActions) private var commentSwipeActions
+  @State private var commentSwipeActions: SwipeActionsSet = Defaults[.commentSwipeActions]
   var forcedBodySize: CGSize?
   var showReplies = true
   var arrowKinds: [ArrowKind]
@@ -52,12 +58,13 @@ struct CommentLinkContent: View {
   @State var dragging = false
   @State var offsetX: CGFloat = 0
   @State var bodySize: CGSize = .zero
-  @State var selectable = false
   @State var highlight = false
   
   @Default(.cardedCommentsInnerHPadding) var cardedCommentsInnerHPadding
+  @Default(.coloredCommentNames) var coloredCommenNames
   
   var body: some View {
+    let selectable = (comment.data?.winstonSelecting ?? false)
     let horPad = preferenceShowCommentsCards ? cardedCommentsInnerHPadding : 0
     if let data = comment.data {
       let collapsed = data.collapsed ?? false
@@ -76,11 +83,11 @@ struct CommentLinkContent: View {
           }
           HStack {
             if let author = data.author, let created = data.created {
-              Badge(usernameColor: (post?.data?.author ?? "") == author ? Color.green : Color.blue, showAvatar: preferenceShowCommentsAvatars, author: author, fullname: data.author_fullname, created: created, avatarURL: avatarsURL?[data.author_fullname!])
+              Badge(usernameColor: (post?.data?.author ?? "") == author ? Color.green : (coloredCommenNames ? Color.blue : Color.primary), showAvatar: preferenceShowCommentsAvatars, author: author, fullname: data.author_fullname, created: created, avatarURL: avatarsURL?[data.author_fullname!])
             }
-            
+
             Spacer()
-            
+
             if selectable {
               HStack(spacing: 2) {
                 Circle()
@@ -93,19 +100,19 @@ struct CommentLinkContent: View {
               .padding(.horizontal, 6)
               .padding(.vertical, 1)
               .background(.orange, in: Capsule(style: .continuous))
-              .onTapGesture { withAnimation { selectable = false } }
+              .onTapGesture { withAnimation { comment.data?.winstonSelecting = false } }
             }
-            
+
             if let ups = data.ups, let downs = data.downs {
               HStack(alignment: .center, spacing: 4) {
                 Image(systemName: "arrow.up")
                   .foregroundColor(data.likes != nil && data.likes! ? .orange : .gray)
-                
+
                 let downup = Int(ups - downs)
                 Text(formatBigNumber(downup))
                   .foregroundColor(downup == 0 ? .gray : downup > 0 ? .orange : .blue)
                   .fontSize(14, .semibold)
-                
+
                 Image(systemName: "arrow.down")
                   .foregroundColor(data.likes != nil && !data.likes! ? .blue : .gray)
               }
@@ -115,14 +122,14 @@ struct CommentLinkContent: View {
               .background(Capsule(style: .continuous).fill(.secondary.opacity(0.1)))
               .viewVotes(ups, downs)
               .allowsHitTesting(!collapsed)
-              
+
               if collapsed {
                 Image(systemName: "eye.slash.fill")
                   .fontSize(14, .medium)
                   .opacity(0.5)
                   .allowsHitTesting(false)
               }
-              
+
             }
           }
           .padding(.top, data.depth != 0 ? 6 : 0)
@@ -135,9 +142,8 @@ struct CommentLinkContent: View {
             controlledDragAmount: $offsetX,
             controlledIsSource: false,
             onTap: { withAnimation(spring) { comment.toggleCollapsed(optimistic: true) } },
-            leftActionHandler: { Task { _ = await comment.vote(action: .down) } },
-            rightActionHandler: { Task { _ = await comment.vote(action: .up) } },
-            secondActionHandler: { showReplyModal = true }
+            actionsSet: commentSwipeActions,
+            entity: comment
           )
         }
         .introspect(.listCell, on: .iOS(.v16, .v17)) { cell in
@@ -150,6 +156,10 @@ struct CommentLinkContent: View {
         .background(Color.blue.opacity(highlight ? 0.2 : 0))
         .background(preferenceShowCommentsCards && showReplies ? Color.listBG : .clear)
         .onAppear {
+          let newCommentSwipeActions = Defaults[.commentSwipeActions]
+          if commentSwipeActions != newCommentSwipeActions {
+            commentSwipeActions = newCommentSwipeActions
+          }
           if var specificID = highlightID {
             specificID = specificID.hasPrefix("t1_") ? String(specificID.dropFirst(3)) : specificID
             if specificID == data.id { withAnimation { highlight = true } }
@@ -204,9 +214,8 @@ struct CommentLinkContent: View {
                 offsetYAction: -15,
                 controlledDragAmount: $offsetX,
                 onTap: { if !selectable { withAnimation(spring) { comment.toggleCollapsed(optimistic: true) } } },
-                leftActionHandler: { Task { _ = await comment.vote(action: .down) } },
-                rightActionHandler: { Task { _ = await comment.vote(action: .up) } },
-                secondActionHandler: { showReplyModal = true }
+                actionsSet: commentSwipeActions,
+                entity: comment
               )
               .background(forcedBodySize != nil ? nil : GeometryReader { geo in Color.clear.onAppear { sizer.size = geo.size } } )
             } else {
@@ -224,12 +233,12 @@ struct CommentLinkContent: View {
           .contextMenu {
             if !selectable && forcedBodySize == nil {
               Button {
-                withAnimation { selectable = true }
+                withAnimation { comment.data?.winstonSelecting = true }
               } label: {
                 Label("Select text", systemImage: "selection.pin.in.out")
               }
               Button {
-                withAnimation { selectable = true }
+                withAnimation { comment.data?.winstonSelecting = true }
               } label: {
                 Label("Edit", systemImage: "pencil")
               }
@@ -243,9 +252,9 @@ struct CommentLinkContent: View {
               .id("\(data.id)-preview")
           }
           
-          .sheet(isPresented: $showReplyModal) {
-            ReplyModalComment(comment: comment)
-          }
+//          .sheet(isPresented: $showReplyModal) {
+//            ReplyModalComment(comment: comment)
+//          }
           .id("\(data.id)-body\(forcedBodySize == nil ? "" : "-preview")")
         }
         

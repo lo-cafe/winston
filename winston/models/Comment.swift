@@ -253,6 +253,28 @@ extension Comment {
     return false
   }
   
+  func saveToggle() async -> Bool {
+    if let data = data, let fullname = data.name {
+      let prev = data.saved ?? false
+      await MainActor.run {
+        withAnimation {
+          self.data?.saved = !prev
+        }
+      }
+      let success = await redditAPI.save(!prev, id: fullname)
+      if !(success ?? false) {
+        await MainActor.run {
+          withAnimation {
+            self.data?.saved = prev
+          }
+        }
+        return false
+      }
+      return true
+    }
+    return false
+  }
+  
   func vote(action: RedditAPI.VoteAction) async -> Bool? {
     let oldLikes = data?.likes
     let oldUps = data?.ups ?? 0
@@ -288,7 +310,7 @@ struct CommentData: GenericRedditEntityDataType {
   var likes: Bool?
   var replies: Either<String, Listing<CommentData>>?
   //  let user_reports: [String]?
-  let saved: Bool?
+  var saved: Bool?
   let id: String
   //  let banned_at_utc: String?
   //  let mod_reason_title: String?
@@ -347,6 +369,7 @@ struct CommentData: GenericRedditEntityDataType {
   let mod_reports: [String]?
   let num_reports: Int?
   var ups: Int?
+  var winstonSelecting: Bool? = false
 }
 
 struct Gildings: Codable {
@@ -377,21 +400,21 @@ enum CommentSortOption: Codable, CaseIterable, Identifiable, Defaults.Serializab
   var rawVal: SubListingSort {
     switch self {
     case .confidence:
-      return SubListingSort(icon: "flame.fill", value: "confidence")
+      return SubListingSort(icon: "flame", value: "confidence")
     case .new:
-      return SubListingSort(icon: "newspaper.fill", value: "new")
+      return SubListingSort(icon: "newspaper", value: "new")
     case .top:
-      return SubListingSort(icon: "arrow.up.forward.app.fill", value: "top")
+      return SubListingSort(icon: "trophy", value: "top")
     case .controversial:
-      return SubListingSort(icon: "arrow.up.forward.app.fill", value: "controversial")
+      return SubListingSort(icon: "figure.fencing", value: "controversial")
     case .old:
-      return SubListingSort(icon: "arrow.up.forward.app.fill", value: "old")
+      return SubListingSort(icon: "clock.arrow.circlepath", value: "old")
     case .random:
-      return SubListingSort(icon: "arrow.up.forward.app.fill", value: "random")
+      return SubListingSort(icon: "dice", value: "random")
     case .qa:
-      return SubListingSort(icon: "arrow.up.forward.app.fill", value: "qa")
+      return SubListingSort(icon: "bubble.left.and.bubble.right", value: "qa")
     case .live:
-      return SubListingSort(icon: "arrow.up.forward.app.fill", value: "live")
+      return SubListingSort(icon: "dot.radiowaves.left.and.right", value: "live")
     }
   }
 }
