@@ -1,5 +1,6 @@
-Express update with some quick fixes:
-- Inbox is now "Notifications" ans has a bell icon
-- Added show username in tab bar option
-- Fixes overview manual refreshes not working
-- Fixed bugs related to premium users (like "me" tab not loading up)
+- Design tweaks
+- Setting to open default feed on launch
+- Search now searches while you type
+- Custom swipe options are now a reality!!!
+- Disabled "Saved" section for a while (sorry about this, it was crashing)
+- Added a draft compact mode (no links and videos atm, and probably buggy)
