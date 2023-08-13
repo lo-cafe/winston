@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		650ACAFC2A87A36900A7C600 /* calcVotes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 650ACAFB2A87A36900A7C600 /* calcVotes.swift */; };
+		65807E732A87F8A8000EF969 /* AlertToast in Frameworks */ = {isa = PBXBuildFile; productRef = 65807E722A87F8A8000EF969 /* AlertToast */; };
 		65978D022A861ECF00B6BDFC /* scaleEffectButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65978D012A861ECF00B6BDFC /* scaleEffectButtonStyle.swift */; };
 		659F68022A84E32300989300 /* VotesCluster.swift in Sources */ = {isa = PBXBuildFile; fileRef = 659F68012A84E32300989300 /* VotesCluster.swift */; };
 		659FDEA82A87798300103414 /* VoteButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 659FDEA72A87798300103414 /* VoteButton.swift */; };
@@ -446,6 +447,7 @@
 				ECAA8B842A76421000D9D636 /* YouTubePlayerKit in Frameworks */,
 				EC593B0C2A47B801002D6454 /* Alamofire in Frameworks */,
 				ECB5E1C62A7DC24D0063AB64 /* LonginusSwiftUI in Frameworks */,
+				65807E732A87F8A8000EF969 /* AlertToast in Frameworks */,
 				EC593B092A47B42D002D6454 /* KeychainAccess in Frameworks */,
 				ECD2A37D2A69CBAD00EDD02D /* WaterfallGrid in Frameworks */,
 				ECE285972A4FD6FC009CF9DD /* SwiftDate in Frameworks */,
@@ -969,6 +971,7 @@
 				ECDD51612A748DF600FD9498 /* SkeletonUI */,
 				ECAA8B832A76421000D9D636 /* YouTubePlayerKit */,
 				ECB5E1C52A7DC24D0063AB64 /* LonginusSwiftUI */,
+				65807E722A87F8A8000EF969 /* AlertToast */,
 			);
 			productName = winston;
 			productReference = EC593AD42A4673B2002D6454 /* winston.app */;
@@ -1033,6 +1036,7 @@
 				ECDD51602A748DF600FD9498 /* XCRemoteSwiftPackageReference "SkeletonUI" */,
 				ECAA8B822A76421000D9D636 /* XCRemoteSwiftPackageReference "YouTubePlayerKit" */,
 				ECB5E1C42A7DC24D0063AB64 /* XCRemoteSwiftPackageReference "Longinus" */,
+				65807E712A87F8A8000EF969 /* XCRemoteSwiftPackageReference "AlertToast" */,
 			);
 			productRefGroup = EC593AD52A4673B2002D6454 /* Products */;
 			projectDirPath = "";
@@ -1558,6 +1562,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		65807E712A87F8A8000EF969 /* XCRemoteSwiftPackageReference "AlertToast" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/ImTheSquid/AlertToast.git";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
 		EC08543B2A4CFE1C00E88389 /* XCRemoteSwiftPackageReference "swiftui-introspect" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/siteline/swiftui-introspect";
@@ -1673,6 +1685,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		65807E722A87F8A8000EF969 /* AlertToast */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 65807E712A87F8A8000EF969 /* XCRemoteSwiftPackageReference "AlertToast" */;
+			productName = AlertToast;
+		};
 		EC08543C2A4CFE1C00E88389 /* SwiftUIIntrospect */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = EC08543B2A4CFE1C00E88389 /* XCRemoteSwiftPackageReference "swiftui-introspect" */;
