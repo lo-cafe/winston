@@ -91,6 +91,9 @@ extension Defaults.Keys {
   static let showAllFeed = Key<Bool>("showAllFeed", default: true)
   static let showSavedFeed = Key<Bool>("showSavedFeed", default: true)
   static let redditAPIUserAgent = Key<String>("redditAPIUserAgent", default: "ios:lo.cafe.winston:v0.1.0 (by /u/Kinark)")
+  
+  static let forceFeedbackModifiers = Key<ForceFeedbackModifiers>("forceFeedbackModifiers", default: .medium)
+  static let hapticFeedbackOnLPM = Key<Bool>("hapticFeedbackOnLPM", default: true)
 }
 
 extension UIScreen {

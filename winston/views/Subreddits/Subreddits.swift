@@ -175,7 +175,7 @@ struct Subreddits: View {
           , alignment: .trailing
         )
         .onChange(of: scrollLetter) { x in
-          try? haptics.fire(intensity: 0.5, sharpness: 0.5)
+          try? haptics.accessFire(intensity: 0.5, sharpness: 0.5)
           if let id = subsDictData[x]?[0].id {
             proxy.scrollTo("\(id)-main", anchor: .top)
           }

@@ -17,7 +17,7 @@ struct VoteButton: View {
 
   var body: some View {
     Button {
-      try? haptics.fire(intensity:  0.35, sharpness: 0.5)
+      try? haptics.accessFire(intensity:  0.35, sharpness: 0.5)
       animate = false
       withAnimation(.spring(response: 0.3, dampingFraction: 0.5)){
         animate = true

@@ -119,7 +119,7 @@ struct PostInBoxLink: View {
           withAnimation(spring) {
             dragging = true
           }
-          try? haptics.fire(intensity: 1, sharpness: 1)
+          try? haptics.accessFire(intensity: 1, sharpness: 1)
         }
         .sequenced(before: DragGesture())
         .onChanged{ sequence in
@@ -138,13 +138,13 @@ struct PostInBoxLink: View {
                 withAnimation(spring) {
                   deleting = true
                 }
-                try? haptics.fire(intensity: 1, sharpness: 1)
+                try? haptics.accessFire(intensity: 1, sharpness: 1)
               }
               if abs(dragVal.translation.height) < 70 && deleting {
                 withAnimation(spring) {
                   deleting = false
                 }
-                try? haptics.fire(intensity: 0.5, sharpness: 0.5)
+                try? haptics.accessFire(intensity: 0.5, sharpness: 0.5)
               }
             }
           }
