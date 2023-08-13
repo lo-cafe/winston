@@ -36,7 +36,7 @@ final class PreviewViewModel: ObservableObject {
   
   private func fetchMetadata() {
     guard let previewURL else { return }
-    Task {
+    Task(priority: .background) {
       var headers = [String: String]()
       headers["User-Agent"] = "facebookexternalhit/1.1"
       headers["charset"] = "UTF-8"

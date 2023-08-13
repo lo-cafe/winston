@@ -56,7 +56,7 @@ struct Avatar: View {
             )
             .onAppear {
               if avatarURL.isNil {
-                Task {
+                Task(priority: .background) {
                   if let data = await redditAPI.fetchUserPublic(userID) {
                     let userDataURL = data.subreddit?.icon_img?.split(separator: "?")[0]
                     let url = userDataURL == nil ? "" : String(userDataURL!)

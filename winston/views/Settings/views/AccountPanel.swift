@@ -33,7 +33,7 @@ struct AccountPanel: View {
             UIPasteboard.general.string = accessToken
           }
           Button("Refresh access token") {
-            Task {
+            Task(priority: .background) {
               await redditAPI.refreshToken(true)
             }
           }

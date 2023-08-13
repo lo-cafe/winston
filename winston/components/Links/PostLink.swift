@@ -38,6 +38,7 @@ struct PostLink: View, Equatable {
     lhs.post == rhs.post && lhs.sub == rhs.sub
   }
   
+  var isCentered = false
   @ObservedObject var post: Post
   @ObservedObject var sub: Subreddit
   var showSub = false
@@ -127,7 +128,7 @@ struct PostLink: View, Equatable {
             VStack(alignment: .center, spacing: 2) {
                           
               MasterButton(icon: "arrow.up", mode: .subtle, color: .white, colorHoverEffect: .none, textColor: data.likes != nil && data.likes! ? .orange : .gray, textSize: 22, proportional: .circle) {
-                Task {
+                Task(priority: .background) {
                   _ = await post.vote(action: .up)
                 }
               }
@@ -137,7 +138,7 @@ struct PostLink: View, Equatable {
               Spacer()
               
               MasterButton(icon: "arrow.down", mode: .subtle, color: .white, colorHoverEffect: .none, textColor: data.likes != nil && !data.likes! ? .blue : .gray, textSize: 22, proportional: .circle) {
-                Task {
+                Task(priority: .background) {
                   _ = await post.vote(action: .down)
                 }
               }
@@ -192,7 +193,7 @@ struct PostLink: View, Equatable {
             
             HStack(alignment: .center, spacing: 0) {
               MasterButton(icon: "arrow.up", mode: .subtle, color: .white, colorHoverEffect: .none, textColor: data.likes != nil && data.likes! ? .orange : .gray, textSize: 22, proportional: .circle) {
-                Task {
+                Task(priority: .background) {
                   _ = await post.vote(action: .up)
                 }
               }
@@ -208,7 +209,7 @@ struct PostLink: View, Equatable {
                 .zIndex(10)
               
               MasterButton(icon: "arrow.down", mode: .subtle, color: .white, colorHoverEffect: .none, textColor: data.likes != nil && !data.likes! ? .blue : .gray, textSize: 22, proportional: .circle) {
-                Task {
+                Task(priority: .background) {
                   _ = await post.vote(action: .down)
                 }
               }
@@ -221,42 +222,35 @@ struct PostLink: View, Equatable {
       }
       .padding(.horizontal, preferenceShowPostsCards ? cardedPostLinksInnerHPadding : postLinksInnerHPadding)
       .padding(.vertical, preferenceShowPostsCards ? cardedPostLinksInnerVPadding : postLinksInnerVPadding)
-//      .overlay(
-//        (data.winstonSeen ?? false)
-//        ? nil
-//        : ZStack {
-//          Circle()
-//            .fill(Color.hex("CFFFDE"))
-//            .frame(width: 5, height: 5)
-//          Circle()
-//            .fill(Color.hex("4FFF85"))
-//            .frame(width: 10, height: 10)
-//            .blur(radius: 8)
-//        }
-//          .padding(.all, 8)
-//        , alignment: .topLeading
-//      )
       .frame(maxWidth: .infinity, alignment: .leading)
-//      .fixedSize()
       .background(
         !preferenceShowPostsCards
         ? nil
         : RR(20, .listBG)
           .allowsHitTesting(false)
       )
-//      .padding(.vertical, !preferenceShowPostsCards ? 8 : 0)
-//      .padding(.vertical, !preferenceShowPostsCards ? postLinksOuterVPadding : 0)
-//      .padding(.horizontal, !preferenceShowPostsCards ? POSTLINK_OUTER_H_PAD : 0 )
-//      .padding(.horizontal, !preferenceShowPostsCards ? postLinksOuterHPadding : 0 )
-      //      .overlay(Rectangle().fill(.primary.opacity(openedPost ? 0.1 : 0)).allowsHitTesting(false))
       .mask(RR(preferenceShowPostsCards ? 20 : 0, .black))
-//      .padding(.horizontal, preferenceShowPostsCards ? cardedPostLinksOuterHPadding : 0 )
+      .overlay(
+        (data.winstonSeen ?? false)
+        //        isCentered
+        ? nil
+        : ZStack {
+          Circle()
+            .fill(Color.hex("CFFFDE"))
+            .frame(width: 5, height: 5)
+          Circle()
+            .fill(Color.hex("4FFF85"))
+            .frame(width: 8, height: 8)
+            .blur(radius: 8)
+        }
+          .padding(.all, 10)
+        , alignment: .topTrailing
+      )
       .padding(.horizontal, preferenceShowPostsCards ? cardedPostLinksOuterHPadding : 0 )
-//      .padding(.vertical, preferenceShowPostsCards ? 8 : 0)
       .padding(.vertical, preferenceShowPostsCards ? cardedPostLinksOuterVPadding : 0)
       .compositingGroup()
-//      .opacity((data.winstonSeen ?? false) ? 0.75 : 1)
       .contentShape(Rectangle())
+      .animation(.default, value: isCentered)
       .swipyUI(
         onTap: {
           withAnimation {
@@ -286,15 +280,6 @@ struct PostLink: View, Equatable {
           postSwipeActions = newPostSwipeActions
         }
       }
-      //      .opacity(appeared.isIt ? 1 : 0)
-      //      .offset(y: appeared.isIt ? 0 : 32)
-      //      .onAppear {
-      //        if !appeared.isIt {
-      //          withAnimation(spring) {
-      //            appeared.isIt = true
-      //          }
-      //        }
-      //      }
     } else {
       Text("Oops something went wrong")
     }

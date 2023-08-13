@@ -24,7 +24,7 @@ struct Me: View {
             .progressViewStyle(.circular)
             .frame(maxWidth: .infinity, minHeight: UIScreen.screenHeight - 200 )
             .onAppear {
-              Task {
+              Task(priority: .background) {
                 await redditAPI.fetchMe(force: true)
               }
             }

@@ -135,7 +135,6 @@ struct Subreddits: View {
         .loader(!loaded && subreddits.count == 0)
         .background(OFWOpener())
         .searchable(text: $searchText, prompt: "Search my subreddits")
-        .navigationTitle("Subs")
         .toolbar {
           ToolbarItem(placement: .navigationBarTrailing) {
             EditButton()
@@ -181,29 +180,30 @@ struct Subreddits: View {
           }
         }
         .refreshable {
-          Task {
+          Task(priority: .background) {
             await updatePostsInBox(redditAPI, force: true)
           }
-          await redditAPI.fetchSubs()
+          _ = await redditAPI.fetchSubs()
         }
         .onChange(of: subreddits) { val in
           withAnimation(nil) {
             subsDict.data = sort(val)
           }
         }
+        .navigationTitle("Subs")
         .onAppear {
           if !loaded {
             if subreddits.count > 0 {
               subsDict.data = sort(subreddits)
             }
-            Task {              
+            Task(priority: .background) {
               // MARK: Route to default feed
               if preferenceDefaultFeed != "subList" && router.path.count == 0 { // we are in subList, can ignore
                 let tempSubreddit = Subreddit(id: preferenceDefaultFeed, api: redditAPI)
                 router.path.append(SubViewType.posts(tempSubreddit))
               }
               
-              await redditAPI.fetchSubs()
+              _ = await redditAPI.fetchSubs()
               withAnimation {
                 loaded = true
               }
@@ -218,11 +218,12 @@ struct Subreddits: View {
       }
       //        .onDelete(perform: deleteItems)
     }
+    .animation(.default, value: router.path)
   }
   
   func deleteFromFavorites(at offsets: IndexSet) {
     for i in offsets {
-      Task {
+      Task(priority: .background) {
         await favoritesArr[i].subscribeToggle(optimistic: true)
       }
     }
@@ -231,7 +232,7 @@ struct Subreddits: View {
   func deleteFromList(at offsets: IndexSet, letter: String) {
     for i in offsets {
       if let sub = subsDict.data[letter]?[i] {
-        Task {
+        Task(priority: .background) {
           await sub.subscribeToggle(optimistic: true)
         }
       }

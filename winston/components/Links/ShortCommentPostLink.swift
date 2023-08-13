@@ -52,7 +52,6 @@ struct ShortCommentPostLink: View {
       .contentShape(Rectangle())
       .highPriorityGesture (
         TapGesture().onEnded {
-          print("akmskas")
           router.path.append(PostViewPayload(post: Post(id: data.link_id!, api: comment.redditAPI), sub: Subreddit(id: data.subreddit!, api: comment.redditAPI)))
         }
       )

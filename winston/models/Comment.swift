@@ -165,7 +165,7 @@ extension Comment {
         
         let loadedComments: [Comment] = nestComments(children, parentID: parentID, api: redditAPI)
 
-        Task { [loadedComments] in
+        Task(priority: .background) { [loadedComments] in
           await redditAPI.updateAvatarURLCacheFromComments(comments: loadedComments)
         }
         await MainActor.run { [loadedComments] in

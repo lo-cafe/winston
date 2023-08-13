@@ -17,9 +17,6 @@ struct ReplyModalPresenter: ViewModifier {
       .sheet(isPresented: Binding(get: { shared.isShowing == .comment }, set: { if !$0 { shared.disable() } })) {
         ReplyModalComment(comment: shared.subjectComment)
       }
-      .onChange(of: shared.isShowing) { newValue in
-        print(newValue)
-      }
   }
 }
 
@@ -39,17 +36,12 @@ class ReplyModalInstance: ObservableObject {
   @Published public private(set) var isShowing: Showing = .none { didSet { if isShowing == .none { self.clearSubjects() } } }
   
   func enable(_ subject: Subject) {
-    print("asas")
     switch subject {
     case .comment(let comment):
-      print("asasasasq")
       subjectComment = comment
-      print("asasasasq1")
       doThisAfter(0) {
         withAnimation(spring) {
-          print("asasasasq2")
           self.isShowing = .comment
-          print(self.isShowing, self.subjectComment)
         }
       }
     case .post(let post):
@@ -63,7 +55,6 @@ class ReplyModalInstance: ObservableObject {
   }
   
   func disable() {
-    print("primo")
     withAnimation(spring) { self.isShowing = .none }
     self.clearSubjects()
   }

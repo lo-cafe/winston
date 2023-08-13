@@ -46,7 +46,7 @@ struct CommentLinkMore: View {
       .frame(maxWidth: .infinity, alignment: .leading)
       .background(preferenceShowCommentsCards ? Color.listBG : .clear)
       .contentShape(Rectangle())
-      .onTapGesture { Task {
+      .onTapGesture { Task(priority: .background) {
         if let postFullname = postFullname {
           await MainActor.run {
             withAnimation(spring) {

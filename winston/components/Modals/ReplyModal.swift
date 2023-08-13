@@ -25,7 +25,7 @@ struct ReplyModalComment: View {
   
   func action(_ endLoading: (@escaping (Bool) -> ()), text: String) {
     if let _ = comment.typePrefix {
-      Task {
+      Task(priority: .background) {
         let result = await comment.reply(text)
         await MainActor.run {
           withAnimation(spring) {
@@ -49,7 +49,7 @@ struct ReplyModalPost: View {
   @ObservedObject var post: Post
   
   func action(_ endLoading: (@escaping (Bool) -> ()), text: String) {
-    Task {
+    Task(priority: .background) {
       let result = await post.reply(text)
       await MainActor.run {
         withAnimation(spring) {
@@ -151,7 +151,7 @@ struct ReplyModal<Content: View>: View {
         }
       }
       .onAppear {
-        Task {
+        Task(priority: .background) {
           await redditAPI.fetchMe()
         }
         if let draftEntity = drafts.first(where: { draft in draft.thingID == thingFullname }) {
@@ -166,8 +166,6 @@ struct ReplyModal<Content: View>: View {
           currentDraft = newDraft
         }
       }
-      .navigationTitle("Replying")
-      .navigationBarTitleDisplayMode(.inline)
       .toolbar {
         ToolbarItem {
           HStack(spacing: 0) {
@@ -200,6 +198,8 @@ struct ReplyModal<Content: View>: View {
           }
         }
       }
+      .navigationBarTitleDisplayMode(.inline)
+      .navigationTitle("Replying")
     }
     .presentationDetents([.large, .fraction(0.75), .medium, collapsedPresentation], selection: $selection)
     .presentationCornerRadius(32)

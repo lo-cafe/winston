@@ -152,7 +152,7 @@ struct UserView: View {
     .navigationTitle(user.data?.name ?? "Loading...")
     .navigationBarTitleDisplayMode(.inline)
     .onAppear {
-      Task {
+      Task(priority: .background) {
         if user.data == nil || lastActivities == nil {
           await refresh()
         }

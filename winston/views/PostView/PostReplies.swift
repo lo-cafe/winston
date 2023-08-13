@@ -26,7 +26,7 @@ struct PostReplies: View {
   
   func asyncFetch(_ full: Bool, _ altIgnoreSpecificComment: Bool? = nil) async {
     if let result = await post.refreshPost(commentID: (altIgnoreSpecificComment ?? ignoreSpecificComment) ? nil : highlightID, sort: sort, after: nil, subreddit: subreddit.data?.display_name ?? subreddit.id, full: full), let newComments = result.0 {
-      Task {
+      Task(priority: .background) {
         await redditAPI.updateAvatarURLCacheFromComments(comments: newComments)
       }
       await MainActor.run {
@@ -93,12 +93,12 @@ struct PostReplies: View {
               .frame(height: 1)
               .listRowBackground(Color.clear)
               .onChange(of: update) { _ in
-                Task {
+                Task(priority: .background) {
                   await asyncFetch(post.data == nil)
                 }
               }
               .onChange(of: ignoreSpecificComment) { val in
-                Task {
+                Task(priority: .background) {
                   await asyncFetch(post.data == nil, val)
                   globalLoader.dismiss()
                 }
@@ -121,7 +121,7 @@ struct PostReplies: View {
             .listRowBackground(Color.clear)
             .onAppear {
               if comments.data.count == 0 || post.data == nil {
-                Task {
+                Task(priority: .background) {
                   await asyncFetch(post.data == nil)
                   //                      var specificID: String? = nil
                   if var specificID = highlightID {

@@ -279,7 +279,7 @@ struct NewPostModal: View {
         }
       }
       .onAppear {
-        Task {
+        Task(priority: .background) {
           await subreddit.getFlairs()
         }
         if let draftEntity = drafts.first(where: { draft in draft.subredditName == subreddit.data?.name }) {
@@ -294,8 +294,6 @@ struct NewPostModal: View {
           currentDraft = newDraft
         }
       }
-      .navigationTitle("New post")
-      .navigationBarTitleDisplayMode(.inline)
       .toolbar {
         ToolbarItem {
           HStack(spacing: 0) {
@@ -328,6 +326,8 @@ struct NewPostModal: View {
           }
         }
       }
+      .navigationTitle("New post")
+      .navigationBarTitleDisplayMode(.inline)
     }
     .scrollDismissesKeyboard(.immediately)
     //    .backport.presentationDetents([.medium,.large], selection: $selection)

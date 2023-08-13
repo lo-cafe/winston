@@ -23,7 +23,7 @@ struct SubItem: View {
           
           Image(systemName: "star.fill")
             .foregroundColor(favorite ? .blue : .gray.opacity(0.3))
-            .highPriorityGesture( TapGesture().onEnded { Task { await sub.favoriteToggle() } } )
+            .highPriorityGesture( TapGesture().onEnded { Task(priority: .background) { await sub.favoriteToggle() } } )
         }
         .contentShape(Rectangle())
       }

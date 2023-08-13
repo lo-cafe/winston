@@ -66,7 +66,7 @@ struct PostFloatingPill: View {
           
           HStack(alignment: .center, spacing: 8) {
             Button {
-              Task {
+              Task(priority: .background) {
                 await post.vote(action: .up)
               }
             } label: {
@@ -80,7 +80,7 @@ struct PostFloatingPill: View {
               .fontSize(17, .semibold)
             
             Button {
-              Task {
+              Task(priority: .background) {
                 await post.vote(action: .down)
               }
             } label: {
