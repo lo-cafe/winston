@@ -75,7 +75,7 @@ extension Post {
       let result = await redditAPI.newReply(text, fullname) ?? false
       if result {
         doThisAfter(0.3) {
-          Task {
+          Task(priority: .background) {
             await self.refreshPost()
           }
         }

@@ -74,6 +74,7 @@ struct Settings: View {
       .navigationTitle("Settings")
       .environmentObject(router)
       .onChange(of: reset) { _ in router.path = NavigationPath() }
+      .animation(.default, value: router.path)
     }
   }
 }

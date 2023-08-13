@@ -44,7 +44,7 @@ struct MessageLink: View {
           router.path.append(PostViewPayload(post: Post(id: getPostId(from: data.context!) ?? "lol", api: message.redditAPI), sub: Subreddit(id: subreddit, api: message.redditAPI), highlightID: actualParentID))
         }
       }, rightActionIcon: !(data.new ?? false) ? "eye.slash.fill" : "eye.fill", rightActionHandler: {
-        Task {
+        Task(priority: .background) {
           await message.toggleRead()
         }
       })

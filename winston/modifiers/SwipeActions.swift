@@ -164,7 +164,7 @@ struct SwipeUI<T: GenericRedditEntityDataType>: ViewModifier {
       .onChange(of: (controlledDragAmount?.wrappedValue ?? dragAmount)) { newValue in
         if !controlledIsSource { return }
         if newValue == 0 {
-          Task { [triggeredAction] in
+          Task(priority: .background) { [triggeredAction] in
             
             switch triggeredAction {
             case .leftFirst:

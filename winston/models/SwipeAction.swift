@@ -208,7 +208,6 @@ struct DownvoteCommentAction: SwipeAction {
   var color = SwipeActionItem(normal: "FFFFFF")
   var bgColor = SwipeActionItem(normal: "0B84FE", active: "FF463B")
   func action(_ entity: Comment) async {
-    print("macabro")
     _ = await entity.vote(action: .down)
   }
   func active(_ entity: Comment) -> Bool { return entity.data?.likes == false }
