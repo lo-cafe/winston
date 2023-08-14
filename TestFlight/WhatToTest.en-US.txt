@@ -3,3 +3,4 @@
 - Added haptics and animation for voting
 - Added option for showing up/down votes ratio
 - Added option to switch from glowing dot to fading to tell read from unread posts.
+- Upvotes get colored accordingly when upvoting / downvoting
