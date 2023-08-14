@@ -10,6 +10,7 @@ import CoreMedia
 import Defaults
 import AVKit
 import AVFoundation
+import SimpleHaptics
 
 struct FlairTag: View {
   var text: String
@@ -38,11 +39,12 @@ struct PostLink: View, Equatable {
     lhs.post == rhs.post && lhs.sub == rhs.sub
   }
   
-  var isCentered = false
   @ObservedObject var post: Post
   @ObservedObject var sub: Subreddit
   var showSub = false
   @EnvironmentObject private var router: Router
+  @EnvironmentObject private var haptics: SimpleHapticGenerator
+
   @Default(.preferenceShowPostsCards) private var preferenceShowPostsCards
   @Default(.preferenceShowPostsAvatars) private var preferenceShowPostsAvatars
   @Default(.blurPostLinkNSFW) private var blurPostLinkNSFW
@@ -57,6 +59,11 @@ struct PostLink: View, Equatable {
   @Default(.cardedPostLinksInnerHPadding) private var cardedPostLinksInnerHPadding
   @Default(.cardedPostLinksInnerVPadding) private var cardedPostLinksInnerVPadding
   
+  @Default(.readPostOnScroll) private var readPostOnScroll
+  @Default(.hideReadPosts) private var hideReadPosts
+  
+  @Default(.showUpvoteRatio) var showUpvoteRatio
+  @Default(.fadeReadPosts) var fadeReadPosts
   @StateObject private var appeared = Appeared()
   
   var contentWidth: CGFloat { UIScreen.screenWidth - ((preferenceShowPostsCards ? cardedPostLinksOuterHPadding : postLinksInnerHPadding) * 2) - (preferenceShowPostsCards ? (preferenceShowPostsCards ? cardedPostLinksInnerHPadding : 0) * 2 : 0) }
@@ -64,6 +71,7 @@ struct PostLink: View, Equatable {
   var body: some View {
     let layout = compactMode ? AnyLayout(HStackLayout(alignment: .top, spacing: 12)) : AnyLayout(VStackLayout(alignment: .leading, spacing: 12))
     if let data = post.data {
+      let seen = (data.winstonSeen ?? false)
       let isLinkPost = !data.url.isEmpty && !data.is_self && !(data.is_video ?? false) && !(data.is_gallery ?? false) && data.post_hint != "image"
       let over18 = data.over_18 ?? false
       VStack(alignment: .leading, spacing: 8) {
@@ -127,23 +135,11 @@ struct PostLink: View, Equatable {
           if compactMode {
             VStack(alignment: .center, spacing: 2) {
                           
-              MasterButton(icon: "arrow.up", mode: .subtle, color: .white, colorHoverEffect: .none, textColor: data.likes != nil && data.likes! ? .orange : .gray, textSize: 22, proportional: .circle) {
-                Task(priority: .background) {
-                  _ = await post.vote(action: .up)
-                }
-              }
-              //            .shrinkOnTap()
-              .padding(.all, -8)
+              VoteButton(color: data.likes != nil && data.likes! ? .orange : .gray, voteAction: .up, image: "arrow.up", post: post)
               
               Spacer()
               
-              MasterButton(icon: "arrow.down", mode: .subtle, color: .white, colorHoverEffect: .none, textColor: data.likes != nil && !data.likes! ? .blue : .gray, textSize: 22, proportional: .circle) {
-                Task(priority: .background) {
-                  _ = await post.vote(action: .down)
-                }
-              }
-              //            .shrinkOnTap()
-              .padding(.all, -8)
+              VoteButton(color: data.likes != nil && !data.likes! ? .blue : .gray, voteAction: .down, image: "arrow.down", post: post)
               
               Spacer()
               
@@ -183,6 +179,8 @@ struct PostLink: View, Equatable {
         .padding(.horizontal, 2)
         .padding(.vertical, 2)
         
+        
+          
         if !compactMode {
           HStack {
             if let fullname = data.author_fullname {
@@ -191,30 +189,8 @@ struct PostLink: View, Equatable {
             
             Spacer()
             
-            HStack(alignment: .center, spacing: 0) {
-              MasterButton(icon: "arrow.up", mode: .subtle, color: .white, colorHoverEffect: .none, textColor: data.likes != nil && data.likes! ? .orange : .gray, textSize: 22, proportional: .circle) {
-                Task(priority: .background) {
-                  _ = await post.vote(action: .up)
-                }
-              }
-              //            .shrinkOnTap()
-              .padding(.all, -8)
-              
-              let downup = Int(data.ups - data.downs)
-              Text(formatBigNumber(downup))
-                .foregroundColor(downup == 0 ? .gray : downup > 0 ? .orange : .blue)
-                .fontSize(16, .semibold)
-                .padding(.horizontal, 12)
-                .viewVotes(data.ups, data.downs)
-                .zIndex(10)
-              
-              MasterButton(icon: "arrow.down", mode: .subtle, color: .white, colorHoverEffect: .none, textColor: data.likes != nil && !data.likes! ? .blue : .gray, textSize: 22, proportional: .circle) {
-                Task(priority: .background) {
-                  _ = await post.vote(action: .down)
-                }
-              }
-              //            .shrinkOnTap()
-              .padding(.all, -8)
+            HStack(alignment: .center) {
+              VotesCluster(data: data, likeRatio: showUpvoteRatio ? data.upvote_ratio : nil, post: post)
             }
             .fontSize(22, .medium)
           }
@@ -231,8 +207,7 @@ struct PostLink: View, Equatable {
       )
       .mask(RR(preferenceShowPostsCards ? 20 : 0, .black))
       .overlay(
-        (data.winstonSeen ?? false)
-        //        isCentered
+        fadeReadPosts
         ? nil
         : ZStack {
           Circle()
@@ -243,14 +218,17 @@ struct PostLink: View, Equatable {
             .frame(width: 8, height: 8)
             .blur(radius: 8)
         }
-          .padding(.all, 10)
+          .padding(.all, 11)
+          .scaleEffect(seen ? 0.1 : 1)
+          .opacity(seen ? 0 : 1)
+          .allowsHitTesting(false)
         , alignment: .topTrailing
       )
       .padding(.horizontal, preferenceShowPostsCards ? cardedPostLinksOuterHPadding : 0 )
       .padding(.vertical, preferenceShowPostsCards ? cardedPostLinksOuterVPadding : 0)
       .compositingGroup()
+      .opacity(fadeReadPosts && seen ? 0.6 : 1)
       .contentShape(Rectangle())
-      .animation(.default, value: isCentered)
       .swipyUI(
         onTap: {
           withAnimation {
@@ -274,6 +252,18 @@ struct PostLink: View, Equatable {
       .foregroundColor(.primary)
       .multilineTextAlignment(.leading)
       .zIndex(1)
+      .onDisappear {
+        if readPostOnScroll {
+          Task(priority: .background) {
+            post.toggleSeen(true, optimistic: true)
+          }
+        }
+        if hideReadPosts {
+          Task(priority: .background) {
+            await post.hide(true)
+          }
+        }
+      }
       .onAppear {
         let newPostSwipeActions = Defaults[.postSwipeActions]
         if postSwipeActions != newPostSwipeActions {
@@ -289,5 +279,16 @@ struct PostLink: View, Equatable {
 struct EmptyButtonStyle: ButtonStyle {
   func makeBody(configuration: Self.Configuration) -> some View {
     configuration.label
+  }
+}
+
+struct CustomLabel: LabelStyle {
+  var spacing: Double = 0.0
+  
+  func makeBody(configuration: Configuration) -> some View {
+    HStack(spacing: spacing) {
+      configuration.icon
+      configuration.title
+    }
   }
 }

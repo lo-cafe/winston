@@ -22,7 +22,7 @@ struct SubredditPosts: View {
   @ObservedObject var subreddit: Subreddit
   @Environment(\.openURL) private var openURL
   @State private var loading = true
-  @StateObject private var posts = ObservableArray<Post>()
+  @StateObject private var posts = NonObservableArray<Post>()
   @State private var lastPostAfter: String?
   @State private var searchText: String = ""
   @State private var sort: SubListingSortOption = Defaults[.preferredSort]
@@ -30,7 +30,6 @@ struct SubredditPosts: View {
   @EnvironmentObject private var redditAPI: RedditAPI
   @EnvironmentObject private var router: Router
   
-  @State private var centeredPostIndex = 0
   
   func asyncFetch(force: Bool = false, loadMore: Bool = false) async {
     if (subreddit.data == nil || force) && !feedsAndSuch.contains(subreddit.id) {
@@ -58,7 +57,7 @@ struct SubredditPosts: View {
   func fetch(loadMore: Bool = false) {
     //    if loadMore {
     //      withAnimation {
-    //        <#code#>
+    //
     //        loadingMore = true
     //      }
     //    }
@@ -68,184 +67,146 @@ struct SubredditPosts: View {
   }
   
   var body: some View {
-      GeometryReader { proxy in
-        Group {
-          //      if IPAD {
-          //        ScrollView(.vertical) {
-          //          WaterfallGrid(posts.data, id: \.self.id) { el in
-          //            PostLink(post: el, sub: subreddit)
-          //          }
-          //          .gridStyle(columns: 2, spacing: 16, animation: .easeInOut(duration: 0.5))
-          //          .scrollOptions(direction: .vertical)
-          //          .padding(.horizontal, 16)
-          //        }
-          //        .introspect(.scrollView, on: .iOS(.v13, .v14, .v15, .v16, .v17)) { scrollView in
-          //          scrollView.backgroundColor = UIColor.systemGroupedBackground
-          //        }
-          //      } else {
-          List {
-            Group {
-              ForEach(Array(posts.data.enumerated()), id: \.self.element.id) { i, post in
-                
-                PostLink(isCentered: centeredPostIndex >= i, post: post, sub: subreddit)
-                  .equatable()
-                  .onAppear { if(Int(Double(posts.data.count) * 0.75) == i) { fetch(loadMore: true) } }
-                  .id(post.id)
-                  .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
-                  .animation(.default, value: posts.data)
-                  .anchorPreference(
-                    key: AnchorsKey.self,
-                    value: .center
-                  ) { return [i: $0] }
-                
-                if !preferenceShowPostsCards && i != (posts.data.count - 1) {
-                  VStack(spacing: 0) {
-                    Divider()
-                    Color.listBG
-                      .frame(maxWidth: .infinity, minHeight: 6, maxHeight: 6)
-                    Divider()
-                  }
-                  .id("\(post.id)-divider")
-                  .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
-                }
-                
+    Group {
+      //      if IPAD {
+      //        ScrollView(.vertical) {
+      //          WaterfallGrid(posts.data, id: \.self.id) { el in
+      //            PostLink(post: el, sub: subreddit)
+      //          }
+      //          .gridStyle(columns: 2, spacing: 16, animation: .easeInOut(duration: 0.5))
+      //          .scrollOptions(direction: .vertical)
+      //          .padding(.horizontal, 16)
+      //        }
+      //        .introspect(.scrollView, on: .iOS(.v13, .v14, .v15, .v16, .v17)) { scrollView in
+      //          scrollView.backgroundColor = UIColor.systemGroupedBackground
+      //        }
+      //      } else {
+      List {
+        Section {
+          ForEach(Array(posts.data.enumerated()), id: \.self.element.id) { i, post in
+            
+            PostLink(post: post, sub: subreddit)
+              .equatable()
+              .onAppear { if(Int(Double(posts.data.count) * 0.75) == i) { fetch(loadMore: true) } }
+              .id(post.id)
+              .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
+              .animation(.default, value: posts.data)
+            
+            if !preferenceShowPostsCards && i != (posts.data.count - 1) {
+              VStack(spacing: 0) {
+                Divider()
+                Color.listBG
+                  .frame(maxWidth: .infinity, minHeight: 6, maxHeight: 6)
+                Divider()
               }
-              if !lastPostAfter.isNil {
-                ProgressView()
-                  .progressViewStyle(.circular)
-                  .frame(maxWidth: .infinity, minHeight: UIScreen.screenHeight - 200 )
-                  .id("post-loading")
-              }
-            }
-            //          .listRowSeparator(preferenceShowPostsCards ? .hidden : .automatic)
-            .listRowSeparator(.hidden)
-            .listRowBackground(Color.clear)
-          }
-          .introspect(.list, on: .iOS(.v15)) { list in
-            list.backgroundColor = UIColor.systemGroupedBackground
-          }
-          .introspect(.list, on: .iOS(.v16, .v17)) { list in
-            list.backgroundColor = UIColor.systemGroupedBackground
-          }
-          //    .listStyle(IPAD ? .grouped : .plain)
-          //    .scrollContentBackground(.hidden)
-          .listStyle(.plain)
-          //        .if(IPAD) { $0.listStyle(.insetGrouped) }
-          .environment(\.defaultMinListRowHeight, 1)
-          //      }
-        }
-//        .onPreferenceChange(AnchorsKey.self) { anchors in
-//          Task(priority: .background) {
-//            let i = topRow(of: anchors, in: proxy) ?? -1
-//            if centeredPostIndex != i {
-//              centeredPostIndex = i
-//            }
-//          }
-//        }
-      }
-      .overlay(
-        loading && posts.data.count == 0
-        ? ProgressView()
-          .frame(maxWidth: .infinity, minHeight: UIScreen.screenHeight)
-        : nil)
-      .overlay(
-        feedsAndSuch.contains(subreddit.id)
-        ? nil
-        : Button {
-          newPost = true
-        } label: {
-          Image(systemName: "newspaper.fill")
-            .fontSize(22, .bold)
-            .frame(width: 64, height: 64)
-            .foregroundColor(.blue)
-            .floating()
-            .contentShape(Circle())
-        }
-          .buttonStyle(NoBtnStyle())
-          .shrinkOnTap()
-          .padding(.all, 12)
-        , alignment: .bottomTrailing
-      )
-      .sheet(isPresented: $newPost, content: {
-        NewPostModal(subreddit: subreddit)
-      })
-      .navigationBarItems(
-        trailing:
-          HStack {
-            Menu {
-              ForEach(SubListingSortOption.allCases) { opt in
-                Button {
-                  sort = opt
-                } label: {
-                  HStack {
-                    Text(opt.rawVal.value.capitalized)
-                    Spacer()
-                    Image(systemName: opt.rawVal.icon)
-                      .foregroundColor(.blue)
-                      .fontSize(17, .bold)
-                  }
-                }
-              }
-            } label: {
-              Button { } label: {
-                Image(systemName: sort.rawVal.icon)
-                  .foregroundColor(.blue)
-                  .fontSize(17, .bold)
-              }
+              .id("\(post.id)-divider")
+              .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
             }
             
-            if let data = subreddit.data {
+          }
+          if !lastPostAfter.isNil {
+            ProgressView()
+              .progressViewStyle(.circular)
+              .frame(maxWidth: .infinity, minHeight: UIScreen.screenHeight - 200 )
+              .id("post-loading")
+          }
+        }
+        //          .listRowSeparator(preferenceShowPostsCards ? .hidden : .automatic)
+        .listRowSeparator(.hidden)
+        .listRowBackground(Color.clear)
+      }
+      .introspect(.list, on: .iOS(.v15)) { list in
+        list.backgroundColor = UIColor.systemGroupedBackground
+      }
+      .introspect(.list, on: .iOS(.v16, .v17)) { list in
+        list.backgroundColor = UIColor.systemGroupedBackground
+      }
+      //    .listStyle(IPAD ? .grouped : .plain)
+      //    .scrollContentBackground(.hidden)
+      .listStyle(.plain)
+      //        .if(IPAD) { $0.listStyle(.insetGrouped) }
+      .environment(\.defaultMinListRowHeight, 1)
+      //      }
+    }
+    .overlay(
+      loading && posts.data.count == 0
+      ? ProgressView()
+        .frame(maxWidth: .infinity, minHeight: UIScreen.screenHeight)
+      : nil)
+    .overlay(
+      feedsAndSuch.contains(subreddit.id)
+      ? nil
+      : Button {
+        newPost = true
+      } label: {
+        Image(systemName: "newspaper.fill")
+          .fontSize(22, .bold)
+          .frame(width: 64, height: 64)
+          .foregroundColor(.blue)
+          .floating()
+          .contentShape(Circle())
+      }
+        .buttonStyle(NoBtnStyle())
+        .shrinkOnTap()
+        .padding(.all, 12)
+      , alignment: .bottomTrailing
+    )
+    .sheet(isPresented: $newPost, content: {
+      NewPostModal(subreddit: subreddit)
+    })
+    .navigationBarItems(
+      trailing:
+        HStack {
+          Menu {
+            ForEach(SubListingSortOption.allCases) { opt in
               Button {
-                router.path.append(SubViewType.info(subreddit))
+                sort = opt
               } label: {
-                SubredditIcon(data: data)
+                HStack {
+                  Text(opt.rawVal.value.capitalized)
+                  Spacer()
+                  Image(systemName: opt.rawVal.icon)
+                    .foregroundColor(.blue)
+                    .fontSize(17, .bold)
+                }
               }
             }
+          } label: {
+            Button { } label: {
+              Image(systemName: sort.rawVal.icon)
+                .foregroundColor(.blue)
+                .fontSize(17, .bold)
+            }
           }
-          .animation(nil, value: sort)
-      )
-      .onAppear {
-        //      sort = Defaults[.preferredSort]
-        doThisAfter(0) {
-          if posts.data.count == 0 {
-            fetch()
+          
+          if let data = subreddit.data {
+            Button {
+              router.path.append(SubViewType.info(subreddit))
+            } label: {
+              SubredditIcon(data: data)
+            }
           }
         }
-      }
-      .onChange(of: sort) { val in
-        withAnimation {
-          loading = true
-          posts.data.removeAll()
+        .animation(nil, value: sort)
+    )
+    .onAppear {
+      //      sort = Defaults[.preferredSort]
+      doThisAfter(0) {
+        if posts.data.count == 0 {
+          fetch()
         }
-        fetch()
       }
-      .searchable(text: $searchText, prompt: "Search r/\(subreddit.data?.display_name ?? subreddit.id)")
-      .refreshable { await asyncFetch(force: true) }
-      .navigationTitle("\(feedsAndSuch.contains(subreddit.id) ? subreddit.id.capitalized : "r/\(subreddit.data?.display_name ?? subreddit.id)")")
-  }
-  
-  private func topRow(of anchors: AnchorsKey.Value, in proxy: GeometryProxy) -> Int? {
-    var yBest = CGFloat.infinity
-    var answer: Int? = nil
-    for (row, anchor) in anchors {
-      let y = proxy[anchor].y
-      guard y >= -(UIScreen.screenHeight / 2), y < yBest else { continue }
-      answer = row
-      yBest = y
     }
-    return answer
+    .onChange(of: sort) { val in
+      withAnimation {
+        loading = true
+        posts.data.removeAll()
+      }
+      fetch()
+    }
+    .searchable(text: $searchText, prompt: "Search r/\(subreddit.data?.display_name ?? subreddit.id)")
+    .refreshable { await asyncFetch(force: true) }
+    .navigationTitle("\(feedsAndSuch.contains(subreddit.id) ? subreddit.id.capitalized : "r/\(subreddit.data?.display_name ?? subreddit.id)")")
   }
-}
-
-
-struct AnchorsKey: PreferenceKey {
-  // Each key is a row index. The corresponding value is the
-  // .center anchor of that row.
-  typealias Value = [Int: Anchor<CGPoint>]
   
-  static var defaultValue: Value { [:] }
-  
-  static func reduce(value: inout Value, nextValue: () -> Value) {
-    value.merge(nextValue()) { $1 }
-  }
 }

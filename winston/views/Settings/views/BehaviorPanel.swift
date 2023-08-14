@@ -16,6 +16,8 @@ struct BehaviorPanel: View {
   @Default(.preferredCommentSort) var preferredCommentSort
   @Default(.blurPostLinkNSFW) var blurPostLinkNSFW
   @Default(.blurPostNSFW) var blurPostNSFW
+  @Default(.readPostOnScroll) var readPostOnScroll
+  @Default(.hideReadPosts) var hideReadPosts
 
   
   var body: some View {
@@ -36,6 +38,8 @@ struct BehaviorPanel: View {
       
       Section("Posts") {
         NavigationLink("Posts swipe settings", value: SettingsPages.postSwipe)
+        Toggle("Read posts on scroll", isOn: $readPostOnScroll)
+        Toggle("Hide read posts", isOn: $hideReadPosts)
         Toggle("Blur NSFW in opened posts", isOn: $blurPostNSFW)
         Toggle("Blur NSFW in posts links", isOn: $blurPostLinkNSFW)
         Picker("Posts sorting", selection: $preferredSort) {
