@@ -1,2 +1,5 @@
-- New "seen" post indicator
-- Performance gains
+- Added option to read posts on scroll
+- Added option to hide posts on read (no way to see unread posts yet)
+- Added haptics and animation for voting
+- Added option for showing up/down votes ratio
+- Added option to switch from glowing dot to fading to tell read from unread posts.

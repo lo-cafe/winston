@@ -39,7 +39,6 @@ struct PostLink: View, Equatable {
     lhs.post == rhs.post && lhs.sub == rhs.sub
   }
   
-  var isCentered = false
   @ObservedObject var post: Post
   @ObservedObject var sub: Subreddit
   var showSub = false
@@ -60,7 +59,11 @@ struct PostLink: View, Equatable {
   @Default(.cardedPostLinksInnerHPadding) private var cardedPostLinksInnerHPadding
   @Default(.cardedPostLinksInnerVPadding) private var cardedPostLinksInnerVPadding
   
+  @Default(.readPostOnScroll) private var readPostOnScroll
+  @Default(.hideReadPosts) private var hideReadPosts
+  
   @Default(.showUpvoteRatio) var showUpvoteRatio
+  @Default(.fadeReadPosts) var fadeReadPosts
   @StateObject private var appeared = Appeared()
   
   var contentWidth: CGFloat { UIScreen.screenWidth - ((preferenceShowPostsCards ? cardedPostLinksOuterHPadding : postLinksInnerHPadding) * 2) - (preferenceShowPostsCards ? (preferenceShowPostsCards ? cardedPostLinksInnerHPadding : 0) * 2 : 0) }
@@ -68,6 +71,7 @@ struct PostLink: View, Equatable {
   var body: some View {
     let layout = compactMode ? AnyLayout(HStackLayout(alignment: .top, spacing: 12)) : AnyLayout(VStackLayout(alignment: .leading, spacing: 12))
     if let data = post.data {
+      let seen = (data.winstonSeen ?? false)
       let isLinkPost = !data.url.isEmpty && !data.is_self && !(data.is_video ?? false) && !(data.is_gallery ?? false) && data.post_hint != "image"
       let over18 = data.over_18 ?? false
       VStack(alignment: .leading, spacing: 8) {
@@ -203,8 +207,7 @@ struct PostLink: View, Equatable {
       )
       .mask(RR(preferenceShowPostsCards ? 20 : 0, .black))
       .overlay(
-        (data.winstonSeen ?? false)
-        //        isCentered
+        fadeReadPosts
         ? nil
         : ZStack {
           Circle()
@@ -215,14 +218,17 @@ struct PostLink: View, Equatable {
             .frame(width: 8, height: 8)
             .blur(radius: 8)
         }
-          .padding(.all, 10)
+          .padding(.all, 11)
+          .scaleEffect(seen ? 0.1 : 1)
+          .opacity(seen ? 0 : 1)
+          .allowsHitTesting(false)
         , alignment: .topTrailing
       )
       .padding(.horizontal, preferenceShowPostsCards ? cardedPostLinksOuterHPadding : 0 )
       .padding(.vertical, preferenceShowPostsCards ? cardedPostLinksOuterVPadding : 0)
       .compositingGroup()
+      .opacity(fadeReadPosts && seen ? 0.6 : 1)
       .contentShape(Rectangle())
-      .animation(.default, value: isCentered)
       .swipyUI(
         onTap: {
           withAnimation {
@@ -246,6 +252,18 @@ struct PostLink: View, Equatable {
       .foregroundColor(.primary)
       .multilineTextAlignment(.leading)
       .zIndex(1)
+      .onDisappear {
+        if readPostOnScroll {
+          Task(priority: .background) {
+            post.toggleSeen(true, optimistic: true)
+          }
+        }
+        if hideReadPosts {
+          Task(priority: .background) {
+            await post.hide(true)
+          }
+        }
+      }
       .onAppear {
         let newPostSwipeActions = Defaults[.postSwipeActions]
         if postSwipeActions != newPostSwipeActions {

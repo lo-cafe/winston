@@ -31,3 +31,7 @@ class ObservableArray<T: ObservableObject>: ObservableObject {
         })
     }
 }
+
+class NonObservableArray<T: ObservableObject>: ObservableObject {
+  @Published var data:[T] = []
+}

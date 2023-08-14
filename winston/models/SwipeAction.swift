@@ -177,7 +177,16 @@ struct SeenPostAction: SwipeAction {
   var icon = SwipeActionItem(normal: "eye.fill", active: "eye.slash.fill")
   var color = SwipeActionItem(normal: "0B84FE")
   var bgColor = SwipeActionItem(normal: "353439")
-  func action(_ entity: Post) async { await MainActor.run { withAnimation { entity.toggleSeen(optimistic: true) } } }
+  func action(_ entity: Post) async {
+    if Defaults[.hideReadPosts] {
+      if let data = entity.data {
+        Task(priority: .background) {
+          await entity.hide(!(data.winstonSeen ?? false))
+        }
+      }
+    }
+    await MainActor.run { withAnimation { entity.toggleSeen(optimistic: true) } }
+  }
   func active(_ entity: Post) -> Bool { return false }
 }
 

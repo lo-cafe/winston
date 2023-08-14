@@ -34,6 +34,7 @@ struct AppearancePanel: View {
   @Default(.cardedCommentsInnerHPadding) var cardedCommentsInnerHPadding
   //  @Default(.cardedCommentsInnerVPadding) var cardedCommentsInnerVPadding
   
+  @Default(.fadeReadPosts) var fadeReadPosts
   @Default(.coloredCommentNames) var coloredCommentNames
   @Default(.showUpvoteRatio) var showUpvoteRatio
   @Default(.compactMode) var compactMode
@@ -61,6 +62,10 @@ struct AppearancePanel: View {
         .pickerStyle(.segmented)
         .frame(maxWidth: .infinity)
         
+        VStack(alignment: .leading) {
+          Toggle("Fade read posts", isOn: $fadeReadPosts)
+          Text("Uses fading instead of a glowing dot to tell read from unread posts.").fontSize(13).opacity(0.75)
+        }
         Toggle("Compact mode", isOn: $compactMode)
         Toggle("Show avatars", isOn: $preferenceShowPostsAvatars)
         Toggle("Colored usernames", isOn: $coloredCommentNames)

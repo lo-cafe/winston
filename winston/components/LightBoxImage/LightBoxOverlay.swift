@@ -16,7 +16,7 @@ struct LightBoxOverlay: View {
   @Binding var done: Bool
     var body: some View {
       VStack(alignment: .leading) {
-        VStack(spacing: 8) {
+        VStack(alignment: .leading, spacing: 8) {
           if let title = post.data?.title {
             Text(title)
               .fontSize(20, .semibold)
