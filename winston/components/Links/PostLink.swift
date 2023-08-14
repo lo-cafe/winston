@@ -10,6 +10,7 @@ import CoreMedia
 import Defaults
 import AVKit
 import AVFoundation
+import SimpleHaptics
 
 struct FlairTag: View {
   var text: String
@@ -43,6 +44,8 @@ struct PostLink: View, Equatable {
   @ObservedObject var sub: Subreddit
   var showSub = false
   @EnvironmentObject private var router: Router
+  @EnvironmentObject private var haptics: SimpleHapticGenerator
+
   @Default(.preferenceShowPostsCards) private var preferenceShowPostsCards
   @Default(.preferenceShowPostsAvatars) private var preferenceShowPostsAvatars
   @Default(.blurPostLinkNSFW) private var blurPostLinkNSFW
@@ -57,6 +60,7 @@ struct PostLink: View, Equatable {
   @Default(.cardedPostLinksInnerHPadding) private var cardedPostLinksInnerHPadding
   @Default(.cardedPostLinksInnerVPadding) private var cardedPostLinksInnerVPadding
   
+  @Default(.showUpvoteRatio) var showUpvoteRatio
   @StateObject private var appeared = Appeared()
   
   var contentWidth: CGFloat { UIScreen.screenWidth - ((preferenceShowPostsCards ? cardedPostLinksOuterHPadding : postLinksInnerHPadding) * 2) - (preferenceShowPostsCards ? (preferenceShowPostsCards ? cardedPostLinksInnerHPadding : 0) * 2 : 0) }
@@ -127,23 +131,11 @@ struct PostLink: View, Equatable {
           if compactMode {
             VStack(alignment: .center, spacing: 2) {
                           
-              MasterButton(icon: "arrow.up", mode: .subtle, color: .white, colorHoverEffect: .none, textColor: data.likes != nil && data.likes! ? .orange : .gray, textSize: 22, proportional: .circle) {
-                Task(priority: .background) {
-                  _ = await post.vote(action: .up)
-                }
-              }
-              //            .shrinkOnTap()
-              .padding(.all, -8)
+              VoteButton(color: data.likes != nil && data.likes! ? .orange : .gray, voteAction: .up, image: "arrow.up", post: post)
               
               Spacer()
               
-              MasterButton(icon: "arrow.down", mode: .subtle, color: .white, colorHoverEffect: .none, textColor: data.likes != nil && !data.likes! ? .blue : .gray, textSize: 22, proportional: .circle) {
-                Task(priority: .background) {
-                  _ = await post.vote(action: .down)
-                }
-              }
-              //            .shrinkOnTap()
-              .padding(.all, -8)
+              VoteButton(color: data.likes != nil && !data.likes! ? .blue : .gray, voteAction: .down, image: "arrow.down", post: post)
               
               Spacer()
               
@@ -183,6 +175,8 @@ struct PostLink: View, Equatable {
         .padding(.horizontal, 2)
         .padding(.vertical, 2)
         
+        
+          
         if !compactMode {
           HStack {
             if let fullname = data.author_fullname {
@@ -191,30 +185,8 @@ struct PostLink: View, Equatable {
             
             Spacer()
             
-            HStack(alignment: .center, spacing: 0) {
-              MasterButton(icon: "arrow.up", mode: .subtle, color: .white, colorHoverEffect: .none, textColor: data.likes != nil && data.likes! ? .orange : .gray, textSize: 22, proportional: .circle) {
-                Task(priority: .background) {
-                  _ = await post.vote(action: .up)
-                }
-              }
-              //            .shrinkOnTap()
-              .padding(.all, -8)
-              
-              let downup = Int(data.ups - data.downs)
-              Text(formatBigNumber(downup))
-                .foregroundColor(downup == 0 ? .gray : downup > 0 ? .orange : .blue)
-                .fontSize(16, .semibold)
-                .padding(.horizontal, 12)
-                .viewVotes(data.ups, data.downs)
-                .zIndex(10)
-              
-              MasterButton(icon: "arrow.down", mode: .subtle, color: .white, colorHoverEffect: .none, textColor: data.likes != nil && !data.likes! ? .blue : .gray, textSize: 22, proportional: .circle) {
-                Task(priority: .background) {
-                  _ = await post.vote(action: .down)
-                }
-              }
-              //            .shrinkOnTap()
-              .padding(.all, -8)
+            HStack(alignment: .center) {
+              VotesCluster(data: data, likeRatio: showUpvoteRatio ? data.upvote_ratio : nil, post: post)
             }
             .fontSize(22, .medium)
           }
@@ -289,5 +261,16 @@ struct PostLink: View, Equatable {
 struct EmptyButtonStyle: ButtonStyle {
   func makeBody(configuration: Self.Configuration) -> some View {
     configuration.label
+  }
+}
+
+struct CustomLabel: LabelStyle {
+  var spacing: Double = 0.0
+  
+  func makeBody(configuration: Configuration) -> some View {
+    HStack(spacing: spacing) {
+      configuration.icon
+      configuration.title
+    }
   }
 }

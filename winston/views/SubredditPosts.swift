@@ -58,7 +58,7 @@ struct SubredditPosts: View {
   func fetch(loadMore: Bool = false) {
     //    if loadMore {
     //      withAnimation {
-    //        <#code#>
+    //
     //        loadingMore = true
     //      }
     //    }

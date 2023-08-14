@@ -59,6 +59,7 @@ extension Defaults.Keys {
 //  static let postLinksOuterVPadding = Key<CGFloat>("postLinksOuterVPadding", default: 8)
   static let postLinksInnerHPadding = Key<CGFloat>("postLinksInnerHPadding", default: 8)
   static let postLinksInnerVPadding = Key<CGFloat>("postLinksInnerVPadding", default: 14)
+  static let showUpvoteRatio = Key<Bool>("showUpvoteRatio", default: true)
   
   static let cardedPostLinksOuterHPadding = Key<CGFloat>("cardedPostLinksOuterHPadding", default: 8)
   static let cardedPostLinksOuterVPadding = Key<CGFloat>("cardedPostLinksOuterVPadding", default: 8)
