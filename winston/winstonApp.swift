@@ -7,7 +7,7 @@
 
 import SwiftUI
 import SimpleHaptics
-
+import AlertToast
 @main
 struct winstonApp: App {
   @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
@@ -22,6 +22,7 @@ struct winstonApp: App {
                 .environment(\.managedObjectContext, persistenceController.container.viewContext)
                 .environmentObject(redditAPI)
                 .environmentObject(haptics)
+                .alertToastRoot()
         }
     }
 }

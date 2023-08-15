@@ -51,7 +51,7 @@ struct Subreddits: View {
   @EnvironmentObject private var haptics: SimpleHapticGenerator
   
   @Default(.preferenceDefaultFeed) var preferenceDefaultFeed // handle default feed selection routing
-  
+  @Default(.likedButNotSubbed) var likedButNotSubbed // subreddits that a user likes but is not subscribed to so they wont be in subsDict
   func sort(_ subs: [ListingChild<SubredditData>]) -> [String: [Subreddit]] {
     return Dictionary(grouping: subs.compactMap { $0.data }, by: { String($0.display_name?.prefix(1) ?? "").uppercased() })
       .mapValues { items in items.sorted { ($0.display_name ?? "") < ($1.display_name ?? "") }.map { Subreddit(data: $0, api: redditAPI) } }
@@ -62,7 +62,7 @@ struct Subreddits: View {
   }
   
   var favoritesArr: [Subreddit] {
-    return Array(subsArr.filter { $0.data?.user_has_favorited ?? false }).sorted { ($0.data?.display_name?.lowercased() ?? "") < ($1.data?.display_name?.lowercased() ?? "") }
+    return Array(subsArr.filter { $0.data?.user_has_favorited ?? false }).sorted { ($0.data?.display_name?.lowercased() ?? "") < ($1.data?.display_name?.lowercased() ?? "") } + likedButNotSubbed
   }
   
   var listArr: [String] {
@@ -175,7 +175,7 @@ struct Subreddits: View {
           , alignment: .trailing
         )
         .onChange(of: scrollLetter) { x in
-          try? haptics.fire(intensity: 0.5, sharpness: 0.5)
+          try? haptics.accessFire(intensity: 0.5, sharpness: 0.5)
           if let id = subsDictData[x]?[0].id {
             proxy.scrollTo("\(id)-main", anchor: .top)
           }

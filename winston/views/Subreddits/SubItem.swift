@@ -6,14 +6,16 @@
 //
 
 import SwiftUI
-
+import Defaults
 struct SubItem: View {
   @EnvironmentObject private var router: Router
   @Environment(\.editMode) var editMode
   @ObservedObject var sub: Subreddit
+  @Default(.likedButNotSubbed) var likedButNotSubbed
   var body: some View {
     if let data = sub.data {
       let favorite = data.user_has_favorited ?? false
+      let localFav = likedButNotSubbed.contains(sub)
       NavigationLink(value: SubViewType.posts(sub)) {
         HStack {
           SubredditIcon(data: data)
@@ -22,8 +24,8 @@ struct SubItem: View {
           Spacer()
           
           Image(systemName: "star.fill")
-            .foregroundColor(favorite ? .blue : .gray.opacity(0.3))
-            .highPriorityGesture( TapGesture().onEnded { Task { await sub.favoriteToggle() } } )
+            .foregroundColor((favorite || localFav) ? .blue : .gray.opacity(0.3))
+            .highPriorityGesture( TapGesture().onEnded { Task { localFav ? _ = sub.localFavoriteToggle() : await sub.favoriteToggle() } } )
         }
         .contentShape(Rectangle())
       }

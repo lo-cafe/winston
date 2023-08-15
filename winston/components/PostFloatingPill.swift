@@ -7,14 +7,17 @@
 
 import SwiftUI
 import Defaults
-
+import SimpleHaptics
+import AlertToast
 struct PostFloatingPill: View {
   @Default(.postsInBox) var postsInBox
-  
+  @Default(.showUpvoteRatio) var showUpvoteRatio
   @ObservedObject var post: Post
   @ObservedObject var subreddit: Subreddit
   @State var showReplyModal = false
-  
+
+  @State var showAddedToast: Bool = false
+  @State var showRemovedToast: Bool = false
   var thisPinnedPost: Bool { postsInBox.contains { $0.id == post.id } }
   
   var body: some View {
@@ -37,6 +40,9 @@ struct PostFloatingPill: View {
                 withAnimation(spring) {
                   postsInBox = postsInBox.filter({ $0.id != post.id })
                 }
+                withAnimation(nil){
+                  showRemovedToast.toggle()
+                }
               } else {
                 var subIcon: String?
                 if let subData = subreddit.data {
@@ -51,10 +57,20 @@ struct PostFloatingPill: View {
                   score: data.ups, commentsCount: data.num_comments,
                   createdAt: data.created, lastUpdatedAt: Date().timeIntervalSince1970
                 )
-                withAnimation(spring) {
+                withAnimation(spring){
                   postsInBox.append(newPostInBox)
+
+                }
+                withAnimation(nil){
+                  showAddedToast.toggle()
                 }
               }
+            }
+            .toast(isPresenting: $showAddedToast, tapToDismiss: true){
+              AlertToast(displayMode: .hud, type: .systemImage("plus.circle", Color.blue), title: "Added to Posts Box!")
+            }
+            .toast(isPresenting: $showRemovedToast, tapToDismiss: true){
+              AlertToast(displayMode: .hud, type: .systemImage("trash", Color.blue), title: "Removed from Posts Box!")
             }
             
             LightBoxButton(icon: "arrowshape.turn.up.left.fill") {
@@ -65,28 +81,12 @@ struct PostFloatingPill: View {
           }
           
           HStack(alignment: .center, spacing: 8) {
-            Button {
-              Task {
-                await post.vote(action: .up)
-              }
-            } label: {
-              Image(systemName: "arrow.up")
-            }
-            .foregroundColor(data.likes != nil && data.likes! ? .orange : .gray)
+           
+
             
-            let downup = Int(data.ups - data.downs)
-            Text(formatBigNumber(downup))
-              .foregroundColor(downup == 0 ? .gray : downup > 0 ? .orange : .blue)
-              .fontSize(17, .semibold)
+            VotesCluster(data: data, likeRatio: showUpvoteRatio ? data.upvote_ratio : nil, post: post)
             
-            Button {
-              Task {
-                await post.vote(action: .down)
-              }
-            } label: {
-              Image(systemName: "arrow.down")
-            }
-            .foregroundColor(data.likes != nil && !data.likes! ? .blue : .gray)
+            
           }
           
         }
@@ -96,7 +96,7 @@ struct PostFloatingPill: View {
     .fontSize(20, .semibold)
     .foregroundColor(.blue)
     .padding(.trailing, 14)
-    //    .padding(.vertical, 8)
+
     .floating()
     .padding(.all, 8)
     .sheet(isPresented: $showReplyModal) {
