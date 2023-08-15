@@ -128,7 +128,6 @@ struct Search: View {
           resultsSubs.data = []
           resultsUsers.data = []
         }
-        
         fetch()
       }
       .refreshable { fetch() }

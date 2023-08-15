@@ -32,11 +32,6 @@ class SubsDictContainer: ObservableObject {
 //  }
 }
 
-class SubredditsRouter: ObservableObject {
-  static var shared = Router()
-  @Published var path = NavigationPath()
-}
-
 struct Subreddits: View {
   var reset: Bool
   @Environment(\.openURL) private var openURL
@@ -46,12 +41,10 @@ struct Subreddits: View {
   @State private var searchText: String = ""
   @StateObject private var subsDict = SubsDictContainer()
   @State private var loaded = false
-  @State private var editMode: EditMode = .inactive
-  @State private var scrollLetter = "A"
   @State private var subsArr: [Subreddit] = []
   @State private var favoritesArr: [Subreddit] = []
   @State private var availableLetters: [String] = []
-  @StateObject private var router = SubredditsRouter.shared
+  @StateObject private var router = Router()
   
   @Default(.preferenceDefaultFeed) var preferenceDefaultFeed // handle default feed selection routing
   
@@ -186,7 +179,6 @@ struct Subreddits: View {
           router.path.removeLast(router.path.count)
         }
         .defaultNavDestinations(router)
-        .environment(\.editMode, $editMode)
       }
       //        .onDelete(perform: deleteItems)
     }

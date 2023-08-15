@@ -7,10 +7,8 @@
 
 import Foundation
 import SwiftUI
-import SimpleHaptics
 
 struct SwipeActionsModifier: ViewModifier {
-  @EnvironmentObject private var haptics: SimpleHapticGenerator
   var offsetY: CGFloat? = nil
   var disableAnimations = false
   var disableSwipe = false
@@ -179,7 +177,10 @@ struct SwipeActionsModifier: ViewModifier {
                 firstAction = firstActioning
               }
             if abs(newValue) > 20 {
-              try? haptics.fire(intensity: firstActioning ? 0.5 : 0.35, sharpness: firstActioning ? 0.25 : 0.5)
+              let impact = UIImpactFeedbackGenerator(style: firstActioning ? .rigid : .soft)
+              impact.prepare()
+              impact.impactOccurred()
+//              try? haptics.fire(intensity: firstActioning ? 0.5 : 0.35, sharpness: firstActioning ? 0.25 : 0.5)
             }
           }
           if secondActionHandler != nil {
@@ -187,7 +188,10 @@ struct SwipeActionsModifier: ViewModifier {
               withAnimation(.interpolatingSpring(stiffness: 200, damping: 15, initialVelocity: secondActioning ? 35 : 0)) {
                 secondAction = secondActioning
               }
-                try? haptics.fire(intensity: secondActioning ? 0.5 : 0.35, sharpness: secondActioning ? 0.25 : 0.5)
+              let impact = UIImpactFeedbackGenerator(style: secondActioning ? .rigid : .soft)
+              impact.prepare()
+              impact.impactOccurred()
+//                try? haptics.fire(intensity: secondActioning ? 0.5 : 0.35, sharpness: secondActioning ? 0.25 : 0.5)
             }
           }
         }

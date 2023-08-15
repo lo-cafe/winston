@@ -7,29 +7,38 @@
 
 import Foundation
 import SwiftUI
-import MarkdownUI
+import Markdown
 
 struct MD: View {
-  var str: String
+  var attributedString: NSAttributedString
   var fontSize: CGFloat = 15
+  
+  init(str: String, fontSize: CGFloat = 15) {
+    let document = Document(parsing: str)
+    var markdownosaur = Markdownosaur()
+    let attributedString = markdownosaur.attributedString(from: document)
+    self.attributedString = attributedString
+    self.fontSize = fontSize
+  }
+  
   var body: some View {
-    Markdown(str.escape)
-      .markdownTextStyle(\.text) {
-        FontSize(fontSize)
-      }
-      .markdownBlockStyle(\.paragraph) { configuration in
-        configuration.label
-//          .allowsHitTesting(false)
-      }
-      .markdownBlockStyle(\.blockquote) { configuration in
-        configuration.label
-          .padding()
-          .markdownTextStyle {
-//            FontCapsVariant(.lowercaseSmallCaps)
-            FontWeight(.semibold)
-            BackgroundColor(nil)
-          }
-          .background(RR(8, .secondary.opacity(0.2)))
-      }
+    Text(AttributedString(attributedString))
+//      .markdownTextStyle(\.text) {
+//        FontSize(fontSize)
+//      }
+//      .markdownBlockStyle(\.paragraph) { configuration in
+//        configuration.label
+////          .allowsHitTesting(false)
+//      }
+//      .markdownBlockStyle(\.blockquote) { configuration in
+//        configuration.label
+//          .padding()
+//          .markdownTextStyle {
+////            FontCapsVariant(.lowercaseSmallCaps)
+//            FontWeight(.semibold)
+//            BackgroundColor(nil)
+//          }
+//          .background(RR(8, .secondary.opacity(0.2)))
+//      }
   }
 }

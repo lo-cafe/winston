@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct SubItem: View {
-  @Environment(\.editMode) var editMode
   @ObservedObject var sub: Subreddit
   var body: some View {
     if let data = sub.data {

@@ -6,11 +6,7 @@
 //
 
 import SwiftUI
-import CoreMedia
 import Defaults
-import AVKit
-import AVFoundation
-import SimpleHaptics
 
 struct FlairTag: View {
   var text: String
@@ -39,12 +35,10 @@ struct PostLink: View, Equatable {
     lhs.post == rhs.post && lhs.sub == rhs.sub
   }
   
+  @EnvironmentObject private var router: Router
   @ObservedObject var post: Post
   @ObservedObject var sub: Subreddit
   var showSub = false
-//  @EnvironmentObject private var router: Router
-  @EnvironmentObject private var haptics: SimpleHapticGenerator
-
   @Default(.preferenceShowPostsCards) private var preferenceShowPostsCards
   @Default(.preferenceShowPostsAvatars) private var preferenceShowPostsAvatars
   @Default(.blurPostLinkNSFW) private var blurPostLinkNSFW
@@ -147,6 +141,7 @@ struct PostLink: View, Equatable {
             .frame(maxHeight: .infinity)
             .fontSize(22, .medium)
           }
+          
         }
         .zIndex(1)
         .frame(maxWidth: .infinity, alignment: .topLeading)
@@ -156,7 +151,7 @@ struct PostLink: View, Equatable {
           if showSub || feedsAndSuch.contains(sub.id) {
             FlairTag(text: "r/\(sub.data?.display_name ?? post.data?.subreddit ?? "Error")", color: .blue)
               .highPriorityGesture(TapGesture() .onEnded {
-                SubredditsRouter.shared.path.append(SubViewType.posts(Subreddit(id: post.data?.subreddit ?? "", api: post.redditAPI)))
+                router.path.append(SubViewType.posts(Subreddit(id: post.data?.subreddit ?? "", api: post.redditAPI)))
               })
             
             WDivider()
@@ -231,7 +226,7 @@ struct PostLink: View, Equatable {
       .contentShape(Rectangle())
       .swipyUI(
         onTap: {
-          SubredditsRouter.shared.path.append(PostViewPayload(post: post, sub: feedsAndSuch.contains(sub.id) ? sub : sub))
+          router.path.append(PostViewPayload(post: post, sub: feedsAndSuch.contains(sub.id) ? sub : sub))
         },
         actionsSet: postSwipeActions,
         entity: post
@@ -241,7 +236,7 @@ struct PostLink: View, Equatable {
           if let perma = URL(string: "https://reddit.com\(data.permalink.escape.urlEncoded)") {
             ShareLink(item: perma) { Label("Share", systemImage: "square.and.arrow.up") }
           }
-          Button { SubredditsRouter.shared.path.append(PostViewPayload(post: post, sub: feedsAndSuch.contains(sub.id) ? sub : sub)) } label: { Label("Open post", systemImage: "rectangle.and.hand.point.up.left.filled") }
+          Button { router.path.append(PostViewPayload(post: post, sub: feedsAndSuch.contains(sub.id) ? sub : sub)) } label: { Label("Open post", systemImage: "rectangle.and.hand.point.up.left.filled") }
           Button {  withAnimation {
             post.toggleSeen(optimistic: true)
           } } label: { Label("Toggle seen", systemImage: "eye") }

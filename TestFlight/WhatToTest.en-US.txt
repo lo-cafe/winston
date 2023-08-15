@@ -1,5 +1,3 @@
-- Improved performance across the app (many changes, there may be some bugs), it should keep smooth even after long time using the app, but it's still a WIP, so more performance gains is coming
-- Changed image overlay transition (it comes from the bottom now... I know, it's ugly, but it's temporary IM SORRY OK IM SO SORRY)
-- Fixed alphabet jumper lag
-- Tweaked alphabet jumper visuals
--
+- Many performance improvements (one step at a time), including a new markdown renderer and the removing of a useless library.
+- Fixes posts not opening in search
+- Removed tooltip in votes, since it was causing a bunch of lag

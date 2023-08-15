@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import SimpleHaptics
 
 @main
 struct winstonApp: App {
@@ -14,14 +13,11 @@ struct winstonApp: App {
   let persistenceController = PersistenceController.shared
   @State var redditAPI = RedditAPI()
   
-  @State var haptics = SimpleHapticGenerator()
-
     var body: some Scene {
         WindowGroup {
             Tabber()
                 .environment(\.managedObjectContext, persistenceController.container.viewContext)
                 .environmentObject(redditAPI)
-                .environmentObject(haptics)
         }
     }
 }
