@@ -17,6 +17,7 @@ struct Settings: View {
   var reset: Bool
   @Environment(\.openURL) private var openURL
   @StateObject private var router = Router()
+  @Default(.likedButNotSubbed) var likedButNotSubbed
   var body: some View {
     NavigationStack(path: $router.path) {
       VStack {
@@ -50,6 +51,11 @@ struct Settings: View {
               openURL(URL(string: "https://patreon.com/user?u=93745105")!)
             } label: {
               Label("Support our work!", systemImage: "heart.fill")
+            }
+            Button{
+              likedButNotSubbed = []
+            } label: {
+              Label("Clear local likes", systemImage: "trash")
             }
             
           }

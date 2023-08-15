@@ -7,12 +7,13 @@
 
 import Foundation
 import Combine
+import Defaults
 
 protocol GenericRedditEntityDataType: Codable, Hashable, Identifiable {
   var id: String { get }
 }
 
-class GenericRedditEntity<T: GenericRedditEntityDataType>: Identifiable, Hashable, ObservableObject, Codable {
+class GenericRedditEntity<T: GenericRedditEntityDataType>: Identifiable, Hashable, ObservableObject, Codable,  _DefaultsSerializable {
   func hash(into hasher: inout Hasher) {
     hasher.combine(data)
     hasher.combine(childrenWinston.data)

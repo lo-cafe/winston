@@ -45,6 +45,7 @@ extension Defaults.Keys {
   static let redditAPITokenExpiration = Key<Int?>("redditAPITokenExpiration", default: nil)
   static let subreddits = Key<[ListingChild<SubredditData>]>("subreddits", default: [])
   static let postsInBox = Key<[PostInBox]>("postsInBox-v2", default: [])
+  static let likedButNotSubbed = Key<[Subreddit]>("likedButNotSubbed", default: [])
   static let preferredSort = Key<SubListingSortOption>("preferredSort", default: .best)
   static let blurPostLinkNSFW = Key<Bool>("blurPostLinkNSFW", default: true)
   static let blurPostNSFW = Key<Bool>("blurPostNSFW", default: false)
