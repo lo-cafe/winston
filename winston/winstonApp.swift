@@ -7,6 +7,7 @@
 
 import SwiftUI
 import AlertToast
+@main
 struct winstonApp: App {
   @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
   let persistenceController = PersistenceController.shared
@@ -17,7 +18,6 @@ struct winstonApp: App {
             Tabber()
                 .environment(\.managedObjectContext, persistenceController.container.viewContext)
                 .environmentObject(redditAPI)
-                .environmentObject(haptics)
                 .alertToastRoot()
         }
     }

@@ -146,12 +146,6 @@ struct Subreddits: View {
           AlphabetJumper(letters: availableLetters, proxy: proxy)
           , alignment: .trailing
         )
-        .onChange(of: scrollLetter) { x in
-          try? haptics.accessFire(intensity: 0.5, sharpness: 0.5)
-          if let id = subsDictData[x]?[0].id {
-            proxy.scrollTo("\(id)-main", anchor: .top)
-          }
-        }
         .refreshable {
           Task(priority: .background) {
             await updatePostsInBox(redditAPI, force: true)
