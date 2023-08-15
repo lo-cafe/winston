@@ -10,7 +10,7 @@ import Defaults
 //import SceneKit
 
 enum SettingsPages {
-  case behavior, appearance, account, about, commentSwipe, postSwipe, accessibility
+  case behavior, appearance, account, about, commentSwipe, postSwipe, accessibility, faq
 }
 
 struct Settings: View {
@@ -36,9 +36,13 @@ struct Settings: View {
             NavigationLink(value: SettingsPages.accessibility) {
               Label("Accessibility", systemImage: "figure.roll")
             }
+            
           }
           
           Section {
+            NavigationLink(value: SettingsPages.faq){
+              Label("FAQ", systemImage: "exclamationmark.questionmark")
+            }
             NavigationLink(value: SettingsPages.about) {
               Label("About", systemImage: "cup.and.saucer.fill")
             }
@@ -78,6 +82,8 @@ struct Settings: View {
             PostSwipePanel()
           case .accessibility:
             AccessibilityPanel()
+          case .faq:
+            FAQPanel()
           }
         }
         .environmentObject(router)
