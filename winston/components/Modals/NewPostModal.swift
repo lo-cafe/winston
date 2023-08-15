@@ -46,7 +46,6 @@ struct FlairButton: View {
   var selected: Bool
   var onSelect: (Flair) -> ()
   var flair: Flair
-  var ns: Namespace.ID
   var body: some View {
     let bgColor = Color.hex(flair.background_color ?? "ffffff")
     let brightness = bgColor.brightness()
@@ -77,7 +76,6 @@ struct FlairPicker: View {
   @StateObject var searchQuery = DebouncedText(delay: 0.25)
   @FocusState var focused: Bool
   @State var searching = false
-  @Namespace var ns
   
   func selectFlair(_ flair: Flair) {
     withAnimation(spring) {
@@ -114,7 +112,7 @@ struct FlairPicker: View {
           .mask(Capsule(style: .continuous).fill(.black))
           
           if let selectedFlair = selectedFlair, !searching {
-            FlairButton(selected: true, onSelect: selectFlair, flair: selectedFlair, ns: ns)
+            FlairButton(selected: true, onSelect: selectFlair, flair: selectedFlair)
               .padding(.trailing, 4)
           }
         }
@@ -124,11 +122,11 @@ struct FlairPicker: View {
             if let flairs = subreddit.data?.winstonFlairs {
               if searchQuery.debounced.isEmpty {
                 ForEach(flairs.filter({ $0 != selectedFlair })) { flair in
-                  FlairButton(selected: selectedFlair == flair, onSelect: selectFlair, flair: flair, ns: ns)
+                  FlairButton(selected: selectedFlair == flair, onSelect: selectFlair, flair: flair)
                 }
               } else {
                 ForEach(flairs.filter({ ($0.text?.lowercased() ?? "").contains(searchQuery.debounced.lowercased()) })) { flair in
-                  FlairButton(selected: selectedFlair == flair, onSelect: selectFlair, flair: flair, ns: ns)
+                  FlairButton(selected: selectedFlair == flair, onSelect: selectFlair, flair: flair)
                 }
               }
             } else {

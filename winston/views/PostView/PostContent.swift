@@ -68,7 +68,6 @@ struct PostContent: View {
               .contentShape(Rectangle())
               .onTapGesture { withAnimation(spring) { collapsed.toggle() } }
               .allowsHitTesting(!isCollapsed)
-
             }
           }
           .fixedSize(horizontal: false, vertical: true)

@@ -17,12 +17,11 @@ struct Avatar: View {
   var userID: String
   var fullname: String? = nil
   var avatarSize: CGFloat = 30
-  @State var userData: UserData?
   @EnvironmentObject var redditAPI: RedditAPI
   @ObservedObject var avatarCache = AvatarCache.shared
   
   var avatarURL: String? {
-    let raw = url ?? avatarCache[fullname ?? userID] ?? userData?.subreddit?.icon_img
+    let raw = url ?? avatarCache[fullname ?? userID]
     return raw == nil || raw == "" ? nil : String(raw?.split(separator: "?")[0] ?? "")
   }
   
@@ -56,20 +55,6 @@ struct Avatar: View {
                 .fill(.gray.opacity(0.5))
                 .frame(width: avatarSize, height: avatarSize)
             )
-            .onAppear {
-              if avatarURL.isNil {
-                Task(priority: .background) {
-                  if let data = await redditAPI.fetchUserPublic(userID) {
-                    let userDataURL = data.subreddit?.icon_img?.split(separator: "?")[0]
-                    let url = userDataURL == nil ? "" : String(userDataURL!)
-                    withAnimation {
-                      avatarCache[userID] = url
-                      userData = data
-                    }
-                  }
-                }
-              }
-            }
         }
       }
     }

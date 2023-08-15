@@ -12,7 +12,6 @@ import SimpleHaptics
 
 struct PostInBoxLink: View {
   @EnvironmentObject private var router: Router
-  @EnvironmentObject private var haptics: SimpleHapticGenerator
   @Default(.postsInBox) private var postsInBox
   @EnvironmentObject private var redditAPI: RedditAPI
   var post: PostInBox
@@ -124,7 +123,10 @@ struct PostInBoxLink: View {
           withAnimation(spring) {
             dragging = true
           }
-          try? haptics.fire(intensity: 1, sharpness: 1)
+          let impact = UIImpactFeedbackGenerator(style: .rigid)
+          impact.prepare()
+          impact.impactOccurred()
+//          try? haptics.fire(intensity: 1, sharpness: 1)
         }
         .sequenced(before: DragGesture())
         .onChanged{ sequence in
@@ -143,13 +145,17 @@ struct PostInBoxLink: View {
                 withAnimation(spring) {
                   deleting = true
                 }
-                try? haptics.fire(intensity: 1, sharpness: 1)
+                let impact = UIImpactFeedbackGenerator(style: .rigid)
+                impact.prepare()
+                impact.impactOccurred()
               }
               if abs(dragVal.translation.height) < 70 && deleting {
                 withAnimation(spring) {
                   deleting = false
                 }
-                try? haptics.fire(intensity: 0.5, sharpness: 0.5)
+                let impact = UIImpactFeedbackGenerator(style: .rigid)
+                impact.prepare()
+                impact.impactOccurred()
               }
             }
           }

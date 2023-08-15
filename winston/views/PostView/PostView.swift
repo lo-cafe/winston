@@ -25,7 +25,6 @@ struct PostView: View {
   @State private var sort: CommentSortOption = Defaults[.preferredCommentSort]
   @EnvironmentObject private var redditAPI: RedditAPI
   @EnvironmentObject private var router: Router
-  @ObservedObject private var globalLoader = TempGlobalState.shared.globalLoader
   @State var update = false
   
   func asyncFetch(_ full: Bool = true) async {
@@ -57,7 +56,7 @@ struct PostView: View {
           if !ignoreSpecificComment && highlightID != nil {
             Section {
               Button {
-                globalLoader.enable("Loading full post...")
+                TempGlobalState.shared.globalLoader.enable("Loading full post...")
                 withAnimation {
                   ignoreSpecificComment = true
                 }
@@ -79,12 +78,12 @@ struct PostView: View {
         }
         .listRowSeparator(.hidden)
       }
-      .introspect(.list, on: .iOS(.v15)) { list in
-        list.backgroundColor = UIColor.systemGroupedBackground
-      }
-      .introspect(.list, on: .iOS(.v16, .v17)) { list in
-        list.backgroundColor = UIColor.systemGroupedBackground
-      }
+//      .introspect(.list, on: .iOS(.v15)) { list in
+//        list.backgroundColor = UIColor.systemGroupedBackground
+//      }
+//      .introspect(.list, on: .iOS(.v16, .v17)) { list in
+//        list.backgroundColor = UIColor.systemGroupedBackground
+//      }
       .transition(.opacity)
       .environment(\.defaultMinListRowHeight, 1)
       .listStyle(.plain)

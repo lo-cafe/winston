@@ -23,7 +23,7 @@ struct VotesCluster: View {
         Text(formatBigNumber(data.ups))
           .foregroundColor(data.likes != nil ? (data.likes! ? .orange : .blue) : .gray)
           .fontSize(16, .semibold)
-          .viewVotes(data.ups, data.downs)
+//          .viewVotes(data.ups, data.downs)
           .zIndex(10)
         
         if likeRatio != nil, let ratio = likeRatio {
