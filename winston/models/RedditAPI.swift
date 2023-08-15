@@ -119,6 +119,10 @@ class RedditAPI: ObservableObject {
             self.loggedUser.refreshToken = data.refresh_token
             self.loggedUser.expiration = data.expires_in
             self.loggedUser.lastRefresh = Date()
+            Task(priority: .low) {
+              _ = await self.fetchMe(force: true)
+              _ = await self.fetchSubs()
+            }
             callback?(true)
             //        self.loggedUser = UserCredential(accessToken: data.token, refreshToken: data.refresh, expiration: data.expires)
             break

@@ -49,7 +49,7 @@ struct SubscribeButton: View {
             loading = true
           }
           doThisAfter(0.3) {
-            Task {
+            Task(priority: .background) {
               await subreddit.subscribeToggle()
               withAnimation(spring) {
                 loading = false

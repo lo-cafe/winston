@@ -13,42 +13,38 @@ import SimpleHaptics
 let alphabetLetters = Array("ABCDEFGHIJKLMNOPQRSTUVWXYZ").map { String($0) }
 
 class SubsDictContainer: ObservableObject {
-  @Published var data: [String: [Subreddit]] = [:] {
-    didSet { observeChildrenChanges() }
-  }
-  var cancellables = [AnyCancellable]()
+  @Published var data: [String: [Subreddit]] = [:]
   
-  init() {
-    self.observeChildrenChanges()
-  }
-  
-  func observeChildrenChanges() {
-    cancellables.forEach { cancelable in
-      cancelable.cancel()
-    }
-    Array(data.values).flatMap { $0 }.forEach({
-      let c = $0.objectWillChange.sink(receiveValue: { _ in self.objectWillChange.send() })
-      self.cancellables.append(c)
-    })
-  }
-}
-
-class SelectedSubredditContainer: ObservableObject {
-  @Published var sub = Subreddit(id: "home", api: RedditAPI())
+//  var cancellables = [AnyCancellable]()
+//
+//  init() {
+//    self.observeChildrenChanges()
+//  }
+//
+//  func observeChildrenChanges() {
+//    cancellables.forEach { cancelable in
+//      cancelable.cancel()
+//    }
+//    Array(data.values).flatMap { $0 }.forEach({
+//      let c = $0.objectWillChange.sink(receiveValue: { _ in self.objectWillChange.send() })
+//      self.cancellables.append(c)
+//    })
+//  }
 }
 
 struct Subreddits: View {
   var reset: Bool
   @Environment(\.openURL) private var openURL
   @EnvironmentObject private var redditAPI: RedditAPI
+//  @State private var subreddits: [ListingChild<SubredditData>] = Defaults[.subreddits]
   @Default(.subreddits) private var subreddits
   @State private var searchText: String = ""
   @StateObject private var subsDict = SubsDictContainer()
   @State private var loaded = false
-  @State private var editMode: EditMode = .inactive
+  @State private var subsArr: [Subreddit] = []
+  @State private var favoritesArr: [Subreddit] = []
+  @State private var availableLetters: [String] = []
   @StateObject private var router = Router()
-  @State private var scrollLetter = "A"
-  @EnvironmentObject private var haptics: SimpleHapticGenerator
   
   @Default(.preferenceDefaultFeed) var preferenceDefaultFeed // handle default feed selection routing
   @Default(.likedButNotSubbed) var likedButNotSubbed // subreddits that a user likes but is not subscribed to so they wont be in subsDict
@@ -57,16 +53,22 @@ struct Subreddits: View {
       .mapValues { items in items.sorted { ($0.display_name ?? "") < ($1.display_name ?? "") }.map { Subreddit(data: $0, api: redditAPI) } }
   }
   
-  var subsArr: [Subreddit] {
-    return Array(subsDict.data.values).flatMap { $0 }
-  }
-  
-  var favoritesArr: [Subreddit] {
-    return Array(subsArr.filter { $0.data?.user_has_favorited ?? false }).sorted { ($0.data?.display_name?.lowercased() ?? "") < ($1.data?.display_name?.lowercased() ?? "") } + likedButNotSubbed
-  }
-  
-  var listArr: [String] {
-    return Array(subsDict.data.keys).sorted { $0 < $1 }
+  func setArrays(_ val: [ListingChild<SubredditData>]) {
+    Task(priority: .background) {
+      let newSubsDict = sort(val)
+      let newSubsArr = Array(newSubsDict.values).flatMap { $0 }
+      let newFavoritesArr = Array(newSubsArr.filter { $0.data?.user_has_favorited ?? false }).sorted { ($0.data?.display_name?.lowercased() ?? "") < ($1.data?.display_name?.lowercased() ?? "") }
+          + likedButNotSubbed
+      let newAvailableLetters = Array(newSubsDict.keys).sorted { $0 < $1 }
+      await MainActor.run {
+        withAnimation(.default) {
+          subsDict.data = newSubsDict
+          subsArr = newSubsArr
+          favoritesArr = newFavoritesArr
+          availableLetters = newAvailableLetters
+        }
+      }
+    }
   }
   
   var body: some View {
@@ -116,7 +118,7 @@ struct Subreddits: View {
               }
               .onDelete(perform: deleteFromFavorites)
             }
-            ForEach(listArr, id: \.self) { letter in
+            ForEach(availableLetters, id: \.self) { letter in
               if let subs = subsDictData[letter] {
                 Section(header: Text(letter)) {
                   ForEach(subs) { sub in
@@ -135,43 +137,13 @@ struct Subreddits: View {
         .loader(!loaded && subreddits.count == 0)
         .background(OFWOpener())
         .searchable(text: $searchText, prompt: "Search my subreddits")
-        .navigationTitle("Subs")
         .toolbar {
           ToolbarItem(placement: .navigationBarTrailing) {
             EditButton()
           }
         }
         .overlay(
-          VStack(spacing: 2) {
-            ForEach(listArr, id: \.self) { letter in
-              if subsDictData[letter] != nil {
-                Text(letter.uppercased())
-                  .contentShape(Rectangle())
-                  .highPriorityGesture(TapGesture().onEnded { scrollLetter = letter })
-              }
-            }
-          }
-            .padding(.trailing, 2)
-            .frame(width: 16, alignment: .trailing)
-            .background(Color(uiColor: UIColor.systemGroupedBackground))
-            .contentShape(Rectangle())
-            .highPriorityGesture(
-              DragGesture()
-                .onChanged { val in
-                  let stepI = Int(val.location.y / 15.3)
-                  if stepI >= listArr.count || stepI < 0 { return }
-                  let newLetter = listArr[stepI]
-                  if newLetter != scrollLetter {
-                    withAnimation {
-                      scrollLetter = newLetter
-                    }
-                  }
-                }
-            )
-            .frame(height: UIScreen.screenHeight, alignment: .trailing)
-            .ignoresSafeArea()
-            .fontSize(11, .semibold)
-            .foregroundColor(.blue)
+          AlphabetJumper(letters: availableLetters, proxy: proxy)
           , alignment: .trailing
         )
         .onChange(of: scrollLetter) { x in
@@ -181,29 +153,29 @@ struct Subreddits: View {
           }
         }
         .refreshable {
-          Task {
+          Task(priority: .background) {
             await updatePostsInBox(redditAPI, force: true)
           }
-          await redditAPI.fetchSubs()
+          _ = await redditAPI.fetchSubs()
         }
         .onChange(of: subreddits) { val in
-          withAnimation(nil) {
-            subsDict.data = sort(val)
-          }
+          setArrays(val)
         }
+        .navigationTitle("Subs")
         .onAppear {
           if !loaded {
             if subreddits.count > 0 {
-              subsDict.data = sort(subreddits)
+              setArrays(subreddits)
+//              subsDict.data = sort(subreddits)
             }
-            Task {              
+            Task(priority: .background) {
               // MARK: Route to default feed
               if preferenceDefaultFeed != "subList" && router.path.count == 0 { // we are in subList, can ignore
                 let tempSubreddit = Subreddit(id: preferenceDefaultFeed, api: redditAPI)
                 router.path.append(SubViewType.posts(tempSubreddit))
               }
               
-              await redditAPI.fetchSubs()
+              _ = await redditAPI.fetchSubs()
               withAnimation {
                 loaded = true
               }
@@ -211,18 +183,18 @@ struct Subreddits: View {
           }
         }
         .onChange(of: reset) { _ in
-          router.path = NavigationPath()
+          router.path.removeLast(router.path.count)
         }
         .defaultNavDestinations(router)
-        .environment(\.editMode, $editMode)
       }
       //        .onDelete(perform: deleteItems)
     }
+    .animation(.default, value: router.path)
   }
   
   func deleteFromFavorites(at offsets: IndexSet) {
     for i in offsets {
-      Task {
+      Task(priority: .background) {
         await favoritesArr[i].subscribeToggle(optimistic: true)
       }
     }
@@ -231,7 +203,7 @@ struct Subreddits: View {
   func deleteFromList(at offsets: IndexSet, letter: String) {
     for i in offsets {
       if let sub = subsDict.data[letter]?[i] {
-        Task {
+        Task(priority: .background) {
           await sub.subscribeToggle(optimistic: true)
         }
       }

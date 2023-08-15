@@ -8,8 +8,6 @@
 import SwiftUI
 import Defaults
 struct SubItem: View {
-  @EnvironmentObject private var router: Router
-  @Environment(\.editMode) var editMode
   @ObservedObject var sub: Subreddit
   @Default(.likedButNotSubbed) var likedButNotSubbed
   var body: some View {
@@ -25,7 +23,7 @@ struct SubItem: View {
           
           Image(systemName: "star.fill")
             .foregroundColor((favorite || localFav) ? .blue : .gray.opacity(0.3))
-            .highPriorityGesture( TapGesture().onEnded { Task { localFav ? _ = sub.localFavoriteToggle() : await sub.favoriteToggle() } } )
+            .highPriorityGesture( TapGesture().onEnded { Task(priority: .background){ localFav ? _ = sub.localFavoriteToggle() : await sub.favoriteToggle() } } )
         }
         .contentShape(Rectangle())
       }

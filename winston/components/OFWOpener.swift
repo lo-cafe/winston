@@ -13,9 +13,9 @@ class OpenFromWeb: ObservableObject {
 }
 
 struct OFWOpener: View {
+  @EnvironmentObject private var router: Router
   @EnvironmentObject private var redditAPI: RedditAPI
   @ObservedObject private var OFW = OpenFromWeb.shared
-  @EnvironmentObject private var router: Router
   
   var body: some View {
     EmptyView()

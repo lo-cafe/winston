@@ -1,7 +1,3 @@
-- Custom swipe options are now a reality!!!
-- There's now the draft of a compact mode (no links and videos atm, and probably buggy)
-- Design tweaks
-- Setting to open default feed on launch
-- Search now searches while you type
-- Disabled "Saved" section for a while (sorry about this, it was crashing)
-- Removed animation from alphabet jumper
+- Many performance improvements (one step at a time), including a new markdown renderer and the removing of a useless library.
+- Fixes posts not opening in search
+- Removed tooltip in votes, since it was causing a bunch of lag

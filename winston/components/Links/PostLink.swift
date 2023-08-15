@@ -6,11 +6,7 @@
 //
 
 import SwiftUI
-import CoreMedia
 import Defaults
-import AVKit
-import AVFoundation
-import SimpleHaptics
 
 struct FlairTag: View {
   var text: String
@@ -39,12 +35,10 @@ struct PostLink: View, Equatable {
     lhs.post == rhs.post && lhs.sub == rhs.sub
   }
   
+  @EnvironmentObject private var router: Router
   @ObservedObject var post: Post
   @ObservedObject var sub: Subreddit
   var showSub = false
-  @EnvironmentObject private var router: Router
-  @EnvironmentObject private var haptics: SimpleHapticGenerator
-
   @Default(.preferenceShowPostsCards) private var preferenceShowPostsCards
   @Default(.preferenceShowPostsAvatars) private var preferenceShowPostsAvatars
   @Default(.blurPostLinkNSFW) private var blurPostLinkNSFW
@@ -59,7 +53,11 @@ struct PostLink: View, Equatable {
   @Default(.cardedPostLinksInnerHPadding) private var cardedPostLinksInnerHPadding
   @Default(.cardedPostLinksInnerVPadding) private var cardedPostLinksInnerVPadding
   
+  @Default(.readPostOnScroll) private var readPostOnScroll
+  @Default(.hideReadPosts) private var hideReadPosts
+  
   @Default(.showUpvoteRatio) var showUpvoteRatio
+  @Default(.fadeReadPosts) var fadeReadPosts
   @StateObject private var appeared = Appeared()
   
   var contentWidth: CGFloat { UIScreen.screenWidth - ((preferenceShowPostsCards ? cardedPostLinksOuterHPadding : postLinksInnerHPadding) * 2) - (preferenceShowPostsCards ? (preferenceShowPostsCards ? cardedPostLinksInnerHPadding : 0) * 2 : 0) }
@@ -67,6 +65,7 @@ struct PostLink: View, Equatable {
   var body: some View {
     let layout = compactMode ? AnyLayout(HStackLayout(alignment: .top, spacing: 12)) : AnyLayout(VStackLayout(alignment: .leading, spacing: 12))
     if let data = post.data {
+      let seen = (data.winstonSeen ?? false)
       let isLinkPost = !data.url.isEmpty && !data.is_self && !(data.is_video ?? false) && !(data.is_gallery ?? false) && data.post_hint != "image"
       let over18 = data.over_18 ?? false
       VStack(alignment: .leading, spacing: 8) {
@@ -106,6 +105,7 @@ struct PostLink: View, Equatable {
                   let vid = datas.reddit_video
                   if let url = vid.hls_url, let width = vid.width, let height = vid.height, let rootURL = rootURL(url) {
                     VideoPlayerPost(sharedVideo: SharedVideo(url: rootURL, size: CGSize(width: width, height: height)))
+                      .scaledToFill()
                   }
                 case .second(_):
                   EmptyView()
@@ -114,13 +114,13 @@ struct PostLink: View, Equatable {
               
               if let redditVidPreview = data.preview?.reddit_video_preview, let status = redditVidPreview.transcoding_status, status == "completed", let url = redditVidPreview.hls_url, let rootURL = rootURL(url), let width = redditVidPreview.width, let height = redditVidPreview.height {
                 VideoPlayerPost(sharedVideo: SharedVideo(url: rootURL, size: CGSize(width: width, height: height)))
+                  .scaledToFill()
               } else if !imgPost {
                 if isLinkPost {
                   PreviewLink(data.url, compact: compactMode, contentWidth: contentWidth, media: data.secure_media)
                 }
               }
             }
-            .scaledToFill()
             .frame(maxWidth: compactMode ? compactModeThumbSize : .infinity, maxHeight: compactMode ? compactModeThumbSize : nil, alignment: .leading)
             .clipped()
             .nsfw(over18 && blurPostLinkNSFW)
@@ -141,6 +141,7 @@ struct PostLink: View, Equatable {
             .frame(maxHeight: .infinity)
             .fontSize(22, .medium)
           }
+          
         }
         .zIndex(1)
         .frame(maxWidth: .infinity, alignment: .topLeading)
@@ -196,26 +197,36 @@ struct PostLink: View, Equatable {
       .background(
         !preferenceShowPostsCards
         ? nil
-        : RR(20, .listBG).allowsHitTesting(false)
+        : RR(20, .listBG)
+          .allowsHitTesting(false)
       )
-//      .padding(.vertical, !preferenceShowPostsCards ? 8 : 0)
-//      .padding(.vertical, !preferenceShowPostsCards ? postLinksOuterVPadding : 0)
-//      .padding(.horizontal, !preferenceShowPostsCards ? POSTLINK_OUTER_H_PAD : 0 )
-//      .padding(.horizontal, !preferenceShowPostsCards ? postLinksOuterHPadding : 0 )
-      //      .overlay(Rectangle().fill(.primary.opacity(openedPost ? 0.1 : 0)).allowsHitTesting(false))
       .mask(RR(preferenceShowPostsCards ? 20 : 0, .black))
-//      .padding(.horizontal, preferenceShowPostsCards ? cardedPostLinksOuterHPadding : 0 )
+      .overlay(
+        fadeReadPosts
+        ? nil
+        : ZStack {
+          Circle()
+            .fill(Color.hex("CFFFDE"))
+            .frame(width: 5, height: 5)
+          Circle()
+            .fill(Color.hex("4FFF85"))
+            .frame(width: 8, height: 8)
+            .blur(radius: 8)
+        }
+          .padding(.all, 11)
+          .scaleEffect(seen ? 0.1 : 1)
+          .opacity(seen ? 0 : 1)
+          .allowsHitTesting(false)
+        , alignment: .topTrailing
+      )
       .padding(.horizontal, preferenceShowPostsCards ? cardedPostLinksOuterHPadding : 0 )
-//      .padding(.vertical, preferenceShowPostsCards ? 8 : 0)
       .padding(.vertical, preferenceShowPostsCards ? cardedPostLinksOuterVPadding : 0)
       .compositingGroup()
-      .opacity((data.winstonSeen ?? false) ? 0.75 : 1)
+      .opacity(fadeReadPosts && seen ? 0.6 : 1)
       .contentShape(Rectangle())
       .swipyUI(
         onTap: {
-          withAnimation {
-            router.path.append(PostViewPayload(post: post, sub: feedsAndSuch.contains(sub.id) ? sub : sub))
-          }
+          router.path.append(PostViewPayload(post: post, sub: feedsAndSuch.contains(sub.id) ? sub : sub))
         },
         actionsSet: postSwipeActions,
         entity: post
@@ -230,25 +241,28 @@ struct PostLink: View, Equatable {
             post.toggleSeen(optimistic: true)
           } } label: { Label("Toggle seen", systemImage: "eye") }
         }
-      }, preview: { NavigationStack { PostView(post: post, subreddit: sub, forceCollapse: true) }.environmentObject(router).environmentObject(post.redditAPI) })
+      }, preview: { NavigationStack { PostView(post: post, subreddit: sub, forceCollapse: true) }.environmentObject(post.redditAPI) })
       .foregroundColor(.primary)
       .multilineTextAlignment(.leading)
       .zIndex(1)
+      .onDisappear {
+        if readPostOnScroll {
+          Task(priority: .background) {
+            post.toggleSeen(true, optimistic: true)
+          }
+        }
+        if hideReadPosts {
+          Task(priority: .background) {
+            await post.hide(true)
+          }
+        }
+      }
       .onAppear {
         let newPostSwipeActions = Defaults[.postSwipeActions]
         if postSwipeActions != newPostSwipeActions {
           postSwipeActions = newPostSwipeActions
         }
       }
-      //      .opacity(appeared.isIt ? 1 : 0)
-      //      .offset(y: appeared.isIt ? 0 : 32)
-      //      .onAppear {
-      //        if !appeared.isIt {
-      //          withAnimation(spring) {
-      //            appeared.isIt = true
-      //          }
-      //        }
-      //      }
     } else {
       Text("Oops something went wrong")
     }

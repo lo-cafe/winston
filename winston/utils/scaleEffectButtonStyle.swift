@@ -12,6 +12,6 @@ struct ScaleButtonStyle: ButtonStyle {
   var scalePressed: CGFloat = 1.4
   var anchor: UnitPoint = UnitPoint.center
   func makeBody(configuration: Configuration) -> some View {
-    configuration.label.scaleEffect(configuration.isPressed ? scalePressed : scaleDepressed)
+    configuration.label.scaleEffect(configuration.isPressed ? scalePressed : scaleDepressed).animation(.interactiveSpring(), value: configuration.isPressed)
   }
 }

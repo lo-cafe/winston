@@ -7,7 +7,7 @@
 
 import Foundation
 import SwiftUI
-import LonginusSwiftUI
+import NukeUI
 import OpenGraph
 import SkeletonUI
 import YouTubePlayerKit
@@ -36,7 +36,7 @@ final class PreviewViewModel: ObservableObject {
   
   private func fetchMetadata() {
     guard let previewURL else { return }
-    Task {
+    Task(priority: .background) {
       var headers = [String: String]()
       headers["User-Agent"] = "facebookexternalhit/1.1"
       headers["charset"] = "UTF-8"
@@ -77,11 +77,14 @@ struct PreviewLinkContent: View {
           Text(viewModel.title?.escape ?? "No title detected")
             .fontSize(17, .medium)
             .lineLimit(1)
+            .truncationMode(.tail)
+            .fixedSize(horizontal: false, vertical: true)
           
           Text(viewModel.url == nil || viewModel.url?.isEmpty == true ? url.absoluteString : viewModel.url!)
             .fontSize(13)
             .opacity(0.5)
             .lineLimit(1)
+            .fixedSize(horizontal: false, vertical: true)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         
@@ -98,12 +101,15 @@ struct PreviewLinkContent: View {
       
       Group {
         if let image = viewModel.image, let imageURL = URL(string: image) {
-          LGImage(source: imageURL, placeholder: {
-            ProgressView()
-          }, options: [.imageWithFadeAnimation])
-          .resizable()
-          .cancelOnDisappear(true)
-          .scaledToFill()
+          LazyImage(url: imageURL) { state in
+            if let image = state.image {
+              image.resizable().scaledToFill()
+            } else if state.error != nil {
+              Color.red // Indicates an error
+            } else {
+              Color.blue // Acts as a placeholder
+            }
+          }
           .frame(width: 76, height: 76)
           .mask(RR(12, .black))
         } else {

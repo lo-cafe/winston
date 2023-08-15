@@ -47,7 +47,7 @@ struct PreviewRedditLinkContent: View {
     .onAppear {
       switch thing {
       case .comment(let id, _, _):
-        Task {
+        Task(priority: .background) {
           if let data = await redditAPI.fetchInfo(fullnames: ["\(Comment.prefix)_\(id)"]) {
             await MainActor.run { withAnimation {
               switch data {
@@ -62,7 +62,7 @@ struct PreviewRedditLinkContent: View {
           }
         }
       case .post(let id, _):
-        Task {
+        Task(priority: .background) {
           //          print("maos", id)
           if let data = await redditAPI.fetchInfo(fullnames: ["\(Post.prefix)_\(id)"]) {
             await MainActor.run { withAnimation {
@@ -78,7 +78,7 @@ struct PreviewRedditLinkContent: View {
           }
         }
       case .user(let username):
-        Task {
+        Task(priority: .background) {
           if let data = await redditAPI.fetchUser(username) {
             await MainActor.run { withAnimation {
               thingEntity = .user(User(data: data, api: redditAPI))
@@ -86,7 +86,7 @@ struct PreviewRedditLinkContent: View {
           }
         }
       case .subreddit(name: let name):
-        Task {
+        Task(priority: .background) {
           if let data = (await redditAPI.fetchSub(name))?.data  {
             await MainActor.run { withAnimation {
               thingEntity = .subreddit(Subreddit(data: data, api: redditAPI))

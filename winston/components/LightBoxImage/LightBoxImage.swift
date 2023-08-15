@@ -23,7 +23,7 @@ struct LightBoxImage: View {
   @State private var activeIndex = 0
   @State private var loading = false
   @State private var done = false
-  @State private var showOverlay = false
+  @State private var showOverlay = true
   //  @State var isPinching = false
   
   @State private var isPinching: Bool = false
