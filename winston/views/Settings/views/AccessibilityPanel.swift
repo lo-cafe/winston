@@ -13,7 +13,7 @@ struct AccessibilityPanel: View {
     var body: some View {
       List{
         Section("Haptics"){
-          Picker("Haptic Feedback Strength", selection: Binding(get: {
+          Picker("Haptic Feedback Strength -- DOESNT WORK", selection: Binding(get: {
             forceFeedbackModifiers
           }, set: { val, _ in
             forceFeedbackModifiers = val
@@ -27,7 +27,7 @@ struct AccessibilityPanel: View {
           .pickerStyle(.segmented)
           .frame(maxWidth: .infinity)
           .labelStyle(.titleOnly)
-          Toggle("Haptics on Low Power Mode", isOn: $hapticFeedbackOnLPM)
+          Toggle("Haptics on Low Power Mode -- DOESNT WORK", isOn: $hapticFeedbackOnLPM)
         }
       }
       Spacer()

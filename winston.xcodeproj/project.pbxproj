@@ -11,9 +11,9 @@
 		65807E732A87F8A8000EF969 /* AlertToast in Frameworks */ = {isa = PBXBuildFile; productRef = 65807E722A87F8A8000EF969 /* AlertToast */; };
 		6593CC432A88C9E8003CA58D /* AccessibilityPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6593CC422A88C9E8003CA58D /* AccessibilityPanel.swift */; };
 		6593CC452A88D128003CA58D /* hapticFeedbackModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6593CC442A88D128003CA58D /* hapticFeedbackModifier.swift */; };
-		65978D022A861ECF00B6BDFC /* scaleEffectButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65978D012A861ECF00B6BDFC /* scaleEffectButtonStyle.swift */; };
 		659F68022A84E32300989300 /* VotesCluster.swift in Sources */ = {isa = PBXBuildFile; fileRef = 659F68012A84E32300989300 /* VotesCluster.swift */; };
 		659FDEA82A87798300103414 /* VoteButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 659FDEA72A87798300103414 /* VoteButton.swift */; };
+		65AA535B2A8BAE9B00275299 /* scaleEffectButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65AA535A2A8BAE9B00275299 /* scaleEffectButtonStyle.swift */; };
 		EC082F252A65FB4300BA2727 /* MeasureOnce.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC082F242A65FB4300BA2727 /* MeasureOnce.swift */; };
 		EC082F272A66132600BA2727 /* CommentLinkMore.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC082F262A66132600BA2727 /* CommentLinkMore.swift */; };
 		EC082F292A66134C00BA2727 /* CommentLinkFull.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC082F282A66134C00BA2727 /* CommentLinkFull.swift */; };
@@ -254,9 +254,9 @@
 		650ACAFB2A87A36900A7C600 /* calcVotes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = calcVotes.swift; sourceTree = "<group>"; };
 		6593CC422A88C9E8003CA58D /* AccessibilityPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessibilityPanel.swift; sourceTree = "<group>"; };
 		6593CC442A88D128003CA58D /* hapticFeedbackModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = hapticFeedbackModifier.swift; sourceTree = "<group>"; };
-		65978D012A861ECF00B6BDFC /* scaleEffectButtonStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = scaleEffectButtonStyle.swift; sourceTree = "<group>"; };
 		659F68012A84E32300989300 /* VotesCluster.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VotesCluster.swift; sourceTree = "<group>"; };
 		659FDEA72A87798300103414 /* VoteButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoteButton.swift; sourceTree = "<group>"; };
+		65AA535A2A8BAE9B00275299 /* scaleEffectButtonStyle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = scaleEffectButtonStyle.swift; path = ../../../../../.Trash/scaleEffectButtonStyle.swift; sourceTree = "<group>"; };
 		EC082F242A65FB4300BA2727 /* MeasureOnce.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeasureOnce.swift; sourceTree = "<group>"; };
 		EC082F262A66132600BA2727 /* CommentLinkMore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentLinkMore.swift; sourceTree = "<group>"; };
 		EC082F282A66134C00BA2727 /* CommentLinkFull.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentLinkFull.swift; sourceTree = "<group>"; };
@@ -464,7 +464,6 @@
 				ECAA8B842A76421000D9D636 /* YouTubePlayerKit in Frameworks */,
 				EC9BB1C22A8B05AA0070CD97 /* NukeExtensions in Frameworks */,
 				EC593B0C2A47B801002D6454 /* Alamofire in Frameworks */,
-				ECB5E1C62A7DC24D0063AB64 /* LonginusSwiftUI in Frameworks */,
 				65807E732A87F8A8000EF969 /* AlertToast in Frameworks */,
 				EC593B092A47B42D002D6454 /* KeychainAccess in Frameworks */,
 				ECD2A37D2A69CBAD00EDD02D /* WaterfallGrid in Frameworks */,
@@ -857,6 +856,7 @@
 				ECC10C732A4A8729009124BE /* fontSize.swift */,
 				EC9EAEC32A4AAB470074D06B /* fromHex.swift */,
 				EC08542A2A4C2B6B00E88389 /* if.swift */,
+				65AA535A2A8BAE9B00275299 /* scaleEffectButtonStyle.swift */,
 				EC08543E2A4D0C0700E88389 /* doThisAfter.swift */,
 				EC0854402A4D558D00E88389 /* Interpolator.swift */,
 				EC0854472A4D6E8C00E88389 /* getInitialSize.swift */,
@@ -885,7 +885,6 @@
 				ECF064EC2A7F405C0088C2C0 /* KeyWindow.swift */,
 				ECF064EE2A80383C0088C2C0 /* sumCGSize.swift */,
 				EC9ECA092A88602F00470F89 /* debounce.swift */,
-				65978D012A861ECF00B6BDFC /* scaleEffectButtonStyle.swift */,
 			);
 			path = utils;
 			sourceTree = "<group>";
@@ -997,7 +996,6 @@
 				ECDD515E2A748C5800FD9498 /* OpenGraph */,
 				ECDD51612A748DF600FD9498 /* SkeletonUI */,
 				ECAA8B832A76421000D9D636 /* YouTubePlayerKit */,
-				ECB5E1C52A7DC24D0063AB64 /* LonginusSwiftUI */,
 				65807E722A87F8A8000EF969 /* AlertToast */,
 				EC9BB1BF2A8B05AA0070CD97 /* Nuke */,
 				EC9BB1C12A8B05AA0070CD97 /* NukeExtensions */,
@@ -1066,7 +1064,6 @@
 				ECDD515D2A748C5800FD9498 /* XCRemoteSwiftPackageReference "OpenGraph" */,
 				ECDD51602A748DF600FD9498 /* XCRemoteSwiftPackageReference "SkeletonUI" */,
 				ECAA8B822A76421000D9D636 /* XCRemoteSwiftPackageReference "YouTubePlayerKit" */,
-				ECB5E1C42A7DC24D0063AB64 /* XCRemoteSwiftPackageReference "Longinus" */,
 				65807E712A87F8A8000EF969 /* XCRemoteSwiftPackageReference "AlertToast" */,
 				EC9BB1BE2A8B05AA0070CD97 /* XCRemoteSwiftPackageReference "Nuke" */,
 				ECAD0F2D2A8B4D4B001C88B5 /* XCRemoteSwiftPackageReference "swift-markdown" */,
@@ -1130,7 +1127,6 @@
 				EC8F34662A6A348F00EB8249 /* SwipeActions.swift in Sources */,
 				ECAA8B5A2A75004300D9D636 /* redditURLParser.swift in Sources */,
 				EC63735D2A791E47000A03A3 /* Onboarding7Ending.swift in Sources */,
-				65978D022A861ECF00B6BDFC /* scaleEffectButtonStyle.swift in Sources */,
 				ECC68D412A799CDD005BC7B4 /* SelectableText.swift in Sources */,
 				ECDD515C2A73A90700FD9498 /* PreviewLink.swift in Sources */,
 				EC5EDA712A4DA94A00140A08 /* SwipeActionsOld.swift in Sources */,
@@ -1161,6 +1157,7 @@
 				EC6373632A7934F8000A03A3 /* AboutPanel.swift in Sources */,
 				EC1E7B662A815BC100DB459A /* LightBoxElementView.swift in Sources */,
 				ECDD514C2A72561500FD9498 /* getFlairs.swift in Sources */,
+				65AA535B2A8BAE9B00275299 /* scaleEffectButtonStyle.swift in Sources */,
 				ECE285992A50086D009CF9DD /* UserView.swift in Sources */,
 				ECD1FC072A56D46D00723016 /* ObservableArray.swift in Sources */,
 				EC8F34A12A6FC99000EB8249 /* updatePostsInBox.swift in Sources */,
