@@ -13,6 +13,7 @@ struct FAQPanel: View {
     VStack{
       List{
         QuestionAnswer(question: "What does the Box Icon do?", answer: "Save posts in the Posts Box to be read later. These will live in Winston and wont be synced to Reddit.", systemImage: "shippingbox")
+        QuestionAnswer(question: "Whats Winston Anywhere?", answer: "Winston Anywhere is a Safari extension, that autmatically redirects Reddit links to Winston.", systemImage: "safari")
       }
 
     }
