@@ -22,7 +22,7 @@ struct SubredditPosts: View {
   @ObservedObject var subreddit: Subreddit
   @Environment(\.openURL) private var openURL
   @State private var loading = true
-  @StateObject private var posts = NonObservableArray<Post>()
+  @State private var posts: [Post] = []
   @State private var lastPostAfter: String?
   @State private var searchText: String = ""
   @State private var sort: SubListingSortOption = Defaults[.preferredSort]
@@ -30,20 +30,19 @@ struct SubredditPosts: View {
   @EnvironmentObject private var redditAPI: RedditAPI
   @EnvironmentObject private var router: Router
   
-  
   func asyncFetch(force: Bool = false, loadMore: Bool = false) async {
     if (subreddit.data == nil || force) && !feedsAndSuch.contains(subreddit.id) {
       await subreddit.refreshSubreddit()
     }
-    if posts.data.count > 0 && lastPostAfter == nil && !force {
+    if posts.count > 0 && lastPostAfter == nil && !force {
       return
     }
     if let result = await subreddit.fetchPosts(sort: sort, after: loadMore ? lastPostAfter : nil), let newPosts = result.0 {
       withAnimation {
         if loadMore {
-          posts.data.append(contentsOf: newPosts)
+          posts.append(contentsOf: newPosts)
         } else {
-          posts.data = newPosts
+          posts = newPosts
         }
         loading = false
         lastPostAfter = result.1
@@ -70,7 +69,7 @@ struct SubredditPosts: View {
     Group {
       //      if IPAD {
       //        ScrollView(.vertical) {
-      //          WaterfallGrid(posts.data, id: \.self.id) { el in
+      //          WaterfallGrid(posts, id: \.self.id) { el in
       //            PostLink(post: el, sub: subreddit)
       //          }
       //          .gridStyle(columns: 2, spacing: 16, animation: .easeInOut(duration: 0.5))
@@ -83,16 +82,16 @@ struct SubredditPosts: View {
       //      } else {
       List {
         Section {
-          ForEach(Array(posts.data.enumerated()), id: \.self.element.id) { i, post in
-            
+          ForEach(Array(posts.enumerated()), id: \.self.element.id) { i, post in
+
             PostLink(post: post, sub: subreddit)
               .equatable()
-              .onAppear { if(Int(Double(posts.data.count) * 0.75) == i) { fetch(loadMore: true) } }
-              .id(post.id)
+              .onAppear { if(Int(Double(posts.count) * 0.75) == i) { fetch(loadMore: true) } }
+//              .id(post.id)
               .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
-              .animation(.default, value: posts.data)
-            
-            if !preferenceShowPostsCards && i != (posts.data.count - 1) {
+              .animation(.default, value: posts)
+
+            if !preferenceShowPostsCards && i != (posts.count - 1) {
               VStack(spacing: 0) {
                 Divider()
                 Color.listBG
@@ -102,7 +101,7 @@ struct SubredditPosts: View {
               .id("\(post.id)-divider")
               .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
             }
-            
+
           }
           if !lastPostAfter.isNil {
             ProgressView()
@@ -129,7 +128,7 @@ struct SubredditPosts: View {
       //      }
     }
     .overlay(
-      loading && posts.data.count == 0
+      loading && posts.count == 0
       ? ProgressView()
         .frame(maxWidth: .infinity, minHeight: UIScreen.screenHeight)
       : nil)
@@ -178,7 +177,7 @@ struct SubredditPosts: View {
                 .fontSize(17, .bold)
             }
           }
-          
+
           if let data = subreddit.data {
             Button {
               router.path.append(SubViewType.info(subreddit))
@@ -191,8 +190,8 @@ struct SubredditPosts: View {
     )
     .onAppear {
       //      sort = Defaults[.preferredSort]
-      doThisAfter(0) {
-        if posts.data.count == 0 {
+      if posts.count == 0 {
+        doThisAfter(0) {
           fetch()
         }
       }
@@ -200,7 +199,7 @@ struct SubredditPosts: View {
     .onChange(of: sort) { val in
       withAnimation {
         loading = true
-        posts.data.removeAll()
+        posts.removeAll()
       }
       fetch()
     }

@@ -42,7 +42,7 @@ struct PostLink: View, Equatable {
   @ObservedObject var post: Post
   @ObservedObject var sub: Subreddit
   var showSub = false
-  @EnvironmentObject private var router: Router
+//  @EnvironmentObject private var router: Router
   @EnvironmentObject private var haptics: SimpleHapticGenerator
 
   @Default(.preferenceShowPostsCards) private var preferenceShowPostsCards
@@ -156,7 +156,7 @@ struct PostLink: View, Equatable {
           if showSub || feedsAndSuch.contains(sub.id) {
             FlairTag(text: "r/\(sub.data?.display_name ?? post.data?.subreddit ?? "Error")", color: .blue)
               .highPriorityGesture(TapGesture() .onEnded {
-                router.path.append(SubViewType.posts(Subreddit(id: post.data?.subreddit ?? "", api: post.redditAPI)))
+                SubredditsRouter.shared.path.append(SubViewType.posts(Subreddit(id: post.data?.subreddit ?? "", api: post.redditAPI)))
               })
             
             WDivider()
@@ -231,9 +231,8 @@ struct PostLink: View, Equatable {
       .contentShape(Rectangle())
       .swipyUI(
         onTap: {
-          withAnimation {
-            router.path.append(PostViewPayload(post: post, sub: feedsAndSuch.contains(sub.id) ? sub : sub))
-          }
+          print("kams")
+          SubredditsRouter.shared.path.append(PostViewPayload(post: post, sub: feedsAndSuch.contains(sub.id) ? sub : sub))
         },
         actionsSet: postSwipeActions,
         entity: post
@@ -243,12 +242,12 @@ struct PostLink: View, Equatable {
           if let perma = URL(string: "https://reddit.com\(data.permalink.escape.urlEncoded)") {
             ShareLink(item: perma) { Label("Share", systemImage: "square.and.arrow.up") }
           }
-          Button { router.path.append(PostViewPayload(post: post, sub: feedsAndSuch.contains(sub.id) ? sub : sub)) } label: { Label("Open post", systemImage: "rectangle.and.hand.point.up.left.filled") }
+          Button { SubredditsRouter.shared.path.append(PostViewPayload(post: post, sub: feedsAndSuch.contains(sub.id) ? sub : sub)) } label: { Label("Open post", systemImage: "rectangle.and.hand.point.up.left.filled") }
           Button {  withAnimation {
             post.toggleSeen(optimistic: true)
           } } label: { Label("Toggle seen", systemImage: "eye") }
         }
-      }, preview: { NavigationStack { PostView(post: post, subreddit: sub, forceCollapse: true) }.environmentObject(router).environmentObject(post.redditAPI) })
+      }, preview: { NavigationStack { PostView(post: post, subreddit: sub, forceCollapse: true) }.environmentObject(post.redditAPI) })
       .foregroundColor(.primary)
       .multilineTextAlignment(.leading)
       .zIndex(1)

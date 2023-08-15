@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-import LonginusSwiftUI
+import NukeUI
 
 //enum UserViewSections: Int {
 //  case
@@ -38,34 +38,29 @@ struct UserView: View {
             ZStack {
               if let bannerImgFull = data.subreddit?.banner_img, bannerImgFull != "" {
                 let bannerImg = String(bannerImgFull.split(separator: "?")[0])
-                LGImage(source: URL(string: bannerImg), placeholder: {
-                  ProgressView()
-                }, options: [.imageWithFadeAnimation])
-                .resizable()
-                //                    .placeholder {
-                //                      ProgressView()
-                //                        .progressViewStyle(.circular)
-                //                        .frame(width: 22, height: 22 )
-                //                        .frame(maxWidth: .infinity, minHeight: 160)
-                //                    }
-                .scaledToFill()
+                LazyImage(url: URL(string: bannerImg)) { state in
+                  if let image = state.image {
+                    image.resizable().scaledToFill()
+                  } else if state.error != nil {
+                    Color.red // Indicates an error
+                  } else {
+                    Color.blue // Acts as a placeholder
+                  }
+                }
                 .frame(width: contentWidth, height: 160)
                 .mask(RR(16, .black))
               }
               if let iconFull = data.subreddit?.icon_img, iconFull != "" {
                 let icon = String(iconFull.split(separator: "?")[0])
-                LGImage(source: URL(string: icon), placeholder: {
-                  ProgressView()
-                }, options: [.imageWithFadeAnimation])
-                .resizable()
-                //                    .placeholder {
-                //                      ProgressView()
-                //                        .progressViewStyle(.circular)
-                //                        .frame(width: 22, height: 22 )
-                //                        .frame(width: 30, height: 30 )
-                //                        .background(.gray, in: Circle())
-                //                    }
-                .scaledToFill()
+                LazyImage(url: URL(string: icon)!) { state in
+                  if let image = state.image {
+                    image.resizable().scaledToFill()
+                  } else if state.error != nil {
+                    Color.red // Indicates an error
+                  } else {
+                    Color.blue // Acts as a placeholder
+                  }
+                }
                 .frame(width: 125, height: 125)
                 .mask(Circle())
                 .offset(y: data.subreddit?.banner_img == "" || data.subreddit?.banner_img == nil ? 0 : 80)

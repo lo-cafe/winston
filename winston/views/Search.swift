@@ -122,7 +122,7 @@ struct Search: View {
       .loader(loading, hideSpinner && !searchQuery.text.isEmpty)
       .searchable(text: $searchQuery.text, placement: .toolbar)
       .onChange(of: searchType) { _ in fetch() }
-      .onChange(of: reset) { _ in router.path = NavigationPath() }
+      .onChange(of: reset) { _ in router.path.removeLast(router.path.count) }
       .onChange(of: searchQuery.debounced) { val in
         if val == "" {
           resultsSubs.data = []

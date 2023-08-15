@@ -7,7 +7,7 @@
 
 import Foundation
 import SwiftUI
-import LonginusSwiftUI
+import NukeUI
 
 struct SubredditBaseIcon: View {
   var name: String
@@ -17,13 +17,17 @@ struct SubredditBaseIcon: View {
   var color: String?
   var body: some View {
     if let icon = iconURLStr, !icon.isEmpty, let iconURL = URL(string: icon) {
-      LGImage(source: iconURL, placeholder: {
-        ProgressView()
-      }, options: [.imageWithFadeAnimation])
-        .resizable()
-        .scaledToFill()
-        .frame(width: size, height: size)
-        .mask(Circle())
+      LazyImage(url: iconURL) { state in
+        if let image = state.image {
+          image.resizable().scaledToFill()
+        } else if state.error != nil {
+          Color.red // Indicates an error
+        } else {
+          Color.blue // Acts as a placeholder
+        }
+      }
+      .frame(width: size, height: size)
+      .mask(Circle())
     } else {
       Text(String((name).prefix(1)).uppercased())
         .frame(width: size, height: size)

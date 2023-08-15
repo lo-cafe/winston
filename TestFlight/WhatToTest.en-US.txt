@@ -1,6 +1,5 @@
-- Added option to read posts on scroll
-- Added option to hide posts on read (no way to see unread posts yet)
-- Added haptics and animation for voting
-- Added option for showing up/down votes ratio
-- Added option to switch from glowing dot to fading to tell read from unread posts.
-- Upvotes get colored accordingly when upvoting / downvoting
+- Improved performance across the app (many changes, there may be some bugs), it should keep smooth even after long time using the app, but it's still a WIP, so more performance gains is coming
+- Changed image overlay transition (it comes from the bottom now... I know, it's ugly, but it's temporary IM SORRY OK IM SO SORRY)
+- Fixed alphabet jumper lag
+- Tweaked alphabet jumper visuals
+-

@@ -7,7 +7,7 @@
 
 import Foundation
 import SwiftUI
-import LonginusSwiftUI
+import NukeUI
 import OpenGraph
 import SkeletonUI
 import YouTubePlayerKit
@@ -101,12 +101,15 @@ struct PreviewLinkContent: View {
       
       Group {
         if let image = viewModel.image, let imageURL = URL(string: image) {
-          LGImage(source: imageURL, placeholder: {
-            ProgressView()
-          }, options: [.imageWithFadeAnimation])
-          .resizable()
-          .cancelOnDisappear(true)
-          .scaledToFill()
+          LazyImage(url: imageURL) { state in
+            if let image = state.image {
+              image.resizable().scaledToFill()
+            } else if state.error != nil {
+              Color.red // Indicates an error
+            } else {
+              Color.blue // Acts as a placeholder
+            }
+          }
           .frame(width: 76, height: 76)
           .mask(RR(12, .black))
         } else {

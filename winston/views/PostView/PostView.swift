@@ -30,9 +30,9 @@ struct PostView: View {
   
   func asyncFetch(_ full: Bool = true) async {
     if let result = await post.refreshPost(commentID: ignoreSpecificComment ? nil : highlightID, sort: sort, after: nil, subreddit: subreddit.data?.display_name ?? subreddit.id, full: full), let newComments = result.0 {
-//      Task {
-//        await redditAPI.updateAvatarURLCacheFromComments(comments: newComments)
-//      }
+      Task {
+        await redditAPI.updateAvatarURLCacheFromComments(comments: newComments)
+      }
     }
   }
   
@@ -134,11 +134,11 @@ struct PostView: View {
         update.toggle()
         Task { await asyncFetch() }
       }
-//      .task {
-//        if subreddit.data == nil && subreddit.id != "home" {
-//          await subreddit.refreshSubreddit()
-//        }
-//      }
+      .task {
+        if subreddit.data == nil && subreddit.id != "home" {
+          await subreddit.refreshSubreddit()
+        }
+      }
     }
 
   }

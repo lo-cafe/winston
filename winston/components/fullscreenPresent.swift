@@ -28,11 +28,11 @@ fileprivate struct HelperHeroView<Overlay: View>: ViewModifier {
     func body(content: Content) -> some View {
         content
             /// Attatch it as background to fetch the parent Controller
-            .background(content: {
-                ExtractSwiftUIParentController(content: overlay, hostView: $hostView) { viewController in
-                    parentController = viewController
-                }
-            })
+//            .background(content: {
+//                ExtractSwiftUIParentController(content: overlay, hostView: $hostView) { viewController in
+//                    parentController = viewController
+//                }
+//            })
             /// Presenting/Dismissing Host View based on Show State
             .onChange(of: show) { newValue in
                 if newValue {
@@ -41,7 +41,7 @@ fileprivate struct HelperHeroView<Overlay: View>: ViewModifier {
                     if let hostView {
                         /// Changing Presentation Style and Transition Style
                       hostView.modalPresentationStyle = .overFullScreen
-                        hostView.modalTransitionStyle = .crossDissolve
+                      hostView.modalTransitionStyle = .crossDissolve
                         hostView.view.backgroundColor = .clear
                         /// We Need a parent View controller to present it
                         parentController?.present(hostView, animated: false)
