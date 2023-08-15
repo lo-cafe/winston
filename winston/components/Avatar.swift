@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-import LonginusSwiftUI
+import NukeUI
 
 struct Avatar: View {
 //  static func == (lhs: Avatar, rhs: Avatar) -> Bool {
@@ -38,14 +38,16 @@ struct Avatar: View {
           )
       } else {
         if let avatarURL = avatarURL, avatarURL != "", let avatarURLURL = URL(string: avatarURL) {
-//          EmptyView()
-          LGImage(source: avatarURLURL, placeholder: {
-            ProgressView()
-          }, options: [.imageWithFadeAnimation])
-            .resizable()
-            .cancelOnDisappear(true)
-            .scaledToFill()
-//            .id(avatarURL)
+          //          EmptyView()
+          LazyImage(url: avatarURLURL) { state in
+            if let image = state.image {
+              image.resizable().scaledToFill()
+            } else if state.error != nil {
+              Color.red // Indicates an error
+            } else {
+              Color.blue // Acts as a placeholder
+            }
+          }
         } else {
           Text(userID.prefix(1).uppercased())
             .fontSize(avatarSize / 2)

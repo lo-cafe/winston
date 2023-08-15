@@ -37,12 +37,12 @@
       }
     },
     {
-      "identity" : "longinus",
+      "identity" : "nuke",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/KittenYang/Longinus.git",
+      "location" : "https://github.com/kean/Nuke.git",
       "state" : {
-        "revision" : "20c1283b25047a333c1cb49b55b93380eab20d94",
-        "version" : "1.2.1"
+        "revision" : "29d3a7e0c687f97fe35b584f60b93fc547d3dade",
+        "version" : "12.1.5"
       }
     },
     {

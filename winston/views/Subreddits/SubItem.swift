@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct SubItem: View {
-  @EnvironmentObject private var router: Router
   @Environment(\.editMode) var editMode
   @ObservedObject var sub: Subreddit
   var body: some View {

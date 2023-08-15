@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-import LonginusSwiftUI
+import NukeUI
 import Defaults
 import SimpleHaptics
 
@@ -88,14 +88,19 @@ struct PostInBoxLink: View {
     .frame(width: (UIScreen.screenWidth / 1.75), height: 120, alignment: .topLeading)
     .background(
       post.img != nil && post.img != ""
-      ? LGImage(source: URL(string: post.img!)!, placeholder: {
-        ProgressView()
-      }, options: [.imageWithFadeAnimation])
-      .resizable()
-      .scaledToFill()
-      .opacity(0.15)
-      .frame(width: (UIScreen.screenWidth / 1.75), height: 120)
-      .clipped()
+      
+      ?       LazyImage(url: URL(string: post.img!)!) { state in
+        if let image = state.image {
+          image.resizable().scaledToFill()
+        } else if state.error != nil {
+          Color.red // Indicates an error
+        } else {
+          Color.blue // Acts as a placeholder
+        }
+      }
+        .opacity(0.15)
+        .frame(width: (UIScreen.screenWidth / 1.75), height: 120)
+        .clipped()
       : nil
     )
     .background(RR(20, .listBG))

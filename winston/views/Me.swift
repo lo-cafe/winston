@@ -31,7 +31,7 @@ struct Me: View {
         }
       }
     }
-    .onChange(of: reset) { _ in router.path = NavigationPath() }
+    .onChange(of: reset) { _ in router.path.removeLast(router.path.count) }
   }
 }
 
