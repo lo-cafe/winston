@@ -231,7 +231,6 @@ struct PostLink: View, Equatable {
       .contentShape(Rectangle())
       .swipyUI(
         onTap: {
-          print("kams")
           SubredditsRouter.shared.path.append(PostViewPayload(post: post, sub: feedsAndSuch.contains(sub.id) ? sub : sub))
         },
         actionsSet: postSwipeActions,
