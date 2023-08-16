@@ -77,15 +77,17 @@ extension Post {
     }
   }
   
-  func reply(_ text: String) async -> Bool {
+  func reply(_ text: String, updateComments: (() -> ())? = nil) async -> Bool {
     if let fullname = data?.name {
       let result = await redditAPI.newReply(text, fullname) ?? false
       if result {
-        doThisAfter(0.3) {
-          Task(priority: .background) {
-            await self.refreshPost()
+          if let updateComments = updateComments {
+            await MainActor.run {
+              withAnimation {
+                updateComments()
+              }
+            }
           }
-        }
         //        if let data = data {
         //          let newComment = CommentData(
         //            subreddit_id: data.subreddit_id,

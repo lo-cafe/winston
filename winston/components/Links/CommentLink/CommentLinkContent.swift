@@ -233,20 +233,20 @@ struct CommentLinkContent: View {
           .background(preferenceShowCommentsCards && showReplies ? Color.listBG : .clear)
           .contextMenu {
             if !selectable && forcedBodySize == nil {
-              Button {
-                withAnimation { comment.data?.winstonSelecting = true }
-              } label: {
-                Label("Select text", systemImage: "selection.pin.in.out")
+              ForEach(allCommentSwipeActions) { action in
+                let active = action.active(comment)
+                if action.enabled(comment) {
+                  Button {
+                    Task(priority: .background) {
+                      await action.action(comment)
+                    }
+                  } label: {
+                    Label(active ? "Undo \(action.label.lowercased())" : action.label, systemImage: active ? action.icon.active : action.icon.normal)
+                      .foregroundColor(action.bgColor.normal == "353439" ? action.color.normal == "FFFFFF" ? Color.blue : Color.hex(action.color.normal) : Color.hex(action.bgColor.normal))
+                  }
+                }
               }
-              Button {
-                withAnimation { comment.data?.winstonSelecting = true }
-              } label: {
-                Label("Edit", systemImage: "pencil")
-              }
-              Button(role: .destructive) {
-              } label: {
-                Label("Delete", systemImage: "trash.fill")
-              }
+
             }
           } preview: {
             CommentLinkContentPreview(sizer: sizer, forcedBodySize: sizer.size, showReplies: showReplies, arrowKinds: arrowKinds, indentLines: indentLines, lineLimit: lineLimit, post: post, comment: comment, avatarsURL: avatarsURL)

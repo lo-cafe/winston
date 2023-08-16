@@ -183,17 +183,17 @@ struct SwipeUI<T: GenericRedditEntityDataType>: ViewModifier {
         
         var triggering: TriggeredAction = .none
         
-        if (actionsSet.leftFirst.id != "none" && newValue > firstActionThreshold - 1) {
-          triggering = .leftFirst
-        }
-        if actionsSet.leftSecond.id != "none" && (newValue) > secondActionThreshold - 1 {
-          triggering = .leftSecond
-        }
-        if (actionsSet.rightFirst.id != "none" && newValue < -firstActionThreshold + 1) {
+        if (actionsSet.rightFirst.id != "none" && actionsSet.rightFirst.enabled(entity) && newValue >= firstActionThreshold) {
           triggering = .rightFirst
         }
-        if actionsSet.rightSecond.id != "none" && (newValue) < -secondActionThreshold + 1 {
+        if actionsSet.rightSecond.id != "none" && actionsSet.rightSecond.enabled(entity) && (newValue) >= secondActionThreshold {
           triggering = .rightSecond
+        }
+        if (actionsSet.leftFirst.id != "none" && actionsSet.leftFirst.enabled(entity) && newValue <= -firstActionThreshold) {
+          triggering = .leftFirst
+        }
+        if actionsSet.leftSecond.id != "none" && actionsSet.leftSecond.enabled(entity) && (newValue) <= -secondActionThreshold {
+          triggering = .leftSecond
         }
         
         if triggering != triggeredAction {

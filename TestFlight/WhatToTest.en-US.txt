@@ -1,3 +1,5 @@
-- Many performance improvements (one step at a time), including a new markdown renderer and the removing of a useless library.
-- Fixes posts not opening in search
-- Removed tooltip in votes, since it was causing a bunch of lag
+- Added edit option
+- Added delete option
+- All swipe options can also be swipe options
+- Yes, Share option does nothing atm
+This was the first step for gestures to work anywhere (swipe right in the middle of the screen) :)

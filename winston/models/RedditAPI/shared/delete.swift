@@ -1,21 +1,20 @@
 //
-//  newReply.swift
+//  deleteComment.swift
 //  winston
 //
-//  Created by Igor Marcossi on 04/07/23.
+//  Created by Igor Marcossi on 15/08/23.
 //
 
 import Foundation
 import Alamofire
 
 extension RedditAPI {
-  func newReply(_ message: String, _ destinationID: String) async -> Bool? {
+  func delete(fullname: String) async -> Bool? {
     await refreshToken()
-    //    await getModHash()
     if let headers = self.getRequestHeaders() {
-      let params = NewReplyPayload(text: message, thing_id: destinationID)
+      let params = ["id": fullname]
       let dataTask = AF.request(
-        "\(RedditAPI.redditApiURLBase)/api/comment",
+        "\(RedditAPI.redditApiURLBase)/api/del",
         method: .post,
         parameters: params,
         encoder: URLEncodedFormParameterEncoder(destination: .httpBody),
@@ -26,17 +25,10 @@ extension RedditAPI {
       case .success:
         return true
       case .failure:
-        //        print(error)
         return nil
       }
     } else {
       return nil
     }
-  }
-  
-  struct NewReplyPayload: Codable {
-    var api_type = "json"
-    let text: String
-    var thing_id: String
   }
 }

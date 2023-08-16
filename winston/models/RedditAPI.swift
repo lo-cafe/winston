@@ -319,3 +319,35 @@ enum Either<A: Codable & Hashable, B: Codable & Hashable>: Codable, Hashable {
   }
 }
 
+//enum Either<A: Codable & Hashable, B: Codable & Hashable>: Codable, Hashable {
+//  case first(A)
+//  case second(B)
+//  
+//  init(from decoder: Decoder) throws {
+//    let container = try decoder.singleValueContainer()
+//    
+//    do {
+//      let firstType = try container.decode(A.self)
+//      self = .first(firstType)
+//    } catch let firstError {
+//      do {
+//        let secondType = try container.decode(B.self)
+//        self = .second(secondType)
+//      } catch let secondError {
+//        let context = DecodingError.Context(codingPath: decoder.codingPath, debugDescription: "Type mismatch for both types.", underlyingError: Swift.DecodingError.typeMismatch(Any.self, DecodingError.Context.init(codingPath: decoder.codingPath, debugDescription: "First type error: \(firstError). Second type error: \(secondError)")))
+//        throw DecodingError.dataCorrupted(context)
+//      }
+//    }
+//  }
+//  
+//  func encode(to encoder: Encoder) throws {
+//    var container = encoder.singleValueContainer()
+//    switch self {
+//    case .first(let value):
+//      try container.encode(value)
+//    case .second(let value):
+//      try container.encode(value)
+//    }
+//  }
+//}
+

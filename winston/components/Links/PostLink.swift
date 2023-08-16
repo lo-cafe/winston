@@ -246,13 +246,11 @@ struct PostLink: View, Equatable {
       .multilineTextAlignment(.leading)
       .zIndex(1)
       .onDisappear {
-        if readPostOnScroll {
-          Task(priority: .background) {
+        Task(priority: .background) {
+          if readPostOnScroll {
             post.toggleSeen(true, optimistic: true)
           }
-        }
-        if hideReadPosts {
-          Task(priority: .background) {
+          if hideReadPosts {
             await post.hide(true)
           }
         }
