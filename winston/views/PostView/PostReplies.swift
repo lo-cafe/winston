@@ -29,6 +29,7 @@ struct PostReplies: View {
       Task(priority: .background) {
         await redditAPI.updateAvatarURLCacheFromComments(comments: newComments)
       }
+      newComments.forEach { $0.parentWinston = comments }
       await MainActor.run {
         withAnimation {
             comments.data = newComments
@@ -94,7 +95,7 @@ struct PostReplies: View {
               .listRowBackground(Color.clear)
               .onChange(of: update) { _ in
                 Task(priority: .background) {
-                  await asyncFetch(post.data == nil)
+                  await asyncFetch(true)
                 }
               }
               .onChange(of: ignoreSpecificComment) { val in
@@ -141,6 +142,11 @@ struct PostReplies: View {
             .frame(maxWidth: .infinity, minHeight: 300)
             .opacity(0.25)
             .listRowBackground(Color.clear)
+            .onChange(of: update) { _ in
+              Task(priority: .background) {
+                await asyncFetch(true)
+              }
+            }
             .id("no-comments-placeholder")
         }
       }

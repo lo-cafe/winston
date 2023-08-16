@@ -10,13 +10,39 @@ import HighlightedTextEditor
 import Defaults
 
 class TextFieldObserver : ObservableObject {
-  @Published var debouncedTeplyText = ""
-  @Published var replyText = ""
+  @Published var debouncedTeplyText: String
+  @Published var replyText: String
   
-  init(delay: DispatchQueue.SchedulerTimeType.Stride) {
+  init(delay: DispatchQueue.SchedulerTimeType.Stride, text: String? = nil) {
+    let initial = ""
+    debouncedTeplyText = text ?? initial
+    replyText = text ?? initial
     $replyText
       .debounce(for: delay, scheduler: DispatchQueue.main)
       .assign(to: &$debouncedTeplyText)
+  }
+}
+
+struct EditReplyModalComment: View {
+  @ObservedObject var comment: Comment
+  
+  func action(_ endLoading: (@escaping (Bool) -> ()), text: String) {
+    if let _ = comment.typePrefix {
+      Task(priority: .background) {
+        let result = (await comment.edit(text)) ?? false
+        await MainActor.run {
+          withAnimation(spring) {
+            endLoading(result)
+          }
+        }
+      }
+    }
+  }
+  
+  var body: some View {
+    ReplyModal(title: "Editing", loadingLabel: "Updating...", submitBtnLabel: "Update comment", thingFullname: comment.data?.name ?? "", action: action, text: comment.data?.body) {
+      EmptyView()
+    }
   }
 }
 
@@ -47,10 +73,11 @@ struct ReplyModalComment: View {
 
 struct ReplyModalPost: View {
   @ObservedObject var post: Post
+  var updateComments: (()->())?
   
   func action(_ endLoading: (@escaping (Bool) -> ()), text: String) {
     Task(priority: .background) {
-      let result = await post.reply(text)
+      let result = await post.reply(text, updateComments: updateComments)
       await MainActor.run {
         withAnimation(spring) {
           endLoading(result)
@@ -67,23 +94,36 @@ struct ReplyModalPost: View {
 }
 
 struct ReplyModal<Content: View>: View {
+  var loadingLabel: String
+  var submitBtnLabel: String
   var thingFullname: String
+  var title: String
   var action: ((@escaping (Bool) -> ()), String) -> ()
+  let content: (() -> Content)?
+  
   @ObservedObject private var globalLoader = TempGlobalState.shared.globalLoader
-  @EnvironmentObject var redditAPI: RedditAPI
-  @State var alertExit = false
-  @StateObject var textWrapper = TextFieldObserver(delay: 0.5)
-  @Environment(\.dismiss) var dismiss
+  @EnvironmentObject private var redditAPI: RedditAPI
+  @State private var alertExit = false
+  @StateObject private var textWrapper: TextFieldObserver
+  @Environment(\.dismiss) private var dismiss
   @Environment(\.managedObjectContext) private var viewContext
-  @State var currentDraft: ReplyDraft?
-  @State var editorHeight: CGFloat = 200
-  @State var loading = false
+  @State private var currentDraft: ReplyDraft?
+  @State private var editorHeight: CGFloat = 200
+  @State private var loading = false
   @State private var selection: PresentationDetent = .medium
   @Default(.replyModalBlurBackground) var replyModalBlurBackground
-  
   @FetchRequest(sortDescriptors: []) var drafts: FetchedResults<ReplyDraft>
-  var content: (() -> Content)?
   
+  init(title: String = "Replying", loadingLabel: String = "Commenting...", submitBtnLabel: String = "Send", thingFullname: String, action: @escaping (@escaping (Bool) -> Void, String) -> Void, text: String? = nil, content: (() -> Content)?) {
+    self.title = title
+    self.loadingLabel = loadingLabel
+    self.submitBtnLabel = submitBtnLabel
+    self.content = content
+    self.thingFullname = thingFullname
+    self.action = action
+    self._textWrapper = StateObject(wrappedValue: TextFieldObserver(delay: 0.5, text: text))
+  }
+    
   var body: some View {
     NavigationView {
       ScrollView {
@@ -118,11 +158,11 @@ struct ReplyModal<Content: View>: View {
         .padding(.bottom, 68)
       }
       .overlay(
-        MasterButton(icon: "paperplane.fill", label: "Send", height: 48, fullWidth: true, cornerRadius: 16) {
+        MasterButton(icon: "paperplane.fill", label: submitBtnLabel, height: 48, fullWidth: true, cornerRadius: 16) {
           withAnimation(spring) {
             dismiss()
           }
-          globalLoader.enable("Commenting...")
+          globalLoader.enable(loadingLabel)
           action({ result in
             globalLoader.dismiss()
             if result {

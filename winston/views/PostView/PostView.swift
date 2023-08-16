@@ -28,11 +28,18 @@ struct PostView: View {
   @State var update = false
   
   func asyncFetch(_ full: Bool = true) async {
+    if full {
+        update.toggle()
+    }
     if let result = await post.refreshPost(commentID: ignoreSpecificComment ? nil : highlightID, sort: sort, after: nil, subreddit: subreddit.data?.display_name ?? subreddit.id, full: full), let newComments = result.0 {
       Task {
         await redditAPI.updateAvatarURLCacheFromComments(comments: newComments)
       }
     }
+  }
+  
+  func updateComments() {
+    Task { await asyncFetch(true) }
   }
   
   var body: some View {
@@ -130,8 +137,7 @@ struct PostView: View {
           .animation(nil, value: sort)
       )
       .onChange(of: sort) { val in
-        update.toggle()
-        Task { await asyncFetch() }
+        updateComments()
       }
       .task {
         if subreddit.data == nil && subreddit.id != "home" {
