@@ -139,9 +139,11 @@ struct PostView: View {
       .onChange(of: sort) { val in
         updateComments()
       }
-      .task {
-        if subreddit.data == nil && subreddit.id != "home" {
-          await subreddit.refreshSubreddit()
+      .onAppear {
+        Task(priority: .background) {
+          if subreddit.data == nil && subreddit.id != "home" {
+            await subreddit.refreshSubreddit()
+          }
         }
       }
     }
