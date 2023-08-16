@@ -18,7 +18,7 @@ extension RedditAPI {
         "\(RedditAPI.redditApiURLBase)/api/vote",
         method: .post,
         parameters: params,
-        encoder: URLEncodedFormParameterEncoder(destination: .queryString),
+        encoder: URLEncodedFormParameterEncoder(destination: .httpBody),
         headers: headers
       ).serializingString()
       let result = await dataTask.result

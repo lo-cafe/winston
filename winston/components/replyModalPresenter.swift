@@ -17,6 +17,9 @@ struct ReplyModalPresenter: ViewModifier {
       .sheet(isPresented: Binding(get: { shared.isShowing == .comment }, set: { if !$0 { shared.disable() } })) {
         ReplyModalComment(comment: shared.subjectComment)
       }
+      .sheet(isPresented: Binding(get: { shared.isShowing == .commentEdit }, set: { if !$0 { shared.disable() } })) {
+        EditReplyModalComment(comment: shared.subjectCommentEdit)
+      }
   }
 }
 
@@ -33,10 +36,18 @@ class ReplyModalInstance: ObservableObject {
   static private let placeholderComment = Comment.placeholder()
   @Published public private(set) var subjectPost: Post = ReplyModalInstance.placeholderPost
   @Published public private(set) var subjectComment: Comment = ReplyModalInstance.placeholderComment
+  @Published public private(set) var subjectCommentEdit: Comment = ReplyModalInstance.placeholderComment
   @Published public private(set) var isShowing: Showing = .none { didSet { if isShowing == .none { self.clearSubjects() } } }
   
   func enable(_ subject: Subject) {
     switch subject {
+    case .commentEdit(let comment):
+      subjectCommentEdit = comment
+      doThisAfter(0) {
+        withAnimation(spring) {
+          self.isShowing = .commentEdit
+        }
+      }
     case .comment(let comment):
       subjectComment = comment
       doThisAfter(0) {
@@ -60,17 +71,23 @@ class ReplyModalInstance: ObservableObject {
   }
   
   private func clearSubjects() {
-    doThisAfter(0.4) { self.subjectPost = ReplyModalInstance.placeholderPost; self.subjectComment = ReplyModalInstance.placeholderComment }
+    doThisAfter(0.4) {
+      self.subjectPost = ReplyModalInstance.placeholderPost;
+      self.subjectComment = ReplyModalInstance.placeholderComment
+      self.subjectCommentEdit = ReplyModalInstance.placeholderComment
+    }
   }
   
   enum Subject {
     case post(Post)
     case comment(Comment)
+    case commentEdit(Comment)
   }
   
   enum Showing: String {
     case post
     case comment
+    case commentEdit
     case none
   }
 }

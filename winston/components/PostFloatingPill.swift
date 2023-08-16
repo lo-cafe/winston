@@ -15,6 +15,7 @@ struct PostFloatingPill: View {
   @ObservedObject var post: Post
   @ObservedObject var subreddit: Subreddit
   @State var showReplyModal = false
+  var updateComments: (()->())?
 
   @State var showAddedToast: Bool = false
   @State var showRemovedToast: Bool = false
@@ -100,7 +101,7 @@ struct PostFloatingPill: View {
     .floating()
     .padding(.all, 8)
     .sheet(isPresented: $showReplyModal) {
-      ReplyModalPost(post: post)
+      ReplyModalPost(post: post, updateComments: updateComments)
     }
   }
 }

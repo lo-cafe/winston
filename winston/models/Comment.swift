@@ -32,8 +32,11 @@ enum CommentParentElement {
 
 extension Comment {
   static var prefix = "t1"
-  convenience init(data: T, api: RedditAPI, kind: String? = nil) {
+  convenience init(data: T, api: RedditAPI, kind: String? = nil, parent: ObservableArray<GenericRedditEntity<T>>? = nil) {
     self.init(data: data, api: api, typePrefix: "\(Comment.prefix)_")
+    if let parent = parent {
+      self.parentWinston = parent
+    }
     self.kind = kind
     if let replies = self.data?.replies {
       switch replies {
@@ -41,7 +44,10 @@ extension Comment {
         break
       case.second(let listing):
         self.childrenWinston.data = listing.data?.children?.compactMap { x in
-          if let innerData = x.data { return Comment(data: innerData, api: redditAPI, kind: x.kind) }
+          if let innerData = x.data {
+            var newComment = Comment(data: innerData, api: redditAPI, kind: x.kind, parent: self.childrenWinston)
+            return newComment
+          }
           return nil
         } ?? []
       }
@@ -72,6 +78,7 @@ extension Comment {
         body: message.body,
         top_awarded_type: nil,
         name: message.name,
+        is_submitter: nil,
         downs: nil,
         children: nil,
         body_html: message.body_html,
@@ -91,14 +98,14 @@ extension Comment {
     }
   }
   
-  static func initMultiple(datas: [ListingChild<T>], api: RedditAPI) -> [Comment] {
+  static func initMultiple(datas: [ListingChild<T>], api: RedditAPI, parent: ObservableArray<GenericRedditEntity<T>>? = nil) -> [Comment] {
     let context = PersistenceController.shared.container.viewContext
     let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "CollapsedComment")
     if let results = try? context.fetch(fetchRequest) as? [CollapsedComment] {
       return datas.compactMap { x in
         if let data = x.data {
           let isCollapsed = results.contains(where: { $0.commentID == data.id })
-          let newPost = Comment.init(data: data, api: api, kind: x.kind)
+          let newPost = Comment.init(data: data, api: api, kind: x.kind, parent: parent)
           newPost.data?.collapsed = isCollapsed
           return newPost
         }
@@ -228,6 +235,7 @@ extension Comment {
           body: text,
           top_awarded_type: nil,
           name: nil,
+          is_submitter: nil,
           downs: 0,
           children: nil,
           body_html: nil,
@@ -281,17 +289,67 @@ extension Comment {
     var newAction = action
     newAction = action.boolVersion() == oldLikes ? .none : action
     await MainActor.run { [newAction] in
-      data?.likes = newAction.boolVersion()
-      data?.ups = oldUps + (action.boolVersion() == oldLikes ? oldLikes == nil ? 0 : -action.rawValue : action.rawValue * (oldLikes == nil ? 1 : 2))
+      withAnimation {
+        data?.likes = newAction.boolVersion()
+        data?.ups = oldUps + (action.boolVersion() == oldLikes ? oldLikes == nil ? 0 : -action.rawValue : action.rawValue * (oldLikes == nil ? 1 : 2))
+      }
     }
     let result = await redditAPI.vote(newAction, id: "\(typePrefix ?? "")\(id)")
     if result == nil || !result! {
       await MainActor.run { [oldLikes] in
-        data?.likes = oldLikes
-        data?.ups = oldUps
+        withAnimation {
+          data?.likes = oldLikes
+          data?.ups = oldUps
+        }
       }
     }
     return result
+  }
+  
+  func edit(_ newBody: String) async -> Bool? {
+    if let data = data, let name = data.name {
+      //      let oldBody = data.body
+      //      await MainActor.run {
+      //        withAnimation {
+      //          self.data?.body = newBody
+      //        }
+      //      }
+      let result = await redditAPI.edit(fullname: name, newText: newBody)
+      if (result ?? false) {
+        await MainActor.run {
+          withAnimation {
+            self.data?.body = newBody
+          }
+        }
+      }
+      //      if result == nil || !result! {
+      //        await MainActor.run {
+      //          withAnimation {
+      //            self.data?.body = oldBody
+      //          }
+      //        }
+      //      }
+      return result
+    }
+    return nil
+  }
+  
+  func del() async -> Bool? {
+    if let name = data?.name {
+      let result = await redditAPI.delete(fullname: name)
+      if (result ?? false) {
+        if let parentWinston = self.parentWinston {
+          let newParent = parentWinston.data.filter { $0.id != id }
+          await MainActor.run {
+            withAnimation {
+              self.parentWinston?.data = newParent
+            }
+          }
+        }
+      }
+      return result
+    }
+    return nil
   }
 }
 
@@ -330,12 +388,12 @@ struct CommentData: GenericRedditEntityDataType {
   let mod_note: String?
   //  let all_awardings: [String]?
   var collapsed: Bool?
-  let body: String?
+  var body: String?
   //  let edited: Bool?
   let top_awarded_type: String?
   //  let author_flair_css_class: String?
   let name: String?
-  //  let is_submitter: Bool?
+  let is_submitter: Bool?
   let downs: Int?
   //  let author_flair_richtext: [String]?
   //  let author_patreon_flair: Bool?
