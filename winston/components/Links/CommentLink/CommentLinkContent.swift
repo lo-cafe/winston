@@ -7,7 +7,6 @@
 
 import SwiftUI
 import Defaults
-import MarkdownUI
 
 class Sizer: ObservableObject {
   @Published var size: CGSize = .zero
