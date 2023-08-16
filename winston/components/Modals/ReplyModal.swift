@@ -239,7 +239,7 @@ struct ReplyModal<Content: View>: View {
         }
       }
       .navigationBarTitleDisplayMode(.inline)
-      .navigationTitle("Replying")
+      .navigationTitle(title)
     }
     .presentationDetents([.large, .fraction(0.75), .medium, collapsedPresentation], selection: $selection)
     .presentationCornerRadius(32)
