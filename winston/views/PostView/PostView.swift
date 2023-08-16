@@ -8,7 +8,7 @@
 import SwiftUI
 import Defaults
 import AVFoundation
-
+import AlertToast
 struct PostViewPayload: Hashable {
   let post: Post
   let sub: Subreddit
@@ -26,7 +26,7 @@ struct PostView: View {
   @EnvironmentObject private var redditAPI: RedditAPI
   @EnvironmentObject private var router: Router
   @State var update = false
-  
+
   func asyncFetch(_ full: Bool = true) async {
     if full {
         update.toggle()

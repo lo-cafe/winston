@@ -8,6 +8,7 @@
 import SwiftUI
 import Defaults
 import SimpleHaptics
+import AlertToast
 struct PostFloatingPill: View {
   @Default(.postsInBox) var postsInBox
   @Default(.showUpvoteRatio) var showUpvoteRatio
@@ -16,6 +17,8 @@ struct PostFloatingPill: View {
   @State var showReplyModal = false
   var updateComments: (()->())?
 
+  @State var showAddedToast: Bool = false
+  @State var showRemovedToast: Bool = false
   var thisPinnedPost: Bool { postsInBox.contains { $0.id == post.id } }
   
   var body: some View {
@@ -38,6 +41,9 @@ struct PostFloatingPill: View {
                 withAnimation(spring) {
                   postsInBox = postsInBox.filter({ $0.id != post.id })
                 }
+                withAnimation(nil){
+                  showRemovedToast.toggle()
+                }
               } else {
                 var subIcon: String?
                 if let subData = subreddit.data {
@@ -52,10 +58,20 @@ struct PostFloatingPill: View {
                   score: data.ups, commentsCount: data.num_comments,
                   createdAt: data.created, lastUpdatedAt: Date().timeIntervalSince1970
                 )
-                withAnimation(spring) {
+                withAnimation(spring){
                   postsInBox.append(newPostInBox)
+
+                }
+                withAnimation(nil){
+                  showAddedToast.toggle()
                 }
               }
+            }
+            .toast(isPresenting: $showAddedToast, tapToDismiss: true){
+              AlertToast(displayMode: .hud, type: .systemImage("plus.circle", Color.blue), title: "Added to Posts Box!")
+            }
+            .toast(isPresenting: $showRemovedToast, tapToDismiss: true){
+              AlertToast(displayMode: .hud, type: .systemImage("trash", Color.blue), title: "Removed from Posts Box!")
             }
             
             LightBoxButton(icon: "arrowshape.turn.up.left.fill") {
@@ -81,7 +97,7 @@ struct PostFloatingPill: View {
     .fontSize(20, .semibold)
     .foregroundColor(.blue)
     .padding(.trailing, 14)
-    //    .padding(.vertical, 8)
+
     .floating()
     .padding(.all, 8)
     .sheet(isPresented: $showReplyModal) {

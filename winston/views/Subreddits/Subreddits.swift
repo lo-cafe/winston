@@ -47,7 +47,7 @@ struct Subreddits: View {
   @StateObject private var router = Router()
   
   @Default(.preferenceDefaultFeed) var preferenceDefaultFeed // handle default feed selection routing
-  
+  @Default(.likedButNotSubbed) var likedButNotSubbed // subreddits that a user likes but is not subscribed to so they wont be in subsDict
   func sort(_ subs: [ListingChild<SubredditData>]) -> [String: [Subreddit]] {
     return Dictionary(grouping: subs.compactMap { $0.data }, by: { String($0.display_name?.prefix(1) ?? "").uppercased() })
       .mapValues { items in items.sorted { ($0.display_name ?? "") < ($1.display_name ?? "") }.map { Subreddit(data: $0, api: redditAPI) } }
@@ -58,6 +58,7 @@ struct Subreddits: View {
       let newSubsDict = sort(val)
       let newSubsArr = Array(newSubsDict.values).flatMap { $0 }
       let newFavoritesArr = Array(newSubsArr.filter { $0.data?.user_has_favorited ?? false }).sorted { ($0.data?.display_name?.lowercased() ?? "") < ($1.data?.display_name?.lowercased() ?? "") }
+          + likedButNotSubbed
       let newAvailableLetters = Array(newSubsDict.keys).sorted { $0 < $1 }
       await MainActor.run {
         withAnimation(.default) {

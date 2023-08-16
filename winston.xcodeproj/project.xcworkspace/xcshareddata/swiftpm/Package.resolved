@@ -10,6 +10,15 @@
       }
     },
     {
+      "identity" : "alerttoast",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/ImTheSquid/AlertToast.git",
+      "state" : {
+        "branch" : "master",
+        "revision" : "1e5e30f68860b7b5ea7cadd51ced166dfe486bca"
+      }
+    },
+    {
       "identity" : "defaults",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/sindresorhus/Defaults",
@@ -122,8 +131,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/siteline/swiftui-introspect",
       "state" : {
-        "revision" : "6dce3c8f5bfa8bc20120c7497da27e984a8813aa",
-        "version" : "0.7.0"
+        "revision" : "ccb973cfff703cba53fb88197413485c060eb26b",
+        "version" : "0.10.0"
       }
     },
     {
