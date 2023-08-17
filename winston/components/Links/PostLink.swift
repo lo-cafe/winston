@@ -44,6 +44,8 @@ struct PostLink: View, Equatable {
   @Default(.blurPostLinkNSFW) private var blurPostLinkNSFW
   @State private var postSwipeActions: SwipeActionsSet = Defaults[.postSwipeActions]
   @Default(.compactMode) var compactMode
+  @Default(.showVotes) var showVotes
+  @Default(.showSelfText) var showSelfText
   
   @Default(.postLinksInnerHPadding) private var postLinksInnerHPadding
   @Default(.postLinksInnerVPadding) private var postLinksInnerVPadding
@@ -72,11 +74,10 @@ struct PostLink: View, Equatable {
         layout {
           VStack(alignment: .leading, spacing: compactMode ? 4 : 10) {
             Text(data.title.escape)
-              .lineLimit(compactMode ? 2 : nil)
               .fontSize(compactMode ? 16 : 17, .medium)
               .frame(maxWidth: .infinity, alignment: .topLeading)
             
-            if data.selftext != "" {
+            if data.selftext != "" && showSelfText {
               Text(data.selftext.md()).lineLimit(compactMode ? 2 : 3)
                 .fontSize(14)
                 .opacity(0.75)
@@ -126,7 +127,7 @@ struct PostLink: View, Equatable {
             .nsfw(over18 && blurPostLinkNSFW)
           }
           
-          if compactMode {
+          if compactMode && showVotes {
             VStack(alignment: .center, spacing: 2) {
               
               VoteButton(color: data.likes != nil && data.likes! ? .orange : .gray, voteAction: .up, image: "arrow.up", post: post)
@@ -179,13 +180,18 @@ struct PostLink: View, Equatable {
         if !compactMode {
           HStack {
             if let fullname = data.author_fullname {
-              Badge(showAvatar: preferenceShowPostsAvatars, author: data.author, fullname: fullname, created: data.created, extraInfo: ["message.fill":"\(data.num_comments)"])
+              if !showVotes {
+                Badge(showAvatar: preferenceShowPostsAvatars, author: data.author, fullname: fullname, created: data.created, extraInfo: ["message.fill":"\(data.num_comments)", (data.ups >= 0 ? "arrow.up" : "arrow.down"): "\(formatBigNumber(data.ups))"])
+              } else {
+                Badge(showAvatar: preferenceShowPostsAvatars, author: data.author, fullname: fullname, created: data.created, extraInfo: ["message.fill":"\(data.num_comments)"])
+
+              }
             }
             
             Spacer()
             
             HStack(alignment: .center) {
-              VotesCluster(data: data, likeRatio: showUpvoteRatio ? data.upvote_ratio : nil, post: post)
+              showVotes ? VotesCluster(data: data, likeRatio: showUpvoteRatio ? data.upvote_ratio : nil, post: post) : nil
             }
             .fontSize(22, .medium)
           }

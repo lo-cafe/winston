@@ -22,17 +22,17 @@ struct AccountPanel: View {
             .fontSize(48, .bold)
             .foregroundColor(.green)
           VStack(alignment: .leading) {
-            Text("Everything amazing!")
+            Text("Everything Amazing!")
               .fontSize(20, .bold)
             Text("Your API credentials are 👌")
           }
         }
         
         if let accessToken = redditAPI.loggedUser.accessToken {
-          Button("Copy current access token") {
+          Button("Copy Current Access Token") {
             UIPasteboard.general.string = accessToken
           }
-          Button("Refresh access token") {
+          Button("Refresh Access Token") {
             Task(priority: .background) {
               await redditAPI.refreshToken(true)
             }
@@ -42,7 +42,7 @@ struct AccountPanel: View {
         Text("If Reddit ban the user-agent this app uses, you can change it to a custom one here:")
         HStack {
           Image(systemName: "person.crop.circle.fill")
-          TextField("User agent", text: $redditAPIUserAgent)
+          TextField("User Agent", text: $redditAPIUserAgent)
         }
       }
       
@@ -52,7 +52,7 @@ struct AccountPanel: View {
         }
         .foregroundColor(.red)
         .confirmationDialog("Are you sure you wanna logoff?", isPresented: $isPresentingConfirm) {
-          Button("Forget API credentials?", role: .destructive) {
+          Button("Forget API Credentials?", role: .destructive) {
             redditAPI.loggedUser.accessToken = nil
             redditAPI.loggedUser.refreshToken = nil
             redditAPI.loggedUser.expiration = nil

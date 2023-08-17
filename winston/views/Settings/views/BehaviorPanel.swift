@@ -25,7 +25,7 @@ struct BehaviorPanel: View {
     List {
       
       Section("General") {
-        Toggle("Open Youtube videos externally", isOn: $openYoutubeApp)
+        Toggle("Open Youtube Videos Externally", isOn: $openYoutubeApp)
         
         Picker("Default Launch Feed", selection: $preferenceDefaultFeed) {
           Text("Home").tag("home")
@@ -44,19 +44,19 @@ struct BehaviorPanel: View {
       }
       
       Section("Posts") {
-        NavigationLink("Posts swipe settings", value: SettingsPages.postSwipe)
-        Toggle("Read posts on scroll", isOn: $readPostOnScroll)
-        Toggle("Hide read posts", isOn: $hideReadPosts)
-        Toggle("Blur NSFW in opened posts", isOn: $blurPostNSFW)
-        Toggle("Blur NSFW in posts links", isOn: $blurPostLinkNSFW)
-        Picker("Posts sorting", selection: $preferredSort) {
+        NavigationLink("Posts Swipe Settings", value: SettingsPages.postSwipe)
+        Toggle("Read Posts on Scroll", isOn: $readPostOnScroll)
+        Toggle("Hide Read Posts", isOn: $hideReadPosts)
+        Toggle("Blur NSFW in Opened Posts", isOn: $blurPostNSFW)
+        Toggle("Blur NSFW in Posts Links", isOn: $blurPostLinkNSFW)
+        Picker("Posts Sorting", selection: $preferredSort) {
           ForEach(SubListingSortOption.allCases, id: \.self) { val in
             Label(val.rawVal.id.capitalized, systemImage: val.rawVal.icon)
           }
         }
         VStack(alignment: .leading) {
           HStack {
-            Text("Max posts image height")
+            Text("Max Posts Image Height")
             Spacer()
             Text(maxPostLinkImageHeightPercentage == 110 ? "Original" : "\(Int(maxPostLinkImageHeightPercentage))%")
               .opacity(0.6)
@@ -66,8 +66,8 @@ struct BehaviorPanel: View {
       }
       
       Section("Comments") {
-        NavigationLink("Comments swipe settings", value: SettingsPages.commentSwipe)
-        Picker("Comments sorting", selection: $preferredCommentSort) {
+        NavigationLink("Comments Swipe Settings", value: SettingsPages.commentSwipe)
+        Picker("Comments Sorting", selection: $preferredCommentSort) {
           ForEach(CommentSortOption.allCases, id: \.self) { val in
             Label(val.rawVal.id.capitalized, systemImage: val.rawVal.icon)
           }

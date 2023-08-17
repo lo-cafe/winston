@@ -38,13 +38,15 @@ struct AppearancePanel: View {
   @Default(.coloredCommentNames) var coloredCommentNames
   @Default(.showUpvoteRatio) var showUpvoteRatio
   @Default(.compactMode) var compactMode
+  @Default(.showVotes) var showVotes
+  @Default(.showSelfText) var showSelfText
   
   var body: some View {
     List {
       Section("General") {
-        Toggle("Blur reply background", isOn: $replyModalBlurBackground)
-        Toggle("Blur new post background", isOn: $newPostModalBlurBackground)
-        Toggle("Show username in tab bar", isOn: $showUsernameInTabBar)
+        Toggle("Blur Reply Background", isOn: $replyModalBlurBackground)
+        Toggle("Blur New Post Background", isOn: $newPostModalBlurBackground)
+        Toggle("Show Username in Tab Bar", isOn: $showUsernameInTabBar)
         
       }
       
@@ -63,16 +65,17 @@ struct AppearancePanel: View {
         .frame(maxWidth: .infinity)
         
         VStack(alignment: .leading) {
-          Toggle("Fade read posts", isOn: $fadeReadPosts)
+          Toggle("Fade Read Posts", isOn: $fadeReadPosts)
           Text("Uses fading instead of a glowing dot to tell read from unread posts.").fontSize(13).opacity(0.75)
         }
-        Toggle("Compact mode", isOn: $compactMode)
         Toggle("Show avatars", isOn: $preferenceShowPostsAvatars)
         Toggle("Show upvote ratio", isOn: $showUpvoteRatio)
-        if preferenceShowCommentsCards {
+        Toggle("Show Voting Buttons", isOn: $showVotes)
+        Toggle("Show Self Text", isOn: $showSelfText)
+        if preferenceShowPostsCards {
           VStack(alignment: .leading) {
             HStack {
-              Text("Outer horizontal spacing")
+              Text("Outer Horizontal Spacing")
               Spacer()
               Text("\(Int(cardedPostLinksOuterHPadding))")
                 .opacity(0.6)
@@ -81,7 +84,7 @@ struct AppearancePanel: View {
           }
           VStack(alignment: .leading) {
             HStack {
-              Text("Outer vertical spacing")
+              Text("Outer Vertical Spacing")
               Spacer()
               Text("\(Int(cardedPostLinksOuterVPadding))")
                 .opacity(0.6)
@@ -90,7 +93,7 @@ struct AppearancePanel: View {
           }
           VStack(alignment: .leading) {
             HStack {
-              Text("Inner horizontal spacing")
+              Text("Inner Horizontal Spacing")
               Spacer()
               Text("\(Int(cardedPostLinksInnerHPadding))")
                 .opacity(0.6)
@@ -99,7 +102,7 @@ struct AppearancePanel: View {
           }
           VStack(alignment: .leading) {
             HStack {
-              Text("Inner vertical spacing")
+              Text("Inner Vertical Spacing")
               Spacer()
               Text("\(Int(cardedPostLinksInnerVPadding))")
                 .opacity(0.6)
@@ -109,7 +112,7 @@ struct AppearancePanel: View {
         } else {
           VStack(alignment: .leading) {
             HStack {
-              Text("Horizontal spacing")
+              Text("Horizontal Spacing")
               Spacer()
               Text("\(Int(postLinksInnerHPadding))")
                 .opacity(0.6)
@@ -119,7 +122,7 @@ struct AppearancePanel: View {
           
           VStack(alignment: .leading) {
             HStack {
-              Text("Vertical spacing")
+              Text("Vertical Spacing")
               Spacer()
               Text("\(Int(postLinksInnerVPadding))")
                 .opacity(0.6)
@@ -127,6 +130,10 @@ struct AppearancePanel: View {
             Slider(value: $postLinksInnerVPadding, in: 10...110, step: 1)
           }
         }
+      }
+      
+      Section("Compact Posts"){
+        Toggle("Compact mode", isOn: $compactMode)
       }
       
       Section("Comments") {
@@ -143,12 +150,12 @@ struct AppearancePanel: View {
         .pickerStyle(.segmented)
         .frame(maxWidth: .infinity)
         
-        Toggle("Show avatars", isOn: $preferenceShowCommentsAvatars)
-        Toggle("Colored usernames", isOn: $coloredCommentNames)
+        Toggle("Show Avatars", isOn: $preferenceShowCommentsAvatars)
+        Toggle("Colored Usernames", isOn: $coloredCommentNames)
         if preferenceShowCommentsCards {
           VStack(alignment: .leading) {
             HStack {
-              Text("Outer horizontal spacing")
+              Text("Outer Horizontal Spacing")
               Spacer()
               Text("\(Int(cardedCommentsOuterHPadding))")
                 .opacity(0.6)
@@ -166,7 +173,7 @@ struct AppearancePanel: View {
           //          }
           VStack(alignment: .leading) {
             HStack {
-              Text("Inner horizontal spacing")
+              Text("Inner Horizontal Spacing")
               Spacer()
               Text("\(Int(cardedCommentsInnerHPadding))")
                 .opacity(0.6)
@@ -185,7 +192,7 @@ struct AppearancePanel: View {
         } else {
           VStack(alignment: .leading) {
             HStack {
-              Text("Horizontal spacing")
+              Text("Horizontal Spacing")
               Spacer()
               Text("\(Int(commentsInnerHPadding))")
                 .opacity(0.6)
