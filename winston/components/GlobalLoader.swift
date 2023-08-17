@@ -21,11 +21,11 @@ struct GlobalLoaderView: View {
             .transition(.scaleAndBlur)
         }
 
-          Text(globalLoader.loadingText ?? "Loaded")
+          Text(globalLoader.loadingText ?? "Done!")
           .foregroundColor(globalLoader.loadingText == nil ? .green : .teal)
           .fontSize(15, .semibold)
           .transition(.asymmetric(insertion: .move(edge: .bottom), removal: .move(edge: .top)).combined(with: .opacity))
-          .id(globalLoader.loadingText ?? "Loaded")
+          .id(globalLoader.loadingText ?? "Done!")
           
       }
         .padding(.horizontal, 12)

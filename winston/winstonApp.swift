@@ -6,22 +6,19 @@
 //
 
 import SwiftUI
-import SimpleHaptics
-
+import AlertToast
 @main
 struct winstonApp: App {
   @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
   let persistenceController = PersistenceController.shared
   @State var redditAPI = RedditAPI()
   
-  @State var haptics = SimpleHapticGenerator()
-
     var body: some Scene {
         WindowGroup {
             Tabber()
                 .environment(\.managedObjectContext, persistenceController.container.viewContext)
                 .environmentObject(redditAPI)
-                .environmentObject(haptics)
+                .alertToastRoot()
         }
     }
 }

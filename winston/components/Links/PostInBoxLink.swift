@@ -6,13 +6,12 @@
 //
 
 import SwiftUI
-import LonginusSwiftUI
+import NukeUI
 import Defaults
 import SimpleHaptics
 
 struct PostInBoxLink: View {
   @EnvironmentObject private var router: Router
-  @EnvironmentObject private var haptics: SimpleHapticGenerator
   @Default(.postsInBox) private var postsInBox
   @EnvironmentObject private var redditAPI: RedditAPI
   var post: PostInBox
@@ -88,14 +87,19 @@ struct PostInBoxLink: View {
     .frame(width: (UIScreen.screenWidth / 1.75), height: 120, alignment: .topLeading)
     .background(
       post.img != nil && post.img != ""
-      ? LGImage(source: URL(string: post.img!)!, placeholder: {
-        ProgressView()
-      }, options: [.imageWithFadeAnimation])
-      .resizable()
-      .scaledToFill()
-      .opacity(0.15)
-      .frame(width: (UIScreen.screenWidth / 1.75), height: 120)
-      .clipped()
+      
+      ?       LazyImage(url: URL(string: post.img!)!) { state in
+        if let image = state.image {
+          image.resizable().scaledToFill()
+        } else if state.error != nil {
+          Color.red // Indicates an error
+        } else {
+          Color.blue // Acts as a placeholder
+        }
+      }
+        .opacity(0.15)
+        .frame(width: (UIScreen.screenWidth / 1.75), height: 120)
+        .clipped()
       : nil
     )
     .background(RR(20, .listBG))
@@ -119,7 +123,10 @@ struct PostInBoxLink: View {
           withAnimation(spring) {
             dragging = true
           }
-          try? haptics.fire(intensity: 1, sharpness: 1)
+          let impact = UIImpactFeedbackGenerator(style: .rigid)
+          impact.prepare()
+          impact.impactOccurred()
+//          try? haptics.fire(intensity: 1, sharpness: 1)
         }
         .sequenced(before: DragGesture())
         .onChanged{ sequence in
@@ -138,13 +145,17 @@ struct PostInBoxLink: View {
                 withAnimation(spring) {
                   deleting = true
                 }
-                try? haptics.fire(intensity: 1, sharpness: 1)
+                let impact = UIImpactFeedbackGenerator(style: .rigid)
+                impact.prepare()
+                impact.impactOccurred()
               }
               if abs(dragVal.translation.height) < 70 && deleting {
                 withAnimation(spring) {
                   deleting = false
                 }
-                try? haptics.fire(intensity: 0.5, sharpness: 0.5)
+                let impact = UIImpactFeedbackGenerator(style: .rigid)
+                impact.prepare()
+                impact.impactOccurred()
               }
             }
           }

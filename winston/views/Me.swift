@@ -24,14 +24,14 @@ struct Me: View {
             .progressViewStyle(.circular)
             .frame(maxWidth: .infinity, minHeight: UIScreen.screenHeight - 200 )
             .onAppear {
-              Task {
+              Task(priority: .background) {
                 await redditAPI.fetchMe(force: true)
               }
             }
         }
       }
     }
-    .onChange(of: reset) { _ in router.path = NavigationPath() }
+    .onChange(of: reset) { _ in router.path.removeLast(router.path.count) }
   }
 }
 

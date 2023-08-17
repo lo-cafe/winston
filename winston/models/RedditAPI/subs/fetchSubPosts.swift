@@ -9,7 +9,7 @@ import Foundation
 import Alamofire
 
 extension RedditAPI {
-  func fetchSubPosts(_ id: String, sort: SubListingSortOption = .hot, after: String? = nil) async -> ([ListingChild<PostData>]?, String?)? {
+  func fetchSubPosts(_ id: String, sort: SubListingSortOption = .best, after: String? = nil) async -> ([ListingChild<PostData>]?, String?)? {
     await refreshToken()
     if let headers = self.getRequestHeaders() {
       let params = FetchSubsPayload(limit: 25, after: after)

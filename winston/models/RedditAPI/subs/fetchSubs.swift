@@ -73,7 +73,7 @@ extension RedditAPI {
   struct FetchSubsPayload: Codable {
     var limit: Int
     var after: String?
-    var show = "all"
+//    var show = "all"
     var count = 0
   }
 }

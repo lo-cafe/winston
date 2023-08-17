@@ -54,7 +54,7 @@ struct Search: View {
     switch searchType {
     case .subreddit:
       resultsSubs.data.removeAll()
-      Task {
+      Task(priority: .background) {
         if let subs = await redditAPI.searchSubreddits(searchQuery.text)?.map({ Subreddit(data: $0, api: redditAPI) }) {
           await MainActor.run {
             withAnimation {
@@ -68,7 +68,7 @@ struct Search: View {
       }
     case .user:
       resultsUsers.data.removeAll()
-      Task {
+      Task(priority: .background) {
         if let users = await redditAPI.searchUsers(searchQuery.text)?.map({ User(data: $0, api: redditAPI) }) {
           await MainActor.run {
             withAnimation {
@@ -120,20 +120,19 @@ struct Search: View {
       }
       .listStyle(.plain)
       .loader(loading, hideSpinner && !searchQuery.text.isEmpty)
-      .navigationTitle("Search")
       .searchable(text: $searchQuery.text, placement: .toolbar)
       .onChange(of: searchType) { _ in fetch() }
-      .onChange(of: reset) { _ in router.path = NavigationPath() }
+      .onChange(of: reset) { _ in router.path.removeLast(router.path.count) }
       .onChange(of: searchQuery.debounced) { val in
         if val == "" {
           resultsSubs.data = []
           resultsUsers.data = []
         }
-        
         fetch()
       }
       .refreshable { fetch() }
       .onSubmit(of: .search) { fetch() }
+      .navigationTitle("Search")
       .defaultNavDestinations(router)
     }
   }

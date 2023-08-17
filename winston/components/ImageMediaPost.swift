@@ -7,8 +7,8 @@
 
 import SwiftUI
 import Defaults
-import CoreMedia
-import LonginusSwiftUI
+import NukeUI
+import Nuke
 
 private var safe = getSafeArea().top + getSafeArea().bottom
 
@@ -18,18 +18,22 @@ struct GalleryThumb: View {
   var height: CGFloat
   var url: URL
   var body: some View {
-    LGImage(source: url, placeholder: {
-      ProgressView()
-    }, options: [.progressiveBlur, .imageWithFadeAnimation])
-      .resizable()
-      .cancelOnDisappear(true)
-      .scaledToFill()
-      .zIndex(1)
-      .allowsHitTesting(false)
-      .frame(width: width, height: height)
-      .contentShape(Rectangle())
-      .clipped()
-      .mask(RR(12, .black))
+    LazyImage(url: url) { state in
+      if let image = state.image {
+        image.resizable().scaledToFill()
+      } else if state.error != nil {
+        Color.red // Indicates an error
+      } else {
+        Color.blue // Acts as a placeholder
+      }
+    }
+    .processors([.resize(width: width)])
+    .zIndex(1)
+    .allowsHitTesting(false)
+    .frame(width: width, height: height)
+    .clipped()
+    .mask(RR(12, .black))
+    .contentShape(Rectangle())
   }
 }
 
@@ -47,17 +51,18 @@ struct ImageMediaPost: View {
   @Default(.maxPostLinkImageHeightPercentage) var maxPostLinkImageHeightPercentage
   
   var body: some View {
+    EmptyView()
     let maxHeight: CGFloat = (maxPostLinkImageHeightPercentage / 100) * (UIScreen.screenHeight - safe)
     if let data = post.data {
       VStack {
         if let preview = data.preview, preview.images?.count ?? 0 > 0, let source = preview.images?[0].source, let srcURL = source.url, let sourceHeight = source.height, let sourceWidth = source.width, let imgURL = URL(string: (data.url.contains("imgur.com") && !IMAGES_FORMATS.contains(String(data.url.suffix(4)))) ? srcURL : data.url) {
-          
+
           let propHeight = (Int(contentWidth) * sourceHeight) / sourceWidth
           let finalHeight = maxPostLinkImageHeightPercentage != 110 ? Double(min(Int(maxHeight), propHeight)) : Double(propHeight)
-          
+
           GalleryThumb(ns: presentationNamespace, width: compact ? compactModeThumbSize : contentWidth, height: compact ? compactModeThumbSize : finalHeight, url: imgURL)
             .onTapGesture { withAnimation(spring) { fullscreen.toggle() } }
-          
+
         } else if data.is_gallery == true, let metadatas = data.media_metadata?.values, metadatas.count > 1 {
           let urls: [String] = metadatas.compactMap { x in
             if let x = x, !x.id.isNil, let id = x.id, !id.isEmpty, let extArr = x.m?.split(separator: "/") {
@@ -68,7 +73,7 @@ struct ImageMediaPost: View {
           }
           let width = (contentWidth - 8) / 2
           let height = width
-          
+
           VStack(spacing: 8) {
             HStack(spacing: 8) {
               GalleryThumb(ns: presentationNamespace, width: compact ? compactModeThumbSize : width, height: compact ? compactModeThumbSize : height, url: URL(string: urls[0])!)
@@ -93,8 +98,8 @@ struct ImageMediaPost: View {
                   } }
               }
             }
-            
-            
+
+
             if urls.count > 2 && !compact {
               HStack(spacing: 8) {
                 GalleryThumb(ns: presentationNamespace, width: urls.count == 3 ? contentWidth : width, height: height, url: URL(string: urls[2])!)
@@ -122,14 +127,16 @@ struct ImageMediaPost: View {
               }
               //              .frame(width: contentWidth, height: height)
             }
-            
+
           }
         }
       }
       .frame(maxWidth: compact ? nil : .infinity)
-      .fullscreenPresent(show: $fullscreen) {
+      .fullScreenCover(isPresented: $fullscreen, content: {
         LightBoxImage(post: post, i: fullscreenIndex, namespace: presentationNamespace)
-      }
+      })
+//      .fullscreenPresent(show: $fullscreen) {
+//      }
     } else {
       Text("Error loding image")
         .frame(width: contentWidth, height: 500)

@@ -22,7 +22,7 @@ struct SubredditPosts: View {
   @ObservedObject var subreddit: Subreddit
   @Environment(\.openURL) private var openURL
   @State private var loading = true
-  @StateObject private var posts = ObservableArray<Post>()
+  @State private var posts: [Post] = []
   @State private var lastPostAfter: String?
   @State private var searchText: String = ""
   @State private var sort: SubListingSortOption = Defaults[.preferredSort]
@@ -34,22 +34,20 @@ struct SubredditPosts: View {
     if (subreddit.data == nil || force) && !feedsAndSuch.contains(subreddit.id) {
       await subreddit.refreshSubreddit()
     }
-    if posts.data.count > 0 && lastPostAfter == nil && !force {
+    if posts.count > 0 && lastPostAfter == nil && !force {
       return
     }
     if let result = await subreddit.fetchPosts(sort: sort, after: loadMore ? lastPostAfter : nil), let newPosts = result.0 {
       withAnimation {
         if loadMore {
-//          print("load more")
-          posts.data.append(contentsOf: newPosts)
+          posts.append(contentsOf: newPosts)
         } else {
-          posts.data = newPosts
+          posts = newPosts
         }
         loading = false
         lastPostAfter = result.1
-        //        loadingMore = false
       }
-      Task {
+      Task(priority: .background) {
         await redditAPI.updateAvatarURLCacheFromPosts(posts: newPosts)
       }
     }
@@ -58,11 +56,11 @@ struct SubredditPosts: View {
   func fetch(loadMore: Bool = false) {
     //    if loadMore {
     //      withAnimation {
-    //        <#code#>
+    //
     //        loadingMore = true
     //      }
     //    }
-    Task {
+    Task(priority: .background) {
       await asyncFetch(loadMore: loadMore)
     }
   }
@@ -71,7 +69,7 @@ struct SubredditPosts: View {
     Group {
       //      if IPAD {
       //        ScrollView(.vertical) {
-      //          WaterfallGrid(posts.data, id: \.self.id) { el in
+      //          WaterfallGrid(posts, id: \.self.id) { el in
       //            PostLink(post: el, sub: subreddit)
       //          }
       //          .gridStyle(columns: 2, spacing: 16, animation: .easeInOut(duration: 0.5))
@@ -83,28 +81,28 @@ struct SubredditPosts: View {
       //        }
       //      } else {
       List {
-        Group {
-            ForEach(Array(posts.data.enumerated()), id: \.self.element.id) { i, post in
-              
-              PostLink(post: post, sub: subreddit)
-                .equatable()
-                .onAppear { if(Int(Double(posts.data.count) * 0.75) == i) { fetch(loadMore: true) } }
-                .id(post.id)
-                .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
-                .animation(.default, value: posts.data)
-              
-              if !preferenceShowPostsCards && i != (posts.data.count - 1) {
-                VStack(spacing: 0) {
-                  Divider()
-                  Color.listBG
-                    .frame(maxWidth: .infinity, minHeight: 6, maxHeight: 6)
-                  Divider()
-                }
-                .id("\(post.id)-divider")
-                .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
+        Section {
+          ForEach(Array(posts.enumerated()), id: \.self.element.id) { i, post in
+
+            PostLink(post: post, sub: subreddit)
+              .equatable()
+              .onAppear { if(Int(Double(posts.count) * 0.75) == i) { fetch(loadMore: true) } }
+//              .id(post.id)
+              .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
+              .animation(.default, value: posts)
+
+            if !preferenceShowPostsCards && i != (posts.count - 1) {
+              VStack(spacing: 0) {
+                Divider()
+                Color.listBG
+                  .frame(maxWidth: .infinity, minHeight: 6, maxHeight: 6)
+                Divider()
               }
-              
+              .id("\(post.id)-divider")
+              .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
             }
+
+          }
           if !lastPostAfter.isNil {
             ProgressView()
               .progressViewStyle(.circular)
@@ -116,12 +114,12 @@ struct SubredditPosts: View {
         .listRowSeparator(.hidden)
         .listRowBackground(Color.clear)
       }
-      .introspect(.list, on: .iOS(.v15)) { list in
-        list.backgroundColor = UIColor.systemGroupedBackground
-      }
-      .introspect(.list, on: .iOS(.v16, .v17)) { list in
-        list.backgroundColor = UIColor.systemGroupedBackground
-      }
+//      .introspect(.list, on: .iOS(.v15)) { list in
+//        list.backgroundColor = UIColor.systemGroupedBackground
+//      }
+//      .introspect(.list, on: .iOS(.v16, .v17)) { list in
+//        list.backgroundColor = UIColor.systemGroupedBackground
+//      }
       //    .listStyle(IPAD ? .grouped : .plain)
       //    .scrollContentBackground(.hidden)
       .listStyle(.plain)
@@ -130,7 +128,7 @@ struct SubredditPosts: View {
       //      }
     }
     .overlay(
-      loading && posts.data.count == 0
+      loading && posts.count == 0
       ? ProgressView()
         .frame(maxWidth: .infinity, minHeight: UIScreen.screenHeight)
       : nil)
@@ -179,7 +177,7 @@ struct SubredditPosts: View {
                 .fontSize(17, .bold)
             }
           }
-          
+
           if let data = subreddit.data {
             Button {
               router.path.append(SubViewType.info(subreddit))
@@ -190,14 +188,10 @@ struct SubredditPosts: View {
         }
         .animation(nil, value: sort)
     )
-    .navigationTitle("\(feedsAndSuch.contains(subreddit.id) ? subreddit.id.capitalized : "r/\(subreddit.data?.display_name ?? subreddit.id)")")
-    .refreshable {
-      await asyncFetch(force: true)
-    }
     .onAppear {
       //      sort = Defaults[.preferredSort]
-      doThisAfter(0) {
-        if posts.data.count == 0 {
+      if posts.count == 0 {
+        doThisAfter(0) {
           fetch()
         }
       }
@@ -205,11 +199,15 @@ struct SubredditPosts: View {
     .onChange(of: sort) { val in
       withAnimation {
         loading = true
-        posts.data.removeAll()
+        posts.removeAll()
       }
       fetch()
+      Defaults[.preferredSort] = sort
     }
     .searchable(text: $searchText, prompt: "Search r/\(subreddit.data?.display_name ?? subreddit.id)")
+    .refreshable { await asyncFetch(force: true) }
+    .navigationTitle("\(feedsAndSuch.contains(subreddit.id) ? subreddit.id.capitalized : "r/\(subreddit.data?.display_name ?? subreddit.id)")")
+    .background(.thinMaterial)
   }
+  
 }
-

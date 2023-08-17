@@ -9,7 +9,8 @@ import SwiftUI
 
 struct AboutPanel: View {
   @Environment(\.openURL) var openURL
-    var body: some View {
+  let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String
+  var body: some View {
       List {
         Section {
           HStack {
@@ -21,7 +22,9 @@ struct AboutPanel: View {
             VStack(alignment: .leading) {
               Text("Winston")
                 .fontSize(20, .bold)
-              Text("Beta")
+              HStack{
+                Text("Beta v" + (appVersion ?? "-1")) 
+              }
             }
           }
           Text("Winston is developed by the lo.cafe team, a group of friends making amazing software together.")

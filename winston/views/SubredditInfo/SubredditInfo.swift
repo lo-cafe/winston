@@ -7,6 +7,8 @@
 
 import SwiftUI
 import SwiftDate
+import Defaults
+import AlertToast
 
 enum SubInfoTabs: String, CaseIterable, Identifiable {
   var id: Self {
@@ -25,8 +27,10 @@ struct SubredditInfo: View {
   
   @StateObject private var myPosts = ObservableArray<Post>()
   @State private var myPostsLoaded = false
-  
+  @State private var addedToFavs = false
+  @Default(.likedButNotSubbed) var likedButNotSubbed
   var body: some View {
+    let isliked = likedButNotSubbed.contains(subreddit)
     List {
       Group {
         if let data = subreddit.data {
@@ -39,7 +43,13 @@ struct SubredditInfo: View {
               Text("Created \(Date(timeIntervalSince1970: TimeInterval(data.created)).toFormat("MMM dd, yyyy"))")
                 .fontSize(16, .medium)
                 .opacity(0.5)
-              SubscribeButton(subreddit: subreddit)
+              HStack{
+                SubscribeButton(subreddit: subreddit)
+                
+              }
+            }
+            .toast(isPresenting: $addedToFavs){
+              AlertToast(displayMode: .hud, type: .systemImage("star.fill", Color.blue), title: "Added to Favorites")
             }
             
             Picker("", selection: $selectedTab) {
@@ -53,6 +63,26 @@ struct SubredditInfo: View {
           .id("header")
           .listRowBackground(Color.clear)
           .listRowInsets(EdgeInsets(top: 8, leading: 0, bottom: 8, trailing: 0))
+          .toolbar{
+            ToolbarItem(){
+              Button{
+                Task{
+                  if !data.user_has_favorited! {
+                    let liked = subreddit.localFavoriteToggle()
+                    if liked {
+                      addedToFavs.toggle()
+                    }
+                  } else {
+                    await subreddit.favoriteToggle()
+                  }
+                }
+              } label: {
+                Label("Favorites", systemImage: (isliked || data.user_has_favorited!) ? "star.fill" : "star")
+                  .foregroundColor(.blue)
+                  .labelStyle(.iconOnly)
+              }
+            }
+          }
             
             switch selectedTab {
             case .info:

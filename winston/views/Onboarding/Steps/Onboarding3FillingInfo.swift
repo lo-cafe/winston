@@ -42,7 +42,7 @@ struct Onboarding3FillingInfo: View {
     }
     .overlay(
       HStack {
-        MasterButton(icon: "arrowshape.backward.fill", label: "Go back", mode: .soft, color: .white, colorHoverEffect: .animated, textSize: 18, height: 48, cornerRadius: 16, action: {
+        MasterButton(icon: "arrowshape.backward.fill", label: "Go back", mode: .soft, color: .primary, colorHoverEffect: .animated, textSize: 18, height: 48, cornerRadius: 16, action: {
           prevStep()
         })
         MasterButton(icon: "checkmark.circle.fill", label: "Done", colorHoverEffect: .animated, textSize: 18, height: 48, fullWidth: true, cornerRadius: 16, action: {

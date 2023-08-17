@@ -18,7 +18,7 @@ struct SubredditRulesTab: View {
           .listRowBackground(Color.clear)
           .listRowInsets(EdgeInsets(top: 8, leading: 0, bottom: 8, trailing: 0))
           .onAppear {
-            Task {
+            Task(priority: .background) {
               if let newData = await subreddit.fetchRules() {
                 withAnimation {
                   data = newData

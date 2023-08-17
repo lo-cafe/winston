@@ -37,10 +37,15 @@ extension Post {
   }
   
   func toggleSeen(_ seen: Bool? = nil, optimistic: Bool = false) -> Void {
+    if data?.winstonSeen == seen { return }
     if optimistic {
       let prev = data?.winstonSeen ?? false
       let new = seen == nil ? !prev : seen
-      if prev != new { data?.winstonSeen = new }
+      DispatchQueue.main.async {
+        withAnimation {
+          if prev != new { self.data?.winstonSeen = new }
+        }
+      }
     }
     let context = PersistenceController.shared.container.viewContext
     let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "SeenPost")
@@ -61,7 +66,9 @@ extension Post {
         try? context.save()
         if !optimistic {
           DispatchQueue.main.async {
-            self.data?.winstonSeen = true
+            withAnimation {
+              self.data?.winstonSeen = true
+            }
           }
         }
       }
@@ -70,15 +77,17 @@ extension Post {
     }
   }
   
-  func reply(_ text: String) async -> Bool {
+  func reply(_ text: String, updateComments: (() -> ())? = nil) async -> Bool {
     if let fullname = data?.name {
       let result = await redditAPI.newReply(text, fullname) ?? false
       if result {
-        doThisAfter(0.3) {
-          Task {
-            await self.refreshPost()
+          if let updateComments = updateComments {
+            await MainActor.run {
+              withAnimation {
+                updateComments()
+              }
+            }
           }
-        }
         //        if let data = data {
         //          let newComment = CommentData(
         //            subreddit_id: data.subreddit_id,
@@ -201,6 +210,18 @@ extension Post {
     }
     return result
   }
+  
+  func hide(_ hide: Bool) async -> () {
+    if data?.winstonHidden == hide { return }
+    await MainActor.run {
+      withAnimation {
+        data?.winstonHidden = true
+      }
+    }
+    if let name = data?.name {
+      await redditAPI.hidePost(hide, fullnames: [name])
+    }
+  }
 }
 
 struct PostData: GenericRedditEntityDataType, Defaults.Serializable {
@@ -298,6 +319,7 @@ struct PostData: GenericRedditEntityDataType, Defaults.Serializable {
   let secure_media_embed: SecureMediaEmbed?
   let preview: Preview?
   var winstonSeen: Bool?
+  var winstonHidden: Bool?
 }
 
 struct MediaMetadataItem: Codable, Hashable, Identifiable {

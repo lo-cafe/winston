@@ -29,8 +29,6 @@ struct VideoPlayerPost: View {
   @Default(.cardedPostLinksOuterHPadding) private var cardedPostLinksOuterHPadding
   @Default(.cardedPostLinksInnerHPadding) private var cardedPostLinksInnerHPadding
 
-  //  @State private var uuid = UUID()
-  @Namespace var namespace
   
   var safe: Double { getSafeArea().top + getSafeArea().bottom }
   var rawContentWidth: CGFloat { UIScreen.screenWidth - (preferenceShowPostsCards ? cardedPostLinksOuterHPadding : postLinksInnerHPadding * 2) - (preferenceShowPostsCards ? (preferenceShowPostsCards ? cardedPostLinksInnerHPadding : 0) * 2 : 0) }

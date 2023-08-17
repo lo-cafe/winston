@@ -1,7 +1,7 @@
-- Custom swipe options are now a reality!!!
-- There's now the draft of a compact mode (no links and videos atm, and probably buggy)
-- Design tweaks
-- Setting to open default feed on launch
-- Search now searches while you type
-- Disabled "Saved" section for a while (sorry about this, it was crashing)
-- Removed animation from alphabet jumper
+- Added edit option
+- Added delete option
+- All swipe options can also be swipe options
+- Yes, Share option does nothing atm
+=== SECOND UPDATE IN A ROW ===
+- Fixes inverted icons on swipe
+This was the first step for gestures to work anywhere (swipe right in the middle of the screen) :)

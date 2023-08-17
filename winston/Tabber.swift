@@ -120,13 +120,13 @@ struct Tabber: View {
       Text("Something went wrong, but winston's is a fast cat, got the bug in his fangs and brought it to you. What do you wanna do?")
     }
     .onAppear {
-      Task { await updatePostsInBox(redditAPI) }
+      Task(priority: .background) { await updatePostsInBox(redditAPI) }
       if redditAPI.loggedUser.apiAppID == nil || redditAPI.loggedUser.apiAppSecret == nil {
         withAnimation(spring) {
           credModalOpen = true
         }
       } else if redditAPI.loggedUser.accessToken != nil && redditAPI.loggedUser.refreshToken != nil {
-        Task {
+        Task(priority: .background) {
           await redditAPI.fetchMe(force: true)
         }
       }

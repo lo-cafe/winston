@@ -7,12 +7,13 @@
 
 import Foundation
 import Combine
+import Defaults
 
 protocol GenericRedditEntityDataType: Codable, Hashable, Identifiable {
   var id: String { get }
 }
 
-class GenericRedditEntity<T: GenericRedditEntityDataType>: Identifiable, Hashable, ObservableObject, Codable {
+class GenericRedditEntity<T: GenericRedditEntityDataType>: Identifiable, Hashable, ObservableObject, Codable,  _DefaultsSerializable {
   func hash(into hasher: inout Hasher) {
     hasher.combine(data)
     hasher.combine(childrenWinston.data)
@@ -64,6 +65,7 @@ class GenericRedditEntity<T: GenericRedditEntityDataType>: Identifiable, Hashabl
   let redditAPI: RedditAPI
   var anyCancellable: AnyCancellable? = nil
   @Published var childrenWinston: ObservableArray<GenericRedditEntity<T>> = ObservableArray<GenericRedditEntity<T>>(array: [])
+  var parentWinston: ObservableArray<GenericRedditEntity<T>>?
   
   required init(id: String, api: RedditAPI, typePrefix: String?) {
     self.id = kind == "more" ? "\(id)-more" : id
