@@ -82,6 +82,7 @@ extension Comment {
         downs: nil,
         children: nil,
         body_html: message.body_html,
+        permalink: nil,
         created: message.created,
         link_id: nil,
         link_title: message.link_title,
@@ -239,6 +240,7 @@ extension Comment {
           downs: 0,
           children: nil,
           body_html: nil,
+          permalink: nil,
           created: Double(Int(Date().timeIntervalSince1970)),
           link_id: data.link_id,
           link_title: data.link_title,
@@ -410,7 +412,7 @@ struct CommentData: GenericRedditEntityDataType {
   //  let unrepliable_reason: String?
   //  let author_flair_text_color: String?
   //  let score_hidden: Bool?
-  //  let permalink: String?
+    let permalink: String?
   //  let subreddit_type: String?
   //  let locked: Bool?
   //  let report_reasons: String?

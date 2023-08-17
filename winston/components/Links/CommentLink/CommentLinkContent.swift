@@ -246,6 +246,10 @@ struct CommentLinkContent: View {
                 }
               }
 
+              if let perma = URL(string: "https://reddit.com\(data.permalink)") {
+                ShareLink(item: perma) { Label("Share", systemImage: "square.and.arrow.up") }
+              }
+              
             }
           } preview: {
             CommentLinkContentPreview(sizer: sizer, forcedBodySize: sizer.size, showReplies: showReplies, arrowKinds: arrowKinds, indentLines: indentLines, lineLimit: lineLimit, post: post, comment: comment, avatarsURL: avatarsURL)

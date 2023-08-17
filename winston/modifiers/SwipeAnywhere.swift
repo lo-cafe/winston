@@ -39,7 +39,7 @@ struct SwipeAnywhere: ViewModifier {
             let translation = val.translation
             trans.isContinuous = true
             var newDragState = state
-            let newActivated = ((abs(translation.width) + abs(translation.height)) / 2) >= activatedAmount
+            let newActivated = translation.width > 0 && ((abs(translation.width) + abs(translation.height)) / 2) >= activatedAmount
             trans.animation = newActivated != newDragState.activated ? .interpolatingSpring(stiffness: 200, damping: 15, initialVelocity: newActivated ? 35 : 0) : .interpolatingSpring(stiffness: 1000, damping: 100)
             
             

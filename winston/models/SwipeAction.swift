@@ -35,10 +35,10 @@ struct SwipeActionsSet: Codable, Defaults.Serializable, Equatable {
 }
 
 
-let allPostSwipeActions: [AnySwipeAction] = [AnySwipeAction(UpvotePostAction()), AnySwipeAction(DownvotePostAction()), AnySwipeAction(SavePostAction()), AnySwipeAction(ReplyPostAction()), AnySwipeAction(SeenPostAction()), AnySwipeAction(SharePostAction()), AnySwipeAction(NoneAction())]
+let allPostSwipeActions: [AnySwipeAction] = [AnySwipeAction(UpvotePostAction()), AnySwipeAction(DownvotePostAction()), AnySwipeAction(SavePostAction()), AnySwipeAction(ReplyPostAction()), AnySwipeAction(SeenPostAction())/**, AnySwipeAction(SharePostAction()) **/, AnySwipeAction(NoneAction())]
 
 let allCommentSwipeActions: [AnySwipeAction] = [
-  AnySwipeAction(UpvoteCommentAction()), AnySwipeAction(DownvoteCommentAction()), AnySwipeAction(EditCommentAction()), AnySwipeAction(ReplyCommentAction()), AnySwipeAction(SaveCommentAction()), AnySwipeAction(SelectTextCommentAction()), AnySwipeAction(ShareCommentAction()), AnySwipeAction(CopyCommentAction()), AnySwipeAction(NoneAction()), AnySwipeAction(DeleteCommentAction())]
+  AnySwipeAction(UpvoteCommentAction()), AnySwipeAction(DownvoteCommentAction()), AnySwipeAction(EditCommentAction()), AnySwipeAction(ReplyCommentAction()), AnySwipeAction(SaveCommentAction()), AnySwipeAction(SelectTextCommentAction())/**, AnySwipeAction(ShareCommentAction())**/, AnySwipeAction(CopyCommentAction()), AnySwipeAction(NoneAction()), AnySwipeAction(DeleteCommentAction())]
 
 let allSwipeActions = allPostSwipeActions + allCommentSwipeActions
 
