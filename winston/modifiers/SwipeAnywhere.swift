@@ -43,7 +43,7 @@ struct SwipeAnywhere: ViewModifier {
             trans.animation = newActivated != newDragState.activated ? .interpolatingSpring(stiffness: 200, damping: 15, initialVelocity: newActivated ? 35 : 0) : .interpolatingSpring(stiffness: 1000, damping: 100)
             
             
-            newDragState.activated = ((abs(translation.width) + abs(translation.height)) / 2) >= activatedAmount
+            newDragState.activated = newActivated
             newDragState.offset = translation
             state = newDragState
           }
