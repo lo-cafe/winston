@@ -49,7 +49,7 @@ struct ImageMediaPost: View {
   @State var fullscreenIndex = 0
   @Namespace var presentationNamespace
   @Default(.maxPostLinkImageHeightPercentage) var maxPostLinkImageHeightPercentage
-  
+
   var body: some View {
     EmptyView()
     let maxHeight: CGFloat = (maxPostLinkImageHeightPercentage / 100) * (UIScreen.screenHeight - safe)
@@ -60,7 +60,7 @@ struct ImageMediaPost: View {
           let propHeight = (Int(contentWidth) * sourceHeight) / sourceWidth
           let finalHeight = maxPostLinkImageHeightPercentage != 110 ? Double(min(Int(maxHeight), propHeight)) : Double(propHeight)
 
-          GalleryThumb(ns: presentationNamespace, width: compact ? compactModeThumbSize : contentWidth, height: compact ? compactModeThumbSize : finalHeight, url: imgURL)
+          GalleryThumb(ns: presentationNamespace, width: compact ? scaledCompactModeThumbSize() : contentWidth, height: compact ? scaledCompactModeThumbSize() : finalHeight, url: imgURL)
             .onTapGesture { withAnimation(spring) { fullscreen.toggle() } }
 
         } else if data.is_gallery == true, let metadatas = data.media_metadata?.values, metadatas.count > 1 {
@@ -71,12 +71,13 @@ struct ImageMediaPost: View {
             }
             return nil
           }
-          let width = (contentWidth - 8) / 2
+//          let width = ((compactMode ? contentWidth * CGFloat(compThumbnailSize.rawVal) : contentWidth) - 8) / 2
+          let width = (contentWidth - 8 / 2)
           let height = width
 
           VStack(spacing: 8) {
             HStack(spacing: 8) {
-              GalleryThumb(ns: presentationNamespace, width: compact ? compactModeThumbSize : width, height: compact ? compactModeThumbSize : height, url: URL(string: urls[0])!)
+              GalleryThumb(ns: presentationNamespace, width: compact ? scaledCompactModeThumbSize() : width, height: compact ? scaledCompactModeThumbSize() : height, url: URL(string: urls[0])!)
                 .onTapGesture { withAnimation(spring) {
                   fullscreenIndex = 0
                   doThisAfter(0) { fullscreen.toggle() }
@@ -142,5 +143,19 @@ struct ImageMediaPost: View {
         .frame(width: contentWidth, height: 500)
         .zIndex(1)
     }
+  }
+}
+
+/// Either returns the content width or, if compact mode is enabled, the modified content width depending on what setting the user chose
+func scaledCompactModeThumbSize() -> CGFloat {
+  @Default(.compactMode) var compactMode
+  @Default(.compThumbnailSize) var compThumbnailSize
+  
+  if compactMode {
+    print(compactModeThumbSize * compThumbnailSize.rawVal)
+    return compactModeThumbSize * compThumbnailSize.rawVal
+  } else {
+    print(compactModeThumbSize)
+    return compactModeThumbSize
   }
 }

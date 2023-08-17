@@ -43,9 +43,13 @@ struct PostLink: View, Equatable {
   @Default(.preferenceShowPostsAvatars) private var preferenceShowPostsAvatars
   @Default(.blurPostLinkNSFW) private var blurPostLinkNSFW
   @State private var postSwipeActions: SwipeActionsSet = Defaults[.postSwipeActions]
+  
+  //Compact Mode
   @Default(.compactMode) var compactMode
   @Default(.showVotes) var showVotes
   @Default(.showSelfText) var showSelfText
+  @Default(.thumbnailPositionRight) var thumbnailPositionRight
+  @Default(.voteButtonPositionRight) var voteButtonPositionRight
   
   @Default(.postLinksInnerHPadding) private var postLinksInnerHPadding
   @Default(.postLinksInnerVPadding) private var postLinksInnerVPadding
@@ -62,7 +66,7 @@ struct PostLink: View, Equatable {
   @Default(.fadeReadPosts) var fadeReadPosts
   @StateObject private var appeared = Appeared()
   
-  var contentWidth: CGFloat { UIScreen.screenWidth - ((preferenceShowPostsCards ? cardedPostLinksOuterHPadding : postLinksInnerHPadding) * 2) - (preferenceShowPostsCards ? (preferenceShowPostsCards ? cardedPostLinksInnerHPadding : 0) * 2 : 0) }
+  var contentWidth: CGFloat { UIScreen.screenWidth - ((preferenceShowPostsCards ? cardedPostLinksOuterHPadding : postLinksInnerHPadding) * 2) - (preferenceShowPostsCards ? (preferenceShowPostsCards ? cardedPostLinksInnerHPadding : 0) * 2 : 0)  }
   
   var body: some View {
     let layout = compactMode ? AnyLayout(HStackLayout(alignment: .top, spacing: 12)) : AnyLayout(VStackLayout(alignment: .leading, spacing: 12))
@@ -70,8 +74,31 @@ struct PostLink: View, Equatable {
       let seen = (data.winstonSeen ?? false)
       let isLinkPost = !data.url.isEmpty && !data.is_self && !(data.is_video ?? false) && !(data.is_gallery ?? false) && data.post_hint != "image"
       let over18 = data.over_18 ?? false
+      let imgPost = data.is_gallery == true || data.url.hasSuffix("jpg") || data.url.hasSuffix("png") || data.url.hasSuffix("webp") || data.url.contains("imgur.com")
+      
       VStack(alignment: .leading, spacing: 8) {
         layout {
+          
+          if compactMode && showVotes && !voteButtonPositionRight {
+            VStack(alignment: .center, spacing: 2) {
+              
+              VoteButton(color: data.likes != nil && data.likes! ? .orange : .gray, voteAction: .up, image: "arrow.up", post: post)
+              
+              Spacer()
+              
+              VoteButton(color: data.likes != nil && !data.likes! ? .blue : .gray, voteAction: .down, image: "arrow.down", post: post)
+              
+              Spacer()
+              
+            }
+            .frame(maxHeight: .infinity)
+            .fontSize(22, .medium)
+          }
+          
+          if imgPost, !thumbnailPositionRight {
+            ImageMediaPost(compact: compactMode, post: post, contentWidth: contentWidth)
+          }
+          
           VStack(alignment: .leading, spacing: compactMode ? 4 : 10) {
             Text(data.title.escape)
               .fontSize(compactMode ? 16 : 17, .medium)
@@ -92,9 +119,9 @@ struct PostLink: View, Equatable {
           }
           .frame(maxWidth: compactMode ? .infinity : nil, alignment: .topLeading)
           
-          let imgPost = data.is_gallery == true || data.url.hasSuffix("jpg") || data.url.hasSuffix("png") || data.url.hasSuffix("webp") || data.url.contains("imgur.com")
+
           
-          if imgPost {
+          if imgPost, thumbnailPositionRight {
             ImageMediaPost(compact: compactMode, post: post, contentWidth: contentWidth)
           }
           
@@ -127,7 +154,7 @@ struct PostLink: View, Equatable {
             .nsfw(over18 && blurPostLinkNSFW)
           }
           
-          if compactMode && showVotes {
+          if compactMode && showVotes && voteButtonPositionRight {
             VStack(alignment: .center, spacing: 2) {
               
               VoteButton(color: data.likes != nil && data.likes! ? .orange : .gray, voteAction: .up, image: "arrow.up", post: post)

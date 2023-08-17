@@ -37,9 +37,14 @@ struct AppearancePanel: View {
   @Default(.fadeReadPosts) var fadeReadPosts
   @Default(.coloredCommentNames) var coloredCommentNames
   @Default(.showUpvoteRatio) var showUpvoteRatio
+  
+  //Compact Mode
   @Default(.compactMode) var compactMode
   @Default(.showVotes) var showVotes
   @Default(.showSelfText) var showSelfText
+  @Default(.compThumbnailSize) var compThumbnailSize
+  @Default(.thumbnailPositionRight) var thumbnailPositionRight
+  @Default(.voteButtonPositionRight) var voteButtonPositionRight
   
   var body: some View {
     List {
@@ -133,7 +138,36 @@ struct AppearancePanel: View {
       }
       
       Section("Compact Posts"){
-        Toggle("Compact mode", isOn: $compactMode)
+        Toggle("Compact Mode", isOn: $compactMode)
+        //TODO: Implement
+        Picker("Thumbnail Position", selection: Binding(get: {
+          thumbnailPositionRight ? "Right" : "Left"
+        }, set: {val, _ in
+          thumbnailPositionRight = val == "Right"
+        })){
+          Text("Left").tag("Left")
+          Text("Right").tag("Right")
+        }
+        
+        Picker("Thumbnail Size", selection: Binding(get: {
+          compThumbnailSize
+        }, set: { val, _ in
+          compThumbnailSize = val
+        })){
+          Text("Hidden").tag(ThumbnailSizeModifier.hidden)
+          Text("Small").tag(ThumbnailSizeModifier.small)
+          Text("Medium").tag(ThumbnailSizeModifier.medium)
+          Text("Large").tag(ThumbnailSizeModifier.large)
+        }
+        
+        Picker("Voting Buttons Position", selection: Binding(get: {
+          voteButtonPositionRight ? "Right" : "Left"
+        }, set: {val, _ in
+          voteButtonPositionRight = val == "Right"
+        })){
+          Text("Left").tag("Left")
+          Text("Right").tag("Right")
+        }
       }
       
       Section("Comments") {
@@ -211,6 +245,9 @@ struct AppearancePanel: View {
           //          }
         }
       }
+//      .alert(isPresented: $compThumbnailSize){
+//        Alert(title: "Please refresh your Home Feed.")
+//      }
     }
     .navigationTitle("Appearance")
     .navigationBarTitleDisplayMode(.inline)
@@ -222,3 +259,30 @@ struct AppearancePanel: View {
 //        Appearance()
 //    }
 //}
+
+
+//Compact Mode Thumbnail Size Modifiers
+enum ThumbnailSizeModifier:  Codable, CaseIterable, Identifiable, Defaults.Serializable{
+  var id: CGFloat {
+    self.rawVal
+  }
+  
+  case hidden
+  case small
+  case medium
+  case large
+  
+  var rawVal: CGFloat {
+    switch self{
+    case .hidden:
+      return 0.0
+    case .small:
+      return 0.75
+    case .medium:
+      return 1.0
+    case .large:
+      return 1.5
+    }
+  }
+}
+

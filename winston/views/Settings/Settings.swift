@@ -10,20 +10,22 @@ import Defaults
 //import SceneKit
 
 enum SettingsPages {
-  case behavior, appearance, account, about, commentSwipe, postSwipe, accessibility, faq
+  case behavior, appearance, account, about, commentSwipe, postSwipe, accessibility, faq, general
 }
 
 struct Settings: View {
   var reset: Bool
   @Environment(\.openURL) private var openURL
   @StateObject private var router = Router()
-  @Default(.likedButNotSubbed) var likedButNotSubbed
   var body: some View {
     NavigationStack(path: $router.path) {
       VStack {
         List {
           
           Section {
+            NavigationLink(value: SettingsPages.general) {
+              Label("General", systemImage: "gear")
+            }
             NavigationLink(value: SettingsPages.behavior) {
               Label("Behavior", systemImage: "arrow.triangle.turn.up.right.diamond.fill")
             }
@@ -56,11 +58,7 @@ struct Settings: View {
             } label: {
               Label("Support our work!", systemImage: "heart.fill")
             }
-            Button{
-              likedButNotSubbed = []
-            } label: {
-              Label("Clear local likes", systemImage: "trash")
-            }
+           
             
           }
         }
@@ -68,6 +66,8 @@ struct Settings: View {
       .navigationDestination(for: SettingsPages.self) { x in
         Group {
           switch x {
+          case .general:
+            GeneralPanel()
           case .behavior:
             BehaviorPanel()
           case .appearance:

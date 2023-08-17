@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		650ACAFC2A87A36900A7C600 /* calcVotes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 650ACAFB2A87A36900A7C600 /* calcVotes.swift */; };
+		653E2DA52A8E278800833556 /* GeneralPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 653E2DA42A8E278800833556 /* GeneralPanel.swift */; };
 		6543D8892A8D10B900A1FFF9 /* scaleEffectButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6543D8882A8D10B900A1FFF9 /* scaleEffectButtonStyle.swift */; };
 		65807E732A87F8A8000EF969 /* AlertToast in Frameworks */ = {isa = PBXBuildFile; productRef = 65807E722A87F8A8000EF969 /* AlertToast */; };
 		6593CC432A88C9E8003CA58D /* AccessibilityPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6593CC422A88C9E8003CA58D /* AccessibilityPanel.swift */; };
@@ -257,6 +258,7 @@
 
 /* Begin PBXFileReference section */
 		650ACAFB2A87A36900A7C600 /* calcVotes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = calcVotes.swift; sourceTree = "<group>"; };
+		653E2DA42A8E278800833556 /* GeneralPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneralPanel.swift; sourceTree = "<group>"; };
 		6543D8882A8D10B900A1FFF9 /* scaleEffectButtonStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = scaleEffectButtonStyle.swift; sourceTree = "<group>"; };
 		6593CC422A88C9E8003CA58D /* AccessibilityPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessibilityPanel.swift; sourceTree = "<group>"; };
 		6593CC442A88D128003CA58D /* hapticFeedbackModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = hapticFeedbackModifier.swift; sourceTree = "<group>"; };
@@ -547,6 +549,7 @@
 				EC7DBDF22A86C92200D7C123 /* PostSwipePanel.swift */,
 				6593CC422A88C9E8003CA58D /* AccessibilityPanel.swift */,
 				65AA535C2A8BB27900275299 /* FAQPanel.swift */,
+				653E2DA42A8E278800833556 /* GeneralPanel.swift */,
 			);
 			path = views;
 			sourceTree = "<group>";
@@ -1289,6 +1292,7 @@
 				ECDD51542A73889A00FD9498 /* rootURL.swift in Sources */,
 				EC1E7B6C2A81650700DB459A /* loader.swift in Sources */,
 				ECAEFF662A77C43B0052FCD3 /* isVideoPlayer.swift in Sources */,
+				653E2DA52A8E278800833556 /* GeneralPanel.swift in Sources */,
 				ECEFC26B2A5E00B30003C6C4 /* floating.swift in Sources */,
 				ECC10C742A4A8729009124BE /* fontSize.swift in Sources */,
 				EC1906F32A55AC6E00A0300E /* fetchMoreReplies.swift in Sources */,

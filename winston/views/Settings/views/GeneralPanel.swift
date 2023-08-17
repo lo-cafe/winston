@@ -6,13 +6,44 @@
 //
 
 import SwiftUI
+import Defaults
+import WebKit
 
 struct GeneralPanel: View {
+  @Default(.likedButNotSubbed) var likedButNotSubbed
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+      List{
+        Section("Advanced"){
+          Button{
+            WebCacheCleaner.clear()
+            
+          } label: {
+            Label("Clear Cache " + String(URLCache.shared.currentDiskUsage), systemImage: "trash")
+          }
+          Button{
+            likedButNotSubbed = []
+          } label: {
+            Label("Clear " + String(likedButNotSubbed.count) + " Local Favorites", systemImage: "heart.slash.fill")
+          }
+        }
+      }
     }
 }
 
-#Preview {
-    GeneralPanel()
+final class WebCacheCleaner {
+
+    class func clear() {
+        URLCache.shared.removeAllCachedResponses()
+
+        HTTPCookieStorage.shared.removeCookies(since: Date.distantPast)
+        print("[WebCacheCleaner] All cookies deleted")
+
+        WKWebsiteDataStore.default().fetchDataRecords(ofTypes: WKWebsiteDataStore.allWebsiteDataTypes()) { records in
+            records.forEach { record in
+                WKWebsiteDataStore.default().removeData(ofTypes: record.dataTypes, for: [record], completionHandler: {})
+                print("[WebCacheCleaner] Record \(record) deleted")
+            }
+        }
+    }
+
 }

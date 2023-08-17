@@ -51,7 +51,11 @@ extension Defaults.Keys {
   static let blurPostNSFW = Key<Bool>("blurPostNSFW", default: false)
   static let preferredCommentSort = Key<CommentSortOption>("preferredCommentSort", default: .confidence)
   
+  // Compact Mode Settings
   static let compactMode = Key<Bool>("compactMode", default: false)
+  static let compThumbnailSize = Key<ThumbnailSizeModifier>("compThumbnailSize", default: .small)
+  static let thumbnailPositionRight = Key<Bool>("thumbnailPositionRight", default: true)
+  static let voteButtonPositionRight = Key<Bool>("voteButtonPositionRight", default: true)
   
   static let postSwipeActions = Key<SwipeActionsSet>("postSwipeActions", default: DEFAULT_POST_SWIPE_ACTIONS)
   static let commentSwipeActions = Key<SwipeActionsSet>("commentSwipeActions", default: DEFAULT_COMMENT_SWIPE_ACTIONS)
