@@ -6,8 +6,8 @@
 //
 
 import SwiftUI
-import SimpleHaptics
 import Defaults
+
 /// A cluster consisting of the upvote, downvote button and the amount of upvotes with an optional upvote ratio
 struct VotesCluster: View {
   var data: PostData
@@ -16,6 +16,7 @@ struct VotesCluster: View {
   @Default(.showUpvoteRatio) var showUpvoteRatio
   
   var body: some View {
+    let votes = calculateUpAndDownVotes(upvoteRatio: data.upvote_ratio, score: data.ups)
     HStack(spacing: showUpvoteRatio ? 4 : 8){
       VoteButton(color: data.likes != nil && data.likes! ? .orange : .gray, voteAction: .up,image: "arrow.up", post: post)
       
@@ -23,8 +24,7 @@ struct VotesCluster: View {
         Text(formatBigNumber(data.ups))
           .foregroundColor(data.likes != nil ? (data.likes! ? .orange : .blue) : .gray)
           .fontSize(16, .semibold)
-//          .viewVotes(data.ups, data.downs)
-          .zIndex(10)
+          .viewVotes(votes.upvotes, votes.downvotes)
         
         if likeRatio != nil, let ratio = likeRatio {
           Label(title: {

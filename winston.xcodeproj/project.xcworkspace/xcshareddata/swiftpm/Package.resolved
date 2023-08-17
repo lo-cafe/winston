@@ -10,6 +10,15 @@
       }
     },
     {
+      "identity" : "alerttoast",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/ImTheSquid/AlertToast.git",
+      "state" : {
+        "branch" : "master",
+        "revision" : "1e5e30f68860b7b5ea7cadd51ced166dfe486bca"
+      }
+    },
+    {
       "identity" : "defaults",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/sindresorhus/Defaults",
@@ -61,15 +70,6 @@
       "state" : {
         "revision" : "de44c4dd7271ec6413fe350f7efadb14e5e18dce",
         "version" : "1.3.2"
-      }
-    },
-    {
-      "identity" : "simple-haptics",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/hallee/simple-haptics",
-      "state" : {
-        "revision" : "8a8c8041e7e790e2fb8b1acc6a116de9cfd1b2a0",
-        "version" : "0.0.5"
       }
     },
     {

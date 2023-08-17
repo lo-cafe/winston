@@ -153,37 +153,10 @@ struct Tabber: View {
         }
       }
     }
-    //    .sheet(isPresented: $credModalOpen) {
-    //      ChangeAuthAPIKey(open: $credModalOpen)
-    //        .interactiveDismissDisabled(true)
-    //    }
     .sheet(isPresented: $credModalOpen) {
       Onboarding(open: $credModalOpen)
         .interactiveDismissDisabled(true)
     }
-    //    .sheet(item: $credModalOpen) {
-    //      ChangeAuthAPIKey()
-    //    }
-    //    .overlay(
-    //      contentLightBox.post == nil
-    //      ? nil
-    //      : LightBox()
-    //    )
-    //    .environmentObject(TabberNamespaceWrapper(generalAnimations))
-    //    .environmentObject(contentLightBox)
   }
 }
 
-//struct Tabber_Previews: PreviewProvider {
-//  static var previews: some View {
-//    Tabber()
-//  }
-//}
-
-//class TabberNamespaceWrapper: ObservableObject {
-//  var namespace: Namespace.ID
-//  
-//  init(_ namespace: Namespace.ID) {
-//    self.namespace = namespace
-//  }
-//}

@@ -68,7 +68,6 @@ struct AppearancePanel: View {
         }
         Toggle("Compact mode", isOn: $compactMode)
         Toggle("Show avatars", isOn: $preferenceShowPostsAvatars)
-        Toggle("Colored usernames", isOn: $coloredCommentNames)
         Toggle("Show upvote ratio", isOn: $showUpvoteRatio)
         if preferenceShowCommentsCards {
           VStack(alignment: .leading) {
@@ -145,6 +144,7 @@ struct AppearancePanel: View {
         .frame(maxWidth: .infinity)
         
         Toggle("Show avatars", isOn: $preferenceShowCommentsAvatars)
+        Toggle("Colored usernames", isOn: $coloredCommentNames)
         if preferenceShowCommentsCards {
           VStack(alignment: .leading) {
             HStack {

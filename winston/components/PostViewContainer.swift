@@ -20,6 +20,7 @@ struct PostViewContainer: View {
     var body: some View {
       PostView(post: post, subreddit: sub, highlightID: highlightID)
     }
+  
 }
 
 //struct PostViewContainer_Previews: PreviewProvider {

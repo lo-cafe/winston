@@ -110,18 +110,12 @@ struct SubredditPosts: View {
               .id("post-loading")
           }
         }
-        //          .listRowSeparator(preferenceShowPostsCards ? .hidden : .automatic)
         .listRowSeparator(.hidden)
         .listRowBackground(Color.clear)
       }
-//      .introspect(.list, on: .iOS(.v15)) { list in
-//        list.backgroundColor = UIColor.systemGroupedBackground
-//      }
-//      .introspect(.list, on: .iOS(.v16, .v17)) { list in
-//        list.backgroundColor = UIColor.systemGroupedBackground
-//      }
+      .background(Color(UIColor.systemGroupedBackground))
+      .scrollContentBackground(.hidden)
       //    .listStyle(IPAD ? .grouped : .plain)
-      //    .scrollContentBackground(.hidden)
       .listStyle(.plain)
       //        .if(IPAD) { $0.listStyle(.insetGrouped) }
       .environment(\.defaultMinListRowHeight, 1)
@@ -202,10 +196,12 @@ struct SubredditPosts: View {
         posts.removeAll()
       }
       fetch()
+      Defaults[.preferredSort] = sort
     }
     .searchable(text: $searchText, prompt: "Search r/\(subreddit.data?.display_name ?? subreddit.id)")
     .refreshable { await asyncFetch(force: true) }
     .navigationTitle("\(feedsAndSuch.contains(subreddit.id) ? subreddit.id.capitalized : "r/\(subreddit.data?.display_name ?? subreddit.id)")")
+    .background(.thinMaterial)
   }
   
 }

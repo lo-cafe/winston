@@ -8,7 +8,6 @@
 import SwiftUI
 import NukeUI
 import Defaults
-import SimpleHaptics
 
 struct PostInBoxLink: View {
   @EnvironmentObject private var router: Router

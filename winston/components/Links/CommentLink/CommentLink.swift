@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import SimpleHaptics
 import Defaults
 import SwiftUIIntrospect
 

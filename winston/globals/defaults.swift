@@ -45,7 +45,8 @@ extension Defaults.Keys {
   static let redditAPITokenExpiration = Key<Int?>("redditAPITokenExpiration", default: nil)
   static let subreddits = Key<[ListingChild<SubredditData>]>("subreddits", default: [])
   static let postsInBox = Key<[PostInBox]>("postsInBox-v2", default: [])
-  static let preferredSort = Key<SubListingSortOption>("preferredSort", default: .hot)
+  static let likedButNotSubbed = Key<[Subreddit]>("likedButNotSubbed", default: [])
+  static let preferredSort = Key<SubListingSortOption>("preferredSort", default: .best)
   static let blurPostLinkNSFW = Key<Bool>("blurPostLinkNSFW", default: true)
   static let blurPostNSFW = Key<Bool>("blurPostNSFW", default: false)
   static let preferredCommentSort = Key<CommentSortOption>("preferredCommentSort", default: .confidence)
@@ -93,7 +94,11 @@ extension Defaults.Keys {
   static let hideReadPosts = Key<Bool>("hideReadPosts", default: false)
   static let fadeReadPosts = Key<Bool>("fadeReadPosts", default: false)
   static let showSavedFeed = Key<Bool>("showSavedFeed", default: true)
+  static let enableSwipeAnywhere = Key<Bool>("enableSwipeAnywhere", default: false)
   static let redditAPIUserAgent = Key<String>("redditAPIUserAgent", default: "ios:lo.cafe.winston:v0.1.0 (by /u/Kinark)")
+  
+  static let forceFeedbackModifiers = Key<ForceFeedbackModifiers>("forceFeedbackModifiers", default: .medium)
+  static let hapticFeedbackOnLPM = Key<Bool>("hapticFeedbackOnLPM", default: true)
 }
 
 extension UIScreen {

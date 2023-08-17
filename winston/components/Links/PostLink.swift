@@ -128,7 +128,7 @@ struct PostLink: View, Equatable {
           
           if compactMode {
             VStack(alignment: .center, spacing: 2) {
-                          
+              
               VoteButton(color: data.likes != nil && data.likes! ? .orange : .gray, voteAction: .up, image: "arrow.up", post: post)
               
               Spacer()
@@ -175,7 +175,7 @@ struct PostLink: View, Equatable {
         .padding(.vertical, 2)
         
         
-          
+        
         if !compactMode {
           HStack {
             if let fullname = data.author_fullname {
@@ -232,15 +232,29 @@ struct PostLink: View, Equatable {
         entity: post
       )
       .contextMenu(menuItems: {
-        VStack {
-          if let perma = URL(string: "https://reddit.com\(data.permalink.escape.urlEncoded)") {
-            ShareLink(item: perma) { Label("Share", systemImage: "square.and.arrow.up") }
-          }
-          Button { router.path.append(PostViewPayload(post: post, sub: feedsAndSuch.contains(sub.id) ? sub : sub)) } label: { Label("Open post", systemImage: "rectangle.and.hand.point.up.left.filled") }
-          Button {  withAnimation {
-            post.toggleSeen(optimistic: true)
-          } } label: { Label("Toggle seen", systemImage: "eye") }
+        
+        if let perma = URL(string: "https://reddit.com\(data.permalink.escape.urlEncoded)") {
+          ShareLink(item: perma) { Label("Share", systemImage: "square.and.arrow.up") }
         }
+        
+        ForEach(allPostSwipeActions) { action in
+          let active = action.active(post)
+          if action.enabled(post) {
+            Button {
+              Task(priority: .background) {
+                await action.action(post)
+              }
+            } label: {
+              Label(active ? "Undo \(action.label.lowercased())" : action.label, systemImage: active ? action.icon.active : action.icon.normal)
+                .foregroundColor(action.bgColor.normal == "353439" ? action.color.normal == "FFFFFF" ? Color.blue : Color.hex(action.color.normal) : Color.hex(action.bgColor.normal))
+            }
+          }
+        }
+        
+        if let perma = URL(string: "https://reddit.com\(data.permalink.escape.urlEncoded)") {
+          ShareLink(item: perma) { Label("Share", systemImage: "square.and.arrow.up") }
+        }
+        
       }, preview: { NavigationStack { PostView(post: post, subreddit: sub, forceCollapse: true) }.environmentObject(post.redditAPI) })
       .foregroundColor(.primary)
       .multilineTextAlignment(.leading)

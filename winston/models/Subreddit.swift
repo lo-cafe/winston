@@ -22,16 +22,35 @@ extension Subreddit {
     self.init(id: id, api: api, typePrefix: "\(Subreddit.prefix)_")
   }
   
+  /// Add a subreddit to the local like list
+  /// This is a seperate list from reddits liked intenden for usage with subreddits a user wants to favorite but not subscribe to
+  /// returns true if added to favorites and false if removed
+  func localFavoriteToggle() -> Bool {
+    @Default(.likedButNotSubbed) var likedButNotSubbed
+    // If the user is not subscribed
+    
+    // If its already in liked remove it
+    if likedButNotSubbed.contains(self) {
+      likedButNotSubbed = likedButNotSubbed.filter{ $0.id != self.id }
+      return false
+    } else { // Else add it
+      likedButNotSubbed.append(self)
+      return true
+    }
+  }
+  
   func favoriteToggle() async {
     if let favoritedStatus = data?.user_has_favorited, let name = data?.display_name {
-      await MainActor.run {
+      await MainActor.run{
         withAnimation {
           data?.user_has_favorited = !favoritedStatus
         }
       }
+      
       let result = await redditAPI.favorite(!favoritedStatus, subName: name)
       if !result {
         await MainActor.run {
+          
           withAnimation {
             data?.user_has_favorited = favoritedStatus
           }
@@ -40,16 +59,21 @@ extension Subreddit {
     }
   }
   
+  
+  
   func subscribeToggle(optimistic: Bool = false) async {
     if let data = data {
       let subscribedStatus = Defaults[.subreddits].contains(where: { $0.data?.id == self.id })
+      let likedButNotSubbed = Defaults[.likedButNotSubbed]
       if optimistic {
         await MainActor.run {
+          @Default(.likedButNotSubbed) var likedButNotSubbed
           withAnimation(.default) {
-            if subscribedStatus {
+            if subscribedStatus { // when unsubscribe
               Defaults[.subreddits] = Defaults[.subreddits].filter { sub in
                 sub.data?.id != self.id
               }
+              likedButNotSubbed = likedButNotSubbed.filter{ $0.id != self.id }
             } else {
               Defaults[.subreddits].append(ListingChild(kind: "t5", data: data))
             }
@@ -86,6 +110,13 @@ extension Subreddit {
           }
         }
       }
+      
+      if !subscribedStatus && likedButNotSubbed.contains(self){
+        await MainActor.run{
+          _ = self.localFavoriteToggle()
+        }
+        await self.favoriteToggle()
+      }
     }
   }
   
@@ -117,7 +148,7 @@ extension Subreddit {
     return nil
   }
   
-  func fetchPosts(sort: SubListingSortOption = .hot, after: String? = nil) async -> ([Post]?, String?)? {
+  func fetchPosts(sort: SubListingSortOption = .best, after: String? = nil) async -> ([Post]?, String?)? {
     if let response = await redditAPI.fetchSubPosts(data?.url ?? (id == "home" ? "" : id), sort: sort, after: after), let data = response.0 {
       return (Post.initMultiple(datas: data.compactMap { $0.data }, api: redditAPI), response.1)
     }
@@ -125,7 +156,7 @@ extension Subreddit {
   }
 }
 
-struct SubredditData: GenericRedditEntityDataType {
+struct SubredditData: GenericRedditEntityDataType, _DefaultsSerializable {
   let user_flair_background_color: String?
   var submit_text_html: String?
   let restrict_posting: Bool?
@@ -164,55 +195,55 @@ struct SubredditData: GenericRedditEntityDataType {
   var submit_text: String?
   var description_html: String?
   let spoilers_enabled: Bool?
-//  let comment_contribution_settings: CommentContributionSettings
+  //  let comment_contribution_settings: CommentContributionSettings
   let allow_talks: Bool?
-//  let header_size: [Int]?
-//  let user_flair_position: String?
-//  let all_original_content: Bool?
-//  let has_menu_widget: Bool?
+  //  let header_size: [Int]?
+  //  let user_flair_position: String?
+  //  let all_original_content: Bool?
+  //  let has_menu_widget: Bool?
   let is_enrolled_in_new_modmail: Bool?
   let key_color: String?
   let can_assign_user_flair: Bool?
   let created: Double
-//  let wls: Int?
+  //  let wls: Int?
   let show_media_preview: Bool?
-//  let submission_type: String?
+  //  let submission_type: String?
   var user_is_subscriber: Bool?
-//  let allowed_media_in_comments: [String]
+  //  let allowed_media_in_comments: [String]
   let allow_videogifs: Bool?
   let should_archive_posts: Bool?
   let user_flair_type: String?
   let allow_polls: Bool?
-//  let collapse_deleted_comments: Bool?
-//  let emojis_custom_size: [Int]?
+  //  let collapse_deleted_comments: Bool?
+  //  let emojis_custom_size: [Int]?
   var public_description_html: String?
   let allow_videos: Bool?
-//  let is_crosspostable_subreddit: Bool?
-//  let notification_level: String?
-//  let should_show_media_in_comments_setting: Bool?
-//  let can_assign_link_flair: Bool?
-//  let accounts_active_is_fuzzed: Bool?
-//  let allow_prediction_contributors: Bool?
-//  let submit_text_label: String?
-//  let link_flair_position: String?
-//  let user_sr_flair_enabled: Bool?
-//  let user_flair_enabled_in_sr: Bool?
-//  let allow_chat_post_creation: Bool?
-//  let allow_discovery: Bool?
-//  let accept_followers: Bool?
-//  let user_sr_theme_enabled: Bool?
-//  let link_flair_enabled: Bool?
-//  let disable_contributor_requests: Bool?
-//  let subreddit_type: String?
-//  let suggested_comment_sort: String?
+  //  let is_crosspostable_subreddit: Bool?
+  //  let notification_level: String?
+  //  let should_show_media_in_comments_setting: Bool?
+  //  let can_assign_link_flair: Bool?
+  //  let accounts_active_is_fuzzed: Bool?
+  //  let allow_prediction_contributors: Bool?
+  //  let submit_text_label: String?
+  //  let link_flair_position: String?
+  //  let user_sr_flair_enabled: Bool?
+  //  let user_flair_enabled_in_sr: Bool?
+  //  let allow_chat_post_creation: Bool?
+  //  let allow_discovery: Bool?
+  //  let accept_followers: Bool?
+  //  let user_sr_theme_enabled: Bool?
+  //  let link_flair_enabled: Bool?
+  //  let disable_contributor_requests: Bool?
+  //  let subreddit_type: String?
+  //  let suggested_comment_sort: String?
   let banner_img: String?
   let user_flair_text: String?
   let banner_background_color: String?
   let show_media: Bool?
   let id: String
   let user_is_moderator: Bool?
-//  let over18: Bool?
-//  let header_title: String?
+  //  let over18: Bool?
+  //  let header_title: String?
   var description: String?
   let is_chat_post_feature_enabled: Bool?
   let submit_link_label: String?
@@ -220,14 +251,14 @@ struct SubredditData: GenericRedditEntityDataType {
   let restrict_commenting: Bool?
   let user_flair_css_class: String?
   let allow_images: Bool?
-//  let lang: String?
-//  let whitelist_status: String?
+  //  let lang: String?
+  //  let whitelist_status: String?
   let url: String
   let created_utc: Double?
-//  let banner_size: [Int]?
-//  let mobile_banner_image: String?
+  //  let banner_size: [Int]?
+  //  let mobile_banner_image: String?
   let user_is_contributor: Bool?
-//  let allow_predictions_tournament: Bool?
+  //  let allow_predictions_tournament: Bool?
   var winstonFlairs: [Flair]?
 }
 
@@ -248,18 +279,22 @@ enum SubListingSortOption: Codable, CaseIterable, Identifiable, Defaults.Seriali
     self.rawVal.id
   }
   
+  case best
   case hot
   case new
   case top
   
   var rawVal: SubListingSort {
     switch self {
+    case .best:
+      return SubListingSort(icon: "trophy", value: "best")
     case .hot:
       return SubListingSort(icon: "flame", value: "hot")
     case .new:
       return SubListingSort(icon: "newspaper", value: "new")
     case .top:
-      return SubListingSort(icon: "trophy", value: "top")
+      return SubListingSort(icon: "chart.line.uptrend.xyaxis", value: "top")
+      
     }
   }
 }
