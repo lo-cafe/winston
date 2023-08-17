@@ -1,3 +1,4 @@
-- Fixes tabs background
-- Adds Swipe Anywhere setting
-- 
+- Fixes tabs background and layout
+- Added Swipe Anywhere setting (to go backwards by swiping anywhere)
+- Added longpress with all options to postlinks
+- Added share option to comment longpress
