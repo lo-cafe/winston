@@ -24,6 +24,10 @@ struct PostReplies: View {
   @ObservedObject private var globalLoader = TempGlobalState.shared.globalLoader
   @State private var loading = true
   
+  @Binding var nextCommentTracker: String
+  @State private var screenCenter: CGFloat = 0
+  @State private var commentPositions: [Int: CGFloat] = [:]
+    
   func asyncFetch(_ full: Bool, _ altIgnoreSpecificComment: Bool? = nil) async {
     if let result = await post.refreshPost(commentID: (altIgnoreSpecificComment ?? ignoreSpecificComment) ? nil : highlightID, sort: sort, after: nil, subreddit: subreddit.data?.display_name ?? subreddit.id, full: full), let newComments = result.0 {
       Task(priority: .background) {
@@ -43,6 +47,17 @@ struct PostReplies: View {
         }
       }
     }
+  }
+  
+  func determineMiddleComment() {
+    let commentsData = comments.data
+      if let closestIndex = commentPositions.min(by: { abs($0.value - screenCenter) < abs($1.value - screenCenter) })?.key {
+          if closestIndex < commentsData.count - 1 {
+              let tempIndex = closestIndex + 1
+              nextCommentTracker = "\(commentsData[tempIndex].id)-top-decoration"
+            print("next comment selected")
+          }
+      }
   }
   
   var body: some View {
@@ -67,6 +82,18 @@ struct PostReplies: View {
                   .id("\(comment.id)-top-spacer")
               }
               CommentLink(highlightID: ignoreSpecificComment ? nil : highlightID, post: post, subreddit: subreddit, postFullname: postFullname, parentElement: .post(comments), comment: comment)
+                .background(
+                    GeometryReader { geometry -> Color in
+                        let minY = geometry.frame(in: .global).minY
+                        
+                        DispatchQueue.main.async {
+                            commentPositions[i] = minY
+                            determineMiddleComment()
+                        }
+                        
+                        return Color.clear
+                    }
+                )
               if preferenceShowCommentsCards {
                 Spacer()
                   .frame(maxWidth: .infinity, minHeight: 24, maxHeight: 24)
@@ -89,6 +116,7 @@ struct PostReplies: View {
             .listRowBackground(Color.clear)
             .listRowInsets(EdgeInsets(top: 0, leading: horPad, bottom: 0, trailing: horPad))
           }
+          
           Section {
             Spacer()
               .frame(height: 1)
@@ -113,6 +141,12 @@ struct PostReplies: View {
           }
           .listRowBackground(Color.clear)
           .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
+        }
+        .onAppear {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                screenCenter = UIScreen.main.bounds.midY
+                determineMiddleComment()
+            }
         }
       } else {
         if loading {
