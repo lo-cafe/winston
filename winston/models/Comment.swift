@@ -45,7 +45,7 @@ extension Comment {
       case.second(let listing):
         self.childrenWinston.data = listing.data?.children?.compactMap { x in
           if let innerData = x.data {
-            var newComment = Comment(data: innerData, api: redditAPI, kind: x.kind, parent: self.childrenWinston)
+            let newComment = Comment(data: innerData, api: redditAPI, kind: x.kind, parent: self.childrenWinston)
             return newComment
           }
           return nil
