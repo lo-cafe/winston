@@ -73,15 +73,6 @@
       }
     },
     {
-      "identity" : "simple-haptics",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/hallee/simple-haptics",
-      "state" : {
-        "revision" : "8a8c8041e7e790e2fb8b1acc6a116de9cfd1b2a0",
-        "version" : "0.0.5"
-      }
-    },
-    {
       "identity" : "skeletonui",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/CSolanaM/SkeletonUI.git",
@@ -131,8 +122,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/siteline/swiftui-introspect",
       "state" : {
-        "revision" : "ccb973cfff703cba53fb88197413485c060eb26b",
-        "version" : "0.10.0"
+        "revision" : "6dce3c8f5bfa8bc20120c7497da27e984a8813aa",
+        "version" : "0.7.0"
       }
     },
     {

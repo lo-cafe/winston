@@ -60,6 +60,7 @@ struct Inbox: View {
       .navigationTitle("Inbox")
       .defaultNavDestinations(router)
     }
+    .swipeAnywhere(router: router)
   }
 }
 

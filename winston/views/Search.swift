@@ -112,15 +112,10 @@ struct Search: View {
         .listRowBackground(Color.clear)
         .listRowInsets(EdgeInsets(top: 6, leading: 16, bottom: 6, trailing: 16))
       }
-      .introspect(.list, on: .iOS(.v15)) { list in
-        list.backgroundColor = UIColor.systemGroupedBackground
-      }
-      .introspect(.list, on: .iOS(.v16, .v17)) { list in
-        list.backgroundColor = UIColor.systemGroupedBackground
-      }
       .listStyle(.plain)
+      .background(Color(UIColor.systemGroupedBackground))
+      .scrollContentBackground(.hidden)
       .loader(loading, hideSpinner && !searchQuery.text.isEmpty)
-      .searchable(text: $searchQuery.text, placement: .toolbar)
       .onChange(of: searchType) { _ in fetch() }
       .onChange(of: reset) { _ in router.path.removeLast(router.path.count) }
       .onChange(of: searchQuery.debounced) { val in
@@ -130,11 +125,13 @@ struct Search: View {
         }
         fetch()
       }
+      .searchable(text: $searchQuery.text, placement: .toolbar)
       .refreshable { fetch() }
       .onSubmit(of: .search) { fetch() }
       .navigationTitle("Search")
       .defaultNavDestinations(router)
     }
+    .swipeAnywhere(router: router)
   }
 }
 

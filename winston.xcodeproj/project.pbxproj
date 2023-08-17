@@ -13,7 +13,6 @@
 		6593CC452A88D128003CA58D /* hapticFeedbackModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6593CC442A88D128003CA58D /* hapticFeedbackModifier.swift */; };
 		659F68022A84E32300989300 /* VotesCluster.swift in Sources */ = {isa = PBXBuildFile; fileRef = 659F68012A84E32300989300 /* VotesCluster.swift */; };
 		659FDEA82A87798300103414 /* VoteButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 659FDEA72A87798300103414 /* VoteButton.swift */; };
-		65AA535B2A8BAE9B00275299 /* scaleEffectButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65AA535A2A8BAE9B00275299 /* scaleEffectButtonStyle.swift */; };
 		65AA535D2A8BB27900275299 /* FAQPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65AA535C2A8BB27900275299 /* FAQPanel.swift */; };
 		EC082F252A65FB4300BA2727 /* MeasureOnce.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC082F242A65FB4300BA2727 /* MeasureOnce.swift */; };
 		EC082F272A66132600BA2727 /* CommentLinkMore.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC082F262A66132600BA2727 /* CommentLinkMore.swift */; };
@@ -35,11 +34,11 @@
 		EC08543F2A4D0C0700E88389 /* doThisAfter.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC08543E2A4D0C0700E88389 /* doThisAfter.swift */; };
 		EC0854412A4D558D00E88389 /* Interpolator.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC0854402A4D558D00E88389 /* Interpolator.swift */; };
 		EC0854432A4D6A4800E88389 /* MasterButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC0854422A4D6A4800E88389 /* MasterButton.swift */; };
-		EC0854462A4D6CC300E88389 /* SimpleHaptics in Frameworks */ = {isa = PBXBuildFile; productRef = EC0854452A4D6CC300E88389 /* SimpleHaptics */; };
 		EC0854482A4D6E8C00E88389 /* getInitialSize.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC0854472A4D6E8C00E88389 /* getInitialSize.swift */; };
 		EC08544A2A4D6EAE00E88389 /* blurTransitions.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC0854492A4D6EAE00E88389 /* blurTransitions.swift */; };
 		EC12D7182A59C7A800C300B3 /* Arrows.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC12D7172A59C7A800C300B3 /* Arrows.swift */; };
 		EC12D71A2A59C81A00C300B3 /* CommentLinkContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC12D7192A59C81A00C300B3 /* CommentLinkContent.swift */; };
+		EC1884482A8D7C1C00CAFB7A /* SwipeAnywhere.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC1884472A8D7C1C00CAFB7A /* SwipeAnywhere.swift */; };
 		EC1906E92A55240600A0300E /* cancelableTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC1906E82A55240600A0300E /* cancelableTimer.swift */; };
 		EC1906ED2A55293500A0300E /* AppearancePanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC1906EC2A55293500A0300E /* AppearancePanel.swift */; };
 		EC1906EF2A552A3100A0300E /* AccountPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC1906EE2A552A3100A0300E /* AccountPanel.swift */; };
@@ -188,6 +187,8 @@
 		ECDD51622A748DF600FD9498 /* SkeletonUI in Frameworks */ = {isa = PBXBuildFile; productRef = ECDD51612A748DF600FD9498 /* SkeletonUI */; };
 		ECDD51642A74C03C00FD9498 /* sendErrorEmail.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECDD51632A74C03C00FD9498 /* sendErrorEmail.swift */; };
 		ECDD51662A74E4DD00FD9498 /* SubredditPostsContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECDD51652A74E4DD00FD9498 /* SubredditPostsContainer.swift */; };
+		ECE00EE22A8D68FE000A6E21 /* scaleEffectButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECE00EE12A8D68FE000A6E21 /* scaleEffectButtonStyle.swift */; };
+		ECE00EE72A8D6A20000A6E21 /* TabBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECE00EE62A8D6A20000A6E21 /* TabBar.swift */; };
 		ECE285972A4FD6FC009CF9DD /* SwiftDate in Frameworks */ = {isa = PBXBuildFile; productRef = ECE285962A4FD6FC009CF9DD /* SwiftDate */; };
 		ECE285992A50086D009CF9DD /* UserView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECE285982A50086D009CF9DD /* UserView.swift */; };
 		ECE2859B2A5010E2009CF9DD /* DataBlock.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECE2859A2A5010E2009CF9DD /* DataBlock.swift */; };
@@ -259,7 +260,6 @@
 		6593CC442A88D128003CA58D /* hapticFeedbackModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = hapticFeedbackModifier.swift; sourceTree = "<group>"; };
 		659F68012A84E32300989300 /* VotesCluster.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VotesCluster.swift; sourceTree = "<group>"; };
 		659FDEA72A87798300103414 /* VoteButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoteButton.swift; sourceTree = "<group>"; };
-		65AA535A2A8BAE9B00275299 /* scaleEffectButtonStyle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = scaleEffectButtonStyle.swift; path = ../../../../../.Trash/scaleEffectButtonStyle.swift; sourceTree = "<group>"; };
 		65AA535C2A8BB27900275299 /* FAQPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FAQPanel.swift; sourceTree = "<group>"; };
 		EC082F242A65FB4300BA2727 /* MeasureOnce.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeasureOnce.swift; sourceTree = "<group>"; };
 		EC082F262A66132600BA2727 /* CommentLinkMore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentLinkMore.swift; sourceTree = "<group>"; };
@@ -284,6 +284,7 @@
 		EC0854492A4D6EAE00E88389 /* blurTransitions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = blurTransitions.swift; sourceTree = "<group>"; };
 		EC12D7172A59C7A800C300B3 /* Arrows.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Arrows.swift; sourceTree = "<group>"; };
 		EC12D7192A59C81A00C300B3 /* CommentLinkContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentLinkContent.swift; sourceTree = "<group>"; };
+		EC1884472A8D7C1C00CAFB7A /* SwipeAnywhere.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwipeAnywhere.swift; sourceTree = "<group>"; };
 		EC1906E82A55240600A0300E /* cancelableTimer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = cancelableTimer.swift; sourceTree = "<group>"; };
 		EC1906EC2A55293500A0300E /* AppearancePanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppearancePanel.swift; sourceTree = "<group>"; };
 		EC1906EE2A552A3100A0300E /* AccountPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountPanel.swift; sourceTree = "<group>"; };
@@ -422,6 +423,8 @@
 		ECDD515B2A73A90700FD9498 /* PreviewLink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewLink.swift; sourceTree = "<group>"; };
 		ECDD51632A74C03C00FD9498 /* sendErrorEmail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = sendErrorEmail.swift; sourceTree = "<group>"; };
 		ECDD51652A74E4DD00FD9498 /* SubredditPostsContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubredditPostsContainer.swift; sourceTree = "<group>"; };
+		ECE00EE12A8D68FE000A6E21 /* scaleEffectButtonStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = scaleEffectButtonStyle.swift; sourceTree = "<group>"; };
+		ECE00EE62A8D6A20000A6E21 /* TabBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBar.swift; sourceTree = "<group>"; };
 		ECE285982A50086D009CF9DD /* UserView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserView.swift; sourceTree = "<group>"; };
 		ECE2859A2A5010E2009CF9DD /* DataBlock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataBlock.swift; sourceTree = "<group>"; };
 		ECE2859C2A50130D009CF9DD /* fetchUserOverview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = fetchUserOverview.swift; sourceTree = "<group>"; };
@@ -483,7 +486,6 @@
 				ECDD515F2A748C5800FD9498 /* OpenGraph in Frameworks */,
 				ECDD51622A748DF600FD9498 /* SkeletonUI in Frameworks */,
 				EC9269F22A51A732003F33B1 /* HighlightedTextEditor in Frameworks */,
-				EC0854462A4D6CC300E88389 /* SimpleHaptics in Frameworks */,
 				ECAD0F2F2A8B4D4B001C88B5 /* Markdown in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -582,6 +584,7 @@
 				EC1E7B6D2A82CC2A00DB459A /* defaultNavDestinations.swift */,
 				6593CC442A88D128003CA58D /* hapticFeedbackModifier.swift */,
 				EC9ECA072A8805DF00470F89 /* performantShadow.swift */,
+				EC1884472A8D7C1C00CAFB7A /* SwipeAnywhere.swift */,
 			);
 			path = modifiers;
 			sourceTree = "<group>";
@@ -865,7 +868,6 @@
 				ECC10C732A4A8729009124BE /* fontSize.swift */,
 				EC9EAEC32A4AAB470074D06B /* fromHex.swift */,
 				EC08542A2A4C2B6B00E88389 /* if.swift */,
-				65AA535A2A8BAE9B00275299 /* scaleEffectButtonStyle.swift */,
 				EC08543E2A4D0C0700E88389 /* doThisAfter.swift */,
 				EC0854402A4D558D00E88389 /* Interpolator.swift */,
 				EC0854472A4D6E8C00E88389 /* getInitialSize.swift */,
@@ -894,6 +896,7 @@
 				ECF064EC2A7F405C0088C2C0 /* KeyWindow.swift */,
 				ECF064EE2A80383C0088C2C0 /* sumCGSize.swift */,
 				EC9ECA092A88602F00470F89 /* debounce.swift */,
+				ECE00EE12A8D68FE000A6E21 /* scaleEffectButtonStyle.swift */,
 			);
 			path = utils;
 			sourceTree = "<group>";
@@ -901,6 +904,7 @@
 		ECC10C752A4A8746009124BE /* components */ = {
 			isa = PBXGroup;
 			children = (
+				ECE00EE52A8D6A19000A6E21 /* TabBar */,
 				ECAA8B852A76470A00D9D636 /* PreviewLink */,
 				EC8F34952A6F5A5400EB8249 /* Modals */,
 				EC8F34942A6F55C800EB8249 /* Links */,
@@ -940,6 +944,14 @@
 				ECAD0F2B2A8B4CD4001C88B5 /* Markdownosaur.swift */,
 			);
 			path = components;
+			sourceTree = "<group>";
+		};
+		ECE00EE52A8D6A19000A6E21 /* TabBar */ = {
+			isa = PBXGroup;
+			children = (
+				ECE00EE62A8D6A20000A6E21 /* TabBar.swift */,
+			);
+			path = TabBar;
 			sourceTree = "<group>";
 		};
 		ECE449752A68893E00E2A3B7 /* SubredditInfo */ = {
@@ -997,7 +1009,6 @@
 				EC593B082A47B42D002D6454 /* KeychainAccess */,
 				EC593B0B2A47B801002D6454 /* Alamofire */,
 				EC08543C2A4CFE1C00E88389 /* SwiftUIIntrospect */,
-				EC0854452A4D6CC300E88389 /* SimpleHaptics */,
 				ECE285962A4FD6FC009CF9DD /* SwiftDate */,
 				EC9269F12A51A732003F33B1 /* HighlightedTextEditor */,
 				ECE449732A67648E00E2A3B7 /* Popovers */,
@@ -1065,7 +1076,6 @@
 				EC593B072A47B42D002D6454 /* XCRemoteSwiftPackageReference "KeychainAccess" */,
 				EC593B0A2A47B801002D6454 /* XCRemoteSwiftPackageReference "Alamofire" */,
 				EC08543B2A4CFE1C00E88389 /* XCRemoteSwiftPackageReference "swiftui-introspect" */,
-				EC0854442A4D6CC300E88389 /* XCRemoteSwiftPackageReference "simple-haptics" */,
 				ECE285952A4FD6FC009CF9DD /* XCRemoteSwiftPackageReference "SwiftDate" */,
 				EC9269F02A51A732003F33B1 /* XCRemoteSwiftPackageReference "HighlightedTextEditor" */,
 				ECE449722A67648E00E2A3B7 /* XCRemoteSwiftPackageReference "Popovers" */,
@@ -1148,6 +1158,7 @@
 				ECF5535B2A5C9EEA004A0136 /* searchSubreddits.swift in Sources */,
 				ECAA8B892A764A3C00D9D636 /* PreviewYTLink.swift in Sources */,
 				EC8F349D2A6F988900EB8249 /* Placeholder.swift in Sources */,
+				ECE00EE72A8D6A20000A6E21 /* TabBar.swift in Sources */,
 				ECEFC25D2A5DADDC0003C6C4 /* searchInSubreddit.swift in Sources */,
 				EC7DBDEF2A846D0C00D7C123 /* save.swift in Sources */,
 				ECA30A1B2A604FD600BB19D1 /* unreadMessage.swift in Sources */,
@@ -1167,7 +1178,6 @@
 				EC6373632A7934F8000A03A3 /* AboutPanel.swift in Sources */,
 				EC1E7B662A815BC100DB459A /* LightBoxElementView.swift in Sources */,
 				ECDD514C2A72561500FD9498 /* getFlairs.swift in Sources */,
-				65AA535B2A8BAE9B00275299 /* scaleEffectButtonStyle.swift in Sources */,
 				ECE285992A50086D009CF9DD /* UserView.swift in Sources */,
 				ECD1FC072A56D46D00723016 /* ObservableArray.swift in Sources */,
 				EC8F34A12A6FC99000EB8249 /* updatePostsInBox.swift in Sources */,
@@ -1243,6 +1253,7 @@
 				ECAEFF602A77A41D0052FCD3 /* stringFallback.swift in Sources */,
 				ECEFC2692A5DFA4B0003C6C4 /* formatBigNumber.swift in Sources */,
 				EC6CBE352A7D6E760089EAA0 /* LICENSE.md in Sources */,
+				ECE00EE22A8D68FE000A6E21 /* scaleEffectButtonStyle.swift in Sources */,
 				EC0854222A4BFF1500E88389 /* fetchSubs.swift in Sources */,
 				ECDD51522A7359D100FD9498 /* MDEditor.swift in Sources */,
 				ECAD0F2C2A8B4CD4001C88B5 /* Markdownosaur.swift in Sources */,
@@ -1253,6 +1264,7 @@
 				ECE2859B2A5010E2009CF9DD /* DataBlock.swift in Sources */,
 				ECEFC2612A5DBC6A0003C6C4 /* PostViewContainer.swift in Sources */,
 				EC22A3142A5B4B9C0062A112 /* ChangeAuthAPIKey.swift in Sources */,
+				EC1884482A8D7C1C00CAFB7A /* SwipeAnywhere.swift in Sources */,
 				EC082F272A66132600BA2727 /* CommentLinkMore.swift in Sources */,
 				ECE2859D2A50130D009CF9DD /* fetchUserOverview.swift in Sources */,
 				ECAD0F332A8C1360001C88B5 /* edit.swift in Sources */,
@@ -1455,7 +1467,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "";
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = Z2NNLU4F7U;
 				ENABLE_PREVIEWS = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = winston/Info.plist;
@@ -1492,7 +1504,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "";
-				DEVELOPMENT_TEAM = TCHY3UX6JP;
+				DEVELOPMENT_TEAM = Z2NNLU4F7U;
 				ENABLE_PREVIEWS = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = winston/Info.plist;
@@ -1627,14 +1639,6 @@
 				minimumVersion = 0.7.0;
 			};
 		};
-		EC0854442A4D6CC300E88389 /* XCRemoteSwiftPackageReference "simple-haptics" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/hallee/simple-haptics";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 0.0.5;
-			};
-		};
 		EC593AFE2A47AFC1002D6454 /* XCRemoteSwiftPackageReference "Defaults" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/sindresorhus/Defaults";
@@ -1743,11 +1747,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = EC08543B2A4CFE1C00E88389 /* XCRemoteSwiftPackageReference "swiftui-introspect" */;
 			productName = SwiftUIIntrospect;
-		};
-		EC0854452A4D6CC300E88389 /* SimpleHaptics */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = EC0854442A4D6CC300E88389 /* XCRemoteSwiftPackageReference "simple-haptics" */;
-			productName = SimpleHaptics;
 		};
 		EC593AFF2A47AFC1002D6454 /* Defaults */ = {
 			isa = XCSwiftPackageProductDependency;

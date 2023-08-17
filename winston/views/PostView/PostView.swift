@@ -85,12 +85,8 @@ struct PostView: View {
         }
         .listRowSeparator(.hidden)
       }
-//      .introspect(.list, on: .iOS(.v15)) { list in
-//        list.backgroundColor = UIColor.systemGroupedBackground
-//      }
-//      .introspect(.list, on: .iOS(.v16, .v17)) { list in
-//        list.backgroundColor = UIColor.systemGroupedBackground
-//      }
+      .background(Color(UIColor.systemGroupedBackground))
+      .scrollContentBackground(.hidden)
       .transition(.opacity)
       .environment(\.defaultMinListRowHeight, 1)
       .listStyle(.plain)

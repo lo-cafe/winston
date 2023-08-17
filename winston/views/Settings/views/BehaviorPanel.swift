@@ -18,6 +18,7 @@ struct BehaviorPanel: View {
   @Default(.blurPostNSFW) var blurPostNSFW
   @Default(.readPostOnScroll) var readPostOnScroll
   @Default(.hideReadPosts) var hideReadPosts
+  @Default(.enableSwipeAnywhere) var enableSwipeAnywhere
 
   
   var body: some View {
@@ -34,6 +35,12 @@ struct BehaviorPanel: View {
           Text("Subscription List").tag("subList")
         }
         .pickerStyle(DefaultPickerStyle())
+      }
+      
+      Section {
+        Toggle("Enable swipe anywhere", isOn: $enableSwipeAnywhere)
+      } footer: {
+        Text("This will allow you to do swipe actions in any screen, but will disable post and comments swipe gestures.")
       }
       
       Section("Posts") {

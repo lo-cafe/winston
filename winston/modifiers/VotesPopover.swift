@@ -10,58 +10,58 @@ import Popovers
 import Defaults
 
 struct ViewVotesModifier: ViewModifier {
-  @Default(.enableVotesPopover) var enableVotesPopover
-  @State var show = false
+  @Default(.enableVotesPopover) private var enableVotesPopover
+  @State private var show = false
   var ups: Int
   var downs: Int
   func body(content: Content) -> some View {
     content
-      .if(enableVotesPopover) { view in
-        view
-          .scaleEffect(show ? 1.175 : 1)
-          .contentShape(Rectangle())
-          .highPriorityGesture(
-            TapGesture().onEnded {
-            withAnimation(spring) {
-              show.toggle()
-            }
-          })
-          .popover(
-            present: $show,
-            attributes: {
-              $0.position = .absolute(
-                originAnchor: .left,
-                popoverAnchor: .right
-              )
-              $0.rubberBandingMode = [.xAxis, .yAxis]
-              $0.dismissal.dragDismissalProximity = CGFloat(50)
-//              $0.dismissal.mode = .dragDown
-              //          $0.dismissal.tapOutsideIncludesOtherPopovers = true
-              $0.presentation.transition = .fadeBlur
-              $0.dismissal.transition = .fadeBlur
-              $0.blocksBackgroundTouches = true
-              $0.onTapOutside = { withAnimation { show = false } }
-              $0.sourceFrameInset = .init(top: -12, left: -12, bottom: -12, right: -12)
-            }
-          ) {
-            VStack {
-              HStack {
-                Image(systemName: "arrow.up.circle.fill")
-                Text(String(ups))
-              }
-              .foregroundColor(.orange)
-              HStack {
-                Image(systemName: "arrow.down.circle.fill")
-                Text(String(downs))
-              }
-              .foregroundColor(.blue)
-            }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 12)
-            .fontSize(20, .semibold)
-            .background(RoundedRectangle(cornerRadius: 16, style: .continuous).fill(.ultraThinMaterial).shadow(radius: 8))
-            .overlay(RoundedRectangle(cornerRadius: 16, style: .continuous).stroke(Color.white.opacity(0.05), lineWidth: 0.5).padding(.all, 0.5))
+      .scaleEffect(show ? 1.175 : 1)
+      .contentShape(Rectangle())
+      .highPriorityGesture(
+        !enableVotesPopover
+        ? nil
+        : TapGesture().onEnded {
+          withAnimation(spring) {
+            show.toggle()
           }
+        }
+      )
+      .popover(
+        present: $show,
+        attributes: {
+          $0.position = .absolute(
+            originAnchor: .left,
+            popoverAnchor: .right
+          )
+          $0.rubberBandingMode = [.xAxis, .yAxis]
+          $0.dismissal.dragDismissalProximity = CGFloat(50)
+          //              $0.dismissal.mode = .dragDown
+          //          $0.dismissal.tapOutsideIncludesOtherPopovers = true
+          $0.presentation.transition = .fadeBlur
+          $0.dismissal.transition = .fadeBlur
+          $0.blocksBackgroundTouches = true
+          $0.onTapOutside = { withAnimation { show = false } }
+          $0.sourceFrameInset = .init(top: -12, left: -12, bottom: -12, right: -12)
+        }
+      ) {
+        VStack {
+          HStack {
+            Image(systemName: "arrow.up.circle.fill")
+            Text(String(ups))
+          }
+          .foregroundColor(.orange)
+          HStack {
+            Image(systemName: "arrow.down.circle.fill")
+            Text(String(downs))
+          }
+          .foregroundColor(.blue)
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 12)
+        .fontSize(20, .semibold)
+        .background(RoundedRectangle(cornerRadius: 16, style: .continuous).fill(.ultraThinMaterial).shadow(radius: 8))
+        .overlay(RoundedRectangle(cornerRadius: 16, style: .continuous).stroke(Color.white.opacity(0.05), lineWidth: 0.5).padding(.all, 0.5))
       }
   }
 }

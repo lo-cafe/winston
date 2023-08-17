@@ -94,6 +94,7 @@ extension Defaults.Keys {
   static let hideReadPosts = Key<Bool>("hideReadPosts", default: false)
   static let fadeReadPosts = Key<Bool>("fadeReadPosts", default: false)
   static let showSavedFeed = Key<Bool>("showSavedFeed", default: true)
+  static let enableSwipeAnywhere = Key<Bool>("enableSwipeAnywhere", default: false)
   static let redditAPIUserAgent = Key<String>("redditAPIUserAgent", default: "ios:lo.cafe.winston:v0.1.0 (by /u/Kinark)")
   
   static let forceFeedbackModifiers = Key<ForceFeedbackModifiers>("forceFeedbackModifiers", default: .medium)
