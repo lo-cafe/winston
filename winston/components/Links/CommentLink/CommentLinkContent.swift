@@ -246,8 +246,8 @@ struct CommentLinkContent: View {
                 }
               }
 
-              if let perma = URL(string: "https://reddit.com\(data.permalink)") {
-                ShareLink(item: perma) { Label("Share", systemImage: "square.and.arrow.up") }
+              if let permalink = data.permalink, let permaURL = URL(string: "https://reddit.com\(permalink.escape.urlEncoded)") {
+                ShareLink(item: permaURL) { Label("Share", systemImage: "square.and.arrow.up") }
               }
               
             }
