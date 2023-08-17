@@ -110,7 +110,6 @@ struct SubredditPosts: View {
               .id("post-loading")
           }
         }
-        //          .listRowSeparator(preferenceShowPostsCards ? .hidden : .automatic)
         .listRowSeparator(.hidden)
         .listRowBackground(Color.clear)
       }
