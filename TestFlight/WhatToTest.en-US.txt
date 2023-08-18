@@ -2,3 +2,4 @@
 - Added toggle to turn off video autoplay
 - Adds "Open in Winston" banner to Reddit Everywhere (an ultra-secret extensions (that needs access to all sites for now) that always lived in your Safari extensions list :D )
 - Added auto-colapse option for AutoMods
+- Titles now show full in compact mode
