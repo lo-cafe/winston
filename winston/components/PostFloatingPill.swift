@@ -7,8 +7,8 @@
 
 import SwiftUI
 import Defaults
-import SimpleHaptics
 import AlertToast
+
 struct PostFloatingPill: View {
   @Default(.postsInBox) var postsInBox
   @Default(.showUpvoteRatio) var showUpvoteRatio
@@ -82,11 +82,8 @@ struct PostFloatingPill: View {
           }
           
           HStack(alignment: .center, spacing: 8) {
-           
-
-            
+  
             VotesCluster(data: data, likeRatio: showUpvoteRatio ? data.upvote_ratio : nil, post: post)
-            
             
           }
           

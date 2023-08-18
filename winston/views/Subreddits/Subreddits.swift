@@ -8,7 +8,6 @@
 import SwiftUI
 import Defaults
 import Combine
-import SimpleHaptics
 
 let alphabetLetters = Array("ABCDEFGHIJKLMNOPQRSTUVWXYZ").map { String($0) }
 
@@ -183,6 +182,7 @@ struct Subreddits: View {
       }
       //        .onDelete(perform: deleteItems)
     }
+    .swipeAnywhere(router: router)
     .animation(.default, value: router.path)
   }
   

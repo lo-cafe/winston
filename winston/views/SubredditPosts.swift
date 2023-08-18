@@ -110,18 +110,12 @@ struct SubredditPosts: View {
               .id("post-loading")
           }
         }
-        //          .listRowSeparator(preferenceShowPostsCards ? .hidden : .automatic)
         .listRowSeparator(.hidden)
         .listRowBackground(Color.clear)
       }
-//      .introspect(.list, on: .iOS(.v15)) { list in
-//        list.backgroundColor = UIColor.systemGroupedBackground
-//      }
-//      .introspect(.list, on: .iOS(.v16, .v17)) { list in
-//        list.backgroundColor = UIColor.systemGroupedBackground
-//      }
+      .background(Color(UIColor.systemGroupedBackground))
+      .scrollContentBackground(.hidden)
       //    .listStyle(IPAD ? .grouped : .plain)
-      //    .scrollContentBackground(.hidden)
       .listStyle(.plain)
       //        .if(IPAD) { $0.listStyle(.insetGrouped) }
       .environment(\.defaultMinListRowHeight, 1)

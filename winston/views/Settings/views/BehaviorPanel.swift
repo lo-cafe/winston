@@ -19,6 +19,8 @@ struct BehaviorPanel: View {
   @Default(.collapseAutoModerator) var collapseAutoModerator
   @Default(.readPostOnScroll) var readPostOnScroll
   @Default(.hideReadPosts) var hideReadPosts
+  @Default(.enableSwipeAnywhere) var enableSwipeAnywhere
+  @Default(.autoPlayVideos) var autoPlayVideos
   
   var body: some View {
     List {
@@ -36,8 +38,15 @@ struct BehaviorPanel: View {
         .pickerStyle(DefaultPickerStyle())
       }
       
+      Section {
+        Toggle("Enable swipe anywhere", isOn: $enableSwipeAnywhere)
+      } footer: {
+        Text("This will allow you to do swipe actions in any screen, but will disable post and comments swipe gestures.")
+      }
+      
       Section("Posts") {
         NavigationLink("Posts swipe settings", value: SettingsPages.postSwipe)
+        Toggle("Autoplay videos (muted)", isOn: $autoPlayVideos)
         Toggle("Read posts on scroll", isOn: $readPostOnScroll)
         Toggle("Hide read posts", isOn: $hideReadPosts)
         Toggle("Blur NSFW in opened posts", isOn: $blurPostNSFW)

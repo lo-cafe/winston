@@ -7,6 +7,7 @@
 //
 import Foundation
 import SwiftUI
+import Defaults
 
 struct SwipeUI<T: GenericRedditEntityDataType>: ViewModifier {
   private enum TriggeredAction: Int {
@@ -17,6 +18,7 @@ struct SwipeUI<T: GenericRedditEntityDataType>: ViewModifier {
     case none = 0
   }
   
+  @Default(.enableSwipeAnywhere) private var enableSwipeAnywhere
   @State private var pressing: Bool = false
   @State private var dragAmount: CGFloat = 0
   @State private var offset: CGFloat?
@@ -89,7 +91,7 @@ struct SwipeUI<T: GenericRedditEntityDataType>: ViewModifier {
     content
       .offset(x: controlledDragAmount != nil ? 0 : dragAmount)
       .background(
-        !controlledIsSource
+        !controlledIsSource || enableSwipeAnywhere
         ? nil
         : HStack {
           
@@ -121,7 +123,9 @@ struct SwipeUI<T: GenericRedditEntityDataType>: ViewModifier {
         onTapAction?()
       }
       .gesture(
-        DragGesture(minimumDistance: minimumDragDistance, coordinateSpace: .local)
+        enableSwipeAnywhere
+        ? nil
+        : DragGesture(minimumDistance: minimumDragDistance, coordinateSpace: .local)
           .onChanged { val in
             let x = val.translation.width
             if offset == nil && x != 0 {
@@ -203,7 +207,7 @@ struct SwipeUI<T: GenericRedditEntityDataType>: ViewModifier {
           let impact = UIImpactFeedbackGenerator(style: increasing ? .rigid : .soft)
           impact.prepare()
           impact.impactOccurred()
-//          try? haptics.fire(intensity: increasing ? 0.5 : 0.35, sharpness: increasing ? 0.25 : 0.5)
+          //          try? haptics.fire(intensity: increasing ? 0.5 : 0.35, sharpness: increasing ? 0.25 : 0.5)
           withAnimation(isSecond ? .default.speed(2) : .interpolatingSpring(stiffness: 200, damping: 15, initialVelocity: increasing ? 35 : 0)) {
             triggeredAction = triggering
           }

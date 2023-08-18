@@ -1,7 +1,2 @@
-- Added edit option
-- Added delete option
-- All swipe options can also be swipe options
-- Yes, Share option does nothing atm
-=== SECOND UPDATE IN A ROW ===
-- Fixes inverted icons on swipe
-This was the first step for gestures to work anywhere (swipe right in the middle of the screen) :)
+- Fixed video player crashes (hopefully) and improves it's performance
+- Added toggle to turn off video autoplay

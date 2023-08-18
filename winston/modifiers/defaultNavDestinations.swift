@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-import AlertToast
+
 extension View {
   func defaultNavDestinations(_ router: Router) -> some View {
     return self
@@ -37,9 +37,5 @@ extension View {
           .environmentObject(router)
       }
       .environmentObject(router)
-
-
   }
 }
-
-  

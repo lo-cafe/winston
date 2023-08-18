@@ -32,6 +32,7 @@ struct Me: View {
       }
     }
     .onChange(of: reset) { _ in router.path.removeLast(router.path.count) }
+    .swipeAnywhere(router: router)
   }
 }
 

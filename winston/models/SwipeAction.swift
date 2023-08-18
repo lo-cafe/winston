@@ -35,10 +35,10 @@ struct SwipeActionsSet: Codable, Defaults.Serializable, Equatable {
 }
 
 
-let allPostSwipeActions: [AnySwipeAction] = [AnySwipeAction(UpvotePostAction()), AnySwipeAction(DownvotePostAction()), AnySwipeAction(SavePostAction()), AnySwipeAction(ReplyPostAction()), AnySwipeAction(SeenPostAction()), AnySwipeAction(SharePostAction()), AnySwipeAction(NoneAction())]
+let allPostSwipeActions: [AnySwipeAction] = [AnySwipeAction(UpvotePostAction()), AnySwipeAction(DownvotePostAction()), AnySwipeAction(SavePostAction()), AnySwipeAction(ReplyPostAction()), AnySwipeAction(SeenPostAction())/**, AnySwipeAction(SharePostAction()) **/, AnySwipeAction(NoneAction())]
 
 let allCommentSwipeActions: [AnySwipeAction] = [
-  AnySwipeAction(UpvoteCommentAction()), AnySwipeAction(DownvoteCommentAction()), AnySwipeAction(EditCommentAction()), AnySwipeAction(ReplyCommentAction()), AnySwipeAction(SaveCommentAction()), AnySwipeAction(SelectTextCommentAction()), AnySwipeAction(ShareCommentAction()), AnySwipeAction(CopyCommentAction()), AnySwipeAction(NoneAction()), AnySwipeAction(DeleteCommentAction())]
+  AnySwipeAction(UpvoteCommentAction()), AnySwipeAction(DownvoteCommentAction()), AnySwipeAction(EditCommentAction()), AnySwipeAction(ReplyCommentAction()), AnySwipeAction(SaveCommentAction()), AnySwipeAction(SelectTextCommentAction())/**, AnySwipeAction(ShareCommentAction())**/, AnySwipeAction(CopyCommentAction()), AnySwipeAction(DeleteCommentAction()), AnySwipeAction(NoneAction())]
 
 let allSwipeActions = allPostSwipeActions + allCommentSwipeActions
 
@@ -334,5 +334,5 @@ struct NoneAction: SwipeAction {
   var bgColor = SwipeActionItem(normal: "000000")
   func action(_ entity: Comment) async { }
   func active(_ entity: Comment) -> Bool { false }
-  func enabled(_ entity: Comment) -> Bool { true }
+  func enabled(_ entity: Comment) -> Bool { false }
 }

@@ -107,7 +107,7 @@ struct PreviewLinkContent: View {
             } else if state.error != nil {
               Color.red // Indicates an error
             } else {
-              Color.blue // Acts as a placeholder
+              Color.blue.opacity(0.1) // Acts as a placeholder
             }
           }
           .frame(width: 76, height: 76)
