@@ -1,2 +1,3 @@
 - Fixed video player crashes (hopefully) and improves it's performance
 - Added toggle to turn off video autoplay
+- Adds "Open in Winston" banner to Reddit Everywhere (an ultra-secret extensions (that needs access to all sites for now) that always lived in your safari extenstions list :D )
