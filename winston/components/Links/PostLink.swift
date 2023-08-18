@@ -72,12 +72,11 @@ struct PostLink: View, Equatable {
         layout {
           VStack(alignment: .leading, spacing: compactMode ? 4 : 10) {
             Text(data.title.escape)
-              .lineLimit(compactMode ? 2 : nil)
               .fontSize(compactMode ? 16 : 17, .medium)
               .frame(maxWidth: .infinity, alignment: .topLeading)
             
-            if data.selftext != "" {
-              Text(data.selftext.md()).lineLimit(compactMode ? 2 : 3)
+            if data.selftext != "" && !compactMode {
+              Text(data.selftext.md()).lineLimit(3)
                 .fontSize(14)
                 .opacity(0.75)
                 .frame(maxWidth: .infinity, alignment: .topLeading)
