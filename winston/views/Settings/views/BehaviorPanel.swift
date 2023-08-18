@@ -19,6 +19,7 @@ struct BehaviorPanel: View {
   @Default(.readPostOnScroll) var readPostOnScroll
   @Default(.hideReadPosts) var hideReadPosts
   @Default(.enableSwipeAnywhere) var enableSwipeAnywhere
+  @Default(.autoPlayVideos) var autoPlayVideos
 
   
   var body: some View {
@@ -45,6 +46,7 @@ struct BehaviorPanel: View {
       
       Section("Posts") {
         NavigationLink("Posts swipe settings", value: SettingsPages.postSwipe)
+        Toggle("Autoplay videos (muted)", isOn: $autoPlayVideos)
         Toggle("Read posts on scroll", isOn: $readPostOnScroll)
         Toggle("Hide read posts", isOn: $hideReadPosts)
         Toggle("Blur NSFW in opened posts", isOn: $blurPostNSFW)

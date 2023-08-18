@@ -93,7 +93,7 @@ struct PostInBoxLink: View {
         } else if state.error != nil {
           Color.red // Indicates an error
         } else {
-          Color.blue // Acts as a placeholder
+          Color.blue.opacity(0.1) // Acts as a placeholder
         }
       }
         .opacity(0.15)

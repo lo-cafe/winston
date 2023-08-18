@@ -44,7 +44,7 @@ struct UserView: View {
                   } else if state.error != nil {
                     Color.red // Indicates an error
                   } else {
-                    Color.blue // Acts as a placeholder
+                    Color.blue.opacity(0.1) // Acts as a placeholder
                   }
                 }
                 .frame(width: contentWidth, height: 160)
@@ -58,7 +58,7 @@ struct UserView: View {
                   } else if state.error != nil {
                     Color.red // Indicates an error
                   } else {
-                    Color.blue // Acts as a placeholder
+                    Color.blue.opacity(0.1) // Acts as a placeholder
                   }
                 }
                 .frame(width: 125, height: 125)

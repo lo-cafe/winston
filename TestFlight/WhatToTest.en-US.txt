@@ -1,4 +1,2 @@
-- Fixes tabs background and layout
-- Added Swipe Anywhere setting (to go backwards by swiping anywhere)
-- Added longpress with all options to postlinks
-- Added share option to comment longpress
+- Fixed video player crashes (hopefully) and improves it's performance
+- Added toggle to turn off video autoplay
