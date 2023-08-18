@@ -16,11 +16,11 @@ struct BehaviorPanel: View {
   @Default(.preferredCommentSort) var preferredCommentSort
   @Default(.blurPostLinkNSFW) var blurPostLinkNSFW
   @Default(.blurPostNSFW) var blurPostNSFW
+  @Default(.collapseAutoModerator) var collapseAutoModerator
   @Default(.readPostOnScroll) var readPostOnScroll
   @Default(.hideReadPosts) var hideReadPosts
   @Default(.enableSwipeAnywhere) var enableSwipeAnywhere
   @Default(.autoPlayVideos) var autoPlayVideos
-
   
   var body: some View {
     List {
@@ -74,6 +74,8 @@ struct BehaviorPanel: View {
             Label(val.rawVal.id.capitalized, systemImage: val.rawVal.icon)
           }
         }
+        
+        Toggle("Collapse AutoModerator comments", isOn: $collapseAutoModerator)
       }
       
     }

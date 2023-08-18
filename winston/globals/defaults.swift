@@ -49,6 +49,7 @@ extension Defaults.Keys {
   static let preferredSort = Key<SubListingSortOption>("preferredSort", default: .best)
   static let blurPostLinkNSFW = Key<Bool>("blurPostLinkNSFW", default: true)
   static let blurPostNSFW = Key<Bool>("blurPostNSFW", default: false)
+  static let collapseAutoModerator = Key<Bool>("collapseAutoModerator", default: false)
   static let preferredCommentSort = Key<CommentSortOption>("preferredCommentSort", default: .confidence)
   
   static let compactMode = Key<Bool>("compactMode", default: false)
