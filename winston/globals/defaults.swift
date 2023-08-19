@@ -97,6 +97,13 @@ extension Defaults.Keys {
   static let showSavedFeed = Key<Bool>("showSavedFeed", default: true)
   static let enableSwipeAnywhere = Key<Bool>("enableSwipeAnywhere", default: false)
   static let autoPlayVideos = Key<Bool>("autoPlayVideos", default: true)
+  
+  static let postLinkTitleSize = Key<CGFloat>("postLinkTitleSize", default: 16)
+  static let postLinkBodySize = Key<CGFloat>("postLinkBodySize", default: 14)
+  static let postViewTitleSize = Key<CGFloat>("postViewTitleSize", default: 20)
+  static let postViewBodySize = Key<CGFloat>("postViewBodySize", default: 15)
+  static let commentLinkBodySize = Key<CGFloat>("commentLinkBodySize", default: 15)
+  
   static let redditAPIUserAgent = Key<String>("redditAPIUserAgent", default: "ios:lo.cafe.winston:v0.1.0 (by /u/Kinark)")
   
   static let forceFeedbackModifiers = Key<ForceFeedbackModifiers>("forceFeedbackModifiers", default: .medium)

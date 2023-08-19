@@ -58,6 +58,10 @@ struct PostLink: View, Equatable {
   
   @Default(.showUpvoteRatio) var showUpvoteRatio
   @Default(.fadeReadPosts) var fadeReadPosts
+  
+  @Default(.postLinkTitleSize) var postLinkTitleSize
+  @Default(.postLinkBodySize) var postLinkBodySize
+  
   @StateObject private var appeared = Appeared()
   
   var contentWidth: CGFloat { UIScreen.screenWidth - ((preferenceShowPostsCards ? cardedPostLinksOuterHPadding : postLinksInnerHPadding) * 2) - (preferenceShowPostsCards ? (preferenceShowPostsCards ? cardedPostLinksInnerHPadding : 0) * 2 : 0) }
@@ -72,12 +76,12 @@ struct PostLink: View, Equatable {
         layout {
           VStack(alignment: .leading, spacing: compactMode ? 4 : 10) {
             Text(data.title.escape)
-              .fontSize(compactMode ? 16 : 17, .medium)
+              .fontSize(postLinkTitleSize, .medium)
               .frame(maxWidth: .infinity, alignment: .topLeading)
             
             if data.selftext != "" && !compactMode {
               Text(data.selftext.md()).lineLimit(3)
-                .fontSize(14)
+                .fontSize(postLinkBodySize)
                 .opacity(0.75)
                 .frame(maxWidth: .infinity, alignment: .topLeading)
             }
