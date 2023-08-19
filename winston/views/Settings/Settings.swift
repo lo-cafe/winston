@@ -33,9 +33,9 @@ struct Settings: View {
             NavigationLink(value: SettingsPages.account) {
               Label("Account", systemImage: "person.crop.circle")
             }
-            NavigationLink(value: SettingsPages.accessibility) {
-              Label("Accessibility", systemImage: "figure.roll")
-            }
+//            NavigationLink(value: SettingsPages.accessibility) {
+//              Label("Accessibility", systemImage: "figure.roll")
+//            }
             
           }
           

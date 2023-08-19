@@ -1,5 +1,5 @@
-- Fixed video player crashes (hopefully) and improves it's performance
-- Added toggle to turn off video autoplay
-- Adds "Open in Winston" banner to Reddit Everywhere (an ultra-secret extensions (that needs access to all sites for now) that always lived in your Safari extensions list :D )
-- Added auto-colapse option for AutoMods
-- Titles now show full in compact mode
+- Hopefully fixes videos crashes again (since last one broke them all)
+- Hopefully fixes many crashes related to Winston's Database concurrent access (may require further actions)
+- Added font size settings (astigmatism is no kidding huh?)
+- Fixed inline URL and soft line breaks
+- Added FAQ questions

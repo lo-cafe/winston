@@ -138,7 +138,9 @@ extension Comment {
       } else if collapsed == nil || collapsed == true {
         let newSeenPost = CollapsedComment(context: context)
         newSeenPost.commentID = id
-        try? context.save()
+        context.performAndWait {
+          try? context.save()
+        }
         if !optimistic {
           data?.collapsed = true
         }

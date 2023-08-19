@@ -104,6 +104,8 @@
 		EC7DBDEF2A846D0C00D7C123 /* save.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC7DBDEE2A846D0C00D7C123 /* save.swift */; };
 		EC7DBDF12A86C91A00D7C123 /* CommentSwipePanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC7DBDF02A86C91A00D7C123 /* CommentSwipePanel.swift */; };
 		EC7DBDF32A86C92200D7C123 /* PostSwipePanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC7DBDF22A86C92200D7C123 /* PostSwipePanel.swift */; };
+		EC828EA72A904E0A009478B1 /* ConfettiSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = EC828EA62A904E0A009478B1 /* ConfettiSwiftUI */; };
+		EC828EA92A904E56009478B1 /* TestersCelebration.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC828EA82A904E56009478B1 /* TestersCelebration.swift */; };
 		EC8F34662A6A348F00EB8249 /* SwipeActions.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC8F34652A6A348F00EB8249 /* SwipeActions.swift */; };
 		EC8F34792A6CE79B00EB8249 /* PostInBoxLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC8F34782A6CE79B00EB8249 /* PostInBoxLink.swift */; };
 		EC8F347C2A6CEBD600EB8249 /* winston.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = EC8F347A2A6CEBD600EB8249 /* winston.xcdatamodeld */; };
@@ -349,6 +351,7 @@
 		EC7DBDEE2A846D0C00D7C123 /* save.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = save.swift; sourceTree = "<group>"; };
 		EC7DBDF02A86C91A00D7C123 /* CommentSwipePanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentSwipePanel.swift; sourceTree = "<group>"; };
 		EC7DBDF22A86C92200D7C123 /* PostSwipePanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostSwipePanel.swift; sourceTree = "<group>"; };
+		EC828EA82A904E56009478B1 /* TestersCelebration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestersCelebration.swift; sourceTree = "<group>"; };
 		EC8F34652A6A348F00EB8249 /* SwipeActions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwipeActions.swift; sourceTree = "<group>"; };
 		EC8F34782A6CE79B00EB8249 /* PostInBoxLink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostInBoxLink.swift; sourceTree = "<group>"; };
 		EC8F347B2A6CEBD600EB8249 /* winston.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = winston.xcdatamodel; sourceTree = "<group>"; };
@@ -470,6 +473,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EC828EA72A904E0A009478B1 /* ConfettiSwiftUI in Frameworks */,
 				ECAA8B842A76421000D9D636 /* YouTubePlayerKit in Frameworks */,
 				EC9BB1C22A8B05AA0070CD97 /* NukeExtensions in Frameworks */,
 				EC593B0C2A47B801002D6454 /* Alamofire in Frameworks */,
@@ -648,6 +652,7 @@
 				ECDBA8C62A4A83DB00FB42DB /* SubredditPosts.swift */,
 				ECE285982A50086D009CF9DD /* UserView.swift */,
 				EC22A3132A5B4B9C0062A112 /* ChangeAuthAPIKey.swift */,
+				EC828EA82A904E56009478B1 /* TestersCelebration.swift */,
 			);
 			path = views;
 			sourceTree = "<group>";
@@ -1022,6 +1027,7 @@
 				EC9BB1C32A8B05AA0070CD97 /* NukeUI */,
 				EC9BB1C52A8B05AA0070CD97 /* NukeVideo */,
 				ECAD0F2E2A8B4D4B001C88B5 /* Markdown */,
+				EC828EA62A904E0A009478B1 /* ConfettiSwiftUI */,
 			);
 			productName = winston;
 			productReference = EC593AD42A4673B2002D6454 /* winston.app */;
@@ -1086,6 +1092,7 @@
 				65807E712A87F8A8000EF969 /* XCRemoteSwiftPackageReference "AlertToast" */,
 				EC9BB1BE2A8B05AA0070CD97 /* XCRemoteSwiftPackageReference "Nuke" */,
 				ECAD0F2D2A8B4D4B001C88B5 /* XCRemoteSwiftPackageReference "swift-markdown" */,
+				EC828EA52A904E0A009478B1 /* XCRemoteSwiftPackageReference "ConfettiSwiftUI" */,
 			);
 			productRefGroup = EC593AD52A4673B2002D6454 /* Products */;
 			projectDirPath = "";
@@ -1299,6 +1306,7 @@
 				EC2D275C2A4FBF00006444D6 /* ShrinkOnTap.swift in Sources */,
 				EC08542B2A4C2B6B00E88389 /* if.swift in Sources */,
 				EC9269E82A514AA6003F33B1 /* DownAttributedString.swift in Sources */,
+				EC828EA92A904E56009478B1 /* TestersCelebration.swift in Sources */,
 				EC12D7182A59C7A800C300B3 /* Arrows.swift in Sources */,
 				ECDD514E2A726E5900FD9498 /* modifyColor.swift in Sources */,
 				EC593AF62A47AE30002D6454 /* Me.swift in Sources */,
@@ -1663,6 +1671,14 @@
 				minimumVersion = 5.0.0;
 			};
 		};
+		EC828EA52A904E0A009478B1 /* XCRemoteSwiftPackageReference "ConfettiSwiftUI" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/simibac/ConfettiSwiftUI.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.0;
+			};
+		};
 		EC9269F02A51A732003F33B1 /* XCRemoteSwiftPackageReference "HighlightedTextEditor" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/kyle-n/HighlightedTextEditor";
@@ -1762,6 +1778,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = EC593B0A2A47B801002D6454 /* XCRemoteSwiftPackageReference "Alamofire" */;
 			productName = Alamofire;
+		};
+		EC828EA62A904E0A009478B1 /* ConfettiSwiftUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = EC828EA52A904E0A009478B1 /* XCRemoteSwiftPackageReference "ConfettiSwiftUI" */;
+			productName = ConfettiSwiftUI;
 		};
 		EC9269F12A51A732003F33B1 /* HighlightedTextEditor */ = {
 			isa = XCSwiftPackageProductDependency;

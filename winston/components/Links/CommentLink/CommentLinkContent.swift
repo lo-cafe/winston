@@ -63,6 +63,7 @@ struct CommentLinkContent: View {
   @Default(.coloredCommentNames) var coloredCommenNames
   
   @Default(.collapseAutoModerator) var collapseAutoModerator
+  @Default(.commentLinkBodySize) var commentLinkBodySize
   
   @State var commentViewLoaded = false
   
@@ -196,7 +197,7 @@ struct CommentLinkContent: View {
                       .fontSize(15)
                       .lineLimit(lineLimit)
                   } else {
-                    MD(str: body)
+                    MD(str: body, fontSize: commentLinkBodySize)
                       .fixedSize(horizontal: false, vertical: true)
                       .overlay(
                         !selectable
