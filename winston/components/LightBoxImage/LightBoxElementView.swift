@@ -28,7 +28,7 @@ struct LightBoxElementView: View {
       } else if state.error != nil {
         Color.red // Indicates an error
       } else {
-        Color.blue // Acts as a placeholder
+        Color.blue.opacity(0.1) // Acts as a placeholder
       }
     }
     .pinchToZoom(onTap: onTap, size: el.size, isPinching: $isPinching, scale: $scale, anchor: $anchor, offset: $offset)

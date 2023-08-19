@@ -16,10 +16,11 @@ struct BehaviorPanel: View {
   @Default(.preferredCommentSort) var preferredCommentSort
   @Default(.blurPostLinkNSFW) var blurPostLinkNSFW
   @Default(.blurPostNSFW) var blurPostNSFW
+  @Default(.collapseAutoModerator) var collapseAutoModerator
   @Default(.readPostOnScroll) var readPostOnScroll
   @Default(.hideReadPosts) var hideReadPosts
   @Default(.enableSwipeAnywhere) var enableSwipeAnywhere
-
+  @Default(.autoPlayVideos) var autoPlayVideos
   
   var body: some View {
     List {
@@ -44,12 +45,13 @@ struct BehaviorPanel: View {
       }
       
       Section("Posts") {
-        NavigationLink("Posts Swipe Settings", value: SettingsPages.postSwipe)
-        Toggle("Read Posts on Scroll", isOn: $readPostOnScroll)
-        Toggle("Hide Read Posts", isOn: $hideReadPosts)
-        Toggle("Blur NSFW in Opened Posts", isOn: $blurPostNSFW)
-        Toggle("Blur NSFW in Posts Links", isOn: $blurPostLinkNSFW)
-        Picker("Posts Sorting", selection: $preferredSort) {
+        NavigationLink("Posts swipe settings", value: SettingsPages.postSwipe)
+        Toggle("Autoplay videos (muted)", isOn: $autoPlayVideos)
+        Toggle("Read posts on scroll", isOn: $readPostOnScroll)
+        Toggle("Hide read posts", isOn: $hideReadPosts)
+        Toggle("Blur NSFW in opened posts", isOn: $blurPostNSFW)
+        Toggle("Blur NSFW in posts links", isOn: $blurPostLinkNSFW)
+        Picker("Posts sorting", selection: $preferredSort) {
           ForEach(SubListingSortOption.allCases, id: \.self) { val in
             Label(val.rawVal.id.capitalized, systemImage: val.rawVal.icon)
           }
@@ -72,6 +74,8 @@ struct BehaviorPanel: View {
             Label(val.rawVal.id.capitalized, systemImage: val.rawVal.icon)
           }
         }
+        
+        Toggle("Collapse AutoModerator comments", isOn: $collapseAutoModerator)
       }
       
     }

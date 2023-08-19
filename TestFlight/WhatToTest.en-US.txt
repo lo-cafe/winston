@@ -1,4 +1,5 @@
-- Fixes tabs background and layout
-- Added Swipe Anywhere setting (to go backwards by swiping anywhere)
-- Added longpress with all options to postlinks
-- Added share option to comment longpress
+- Hopefully fixes videos crashes again (since last one broke them all)
+- Hopefully fixes many crashes related to Winston's Database concurrent access (may require further actions)
+- Added font size settings (astigmatism is no kidding huh?)
+- Fixed inline URL and soft line breaks
+- Added FAQ questions

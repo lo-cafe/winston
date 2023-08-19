@@ -17,6 +17,8 @@ struct PostContent: View {
   @State private var collapsed = false
   @Default(.blurPostNSFW) private var blurPostNSFW
   @Default(.preferenceShowPostsAvatars) var showPostAvatars
+  @Default(.postViewTitleSize) var postViewTitleSize
+  @Default(.postViewBodySize) var postViewBodySize
   private var contentWidth: CGFloat { UIScreen.screenWidth - 16 }
   
   var body: some View {
@@ -25,7 +27,7 @@ struct PostContent: View {
       let over18 = data.over_18 ?? false
       Group {
         Text(data.title)
-          .fontSize(20, .semibold)
+          .fontSize(postViewTitleSize, .semibold)
           .fixedSize(horizontal: false, vertical: true)
           .id("post-title")
           .onAppear {
@@ -64,7 +66,7 @@ struct PostContent: View {
             
             if data.selftext != "" {
               VStack {
-                MD(str: data.selftext)
+                MD(str: data.selftext, fontSize: postViewBodySize)
               }
               .contentShape(Rectangle())
               .onTapGesture { withAnimation(spring) { collapsed.toggle() } }

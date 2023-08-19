@@ -46,6 +46,12 @@ struct AppearancePanel: View {
   @Default(.thumbnailPositionRight) var thumbnailPositionRight
   @Default(.voteButtonPositionRight) var voteButtonPositionRight
   
+  @Default(.postLinkTitleSize) var postLinkTitleSize
+  @Default(.postLinkBodySize) var postLinkBodySize
+  @Default(.postViewTitleSize) var postViewTitleSize
+  @Default(.postViewBodySize) var postViewBodySize
+  @Default(.commentLinkBodySize) var commentLinkBodySize
+  
   var body: some View {
     List {
       Section("General") {
@@ -77,6 +83,52 @@ struct AppearancePanel: View {
         Toggle("Show upvote ratio", isOn: $showUpvoteRatio)
         Toggle("Show Voting Buttons", isOn: $showVotes)
         Toggle("Show Self Text", isOn: $showSelfText)
+        
+        VStack(alignment: .leading) {
+          HStack {
+            Text("Post link title size")
+            Spacer()
+            Text("\(Int(postLinkTitleSize))")
+              .opacity(0.6)
+              .fontSize(postLinkTitleSize, .medium)
+          }
+          Slider(value: $postLinkTitleSize, in: 10...32, step: 1)
+        }
+        
+        VStack(alignment: .leading) {
+          HStack {
+            Text("Post link body size")
+            Spacer()
+            Text("\(Int(postLinkBodySize))")
+              .opacity(0.6)
+              .fontSize(postLinkBodySize)
+          }
+          Slider(value: $postLinkBodySize, in: 10...32, step: 1)
+        }
+        .disabled(compactMode)
+        
+        VStack(alignment: .leading) {
+          HStack {
+            Text("Post page title size")
+            Spacer()
+            Text("\(Int(postViewTitleSize))")
+              .opacity(0.6)
+              .fontSize(postViewTitleSize, .semibold)
+          }
+          Slider(value: $postViewTitleSize, in: 10...32, step: 1)
+        }
+        
+        VStack(alignment: .leading) {
+          HStack {
+            Text("Post page body size")
+            Spacer()
+            Text("\(Int(postViewBodySize))")
+              .opacity(0.6)
+              .fontSize(postViewBodySize)
+          }
+          Slider(value: $postViewBodySize, in: 10...32, step: 1)
+        }
+
         if preferenceShowPostsCards {
           VStack(alignment: .leading) {
             HStack {
@@ -186,6 +238,21 @@ struct AppearancePanel: View {
         
         Toggle("Show Avatars", isOn: $preferenceShowCommentsAvatars)
         Toggle("Colored Usernames", isOn: $coloredCommentNames)
+        Toggle("Show avatars", isOn: $preferenceShowCommentsAvatars)
+        Toggle("Colored usernames", isOn: $coloredCommentNames)
+        
+        
+        VStack(alignment: .leading) {
+          HStack {
+            Text("Comment body size")
+            Spacer()
+            Text("\(Int(commentLinkBodySize))")
+              .opacity(0.6)
+              .fontSize(commentLinkBodySize)
+          }
+          Slider(value: $commentLinkBodySize, in: 10...32, step: 1)
+        }
+        
         if preferenceShowCommentsCards {
           VStack(alignment: .leading) {
             HStack {

@@ -44,6 +44,7 @@ struct Tabber: View {
     .settings: true,
   ]
   @Default(.postsInBox) var postsInBox
+  @Default(.showTestersCelebrationModal) var showTestersCelebrationModal
   @Default(.showUsernameInTabBar) var showUsernameInTabBar
   var body: some View {
     TabView(selection: $activeTab.onUpdate { newTab in if activeTab == newTab { reset[newTab]!.toggle() } }) {
@@ -152,6 +153,9 @@ struct Tabber: View {
           break
         }
       }
+    }
+    .sheet(isPresented: $showTestersCelebrationModal) {
+      TestersCelebration()
     }
     .sheet(isPresented: $credModalOpen) {
       Onboarding(open: $credModalOpen)

@@ -49,6 +49,7 @@ extension Defaults.Keys {
   static let preferredSort = Key<SubListingSortOption>("preferredSort", default: .best)
   static let blurPostLinkNSFW = Key<Bool>("blurPostLinkNSFW", default: true)
   static let blurPostNSFW = Key<Bool>("blurPostNSFW", default: false)
+  static let collapseAutoModerator = Key<Bool>("collapseAutoModerator", default: false)
   static let preferredCommentSort = Key<CommentSortOption>("preferredCommentSort", default: .confidence)
   
   // Compact Mode Settings
@@ -100,10 +101,20 @@ extension Defaults.Keys {
   static let fadeReadPosts = Key<Bool>("fadeReadPosts", default: false)
   static let showSavedFeed = Key<Bool>("showSavedFeed", default: true)
   static let enableSwipeAnywhere = Key<Bool>("enableSwipeAnywhere", default: false)
+  static let autoPlayVideos = Key<Bool>("autoPlayVideos", default: true)
+  
+  static let postLinkTitleSize = Key<CGFloat>("postLinkTitleSize", default: 16)
+  static let postLinkBodySize = Key<CGFloat>("postLinkBodySize", default: 14)
+  static let postViewTitleSize = Key<CGFloat>("postViewTitleSize", default: 20)
+  static let postViewBodySize = Key<CGFloat>("postViewBodySize", default: 15)
+  static let commentLinkBodySize = Key<CGFloat>("commentLinkBodySize", default: 15)
+  
   static let redditAPIUserAgent = Key<String>("redditAPIUserAgent", default: "ios:lo.cafe.winston:v0.1.0 (by /u/Kinark)")
   
   static let forceFeedbackModifiers = Key<ForceFeedbackModifiers>("forceFeedbackModifiers", default: .medium)
   static let hapticFeedbackOnLPM = Key<Bool>("hapticFeedbackOnLPM", default: true)
+  
+  static let showTestersCelebrationModal = Key<Bool>("showTestersCelebrationModal", default: true)
 }
 
 extension UIScreen {

@@ -4,14 +4,16 @@
 //
 //  Created by Christian Selig on 2021-11-02.
 //
-
+import Foundation
 import UIKit
 import Markdown
 
 public struct Markdownosaur: MarkupVisitor {
-    let baseFontSize: CGFloat = 15.0
+    var baseFontSize: CGFloat
 
-    public init() {}
+    public init(baseFontSize: CGFloat = 15.0) {
+        self.baseFontSize = baseFontSize
+    }
     
     public mutating func attributedString(from document: Document) -> NSAttributedString {
         return visit(document)
@@ -19,7 +21,6 @@ public struct Markdownosaur: MarkupVisitor {
     
     mutating public func defaultVisit(_ markup: Markup) -> NSAttributedString {
         let result = NSMutableAttributedString()
-        
         for child in markup.children {
             result.append(visit(child))
         }
@@ -28,7 +29,13 @@ public struct Markdownosaur: MarkupVisitor {
     }
     
     mutating public func visitText(_ text: Text) -> NSAttributedString {
-        return NSAttributedString(string: text.plainText, attributes: [.font: UIFont.systemFont(ofSize: baseFontSize, weight: .regular)])
+        let plainText = text.plainText
+        let textRange = NSRange(location: 0, length: plainText.utf16.count)
+        let attributedString = NSMutableAttributedString(string: plainText, attributes: [.font: UIFont.systemFont(ofSize: baseFontSize, weight: .regular)])
+
+        applyUrlDetector(attributedString: attributedString, text: plainText, range: textRange)
+
+        return attributedString
     }
     
     mutating public func visitEmphasis(_ emphasis: Emphasis) -> NSAttributedString {
@@ -40,6 +47,21 @@ public struct Markdownosaur: MarkupVisitor {
         
         result.applyEmphasis()
         
+        return result
+    }
+    
+    mutating public func visitSoftBreak(_ softBreak: SoftBreak) -> NSAttributedString {
+        return NSAttributedString(string: " ")
+    }
+    
+    mutating public func visitLineBreak(_ lineBreak: LineBreak) -> NSAttributedString {
+        let result = NSMutableAttributedString()
+
+        for child in lineBreak.children {
+            result.append(visit(child))
+        }
+        result.append(.singleNewline(withFontSize: baseFontSize))
+
         return result
     }
     
@@ -67,6 +89,15 @@ public struct Markdownosaur: MarkupVisitor {
         }
         
         return result
+    }
+    
+    mutating public func visitInlineHTML(_ inlineHTML: InlineHTML) -> NSAttributedString {
+        let htmlString = inlineHTML.rawHTML
+        
+        // Create an attributed string with the raw HTML string
+        let attributedString = NSAttributedString(string: htmlString)
+        
+        return attributedString
     }
     
     mutating public func visitHeading(_ heading: Heading) -> NSAttributedString {
@@ -366,6 +397,8 @@ extension BlockQuote {
 extension NSAttributedString.Key {
     static let listDepth = NSAttributedString.Key("ListDepth")
     static let quoteDepth = NSAttributedString.Key("QuoteDepth")
+    static let spoilerText = NSAttributedString.Key("SpoilerText")
+    static let spoilerCovered = NSAttributedString.Key("SpoilerCovered")
 }
 
 extension NSMutableAttributedString {
@@ -407,5 +440,27 @@ extension NSAttributedString {
     
     static func doubleNewline(withFontSize fontSize: CGFloat) -> NSAttributedString {
         return NSAttributedString(string: "\n\n", attributes: [.font: UIFont.systemFont(ofSize: fontSize, weight: .regular)])
+    }
+}
+
+let urlDetector: NSDataDetector? = try? NSDataDetector(types: NSTextCheckingResult.CheckingType.link.rawValue)
+
+public func applyUrlDetector(attributedString: NSMutableAttributedString, text: String, range: NSRange) {
+    let matches = urlDetector?.matches(in: text, options: [], range: range) ?? []
+    
+    let existingFont: UIFont
+    if attributedString.length > 0 {
+        existingFont = attributedString.attribute(.font, at: 0, effectiveRange: nil) as? UIFont ?? UIFont.systemFont(ofSize: UIFont.systemFontSize)
+    } else {
+        existingFont = UIFont.systemFont(ofSize: UIFont.systemFontSize)
+    }
+
+    for match in matches {
+        guard let url = match.url else { continue }
+        let linkAttributes: [NSAttributedString.Key: Any] = [
+            .link: url,
+            .font: existingFont
+        ]
+        attributedString.setAttributes(linkAttributes, range: match.range)
     }
 }
