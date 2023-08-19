@@ -1,5 +1,1 @@
-- Hopefully fixes videos crashes again (since last one broke them all)
-- Hopefully fixes many crashes related to Winston's Database concurrent access (may require further actions)
-- Added font size settings (astigmatism is no kidding huh?)
-- Fixed inline URL and soft line breaks
-- Added FAQ questions
+- Fixed bug that locked users in video fullscreen views
