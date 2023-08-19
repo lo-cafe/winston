@@ -1,1 +1,2 @@
 - Hopefully fixes videos crashes again (since last one broke them all)
+- Hopefully fixes many crashes related to Winston's Database concurrent access (may require further actions)
