@@ -45,13 +45,10 @@ struct AppearancePanel: View {
   @Default(.compThumbnailSize) var compThumbnailSize
   @Default(.thumbnailPositionRight) var thumbnailPositionRight
   @Default(.voteButtonPositionRight) var voteButtonPositionRight
+  @Default(.showSelfPostThumbnails) var showSelfPostThumbnails
   
-  @Default(.postLinkTitleSize) var postLinkTitleSize
-  @Default(.postLinkBodySize) var postLinkBodySize
-  @Default(.postViewTitleSize) var postViewTitleSize
-  @Default(.postViewBodySize) var postViewBodySize
   @Default(.commentLinkBodySize) var commentLinkBodySize
-  
+
   var body: some View {
     List {
       Section("General") {
@@ -79,54 +76,14 @@ struct AppearancePanel: View {
           Toggle("Fade Read Posts", isOn: $fadeReadPosts)
           Text("Uses fading instead of a glowing dot to tell read from unread posts.").fontSize(13).opacity(0.75)
         }
-        Toggle("Show avatars", isOn: $preferenceShowPostsAvatars)
-        Toggle("Show upvote ratio", isOn: $showUpvoteRatio)
+        Toggle("Show Avatars", isOn: $preferenceShowPostsAvatars)
+        Toggle("Show Upvote Ratio", isOn: $showUpvoteRatio)
         Toggle("Show Voting Buttons", isOn: $showVotes)
         Toggle("Show Self Text", isOn: $showSelfText)
         
-        VStack(alignment: .leading) {
-          HStack {
-            Text("Post link title size")
-            Spacer()
-            Text("\(Int(postLinkTitleSize))")
-              .opacity(0.6)
-              .fontSize(postLinkTitleSize, .medium)
-          }
-          Slider(value: $postLinkTitleSize, in: 10...32, step: 1)
-        }
-        
-        VStack(alignment: .leading) {
-          HStack {
-            Text("Post link body size")
-            Spacer()
-            Text("\(Int(postLinkBodySize))")
-              .opacity(0.6)
-              .fontSize(postLinkBodySize)
-          }
-          Slider(value: $postLinkBodySize, in: 10...32, step: 1)
-        }
-        .disabled(compactMode)
-        
-        VStack(alignment: .leading) {
-          HStack {
-            Text("Post page title size")
-            Spacer()
-            Text("\(Int(postViewTitleSize))")
-              .opacity(0.6)
-              .fontSize(postViewTitleSize, .semibold)
-          }
-          Slider(value: $postViewTitleSize, in: 10...32, step: 1)
-        }
-        
-        VStack(alignment: .leading) {
-          HStack {
-            Text("Post page body size")
-            Spacer()
-            Text("\(Int(postViewBodySize))")
-              .opacity(0.6)
-              .fontSize(postViewBodySize)
-          }
-          Slider(value: $postViewBodySize, in: 10...32, step: 1)
+        NavigationLink(destination: postFontSettings()){
+          Label("Text Size", systemImage: "text.magnifyingglass")
+            .labelStyle(.titleOnly)
         }
 
         if preferenceShowPostsCards {
@@ -191,7 +148,7 @@ struct AppearancePanel: View {
       
       Section("Compact Posts"){
         Toggle("Compact Mode", isOn: $compactMode)
-        //TODO: Implement
+        Toggle("Show Self Post Thumbnails", isOn: $showSelfPostThumbnails)
         Picker("Thumbnail Position", selection: Binding(get: {
           thumbnailPositionRight ? "Right" : "Left"
         }, set: {val, _ in
@@ -205,6 +162,9 @@ struct AppearancePanel: View {
           compThumbnailSize
         }, set: { val, _ in
           compThumbnailSize = val
+          // This is a bit of a hacky way of refreshing the images, but it works
+          compactMode = false
+          compactMode = true
         })){
           Text("Hidden").tag(ThumbnailSizeModifier.hidden)
           Text("Small").tag(ThumbnailSizeModifier.small)
@@ -238,13 +198,10 @@ struct AppearancePanel: View {
         
         Toggle("Show Avatars", isOn: $preferenceShowCommentsAvatars)
         Toggle("Colored Usernames", isOn: $coloredCommentNames)
-        Toggle("Show avatars", isOn: $preferenceShowCommentsAvatars)
-        Toggle("Colored usernames", isOn: $coloredCommentNames)
-        
         
         VStack(alignment: .leading) {
           HStack {
-            Text("Comment body size")
+            Text("Comment Body Size")
             Spacer()
             Text("\(Int(commentLinkBodySize))")
               .opacity(0.6)

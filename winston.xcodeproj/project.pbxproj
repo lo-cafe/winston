@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		650ACAFC2A87A36900A7C600 /* calcVotes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 650ACAFB2A87A36900A7C600 /* calcVotes.swift */; };
+		651D19C72A90B7D6003867A9 /* postFontSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 651D19C62A90B7D6003867A9 /* postFontSettings.swift */; };
 		653E2DA52A8E278800833556 /* GeneralPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 653E2DA42A8E278800833556 /* GeneralPanel.swift */; };
 		6543D8892A8D10B900A1FFF9 /* scaleEffectButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6543D8882A8D10B900A1FFF9 /* scaleEffectButtonStyle.swift */; };
 		65807E732A87F8A8000EF969 /* AlertToast in Frameworks */ = {isa = PBXBuildFile; productRef = 65807E722A87F8A8000EF969 /* AlertToast */; };
@@ -191,7 +192,6 @@
 		ECDD51622A748DF600FD9498 /* SkeletonUI in Frameworks */ = {isa = PBXBuildFile; productRef = ECDD51612A748DF600FD9498 /* SkeletonUI */; };
 		ECDD51642A74C03C00FD9498 /* sendErrorEmail.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECDD51632A74C03C00FD9498 /* sendErrorEmail.swift */; };
 		ECDD51662A74E4DD00FD9498 /* SubredditPostsContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECDD51652A74E4DD00FD9498 /* SubredditPostsContainer.swift */; };
-		ECE00EE22A8D68FE000A6E21 /* scaleEffectButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECE00EE12A8D68FE000A6E21 /* scaleEffectButtonStyle.swift */; };
 		ECE00EE72A8D6A20000A6E21 /* TabBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECE00EE62A8D6A20000A6E21 /* TabBar.swift */; };
 		ECE285972A4FD6FC009CF9DD /* SwiftDate in Frameworks */ = {isa = PBXBuildFile; productRef = ECE285962A4FD6FC009CF9DD /* SwiftDate */; };
 		ECE285992A50086D009CF9DD /* UserView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECE285982A50086D009CF9DD /* UserView.swift */; };
@@ -260,6 +260,7 @@
 
 /* Begin PBXFileReference section */
 		650ACAFB2A87A36900A7C600 /* calcVotes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = calcVotes.swift; sourceTree = "<group>"; };
+		651D19C62A90B7D6003867A9 /* postFontSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = postFontSettings.swift; sourceTree = "<group>"; };
 		653E2DA42A8E278800833556 /* GeneralPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneralPanel.swift; sourceTree = "<group>"; };
 		6543D8882A8D10B900A1FFF9 /* scaleEffectButtonStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = scaleEffectButtonStyle.swift; sourceTree = "<group>"; };
 		6593CC422A88C9E8003CA58D /* AccessibilityPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessibilityPanel.swift; sourceTree = "<group>"; };
@@ -508,6 +509,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		651D19C52A90B7B5003867A9 /* subSettingView */ = {
+			isa = PBXGroup;
+			children = (
+				651D19C62A90B7D6003867A9 /* postFontSettings.swift */,
+			);
+			path = subSettingView;
+			sourceTree = "<group>";
+		};
 		EC08541C2A4BFEF100E88389 /* RedditAPI */ = {
 			isa = PBXGroup;
 			children = (
@@ -536,6 +545,7 @@
 		EC1906EA2A5528EE00A0300E /* Settings */ = {
 			isa = PBXGroup;
 			children = (
+				651D19C52A90B7B5003867A9 /* subSettingView */,
 				EC1906EB2A55291F00A0300E /* views */,
 				EC593AF92A47AE3E002D6454 /* Settings.swift */,
 			);
@@ -1064,7 +1074,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1430;
-				LastUpgradeCheck = 1430;
+				LastUpgradeCheck = 1500;
 				TargetAttributes = {
 					EC593AD32A4673B2002D6454 = {
 						CreatedOnToolsVersion = 14.3.1;
@@ -1153,6 +1163,7 @@
 				EC63734F2A791369000A03A3 /* OnboardingBigStep.swift in Sources */,
 				ECE2859F2A501CD4009CF9DD /* fetchMe.swift in Sources */,
 				ECFDEAD02A7F151500DF102D /* PostsInBoxView.swift in Sources */,
+				651D19C72A90B7D6003867A9 /* postFontSettings.swift in Sources */,
 				EC0854262A4C013B00E88389 /* Avatar.swift in Sources */,
 				ECE285A82A513342009CF9DD /* ReplyModal.swift in Sources */,
 				ECEFC2652A5DE5910003C6C4 /* SubredditLink.swift in Sources */,
@@ -1267,7 +1278,6 @@
 				ECAEFF602A77A41D0052FCD3 /* stringFallback.swift in Sources */,
 				ECEFC2692A5DFA4B0003C6C4 /* formatBigNumber.swift in Sources */,
 				EC6CBE352A7D6E760089EAA0 /* LICENSE.md in Sources */,
-				ECE00EE22A8D68FE000A6E21 /* scaleEffectButtonStyle.swift in Sources */,
 				EC0854222A4BFF1500E88389 /* fetchSubs.swift in Sources */,
 				ECDD51522A7359D100FD9498 /* MDEditor.swift in Sources */,
 				ECAD0F2C2A8B4CD4001C88B5 /* Markdownosaur.swift in Sources */,
@@ -1395,6 +1405,7 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -1455,6 +1466,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;

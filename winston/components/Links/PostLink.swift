@@ -101,6 +101,8 @@ struct PostLink: View, Equatable {
           
           if imgPost, !thumbnailPositionRight {
             ImageMediaPost(compact: compactMode, post: post, contentWidth: contentWidth)
+          } else if !thumbnailPositionRight && compactMode{
+            EmptyThumbnail()
           }
           
           VStack(alignment: .leading, spacing: compactMode ? 4 : 10) {
@@ -108,7 +110,7 @@ struct PostLink: View, Equatable {
               .fontSize(postLinkTitleSize, .medium)
               .frame(maxWidth: .infinity, alignment: .topLeading)
             
-            if data.selftext != "" && !compactMode && showSelfText {
+            if data.selftext != "" && showSelfText {
               Text(data.selftext.md()).lineLimit(3)
                 .fontSize(postLinkBodySize)
                 .opacity(0.75)
@@ -127,6 +129,8 @@ struct PostLink: View, Equatable {
           
           if imgPost, thumbnailPositionRight {
             ImageMediaPost(compact: compactMode, post: post, contentWidth: contentWidth)
+          } else if thumbnailPositionRight && compactMode {
+            EmptyThumbnail()
           }
           
           if !compactMode {
@@ -331,6 +335,21 @@ struct CustomLabel: LabelStyle {
     HStack(spacing: spacing) {
       configuration.icon
       configuration.title
+    }
+  }
+}
+
+struct EmptyThumbnail: View {
+  @Default(.showSelfPostThumbnails) var showSelfPostThumbnails
+  var body: some View {
+    if showSelfPostThumbnails {
+      Image("emptyThumb")
+        .resizable()
+        .scaledToFill()
+        .clipped()
+        .mask(RR(12, .black))
+        .contentShape(Rectangle())
+        .frame(width: scaledCompactModeThumbSize(), height: scaledCompactModeThumbSize())
     }
   }
 }

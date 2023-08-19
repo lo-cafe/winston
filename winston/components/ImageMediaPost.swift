@@ -43,7 +43,7 @@ struct ImageMediaPost: View {
   var compact = false
   var prefix: String = ""
   var post: Post
-  var contentWidth: CGFloat
+  @State var contentWidth: CGFloat
   @State var pressing = false
   @State var fullscreen = false
   @State var fullscreenIndex = 0
@@ -71,7 +71,6 @@ struct ImageMediaPost: View {
             }
             return nil
           }
-//          let width = ((compactMode ? contentWidth * CGFloat(compThumbnailSize.rawVal) : contentWidth) - 8) / 2
           let width = (contentWidth - 8 / 2)
           let height = width
 
@@ -152,10 +151,8 @@ func scaledCompactModeThumbSize() -> CGFloat {
   @Default(.compThumbnailSize) var compThumbnailSize
   
   if compactMode {
-    print(compactModeThumbSize * compThumbnailSize.rawVal)
     return compactModeThumbSize * compThumbnailSize.rawVal
   } else {
-    print(compactModeThumbSize)
     return compactModeThumbSize
   }
 }
