@@ -108,7 +108,7 @@ struct PostLink: View, Equatable {
               .fontSize(postLinkTitleSize, .medium)
               .frame(maxWidth: .infinity, alignment: .topLeading)
             
-            if data.selftext != "" && !compactMode {
+            if data.selftext != "" && !compactMode && showSelfText {
               Text(data.selftext.md()).lineLimit(3)
                 .fontSize(postLinkBodySize)
                 .opacity(0.75)
