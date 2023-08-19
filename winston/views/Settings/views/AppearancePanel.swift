@@ -37,7 +37,8 @@ struct AppearancePanel: View {
   @Default(.fadeReadPosts) var fadeReadPosts
   @Default(.coloredCommentNames) var coloredCommentNames
   @Default(.showUpvoteRatio) var showUpvoteRatio
-  
+  @Default(.showSubsAtTop) var showSubsAtTop
+  @Default(.showTitleAtTop) var showTitleAtTop
   //Compact Mode
   @Default(.compactMode) var compactMode
   @Default(.showVotes) var showVotes
@@ -80,6 +81,8 @@ struct AppearancePanel: View {
         Toggle("Show Upvote Ratio", isOn: $showUpvoteRatio)
         Toggle("Show Voting Buttons", isOn: $showVotes)
         Toggle("Show Self Text", isOn: $showSelfText)
+        Toggle("Show Subreddit at Top", isOn: $showSubsAtTop)
+        Toggle("Show Title at Top", isOn: $showTitleAtTop)
         
         NavigationLink(destination: postFontSettings()){
           Label("Text Size", systemImage: "text.magnifyingglass")

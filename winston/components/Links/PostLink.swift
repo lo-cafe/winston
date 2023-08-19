@@ -67,6 +67,8 @@ struct PostLink: View, Equatable {
   
   @Default(.postLinkTitleSize) var postLinkTitleSize
   @Default(.postLinkBodySize) var postLinkBodySize
+  @Default(.showSubsAtTop) var showSubsAtTop
+  @Default(.showTitleAtTop) var showTitleAtTop
   
   @StateObject private var appeared = Appeared()
   
@@ -99,7 +101,11 @@ struct PostLink: View, Equatable {
             .fontSize(22, .medium)
           }
           
-          if imgPost, !thumbnailPositionRight {
+          if showSubsAtTop {
+            SubsNStuffLine(showSub: showSub, feedsAndSuch: feedsAndSuch, post: post, sub: sub, router: router, over18: over18, data: data)
+          }
+          
+          if imgPost, (!thumbnailPositionRight && compactMode) || (!compactMode && !showTitleAtTop) {
             ImageMediaPost(compact: compactMode, post: post, contentWidth: contentWidth)
           } else if !thumbnailPositionRight && compactMode{
             EmptyThumbnail()
@@ -127,7 +133,7 @@ struct PostLink: View, Equatable {
           
 
           
-          if imgPost, thumbnailPositionRight {
+          if imgPost, (thumbnailPositionRight && compactMode) || (!compactMode && showTitleAtTop) {
             ImageMediaPost(compact: compactMode, post: post, contentWidth: contentWidth)
           } else if thumbnailPositionRight && compactMode {
             EmptyThumbnail()
@@ -182,33 +188,11 @@ struct PostLink: View, Equatable {
         .zIndex(1)
         .frame(maxWidth: .infinity, alignment: .topLeading)
         
-        HStack(spacing: 0) {
-          
-          if showSub || feedsAndSuch.contains(sub.id) {
-            FlairTag(text: "r/\(sub.data?.display_name ?? post.data?.subreddit ?? "Error")", color: .blue)
-              .highPriorityGesture(TapGesture() .onEnded {
-                router.path.append(SubViewType.posts(Subreddit(id: post.data?.subreddit ?? "", api: post.redditAPI)))
-              })
-            
-            WDivider()
-          }
-          
-          if over18 {
-            FlairTag(text: "NSFW", color: .red)
-            WDivider()
-          }
-          
-          if let link_flair_text = data.link_flair_text {
-            FlairTag(text: link_flair_text.emojied())
-              .allowsHitTesting(false)
-          }
-          
-          if !showSub && !feedsAndSuch.contains(sub.id) {
-            WDivider()
-          }
+        if !showSubsAtTop {
+          SubsNStuffLine(showSub: showSub, feedsAndSuch: feedsAndSuch, post: post, sub: sub, router: router, over18: over18, data: data)
         }
-        .padding(.horizontal, 2)
-        .padding(.vertical, 2)
+        
+
         
         
         
@@ -351,5 +335,46 @@ struct EmptyThumbnail: View {
         .contentShape(Rectangle())
         .frame(width: scaledCompactModeThumbSize(), height: scaledCompactModeThumbSize())
     }
+  }
+}
+
+
+struct SubsNStuffLine: View {
+  var showSub: Bool
+  var feedsAndSuch: [String]
+  var post: Post
+  var sub: Subreddit
+  var router: Router
+  var over18: Bool
+  var data: PostData
+  
+  var body: some View {
+    HStack(spacing: 0) {
+      
+      if showSub || feedsAndSuch.contains(sub.id) {
+        FlairTag(text: "r/\(sub.data?.display_name ?? post.data?.subreddit ?? "Error")", color: .blue)
+          .highPriorityGesture(TapGesture() .onEnded {
+            router.path.append(SubViewType.posts(Subreddit(id: post.data?.subreddit ?? "", api: post.redditAPI)))
+          })
+        
+        WDivider()
+      }
+      
+      if over18 {
+        FlairTag(text: "NSFW", color: .red)
+        WDivider()
+      }
+      
+      if let link_flair_text = data.link_flair_text {
+        FlairTag(text: link_flair_text.emojied())
+          .allowsHitTesting(false)
+      }
+      
+      if !showSub && !feedsAndSuch.contains(sub.id) {
+        WDivider()
+      }
+    }
+    .padding(.horizontal, 2)
+    .padding(.vertical, 2)
   }
 }
