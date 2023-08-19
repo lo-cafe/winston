@@ -108,6 +108,8 @@ extension Defaults.Keys {
   
   static let forceFeedbackModifiers = Key<ForceFeedbackModifiers>("forceFeedbackModifiers", default: .medium)
   static let hapticFeedbackOnLPM = Key<Bool>("hapticFeedbackOnLPM", default: true)
+  
+  static let showTestersCelebrationModal = Key<Bool>("showTestersCelebrationModal", default: true)
 }
 
 extension UIScreen {
