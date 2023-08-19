@@ -63,7 +63,9 @@ extension Post {
       } else if seen == nil || seen == true {
         let newSeenPost = SeenPost(context: context)
         newSeenPost.postID = id
-        try? context.save()
+        context.performAndWait {
+          try? context.save()
+        }
         if !optimistic {
           DispatchQueue.main.async {
             withAnimation {
