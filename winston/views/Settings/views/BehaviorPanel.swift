@@ -39,9 +39,9 @@ struct BehaviorPanel: View {
       }
       
       Section {
-        Toggle("Enable swipe anywhere", isOn: $enableSwipeAnywhere)
+        Toggle("Navigation everywhere", isOn: $enableSwipeAnywhere)
       } footer: {
-        Text("This will allow you to do swipe actions in any screen, but will disable post and comments swipe gestures.")
+        Text("This will allow you to do go back by swiping anywhere in the screen, but will disable post and comments swipe gestures.")
       }
       
       Section("Posts") {

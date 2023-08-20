@@ -33,6 +33,7 @@ class SubsDictContainer: ObservableObject {
 
 struct Subreddits: View {
   var reset: Bool
+  @ObservedObject var router: Router
   @Environment(\.openURL) private var openURL
   @EnvironmentObject private var redditAPI: RedditAPI
 //  @State private var subreddits: [ListingChild<SubredditData>] = Defaults[.subreddits]
@@ -43,7 +44,6 @@ struct Subreddits: View {
   @State private var subsArr: [Subreddit] = []
   @State private var favoritesArr: [Subreddit] = []
   @State private var availableLetters: [String] = []
-  @StateObject private var router = Router()
   
   @Default(.preferenceDefaultFeed) var preferenceDefaultFeed // handle default feed selection routing
   @Default(.likedButNotSubbed) var likedButNotSubbed // subreddits that a user likes but is not subscribed to so they wont be in subsDict

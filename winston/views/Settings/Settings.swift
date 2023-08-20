@@ -15,8 +15,9 @@ enum SettingsPages {
 
 struct Settings: View {
   var reset: Bool
+  @ObservedObject var router: Router
   @Environment(\.openURL) private var openURL
-  @StateObject private var router = Router()
+  @Default(.likedButNotSubbed) var likedButNotSubbed
   var body: some View {
     NavigationStack(path: $router.path) {
       VStack {

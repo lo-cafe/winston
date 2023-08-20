@@ -38,15 +38,8 @@ struct Avatar: View {
       } else {
         if let avatarURL = avatarURL, avatarURL != "", let avatarURLURL = URL(string: avatarURL) {
           //          EmptyView()
-          LazyImage(url: avatarURLURL) { state in
-            if let image = state.image {
-              image.resizable().scaledToFill()
-            } else if state.error != nil {
-              Color.red // Indicates an error
-            } else {
-              Color.blue.opacity(0.1) // Acts as a placeholder
-            }
-          }
+          URLImage(url: avatarURLURL)
+            .scaledToFill()
         } else {
           Text(userID.prefix(1).uppercased())
             .fontSize(avatarSize / 2)

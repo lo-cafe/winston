@@ -7,6 +7,7 @@
 
 import SwiftUI
 import Defaults
+import _SpriteKit_SwiftUI
 
 class Oops: ObservableObject {
   static var shared = Oops()
@@ -30,26 +31,41 @@ enum TabIdentifier {
   case posts, inbox, me, search, settings
 }
 
+struct TabPayload {
+  var reset = false
+  var router = Router()
+}
+
 struct Tabber: View {
   @ObservedObject var tempGlobalState = TempGlobalState.shared
   @ObservedObject var errorAlert = Oops.shared
   @State var activeTab = TabIdentifier.posts
   @EnvironmentObject var redditAPI: RedditAPI
   @State var credModalOpen = false
-  @State var reset: [TabIdentifier:Bool] = [
-    .inbox: true,
-    .me: true,
-    .posts: true,
-    .search: true,
-    .settings: true,
+  @State var choosingAccount = false
+  @State var accountDrag: CGSize = .zero
+  @State var tabBarHeight: CGFloat?
+  @State private var morph = MorphingGradientCircleScene()
+  @State var medium = UIImpactFeedbackGenerator(style: .soft)
+  @State var payload: [TabIdentifier:TabPayload] = [
+    .inbox: TabPayload(),
+    .me: TabPayload(),
+    .posts: TabPayload(),
+    .search: TabPayload(),
+    .settings: TabPayload(),
   ]
   @Default(.postsInBox) var postsInBox
   @Default(.showTestersCelebrationModal) var showTestersCelebrationModal
   @Default(.showUsernameInTabBar) var showUsernameInTabBar
+  
   var body: some View {
-    TabView(selection: $activeTab.onUpdate { newTab in if activeTab == newTab { reset[newTab]!.toggle() } }) {
+    let tabHeight = (tabBarHeight ?? 0) - getSafeArea().bottom
+    TabView(selection: $activeTab.onUpdate { newTab in if activeTab == newTab { payload[newTab]!.reset.toggle() } }) {
       
-      Subreddits(reset: reset[.posts]!)
+      Subreddits(reset: payload[.posts]!.reset, router: payload[.posts]!.router)
+        .background(TabBarAccessor { tabBar in
+          if tabBarHeight != tabBar.bounds.height { tabBarHeight = tabBar.bounds.height }
+        })
         .tabItem {
           VStack {
             Image(systemName: "doc.text.image")
@@ -58,7 +74,10 @@ struct Tabber: View {
         }
         .tag(TabIdentifier.posts)
       
-      Inbox(reset: reset[.inbox]!)
+      Inbox(reset: payload[.inbox]!.reset, router: payload[.inbox]!.router)
+        .background(TabBarAccessor { tabBar in
+          if tabBarHeight != tabBar.bounds.height { tabBarHeight = tabBar.bounds.height }
+        })
         .tabItem {
           VStack {
             Image(systemName: "bell.fill")
@@ -67,7 +86,10 @@ struct Tabber: View {
         }
         .tag(TabIdentifier.inbox)
       
-      Me(reset: reset[.me]!)
+      Me(reset: payload[.me]!.reset, router: payload[.me]!.router)
+        .background(TabBarAccessor { tabBar in
+          if tabBarHeight != tabBar.bounds.height { tabBarHeight = tabBar.bounds.height }
+        })
         .tabItem {
           VStack {
             Image(systemName: "person.fill")
@@ -80,7 +102,10 @@ struct Tabber: View {
         }
         .tag(TabIdentifier.me)
       
-      Search(reset: reset[.search]!)
+      Search(reset: payload[.search]!.reset, router: payload[.search]!.router)
+        .background(TabBarAccessor { tabBar in
+          if tabBarHeight != tabBar.bounds.height { tabBarHeight = tabBar.bounds.height }
+        })
         .tabItem {
           VStack {
             Image(systemName: "magnifyingglass")
@@ -89,7 +114,10 @@ struct Tabber: View {
         }
         .tag(TabIdentifier.search)
       
-      Settings(reset: reset[.settings]!)
+      Settings(reset: payload[.settings]!.reset, router: payload[.settings]!.router)
+        .background(TabBarAccessor { tabBar in
+          if tabBarHeight != tabBar.bounds.height { tabBarHeight = tabBar.bounds.height }
+        })
         .tabItem {
           VStack {
             Image(systemName: "gearshape.fill")
@@ -102,6 +130,110 @@ struct Tabber: View {
     .replyModalPresenter()
     .overlay(
       GlobalLoaderView()
+      , alignment: .bottom
+    )
+    .overlay(
+      tabBarHeight.isNil
+      ? nil
+      : Color.clear
+        .frame(maxWidth: UIScreen.screenWidth / 5, minHeight: tabHeight, maxHeight: tabHeight)
+        .overlay(
+          !choosingAccount
+          ? nil
+          //          : BlurRadialGradientView()
+          //                      .frame(width: 150, height: 150)
+          //                      .clipShape(Circle())
+          //          Circle()
+          //            .fill(RadialGradient(gradient: Gradient(colors: [.blue, .blue.opacity(0)]), center: .center, startRadius: 0, endRadius: 150))
+          //            .opacity(choosingAccount ? 0.75 : 0)
+          //            .frame(width: 300, height: 300)
+          //            .allowsHitTesting(false)
+          
+          : ZStack {
+            Circle()
+              .fill( RadialGradient(
+                gradient: Gradient(stops: [
+                  .init(color: Color.cyan, location: 0),
+                  .init(color: Color.cyan.opacity(0.972), location: 0.044),
+                  .init(color: Color.cyan.opacity(0.924), location: 0.083),
+                  .init(color: Color.cyan.opacity(0.861), location: 0.121),
+                  .init(color: Color.cyan.opacity(0.786), location: 0.159),
+                  .init(color: Color.cyan.opacity(0.701), location: 0.197),
+                  .init(color: Color.cyan.opacity(0.609), location: 0.238),
+                  .init(color: Color.cyan.opacity(0.514), location: 0.284),
+                  .init(color: Color.cyan.opacity(0.419), location: 0.335),
+                  .init(color: Color.cyan.opacity(0.326), location: 0.395),
+                  .init(color: Color.cyan.opacity(0.239), location: 0.463),
+                  .init(color: Color.cyan.opacity(0.161), location: 0.542),
+                  .init(color: Color.cyan.opacity(0.095), location: 0.634),
+                  .init(color: Color.cyan.opacity(0.044), location: 0.74),
+                  .init(color: Color.cyan.opacity(0.012), location: 0.861),
+                  .init(color: Color.cyan.opacity(0), location: 1)
+                ]),
+                center: .center,
+                startRadius: 0,
+                endRadius: 300
+              ))
+              .opacity(0.5)
+              .frame(width: 600, height: 600)
+            VStack(spacing: 6) {
+              Image("winstonNoBG")
+                .resizable()
+                .scaledToFit()
+                .frame(width: 60, height: 60)
+              Text("Account switcher\ncoming soon...")
+                .fontSize(15, .medium)
+                .opacity(1)
+            }
+            .offset(y: -100)
+            SpriteView(scene: morph, transition: nil, isPaused: false, preferredFramesPerSecond: UIScreen.main.maximumFramesPerSecond, options: [.allowsTransparency, .ignoresSiblingOrder])
+              .frame(width: 600, height: 600)
+              .blur(radius: 32)
+              .offset(accountDrag)
+              .transition(.scale.combined(with: .opacity))
+          }
+            .multilineTextAlignment(.center)
+            .allowsHitTesting(false)
+        )
+        .contentShape(Rectangle())
+        .onTapGesture {
+          activeTab = .me
+        }
+        .gesture(
+          LongPressGesture()
+            .onEnded({ val in
+              medium.prepare()
+              medium.impactOccurred(intensity: 1)
+              withAnimation(spring) {
+                choosingAccount = true
+              }
+            })
+            .sequenced(before: DragGesture(minimumDistance: 0))
+            .onChanged { sequence in
+              switch sequence {
+              case .first(_):
+                break
+              case .second(_, let dragVal):
+                if let dragVal = dragVal {
+                  accountDrag = dragVal.translation
+                }
+              }
+            }
+            .onEnded({ sequence in
+              switch sequence {
+              case .first(_):
+                break
+              case .second(_, let dragVal):
+                withAnimation(spring) {
+                  choosingAccount = false
+                  accountDrag = .zero
+                }
+              }
+            })
+        )
+        .frame(maxWidth: .infinity)
+        .contentShape(Rectangle())
+        .swipeAnywhere(router: payload[activeTab]!.router, forceEnable: true)
       , alignment: .bottom
     )
     .environmentObject(tempGlobalState)
@@ -164,3 +296,57 @@ struct Tabber: View {
   }
 }
 
+
+struct BlurRadialGradientView: UIViewRepresentable {
+  func makeUIView(context: Context) -> UIView {
+    let view = UIView()
+    addBlurWithGradient(view: view)
+    return view
+  }
+  
+  func updateUIView(_ uiView: UIView, context: Context) {
+  }
+  
+  private func addBlurWithGradient(view: UIView) {
+    let gradient = CAGradientLayer()
+    gradient.frame = view.bounds
+    gradient.colors = [UIColor.blue.cgColor, UIColor.blue.withAlphaComponent(0.0).cgColor]
+    gradient.startPoint = CGPoint(x: 0.5, y: 0.5)
+    gradient.endPoint = CGPoint(x: 1.0, y: 1.0)
+    gradient.locations = [0, 1]
+    
+    let blurEffect = UIBlurEffect.init(style: .systemMaterial)
+    let visualEffectView = UIVisualEffectView.init(effect: blurEffect)
+    visualEffectView.frame = gradient.bounds
+    
+    gradient.mask = visualEffectView.layer
+    view.layer.addSublayer(gradient)
+  }
+}
+
+struct TabBarAccessor: UIViewControllerRepresentable {
+  var callback: (UITabBar) -> Void
+  private let proxyController = ViewController()
+  
+  func makeUIViewController(context: UIViewControllerRepresentableContext<TabBarAccessor>) ->
+  UIViewController {
+    proxyController.callback = callback
+    return proxyController
+  }
+  
+  func updateUIViewController(_ uiViewController: UIViewController, context: UIViewControllerRepresentableContext<TabBarAccessor>) {
+  }
+  
+  typealias UIViewControllerType = UIViewController
+  
+  private class ViewController: UIViewController {
+    var callback: (UITabBar) -> Void = { _ in }
+    
+    override func viewWillAppear(_ animated: Bool) {
+      super.viewWillAppear(animated)
+      if let tabBar = self.tabBarController {
+        self.callback(tabBar.tabBar)
+      }
+    }
+  }
+}
