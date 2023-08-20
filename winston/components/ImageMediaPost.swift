@@ -18,16 +18,8 @@ struct GalleryThumb: View {
   var height: CGFloat
   var url: URL
   var body: some View {
-    LazyImage(url: url) { state in
-      if let image = state.image {
-        image.resizable().scaledToFill()
-      } else if state.error != nil {
-        Color.red // Indicates an error
-      } else {
-        Color.blue.opacity(0.1) // Acts as a placeholder
-      }
-    }
-    .processors([.resize(width: width)])
+    URLImage(url: url, processors: [.resize(width: width)])
+    .scaledToFill()
     .zIndex(1)
     .allowsHitTesting(false)
     .frame(width: width, height: height)

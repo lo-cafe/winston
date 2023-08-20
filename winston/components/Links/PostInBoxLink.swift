@@ -87,15 +87,8 @@ struct PostInBoxLink: View {
     .background(
       post.img != nil && post.img != ""
       
-      ?       LazyImage(url: URL(string: post.img!)!) { state in
-        if let image = state.image {
-          image.resizable().scaledToFill()
-        } else if state.error != nil {
-          Color.red // Indicates an error
-        } else {
-          Color.blue.opacity(0.1) // Acts as a placeholder
-        }
-      }
+      ? URLImage(url: URL(string: post.img!)!)
+        .scaledToFill()
         .opacity(0.15)
         .frame(width: (UIScreen.screenWidth / 1.75), height: 120)
         .clipped()

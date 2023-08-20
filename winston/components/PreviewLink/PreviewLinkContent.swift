@@ -101,15 +101,8 @@ struct PreviewLinkContent: View {
       
       Group {
         if let image = viewModel.image, let imageURL = URL(string: image) {
-          LazyImage(url: imageURL) { state in
-            if let image = state.image {
-              image.resizable().scaledToFill()
-            } else if state.error != nil {
-              Color.red // Indicates an error
-            } else {
-              Color.blue.opacity(0.1) // Acts as a placeholder
-            }
-          }
+          URLImage(url: imageURL)
+          .scaledToFill()
           .frame(width: 76, height: 76)
           .mask(RR(12, .black))
         } else {

@@ -17,15 +17,8 @@ struct SubredditBaseIcon: View {
   var color: String?
   var body: some View {
     if let icon = iconURLStr, !icon.isEmpty, let iconURL = URL(string: icon) {
-      LazyImage(url: iconURL) { state in
-        if let image = state.image {
-          image.resizable().scaledToFill()
-        } else if state.error != nil {
-          Color.red // Indicates an error
-        } else {
-          Color.blue.opacity(0.1) // Acts as a placeholder
-        }
-      }
+      URLImage(url: iconURL)
+      .scaledToFill()
       .frame(width: size, height: size)
       .mask(Circle())
     } else {

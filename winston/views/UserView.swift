@@ -36,31 +36,16 @@ struct UserView: View {
         Group {
           VStack(spacing: 16) {
             ZStack {
-              if let bannerImgFull = data.subreddit?.banner_img, bannerImgFull != "" {
-                let bannerImg = String(bannerImgFull.split(separator: "?")[0])
-                LazyImage(url: URL(string: bannerImg)) { state in
-                  if let image = state.image {
-                    image.resizable().scaledToFill()
-                  } else if state.error != nil {
-                    Color.red // Indicates an error
-                  } else {
-                    Color.blue.opacity(0.1) // Acts as a placeholder
-                  }
-                }
+              if let bannerImgFull = data.subreddit?.banner_img, !bannerImgFull.isEmpty, let bannerImg = URL(string: String(bannerImgFull.split(separator: "?")[0])) {
+                URLImage(url: bannerImg)
+                .scaledToFill()
                 .frame(width: contentWidth, height: 160)
                 .mask(RR(16, .black))
               }
-              if let iconFull = data.subreddit?.icon_img, iconFull != "" {
-                let icon = String(iconFull.split(separator: "?")[0])
-                LazyImage(url: URL(string: icon)!) { state in
-                  if let image = state.image {
-                    image.resizable().scaledToFill()
-                  } else if state.error != nil {
-                    Color.red // Indicates an error
-                  } else {
-                    Color.blue.opacity(0.1) // Acts as a placeholder
-                  }
-                }
+              if let iconFull = data.subreddit?.icon_img, iconFull != "", let icon = URL(string: String(iconFull.split(separator: "?")[0])) {
+                
+                URLImage(url: icon)
+                .scaledToFill()
                 .frame(width: 125, height: 125)
                 .mask(Circle())
                 .offset(y: data.subreddit?.banner_img == "" || data.subreddit?.banner_img == nil ? 0 : 80)
