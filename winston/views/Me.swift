@@ -9,10 +9,10 @@ import SwiftUI
 
 struct Me: View {
   var reset: Bool
+  @ObservedObject var router: Router
   @Environment(\.openURL) private var openURL
   @EnvironmentObject private var redditAPI: RedditAPI
   @State private var loading = true
-  @StateObject private var router = Router()
   var body: some View {
     NavigationStack(path: $router.path) {
       Group {

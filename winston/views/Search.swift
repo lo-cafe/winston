@@ -37,6 +37,7 @@ typealias SearchTypeArr = Either<[Subreddit], [User]>
 
 struct Search: View {
   var reset: Bool
+  @ObservedObject var router: Router
   @State private var searchType: SearchType = .subreddit
   @StateObject private var resultsSubs = ObservableArray<Subreddit>()
   @StateObject private var resultsUsers = ObservableArray<User>()
@@ -44,7 +45,6 @@ struct Search: View {
   @State private var hideSpinner = false
   @StateObject var searchQuery = DebouncedText(delay: 0.25)
   @EnvironmentObject private var redditAPI: RedditAPI
-  @StateObject private var router = Router()
   
   func fetch() {
     if searchQuery.text == "" { return }
