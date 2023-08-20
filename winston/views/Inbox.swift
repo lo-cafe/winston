@@ -9,10 +9,10 @@ import SwiftUI
 
 struct Inbox: View {
   var reset: Bool
+  @ObservedObject var router: Router
   @StateObject var messages = ObservableArray<Message>()
   @State var loading = false
   @EnvironmentObject var redditAPI: RedditAPI
-  @StateObject private var router = Router()
   
   func fetch(_ loadMore: Bool = false, _ force: Bool = false) async {
     if messages.data.count > 0 && !force { return }

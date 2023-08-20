@@ -22,15 +22,8 @@ struct LightBoxElementView: View {
   @State private var anchor: UnitPoint = .zero
   @State private var offset: CGSize = .zero
   var body: some View {
-    LazyImage(url: URL(string: el.url)!) { state in
-      if let image = state.image {
-        image.resizable().scaledToFit()
-      } else if state.error != nil {
-        Color.red // Indicates an error
-      } else {
-        Color.blue.opacity(0.1) // Acts as a placeholder
-      }
-    }
+    URLImage(url: URL(string: el.url)!)
+    .scaledToFit()
     .pinchToZoom(onTap: onTap, size: el.size, isPinching: $isPinching, scale: $scale, anchor: $anchor, offset: $offset)
     .id(el.id)
   }

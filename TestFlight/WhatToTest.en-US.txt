@@ -1,5 +1,5 @@
-- Hopefully fixes videos crashes again (since last one broke them all)
-- Hopefully fixes many crashes related to Winston's Database concurrent access (may require further actions)
-- Added font size settings (astigmatism is no kidding huh?)
-- Fixed inline URL and soft line breaks
-- Added FAQ questions
+- Fixed bug that locked users in video fullscreen views
+- Fixed imgur .jpeg images error
+- Added loaded image fade transition on appear
+- Added swipe everywhere to tab bar (you can now always go back by swiping the tab bar)
+- Added account switcher preview (try holding the "Me" tab :D )

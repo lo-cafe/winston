@@ -87,15 +87,8 @@ struct PostInBoxLink: View {
     .background(
       post.img != nil && post.img != ""
       
-      ?       LazyImage(url: URL(string: post.img!)!) { state in
-        if let image = state.image {
-          image.resizable().scaledToFill()
-        } else if state.error != nil {
-          Color.red // Indicates an error
-        } else {
-          Color.blue.opacity(0.1) // Acts as a placeholder
-        }
-      }
+      ? URLImage(url: URL(string: post.img!)!)
+        .scaledToFill()
         .opacity(0.15)
         .frame(width: (UIScreen.screenWidth / 1.75), height: 120)
         .clipped()
@@ -167,7 +160,7 @@ struct PostInBoxLink: View {
             var endingY: CGFloat = 0
             let endPos = dragVal?.translation.height ?? 0
             let predictedEnd = dragVal?.predictedEndTranslation.height ?? 0
-            if let dragVal = dragVal {
+            if !dragVal.isNil {
               if predictedEnd > 300 || (endPos > 70 && predictedEnd > 0) { endingY = 300 }
               if predictedEnd < -300 || (endPos < 70 && predictedEnd < 0) { endingY = -300 }
             }

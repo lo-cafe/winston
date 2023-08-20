@@ -18,16 +18,8 @@ struct GalleryThumb: View {
   var height: CGFloat
   var url: URL
   var body: some View {
-    LazyImage(url: url) { state in
-      if let image = state.image {
-        image.resizable().scaledToFill()
-      } else if state.error != nil {
-        Color.red // Indicates an error
-      } else {
-        Color.blue.opacity(0.1) // Acts as a placeholder
-      }
-    }
-    .processors([.resize(width: width)])
+    URLImage(url: url, processors: [.resize(width: width)])
+    .scaledToFill()
     .zIndex(1)
     .allowsHitTesting(false)
     .frame(width: width, height: height)
@@ -55,7 +47,7 @@ struct ImageMediaPost: View {
     let maxHeight: CGFloat = (maxPostLinkImageHeightPercentage / 100) * (UIScreen.screenHeight - safe)
     if let data = post.data {
       VStack {
-        if let preview = data.preview, preview.images?.count ?? 0 > 0, let source = preview.images?[0].source, let srcURL = source.url, let sourceHeight = source.height, let sourceWidth = source.width, let imgURL = URL(string: (data.url.contains("imgur.com") && !IMAGES_FORMATS.contains(String(data.url.suffix(4)))) ? srcURL : data.url) {
+        if let preview = data.preview, preview.images?.count ?? 0 > 0, let source = preview.images?[0].source, let srcURL = source.url, let sourceHeight = source.height, let sourceWidth = source.width, let imgURL = rootURL((data.url.contains("imgur.com") && !IMAGES_FORMATS.contains(where: { data.url.hasSuffix($0) })) ? srcURL : data.url) {
 
           let propHeight = (Int(contentWidth) * sourceHeight) / sourceWidth
           let finalHeight = maxPostLinkImageHeightPercentage != 110 ? Double(min(Int(maxHeight), propHeight)) : Double(propHeight)

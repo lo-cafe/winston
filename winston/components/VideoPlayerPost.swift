@@ -24,7 +24,6 @@ struct VideoPlayerPost: View {
   @Default(.preferenceShowPostsCards) var preferenceShowPostsCards
   @Default(.maxPostLinkImageHeightPercentage) var maxPostLinkImageHeightPercentage
   @State private var initialized = false
-  @State var willBeginFullScreenPresentation: Bool = false
   @Default(.postLinksInnerHPadding) private var postLinksInnerHPadding
   @Default(.cardedPostLinksOuterHPadding) private var cardedPostLinksOuterHPadding
   @Default(.cardedPostLinksInnerHPadding) private var cardedPostLinksInnerHPadding
@@ -75,13 +74,11 @@ struct AVPlayerControllerRepresentable: UIViewControllerRepresentable {
     controller.addChild(playerController)
     controller.view.addSubview(playerController.view)
     playerController.didMove(toParent: controller)
-    
     return controller
   }
   
   func updateUIViewController(_ controller: UIViewController, context content: Context) {
-    
-    if let playerController = controller.children[0] as? NiceAVPlayer {
+    if let playerController = controller.children[0] as? NiceAVPlayer, playerController.autoPlayVideos != autoPlayVideos {
       playerController.autoPlayVideos = autoPlayVideos
     }
   }
@@ -111,24 +108,14 @@ class NiceAVPlayer: AVPlayerViewController, AVPlayerViewControllerDelegate {
     self.autoPlayVideos = autoPlayVideos
     super.init(nibName: nil, bundle: nil)
     self.delegate = self
+    showsPlaybackControls = false
+    let tapGesture = UITapGestureRecognizer(target: self, action: #selector(didTapView))
+    self.view.addGestureRecognizer(tapGesture)
   }
   
   required init?(coder aDecoder: NSCoder) {
     self.autoPlayVideos = false
     super.init(coder: aDecoder)
-  }
-  
-  override func viewDidAppear(_ animated: Bool) {
-    super.viewDidAppear(animated)
-    
-    showsPlaybackControls = false
-    
-    let tapGesture = UITapGestureRecognizer(target: self, action: #selector(didTapView))
-    self.view.addGestureRecognizer(tapGesture)
-  }
-  
-  override func viewDidDisappear(_ animated: Bool) {
-    super.viewDidDisappear(animated)
   }
   
   @objc private func didTapView() {
@@ -156,7 +143,6 @@ class NiceAVPlayer: AVPlayerViewController, AVPlayerViewControllerDelegate {
     _ playerViewController: AVPlayerViewController,
     willBeginFullScreenPresentationWithAnimationCoordinator coordinator: UIViewControllerTransitionCoordinator
   ) {
-    let isPlaying = playerViewController.player?.isPlaying ?? false
     coordinator.animate(alongsideTransition: nil) { context in
       if context.isCancelled {
         // Still embedded inline
@@ -175,16 +161,16 @@ class NiceAVPlayer: AVPlayerViewController, AVPlayerViewControllerDelegate {
     willEndFullScreenPresentationWithAnimationCoordinator coordinator: UIViewControllerTransitionCoordinator
   ) {
     let isPlaying = self.player?.isPlaying ?? false
-    coordinator.animate { _ in
-      self.player?.volume = 0.0
-      self.showsPlaybackControls = false
-    }
     coordinator.animate(alongsideTransition: nil) { context in
       if context.isCancelled {
-        // Still full screen
+//        // Still full screen
       } else {
-        // Embedded inline
-        // Remove strong reference to playerViewController if held
+//        // Embedded inline
+//        // Remove strong reference to playerViewController if held
+        doThisAfter(0) {
+          self.player?.volume = 0.0
+        }
+        self.showsPlaybackControls = false
         if !self.autoPlayVideos { self.player?.pause() } else if isPlaying { self.player?.play() }
       }
     }
