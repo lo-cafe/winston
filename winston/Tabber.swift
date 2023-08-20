@@ -172,10 +172,10 @@ struct Tabber: View {
                 ]),
                 center: .center,
                 startRadius: 0,
-                endRadius: 250
+                endRadius: 300
               ))
               .opacity(0.5)
-              .frame(width: 500, height: 500)
+              .frame(width: 600, height: 600)
             VStack(spacing: 6) {
               Image("winstonNoBG")
                 .resizable()
