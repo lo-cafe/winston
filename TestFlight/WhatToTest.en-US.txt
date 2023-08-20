@@ -1,1 +1,2 @@
 - Fixed bug that locked users in video fullscreen views
+- Fixed imgur .jpeg images error
