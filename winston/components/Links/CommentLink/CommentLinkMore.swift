@@ -20,7 +20,6 @@ struct CommentLinkMore: View {
   @Default(.cardedCommentsInnerHPadding) var cardedCommentsInnerHPadding
 
   var body: some View {
-    let horPad = preferenceShowCommentsCards ? cardedCommentsInnerHPadding : 0
     if let data = comment.data, let count = data.count, let parentElement = parentElement, count > 0 {
       HStack {
         if data.depth != 0 && indentLines != 0 {
