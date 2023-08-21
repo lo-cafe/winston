@@ -85,6 +85,10 @@ struct PostLink: View, Equatable {
       VStack(alignment: .leading, spacing: 8) {
         layout {
           
+          if showSubsAtTop && !compactMode{
+            SubsNStuffLine(showSub: showSub, feedsAndSuch: feedsAndSuch, post: post, sub: sub, router: router, over18: over18, data: data)
+          }
+          
           if compactMode && showVotes && !voteButtonPositionRight {
             VStack(alignment: .center, spacing: 2) {
               
@@ -101,10 +105,7 @@ struct PostLink: View, Equatable {
             .fontSize(22, .medium)
           }
           
-          if showSubsAtTop {
-            SubsNStuffLine(showSub: showSub, feedsAndSuch: feedsAndSuch, post: post, sub: sub, router: router, over18: over18, data: data)
-          }
-          
+
           if imgPost, (!thumbnailPositionRight && compactMode) || (!compactMode && !showTitleAtTop) {
             ImageMediaPost(compact: compactMode, post: post, contentWidth: contentWidth)
           } else if !thumbnailPositionRight && compactMode{
@@ -125,7 +126,7 @@ struct PostLink: View, Equatable {
             
             if compactMode {
               if let fullname = data.author_fullname {
-                Badge(showAvatar: preferenceShowPostsAvatars, author: data.author, fullname: fullname, created: data.created, extraInfo: ["message.fill":"\(data.num_comments)", (data.ups >= 0 ? "arrow.up" : "arrow.down"): "\(formatBigNumber(data.ups))"])
+                Badge(showAvatar: preferenceShowPostsAvatars, author: data.author, fullname: fullname, created: data.created, extraInfo: [PresetBadgeExtraInfo().commentsExtraInfo(data:data), PresetBadgeExtraInfo().upvotesExtraInfo(data: data)])
               }
             }
           }
@@ -188,7 +189,7 @@ struct PostLink: View, Equatable {
         .zIndex(1)
         .frame(maxWidth: .infinity, alignment: .topLeading)
         
-        if !showSubsAtTop {
+        if !showSubsAtTop || compactMode {
           SubsNStuffLine(showSub: showSub, feedsAndSuch: feedsAndSuch, post: post, sub: sub, router: router, over18: over18, data: data)
         }
         
@@ -200,9 +201,9 @@ struct PostLink: View, Equatable {
           HStack {
             if let fullname = data.author_fullname {
               if !showVotes {
-                Badge(showAvatar: preferenceShowPostsAvatars, author: data.author, fullname: fullname, created: data.created, extraInfo: ["message.fill":"\(data.num_comments)", (data.ups >= 0 ? "arrow.up" : "arrow.down"): "\(formatBigNumber(data.ups))"])
+                Badge(showAvatar: preferenceShowPostsAvatars, author: data.author, fullname: fullname, created: data.created, extraInfo: [PresetBadgeExtraInfo().commentsExtraInfo(data: data), PresetBadgeExtraInfo().upvotesExtraInfo(data: data)])
               } else {
-                Badge(showAvatar: preferenceShowPostsAvatars, author: data.author, fullname: fullname, created: data.created, extraInfo: ["message.fill":"\(data.num_comments)"])
+                Badge(showAvatar: preferenceShowPostsAvatars, author: data.author, fullname: fullname, created: data.created, extraInfo: [PresetBadgeExtraInfo().commentsExtraInfo(data: data)])
 
               }
             }
