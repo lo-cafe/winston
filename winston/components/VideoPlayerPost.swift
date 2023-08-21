@@ -30,7 +30,7 @@ struct VideoPlayerPost: View {
   @Default(.autoPlayVideos) private var autoPlayVideos
   
   var safe: Double { getSafeArea().top + getSafeArea().bottom }
-  var rawContentWidth: CGFloat { UIScreen.screenWidth - (preferenceShowPostsCards ? cardedPostLinksOuterHPadding : postLinksInnerHPadding * 2) - (preferenceShowPostsCards ? (preferenceShowPostsCards ? cardedPostLinksInnerHPadding : 0) * 2 : 0) }
+  var rawContentWidth: CGFloat { UIScreen.screenWidth - ((preferenceShowPostsCards ? cardedPostLinksOuterHPadding : postLinksInnerHPadding) * 2) - (preferenceShowPostsCards ? (preferenceShowPostsCards ? cardedPostLinksInnerHPadding : 0) * 2 : 0) }
   
   var body: some View {
     let contentWidth = overrideWidth ?? rawContentWidth
@@ -40,22 +40,21 @@ struct VideoPlayerPost: View {
     let propHeight = (contentWidth * sourceHeight) / sourceWidth
     let finalHeight = maxPostLinkImageHeightPercentage != 110 ? Double(min(maxHeight, propHeight)) : Double(propHeight)
     
-    AVPlayerControllerRepresentable(autoPlayVideos: autoPlayVideos, player: sharedVideo.player, aspect: .resizeAspectFill)
-      .shadow(radius: 0)
-      .ignoresSafeArea()
-      .frame(width: contentWidth, height: CGFloat(finalHeight))
-      .mask(RR(12, .black))
-      .gesture(TapGesture())
-      .contentShape(Rectangle())
-      .overlay(sharedVideo.player.isPlaying ? nil : Image(systemName: "play.fill").foregroundColor(.white.opacity(0.75)).fontSize(32).shadow(color: .black.opacity(0.45), radius: 12, y: 8).allowsHitTesting(false))
-      .onAppear {
-        if autoPlayVideos && !initialized {
-          sharedVideo.player.play()
-          withAnimation {
-            initialized = true
-          }
-        }
-      }
+    ZStack {
+      AVPlayerControllerRepresentable(autoPlayVideos: autoPlayVideos, player: sharedVideo.player, aspect: .resizeAspectFill)
+        .shadow(radius: 0)
+        .ignoresSafeArea()
+        .frame(width: contentWidth, height: CGFloat(finalHeight))
+        .mask(RR(12, .black))
+        .onTapGesture {}
+        .contentShape(Rectangle())
+      
+        Image(systemName: "play.fill").foregroundColor(.white.opacity(0.75)).fontSize(32).shadow(color: .black.opacity(0.45), radius: 12, y: 8).opacity(sharedVideo.player.isPlaying ? 0 : 1).allowsHitTesting(false)
+    }
+//    .onDisappear { sharedVideo.player.pause() }
+//    .onAppear {
+//      if autoPlayVideos { sharedVideo.player.play() }
+//    }
   }
 }
 
@@ -100,6 +99,8 @@ struct AVPlayerControllerRepresentable: UIViewControllerRepresentable {
 
 class NiceAVPlayer: AVPlayerViewController, AVPlayerViewControllerDelegate {
   var autoPlayVideos: Bool
+  var ida = UUID().uuidString
+  var gone = true
   override open var prefersStatusBarHidden: Bool {
     return true
   }
@@ -111,11 +112,28 @@ class NiceAVPlayer: AVPlayerViewController, AVPlayerViewControllerDelegate {
     showsPlaybackControls = false
     let tapGesture = UITapGestureRecognizer(target: self, action: #selector(didTapView))
     self.view.addGestureRecognizer(tapGesture)
+    self.player?.play()
   }
   
   required init?(coder aDecoder: NSCoder) {
     self.autoPlayVideos = false
     super.init(coder: aDecoder)
+  }
+  
+  override func viewDidAppear(_ animated: Bool) {
+    super.viewDidAppear(animated)
+    if autoPlayVideos && gone {
+      self.player?.play()
+      gone = false
+    }
+  }
+  
+  override func viewDidDisappear(_ animated: Bool) {
+    super.viewDidDisappear(animated)
+    if !showsPlaybackControls {
+      player?.pause()
+      gone = true
+    }
   }
   
   @objc private func didTapView() {
