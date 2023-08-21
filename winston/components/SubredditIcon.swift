@@ -7,7 +7,7 @@
 
 import Foundation
 import SwiftUI
-import NukeUI
+import Nuke
 
 struct SubredditBaseIcon: View {
   var name: String
@@ -17,10 +17,10 @@ struct SubredditBaseIcon: View {
   var color: String?
   var body: some View {
     if let icon = iconURLStr, !icon.isEmpty, let iconURL = URL(string: icon) {
-      URLImage(url: iconURL)
+      URLImage(url: iconURL, processors: [ImageProcessors.Circle()])
       .scaledToFill()
       .frame(width: size, height: size)
-      .mask(Circle())
+//      .mask(Circle())
     } else {
       Text(String((name).prefix(1)).uppercased())
         .frame(width: size, height: size)

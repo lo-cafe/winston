@@ -7,6 +7,24 @@
 
 import SwiftUI
 import Defaults
+
+struct SubItemButton: View {
+  @StateObject var sub: Subreddit
+  @EnvironmentObject private var router: Router
+  var body: some View {
+    if let data = sub.data {
+      Button {
+        router.path.append(SubViewType.posts(sub))
+      } label: {
+        HStack {
+          Text(data.display_name ?? "")
+          SubredditIcon(data: data)
+        }
+      }
+    }
+  }
+}
+
 struct SubItem: View {
   @ObservedObject var sub: Subreddit
   @Default(.likedButNotSubbed) var likedButNotSubbed

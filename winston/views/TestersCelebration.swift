@@ -63,6 +63,7 @@ struct TestersCelebration: View {
             
             VStack {
               Text("Wanna learn more about Winston's situation before donating? Press the button below")
+                .fixedSize(horizontal: false, vertical: true)
               VStack(spacing: 16) {
                 HStack {
                   Image(systemName: "heart.text.square.fill")

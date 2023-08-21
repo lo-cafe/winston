@@ -30,6 +30,30 @@ private class Appeared: ObservableObject {
   @Published var isIt: Bool = false
 }
 
+struct PostLinkNoSub: View, Equatable {
+  static func == (lhs: PostLinkNoSub, rhs: PostLinkNoSub) -> Bool {
+    lhs.post == rhs.post
+  }
+  var post: Post
+  var body: some View {
+      PostLink(post: post, sub: Subreddit(id: post.data?.subreddit ?? "Error", api: post.redditAPI))
+      .equatable()
+  }
+}
+
+struct PostLinkSubContainer: View, Equatable {
+  static func == (lhs: PostLinkSubContainer, rhs: PostLinkSubContainer) -> Bool {
+    lhs.post == rhs.post
+  }
+  var post: Post
+  @StateObject var sub: Subreddit
+  
+  var body: some View {
+      PostLink(post: post, sub: sub)
+      .equatable()
+  }
+}
+
 struct PostLink: View, Equatable {
   static func == (lhs: PostLink, rhs: PostLink) -> Bool {
     lhs.post == rhs.post && lhs.sub == rhs.sub
@@ -132,7 +156,7 @@ struct PostLink: View, Equatable {
           }
           .frame(maxWidth: compactMode ? .infinity : nil, alignment: .topLeading)
           
-
+          let imgPost = (data.is_gallery == true || data.url.hasSuffix("jpg") || data.url.hasSuffix("png") || data.url.hasSuffix("webp") || data.url.contains("imgur.com")) && !data.url.hasSuffix("gif")
           
           if imgPost, (thumbnailPositionRight && compactMode) || (!compactMode && showTitleAtTop) {
             ImageMediaPost(compact: compactMode, post: post, contentWidth: contentWidth)
