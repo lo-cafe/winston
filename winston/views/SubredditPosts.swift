@@ -10,8 +10,6 @@ import Defaults
 import SwiftUIIntrospect
 import WaterfallGrid
 
-let POSTLINK_OUTER_H_PAD: CGFloat = IPAD ? 0 : 8
-
 enum SubViewType: Hashable {
   case posts(Subreddit)
   case info(Subreddit)
@@ -54,12 +52,6 @@ struct SubredditPosts: View {
   }
   
   func fetch(loadMore: Bool = false) {
-    //    if loadMore {
-    //      withAnimation {
-    //
-    //        loadingMore = true
-    //      }
-    //    }
     Task(priority: .background) {
       await asyncFetch(loadMore: loadMore)
     }
@@ -87,7 +79,6 @@ struct SubredditPosts: View {
             PostLink(post: post, sub: subreddit)
               .equatable()
               .onAppear { if(Int(Double(posts.count) * 0.75) == i) { fetch(loadMore: true) } }
-//              .id(post.id)
               .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
               .animation(.default, value: posts)
 
@@ -115,17 +106,10 @@ struct SubredditPosts: View {
       }
       .background(Color(UIColor.systemGroupedBackground))
       .scrollContentBackground(.hidden)
-      //    .listStyle(IPAD ? .grouped : .plain)
       .listStyle(.plain)
-      //        .if(IPAD) { $0.listStyle(.insetGrouped) }
       .environment(\.defaultMinListRowHeight, 1)
-      //      }
     }
-    .overlay(
-      loading && posts.count == 0
-      ? ProgressView()
-        .frame(maxWidth: .infinity, minHeight: UIScreen.screenHeight)
-      : nil)
+    .loader(loading && posts.count == 0)
     .overlay(
       feedsAndSuch.contains(subreddit.id)
       ? nil
