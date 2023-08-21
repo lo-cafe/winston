@@ -118,7 +118,7 @@ struct PostLink: View, Equatable {
           }
           .frame(maxWidth: compactMode ? .infinity : nil, alignment: .topLeading)
           
-          let imgPost = data.is_gallery == true || data.url.hasSuffix("jpg") || data.url.hasSuffix("png") || data.url.hasSuffix("webp") || data.url.contains("imgur.com")
+          let imgPost = (data.is_gallery == true || data.url.hasSuffix("jpg") || data.url.hasSuffix("png") || data.url.hasSuffix("webp") || data.url.contains("imgur.com")) && !data.url.hasSuffix("gif")
           
           if imgPost {
             ImageMediaPost(compact: compactMode, post: post, contentWidth: contentWidth)
