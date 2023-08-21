@@ -122,6 +122,7 @@ class RedditAPI: ObservableObject {
             Task(priority: .low) {
               _ = await self.fetchMe(force: true)
               _ = await self.fetchSubs()
+              _ = await self.fetchMyMultis()
             }
             callback?(true)
             //        self.loggedUser = UserCredential(accessToken: data.token, refreshToken: data.refresh, expiration: data.expires)

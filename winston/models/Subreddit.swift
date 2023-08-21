@@ -156,7 +156,11 @@ extension Subreddit {
   }
 }
 
-struct SubredditData: GenericRedditEntityDataType, _DefaultsSerializable {
+//struct SubredditData: GenericRedditEntityDataType, _DefaultsSerializable {
+//
+//}
+
+struct SubredditData: Codable, GenericRedditEntityDataType, Defaults.Serializable {
   let user_flair_background_color: String?
   var submit_text_html: String?
   let restrict_posting: Bool?
@@ -185,7 +189,7 @@ struct SubredditData: GenericRedditEntityDataType, _DefaultsSerializable {
   let advertiser_category: String?
   var public_description: String
   let comment_score_hide_mins: Int?
-  let allow_predictions: Bool
+  let allow_predictions: Bool?
   var user_has_favorited: Bool?
   let user_flair_template_id: String?
   let community_icon: String
@@ -195,29 +199,46 @@ struct SubredditData: GenericRedditEntityDataType, _DefaultsSerializable {
   var submit_text: String?
   var description_html: String?
   let spoilers_enabled: Bool?
-  //  let comment_contribution_settings: CommentContributionSettings
   let allow_talks: Bool?
-  //  let header_size: [Int]?
-  //  let user_flair_position: String?
-  //  let all_original_content: Bool?
-  //  let has_menu_widget: Bool?
   let is_enrolled_in_new_modmail: Bool?
   let key_color: String?
   let can_assign_user_flair: Bool?
   let created: Double
-  //  let wls: Int?
   let show_media_preview: Bool?
-  //  let submission_type: String?
   var user_is_subscriber: Bool?
-  //  let allowed_media_in_comments: [String]
   let allow_videogifs: Bool?
   let should_archive_posts: Bool?
   let user_flair_type: String?
   let allow_polls: Bool?
-  //  let collapse_deleted_comments: Bool?
-  //  let emojis_custom_size: [Int]?
   var public_description_html: String?
   let allow_videos: Bool?
+  let banner_img: String?
+  let user_flair_text: String?
+  let banner_background_color: String?
+  let show_media: Bool?
+  let id: String
+  let user_is_moderator: Bool?
+  var description: String?
+  let is_chat_post_feature_enabled: Bool?
+  let submit_link_label: String?
+  let user_flair_text_color: String?
+  let restrict_commenting: Bool?
+  let user_flair_css_class: String?
+  let allow_images: Bool?
+  let url: String
+  let created_utc: Double?
+  let user_is_contributor: Bool?
+  var winstonFlairs: [Flair]?
+  //  let comment_contribution_settings: CommentContributionSettings
+  //  let header_size: [Int]?
+  //  let user_flair_position: String?
+  //  let all_original_content: Bool?
+  //  let has_menu_widget: Bool?
+  //  let wls: Int?
+  //  let submission_type: String?
+  //  let allowed_media_in_comments: [String]
+  //  let collapse_deleted_comments: Bool?
+  //  let emojis_custom_size: [Int]?
   //  let is_crosspostable_subreddit: Bool?
   //  let notification_level: String?
   //  let should_show_media_in_comments_setting: Bool?
@@ -236,30 +257,106 @@ struct SubredditData: GenericRedditEntityDataType, _DefaultsSerializable {
   //  let disable_contributor_requests: Bool?
   //  let subreddit_type: String?
   //  let suggested_comment_sort: String?
-  let banner_img: String?
-  let user_flair_text: String?
-  let banner_background_color: String?
-  let show_media: Bool?
-  let id: String
-  let user_is_moderator: Bool?
   //  let over18: Bool?
   //  let header_title: String?
-  var description: String?
-  let is_chat_post_feature_enabled: Bool?
-  let submit_link_label: String?
-  let user_flair_text_color: String?
-  let restrict_commenting: Bool?
-  let user_flair_css_class: String?
-  let allow_images: Bool?
   //  let lang: String?
   //  let whitelist_status: String?
-  let url: String
-  let created_utc: Double?
   //  let banner_size: [Int]?
   //  let mobile_banner_image: String?
-  let user_is_contributor: Bool?
   //  let allow_predictions_tournament: Bool?
-  var winstonFlairs: [Flair]?
+  
+  
+  enum CodingKeys: String, CodingKey {
+    case user_flair_background_color, submit_text_html, restrict_posting, user_is_banned, free_form_reports, wiki_enabled, user_is_muted, user_can_flair_in_sr, display_name, header_img, title, allow_galleries, icon_size, primary_color, active_user_count, icon_img, display_name_prefixed, accounts_active, public_traffic, subscribers, name, quarantine, hide_ads, prediction_leaderboard_entry_type, emojis_enabled, advertiser_category, public_description, comment_score_hide_mins, allow_predictions, user_has_favorited, user_flair_template_id, community_icon, banner_background_image, original_content_tag_enabled, community_reviewed, submit_text, description_html, spoilers_enabled, allow_talks, is_enrolled_in_new_modmail, key_color, can_assign_user_flair, created, show_media_preview, user_is_subscriber, allow_videogifs, should_archive_posts, user_flair_type, allow_polls, public_description_html, allow_videos, banner_img, user_flair_text, banner_background_color, show_media, id, user_is_moderator, description, is_chat_post_feature_enabled, submit_link_label, user_flair_text_color, restrict_commenting, user_flair_css_class, allow_images, url, created_utc, user_is_contributor, winstonFlairs
+  }
+  
+  init(from decoder: Decoder) throws {
+    let container = try decoder.container(keyedBy: CodingKeys.self)
+    
+    let id: String
+    if let idValue = try? container.decode(String.self, forKey: .id) {
+      id = idValue
+    } else if let nameValue = try? container.decode(String.self, forKey: .name) {
+      id = nameValue
+    } else {
+      throw DecodingError.dataCorrupted(
+        .init(codingPath: decoder.codingPath,
+              debugDescription: "Unable to decode identification.")
+      )
+      
+    }
+    
+    self.id = id
+    
+    self.user_flair_background_color = try container.decodeIfPresent(String.self, forKey: .user_flair_background_color)
+    self.submit_text_html = try container.decodeIfPresent(String.self, forKey: .submit_text_html)
+    self.restrict_posting = try container.decodeIfPresent(Bool.self, forKey: .restrict_posting)
+    self.user_is_banned = try container.decodeIfPresent(Bool.self, forKey: .user_is_banned)
+    self.free_form_reports = try container.decodeIfPresent(Bool.self, forKey: .free_form_reports)
+    self.wiki_enabled = try container.decodeIfPresent(Bool.self, forKey: .wiki_enabled)
+    self.user_is_muted = try container.decodeIfPresent(Bool.self, forKey: .user_is_muted)
+    self.user_can_flair_in_sr = try container.decodeIfPresent(Bool.self, forKey: .user_can_flair_in_sr)
+    self.display_name = try container.decodeIfPresent(String.self, forKey: .display_name)
+    self.header_img = try container.decodeIfPresent(String.self, forKey: .header_img)
+    self.title = try container.decodeIfPresent(String.self, forKey: .title)
+    self.allow_galleries = try container.decodeIfPresent(Bool.self, forKey: .allow_galleries)
+    self.icon_size = try container.decodeIfPresent([Int].self, forKey: .icon_size)
+    self.primary_color = try container.decodeIfPresent(String.self, forKey: .primary_color)
+    self.active_user_count = try container.decodeIfPresent(Int.self, forKey: .active_user_count)
+    self.icon_img = try container.decodeIfPresent(String.self, forKey: .icon_img)
+    self.display_name_prefixed = try container.decodeIfPresent(String.self, forKey: .display_name_prefixed)
+    self.accounts_active = try container.decodeIfPresent(Int.self, forKey: .accounts_active)
+    self.public_traffic = try container.decodeIfPresent(Bool.self, forKey: .public_traffic)
+    self.subscribers = try container.decodeIfPresent(Int.self, forKey: .subscribers)
+    self.name = try container.decode(String.self, forKey: .name)
+    self.quarantine = try container.decodeIfPresent(Bool.self, forKey: .quarantine)
+    self.hide_ads = try container.decodeIfPresent(Bool.self, forKey: .hide_ads)
+    self.prediction_leaderboard_entry_type = try container.decodeIfPresent(String.self, forKey: .prediction_leaderboard_entry_type)
+    self.emojis_enabled = try container.decodeIfPresent(Bool.self, forKey: .emojis_enabled)
+    self.advertiser_category = try container.decodeIfPresent(String.self, forKey: .advertiser_category)
+    self.public_description = try container.decode(String.self, forKey: .public_description)
+    self.comment_score_hide_mins = try container.decodeIfPresent(Int.self, forKey: .comment_score_hide_mins)
+    self.allow_predictions = try container.decodeIfPresent(Bool.self, forKey: .allow_predictions)
+    self.user_has_favorited = try container.decodeIfPresent(Bool.self, forKey: .user_has_favorited)
+    self.user_flair_template_id = try container.decodeIfPresent(String.self, forKey: .user_flair_template_id)
+    self.community_icon = try container.decode(String.self, forKey: .community_icon)
+    self.banner_background_image = try container.decodeIfPresent(String.self, forKey: .banner_background_image)
+    self.original_content_tag_enabled = try container.decodeIfPresent(Bool.self, forKey: .original_content_tag_enabled)
+    self.community_reviewed = try container.decodeIfPresent(Bool.self, forKey: .community_reviewed)
+    self.submit_text = try container.decodeIfPresent(String.self, forKey: .submit_text)
+    self.description_html = try container.decodeIfPresent(String.self, forKey: .description_html)
+    self.spoilers_enabled = try container.decodeIfPresent(Bool.self, forKey: .spoilers_enabled)
+    self.allow_talks = try container.decodeIfPresent(Bool.self, forKey: .allow_talks)
+    self.is_enrolled_in_new_modmail = try container.decodeIfPresent(Bool.self, forKey: .is_enrolled_in_new_modmail)
+    self.key_color = try container.decodeIfPresent(String.self, forKey: .key_color)
+    self.can_assign_user_flair = try container.decodeIfPresent(Bool.self, forKey: .can_assign_user_flair)
+    self.created = try container.decode(Double.self, forKey: .created)
+    self.show_media_preview = try container.decodeIfPresent(Bool.self, forKey: .show_media_preview)
+    self.user_is_subscriber = try container.decodeIfPresent(Bool.self, forKey: .user_is_subscriber)
+    self.allow_videogifs = try container.decodeIfPresent(Bool.self, forKey: .allow_videogifs)
+    self.should_archive_posts = try container.decodeIfPresent(Bool.self, forKey: .should_archive_posts)
+    self.user_flair_type = try container.decodeIfPresent(String.self, forKey: .user_flair_type)
+    self.allow_polls = try container.decodeIfPresent(Bool.self, forKey: .allow_polls)
+    self.public_description_html = try container.decodeIfPresent(String.self, forKey: .public_description_html)
+    self.allow_videos = try container.decodeIfPresent(Bool.self, forKey: .allow_videos)
+    self.banner_img = try container.decodeIfPresent(String.self, forKey: .banner_img)
+    self.user_flair_text = try container.decodeIfPresent(String.self, forKey: .user_flair_text)
+    self.banner_background_color = try container.decodeIfPresent(String.self, forKey: .banner_background_color)
+    self.show_media = try container.decodeIfPresent(Bool.self, forKey: .show_media)
+    //  self.id = try container.decodeIfPresent(String.self, forKey: .id)
+    self.user_is_moderator = try container.decodeIfPresent(Bool.self, forKey: .user_is_moderator)
+    self.description = try container.decodeIfPresent(String.self, forKey: .description)
+    self.is_chat_post_feature_enabled = try container.decodeIfPresent(Bool.self, forKey: .is_chat_post_feature_enabled)
+    self.submit_link_label = try container.decodeIfPresent(String.self, forKey: .submit_link_label)
+    self.user_flair_text_color = try container.decodeIfPresent(String.self, forKey: .user_flair_text_color)
+    self.restrict_commenting = try container.decodeIfPresent(Bool.self, forKey: .restrict_commenting)
+    self.user_flair_css_class = try container.decodeIfPresent(String.self, forKey: .user_flair_css_class)
+    self.allow_images = try container.decodeIfPresent(Bool.self, forKey: .allow_images)
+    self.url = try container.decode(String.self, forKey: .url)
+    self.created_utc = try container.decodeIfPresent(Double.self, forKey: .created_utc)
+    self.user_is_contributor = try container.decodeIfPresent(Bool.self, forKey: .user_is_contributor)
+    self.winstonFlairs = try container.decodeIfPresent([Flair].self, forKey: .winstonFlairs)
+  }
 }
 
 struct CommentContributionSettings: Codable, Hashable {

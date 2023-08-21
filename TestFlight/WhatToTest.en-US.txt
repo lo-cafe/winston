@@ -1,5 +1,2 @@
-- Fixed bug that locked users in video fullscreen views
-- Fixed imgur .jpeg images error
-- Added loaded image fade transition on appear
-- Added swipe everywhere to tab bar (you can now always go back by swiping the tab bar)
-- Added account switcher preview (try holding the "Me" tab :D )
+- Added first version of multis (long press to see subs and tap to go to the feed)
+- Videos now pause on disappear and play on appear

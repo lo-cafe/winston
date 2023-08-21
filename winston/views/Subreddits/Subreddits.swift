@@ -38,6 +38,7 @@ struct Subreddits: View {
   @EnvironmentObject private var redditAPI: RedditAPI
 //  @State private var subreddits: [ListingChild<SubredditData>] = Defaults[.subreddits]
   @Default(.subreddits) private var subreddits
+  @Default(.multis) private var multis
   @State private var searchText: String = ""
   @StateObject private var subsDict = SubsDictContainer()
   @State private var loaded = false
@@ -103,6 +104,21 @@ struct Subreddits: View {
             .listRowInsets(EdgeInsets(top: 0, leading: 16, bottom: 0, trailing: 16))
             .listRowBackground(Color.clear)
           
+          if multis.count > 0 {
+            Section("Multis") {
+              ScrollView(.horizontal) {
+                HStack(spacing: 16) {
+                  ForEach(multis) { multi in
+                    MultiLink(multi: multi, router: router)
+                  }
+                }
+                .padding(.horizontal, 16)
+              }
+              .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
+            }
+            .listRowBackground(Color.clear)
+          }
+          
           
           if searchText != "" {
             Section("Found subs") {
@@ -149,6 +165,9 @@ struct Subreddits: View {
           Task(priority: .background) {
             await updatePostsInBox(redditAPI, force: true)
           }
+          Task(priority: .background) {
+            _ = await redditAPI.fetchMyMultis()
+          }
           _ = await redditAPI.fetchSubs()
         }
         .onChange(of: subreddits) { val in
@@ -169,6 +188,7 @@ struct Subreddits: View {
               }
               
               _ = await redditAPI.fetchSubs()
+              _ = await redditAPI.fetchMyMultis()
               withAnimation {
                 loaded = true
               }

@@ -28,6 +28,15 @@ extension View {
             .environmentObject(router)
         }
       }
+      .navigationDestination(for: MultiViewType.self) { sub in
+        switch sub {
+        case .posts(let multi):
+          MultiPostsView(multi: multi)
+            .environmentObject(router)
+        case .info(_):
+          EmptyView()
+        }
+      }
       .navigationDestination(for: SubredditPostsContainerPayload.self) { payload in
         SubredditPostsContainer(sub: payload.sub, highlightID: payload.highlightID)
           .environmentObject(router)
