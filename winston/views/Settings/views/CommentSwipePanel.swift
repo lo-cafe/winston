@@ -20,7 +20,7 @@ struct CommentSwipePanel: View {
               .tag(act)
           }
         } label: {
-          Label("Drag left", image: "dragLeft")
+          Label("Drag Left", image: "dragLeft")
         }
         
         Picker(selection: $commentSwipeActions.rightFirst) {
@@ -29,7 +29,7 @@ struct CommentSwipePanel: View {
               .tag(act)
           }
         } label: {
-          Label("Drag right", image: "dragRight")
+          Label("Drag Right", image: "dragRight")
         }
         
         Picker(selection: $commentSwipeActions.leftSecond) {
@@ -38,7 +38,7 @@ struct CommentSwipePanel: View {
               .tag(act)
           }
         } label: {
-          Label("Long drag left", image: "longDragLeft")
+          Label("Long Drag Left", image: "longDragLeft")
         }
         
         Picker(selection: $commentSwipeActions.rightSecond) {
@@ -47,11 +47,11 @@ struct CommentSwipePanel: View {
               .tag(act)
           }
         } label: {
-          Label("Long drag right", image: "longDragRight")
+          Label("Long Drag Right", image: "longDragRight")
         }
         
       }
-      .navigationTitle("Comments swipe settings")
+      .navigationTitle("Comments Swipe Settings")
       .navigationBarTitleDisplayMode(.inline)
     }
 }

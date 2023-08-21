@@ -16,6 +16,7 @@ struct PostContent: View {
   @State private var height: CGFloat = 0
   @State private var collapsed = false
   @Default(.blurPostNSFW) private var blurPostNSFW
+  @Default(.preferenceShowPostsAvatars) var showPostAvatars
   @Default(.postViewTitleSize) var postViewTitleSize
   @Default(.postViewBodySize) var postViewBodySize
   private var contentWidth: CGFloat { UIScreen.screenWidth - 16 }
@@ -109,7 +110,7 @@ struct PostContent: View {
         .listRowInsets(EdgeInsets(top: 6, leading: 8, bottom: 6, trailing: 8))
         
         if let fullname = data.author_fullname {
-          Badge(author: data.author, fullname: fullname, created: data.created)
+          Badge(showAvatar: showPostAvatars, author: data.author, fullname: fullname, created: data.created)
             .id("post-badge")
             .listRowInsets(EdgeInsets(top: 6, leading: 8, bottom: 8, trailing: 8))
         }

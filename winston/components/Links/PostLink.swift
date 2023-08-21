@@ -67,7 +67,13 @@ struct PostLink: View, Equatable {
   @Default(.preferenceShowPostsAvatars) private var preferenceShowPostsAvatars
   @Default(.blurPostLinkNSFW) private var blurPostLinkNSFW
   @State private var postSwipeActions: SwipeActionsSet = Defaults[.postSwipeActions]
+  
+  //Compact Mode
   @Default(.compactMode) var compactMode
+  @Default(.showVotes) var showVotes
+  @Default(.showSelfText) var showSelfText
+  @Default(.thumbnailPositionRight) var thumbnailPositionRight
+  @Default(.voteButtonPositionRight) var voteButtonPositionRight
   
   @Default(.postLinksInnerHPadding) private var postLinksInnerHPadding
   @Default(.postLinksInnerVPadding) private var postLinksInnerVPadding
@@ -85,10 +91,12 @@ struct PostLink: View, Equatable {
   
   @Default(.postLinkTitleSize) var postLinkTitleSize
   @Default(.postLinkBodySize) var postLinkBodySize
+  @Default(.showSubsAtTop) var showSubsAtTop
+  @Default(.showTitleAtTop) var showTitleAtTop
   
   @StateObject private var appeared = Appeared()
   
-  var contentWidth: CGFloat { UIScreen.screenWidth - ((preferenceShowPostsCards ? cardedPostLinksOuterHPadding : postLinksInnerHPadding) * 2) - (preferenceShowPostsCards ? (preferenceShowPostsCards ? cardedPostLinksInnerHPadding : 0) * 2 : 0) }
+  var contentWidth: CGFloat { UIScreen.screenWidth - ((preferenceShowPostsCards ? cardedPostLinksOuterHPadding : postLinksInnerHPadding) * 2) - (preferenceShowPostsCards ? (preferenceShowPostsCards ? cardedPostLinksInnerHPadding : 0) * 2 : 0)  }
   
   var body: some View {
     let layout = compactMode ? AnyLayout(HStackLayout(alignment: .top, spacing: 12)) : AnyLayout(VStackLayout(alignment: .leading, spacing: 12))
@@ -96,14 +104,44 @@ struct PostLink: View, Equatable {
       let seen = (data.winstonSeen ?? false)
       let isLinkPost = !data.url.isEmpty && !data.is_self && !(data.is_video ?? false) && !(data.is_gallery ?? false) && data.post_hint != "image"
       let over18 = data.over_18 ?? false
+      let imgPost = data.is_gallery == true || data.url.hasSuffix("jpg") || data.url.hasSuffix("png") || data.url.hasSuffix("webp") || data.url.contains("imgur.com")
+      
       VStack(alignment: .leading, spacing: 8) {
         layout {
+          
+          if showSubsAtTop && !compactMode{
+            SubsNStuffLine(showSub: showSub, feedsAndSuch: feedsAndSuch, post: post, sub: sub, router: router, over18: over18, data: data)
+          }
+          
+          if compactMode && showVotes && !voteButtonPositionRight {
+            VStack(alignment: .center, spacing: 2) {
+              
+              VoteButton(color: data.likes != nil && data.likes! ? .orange : .gray, voteAction: .up, image: "arrow.up", post: post)
+              
+              Spacer()
+              
+              VoteButton(color: data.likes != nil && !data.likes! ? .blue : .gray, voteAction: .down, image: "arrow.down", post: post)
+              
+              Spacer()
+              
+            }
+            .frame(maxHeight: .infinity)
+            .fontSize(22, .medium)
+          }
+          
+
+          if imgPost, (!thumbnailPositionRight && compactMode) || (!compactMode && !showTitleAtTop) {
+            ImageMediaPost(compact: compactMode, post: post, contentWidth: contentWidth)
+          } else if !thumbnailPositionRight && compactMode{
+            EmptyThumbnail()
+          }
+          
           VStack(alignment: .leading, spacing: compactMode ? 4 : 10) {
             Text(data.title.escape)
               .fontSize(postLinkTitleSize, .medium)
               .frame(maxWidth: .infinity, alignment: .topLeading)
             
-            if data.selftext != "" && !compactMode {
+            if data.selftext != "" && showSelfText {
               Text(data.selftext.md()).lineLimit(3)
                 .fontSize(postLinkBodySize)
                 .opacity(0.75)
@@ -112,7 +150,7 @@ struct PostLink: View, Equatable {
             
             if compactMode {
               if let fullname = data.author_fullname {
-                Badge(showAvatar: preferenceShowPostsAvatars, author: data.author, fullname: fullname, created: data.created, extraInfo: ["message.fill":"\(data.num_comments)", (data.ups >= 0 ? "arrow.up" : "arrow.down"): "\(formatBigNumber(data.ups))"])
+                Badge(showAvatar: preferenceShowPostsAvatars, author: data.author, fullname: fullname, created: data.created, extraInfo: [PresetBadgeExtraInfo().commentsExtraInfo(data:data), PresetBadgeExtraInfo().upvotesExtraInfo(data: data)])
               }
             }
           }
@@ -120,8 +158,10 @@ struct PostLink: View, Equatable {
           
           let imgPost = (data.is_gallery == true || data.url.hasSuffix("jpg") || data.url.hasSuffix("png") || data.url.hasSuffix("webp") || data.url.contains("imgur.com")) && !data.url.hasSuffix("gif")
           
-          if imgPost {
+          if imgPost, (thumbnailPositionRight && compactMode) || (!compactMode && showTitleAtTop) {
             ImageMediaPost(compact: compactMode, post: post, contentWidth: contentWidth)
+          } else if thumbnailPositionRight && compactMode {
+            EmptyThumbnail()
           }
           
           if !compactMode {
@@ -153,7 +193,7 @@ struct PostLink: View, Equatable {
             .nsfw(over18 && blurPostLinkNSFW)
           }
           
-          if compactMode {
+          if compactMode && showVotes && voteButtonPositionRight {
             VStack(alignment: .center, spacing: 2) {
               
               VoteButton(color: data.likes != nil && data.likes! ? .orange : .gray, voteAction: .up, image: "arrow.up", post: post)
@@ -173,46 +213,29 @@ struct PostLink: View, Equatable {
         .zIndex(1)
         .frame(maxWidth: .infinity, alignment: .topLeading)
         
-        HStack(spacing: 0) {
-          
-          if showSub || feedsAndSuch.contains(sub.id) {
-            FlairTag(text: "r/\(sub.data?.display_name ?? post.data?.subreddit ?? "Error")", color: .blue)
-              .highPriorityGesture(TapGesture() .onEnded {
-                router.path.append(SubViewType.posts(Subreddit(id: post.data?.subreddit ?? "", api: post.redditAPI)))
-              })
-            
-            WDivider()
-          }
-          
-          if over18 {
-            FlairTag(text: "NSFW", color: .red)
-            WDivider()
-          }
-          
-          if let link_flair_text = data.link_flair_text {
-            FlairTag(text: link_flair_text.emojied())
-              .allowsHitTesting(false)
-          }
-          
-          if !showSub && !feedsAndSuch.contains(sub.id) {
-            WDivider()
-          }
+        if !showSubsAtTop || compactMode {
+          SubsNStuffLine(showSub: showSub, feedsAndSuch: feedsAndSuch, post: post, sub: sub, router: router, over18: over18, data: data)
         }
-        .padding(.horizontal, 2)
-        .padding(.vertical, 2)
+        
+
         
         
         
         if !compactMode {
           HStack {
             if let fullname = data.author_fullname {
-              Badge(showAvatar: preferenceShowPostsAvatars, author: data.author, fullname: fullname, created: data.created, extraInfo: ["message.fill":"\(data.num_comments)"])
+              if !showVotes {
+                Badge(showAvatar: preferenceShowPostsAvatars, author: data.author, fullname: fullname, created: data.created, extraInfo: [PresetBadgeExtraInfo().commentsExtraInfo(data: data), PresetBadgeExtraInfo().upvotesExtraInfo(data: data)])
+              } else {
+                Badge(showAvatar: preferenceShowPostsAvatars, author: data.author, fullname: fullname, created: data.created, extraInfo: [PresetBadgeExtraInfo().commentsExtraInfo(data: data)])
+
+              }
             }
             
             Spacer()
             
             HStack(alignment: .center) {
-              VotesCluster(data: data, likeRatio: showUpvoteRatio ? data.upvote_ratio : nil, post: post)
+              showVotes ? VotesCluster(data: data, likeRatio: showUpvoteRatio ? data.upvote_ratio : nil, post: post) : nil
             }
             .fontSize(22, .medium)
           }
@@ -322,5 +345,61 @@ struct CustomLabel: LabelStyle {
       configuration.icon
       configuration.title
     }
+  }
+}
+
+struct EmptyThumbnail: View {
+  @Default(.showSelfPostThumbnails) var showSelfPostThumbnails
+  var body: some View {
+    if showSelfPostThumbnails {
+      Image("emptyThumb")
+        .resizable()
+        .scaledToFill()
+        .clipped()
+        .mask(RR(12, .black))
+        .contentShape(Rectangle())
+        .frame(width: scaledCompactModeThumbSize(), height: scaledCompactModeThumbSize())
+    }
+  }
+}
+
+
+struct SubsNStuffLine: View {
+  var showSub: Bool
+  var feedsAndSuch: [String]
+  var post: Post
+  var sub: Subreddit
+  var router: Router
+  var over18: Bool
+  var data: PostData
+  
+  var body: some View {
+    HStack(spacing: 0) {
+      
+      if showSub || feedsAndSuch.contains(sub.id) {
+        FlairTag(text: "r/\(sub.data?.display_name ?? post.data?.subreddit ?? "Error")", color: .blue)
+          .highPriorityGesture(TapGesture() .onEnded {
+            router.path.append(SubViewType.posts(Subreddit(id: post.data?.subreddit ?? "", api: post.redditAPI)))
+          })
+        
+        WDivider()
+      }
+      
+      if over18 {
+        FlairTag(text: "NSFW", color: .red)
+        WDivider()
+      }
+      
+      if let link_flair_text = data.link_flair_text {
+        FlairTag(text: link_flair_text.emojied())
+          .allowsHitTesting(false)
+      }
+      
+      if !showSub && !feedsAndSuch.contains(sub.id) {
+        WDivider()
+      }
+    }
+    .padding(.horizontal, 2)
+    .padding(.vertical, 2)
   }
 }

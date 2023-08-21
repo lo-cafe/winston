@@ -8,6 +8,10 @@
 
 /* Begin PBXBuildFile section */
 		650ACAFC2A87A36900A7C600 /* calcVotes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 650ACAFB2A87A36900A7C600 /* calcVotes.swift */; };
+		651D19C72A90B7D6003867A9 /* postFontSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 651D19C62A90B7D6003867A9 /* postFontSettings.swift */; };
+		653E2DA52A8E278800833556 /* GeneralPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 653E2DA42A8E278800833556 /* GeneralPanel.swift */; };
+		6543D8892A8D10B900A1FFF9 /* scaleEffectButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6543D8882A8D10B900A1FFF9 /* scaleEffectButtonStyle.swift */; };
+		65807E732A87F8A8000EF969 /* AlertToast in Frameworks */ = {isa = PBXBuildFile; productRef = 65807E722A87F8A8000EF969 /* AlertToast */; };
 		6593CC432A88C9E8003CA58D /* AccessibilityPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6593CC422A88C9E8003CA58D /* AccessibilityPanel.swift */; };
 		6593CC452A88D128003CA58D /* hapticFeedbackModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6593CC442A88D128003CA58D /* hapticFeedbackModifier.swift */; };
 		659F68022A84E32300989300 /* VotesCluster.swift in Sources */ = {isa = PBXBuildFile; fileRef = 659F68012A84E32300989300 /* VotesCluster.swift */; };
@@ -201,7 +205,6 @@
 		ECDD51622A748DF600FD9498 /* SkeletonUI in Frameworks */ = {isa = PBXBuildFile; productRef = ECDD51612A748DF600FD9498 /* SkeletonUI */; };
 		ECDD51642A74C03C00FD9498 /* sendErrorEmail.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECDD51632A74C03C00FD9498 /* sendErrorEmail.swift */; };
 		ECDD51662A74E4DD00FD9498 /* SubredditPostsContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECDD51652A74E4DD00FD9498 /* SubredditPostsContainer.swift */; };
-		ECE00EE22A8D68FE000A6E21 /* scaleEffectButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECE00EE12A8D68FE000A6E21 /* scaleEffectButtonStyle.swift */; };
 		ECE00EE72A8D6A20000A6E21 /* TabBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECE00EE62A8D6A20000A6E21 /* TabBar.swift */; };
 		ECE285972A4FD6FC009CF9DD /* SwiftDate in Frameworks */ = {isa = PBXBuildFile; productRef = ECE285962A4FD6FC009CF9DD /* SwiftDate */; };
 		ECE285992A50086D009CF9DD /* UserView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECE285982A50086D009CF9DD /* UserView.swift */; };
@@ -270,6 +273,9 @@
 
 /* Begin PBXFileReference section */
 		650ACAFB2A87A36900A7C600 /* calcVotes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = calcVotes.swift; sourceTree = "<group>"; };
+		651D19C62A90B7D6003867A9 /* postFontSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = postFontSettings.swift; sourceTree = "<group>"; };
+		653E2DA42A8E278800833556 /* GeneralPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneralPanel.swift; sourceTree = "<group>"; };
+		6543D8882A8D10B900A1FFF9 /* scaleEffectButtonStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = scaleEffectButtonStyle.swift; sourceTree = "<group>"; };
 		6593CC422A88C9E8003CA58D /* AccessibilityPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessibilityPanel.swift; sourceTree = "<group>"; };
 		6593CC442A88D128003CA58D /* hapticFeedbackModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = hapticFeedbackModifier.swift; sourceTree = "<group>"; };
 		659F68012A84E32300989300 /* VotesCluster.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VotesCluster.swift; sourceTree = "<group>"; };
@@ -528,6 +534,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		651D19C52A90B7B5003867A9 /* subSettingView */ = {
+			isa = PBXGroup;
+			children = (
+				651D19C62A90B7D6003867A9 /* postFontSettings.swift */,
+			);
+			path = subSettingView;
+			sourceTree = "<group>";
+		};
 		EC08541C2A4BFEF100E88389 /* RedditAPI */ = {
 			isa = PBXGroup;
 			children = (
@@ -557,6 +571,7 @@
 		EC1906EA2A5528EE00A0300E /* Settings */ = {
 			isa = PBXGroup;
 			children = (
+				651D19C52A90B7B5003867A9 /* subSettingView */,
 				EC1906EB2A55291F00A0300E /* views */,
 				EC593AF92A47AE3E002D6454 /* Settings.swift */,
 			);
@@ -574,6 +589,7 @@
 				EC7DBDF22A86C92200D7C123 /* PostSwipePanel.swift */,
 				6593CC422A88C9E8003CA58D /* AccessibilityPanel.swift */,
 				65AA535C2A8BB27900275299 /* FAQPanel.swift */,
+				653E2DA42A8E278800833556 /* GeneralPanel.swift */,
 			);
 			path = views;
 			sourceTree = "<group>";
@@ -915,6 +931,7 @@
 				EC08542A2A4C2B6B00E88389 /* if.swift */,
 				EC08543E2A4D0C0700E88389 /* doThisAfter.swift */,
 				EC0854402A4D558D00E88389 /* Interpolator.swift */,
+				6543D8882A8D10B900A1FFF9 /* scaleEffectButtonStyle.swift */,
 				EC0854472A4D6E8C00E88389 /* getInitialSize.swift */,
 				EC0854492A4D6EAE00E88389 /* blurTransitions.swift */,
 				ECF0B7E62A54357F002B9FAD /* StringToMD.swift */,
@@ -1102,7 +1119,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1430;
-				LastUpgradeCheck = 1430;
+				LastUpgradeCheck = 1500;
 				TargetAttributes = {
 					EC593AD32A4673B2002D6454 = {
 						CreatedOnToolsVersion = 14.3.1;
@@ -1192,6 +1209,7 @@
 				EC63734F2A791369000A03A3 /* OnboardingBigStep.swift in Sources */,
 				ECE2859F2A501CD4009CF9DD /* fetchMe.swift in Sources */,
 				ECFDEAD02A7F151500DF102D /* PostsInBoxView.swift in Sources */,
+				651D19C72A90B7D6003867A9 /* postFontSettings.swift in Sources */,
 				EC0854262A4C013B00E88389 /* Avatar.swift in Sources */,
 				ECE285A82A513342009CF9DD /* ReplyModal.swift in Sources */,
 				ECEFC2652A5DE5910003C6C4 /* SubredditLink.swift in Sources */,
@@ -1236,6 +1254,7 @@
 				ECE285992A50086D009CF9DD /* UserView.swift in Sources */,
 				ECD1FC072A56D46D00723016 /* ObservableArray.swift in Sources */,
 				EC8F34A12A6FC99000EB8249 /* updatePostsInBox.swift in Sources */,
+				6543D8892A8D10B900A1FFF9 /* scaleEffectButtonStyle.swift in Sources */,
 				EC50B0E42A84563C00AB8F72 /* SwipeAction.swift in Sources */,
 				ECF0B7E52A541449002B9FAD /* newReply.swift in Sources */,
 				EC1906E92A55240600A0300E /* cancelableTimer.swift in Sources */,
@@ -1346,6 +1365,7 @@
 				ECDD51542A73889A00FD9498 /* rootURL.swift in Sources */,
 				EC1E7B6C2A81650700DB459A /* loader.swift in Sources */,
 				ECAEFF662A77C43B0052FCD3 /* isVideoPlayer.swift in Sources */,
+				653E2DA52A8E278800833556 /* GeneralPanel.swift in Sources */,
 				ECEFC26B2A5E00B30003C6C4 /* floating.swift in Sources */,
 				ECC10C742A4A8729009124BE /* fontSize.swift in Sources */,
 				EC1906F32A55AC6E00A0300E /* fetchMoreReplies.swift in Sources */,
@@ -1443,6 +1463,7 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -1503,6 +1524,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;

@@ -26,7 +26,7 @@ struct BehaviorPanel: View {
     List {
       
       Section("General") {
-        Toggle("Open Youtube videos externally", isOn: $openYoutubeApp)
+        Toggle("Open Youtube Videos Externally", isOn: $openYoutubeApp)
         
         Picker("Default Launch Feed", selection: $preferenceDefaultFeed) {
           Text("Home").tag("home")
@@ -58,7 +58,7 @@ struct BehaviorPanel: View {
         }
         VStack(alignment: .leading) {
           HStack {
-            Text("Max posts image height")
+            Text("Max Posts Image Height")
             Spacer()
             Text(maxPostLinkImageHeightPercentage == 110 ? "Original" : "\(Int(maxPostLinkImageHeightPercentage))%")
               .opacity(0.6)
@@ -68,8 +68,8 @@ struct BehaviorPanel: View {
       }
       
       Section("Comments") {
-        NavigationLink("Comments swipe settings", value: SettingsPages.commentSwipe)
-        Picker("Comments sorting", selection: $preferredCommentSort) {
+        NavigationLink("Comments Swipe Settings", value: SettingsPages.commentSwipe)
+        Picker("Comments Sorting", selection: $preferredCommentSort) {
           ForEach(CommentSortOption.allCases, id: \.self) { val in
             Label(val.rawVal.id.capitalized, systemImage: val.rawVal.icon)
           }

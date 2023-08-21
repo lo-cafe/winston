@@ -75,7 +75,7 @@ struct Subreddits: View {
     let subsDictData = subsDict.data
     NavigationStack(path: $router.path) {
       ScrollViewReader { proxy in
-        List {
+        List{
           
           if searchText == "" {
             VStack(spacing: 12) {
