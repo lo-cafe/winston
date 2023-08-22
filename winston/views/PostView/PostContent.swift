@@ -35,7 +35,7 @@ struct PostContent: View {
           }
           .listRowInsets(EdgeInsets(top: 0, leading: 8, bottom: 6, trailing: 8))
         
-        let imgPost = data.is_gallery == true || data.url.hasSuffix("jpg") || data.url.hasSuffix("png") || data.url.hasSuffix("webp")
+        let imgPost = data.is_gallery == true || IMAGES_FORMATS.contains(where: { data.url.hasSuffix($0) })
         
         VStack(spacing: 0) {
           VStack(spacing: 12) {
