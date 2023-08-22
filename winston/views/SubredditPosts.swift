@@ -221,7 +221,7 @@ struct SubredditPosts: View {
             Button {
               router.path.append(SubViewType.info(subreddit))
             } label: {
-              SubredditIcon(data: data)
+              SubredditIcon(data: data, forceNSFWOFF: true)
             }
           }
         }
