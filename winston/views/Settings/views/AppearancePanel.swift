@@ -49,14 +49,22 @@ struct AppearancePanel: View {
   @Default(.showSelfPostThumbnails) var showSelfPostThumbnails
   
   @Default(.commentLinkBodySize) var commentLinkBodySize
-
+  @Default(.preferredThemeMode) var preferredThemeMode
   var body: some View {
     List {
       Section("General") {
         Toggle("Blur Reply Background", isOn: $replyModalBlurBackground)
         Toggle("Blur New Post Background", isOn: $newPostModalBlurBackground)
         Toggle("Show Username in Tab Bar", isOn: $showUsernameInTabBar)
-        
+        Picker("Preferred Theme", selection: Binding(get: {
+          preferredThemeMode
+        }, set: { val, _ in
+          preferredThemeMode = val
+        })){
+          Text("Automatic").tag(PreferredThemeMode.automatic)
+          Text("Light").tag(PreferredThemeMode.light)
+          Text("Dark").tag(PreferredThemeMode.dark)
+        }
       }
       
       Section("Posts") {
@@ -278,7 +286,9 @@ struct AppearancePanel: View {
     }
     .navigationTitle("Appearance")
     .navigationBarTitleDisplayMode(.inline)
+    .preferredColorScheme(preferredThemeMode.id == 0 ? nil : preferredThemeMode.id == 1 ? .light : .dark)
   }
+  
 }
 //
 //struct Appearance_Previews: PreviewProvider {
@@ -313,3 +323,23 @@ enum ThumbnailSizeModifier:  Codable, CaseIterable, Identifiable, Defaults.Seria
   }
 }
 
+enum PreferredThemeMode: Codable, CaseIterable, Identifiable, Defaults.Serializable {
+  var id: Int {
+    self.rawVal
+  }
+  
+  case automatic
+  case dark
+  case light
+  
+  var rawVal: Int {
+    switch self{
+    case .automatic:
+      0
+    case .light:
+      1
+    case .dark:
+      2
+    }
+  }
+}
