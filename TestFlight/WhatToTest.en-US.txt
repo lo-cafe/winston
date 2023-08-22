@@ -1,2 +1,1 @@
-- Added first version of multis (long press to see subs and tap to go to the feed)
-- Videos now pause on disappear and play on appear
+- NSFW Subreddits get blurred in search
