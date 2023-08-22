@@ -139,9 +139,9 @@ struct PresetBadgeExtraInfo{
   init(){}
   
   func upvotesExtraInfo(data: PostData) -> BadgeExtraInfo{
-    //    let upvoted = data.likes != nil && data.likes!
-    //    let downvoted = data.likes != nil && !data.likes!
-    //    return BadgeExtraInfo(systemImage: upvoted  ? "arrow.up" : (downvoted ? "arrow.down" : "arrow.up"), text: "\(formatBigNumber(data.ups))",textColor: upvoted ? .orange : (downvoted ? .blue : .primary), iconColor:  upvoted ? .orange : (downvoted ? .blue : .primary))
+//    let upvoted = data.likes != nil && data.likes!
+//    let downvoted = data.likes != nil && !data.likes!
+//    return BadgeExtraInfo(systemImage: "arrow.up", text: "fuck this shit", iconColor: data.likes == nil ? .primary : data.likes! ? .orange : .blue)
     return BadgeExtraInfo(systemImage: "arrow.up", text: "\(formatBigNumber(data.ups))")
   }
   

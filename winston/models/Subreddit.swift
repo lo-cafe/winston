@@ -249,6 +249,7 @@ struct SubredditData: Codable, GenericRedditEntityDataType, Defaults.Serializabl
   //  let user_sr_theme_enabled: Bool?
   //  let link_flair_enabled: Bool?
   //  let disable_contributor_requests: Bool?
+    let over18: Bool?
     let subreddit_type: String?
   let suggested_comment_sort: String?
     let over18: Bool?
