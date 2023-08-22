@@ -107,6 +107,8 @@ extension Defaults.Keys {
   static let showSubsAtTop = Key<Bool>("showSubsAtTop", default: false)
   static let showTitleAtTop = Key<Bool>("showTitleAtTop", default: true)
   
+  static let preferredThemeMode = Key<PreferredThemeMode>("preferredThemeMode", default: .automatic)
+  
   static let postLinkTitleSize = Key<CGFloat>("postLinkTitleSize", default: 16)
   static let postLinkBodySize = Key<CGFloat>("postLinkBodySize", default: 14)
   static let postViewTitleSize = Key<CGFloat>("postViewTitleSize", default: 20)
@@ -126,3 +128,5 @@ extension UIScreen {
    static let screenHeight = UIScreen.main.bounds.size.height
    static let screenSize = UIScreen.main.bounds.size
 }
+
+
