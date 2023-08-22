@@ -49,6 +49,7 @@ struct AppearancePanel: View {
   @Default(.showSelfPostThumbnails) var showSelfPostThumbnails
   
   @Default(.commentLinkBodySize) var commentLinkBodySize
+  @Default(.preferredThemeMode) var preferredThemeMode
   var body: some View {
     List {
       Section("Themes"){
@@ -60,7 +61,15 @@ struct AppearancePanel: View {
         Toggle("Blur Reply Background", isOn: $replyModalBlurBackground)
         Toggle("Blur New Post Background", isOn: $newPostModalBlurBackground)
         Toggle("Show Username in Tab Bar", isOn: $showUsernameInTabBar)
-       
+        Picker("Preferred Theme", selection: Binding(get: {
+          preferredThemeMode
+        }, set: { val, _ in
+          preferredThemeMode = val
+        })){
+          Text("Automatic").tag(PreferredThemeMode.automatic)
+          Text("Light").tag(PreferredThemeMode.light)
+          Text("Dark").tag(PreferredThemeMode.dark)
+        }
       }
       
       Section("Posts") {
@@ -282,6 +291,7 @@ struct AppearancePanel: View {
     }
     .navigationTitle("Appearance")
     .navigationBarTitleDisplayMode(.inline)
+    .preferredColorScheme(preferredThemeMode.id == 0 ? nil : preferredThemeMode.id == 1 ? .light : .dark)
   }
   
 }
