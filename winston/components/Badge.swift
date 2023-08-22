@@ -121,6 +121,10 @@ struct PresetBadgeExtraInfo{
     return BadgeExtraInfo(systemImage: "arrow.up", text: "\(formatBigNumber(data.ups))")
   }
   
+  func upvotesExtraInfo2(upvoted: Bool, downvoted: Bool, upvotes: Int) -> BadgeExtraInfo{
+    return BadgeExtraInfo(systemImage: upvoted  ? "arrow.up" : (downvoted ? "arrow.down" : "arrow.up"), text: "\(formatBigNumber(upvotes))",textColor: upvoted ? .orange : (downvoted ? .blue : .primary), iconColor:  upvoted ? .orange : (downvoted ? .blue : .primary))
+  }
+  
   func commentsExtraInfo(data: PostData) -> BadgeExtraInfo{
     return BadgeExtraInfo(systemImage: "message.fill", text: "\(formatBigNumber(data.num_comments))")
   }

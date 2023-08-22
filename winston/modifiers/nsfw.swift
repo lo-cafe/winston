@@ -10,6 +10,7 @@ import SwiftUI
 
 struct NSFWMod: ViewModifier {
   var isIt: Bool
+  var disableTapToUnblur: Bool
   @State private var unblur = false
   func body(content: Content) -> some View {
     let blur = !unblur && isIt
@@ -27,18 +28,19 @@ struct NSFWMod: ViewModifier {
             .padding(.vertical, 3)
             .background(.red, in: Capsule(style: .continuous))
             .foregroundColor(.white)
-          Text("Tap to unblur")
+          disableTapToUnblur ? nil : Text("Tap to unblur")
         }
       )
-      .allowsHitTesting(!blur)
+      .allowsHitTesting(disableTapToUnblur ? false : !blur)
       .contentShape(Rectangle())
-      .highPriorityGesture(blur ? TapGesture().onEnded { withAnimation { unblur = true } } : nil )
+      .highPriorityGesture(blur ? TapGesture().onEnded { withAnimation { unblur = !disableTapToUnblur } } : nil )
   }
 }
 
 extension View {
-  func nsfw(_ isIt: Bool) -> some View {
+  func nsfw(_ isIt: Bool, disableTapToUnblur: Bool = false) -> some View {
     self
-      .modifier(NSFWMod(isIt: isIt))
+      .modifier(NSFWMod(isIt: isIt, disableTapToUnblur: disableTapToUnblur))
   }
 }
+
