@@ -35,7 +35,7 @@ struct SubredditInfo: View {
       Group {
         if let data = subreddit.data {
           VStack(spacing: 12) {
-            SubredditIcon(data: data, size: 125)
+            SubredditIcon(data: data, size: 125, forceNSFWOFF: true)
             
             VStack {
               Text("r/\(data.display_name ?? "")")

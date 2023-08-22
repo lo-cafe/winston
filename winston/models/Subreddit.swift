@@ -251,7 +251,7 @@ struct SubredditData: Codable, GenericRedditEntityDataType, Defaults.Serializabl
   //  let disable_contributor_requests: Bool?
   //  let subreddit_type: String?
   //  let suggested_comment_sort: String?
-  //  let over18: Bool?
+    let over18: Bool?
   //  let header_title: String?
   //  let lang: String?
   //  let whitelist_status: String?
@@ -261,7 +261,7 @@ struct SubredditData: Codable, GenericRedditEntityDataType, Defaults.Serializabl
   
   
   enum CodingKeys: String, CodingKey {
-    case user_flair_background_color, submit_text_html, restrict_posting, user_is_banned, free_form_reports, wiki_enabled, user_is_muted, user_can_flair_in_sr, display_name, header_img, title, allow_galleries, icon_size, primary_color, active_user_count, icon_img, display_name_prefixed, accounts_active, public_traffic, subscribers, name, quarantine, hide_ads, prediction_leaderboard_entry_type, emojis_enabled, advertiser_category, public_description, comment_score_hide_mins, allow_predictions, user_has_favorited, user_flair_template_id, community_icon, banner_background_image, original_content_tag_enabled, community_reviewed, submit_text, description_html, spoilers_enabled, allow_talks, is_enrolled_in_new_modmail, key_color, can_assign_user_flair, created, show_media_preview, user_is_subscriber, allow_videogifs, should_archive_posts, user_flair_type, allow_polls, public_description_html, allow_videos, banner_img, user_flair_text, banner_background_color, show_media, id, user_is_moderator, description, is_chat_post_feature_enabled, submit_link_label, user_flair_text_color, restrict_commenting, user_flair_css_class, allow_images, url, created_utc, user_is_contributor, winstonFlairs
+    case user_flair_background_color, submit_text_html, restrict_posting, user_is_banned, free_form_reports, wiki_enabled, user_is_muted, user_can_flair_in_sr, display_name, header_img, title, allow_galleries, icon_size, primary_color, active_user_count, icon_img, display_name_prefixed, accounts_active, public_traffic, subscribers, name, quarantine, hide_ads, prediction_leaderboard_entry_type, emojis_enabled, advertiser_category, public_description, comment_score_hide_mins, allow_predictions, user_has_favorited, user_flair_template_id, community_icon, banner_background_image, original_content_tag_enabled, community_reviewed, submit_text, description_html, spoilers_enabled, allow_talks, is_enrolled_in_new_modmail, key_color, can_assign_user_flair, created, show_media_preview, user_is_subscriber, allow_videogifs, should_archive_posts, user_flair_type, allow_polls, public_description_html, allow_videos, banner_img, user_flair_text, banner_background_color, show_media, id, user_is_moderator, description, is_chat_post_feature_enabled, submit_link_label, user_flair_text_color, restrict_commenting, user_flair_css_class, allow_images, url, created_utc, user_is_contributor, winstonFlairs, over18
   }
   
   
@@ -450,6 +450,8 @@ struct SubredditData: Codable, GenericRedditEntityDataType, Defaults.Serializabl
     self.created_utc = try container.decodeIfPresent(Double.self, forKey: .created_utc)
     self.user_is_contributor = try container.decodeIfPresent(Bool.self, forKey: .user_is_contributor)
     self.winstonFlairs = try container.decodeIfPresent([Flair].self, forKey: .winstonFlairs)
+    
+    self.over18 = try container.decodeIfPresent(Bool.self, forKey: .over18)
   }
 }
 
