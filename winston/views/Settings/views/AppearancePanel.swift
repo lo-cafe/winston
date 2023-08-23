@@ -84,7 +84,7 @@ struct AppearancePanel: View {
         Toggle("Show Subreddit at Top", isOn: $showSubsAtTop)
         Toggle("Show Title at Top", isOn: $showTitleAtTop)
         
-        NavigationLink(destination: postFontSettings()){
+        NavigationLink(value: SettingsPages.postFontSettings){
           Label("Text Size", systemImage: "text.magnifyingglass")
             .labelStyle(.titleOnly)
         }
