@@ -1,1 +1,5 @@
 - NSFW Subreddits get blurred in search
+- Added preferred theme setting
+- Added pinned comment indicator
+- Added locked comment indicator
+- Added suggested sort to posts

@@ -271,7 +271,7 @@ struct PostData: GenericRedditEntityDataType, Defaults.Serializable {
   let pwls: Int?
   let link_flair_text: String?
   let thumbnail: String?
-  //  let edited: Edited?
+  //let edited: Edited?
   let link_flair_template_id: String?
   let author_flair_text: String?
   //    let media: String?
@@ -448,7 +448,7 @@ struct Awarding: Codable, Hashable {
   let subreddit_id: String?
 }
 
-enum Edited: Codable {
+enum Edited: Codable, Equatable, Hashable{
   case bool(Bool)
   case double(Double)
   
@@ -470,6 +470,15 @@ enum Edited: Codable {
       try container.encode(boolValue)
     case .double(let doubleValue):
       try container.encode(doubleValue)
+    }
+  }
+  
+  var asBool: Bool? {
+    switch self {
+    case .bool(let boolValue):
+      return boolValue
+    case .double(_):
+      return nil
     }
   }
 }

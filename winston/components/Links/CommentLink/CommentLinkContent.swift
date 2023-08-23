@@ -87,7 +87,7 @@ struct CommentLinkContent: View {
           }
           HStack {
             if let author = data.author, let created = data.created {
-              Badge(usernameColor: (post?.data?.author ?? "") == author ? Color.green : (coloredCommenNames ? Color.blue : Color.primary), showAvatar: preferenceShowCommentsAvatars, author: author, fullname: data.author_fullname, created: created, avatarURL: avatarsURL?[data.author_fullname!])
+              Badge(usernameColor: (post?.data?.author ?? "") == author ? Color.green : (coloredCommenNames ? Color.blue : Color.primary), showAvatar: preferenceShowCommentsAvatars, author: author, fullname: data.author_fullname, created: created, avatarURL: avatarsURL?[data.author_fullname!], stickied: data.stickied ?? false, locked: data.locked ?? false, edited: data.edited == nil)
             }
 
             Spacer()
@@ -105,6 +105,7 @@ struct CommentLinkContent: View {
               .padding(.vertical, 1)
               .background(.orange, in: Capsule(style: .continuous))
               .onTapGesture { withAnimation { comment.data?.winstonSelecting = false } }
+              
             }
 
             if let ups = data.ups, let downs = data.downs {
