@@ -76,13 +76,16 @@ extension Comment {
         mod_note: nil,
         collapsed: false,
         body: message.body,
+        edited: nil,
         top_awarded_type: nil,
         name: message.name,
         is_submitter: nil,
         downs: nil,
         children: nil,
         body_html: message.body_html,
+        stickied: false,
         permalink: nil,
+        locked: false,
         created: message.created,
         link_id: nil,
         link_title: message.link_title,
@@ -238,13 +241,16 @@ extension Comment {
           mod_note: nil,
           collapsed: nil,
           body: text,
+          edited: nil,
           top_awarded_type: nil,
           name: nil,
           is_submitter: nil,
           downs: 0,
           children: nil,
           body_html: nil,
+          stickied: false,
           permalink: nil,
+          locked: false,
           created: Double(Int(Date().timeIntervalSince1970)),
           link_id: data.link_id,
           link_title: data.link_title,
@@ -395,7 +401,7 @@ struct CommentData: GenericRedditEntityDataType {
   //  let all_awardings: [String]?
   var collapsed: Bool?
   var body: String?
-  //  let edited: Bool?
+  let edited: Edited?
   let top_awarded_type: String?
   //  let author_flair_css_class: String?
   let name: String?
@@ -409,16 +415,16 @@ struct CommentData: GenericRedditEntityDataType {
   //  let collapsed_reason: String?
   //  let distinguished: String?
   //  let associated_award: String?
-  //  let stickied: Bool?
+  let stickied: Bool?
   //  let author_premium: Bool?
   //  let can_gild: Bool?
   //  let gildings: [String: String]?
   //  let unrepliable_reason: String?
   //  let author_flair_text_color: String?
   //  let score_hidden: Bool?
-    let permalink: String?
+  let permalink: String?
   //  let subreddit_type: String?
-  //  let locked: Bool?
+  let locked: Bool?
   //  let report_reasons: String?
   let created: Double?
   //  let author_flair_text: String?
@@ -452,6 +458,7 @@ enum CommentSortOption: Codable, CaseIterable, Identifiable, Defaults.Serializab
     self.rawVal.id
   }
   
+  
   case confidence
   case new
   case top
@@ -480,5 +487,36 @@ enum CommentSortOption: Codable, CaseIterable, Identifiable, Defaults.Serializab
     case .live:
       return SubListingSort(icon: "dot.radiowaves.left.and.right", value: "live")
     }
+  }
+  
+}
+
+extension CommentSortOption {
+  func addSuggestedText() -> SubListingSort{
+    return SubListingSort(icon: self.rawVal.icon, value: self.rawVal.value + " (Suggested)")
+  }
+}
+
+func convertStringToCommentSortOption(string: String) -> CommentSortOption {
+  print(string)
+  return switch string {
+    case "new":
+    CommentSortOption.new
+  case "confidence":
+    CommentSortOption.confidence
+  case "top":
+    CommentSortOption.top
+  case "controversial":
+    CommentSortOption.controversial
+  case "old":
+    CommentSortOption.old
+  case "random":
+    CommentSortOption.random
+  case "qa":
+    CommentSortOption.qa
+  case "live":
+    CommentSortOption.live
+  default:
+    CommentSortOption.controversial
   }
 }
