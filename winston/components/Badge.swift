@@ -21,7 +21,11 @@ struct Badge: View {
   var avatarSize: CGFloat = 30
   var nameSize: CGFloat = 13
   var labelSize: CGFloat = 12
-  //  var extraInfo: [String:String] = [:]
+  
+  var stickied: Bool = false
+  var locked: Bool = false
+  var edited: Bool = false
+//  var extraInfo: [String:String] = [:]
   var extraInfo: [BadgeExtraInfo] = []
   @EnvironmentObject private var router: Router
   @EnvironmentObject private var redditAPI: RedditAPI
@@ -72,10 +76,14 @@ struct Badge: View {
       
       VStack(alignment: .leading) {
         
-        Text(author).font(.system(size: nameSize, weight: .semibold)).foregroundColor(author == "[deleted]" ? .red : usernameColor)
-          .onTapGesture {
-            router.path.append(User(id: author, api: redditAPI))
-          }
+        HStack{
+          (Text("by ").font(.system(size: nameSize, weight: .medium)).foregroundColor(.primary.opacity(0.5)) + Text(author).font(.system(size: nameSize, weight: .semibold)).foregroundColor(author == "[deleted]" ? .red : usernameColor))
+            .onTapGesture {
+              router.path.append(User(id: author, api: redditAPI))
+            }
+          
+          
+        }
         
         HStack(alignment: .center, spacing: 6) {
           ForEach(extraInfo, id: \.self){ elem in
@@ -90,7 +98,23 @@ struct Badge: View {
           HStack(alignment: .center, spacing: 2) {
             Image(systemName: "hourglass.bottomhalf.filled")
             Text(timeSince(Int(created)))
+            
+            if stickied {
+              Image(systemName: "pin.fill")
+                .foregroundColor(.green)
+            }
+            
+            if locked {
+              Image(systemName: "lock.fill")
+                .foregroundColor(.green)
+            }
+            
+            if edited {
+              Image(systemName: "pencil")
+            }
           }
+          
+          
         }
         .font(.system(size: labelSize, weight: .medium))
         .compositingGroup()
