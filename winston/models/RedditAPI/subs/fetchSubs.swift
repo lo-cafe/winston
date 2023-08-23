@@ -10,7 +10,7 @@ import Alamofire
 import Defaults
 import SwiftUI
 
-private func cleanSubs(_ subs: [ListingChild<SubredditData>]) -> [ListingChild<SubredditData>] {
+func cleanSubs(_ subs: [ListingChild<SubredditData>]) -> [ListingChild<SubredditData>] {
   return subs.compactMap({ y in
     var x = y
     x.data?.description = ""
