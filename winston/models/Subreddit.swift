@@ -192,7 +192,7 @@ struct SubredditData: Codable, GenericRedditEntityDataType, Defaults.Serializabl
   let allow_predictions: Bool?
   var user_has_favorited: Bool?
   let user_flair_template_id: String?
-  let community_icon: String
+  let community_icon: String?
   let banner_background_image: String?
   let original_content_tag_enabled: Bool?
   let community_reviewed: Bool?
@@ -203,7 +203,7 @@ struct SubredditData: Codable, GenericRedditEntityDataType, Defaults.Serializabl
   let is_enrolled_in_new_modmail: Bool?
   let key_color: String?
   let can_assign_user_flair: Bool?
-  let created: Double
+  let created: Double?
   let show_media_preview: Bool?
   var user_is_subscriber: Bool?
   let allow_videogifs: Bool?
@@ -319,7 +319,7 @@ struct SubredditData: Codable, GenericRedditEntityDataType, Defaults.Serializabl
     self.allow_predictions = try container.decodeIfPresent(Bool.self, forKey: .allow_predictions)
     self.user_has_favorited = try container.decodeIfPresent(Bool.self, forKey: .user_has_favorited)
     self.user_flair_template_id = try container.decodeIfPresent(String.self, forKey: .user_flair_template_id)
-    self.community_icon = try container.decode(String.self, forKey: .community_icon)
+    self.community_icon = try container.decodeIfPresent(String.self, forKey: .community_icon)
     self.banner_background_image = try container.decodeIfPresent(String.self, forKey: .banner_background_image)
     self.original_content_tag_enabled = try container.decodeIfPresent(Bool.self, forKey: .original_content_tag_enabled)
     self.community_reviewed = try container.decodeIfPresent(Bool.self, forKey: .community_reviewed)
@@ -330,7 +330,7 @@ struct SubredditData: Codable, GenericRedditEntityDataType, Defaults.Serializabl
     self.is_enrolled_in_new_modmail = try container.decodeIfPresent(Bool.self, forKey: .is_enrolled_in_new_modmail)
     self.key_color = try container.decodeIfPresent(String.self, forKey: .key_color)
     self.can_assign_user_flair = try container.decodeIfPresent(Bool.self, forKey: .can_assign_user_flair)
-    self.created = try container.decode(Double.self, forKey: .created)
+    self.created = try container.decodeIfPresent(Double.self, forKey: .created)
     self.show_media_preview = try container.decodeIfPresent(Bool.self, forKey: .show_media_preview)
     self.user_is_subscriber = try container.decodeIfPresent(Bool.self, forKey: .user_is_subscriber)
     self.allow_videogifs = try container.decodeIfPresent(Bool.self, forKey: .allow_videogifs)

@@ -53,7 +53,12 @@ extension Defaults.Keys {
   static let collapseAutoModerator = Key<Bool>("collapseAutoModerator", default: false)
   static let preferredCommentSort = Key<CommentSortOption>("preferredCommentSort", default: .confidence)
   
+  // Compact Mode Settings
   static let compactMode = Key<Bool>("compactMode", default: false)
+  static let compThumbnailSize = Key<ThumbnailSizeModifier>("compThumbnailSize", default: .small)
+  static let thumbnailPositionRight = Key<Bool>("thumbnailPositionRight", default: true)
+  static let voteButtonPositionRight = Key<Bool>("voteButtonPositionRight", default: true)
+  static let showSelfPostThumbnails = Key<Bool>("showSelfPostThumbnails", default: true)
   
   static let postSwipeActions = Key<SwipeActionsSet>("postSwipeActions", default: DEFAULT_POST_SWIPE_ACTIONS)
   static let commentSwipeActions = Key<SwipeActionsSet>("commentSwipeActions", default: DEFAULT_COMMENT_SWIPE_ACTIONS)
@@ -72,7 +77,8 @@ extension Defaults.Keys {
   static let commentsInnerHPadding = Key<CGFloat>("commentsInnerHPadding", default: 8)
 //  static let commentsInnerVPadding = Key<CGFloat>("commentsInnerVPadding", default: 0)
   static let coloredCommentNames = Key<Bool>("coloredCommentNames", default: false)
-  
+  static let showVotes = Key<Bool>("showVotes", default: true)
+  static let showSelfText = Key<Bool>("showSelfText", default: true)
   static let cardedCommentsOuterHPadding = Key<CGFloat>("cardedCommentsOuterHPadding", default: 8)
 //  static let cardedCommentsOuterVPadding = Key<CGFloat>("cardedCommentsOuterVPadding", default: 0)
   static let cardedCommentsInnerHPadding = Key<CGFloat>("cardedCommentsInnerHPadding", default: 13)
@@ -98,6 +104,8 @@ extension Defaults.Keys {
   static let showSavedFeed = Key<Bool>("showSavedFeed", default: true)
   static let enableSwipeAnywhere = Key<Bool>("enableSwipeAnywhere", default: false)
   static let autoPlayVideos = Key<Bool>("autoPlayVideos", default: true)
+  static let showSubsAtTop = Key<Bool>("showSubsAtTop", default: false)
+  static let showTitleAtTop = Key<Bool>("showTitleAtTop", default: true)
   
   static let postLinkTitleSize = Key<CGFloat>("postLinkTitleSize", default: 16)
   static let postLinkBodySize = Key<CGFloat>("postLinkBodySize", default: 14)

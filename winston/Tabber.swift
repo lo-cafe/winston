@@ -236,6 +236,7 @@ struct Tabber: View {
         .swipeAnywhere(router: payload[activeTab]!.router, forceEnable: true)
       , alignment: .bottom
     )
+    .background(OFWOpener(router: payload[activeTab]!.router))
     .environmentObject(tempGlobalState)
     .alert("OMG! Winston found a squirky bug!", isPresented: $errorAlert.asking) {
       Button("Gratefully accept the weird gift") {
@@ -277,10 +278,13 @@ struct Tabber: View {
         switch parsed {
         case .post(_, _):
           OpenFromWeb.shared.data = parsed
+          activeTab = .posts
         case .subreddit(_):
           OpenFromWeb.shared.data = parsed
+          activeTab = .posts
         case .user(_):
           OpenFromWeb.shared.data = parsed
+          activeTab = .posts
         default:
           break
         }

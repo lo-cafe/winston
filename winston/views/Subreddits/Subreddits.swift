@@ -14,21 +14,21 @@ let alphabetLetters = Array("ABCDEFGHIJKLMNOPQRSTUVWXYZ").map { String($0) }
 class SubsDictContainer: ObservableObject {
   @Published var data: [String: [Subreddit]] = [:]
   
-//  var cancellables = [AnyCancellable]()
-//
-//  init() {
-//    self.observeChildrenChanges()
-//  }
-//
-//  func observeChildrenChanges() {
-//    cancellables.forEach { cancelable in
-//      cancelable.cancel()
-//    }
-//    Array(data.values).flatMap { $0 }.forEach({
-//      let c = $0.objectWillChange.sink(receiveValue: { _ in self.objectWillChange.send() })
-//      self.cancellables.append(c)
-//    })
-//  }
+  //  var cancellables = [AnyCancellable]()
+  //
+  //  init() {
+  //    self.observeChildrenChanges()
+  //  }
+  //
+  //  func observeChildrenChanges() {
+  //    cancellables.forEach { cancelable in
+  //      cancelable.cancel()
+  //    }
+  //    Array(data.values).flatMap { $0 }.forEach({
+  //      let c = $0.objectWillChange.sink(receiveValue: { _ in self.objectWillChange.send() })
+  //      self.cancellables.append(c)
+  //    })
+  //  }
 }
 
 struct Subreddits: View {
@@ -36,7 +36,7 @@ struct Subreddits: View {
   @ObservedObject var router: Router
   @Environment(\.openURL) private var openURL
   @EnvironmentObject private var redditAPI: RedditAPI
-//  @State private var subreddits: [ListingChild<SubredditData>] = Defaults[.subreddits]
+  //  @State private var subreddits: [ListingChild<SubredditData>] = Defaults[.subreddits]
   @Default(.subreddits) private var subreddits
   @Default(.multis) private var multis
   @State private var searchText: String = ""
@@ -58,7 +58,7 @@ struct Subreddits: View {
       let newSubsDict = sort(val)
       let newSubsArr = Array(newSubsDict.values).flatMap { $0 }
       let newFavoritesArr = Array(newSubsArr.filter { $0.data?.user_has_favorited ?? false }).sorted { ($0.data?.display_name?.lowercased() ?? "") < ($1.data?.display_name?.lowercased() ?? "") }
-          + likedButNotSubbed
+      + likedButNotSubbed
       let newAvailableLetters = Array(newSubsDict.keys).sorted { $0 < $1 }
       await MainActor.run {
         withAnimation(.default) {
@@ -75,7 +75,7 @@ struct Subreddits: View {
     let subsDictData = subsDict.data
     NavigationStack(path: $router.path) {
       ScrollViewReader { proxy in
-        List {
+        List{
           
           if searchText == "" {
             VStack(spacing: 12) {
@@ -150,7 +150,6 @@ struct Subreddits: View {
         .listStyle(.sidebar)
         .scrollDismissesKeyboard(.immediately)
         .loader(!loaded && subreddits.count == 0)
-        .background(OFWOpener())
         .searchable(text: $searchText, prompt: "Search my subreddits")
         .toolbar {
           ToolbarItem(placement: .navigationBarTrailing) {
@@ -178,7 +177,7 @@ struct Subreddits: View {
           if !loaded {
             if subreddits.count > 0 {
               setArrays(subreddits)
-//              subsDict.data = sort(subreddits)
+              //              subsDict.data = sort(subreddits)
             }
             Task(priority: .background) {
               // MARK: Route to default feed
@@ -198,8 +197,8 @@ struct Subreddits: View {
         .onChange(of: reset) { _ in
           router.path.removeLast(router.path.count)
         }
-        .defaultNavDestinations(router)
       }
+      .defaultNavDestinations(router)
       //        .onDelete(perform: deleteItems)
     }
     .swipeAnywhere(router: router)

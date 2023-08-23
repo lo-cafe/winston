@@ -19,6 +19,7 @@ class SharedVideo: ObservableObject {
 }
 
 struct VideoPlayerPost: View {
+  var compact = false
   var overrideWidth: CGFloat?
   @StateObject var sharedVideo: SharedVideo
   @Default(.preferenceShowPostsCards) var preferenceShowPostsCards
@@ -44,7 +45,7 @@ struct VideoPlayerPost: View {
       AVPlayerControllerRepresentable(autoPlayVideos: autoPlayVideos, player: sharedVideo.player, aspect: .resizeAspectFill)
         .shadow(radius: 0)
         .ignoresSafeArea()
-        .frame(width: contentWidth, height: CGFloat(finalHeight))
+        .frame(width: compact ? scaledCompactModeThumbSize() : contentWidth, height: compact ? scaledCompactModeThumbSize() : CGFloat(finalHeight))
         .mask(RR(12, .black))
         .onTapGesture {}
         .contentShape(Rectangle())
