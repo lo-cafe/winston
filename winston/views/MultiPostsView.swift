@@ -62,7 +62,7 @@ struct MultiPostsView: View {
       Section {
         ForEach(Array(posts.enumerated()), id: \.self.element.id) { i, post in
           
-          PostLinkNoSub(post: post)
+          PostLinkNoSub(showSub: true, post: post)
             .equatable()
             .onAppear { if(Int(Double(posts.count) * 0.75) == i) { fetch(loadMore: true) } }
             .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
