@@ -10,7 +10,7 @@ import SwiftUI
 struct LightBoxOverlay: View {
   var post: Post
   var opacity: CGFloat
-  var imagesArr: [LightBoxElement]
+  var imagesArr: [MediaExtracted]
   var activeIndex: Int
   @Binding var loading: Bool
   @Binding var done: Bool
@@ -46,13 +46,13 @@ struct LightBoxOverlay: View {
             withAnimation(spring) {
               loading = true
             }
-            saveMedia(imagesArr[activeIndex].url, .image) { result in
+            saveMedia(imagesArr[activeIndex].url.absoluteString, .image) { result in
               withAnimation(spring) {
                 done = true
               }
             }
           }
-          ShareLink(item: imagesArr[activeIndex].url) {
+          ShareLink(item: imagesArr[activeIndex].url.absoluteString) {
             LightBoxButton(icon: "square.and.arrow.up.fill") {}
               .allowsHitTesting(false)
               .contentShape(Circle())

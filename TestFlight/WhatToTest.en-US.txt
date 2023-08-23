@@ -1,2 +1,16 @@
+BIG UPDATE!
+- Completely rewritten the embed showing code, so no more broken media (hopefully, let me know if not)
 - Fixed some missing multis not showing up
-
+- Added option to change thumbnail size in compact mode
+- Added option to change vote buttons screen side in compact mode
+- Added option to change thumbnail screen side in compact mode
+- Added option to show blank thumbnail in non image posts for consistency
+- Changed title to title case because it looks better
+- Moved font size for posts to own page to clean up the settings a bit
+- Added ability to change position of title and subreddit "bar"
+- Fixed reddit links not opening when on another tab rather than "Posts"
+- Added videos to compact mode
+- Addded links to compact mode
+- Fixed reopening links in winston not woring
+- Bugs and typos fixes
+- Design tweaks

@@ -83,13 +83,13 @@ extension Post {
     if let fullname = data?.name {
       let result = await redditAPI.newReply(text, fullname) ?? false
       if result {
-          if let updateComments = updateComments {
-            await MainActor.run {
-              withAnimation {
-                updateComments()
-              }
+        if let updateComments = updateComments {
+          await MainActor.run {
+            withAnimation {
+              updateComments()
             }
           }
+        }
         //        if let data = data {
         //          let newComment = CommentData(
         //            subreddit_id: data.subreddit_id,
@@ -265,6 +265,8 @@ struct PostData: GenericRedditEntityDataType, Defaults.Serializable {
   let num_crossposts: Int
   let is_video: Bool?
   let is_gallery: Bool?
+  let gallery_data: GalleryData?
+  let crosspost_parent_list: [PostData]?
   var media_metadata: [String:MediaMetadataItem?]?
   // Optional properties
   let wls: Int?
@@ -274,7 +276,7 @@ struct PostData: GenericRedditEntityDataType, Defaults.Serializable {
   //  let edited: Edited?
   let link_flair_template_id: String?
   let author_flair_text: String?
-  //    let media: String?
+  let media: Media?
   let approved_at_utc: Int?
   let mod_reason_title: String?
   let top_awarded_type: String?
@@ -317,11 +319,20 @@ struct PostData: GenericRedditEntityDataType, Defaults.Serializable {
   let link_flair_background_color: String?
   let report_reasons: [String]?
   let discussion_type: String?
-  let secure_media: Either<SecureMediaRedditVideo, SecureMediaAlt>?
+  let secure_media: Media?
   let secure_media_embed: SecureMediaEmbed?
   let preview: Preview?
   var winstonSeen: Bool?
   var winstonHidden: Bool?
+}
+
+struct GalleryData: Codable, Hashable {
+  let items: [GalleryDataItem]?
+}
+
+struct GalleryDataItem: Codable, Hashable, Identifiable {
+  let media_id: String
+  let id: Double
 }
 
 struct MediaMetadataItem: Codable, Hashable, Identifiable {
@@ -372,9 +383,10 @@ struct Preview: Codable, Hashable {
   let enabled: Bool?
 }
 
-struct SecureMediaAlt: Codable, Hashable {
+struct Media: Codable, Hashable {
   let type: String?
   let oembed: Oembed?
+  let reddit_video: RedditVideo?
 }
 
 struct Oembed: Codable, Hashable {
@@ -393,14 +405,6 @@ struct Oembed: Codable, Hashable {
   let author_url: String?
 }
 
-struct SecureMediaEmbed: Codable, Hashable {
-  let content: String?
-  let width: Int?
-  let scrolling: Bool?
-  let media_domain_url: String?
-  let height: Int?
-}
-
 struct RedditVideo: Codable, Hashable {
   let bitrate_kbps: Int?
   let fallback_url: String?
@@ -415,8 +419,12 @@ struct RedditVideo: Codable, Hashable {
   let transcoding_status: String?
 }
 
-struct SecureMediaRedditVideo: Codable, Hashable {
-  let reddit_video: RedditVideo
+struct SecureMediaEmbed: Codable, Hashable {
+  let content: String?
+  let width: Int?
+  let scrolling: Bool?
+  let media_domain_url: String?
+  let height: Int?
 }
 
 struct Awarding: Codable, Hashable {

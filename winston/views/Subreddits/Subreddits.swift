@@ -150,7 +150,6 @@ struct Subreddits: View {
         .listStyle(.sidebar)
         .scrollDismissesKeyboard(.immediately)
         .loader(!loaded && subreddits.count == 0)
-        .background(OFWOpener())
         .searchable(text: $searchText, prompt: "Search my subreddits")
         .toolbar {
           ToolbarItem(placement: .navigationBarTrailing) {

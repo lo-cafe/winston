@@ -34,35 +34,14 @@ struct PostContent: View {
             post.toggleSeen(true)
           }
           .listRowInsets(EdgeInsets(top: 0, leading: 8, bottom: 6, trailing: 8))
-        
-        let imgPost = data.is_gallery == true || IMAGES_FORMATS.contains(where: { data.url.hasSuffix($0) })
-        
+                
         VStack(spacing: 0) {
           VStack(spacing: 12) {
-            if let media = data.secure_media {
-              switch media {
-              case .first(let datas):
-                let vid = datas.reddit_video
-                if let url = vid.hls_url, let rootURL = rootURL(url), let width = vid.width, let height = vid.height {
-                  VideoPlayerPost(overrideWidth: UIScreen.screenWidth - 16, sharedVideo: SharedVideo(url: rootURL, size: CGSize(width: width, height: height)))
-                    .id("post-video-player")
-                    .allowsHitTesting(!isCollapsed)
-                }
-              case .second(_):
-                EmptyView()
-              }
-            }
             
-            if imgPost {
-              ImageMediaPost(prefix: "postView", post: post, contentWidth: contentWidth)
-                .allowsHitTesting(!isCollapsed)
+            if let extractedMedia = mediaExtractor(post) {
+              MediaPresenter(media: extractedMedia, post: post, compact: false, contentWidth: contentWidth)
+                .id("media-post-open")
             }
-            
-            if !data.url.isEmpty && !data.is_self && !(data.is_video ?? false) && !(data.is_gallery ?? false) && data.post_hint != "image" {
-              PreviewLink(data.url, contentWidth: contentWidth, media: data.secure_media)
-                .allowsHitTesting(!isCollapsed)
-            }
-            
             
             if data.selftext != "" {
               VStack {

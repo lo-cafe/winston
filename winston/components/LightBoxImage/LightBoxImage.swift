@@ -13,6 +13,7 @@ private let SPACING = 24.0
 struct LightBoxImage: View {
   @ObservedObject var post: Post
   var i: Int
+  var imagesArr: [MediaExtracted]
   var namespace: Namespace.ID
   @Environment(\.dismiss) private var dismiss
   @State private var appearBlack = false
@@ -24,39 +25,9 @@ struct LightBoxImage: View {
   @State private var loading = false
   @State private var done = false
   @State private var showOverlay = true
-  //  @State var isPinching = false
   
   @State private var isPinching: Bool = false
   @State private var scale: CGFloat = 1.0
-  
-  
-  @State private var imagesArr: [LightBoxElement]
-  
-  init(post: Post, i: Int, namespace: Namespace.ID) {
-    self.post = post
-    self.i = i
-    self.namespace = namespace
-    
-    var newImagesArr: [LightBoxElement] = []
-    
-    if post.data?.is_gallery == true {
-      if let data = post.data?.media_metadata?.values {
-        newImagesArr = data.compactMap { x in
-          if let x = x, !x.id.isNil, let id = x.id, !id.isEmpty, let extArr = x.m?.split(separator: "/"), let size = x.s {
-            let ext = extArr[extArr.count - 1]
-            return LightBoxElement(url: "https://i.redd.it/\(id).\(ext)", size: CGSize(width: size.x, height: size.y))
-          }
-          return nil
-        }
-      }
-    } else {
-      if let data = post.data, let preview = data.preview, preview.images?.count ?? 0 > 0, let source = preview.images?[0].source, let _ = source.url, let sourceHeight = source.height, let sourceWidth = source.width {
-        newImagesArr = [LightBoxElement(url: data.url, size: CGSize(width: sourceWidth, height: sourceHeight))]
-      }
-    }
-    
-    _imagesArr = State(initialValue: newImagesArr)
-  }
   
   private enum Axis {
     case horizontal

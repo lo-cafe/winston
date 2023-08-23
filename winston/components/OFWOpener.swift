@@ -13,12 +13,17 @@ class OpenFromWeb: ObservableObject {
 }
 
 struct OFWOpener: View {
-  @EnvironmentObject private var router: Router
+  @ObservedObject var router: Router
   @EnvironmentObject private var redditAPI: RedditAPI
   @ObservedObject private var OFW = OpenFromWeb.shared
   
   var body: some View {
     EmptyView()
+      .onChange(of: router.path) { _ in
+        if !OpenFromWeb.shared.data.isNil {
+          OpenFromWeb.shared.data = nil
+        }
+      }
       .onChange(of: OFW.data) { link in
         if let link = link {
           switch link {
