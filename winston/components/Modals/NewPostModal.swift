@@ -20,7 +20,9 @@ class NewPostData: ObservableObject {
   @Published var flair: NewPostFlairData?
   //  @Published var debFlair: NewPostFlairData?
   
-  init(delay: DispatchQueue.SchedulerTimeType.Stride) {
+  init(delay: DispatchQueue.SchedulerTimeType.Stride, initialText: String = "") {
+    self.text = initialText
+    self.debText = initialText
     $text.debounce(for: delay, scheduler: DispatchQueue.main).assign(to: &$debText)
     $title.debounce(for: delay, scheduler: DispatchQueue.main).assign(to: &$debTitle)
     $url.debounce(for: delay, scheduler: DispatchQueue.main).assign(to: &$debUrl)
@@ -185,7 +187,7 @@ struct FlairPicker: View {
 struct NewPostModal: View {
   var subreddit: Subreddit
   @EnvironmentObject var redditAPI: RedditAPI
-  @StateObject var postData = NewPostData(delay: 0.5)
+  @StateObject var postData = NewPostData(delay: 0.5, initialText: "Post creation isn't supported yet. There's no submit button.")
   @State var alertExit = false
   @Environment(\.dismiss) var dismiss
   @Environment(\.managedObjectContext) private var viewContext

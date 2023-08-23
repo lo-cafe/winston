@@ -22,7 +22,7 @@ struct ShortPostLink: View {
           .fontSize(15).opacity(0.75)
         HStack {
           if let fullname = data.author_fullname {
-            Badge(showAvatar: preferenceShowPostsAvatars, author: data.author, fullname: fullname, created: data.created, extraInfo: ["message.fill":"\(data.num_comments)", "arrow.up.arrow.down":"\(data.ups)"])
+            Badge(showAvatar: preferenceShowPostsAvatars, author: data.author, fullname: fullname, created: data.created, extraInfo: [PresetBadgeExtraInfo().commentsExtraInfo(data: data), PresetBadgeExtraInfo().upvotesExtraInfo(data: data)])
           }
           Spacer()
           FlairTag(text: "r/\(data.subreddit)", color: .blue)

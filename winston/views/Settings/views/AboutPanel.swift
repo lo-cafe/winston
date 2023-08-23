@@ -31,17 +31,17 @@ struct AboutPanel: View {
           Button {
             openURL(URL(string: "https://lo.cafe")!)
           } label: {
-            Label("Visit lo.cafe website", systemImage: "cup.and.saucer.fill")
+            Label("Visit lo.cafe Website", systemImage: "cup.and.saucer.fill")
           }
           Button {
             openURL(URL(string: "https://discord.gg/Jw3Syb3nrz")!)
           } label: {
-            Label("Join the Discord server", systemImage: "person.3.fill")
+            Label("Join the Discord Server", systemImage: "person.3.fill")
           }
           Button {
             openURL(URL(string: "https://patreon.com/user?u=93745105")!)
           } label: {
-            Label("Support our work!", systemImage: "heart.fill")
+            Label("Support our Work!", systemImage: "heart.fill")
           }
         }
         
@@ -50,7 +50,7 @@ struct AboutPanel: View {
           Button {
             openURL(URL(string: "https://github.com/Kinark/winston")!)
           } label: {
-            Label("Check Winston's source code", systemImage: "arrow.branch")
+            Label("Check out Winston's Source Code", systemImage: "arrow.branch")
           }
         }
       }

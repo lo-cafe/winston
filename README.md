@@ -11,3 +11,9 @@ https://testflight.apple.com/join/3UF8bAUN
 
 You can support this project by subscribing to our Patreon:
 https://patreon.com/user?u=93745105
+
+Join our super awesome Discord server:
+https://discord.gg/Jw3Syb3nrz 
+
+Subscribe to our galactic subreddit:
+https://www.reddit.com/r/winstonfoss/

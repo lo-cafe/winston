@@ -16,16 +16,17 @@ struct BehaviorPanel: View {
   @Default(.preferredCommentSort) var preferredCommentSort
   @Default(.blurPostLinkNSFW) var blurPostLinkNSFW
   @Default(.blurPostNSFW) var blurPostNSFW
+  @Default(.collapseAutoModerator) var collapseAutoModerator
   @Default(.readPostOnScroll) var readPostOnScroll
   @Default(.hideReadPosts) var hideReadPosts
   @Default(.enableSwipeAnywhere) var enableSwipeAnywhere
-
+  @Default(.autoPlayVideos) var autoPlayVideos
   
   var body: some View {
     List {
       
       Section("General") {
-        Toggle("Open Youtube videos externally", isOn: $openYoutubeApp)
+        Toggle("Open Youtube Videos Externally", isOn: $openYoutubeApp)
         
         Picker("Default Launch Feed", selection: $preferenceDefaultFeed) {
           Text("Home").tag("home")
@@ -38,13 +39,14 @@ struct BehaviorPanel: View {
       }
       
       Section {
-        Toggle("Enable swipe anywhere", isOn: $enableSwipeAnywhere)
+        Toggle("Navigation everywhere", isOn: $enableSwipeAnywhere)
       } footer: {
-        Text("This will allow you to do swipe actions in any screen, but will disable post and comments swipe gestures.")
+        Text("This will allow you to do go back by swiping anywhere in the screen, but will disable post and comments swipe gestures.")
       }
       
       Section("Posts") {
         NavigationLink("Posts swipe settings", value: SettingsPages.postSwipe)
+        Toggle("Autoplay videos (muted)", isOn: $autoPlayVideos)
         Toggle("Read posts on scroll", isOn: $readPostOnScroll)
         Toggle("Hide read posts", isOn: $hideReadPosts)
         Toggle("Blur NSFW in opened posts", isOn: $blurPostNSFW)
@@ -56,7 +58,7 @@ struct BehaviorPanel: View {
         }
         VStack(alignment: .leading) {
           HStack {
-            Text("Max posts image height")
+            Text("Max Posts Image Height")
             Spacer()
             Text(maxPostLinkImageHeightPercentage == 110 ? "Original" : "\(Int(maxPostLinkImageHeightPercentage))%")
               .opacity(0.6)
@@ -66,12 +68,14 @@ struct BehaviorPanel: View {
       }
       
       Section("Comments") {
-        NavigationLink("Comments swipe settings", value: SettingsPages.commentSwipe)
-        Picker("Comments sorting", selection: $preferredCommentSort) {
+        NavigationLink("Comments Swipe Settings", value: SettingsPages.commentSwipe)
+        Picker("Comments Sorting", selection: $preferredCommentSort) {
           ForEach(CommentSortOption.allCases, id: \.self) { val in
             Label(val.rawVal.id.capitalized, systemImage: val.rawVal.icon)
           }
         }
+        
+        Toggle("Collapse AutoModerator comments", isOn: $collapseAutoModerator)
       }
       
     }

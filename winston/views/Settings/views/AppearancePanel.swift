@@ -37,14 +37,25 @@ struct AppearancePanel: View {
   @Default(.fadeReadPosts) var fadeReadPosts
   @Default(.coloredCommentNames) var coloredCommentNames
   @Default(.showUpvoteRatio) var showUpvoteRatio
+  @Default(.showSubsAtTop) var showSubsAtTop
+  @Default(.showTitleAtTop) var showTitleAtTop
+  //Compact Mode
   @Default(.compactMode) var compactMode
+  @Default(.showVotes) var showVotes
+  @Default(.showSelfText) var showSelfText
+  @Default(.compThumbnailSize) var compThumbnailSize
+  @Default(.thumbnailPositionRight) var thumbnailPositionRight
+  @Default(.voteButtonPositionRight) var voteButtonPositionRight
+  @Default(.showSelfPostThumbnails) var showSelfPostThumbnails
   
+  @Default(.commentLinkBodySize) var commentLinkBodySize
+
   var body: some View {
     List {
       Section("General") {
-        Toggle("Blur reply background", isOn: $replyModalBlurBackground)
-        Toggle("Blur new post background", isOn: $newPostModalBlurBackground)
-        Toggle("Show username in tab bar", isOn: $showUsernameInTabBar)
+        Toggle("Blur Reply Background", isOn: $replyModalBlurBackground)
+        Toggle("Blur New Post Background", isOn: $newPostModalBlurBackground)
+        Toggle("Show Username in Tab Bar", isOn: $showUsernameInTabBar)
         
       }
       
@@ -63,16 +74,25 @@ struct AppearancePanel: View {
         .frame(maxWidth: .infinity)
         
         VStack(alignment: .leading) {
-          Toggle("Fade read posts", isOn: $fadeReadPosts)
+          Toggle("Fade Read Posts", isOn: $fadeReadPosts)
           Text("Uses fading instead of a glowing dot to tell read from unread posts.").fontSize(13).opacity(0.75)
         }
-        Toggle("Compact mode", isOn: $compactMode)
-        Toggle("Show avatars", isOn: $preferenceShowPostsAvatars)
-        Toggle("Show upvote ratio", isOn: $showUpvoteRatio)
-        if preferenceShowCommentsCards {
+        Toggle("Show Avatars", isOn: $preferenceShowPostsAvatars)
+        Toggle("Show Upvote Ratio", isOn: $showUpvoteRatio)
+        Toggle("Show Voting Buttons", isOn: $showVotes)
+        Toggle("Show Self Text", isOn: $showSelfText)
+        Toggle("Show Subreddit at Top", isOn: $showSubsAtTop)
+        Toggle("Show Title at Top", isOn: $showTitleAtTop)
+        
+        NavigationLink(value: SettingsPages.postFontSettings){
+          Label("Text Size", systemImage: "text.magnifyingglass")
+            .labelStyle(.titleOnly)
+        }
+
+        if preferenceShowPostsCards {
           VStack(alignment: .leading) {
             HStack {
-              Text("Outer horizontal spacing")
+              Text("Outer Horizontal Spacing")
               Spacer()
               Text("\(Int(cardedPostLinksOuterHPadding))")
                 .opacity(0.6)
@@ -81,7 +101,7 @@ struct AppearancePanel: View {
           }
           VStack(alignment: .leading) {
             HStack {
-              Text("Outer vertical spacing")
+              Text("Outer Vertical Spacing")
               Spacer()
               Text("\(Int(cardedPostLinksOuterVPadding))")
                 .opacity(0.6)
@@ -90,7 +110,7 @@ struct AppearancePanel: View {
           }
           VStack(alignment: .leading) {
             HStack {
-              Text("Inner horizontal spacing")
+              Text("Inner Horizontal Spacing")
               Spacer()
               Text("\(Int(cardedPostLinksInnerHPadding))")
                 .opacity(0.6)
@@ -99,7 +119,7 @@ struct AppearancePanel: View {
           }
           VStack(alignment: .leading) {
             HStack {
-              Text("Inner vertical spacing")
+              Text("Inner Vertical Spacing")
               Spacer()
               Text("\(Int(cardedPostLinksInnerVPadding))")
                 .opacity(0.6)
@@ -109,7 +129,7 @@ struct AppearancePanel: View {
         } else {
           VStack(alignment: .leading) {
             HStack {
-              Text("Horizontal spacing")
+              Text("Horizontal Spacing")
               Spacer()
               Text("\(Int(postLinksInnerHPadding))")
                 .opacity(0.6)
@@ -119,13 +139,49 @@ struct AppearancePanel: View {
           
           VStack(alignment: .leading) {
             HStack {
-              Text("Vertical spacing")
+              Text("Vertical Spacing")
               Spacer()
               Text("\(Int(postLinksInnerVPadding))")
                 .opacity(0.6)
             }
             Slider(value: $postLinksInnerVPadding, in: 10...110, step: 1)
           }
+        }
+      }
+      
+      Section("Compact Posts"){
+        Toggle("Compact Mode", isOn: $compactMode)
+        Toggle("Show Self Post Thumbnails", isOn: $showSelfPostThumbnails)
+        Picker("Thumbnail Position", selection: Binding(get: {
+          thumbnailPositionRight ? "Right" : "Left"
+        }, set: {val, _ in
+          thumbnailPositionRight = val == "Right"
+        })){
+          Text("Left").tag("Left")
+          Text("Right").tag("Right")
+        }
+        
+        Picker("Thumbnail Size", selection: Binding(get: {
+          compThumbnailSize
+        }, set: { val, _ in
+          compThumbnailSize = val
+          // This is a bit of a hacky way of refreshing the images, but it works
+          compactMode = false
+          compactMode = true
+        })){
+          Text("Hidden").tag(ThumbnailSizeModifier.hidden)
+          Text("Small").tag(ThumbnailSizeModifier.small)
+          Text("Medium").tag(ThumbnailSizeModifier.medium)
+          Text("Large").tag(ThumbnailSizeModifier.large)
+        }
+        
+        Picker("Voting Buttons Position", selection: Binding(get: {
+          voteButtonPositionRight ? "Right" : "Left"
+        }, set: {val, _ in
+          voteButtonPositionRight = val == "Right"
+        })){
+          Text("Left").tag("Left")
+          Text("Right").tag("Right")
         }
       }
       
@@ -143,12 +199,24 @@ struct AppearancePanel: View {
         .pickerStyle(.segmented)
         .frame(maxWidth: .infinity)
         
-        Toggle("Show avatars", isOn: $preferenceShowCommentsAvatars)
-        Toggle("Colored usernames", isOn: $coloredCommentNames)
+        Toggle("Show Avatars", isOn: $preferenceShowCommentsAvatars)
+        Toggle("Colored Usernames", isOn: $coloredCommentNames)
+        
+        VStack(alignment: .leading) {
+          HStack {
+            Text("Comment Body Size")
+            Spacer()
+            Text("\(Int(commentLinkBodySize))")
+              .opacity(0.6)
+              .fontSize(commentLinkBodySize)
+          }
+          Slider(value: $commentLinkBodySize, in: 10...32, step: 1)
+        }
+        
         if preferenceShowCommentsCards {
           VStack(alignment: .leading) {
             HStack {
-              Text("Outer horizontal spacing")
+              Text("Outer Horizontal Spacing")
               Spacer()
               Text("\(Int(cardedCommentsOuterHPadding))")
                 .opacity(0.6)
@@ -166,7 +234,7 @@ struct AppearancePanel: View {
           //          }
           VStack(alignment: .leading) {
             HStack {
-              Text("Inner horizontal spacing")
+              Text("Inner Horizontal Spacing")
               Spacer()
               Text("\(Int(cardedCommentsInnerHPadding))")
                 .opacity(0.6)
@@ -185,7 +253,7 @@ struct AppearancePanel: View {
         } else {
           VStack(alignment: .leading) {
             HStack {
-              Text("Horizontal spacing")
+              Text("Horizontal Spacing")
               Spacer()
               Text("\(Int(commentsInnerHPadding))")
                 .opacity(0.6)
@@ -204,6 +272,9 @@ struct AppearancePanel: View {
           //          }
         }
       }
+//      .alert(isPresented: $compThumbnailSize){
+//        Alert(title: "Please refresh your Home Feed.")
+//      }
     }
     .navigationTitle("Appearance")
     .navigationBarTitleDisplayMode(.inline)
@@ -215,3 +286,30 @@ struct AppearancePanel: View {
 //        Appearance()
 //    }
 //}
+
+
+//Compact Mode Thumbnail Size Modifiers
+enum ThumbnailSizeModifier:  Codable, CaseIterable, Identifiable, Defaults.Serializable{
+  var id: CGFloat {
+    self.rawVal
+  }
+  
+  case hidden
+  case small
+  case medium
+  case large
+  
+  var rawVal: CGFloat {
+    switch self{
+    case .hidden:
+      return 0.0
+    case .small:
+      return 0.75
+    case .medium:
+      return 1.0
+    case .large:
+      return 1.5
+    }
+  }
+}
+

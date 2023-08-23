@@ -10,13 +10,13 @@ import Defaults
 //import SceneKit
 
 enum SettingsPages {
-  case behavior, appearance, account, about, commentSwipe, postSwipe, accessibility, faq
+  case behavior, appearance, account, about, commentSwipe, postSwipe, accessibility, faq, general, postFontSettings
 }
 
 struct Settings: View {
   var reset: Bool
+  @ObservedObject var router: Router
   @Environment(\.openURL) private var openURL
-  @StateObject private var router = Router()
   @Default(.likedButNotSubbed) var likedButNotSubbed
   var body: some View {
     NavigationStack(path: $router.path) {
@@ -24,6 +24,9 @@ struct Settings: View {
         List {
           
           Section {
+            NavigationLink(value: SettingsPages.general) {
+              Label("General", systemImage: "gear")
+            }
             NavigationLink(value: SettingsPages.behavior) {
               Label("Behavior", systemImage: "arrow.triangle.turn.up.right.diamond.fill")
             }
@@ -33,9 +36,9 @@ struct Settings: View {
             NavigationLink(value: SettingsPages.account) {
               Label("Account", systemImage: "person.crop.circle")
             }
-            NavigationLink(value: SettingsPages.accessibility) {
-              Label("Accessibility", systemImage: "figure.roll")
-            }
+//            NavigationLink(value: SettingsPages.accessibility) {
+//              Label("Accessibility", systemImage: "figure.roll")
+//            }
             
           }
           
@@ -56,11 +59,7 @@ struct Settings: View {
             } label: {
               Label("Support our work!", systemImage: "heart.fill")
             }
-            Button{
-              likedButNotSubbed = []
-            } label: {
-              Label("Clear local likes", systemImage: "trash")
-            }
+           
             
           }
         }
@@ -68,6 +67,8 @@ struct Settings: View {
       .navigationDestination(for: SettingsPages.self) { x in
         Group {
           switch x {
+          case .general:
+            GeneralPanel()
           case .behavior:
             BehaviorPanel()
           case .appearance:
@@ -82,6 +83,8 @@ struct Settings: View {
             PostSwipePanel()
           case .accessibility:
             AccessibilityPanel()
+          case .postFontSettings:
+            PostFontSettings()
           case .faq:
             FAQPanel()
           }

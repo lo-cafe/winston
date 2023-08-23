@@ -16,6 +16,9 @@ struct PostContent: View {
   @State private var height: CGFloat = 0
   @State private var collapsed = false
   @Default(.blurPostNSFW) private var blurPostNSFW
+  @Default(.preferenceShowPostsAvatars) var showPostAvatars
+  @Default(.postViewTitleSize) var postViewTitleSize
+  @Default(.postViewBodySize) var postViewBodySize
   private var contentWidth: CGFloat { UIScreen.screenWidth - 16 }
   
   var body: some View {
@@ -24,46 +27,25 @@ struct PostContent: View {
       let over18 = data.over_18 ?? false
       Group {
         Text(data.title)
-          .fontSize(20, .semibold)
+          .fontSize(postViewTitleSize, .semibold)
           .fixedSize(horizontal: false, vertical: true)
           .id("post-title")
           .onAppear {
             post.toggleSeen(true)
           }
           .listRowInsets(EdgeInsets(top: 0, leading: 8, bottom: 6, trailing: 8))
-        
-        let imgPost = data.is_gallery == true || data.url.hasSuffix("jpg") || data.url.hasSuffix("png") || data.url.hasSuffix("webp")
-        
+                
         VStack(spacing: 0) {
           VStack(spacing: 12) {
-            if let media = data.secure_media {
-              switch media {
-              case .first(let datas):
-                let vid = datas.reddit_video
-                if let url = vid.hls_url, let rootURL = rootURL(url), let width = vid.width, let height = vid.height {
-                  VideoPlayerPost(overrideWidth: UIScreen.screenWidth - 16, sharedVideo: SharedVideo(url: rootURL, size: CGSize(width: width, height: height)))
-                    .id("post-video-player")
-                    .allowsHitTesting(!isCollapsed)
-                }
-              case .second(_):
-                EmptyView()
-              }
-            }
             
-            if imgPost {
-              ImageMediaPost(prefix: "postView", post: post, contentWidth: contentWidth)
-                .allowsHitTesting(!isCollapsed)
+            if let extractedMedia = mediaExtractor(post) {
+              MediaPresenter(media: extractedMedia, post: post, compact: false, contentWidth: contentWidth)
+                .id("media-post-open")
             }
-            
-            if !data.url.isEmpty && !data.is_self && !(data.is_video ?? false) && !(data.is_gallery ?? false) && data.post_hint != "image" {
-              PreviewLink(data.url, contentWidth: contentWidth, media: data.secure_media)
-                .allowsHitTesting(!isCollapsed)
-            }
-            
             
             if data.selftext != "" {
               VStack {
-                MD(str: data.selftext)
+                MD(str: data.selftext, fontSize: postViewBodySize)
               }
               .contentShape(Rectangle())
               .onTapGesture { withAnimation(spring) { collapsed.toggle() } }
@@ -107,7 +89,7 @@ struct PostContent: View {
         .listRowInsets(EdgeInsets(top: 6, leading: 8, bottom: 6, trailing: 8))
         
         if let fullname = data.author_fullname {
-          Badge(author: data.author, fullname: fullname, created: data.created)
+          Badge(showAvatar: showPostAvatars, author: data.author, fullname: fullname, created: data.created)
             .id("post-badge")
             .listRowInsets(EdgeInsets(top: 6, leading: 8, bottom: 8, trailing: 8))
         }

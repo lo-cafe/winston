@@ -62,6 +62,11 @@ struct CommentLinkContent: View {
   @Default(.cardedCommentsInnerHPadding) var cardedCommentsInnerHPadding
   @Default(.coloredCommentNames) var coloredCommenNames
   
+  @Default(.collapseAutoModerator) var collapseAutoModerator
+  @Default(.commentLinkBodySize) var commentLinkBodySize
+  
+  @State var commentViewLoaded = false
+  
   var body: some View {
     let selectable = (comment.data?.winstonSelecting ?? false)
     let horPad = preferenceShowCommentsCards ? cardedCommentsInnerHPadding : 0
@@ -192,7 +197,7 @@ struct CommentLinkContent: View {
                       .fontSize(15)
                       .lineLimit(lineLimit)
                   } else {
-                    MD(str: body)
+                    MD(str: body, fontSize: commentLinkBodySize)
                       .fixedSize(horizontal: false, vertical: true)
                       .overlay(
                         !selectable
@@ -261,7 +266,15 @@ struct CommentLinkContent: View {
 //          }
           .id("\(data.id)-body\(forcedBodySize == nil ? "" : "-preview")")
         }
-        
+      }
+      .onAppear() {
+        if !commentViewLoaded && collapseAutoModerator {
+          if data.depth == 0 && data.author == "AutoModerator" && !(data.collapsed ?? false) {
+            comment.toggleCollapsed(optimistic: true)
+          }
+        } else {
+          commentViewLoaded = true
+        }
       }
     } else {
       Text("oops")
