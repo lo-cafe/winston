@@ -49,7 +49,7 @@ struct PostReplies: View {
     }
   }
   
-  func determineMiddleComment() {
+  func determineNextComment() {
     let commentsData = comments.data
     if let closestIndex = commentPositions.min(by: { abs($0.value - screenCenter) < abs($1.value - screenCenter) })?.key {
       if closestIndex < commentsData.count - 1 {
@@ -87,7 +87,7 @@ struct PostReplies: View {
                     
                     DispatchQueue.main.async {
                       commentPositions[i] = minY
-                      determineMiddleComment()
+                      determineNextComment()
                     }
                     
                     return Color.clear
@@ -144,7 +144,7 @@ struct PostReplies: View {
         .onAppear {
           DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
             screenCenter = UIScreen.main.bounds.midY * 0.35
-            determineMiddleComment()
+            determineNextComment()
           }
         }
       } else {
