@@ -51,13 +51,12 @@ struct PostReplies: View {
   
   func determineMiddleComment() {
     let commentsData = comments.data
-      if let closestIndex = commentPositions.min(by: { abs($0.value - screenCenter) < abs($1.value - screenCenter) })?.key {
-          if closestIndex < commentsData.count - 1 {
-              let tempIndex = closestIndex + 1
-              nextCommentTracker = "\(commentsData[tempIndex].id)-top-decoration"
-            print("next comment selected")
-          }
+    if let closestIndex = commentPositions.min(by: { abs($0.value - screenCenter) < abs($1.value - screenCenter) })?.key {
+      if closestIndex < commentsData.count - 1 {
+        let tempIndex = closestIndex + 1
+        nextCommentTracker = "\(commentsData[tempIndex].id)-top-decoration"
       }
+    }
   }
   
   var body: some View {
@@ -83,16 +82,16 @@ struct PostReplies: View {
               }
               CommentLink(highlightID: ignoreSpecificComment ? nil : highlightID, post: post, subreddit: subreddit, postFullname: postFullname, parentElement: .post(comments), comment: comment)
                 .background(
-                    GeometryReader { geometry -> Color in
-                        let minY = geometry.frame(in: .global).minY
-                        
-                        DispatchQueue.main.async {
-                            commentPositions[i] = minY
-                            determineMiddleComment()
-                        }
-                        
-                        return Color.clear
+                  GeometryReader { geometry -> Color in
+                    let minY = geometry.frame(in: .global).minY
+                    
+                    DispatchQueue.main.async {
+                      commentPositions[i] = minY
+                      determineMiddleComment()
                     }
+                    
+                    return Color.clear
+                  }
                 )
               if preferenceShowCommentsCards {
                 Spacer()
@@ -143,10 +142,10 @@ struct PostReplies: View {
           .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
         }
         .onAppear {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                screenCenter = UIScreen.main.bounds.midY
-                determineMiddleComment()
-            }
+          DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
+            screenCenter = UIScreen.main.bounds.midY * 0.35
+            determineMiddleComment()
+          }
         }
       } else {
         if loading {

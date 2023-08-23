@@ -96,25 +96,7 @@ struct PostView: View {
       .overlay(alignment: .bottomTrailing) {
         // Floating button
         HStack {
-          PostFloatingPill(post: post, subreddit: subreddit)
-          
-          Button(action: {
-            // Action to scroll to next comment
-            if !nextCommentTracker.isEmpty {
-              print("navigation \(nextCommentTracker)")
-              withAnimation {
-                proxy.scrollTo(nextCommentTracker, anchor: .top)
-              }
-            }
-          }) {
-            Image(systemName: "chevron.down")
-              .padding()
-              .background(Color.blue)
-              .foregroundColor(.white)
-              .clipShape(Circle())
-              .shadow(radius: 5)
-          }
-          .padding()
+          PostFloatingPill(post: post, subreddit: subreddit, proxy: proxy, nextCommentTracker: $nextCommentTracker)
         }
       }
       .navigationBarTitle("\(post.data?.num_comments ?? 0) comments", displayMode: .inline)
