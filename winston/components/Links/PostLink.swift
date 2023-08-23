@@ -34,9 +34,10 @@ struct PostLinkNoSub: View, Equatable {
   static func == (lhs: PostLinkNoSub, rhs: PostLinkNoSub) -> Bool {
     lhs.post == rhs.post
   }
+  var showSub = false
   var post: Post
   var body: some View {
-      PostLink(post: post, sub: Subreddit(id: post.data?.subreddit ?? "Error", api: post.redditAPI))
+    PostLinkSubContainer(showSub: showSub, post: post, sub: Subreddit(id: post.data?.subreddit ?? "Error", api: post.redditAPI))
       .equatable()
   }
 }
@@ -45,11 +46,12 @@ struct PostLinkSubContainer: View, Equatable {
   static func == (lhs: PostLinkSubContainer, rhs: PostLinkSubContainer) -> Bool {
     lhs.post == rhs.post
   }
+  var showSub = false
   var post: Post
   @StateObject var sub: Subreddit
   
   var body: some View {
-      PostLink(post: post, sub: sub)
+      PostLink(post: post, sub: sub, showSub: showSub)
       .equatable()
   }
 }
