@@ -77,13 +77,13 @@ struct Badge: View {
       VStack(alignment: .leading) {
         
         HStack{
-          
-          
-        }
-        Text(author).font(.system(size: nameSize, weight: .semibold)).foregroundColor(author == "[deleted]" ? .red : usernameColor)
+          (Text("by ").font(.system(size: nameSize, weight: .medium)).foregroundColor(.primary.opacity(0.5)) + Text(author).font(.system(size: nameSize, weight: .semibold)).foregroundColor(author == "[deleted]" ? .red : usernameColor))
             .onTapGesture {
               router.path.append(User(id: author, api: redditAPI))
             }
+          
+          
+        }
         
         HStack(alignment: .center, spacing: 6) {
           ForEach(extraInfo, id: \.self){ elem in
