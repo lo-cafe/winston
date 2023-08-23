@@ -64,7 +64,17 @@ struct SubredditInfo: View {
           .listRowBackground(Color.clear)
           .listRowInsets(EdgeInsets(top: 8, leading: 0, bottom: 8, trailing: 0))
           .toolbar{
+            
             ToolbarItem(){
+              if let data = subreddit.data {
+                ShareLink(item: "reddit.com/r/" + ((data.display_name != nil) ? data.display_name! : data.name)){
+                  Label("Share Subreddit", systemImage: "square.and.arrow.up")
+                }
+              }
+            }
+            
+            ToolbarItem(){
+              
               Button{
                 Task{
                   if !data.user_has_favorited! {
@@ -81,6 +91,7 @@ struct SubredditInfo: View {
                   .foregroundColor(.blue)
                   .labelStyle(.iconOnly)
               }
+              
             }
           }
             
