@@ -236,7 +236,7 @@ struct Tabber: View {
         .swipeAnywhere(router: payload[activeTab]!.router, forceEnable: true)
       , alignment: .bottom
     )
-    .background(OFWOpener(router: payload[activeTab]!.router))
+    .background(OFWOpener(router: payload[TabIdentifier.posts]!.router))
     .environmentObject(tempGlobalState)
     .alert("OMG! Winston found a squirky bug!", isPresented: $errorAlert.asking) {
       Button("Gratefully accept the weird gift") {
