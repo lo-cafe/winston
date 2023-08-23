@@ -25,7 +25,21 @@ extension RedditAPI {
       ).serializingDecodable([MultiContainerResponse].self).response
       switch response.result {
       case .success(let data):
-        let toStore = data.compactMap { $0.data }
+        let toStore = data.compactMap { x in
+          var newData = x
+          newData.data?.subreddits = x.data?.subreddits?.compactMap({ multiSub in
+            var newMultiSub = multiSub
+            newMultiSub.data?.description = ""
+            newMultiSub.data?.description_html = ""
+            newMultiSub.data?.public_description = ""
+            newMultiSub.data?.public_description_html = ""
+            newMultiSub.data?.submit_text_html = ""
+            newMultiSub.data?.submit_text = ""
+            return newMultiSub
+          })
+          return newData.data
+        }
+        
         await MainActor.run { [toStore] in
           withAnimation {
             Defaults[.multis] = toStore
@@ -44,6 +58,6 @@ extension RedditAPI {
   
   struct MultiContainerResponse: Codable {
       let kind: String?
-      let data: MultiData?
+      var data: MultiData?
   }
 }

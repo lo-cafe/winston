@@ -65,17 +65,18 @@ struct MediaPresenter: View {
         OnlyURL(url: url)
       }
     case .repost(let post):
-      if !showURLInstead {
-        if compact {
-          if let postData = post.data, let url = URL(string: "https://reddit.com/r/\(postData.subreddit)/comments/\(post.id)") {
-            PreviewLink(url, compact: compact)
-          }
-        } else {
-          PostLinkNoSub(post: post)
-        }
-      } else if let postData = post.data, let url = URL(string: "https://reddit.com/r/\(postData.subreddit)/comments/\(post.id)") {
-        OnlyURL(url: url)
-      }
+      EmptyView()
+//      if !showURLInstead {
+//        if compact {
+//          if let postData = post.data, let url = URL(string: "https://reddit.com/r/\(postData.subreddit)/comments/\(post.id)") {
+//            PreviewLink(url, compact: compact)
+//          }
+//        } else {
+//          PostLinkNoSub(post: post)
+//        }
+//      } else if let postData = post.data, let url = URL(string: "https://reddit.com/r/\(postData.subreddit)/comments/\(post.id)") {
+//        OnlyURL(url: url)
+//      }
     case .post(let id, let subreddit):
       if !showURLInstead {
         if compact {
