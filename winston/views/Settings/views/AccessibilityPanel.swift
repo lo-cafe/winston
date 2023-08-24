@@ -64,7 +64,7 @@ struct AccessibilityPanel: View {
             arrowDividerColorPalette = ArrowColorPalette.monochrome
 
           } label: {
-            Label("Revert to Default Colors", systemImage: "")
+            Label("Revert to Default Colors", systemImage: "clock.arrow.circlepath")
               .foregroundColor(.red)
           }
         }
