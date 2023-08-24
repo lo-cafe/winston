@@ -1,5 +1,5 @@
 //
-//  postFontSettings.swift
+//  PostFontSettings.swift
 //  winston
 //
 //  Created by Daniel Inama on 19/08/23.
@@ -8,7 +8,7 @@
 import SwiftUI
 import Defaults
 
-struct postFontSettings: View {
+struct PostFontSettings: View {
   @Default(.postLinkTitleSize) var postLinkTitleSize
   @Default(.postLinkBodySize) var postLinkBodySize
   @Default(.postViewTitleSize) var postViewTitleSize

@@ -12,25 +12,22 @@ import Defaults
 
 struct PreviewYTLink: View {
   @StateObject var player: YouTubePlayer
-  var url: String
-  var media: Either<SecureMediaRedditVideo, SecureMediaAlt>
+  var videoID: String
+  var size: CGSize
   var contentWidth: CGFloat
   @Default(.openYoutubeApp) var openYoutubeApp
   @Environment(\.openURL) var openURL
   var body: some View {
-    switch media {
-    case .second(let data):
-      if let oembed = data.oembed, let width = oembed.width, let height = oembed.height, let ytURL = URL(string: url) {
+    if let ytURL = URL(string: "https://www.youtube.com/watch?v=\(videoID)") {
+        let width = size.width
+        let height = size.height
         let actualHeight = (contentWidth * CGFloat(height)) / CGFloat(width)
         YouTubePlayerView(player)
           .frame(width: contentWidth, height: actualHeight)
           .mask(RR(12, .black))
           .allowsHitTesting(!openYoutubeApp)
           .contentShape(Rectangle())
-          .highPriorityGesture(!openYoutubeApp ? TapGesture().onEnded { } : TapGesture().onEnded { openURL(ytURL) })
+          .highPriorityGesture(TapGesture().onEnded { if openYoutubeApp { openURL(ytURL) } })
       }
-    default:
-     EmptyView()
-    }
   }
 }

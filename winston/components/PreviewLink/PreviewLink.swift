@@ -11,38 +11,19 @@ import YouTubePlayerKit
 
 
 struct PreviewLink: View {
-  var url: String
+  var url: URL
   var compact = false
-  var redditURL: RedditURLType
-  var media: Either<SecureMediaRedditVideo, SecureMediaAlt>?
-  var contentWidth: CGFloat
   
-  init(_ url: String, compact: Bool = false, contentWidth: CGFloat, media: Either<SecureMediaRedditVideo, SecureMediaAlt>?) {
-    self.url = url.hasPrefix("http") ? url : "https://www.reddit.com\(url)"
+  init(_ url: URL, compact: Bool = false) {
+    let link = url.absoluteString
+    self.url = url
     self.compact = compact
-    self.media = media
-    self.contentWidth = contentWidth
-    self.redditURL = parseRedditURL(self.url)
-    switch self.redditURL {
-    case .other(let link):
-      if PreviewLinkCache.shared.cache[link].isNil {
-        PreviewLinkCache.shared.cache[link] = PreviewViewModel(link)
-      }
-    default:
-      break
+    if PreviewLinkCache.shared.cache[link].isNil {
+      PreviewLinkCache.shared.cache[link] = PreviewViewModel(url)
     }
   }
   
   var body: some View {
-    switch redditURL {
-    case .youtube(let videoId):
-      if let media = media {
-        PreviewYTLink(player: YouTubePlayer(source: .video(id: videoId)), url: url, media: media, contentWidth: contentWidth)
-      }
-    case .other(let link):
-      PreviewLinkContent(viewModel: PreviewLinkCache.shared.cache[link]!, url: URL(string: link)!)
-    default:
-      PreviewRedditLinkContent(thing: redditURL)
-    }
+    PreviewLinkContent(compact: compact, viewModel: PreviewLinkCache.shared.cache[url.absoluteString]!, url: url)
   }
 }

@@ -28,9 +28,8 @@ final class PreviewViewModel: ObservableObject {
   
   let previewURL: URL?
   
-  init(_ url: String) {
-    self.previewURL = URL(string: url)
-    
+  init(_ url: URL) {
+    self.previewURL = url
     fetchMetadata()
   }
   
@@ -64,6 +63,7 @@ final class PreviewViewModel: ObservableObject {
 
 
 struct PreviewLinkContent: View {
+  var compact: Bool
   @StateObject var viewModel: PreviewViewModel
   var url: URL
   private let height: CGFloat = 88
@@ -72,39 +72,39 @@ struct PreviewLinkContent: View {
   var body: some View {
     HStack(spacing: 16) {
       
-      VStack(alignment: .leading, spacing: 2) {
-        VStack(alignment: .leading, spacing: 0) {
-          Text(viewModel.title?.escape ?? "No title detected")
-            .fontSize(17, .medium)
-            .lineLimit(1)
-            .truncationMode(.tail)
-            .fixedSize(horizontal: false, vertical: true)
+      if !compact {
+        VStack(alignment: .leading, spacing: 2) {
+          VStack(alignment: .leading, spacing: 0) {
+            Text(viewModel.title?.escape ?? "No title detected")
+              .fontSize(17, .medium)
+              .lineLimit(1)
+              .truncationMode(.tail)
+              .fixedSize(horizontal: false, vertical: true)
+            
+            Text(viewModel.url == nil || viewModel.url?.isEmpty == true ? url.absoluteString : viewModel.url!)
+              .fontSize(13)
+              .opacity(0.5)
+              .lineLimit(1)
+              .fixedSize(horizontal: false, vertical: true)
+          }
+          .frame(maxWidth: .infinity, alignment: .leading)
           
-          Text(viewModel.url == nil || viewModel.url?.isEmpty == true ? url.absoluteString : viewModel.url!)
-            .fontSize(13)
-            .opacity(0.5)
-            .lineLimit(1)
+          Text(viewModel.description?.escape ?? "No description detected")
+            .fontSize(14)
+            .lineLimit(2)
+            .opacity(0.75)
             .fixedSize(horizontal: false, vertical: true)
         }
+        .skeleton(with: viewModel.loading)
+        .multiline(lines: 4, scales: [1: 1, 2: 0.5, 3: 0.75, 4: 0.75])
         .frame(maxWidth: .infinity, alignment: .leading)
-        
-        Text(viewModel.description?.escape ?? "No description detected")
-          .fontSize(14)
-          .lineLimit(2)
-          .opacity(0.75)
-          .fixedSize(horizontal: false, vertical: true)
+        .multilineTextAlignment(.leading)
       }
-      .skeleton(with: viewModel.loading)
-      .multiline(lines: 4, scales: [1: 1, 2: 0.5, 3: 0.75, 4: 0.75])
-      .frame(maxWidth: .infinity, alignment: .leading)
-      .multilineTextAlignment(.leading)
       
       Group {
         if let image = viewModel.image, let imageURL = URL(string: image) {
           URLImage(url: imageURL)
-          .scaledToFill()
-          .frame(width: 76, height: 76)
-          .mask(RR(12, .black))
+            .scaledToFill()
         } else {
           if viewModel.loading {
             ProgressView()
@@ -114,15 +114,16 @@ struct PreviewLinkContent: View {
           }
         }
       }
-      .frame(width: 76, height: 76)
+      .frame(width:  compact ? scaledCompactModeThumbSize() : 76, height:  compact ? scaledCompactModeThumbSize() : 76)
       .clipped()
+      .mask(RR(12, .black))
       .background(RR(12, .primary.opacity(0.05)))
     }
-    .padding(.vertical, 6)
-    .padding(.leading, 10)
-    .padding(.trailing, 6)
-    .frame(maxWidth: .infinity, minHeight: height, maxHeight: height)
-    .background(RR(16, .primary.opacity(0.05)))
+    .padding(.vertical, compact ? 0 : 6)
+    .padding(.leading, compact ? 0 : 10)
+    .padding(.trailing, compact ? 0 : 6)
+    .frame(maxWidth: compact ? nil : .infinity, minHeight: compact ? nil : height, maxHeight: compact ? nil : height)
+    .background(compact ? nil : RR(16, .primary.opacity(0.05)))
     .contextMenu {
       Button {
         UIPasteboard.general.string = viewModel.url ?? url.absoluteString
@@ -130,6 +131,10 @@ struct PreviewLinkContent: View {
         Label("Copy URL", systemImage: "link")
       }
     }
-    .highPriorityGesture(TapGesture().onEnded { openURL(url) })
+    .highPriorityGesture(TapGesture().onEnded {
+      if let newURL = URL(string: url.absoluteString.replacingOccurrences(of: "https://reddit.com/", with: "winstonapp://")) {
+        openURL(newURL)
+      }
+    })
   }
 }

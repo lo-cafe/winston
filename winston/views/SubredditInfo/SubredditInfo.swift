@@ -40,7 +40,7 @@ struct SubredditInfo: View {
             VStack {
               Text("r/\(data.display_name ?? "")")
                 .fontSize(22, .bold)
-              Text("Created \(Date(timeIntervalSince1970: TimeInterval(data.created)).toFormat("MMM dd, yyyy"))")
+              Text("Created \(data.created.isNil ? "at some point" : Date(timeIntervalSince1970: TimeInterval(data.created!)).toFormat("MMM dd, yyyy"))")
                 .fontSize(16, .medium)
                 .opacity(0.5)
               HStack{

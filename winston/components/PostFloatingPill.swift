@@ -47,7 +47,7 @@ struct PostFloatingPill: View {
               } else {
                 var subIcon: String?
                 if let subData = subreddit.data {
-                  let communityIcon = subData.community_icon.split(separator: "?")
+                  let communityIcon = subData.community_icon?.split(separator: "?") ?? []
                   subIcon = subData.icon_img == "" || subData.icon_img == nil ? communityIcon.count > 0 ? String(communityIcon[0]) : "" : subData.icon_img
                 }
                 let newPostInBox = PostInBox(

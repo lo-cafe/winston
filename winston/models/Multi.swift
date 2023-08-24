@@ -52,7 +52,7 @@ struct MultiData: GenericRedditEntityDataType, Defaults.Serializable {
   let num_subscribers: Int?
   let copied_from: String?
   let icon_url: String?
-  let subreddits: [MultiSub]?
+  var subreddits: [MultiSub]?
   let created_utc, created: Double?
   let visibility: MultiVisibility?
   let over_18: Bool?

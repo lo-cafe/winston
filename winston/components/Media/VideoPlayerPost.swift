@@ -19,6 +19,7 @@ class SharedVideo: ObservableObject {
 }
 
 struct VideoPlayerPost: View {
+  var compact = false
   var overrideWidth: CGFloat?
   @StateObject var sharedVideo: SharedVideo
   @Default(.preferenceShowPostsCards) var preferenceShowPostsCards
@@ -44,12 +45,12 @@ struct VideoPlayerPost: View {
       AVPlayerControllerRepresentable(autoPlayVideos: autoPlayVideos, player: sharedVideo.player, aspect: .resizeAspectFill)
         .shadow(radius: 0)
         .ignoresSafeArea()
-        .frame(width: contentWidth, height: CGFloat(finalHeight))
+        .frame(width: compact ? scaledCompactModeThumbSize() : contentWidth, height: compact ? scaledCompactModeThumbSize() : CGFloat(finalHeight))
         .mask(RR(12, .black))
         .onTapGesture {}
         .contentShape(Rectangle())
       
-        Image(systemName: "play.fill").foregroundColor(.white.opacity(0.75)).fontSize(32).shadow(color: .black.opacity(0.45), radius: 12, y: 8).opacity(sharedVideo.player.isPlaying ? 0 : 1).allowsHitTesting(false)
+        Image(systemName: "play.fill").foregroundColor(.white.opacity(0.75)).fontSize(32).shadow(color: .black.opacity(0.45), radius: 12, y: 8).opacity(autoPlayVideos ? 0 : 1).allowsHitTesting(false)
     }
 //    .onDisappear { sharedVideo.player.pause() }
 //    .onAppear {

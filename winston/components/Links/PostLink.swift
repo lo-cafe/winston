@@ -35,9 +35,10 @@ struct PostLinkNoSub: View, Equatable {
   static func == (lhs: PostLinkNoSub, rhs: PostLinkNoSub) -> Bool {
     lhs.post == rhs.post
   }
+  var showSub = false
   var post: Post
   var body: some View {
-      PostLink(post: post, sub: Subreddit(id: post.data?.subreddit ?? "Error", api: post.redditAPI))
+    PostLinkSubContainer(showSub: showSub, post: post, sub: Subreddit(id: post.data?.subreddit ?? "Error", api: post.redditAPI))
       .equatable()
   }
 }
@@ -46,11 +47,12 @@ struct PostLinkSubContainer: View, Equatable {
   static func == (lhs: PostLinkSubContainer, rhs: PostLinkSubContainer) -> Bool {
     lhs.post == rhs.post
   }
+  var showSub = false
   var post: Post
   @StateObject var sub: Subreddit
   
   var body: some View {
-      PostLink(post: post, sub: sub)
+      PostLink(post: post, sub: sub, showSub: showSub)
       .equatable()
   }
 }
@@ -102,17 +104,16 @@ struct PostLink: View, Equatable {
   var contentWidth: CGFloat { UIScreen.screenWidth - ((preferenceShowPostsCards ? cardedPostLinksOuterHPadding : postLinksInnerHPadding) * 2) - (preferenceShowPostsCards ? (preferenceShowPostsCards ? cardedPostLinksInnerHPadding : 0) * 2 : 0)  }
   
   var body: some View {
+    let extractedMedia = mediaExtractor(post)
     let layout = compactMode ? AnyLayout(HStackLayout(alignment: .top, spacing: 12)) : AnyLayout(VStackLayout(alignment: .leading, spacing: 12))
     if let data = post.data {
       let seen = (data.winstonSeen ?? false)
-      let isLinkPost = !data.url.isEmpty && !data.is_self && !(data.is_video ?? false) && !(data.is_gallery ?? false) && data.post_hint != "image"
       let over18 = data.over_18 ?? false
-      let imgPost = data.is_gallery == true || data.url.hasSuffix("jpg") || data.url.hasSuffix("png") || data.url.hasSuffix("webp") || data.url.contains("imgur.com")
       
       VStack(alignment: .leading, spacing: 8) {
         layout {
           
-          if showSubsAtTop && !compactMode{
+          if showSubsAtTop && !compactMode {
             SubsNStuffLine(showSub: showSub, feedsAndSuch: feedsAndSuch, post: post, sub: sub, router: router, over18: over18, data: data)
           }
           
@@ -133,10 +134,11 @@ struct PostLink: View, Equatable {
           }
           
 
-          if imgPost, (!thumbnailPositionRight && compactMode) || (!compactMode && !showTitleAtTop) {
-            ImageMediaPost(compact: compactMode, post: post, contentWidth: contentWidth)
-          } else if !thumbnailPositionRight && compactMode{
-            EmptyThumbnail()
+          if (!thumbnailPositionRight && compactMode) || (!compactMode && !showTitleAtTop), let extractedMedia = extractedMedia {
+            MediaPresenter(media: extractedMedia, post: post, compact: compactMode, contentWidth: contentWidth)
+            .frame(maxWidth: compactMode ? compactModeThumbSize : .infinity, maxHeight: compactMode ? compactModeThumbSize : nil, alignment: .leading)
+            .clipped()
+            .nsfw(over18 && blurPostLinkNSFW)
           }
           
           VStack(alignment: .leading, spacing: compactMode ? 4 : 10) {
@@ -144,7 +146,13 @@ struct PostLink: View, Equatable {
               .fontSize(postLinkTitleSize, .medium)
               .frame(maxWidth: .infinity, alignment: .topLeading)
             
-            if data.selftext != "" && showSelfText {
+            
+            if compactMode, let extractedMedia = extractedMedia {
+              MediaPresenter(showURLInstead: true, media: extractedMedia, post: post, compact: compactMode, contentWidth: contentWidth)
+              .frame(maxWidth: .infinity, alignment: .topLeading)
+            }
+            
+            if data.selftext != "" && showSelfText && !compactMode {
               Text(data.selftext.md()).lineLimit(3)
                 .fontSize(postLinkBodySize)
                 .opacity(0.75)
@@ -158,39 +166,9 @@ struct PostLink: View, Equatable {
             }
           }
           .frame(maxWidth: compactMode ? .infinity : nil, alignment: .topLeading)
-          
-          let imgPost = (data.is_gallery == true || data.url.hasSuffix("jpg") || data.url.hasSuffix("png") || data.url.hasSuffix("webp") || data.url.contains("imgur.com")) && !data.url.hasSuffix("gif")
-          
-          if imgPost, (thumbnailPositionRight && compactMode) || (!compactMode && showTitleAtTop) {
-            ImageMediaPost(compact: compactMode, post: post, contentWidth: contentWidth)
-          } else if thumbnailPositionRight && compactMode {
-            EmptyThumbnail()
-          }
-          
-          if !compactMode {
-            Group {
-              if let media = data.secure_media {
-                switch media {
-                case .first(let datas):
-                  let vid = datas.reddit_video
-                  if let url = vid.hls_url, let width = vid.width, let height = vid.height, let rootURL = rootURL(url) {
-                    VideoPlayerPost(sharedVideo: SharedVideo(url: rootURL, size: CGSize(width: width, height: height)))
-                      .scaledToFill()
-                  }
-                case .second(_):
-                  EmptyView()
-                }
-              }
-              
-              if let redditVidPreview = data.preview?.reddit_video_preview, let status = redditVidPreview.transcoding_status, status == "completed", let url = redditVidPreview.hls_url, let rootURL = rootURL(url), let width = redditVidPreview.width, let height = redditVidPreview.height {
-                VideoPlayerPost(sharedVideo: SharedVideo(url: rootURL, size: CGSize(width: width, height: height)))
-                  .scaledToFill()
-              } else if !imgPost {
-                if isLinkPost {
-                  PreviewLink(data.url, compact: compactMode, contentWidth: contentWidth, media: data.secure_media)
-                }
-              }
-            }
+                    
+          if (thumbnailPositionRight && compactMode) || (!compactMode && showTitleAtTop), let extractedMedia = extractedMedia {
+            MediaPresenter(media: extractedMedia, post: post, compact: compactMode, contentWidth: contentWidth)
             .frame(maxWidth: compactMode ? compactModeThumbSize : .infinity, maxHeight: compactMode ? compactModeThumbSize : nil, alignment: .leading)
             .clipped()
             .nsfw(over18 && blurPostLinkNSFW)
@@ -227,12 +205,7 @@ struct PostLink: View, Equatable {
         if !compactMode {
           HStack {
             if let fullname = data.author_fullname {
-              if !showVotes {
-                Badge(showAvatar: preferenceShowPostsAvatars, author: data.author, fullname: fullname, created: data.created, extraInfo: [PresetBadgeExtraInfo().commentsExtraInfo(data: data), PresetBadgeExtraInfo().upvotesExtraInfo(data: data)])
-              } else {
-                Badge(showAvatar: preferenceShowPostsAvatars, author: data.author, fullname: fullname, created: data.created, extraInfo: [PresetBadgeExtraInfo().commentsExtraInfo(data: data)])
-
-              }
+              Badge(showAvatar: preferenceShowPostsAvatars, author: data.author, fullname: fullname, created: data.created, extraInfo: !showVotes ? [PresetBadgeExtraInfo().commentsExtraInfo(data: data), PresetBadgeExtraInfo().upvotesExtraInfo(data: data)] : [PresetBadgeExtraInfo().commentsExtraInfo(data: data)])
             }
             
             Spacer()
@@ -243,6 +216,7 @@ struct PostLink: View, Equatable {
             .fontSize(22, .medium)
           }
         }
+        
       }
       .padding(.horizontal, preferenceShowPostsCards ? cardedPostLinksInnerHPadding : postLinksInnerHPadding)
       .padding(.vertical, preferenceShowPostsCards ? cardedPostLinksInnerVPadding : postLinksInnerVPadding)
