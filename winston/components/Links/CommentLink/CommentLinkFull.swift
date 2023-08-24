@@ -19,6 +19,7 @@ struct CommentLinkFull: View {
   @State private var loadMoreLoading = false
   @State private var id = UUID().uuidString
   @Default(.cardedCommentsInnerHPadding) var cardedCommentsInnerHPadding
+  @Default(.arrowDividerColorPalette) var arrowDividerColorPalette
   var body: some View {
     let horPad = preferenceShowCommentsCards ? cardedCommentsInnerHPadding : 0
     if let data = comment.data {
@@ -29,7 +30,7 @@ struct CommentLinkFull: View {
             ForEach(shapes, id: \.self) { i in
               if arrowKinds.indices.contains(i - 1) {
                 let actualArrowKind = arrowKinds[i - 1]
-                Arrows(kind: actualArrowKind)
+                Arrows(kind: actualArrowKind, color: getColorFromPalette(index: i, palette: arrowDividerColorPalette.rawVal))
               }
             }
           }
