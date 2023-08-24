@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		650ACAFC2A87A36900A7C600 /* calcVotes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 650ACAFB2A87A36900A7C600 /* calcVotes.swift */; };
+		651D19C72A90B7D6003867A9 /* postFontSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 651D19C62A90B7D6003867A9 /* postFontSettings.swift */; };
+		652C7C022A976279001DCD57 /* generateColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 652C7C012A976279001DCD57 /* generateColors.swift */; };
 		651D19C72A90B7D6003867A9 /* PostFontSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 651D19C62A90B7D6003867A9 /* PostFontSettings.swift */; };
 		653E2DA52A8E278800833556 /* GeneralPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 653E2DA42A8E278800833556 /* GeneralPanel.swift */; };
 		6543D8892A8D10B900A1FFF9 /* scaleEffectButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6543D8882A8D10B900A1FFF9 /* scaleEffectButtonStyle.swift */; };
@@ -283,6 +285,8 @@
 
 /* Begin PBXFileReference section */
 		650ACAFB2A87A36900A7C600 /* calcVotes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = calcVotes.swift; sourceTree = "<group>"; };
+		651D19C62A90B7D6003867A9 /* postFontSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = postFontSettings.swift; sourceTree = "<group>"; };
+		652C7C012A976279001DCD57 /* generateColors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = generateColors.swift; sourceTree = "<group>"; };
 		651D19C62A90B7D6003867A9 /* PostFontSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostFontSettings.swift; sourceTree = "<group>"; };
 		653E2DA42A8E278800833556 /* GeneralPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneralPanel.swift; sourceTree = "<group>"; };
 		6543D8882A8D10B900A1FFF9 /* scaleEffectButtonStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = scaleEffectButtonStyle.swift; sourceTree = "<group>"; };
@@ -1005,6 +1009,7 @@
 				ECF064EE2A80383C0088C2C0 /* sumCGSize.swift */,
 				EC9ECA092A88602F00470F89 /* debounce.swift */,
 				ECE00EE12A8D68FE000A6E21 /* scaleEffectButtonStyle.swift */,
+				652C7C012A976279001DCD57 /* generateColors.swift */,
 				ECAA23812A9EC34100874731 /* inlineSymbol.swift */,
 			);
 			path = utils;
@@ -1276,6 +1281,7 @@
 				ECAA8B5A2A75004300D9D636 /* redditURLParser.swift in Sources */,
 				EC63735D2A791E47000A03A3 /* Onboarding7Ending.swift in Sources */,
 				ECC68D412A799CDD005BC7B4 /* SelectableText.swift in Sources */,
+				652C7C022A976279001DCD57 /* generateColors.swift in Sources */,
 				ECDD515C2A73A90700FD9498 /* PreviewLink.swift in Sources */,
 				EC5EDA712A4DA94A00140A08 /* SwipeActionsOld.swift in Sources */,
 				ECF0B7E92A543795002B9FAD /* fetchUsers.swift in Sources */,
