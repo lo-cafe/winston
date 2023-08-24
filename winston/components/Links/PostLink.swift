@@ -9,6 +9,7 @@ import SwiftUI
 import Defaults
 
 struct FlairTag: View {
+  @Default(.postAccessoryColor) var postAccessoryColor
   var text: String
   var color: Color = .secondary
   var body: some View {
@@ -16,8 +17,8 @@ struct FlairTag: View {
       .fontSize(13)
       .padding(.horizontal, 9)
       .padding(.vertical, 2)
-      .background(Capsule(style: .continuous).fill(color.opacity(0.2)))
-      .foregroundColor(.primary.opacity(0.5))
+      .background(Capsule(style: .continuous).fill(color))
+      .foregroundColor(postAccessoryColor)
       .frame(maxWidth: 150, alignment: .leading)
       .fixedSize(horizontal: true, vertical: false)
       .lineLimit(1)
@@ -95,6 +96,8 @@ struct PostLink: View, Equatable {
   @Default(.postLinkBodySize) var postLinkBodySize
   @Default(.showSubsAtTop) var showSubsAtTop
   @Default(.showTitleAtTop) var showTitleAtTop
+  
+  
   
   @StateObject private var appeared = Appeared()
   
@@ -353,6 +356,8 @@ struct EmptyThumbnail: View {
 
 
 struct SubsNStuffLine: View {
+  @Default(.postAccessoryBackgroundColor) var postAccessoryBackgroundColor
+  
   var showSub: Bool
   var feedsAndSuch: [String]
   var post: Post
@@ -365,7 +370,7 @@ struct SubsNStuffLine: View {
     HStack(spacing: 0) {
       
       if showSub || feedsAndSuch.contains(sub.id) {
-        FlairTag(text: "r/\(sub.data?.display_name ?? post.data?.subreddit ?? "Error")", color: .blue)
+        FlairTag(text: "r/\(sub.data?.display_name ?? post.data?.subreddit ?? "Error")", color: postAccessoryBackgroundColor)
           .highPriorityGesture(TapGesture() .onEnded {
             router.path.append(SubViewType.posts(Subreddit(id: post.data?.subreddit ?? "", api: post.redditAPI)))
           })
