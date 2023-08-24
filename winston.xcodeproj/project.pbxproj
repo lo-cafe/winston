@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		650ACAFC2A87A36900A7C600 /* calcVotes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 650ACAFB2A87A36900A7C600 /* calcVotes.swift */; };
+		651D19C72A90B7D6003867A9 /* postFontSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 651D19C62A90B7D6003867A9 /* postFontSettings.swift */; };
+		652C7C022A976279001DCD57 /* generateColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 652C7C012A976279001DCD57 /* generateColors.swift */; };
 		651D19C72A90B7D6003867A9 /* PostFontSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 651D19C62A90B7D6003867A9 /* PostFontSettings.swift */; };
 		651D19C72A90B7D6003867A9 /* PostFontSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 651D19C62A90B7D6003867A9 /* PostFontSettings.swift */; };
 		651D19C72A90B7D6003867A9 /* postFontSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 651D19C62A90B7D6003867A9 /* postFontSettings.swift */; };
@@ -294,6 +296,8 @@
 
 /* Begin PBXFileReference section */
 		650ACAFB2A87A36900A7C600 /* calcVotes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = calcVotes.swift; sourceTree = "<group>"; };
+		651D19C62A90B7D6003867A9 /* postFontSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = postFontSettings.swift; sourceTree = "<group>"; };
+		652C7C012A976279001DCD57 /* generateColors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = generateColors.swift; sourceTree = "<group>"; };
 		651D19C62A90B7D6003867A9 /* PostFontSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostFontSettings.swift; sourceTree = "<group>"; };
 		651D19C62A90B7D6003867A9 /* PostFontSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostFontSettings.swift; sourceTree = "<group>"; };
 		651D19C62A90B7D6003867A9 /* postFontSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = postFontSettings.swift; sourceTree = "<group>"; };
@@ -1035,6 +1039,7 @@
 				EC8F34A22A6FCB3500EB8249 /* timeSince.swift */,
 				EC8F34A02A6FC99000EB8249 /* updatePostsInBox.swift */,
 				ECE00EE12A8D68FE000A6E21 /* scaleEffectButtonStyle.swift */,
+				652C7C012A976279001DCD57 /* generateColors.swift */,
 				ECAA23812A9EC34100874731 /* inlineSymbol.swift */,
 				652C7C012A976279001DCD57 /* generateColors.swift */,
 			);
