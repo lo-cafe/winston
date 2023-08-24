@@ -25,7 +25,7 @@ struct PostReplies: View {
   @State private var loading = true
   
   @Binding var nextCommentTracker: String
-  @State private var screenCenter: CGFloat = 0
+  @State private var screenTopOffset: CGFloat = 0
   @State private var commentPositions: [Int: CGFloat] = [:]
     
   func asyncFetch(_ full: Bool, _ altIgnoreSpecificComment: Bool? = nil) async {
@@ -51,7 +51,7 @@ struct PostReplies: View {
   
   func determineNextComment() {
     let commentsData = comments.data
-    if let closestIndex = commentPositions.min(by: { abs($0.value - screenCenter) < abs($1.value - screenCenter) })?.key {
+    if let closestIndex = commentPositions.min(by: { abs($0.value - screenTopOffset) < abs($1.value - screenTopOffset) })?.key {
       if closestIndex < commentsData.count - 1 {
         let tempIndex = closestIndex + 1
         nextCommentTracker = "\(commentsData[tempIndex].id)-top-decoration"
@@ -143,7 +143,7 @@ struct PostReplies: View {
         }
         .onAppear {
           DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
-            screenCenter = UIScreen.main.bounds.midY * 0.35
+            screenTopOffset = UIScreen.main.bounds.midY * 0.35
             determineNextComment()
           }
         }
