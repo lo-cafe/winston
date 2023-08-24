@@ -34,6 +34,7 @@ enum ArrowKind {
 struct Arrows: View {
   var kind: ArrowKind
   var color: Color = ArrowColorPalette.monochrome.rawVal.first!
+  var color: Color = ArrowColorPalette.monochrome.rawVal.first!
 
   var body: some View {
       Group {
