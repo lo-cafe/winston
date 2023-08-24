@@ -6,6 +6,8 @@
 - Subreddits can now be shared when long pressing them in the subs list or by navigating to the subreddit details
 - Added ability to override colored text colors
 - Added color themes for comment accents
+- Added ability to override colored text colors
+- Added color themes for comment accents
 - Added Haptic Feedback strength controls in Accessibility Settings
 - Fixed Show Self Text Thubmnail option
 - Clicking the Subreddit Name/Icon in the subreddit details view takes you to the subreddit feed
