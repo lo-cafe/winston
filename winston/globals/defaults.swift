@@ -121,6 +121,13 @@ extension Defaults.Keys {
   static let hapticFeedbackOnLPM = Key<Bool>("hapticFeedbackOnLPM", default: true)
   
   static let showTestersCelebrationModal = Key<Bool>("showTestersCelebrationModal", default: true)
+  
+  //Color options
+  static let opUsernameColor = Key<Color>("opUsernameColor", default: .green)
+  static let commentUsernameColor = Key<Color>("commentUsernameColor", default: .primary)
+  static let postAccessoryColor = Key<Color>("postAccessoryColor", default: .primary)
+  static let postAccessoryBackgroundColor = Key<Color>("postAccessoryBackgroundColor", default: .blue)
+  static let arrowDividerColorPalette = Key<ArrowColorPalette>("arrowDividerColorPalette", default: ArrowColorPalette.monochrome)
 }
 
 extension UIScreen {

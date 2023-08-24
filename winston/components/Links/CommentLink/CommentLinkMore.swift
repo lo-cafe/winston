@@ -18,6 +18,7 @@ struct CommentLinkMore: View {
   @State var loadMoreLoading = false
   
   @Default(.cardedCommentsInnerHPadding) var cardedCommentsInnerHPadding
+  @Default(.arrowDividerColorPalette) var arrowDividerColorPalette
 
   var body: some View {
     if let data = comment.data, let count = data.count, let parentElement = parentElement, count > 0 {
@@ -28,7 +29,7 @@ struct CommentLinkMore: View {
             ForEach(shapes, id: \.self) { i in
               if arrowKinds.indices.contains(i - 1) {
                 let actualArrowKind = arrowKinds[i - 1]
-                Arrows(kind: actualArrowKind)
+                Arrows(kind: actualArrowKind, color: getColorFromPalette(index: i, palette: arrowDividerColorPalette.rawVal))
               }
             }
           }

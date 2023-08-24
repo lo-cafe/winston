@@ -65,6 +65,10 @@ struct CommentLinkContent: View {
   @Default(.collapseAutoModerator) var collapseAutoModerator
   @Default(.commentLinkBodySize) var commentLinkBodySize
   
+  @Default(.opUsernameColor) var opUsernameColor
+  @Default(.commentUsernameColor) var commentUsernameColor
+  @Default(.arrowDividerColorPalette) var arrowDividerColorPalette
+
   @State var commentViewLoaded = false
   
   var body: some View {
@@ -80,14 +84,15 @@ struct CommentLinkContent: View {
               ForEach(shapes, id: \.self) { i in
                 if arrowKinds.indices.contains(i - 1) {
                   let actualArrowKind = arrowKinds[i - 1]
-                  Arrows(kind: actualArrowKind)
+//                  let cols: [Color] = arrowDividerColorPalette.rawVal
+                  Arrows(kind: actualArrowKind, color: getColorFromPalette(index: i, palette: arrowDividerColorPalette.rawVal))
                 }
               }
             }
           }
           HStack {
             if let author = data.author, let created = data.created {
-              Badge(usernameColor: (post?.data?.author ?? "") == author ? Color.green : (coloredCommenNames ? Color.blue : Color.primary), showAvatar: preferenceShowCommentsAvatars, author: author, fullname: data.author_fullname, created: created, avatarURL: avatarsURL?[data.author_fullname!], stickied: data.stickied ?? false, locked: data.locked ?? false, edited: data.edited == nil)
+              Badge(usernameColor: (post?.data?.author ?? "") == author ? opUsernameColor : commentUsernameColor, showAvatar: preferenceShowCommentsAvatars, author: author, fullname: data.author_fullname, created: created, avatarURL: avatarsURL?[data.author_fullname!], stickied: data.stickied ?? false, locked: data.locked ?? false, edited: data.edited == nil)
             }
 
             Spacer()
@@ -184,7 +189,7 @@ struct CommentLinkContent: View {
                 ForEach(shapes, id: \.self) { i in
                   if arrowKinds.indices.contains(i - 1) {
                     let actualArrowKind = arrowKinds[i - 1]
-                    Arrows(kind: actualArrowKind.child)
+                    Arrows(kind: actualArrowKind.child, color: getColorFromPalette(index: i, palette: arrowDividerColorPalette.rawVal))
                   }
                 }
               }
@@ -301,4 +306,9 @@ struct AnimatingCellHeight: AnimatableModifier {
   func body(content: Content) -> some View {
     content.frame(maxHeight: disable ? nil : height, alignment: .topLeading)
   }
+}
+
+/// A function that returns a color from a color palette (array of colors) given an index
+func getColorFromPalette(index: Int, palette: [Color]) -> Color{
+  return palette[(index - 1) % palette.count]
 }
