@@ -14,10 +14,15 @@ import VisionKit
 struct URLImage: View {
   let url: URL
   var processors: [ImageProcessing]? = nil
+  var doLiveText: Bool = false
   var body: some View {
     LazyImage(url: url, transaction: Transaction(animation: .default)) { state in
       if let image = state.image {
-        LiveTextInteraction(image: image.resizable())
+        if doLiveText {
+          LiveTextInteraction(image: image.resizable())
+        } else {
+          image.resizable()
+        }
       } else if state.error != nil {
         Color.red.opacity(0.1)
           .overlay(Image(systemName: "xmark.circle.fill").foregroundColor(.red))
@@ -26,7 +31,6 @@ struct URLImage: View {
       }
     }
     .processors(processors)
-    
     
   }
 }

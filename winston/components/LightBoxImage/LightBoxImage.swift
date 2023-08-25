@@ -15,6 +15,7 @@ struct LightBoxImage: View {
   var i: Int
   var imagesArr: [MediaExtracted]
   var namespace: Namespace.ID
+  var doLiveText: Bool = false
   @Environment(\.dismiss) private var dismiss
   @State private var appearBlack = false
   @State private var appearContent = false
@@ -45,7 +46,7 @@ struct LightBoxImage: View {
     HStack(spacing: SPACING) {
       ForEach(Array(imagesArr.enumerated()), id: \.element.id) { i, img in
         let selected = i == activeIndex
-        LightBoxElementView(el: img, onTap: toggleOverlay, isPinching: $isPinching)
+        LightBoxElementView(el: img, onTap: toggleOverlay, isPinching: $isPinching, doLiveText: doLiveText)
           .allowsHitTesting(selected)
           .scaleEffect(!selected ? 1 : interpolate([1, 0.9], true))
           .blur(radius: selected && loading ? 24 : 0)
