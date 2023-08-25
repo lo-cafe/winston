@@ -10,6 +10,7 @@ import Defaults
 
 struct FlairTag: View {
   @Default(.postAccessoryColor) var postAccessoryColor
+  @Default(.customPostAccessoryTextColor) var customPostAccessoryTextColor
   var text: String
   var color: Color = .secondary
   var body: some View {
@@ -18,7 +19,7 @@ struct FlairTag: View {
       .padding(.horizontal, 9)
       .padding(.vertical, 2)
       .background(Capsule(style: .continuous).fill(color))
-      .foregroundColor(postAccessoryColor)
+      .foregroundColor(customPostAccessoryTextColor ? postAccessoryColor : Color.primary.opacity(0.5))
       .frame(maxWidth: 150, alignment: .leading)
       .fixedSize(horizontal: true, vertical: false)
       .lineLimit(1)

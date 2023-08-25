@@ -68,6 +68,7 @@ struct CommentLinkContent: View {
   @Default(.opUsernameColor) var opUsernameColor
   @Default(.commentUsernameColor) var commentUsernameColor
   @Default(.arrowDividerColorPalette) var arrowDividerColorPalette
+  @Default(.customCommentUsernameColor) var customCommentUsernameColor
 
   @State var commentViewLoaded = false
   
@@ -93,7 +94,7 @@ struct CommentLinkContent: View {
           }
           HStack(spacing: 8) {
             if let author = data.author, let created = data.created {
-              Badge(usernameColor: (post?.data?.author ?? "") == author ? opUsernameColor : commentUsernameColor, showAvatar: preferenceShowCommentsAvatars, author: author, fullname: data.author_fullname, created: created, avatarURL: avatarsURL?[data.author_fullname!], stickied: data.stickied ?? false, locked: data.locked ?? false, edited: data.edited == nil)
+              Badge(usernameColor: (post?.data?.author ?? "") == author ? opUsernameColor : (customCommentUsernameColor ? commentUsernameColor : Color.primary), showAvatar: preferenceShowCommentsAvatars, author: author, fullname: data.author_fullname, created: created, avatarURL: avatarsURL?[data.author_fullname!], stickied: data.stickied ?? false, locked: data.locked ?? false, edited: data.edited == nil)
             }
             
             Spacer()
