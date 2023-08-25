@@ -20,7 +20,10 @@ struct AccessibilityPanel: View {
       List {
         Section("Haptics"){
           VStack{
-            Text("Haptic Feedback Strength")
+            HStack{
+              Text("Haptic Feedback Strength")
+              Spacer()
+            }
             Picker("Haptic Feedback Strength", selection: Binding(get: {
               forceFeedbackModifiers
             }, set: { val, _ in
