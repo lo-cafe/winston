@@ -52,6 +52,11 @@ struct AppearancePanel: View {
   @Default(.preferredThemeMode) var preferredThemeMode
   var body: some View {
     List {
+      Section("Themes"){
+        NavigationLink(destination: ThemeSettings()){
+          Label("Themes", systemImage: "paintpalette")
+        }
+      }
       Section("General") {
         Toggle("Blur Reply Background", isOn: $replyModalBlurBackground)
         Toggle("Blur New Post Background", isOn: $newPostModalBlurBackground)

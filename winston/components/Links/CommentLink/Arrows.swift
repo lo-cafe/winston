@@ -34,6 +34,7 @@ enum ArrowKind {
 struct Arrows: View {
   var kind: ArrowKind
   var color: Color = ArrowColorPalette.monochrome.rawVal.first!
+
   var body: some View {
       Group {
         switch kind {
@@ -67,21 +68,32 @@ struct StraightShape: Shape {
 }
 
 struct StraightCurveShape: Shape {
+  @Default(.winstonCommentAccentStyle) var winstonCommentAccentStyle
   func path(in rect: CGRect) -> Path {
-    var path = Path()
-    path.move(to: CGPoint(x: rect.minX, y: rect.minY))
-    path.addLine(to: CGPoint(x: rect.minX, y: rect.maxY))
-    path.addArc(center: CGPoint(x: rect.minX + NEST_LINES_WIDTH, y: (rect.maxY / 2) - NEST_LINES_WIDTH), radius: NEST_LINES_WIDTH, startAngle: .degrees(180), endAngle: .degrees(90), clockwise: true)
-    return path
+    if winstonCommentAccentStyle {
+      var path = Path()
+      path.move(to: CGPoint(x: rect.minX, y: rect.minY))
+      path.addLine(to: CGPoint(x: rect.minX, y: rect.maxY))
+      path.addArc(center: CGPoint(x: rect.minX + NEST_LINES_WIDTH, y: (rect.maxY / 2) - NEST_LINES_WIDTH), radius: NEST_LINES_WIDTH, startAngle: .degrees(180), endAngle: .degrees(90), clockwise: true)
+      return path
+    } else {
+      return StraightShape().path(in: rect) //return just a straight line if the user chose the "Apollo" comment stile
+    }
   }
 }
 
 struct CurveShape: Shape {
+  @Default(.winstonCommentAccentStyle) var winstonCommentAccentStyle
   func path(in rect: CGRect) -> Path {
-    var path = Path()
-    path.move(to: CGPoint(x: rect.minX, y: rect.minY))
-    path.addArc(center: CGPoint(x: rect.minX + NEST_LINES_WIDTH, y: (rect.maxY / 2) - NEST_LINES_WIDTH), radius: NEST_LINES_WIDTH, startAngle: .degrees(180), endAngle: .degrees(90), clockwise: true)
-    return path
+    if winstonCommentAccentStyle {
+      var path = Path()
+      path.move(to: CGPoint(x: rect.minX, y: rect.minY))
+      path.addArc(center: CGPoint(x: rect.minX + NEST_LINES_WIDTH, y: (rect.maxY / 2) - NEST_LINES_WIDTH), radius: NEST_LINES_WIDTH, startAngle: .degrees(180), endAngle: .degrees(90), clockwise: true)
+      return path
+    } else {
+      return StraightShape().path(in: rect) //return just a straight line if the user chose the "Apollo" comment stile
+    }
+
   }
 }
 

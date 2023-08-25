@@ -13,7 +13,6 @@ struct AccessibilityPanel: View {
   @Default(.opUsernameColor) var opUsernameColor
   @Default(.commentUsernameColor) var commentUsernameColor
   @Default(.postAccessoryBackgroundColor) var postAccessoryBackgroundColor
-  @Default(.arrowDividerColorPalette) var arrowDividerColorPalette
 //  @Default(.hapticFeedbackOnLPM) var hapticFeedbackOnLPM
   var body: some View {
       List {
@@ -42,27 +41,13 @@ struct AccessibilityPanel: View {
           ColorPicker("Post Accessory Text Color", selection: $postAccessoryColor)
           ColorPicker("Post Accessory Background Color", selection: $postAccessoryBackgroundColor)
           
-          Picker("Comments Theme", selection: Binding(get: {
-            arrowDividerColorPalette
-          }, set: { val, _ in
-            arrowDividerColorPalette = val
-          })){
-            PaletteDisplayItem(palette: ArrowColorPalette.monochrome, name: "Monochrome")
-            PaletteDisplayItem(palette: ArrowColorPalette.rainbow, name: "Rainbow")
-            PaletteDisplayItem(palette: ArrowColorPalette.ibm, name: "IBM")
-            PaletteDisplayItem(palette: ArrowColorPalette.fire, name: "Fire")
-            PaletteDisplayItem(palette: ArrowColorPalette.forest, name: "Forest")
-            PaletteDisplayItem(palette: ArrowColorPalette.ocean, name: "Ocean")
-          }
-          .pickerStyle(.inline)
+          
           
           Button{
             opUsernameColor = Color.green
             commentUsernameColor = Color.primary
             postAccessoryColor = Color.primary.opacity(0.5)
             postAccessoryBackgroundColor = Color.blue.opacity(0.2)
-            arrowDividerColorPalette = ArrowColorPalette.monochrome
-
           } label: {
             Label("Revert to Default Colors", systemImage: "clock.arrow.circlepath")
               .foregroundColor(.red)
