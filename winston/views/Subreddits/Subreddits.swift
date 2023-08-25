@@ -90,38 +90,32 @@ struct Subreddits: View {
             .listRowBackground(Color.clear)
           }
           
-          if searchText != "" {
-            Section("Found subs") {
-              ForEach(Array(subreddits.filter { ($0.display_name ?? "").lowercased().contains(searchText.lowercased()) }), id: \.self.id) { cachedSub in
-                SubItem(sub: Subreddit(data: SubredditData(entity: cachedSub), api: redditAPI), cachedSub: cachedSub)
-              }
-            }
-          } else {
-            Section("Favorites") {
-              ForEach(subreddits.filter { $0.user_has_favorited && $0.user_is_subscriber }.sorted(by: { x, y in
-                (x.display_name?.lowercased() ?? "a") < (y.display_name?.lowercased() ?? "a")
-              }), id: \.self.id) { cachedSub in
-                  SubItem(sub: Subreddit(data: SubredditData(entity: cachedSub), api: redditAPI), cachedSub: cachedSub)
-              }
-              .onDelete(perform: deleteFromFavorites)
-            }
-
-            ForEach(sections.keys.sorted(), id: \.self) { letter in
-              Section(header: Text(letter)) {
-                if let arr = sections[letter] {
-                  ForEach(arr.sorted(by: { x, y in
-                    (x.display_name?.lowercased() ?? "a") < (y.display_name?.lowercased() ?? "a")
-                  })) { cachedSub in
-                    SubItem(sub: Subreddit(data: SubredditData(entity: cachedSub), api: redditAPI), cachedSub: cachedSub)
-                  }
-                  .onDelete(perform: { i in
-                    deleteFromList(at: i, letter: letter)
-                  })
-                }
-              }
-            }
-            
-          }
+          
+//          if searchText != "" {
+//            Section("Found subs") {
+//              ForEach(Array(subsArr.filter { ($0.data?.display_name ?? "").lowercased().contains(searchText.lowercased()) }).sorted { ($0.data?.display_name?.lowercased() ?? "") < ($1.data?.display_name?.lowercased() ?? "") }, id: \.self.id) { sub in
+//                SubItem(sub: sub)
+//              }
+//            }
+//          } else {
+//            Section("Favorites") {
+//              ForEach(favoritesArr, id: \.self.id) { sub in
+//                SubItem(sub: sub)
+//              }
+//              .onDelete(perform: deleteFromFavorites)
+//            }
+//            ForEach(availableLetters, id: \.self) { letter in
+//              if let subs = subsDictData[letter] {
+//                Section(header: Text(letter)) {
+//                  ForEach(subs) { sub in
+//                    SubItem(sub: sub)
+//                      .id("\(sub.id)-main")
+//                  }
+//                  .onDelete(perform: { i in deleteFromList(at: i, letter: letter)})
+//                }
+//              }
+//            }
+//          }
         }
         .scrollIndicators(.hidden)
         .listStyle(.sidebar)
