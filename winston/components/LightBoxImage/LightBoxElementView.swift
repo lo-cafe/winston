@@ -18,12 +18,13 @@ struct LightBoxElementView: View {
   var el: MediaExtracted
   var onTap: (()->())?
   @Binding var isPinching: Bool
+  var doLiveText: Bool = false
   @State private var scale: CGFloat = 1.0
   @State private var anchor: UnitPoint = .zero
   @State private var offset: CGSize = .zero
   @State private var altSize: CGSize = .zero
   var body: some View {
-    URLImage(url: el.url)
+    URLImage(url: el.url, doLiveText: doLiveText)
     .scaledToFit()
     .background(
       el.size != .zero
