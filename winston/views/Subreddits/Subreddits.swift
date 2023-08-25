@@ -119,31 +119,7 @@
            }
 
 
-           if searchText != "" {
-             Section("Found subs") {
-               ForEach(Array(subsArr.filter { ($0.data?.display_name ?? "").lowercased().contains(searchText.lowercased()) }).sorted { ($0.data?.display_name?.lowercased() ?? "") < ($1.data?.display_name?.lowercased() ?? "") }, id: \.self.id) { sub in
-                 SubItem(sub: sub)
-               }
-             }
-           } else {
-             Section("Favorites") {
-               ForEach(favoritesArr, id: \.self.id) { sub in
-                 SubItem(sub: sub)
-               }
-               .onDelete(perform: deleteFromFavorites)
-             }
-             ForEach(availableLetters, id: \.self) { letter in
-               if let subs = subsDictData[letter] {
-                 Section(header: Text(letter)) {
-                   ForEach(subs) { sub in
-                     SubItem(sub: sub)
-                       .id("\(sub.id)-main")
-                   }
-                   .onDelete(perform: { i in deleteFromList(at: i, letter: letter)})
-                 }
-               }
-             }
-           }
+
          }
          .scrollIndicators(.hidden)
          .listStyle(.sidebar)
