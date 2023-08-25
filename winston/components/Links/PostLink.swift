@@ -144,6 +144,8 @@ struct PostLink: View, Equatable {
             .frame(maxWidth: compactMode ? compactModeThumbSize : .infinity, maxHeight: compactMode ? compactModeThumbSize : nil, alignment: .leading)
             .clipped()
             .nsfw(over18 && blurPostLinkNSFW)
+          } else if (!thumbnailPositionRight && compactMode) || (!compactMode && !showTitleAtTop) {
+            EmptyThumbnail()
           }
           
           /// /////////
@@ -182,6 +184,8 @@ struct PostLink: View, Equatable {
             .frame(maxWidth: compactMode ? compactModeThumbSize : .infinity, maxHeight: compactMode ? compactModeThumbSize : nil, alignment: .leading)
             .clipped()
             .nsfw(over18 && blurPostLinkNSFW)
+          } else if (thumbnailPositionRight && compactMode) || (!compactMode && showTitleAtTop) {
+            EmptyThumbnail()
           }
           
           if compactMode && showVotes && voteButtonPositionRight {
