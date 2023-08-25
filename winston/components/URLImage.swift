@@ -10,6 +10,7 @@ import NukeUI
 import Nuke
 import NukeExtensions
 import Giffy
+import VisionKit
 
 struct URLImage: View {
   let url: URL
@@ -25,6 +26,14 @@ struct URLImage: View {
           case .success(let giffy):
             giffy.scaledToFit()
           }
+    LazyImage(url: url, transaction: Transaction(animation: .default)) { state in
+      if let image = state.image {
+        LiveTextInteraction(image: image.resizable())
+      } else if state.error != nil {
+        Color.red.opacity(0.1)
+          .overlay(Image(systemName: "xmark.circle.fill").foregroundColor(.red))
+      } else {
+        Color.gray.opacity(0.1).transition(.opacity)
       }
     } else {
       LazyImage(url: url, transaction: Transaction(animation: .default)) { state in
@@ -39,5 +48,8 @@ struct URLImage: View {
       }
       .processors(processors)
     }
+    .processors(processors)
+    
+    
   }
 }
