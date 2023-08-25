@@ -129,7 +129,11 @@ extension Defaults.Keys {
   
   //Color options
   static let opUsernameColor = Key<Color>("opUsernameColor", default: .green)
+  
   static let commentUsernameColor = Key<Color>("commentUsernameColor", default: .primary)
+  static let customCommentUsernameColor = Key<Bool>("customCommentUsernameColor", default: false)
+  static let customPostAccessoryTextColor = Key<Bool>("customPostAccessoryTextColor", default: false)
+  
   static let postAccessoryColor = Key<Color>("postAccessoryColor", default: .primary)
   static let postAccessoryBackgroundColor = Key<Color>("postAccessoryBackgroundColor", default: .blue)
   static let arrowDividerColorPalette = Key<ArrowColorPalette>("arrowDividerColorPalette", default: ArrowColorPalette.monochrome)

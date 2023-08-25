@@ -21,6 +21,7 @@
 		659FDEA82A87798300103414 /* VoteButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 659FDEA72A87798300103414 /* VoteButton.swift */; };
 		65AA535D2A8BB27900275299 /* FAQPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65AA535C2A8BB27900275299 /* FAQPanel.swift */; };
 		65EEAC592A988CAE00B0D607 /* ThemeSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65EEAC582A988CAE00B0D607 /* ThemeSettings.swift */; };
+		65EEAC5C2A98980F00B0D607 /* AllujaHaptics in Frameworks */ = {isa = PBXBuildFile; productRef = 65EEAC5B2A98980F00B0D607 /* AllujaHaptics */; };
 		65BB79012A99FB2600EB83D5 /* LightBoxElementView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65BB79002A99FB2600EB83D5 /* LightBoxElementView.swift */; };
 		65D531402A98D75000FED4DE /* LiveTextInteraction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65D5313F2A98D75000FED4DE /* LiveTextInteraction.swift */; };
 		65D531422A98DE8800FED4DE /* Subreddits.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65D531412A98DE8800FED4DE /* Subreddits.swift */; };
@@ -535,6 +536,7 @@
 			files = (
 				EC828EA72A904E0A009478B1 /* ConfettiSwiftUI in Frameworks */,
 				ECAA8B842A76421000D9D636 /* YouTubePlayerKit in Frameworks */,
+				65EEAC5C2A98980F00B0D607 /* AllujaHaptics in Frameworks */,
 				EC9BB1C22A8B05AA0070CD97 /* NukeExtensions in Frameworks */,
 				EC3188092A91991900CB3738 /* AlertToast in Frameworks */,
 				EC593B0C2A47B801002D6454 /* Alamofire in Frameworks */,
@@ -982,10 +984,26 @@
 		ECC10C722A4A8721009124BE /* utils */ = {
 			isa = PBXGroup;
 			children = (
+				EC0854492A4D6EAE00E88389 /* blurTransitions.swift */,
+				650ACAFB2A87A36900A7C600 /* calcVotes.swift */,
+				EC1906E82A55240600A0300E /* cancelableTimer.swift */,
+				EC9ECA092A88602F00470F89 /* debounce.swift */,
+				ECDD514F2A726F2600FD9498 /* debouncedText.swift */,
+				ECA30A312A621B9A00BB19D1 /* decodeString.swift */,
+				EC63735E2A7921C4000A03A3 /* dismissKeyboard.swift */,
+				EC08543E2A4D0C0700E88389 /* doThisAfter.swift */,
 				ECAEFF672A77DDF60052FCD3 /* Emojize */,
 				ECC10C732A4A8729009124BE /* fontSize.swift */,
+				ECEFC2682A5DFA4B0003C6C4 /* formatBigNumber.swift */,
 				EC9EAEC32A4AAB470074D06B /* fromHex.swift */,
+				652C7C012A976279001DCD57 /* generateColors.swift */,
+				EC0854472A4D6E8C00E88389 /* getInitialSize.swift */,
 				EC08542A2A4C2B6B00E88389 /* if.swift */,
+				EC0854402A4D558D00E88389 /* Interpolator.swift */,
+				ECAEFF652A77C43B0052FCD3 /* isVideoPlayer.swift */,
+				ECF064EC2A7F405C0088C2C0 /* KeyWindow.swift */,
+				EC31882A2A94439D00CB3738 /* mediaExtractor.swift */,
+				ECDD514D2A726E5900FD9498 /* modifyColor.swift */,
 				EC08543E2A4D0C0700E88389 /* doThisAfter.swift */,
 				6543D8882A8D10B900A1FFF9 /* scaleEffectButtonStyle.swift */,
 				EC0854472A4D6E8C00E88389 /* getInitialSize.swift */,
@@ -993,27 +1011,20 @@
 				ECF0B7E62A54357F002B9FAD /* StringToMD.swift */,
 				EC1906E82A55240600A0300E /* cancelableTimer.swift */,
 				EC1906F42A55B88500A0300E /* nestComments.swift */,
-				EC92FBDD2A589BE200391D1D /* SquircleUIKit.swift */,
 				ECEFC2622A5DDBE00003C6C4 /* onBindingUpdate.swift */,
-				ECEFC2682A5DFA4B0003C6C4 /* formatBigNumber.swift */,
-				ECEFC2722A5F70B70003C6C4 /* saveMedia.swift */,
-				650ACAFB2A87A36900A7C600 /* calcVotes.swift */,
-				ECEFC2742A5F72A40003C6C4 /* shareMedia.swift */,
-				ECA30A312A621B9A00BB19D1 /* decodeString.swift */,
-				EC8F34A02A6FC99000EB8249 /* updatePostsInBox.swift */,
-				EC8F34A22A6FCB3500EB8249 /* timeSince.swift */,
-				ECDD514D2A726E5900FD9498 /* modifyColor.swift */,
-				ECDD514F2A726F2600FD9498 /* debouncedText.swift */,
-				ECDD51532A73889A00FD9498 /* rootURL.swift */,
-				ECDD51632A74C03C00FD9498 /* sendErrorEmail.swift */,
 				ECAA8B592A75004300D9D636 /* redditURLParser.swift */,
-				ECAEFF5F2A77A41D0052FCD3 /* stringFallback.swift */,
-				ECAEFF652A77C43B0052FCD3 /* isVideoPlayer.swift */,
-				EC63735E2A7921C4000A03A3 /* dismissKeyboard.swift */,
+				ECDD51532A73889A00FD9498 /* rootURL.swift */,
 				ECF064EA2A7F2AC50088C2C0 /* Router.swift */,
-				ECF064EC2A7F405C0088C2C0 /* KeyWindow.swift */,
+				ECEFC2722A5F70B70003C6C4 /* saveMedia.swift */,
+				6543D8882A8D10B900A1FFF9 /* scaleEffectButtonStyle.swift */,
+				ECDD51632A74C03C00FD9498 /* sendErrorEmail.swift */,
+				ECEFC2742A5F72A40003C6C4 /* shareMedia.swift */,
+				EC92FBDD2A589BE200391D1D /* SquircleUIKit.swift */,
+				ECAEFF5F2A77A41D0052FCD3 /* stringFallback.swift */,
+				ECF0B7E62A54357F002B9FAD /* StringToMD.swift */,
 				ECF064EE2A80383C0088C2C0 /* sumCGSize.swift */,
-				EC9ECA092A88602F00470F89 /* debounce.swift */,
+				EC8F34A22A6FCB3500EB8249 /* timeSince.swift */,
+				EC8F34A02A6FC99000EB8249 /* updatePostsInBox.swift */,
 				ECE00EE12A8D68FE000A6E21 /* scaleEffectButtonStyle.swift */,
 				ECAA23812A9EC34100874731 /* inlineSymbol.swift */,
 			);
@@ -1157,6 +1168,8 @@
 				ECAD0F2E2A8B4D4B001C88B5 /* Markdown */,
 				EC828EA62A904E0A009478B1 /* ConfettiSwiftUI */,
 				EC3188082A91991900CB3738 /* AlertToast */,
+				EC31881E2A92C85800CB3738 /* Shallows */,
+				65EEAC5B2A98980F00B0D607 /* AllujaHaptics */,
 				EC50A5A72A9EEF8A00DE8122 /* Giffy */,
 			);
 			productName = winston;
@@ -1223,6 +1236,8 @@
 				ECAD0F2D2A8B4D4B001C88B5 /* XCRemoteSwiftPackageReference "swift-markdown" */,
 				EC828EA52A904E0A009478B1 /* XCRemoteSwiftPackageReference "ConfettiSwiftUI" */,
 				EC3188072A91991900CB3738 /* XCRemoteSwiftPackageReference "AlertToast" */,
+				EC31881D2A92C85800CB3738 /* XCRemoteSwiftPackageReference "Shallows" */,
+				65EEAC5A2A98980F00B0D607 /* XCRemoteSwiftPackageReference "Haptics" */,
 				EC50A5A62A9EEF8A00DE8122 /* XCRemoteSwiftPackageReference "Giffy" */,
 			);
 			productRefGroup = EC593AD52A4673B2002D6454 /* Products */;
@@ -1793,6 +1808,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		65EEAC5A2A98980F00B0D607 /* XCRemoteSwiftPackageReference "Haptics" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Alluja-LLC/Haptics.git";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
 		EC08543B2A4CFE1C00E88389 /* XCRemoteSwiftPackageReference "swiftui-introspect" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/siteline/swiftui-introspect";
@@ -1924,6 +1947,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		65EEAC5B2A98980F00B0D607 /* AllujaHaptics */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 65EEAC5A2A98980F00B0D607 /* XCRemoteSwiftPackageReference "Haptics" */;
+			productName = AllujaHaptics;
+		};
 		EC08543C2A4CFE1C00E88389 /* SwiftUIIntrospect */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = EC08543B2A4CFE1C00E88389 /* XCRemoteSwiftPackageReference "swiftui-introspect" */;

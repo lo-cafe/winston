@@ -16,9 +16,7 @@ struct VoteButton: View {
 
   var body: some View {
     Button {
-      let medium = UIImpactFeedbackGenerator(style: .medium)
-      medium.prepare()
-      medium.impactOccurred()
+      _ = WinstonHapticPatterns.click
 //      try? haptics.fire(intensity:  0.45, sharpness: 0.65)
       animate = false
       withAnimation(.spring(response: 0.3, dampingFraction: 0.5)){
