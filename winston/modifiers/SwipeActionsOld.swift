@@ -177,9 +177,8 @@ struct SwipeActionsModifier: ViewModifier {
                 firstAction = firstActioning
               }
             if abs(newValue) > 20 {
-              let impact = UIImpactFeedbackGenerator(style: firstActioning ? .rigid : .soft)
-              impact.prepare()
-              impact.impactOccurred()
+//              let impact = UIImpactFeedbackGenerator(style: firstActioning ? .rigid : .soft)
+              _ = firstActioning ? WinstonHapticPatterns.clickHard : WinstonHapticPatterns.click
 //              try? haptics.fire(intensity: firstActioning ? 0.5 : 0.35, sharpness: firstActioning ? 0.25 : 0.5)
             }
           }
@@ -188,9 +187,8 @@ struct SwipeActionsModifier: ViewModifier {
               withAnimation(.interpolatingSpring(stiffness: 200, damping: 15, initialVelocity: secondActioning ? 35 : 0)) {
                 secondAction = secondActioning
               }
-              let impact = UIImpactFeedbackGenerator(style: secondActioning ? .rigid : .soft)
-              impact.prepare()
-              impact.impactOccurred()
+//              let impact = UIImpactFeedbackGenerator(style: secondActioning ? .rigid : .soft)
+              _ = firstActioning ? WinstonHapticPatterns.clickHard : WinstonHapticPatterns.click
 //                try? haptics.fire(intensity: secondActioning ? 0.5 : 0.35, sharpness: secondActioning ? 0.25 : 0.5)
             }
           }

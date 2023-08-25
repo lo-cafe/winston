@@ -10,10 +10,12 @@ import UIKit
 import SwiftUI
 import AVKit
 import AVFoundation
+import AllujaHaptics
 
 class AppDelegate: NSObject, UIApplicationDelegate {
   func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
     try? AVAudioSession.sharedInstance().setCategory(.playback, mode: .default, options: [.mixWithOthers])
+    try? Haptics.initialize()
     return true
   }
 //  func applicationDidFinishLaunching(_ application: UIApplication) {

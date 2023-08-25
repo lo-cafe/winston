@@ -242,11 +242,10 @@ class PinchZoomView: UIView {
         if blackAreaRight > 0 { newOffset.width += blackAreaRight }
       }
       
-      let impactFeedbackgenerator = UIImpactFeedbackGenerator(style: .light)
+//      let impactFeedbackgenerator = UIImpactFeedbackGenerator(style: .light)
       withAnimation(spring) {
         if scale < 1 {
-          impactFeedbackgenerator.prepare()
-          impactFeedbackgenerator.impactOccurred()
+          _ = WinstonHapticPatterns.click
           scale = 1; offset = .zero
         } else { offset = newOffset }
       }

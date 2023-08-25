@@ -37,6 +37,15 @@
       }
     },
     {
+      "identity" : "haptics",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Alluja-LLC/Haptics.git",
+      "state" : {
+        "branch" : "main",
+        "revision" : "d17ae2a5d736fa7569c6f4d6b76374da3e595311"
+      }
+    },
+    {
       "identity" : "highlightedtexteditor",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/kyle-n/HighlightedTextEditor",
