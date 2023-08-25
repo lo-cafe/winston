@@ -16,4 +16,4 @@ Join our super awesome Discord server:
 https://discord.gg/Jw3Syb3nrz 
 
 Subscribe to our galactic subreddit:
-https://www.reddit.com/r/winstonfoss/
+https://www.reddit.com/r/winstonappfoss/
