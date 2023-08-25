@@ -13,39 +13,51 @@ struct AccessibilityPanel: View {
   @Default(.opUsernameColor) var opUsernameColor
   @Default(.commentUsernameColor) var commentUsernameColor
   @Default(.postAccessoryBackgroundColor) var postAccessoryBackgroundColor
+  @Default(.customCommentUsernameColor) var customCommentUsernameColor
+  @Default(.customPostAccessoryTextColor) var customPostAccessoryTextColor
 //  @Default(.hapticFeedbackOnLPM) var hapticFeedbackOnLPM
   var body: some View {
       List {
-//        Section("Haptics"){
-//          Picker("Haptic Feedback Strength -- DOESNT WORK", selection: Binding(get: {
-//            forceFeedbackModifiers
-//          }, set: { val, _ in
-//            forceFeedbackModifiers = val
-//          })) {
-//            Text("None").tag(ForceFeedbackModifiers.none)
-//              .foregroundColor(.red)
-//            Text("Light").tag(ForceFeedbackModifiers.light)
-//            Text("Medium").tag(ForceFeedbackModifiers.medium)
-//            Text("Strong").tag(ForceFeedbackModifiers.strong)
-//          }
-//          .pickerStyle(.segmented)
-//          .frame(maxWidth: .infinity)
-//          .labelStyle(.titleOnly)
-//          Toggle("Haptics on Low Power Mode -- DOESNT WORK", isOn: $hapticFeedbackOnLPM)
-//        }
+        Section("Haptics"){
+          VStack{
+            Text("Haptic Feedback Strength")
+            Picker("Haptic Feedback Strength", selection: Binding(get: {
+              forceFeedbackModifiers
+            }, set: { val, _ in
+              forceFeedbackModifiers = val
+            })) {
+              Text("None").tag(ForceFeedbackModifiers.none)
+                .foregroundColor(.red)
+              Text("Light").tag(ForceFeedbackModifiers.light)
+              Text("Medium").tag(ForceFeedbackModifiers.medium)
+              Text("Strong").tag(ForceFeedbackModifiers.strong)
+            }
+            .pickerStyle(.segmented)
+            .frame(maxWidth: .infinity)
+            .labelStyle(.titleOnly)
+          }
+        }
         
         //These colors are intended to be a global override over any theme and are therefore inside the Accessibility settings
         Section("Color Overrides"){
-          ColorPicker("OP Color", selection: $opUsernameColor)
-          ColorPicker("Comments Username Color", selection: $commentUsernameColor)
-          ColorPicker("Post Accessory Text Color", selection: $postAccessoryColor)
+          ColorPicker("OP Username Color", selection: $opUsernameColor)
+          
+          Toggle("Custom Comments Username Color", isOn: $customCommentUsernameColor)
+          if customCommentUsernameColor {
+            ColorPicker("Comments Username Color", selection: $commentUsernameColor)
+          }
+          
+          Toggle("Custom Post Accessory Text Color", isOn: $customPostAccessoryTextColor)
+          if customPostAccessoryTextColor{
+            ColorPicker("Post Accessory Text Color", selection: $postAccessoryColor)
+          }
+          
           ColorPicker("Post Accessory Background Color", selection: $postAccessoryBackgroundColor)
-          
-          
           
           Button{
             opUsernameColor = Color.green
-            commentUsernameColor = Color.primary
+            customCommentUsernameColor = false
+            customPostAccessoryTextColor = false
             postAccessoryColor = Color.primary.opacity(0.5)
             postAccessoryBackgroundColor = Color.blue.opacity(0.2)
           } label: {

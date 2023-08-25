@@ -11,9 +11,21 @@ import Defaults
 struct ThemeSettings: View {
   @Default(.arrowDividerColorPalette) var arrowDividerColorPalette
   @Default(.winstonCommentAccentStyle) var winstonCommentAccentStyle
+  @Default(.preferredThemeMode) var preferredThemeMode
   
   var body: some View {
     List{
+      Section("Device Theme"){
+        Picker("Preferred Theme", selection: Binding(get: {
+          preferredThemeMode
+        }, set: { val, _ in
+          preferredThemeMode = val
+        })){
+          Text("Automatic").tag(PreferredThemeMode.automatic)
+          Text("Light").tag(PreferredThemeMode.light)
+          Text("Dark").tag(PreferredThemeMode.dark)
+        }
+      }
       Section("Comments"){
         Picker("Comment Accent Style", selection: Binding(get: {
           winstonCommentAccentStyle ? "Winston" : "Apollo"
@@ -39,6 +51,7 @@ struct ThemeSettings: View {
         .pickerStyle(.inline)
       }
     }
+    .preferredColorScheme(preferredThemeMode.id == 0 ? nil : preferredThemeMode.id == 1 ? .light : .dark)
     .navigationTitle("Themes")
     .navigationBarTitleDisplayMode(.inline)
   }
