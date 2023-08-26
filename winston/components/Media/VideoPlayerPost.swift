@@ -25,6 +25,7 @@ struct VideoPlayerPost: View {
   @Default(.preferenceShowPostsCards) var preferenceShowPostsCards
   @Default(.maxPostLinkImageHeightPercentage) var maxPostLinkImageHeightPercentage
   @State private var initialized = false
+  @State private var fullscreen = false
   @Default(.postLinksInnerHPadding) private var postLinksInnerHPadding
   @Default(.cardedPostLinksOuterHPadding) private var cardedPostLinksOuterHPadding
   @Default(.cardedPostLinksInnerHPadding) private var cardedPostLinksInnerHPadding
@@ -42,20 +43,74 @@ struct VideoPlayerPost: View {
     let finalHeight = maxPostLinkImageHeightPercentage != 110 ? Double(min(maxHeight, propHeight)) : Double(propHeight)
     
     ZStack {
-      AVPlayerControllerRepresentable(autoPlayVideos: autoPlayVideos, player: sharedVideo.player, aspect: .resizeAspectFill)
-        .shadow(radius: 0)
-        .ignoresSafeArea()
-        .frame(width: compact ? scaledCompactModeThumbSize() : contentWidth, height: compact ? scaledCompactModeThumbSize() : CGFloat(finalHeight))
-        .mask(RR(12, .black))
-        .onTapGesture {}
-        .contentShape(Rectangle())
+      if !fullscreen {
+        VideoPlayer(player: sharedVideo.player)
+          .aspectRatio(contentMode: .fill)
+          .frame(width: compact ? scaledCompactModeThumbSize() : contentWidth, height: compact ? scaledCompactModeThumbSize() : CGFloat(finalHeight))
+          .allowsHitTesting(false)
+          .mask(RR(12, .black))
+          .overlay(
+            Color.clear
+              .contentShape(Rectangle())
+              .onTapGesture {
+                withAnimation {
+                  fullscreen = true
+                }
+              }
+          )
+      } else {
+        Color.clear
+          .frame(width: compact ? scaledCompactModeThumbSize() : contentWidth, height: compact ? scaledCompactModeThumbSize() : CGFloat(finalHeight))
+      }
       
         Image(systemName: "play.fill").foregroundColor(.white.opacity(0.75)).fontSize(32).shadow(color: .black.opacity(0.45), radius: 12, y: 8).opacity(autoPlayVideos ? 0 : 1).allowsHitTesting(false)
     }
-//    .onDisappear { sharedVideo.player.pause() }
-//    .onAppear {
-//      if autoPlayVideos { sharedVideo.player.play() }
-//    }
+    .onAppear {
+      if autoPlayVideos {
+        sharedVideo.player.play()
+      }
+    }
+    .fullScreenCover(isPresented: $fullscreen) {
+      FullScreenVP(sharedVideo: sharedVideo)
+    }
+  }
+}
+
+struct FullScreenVP: View {
+  @Environment(\.dismiss) private var dismiss
+  @ObservedObject var sharedVideo: SharedVideo
+  @State private var drag: CGSize = .zero
+  var body: some View {
+    let interpolate = interpolatorBuilder([0, 100], value: abs(drag.height))
+    VideoPlayer(player: sharedVideo.player)
+      .scaleEffect(interpolate([1, 0.9], true))
+      .offset(drag)
+      .gesture(
+        DragGesture(minimumDistance: 5)
+          .onChanged { val in
+              var transaction = Transaction()
+              transaction.isContinuous = true
+              transaction.animation = .interpolatingSpring(stiffness: 1000, damping: 100, initialVelocity: 0)
+              
+              var endPos = val.translation
+//                if dragAxis == .horizontal {
+//                  endPos.height = 0
+//                }
+              withTransaction(transaction) {
+                drag = endPos
+              }
+            }
+          .onEnded { val in
+              let shouldClose = abs(val.translation.width) > 100 || abs(val.translation.height) > 100
+              print(abs(val.translation.width), abs(val.translation.height))
+              withAnimation(.interpolatingSpring(stiffness: 200, damping: 20, initialVelocity: 0)) {
+                drag = .zero
+                if shouldClose {
+                  dismiss()
+                }
+              }
+          }
+      )
   }
 }
 
