@@ -126,6 +126,8 @@ struct Search: View {
         fetch()
       }
       .searchable(text: $searchQuery.text, placement: .toolbar)
+      .autocorrectionDisabled(true)
+      .textInputAutocapitalization(.none)
       .refreshable { fetch() }
       .onSubmit(of: .search) { fetch() }
       .navigationTitle("Search")
