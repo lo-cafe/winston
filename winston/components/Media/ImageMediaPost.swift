@@ -40,7 +40,7 @@ struct ImageMediaPost: View {
         
       } else if images.count > 1 {
         
-        let width = (contentWidth - 8 / 2)
+        let width = ((contentWidth - 8) / 2)
         let height = width
         VStack(spacing: 8) {
           HStack(spacing: 8) {

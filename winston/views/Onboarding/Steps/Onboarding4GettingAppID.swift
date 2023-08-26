@@ -31,6 +31,8 @@ struct Onboarding4GettingAppID: View {
           .frame(maxWidth: 300)
         
         TextField("", text: $appID, prompt: Text("Paste here the app ID"))
+          .autocorrectionDisabled(true)
+          .textInputAutocapitalization(.none)
           .fontSize(16, .medium)
           .frame(maxWidth: .infinity)
           .padding(.vertical, 12)
@@ -53,7 +55,6 @@ struct Onboarding4GettingAppID: View {
 //      .onTapGesture { withAnimation { UIApplication.shared.dismissKeyboard() } }
     }
     .modifier(AdaptsToSoftwareKeyboard())
-    .scrollDismissesKeyboard(.immediately)
     .scrollDismissesKeyboard(.immediately)
   }
 }
