@@ -54,9 +54,14 @@ extension RedditAPI {
         if !after.isNil {
           return finalSubs
         }
-        await MainActor.run { [finalSubs] in
+        let context = PersistenceController.shared.container.viewContext
+        
+        cleanSubs(finalSubs).compactMap { $0.data }.forEach { x in
+          let newCachedSub = CachedSub(data: x, context: context)
+        }
+        await MainActor.run {
           withAnimation {
-            Defaults[.subreddits] = cleanSubs(finalSubs)
+            try? context.save()
           }
         }
         return nil

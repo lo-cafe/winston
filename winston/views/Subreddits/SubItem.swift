@@ -27,6 +27,7 @@ struct SubItemButton: View {
 
 struct SubItem: View {
   @ObservedObject var sub: Subreddit
+  var cachedSub: CachedSub? = nil
   @Default(.likedButNotSubbed) var likedButNotSubbed
   var body: some View {
     if let data = sub.data {
@@ -42,7 +43,7 @@ struct SubItem: View {
           
           Image(systemName: "star.fill")
             .foregroundColor((favorite || localFav) ? .blue : .gray.opacity(0.3))
-            .highPriorityGesture( TapGesture().onEnded { Task(priority: .background){ localFav ? _ = sub.localFavoriteToggle() : await sub.favoriteToggle() } } )
+            .highPriorityGesture( TapGesture().onEnded { Task(priority: .background){ localFav ? _ = sub.localFavoriteToggle() : await sub.favoriteToggle(entity: cachedSub) } } )
         }
         .contentShape(Rectangle())
       }

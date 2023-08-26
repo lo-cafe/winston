@@ -9,6 +9,7 @@ import Foundation
 import Defaults
 import Alamofire
 import SwiftUI
+import CoreData
 
 extension RedditAPI {
   func fetchMyMultis() async -> Bool? {
@@ -25,30 +26,76 @@ extension RedditAPI {
       ).serializingDecodable([MultiContainerResponse].self).response
       switch response.result {
       case .success(let data):
-        let toStore = data.compactMap { x in
-          var newData = x
-          newData.data?.subreddits = x.data?.subreddits?.compactMap({ multiSub in
-            var newMultiSub = multiSub
-            newMultiSub.data?.description = ""
-            newMultiSub.data?.description_html = ""
-            newMultiSub.data?.public_description = ""
-            newMultiSub.data?.public_description_html = ""
-            newMultiSub.data?.submit_text_html = ""
-            newMultiSub.data?.submit_text = ""
-            return newMultiSub
-          })
-          return newData.data
+        let context = PersistenceController.shared.container.viewContext
+        
+        var cachedSubs: [String:CachedSub] = [:]
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "CachedSub")
+        if let results = try? context.fetch(fetchRequest) as? [CachedSub] {
+          results.forEach { cachedSub in
+            if let name = cachedSub.name {
+              cachedSubs[name] = cachedSub
+            }
+          }
         }
         
-        await MainActor.run { [toStore] in
+        data.forEach { c in
+          let subs: [CachedSub] = c.data?.subreddits?.compactMap { subData in
+            if let data = subData.data, let found = cachedSubs[data.name] { return found }
+            if let y = subData.data {
+              let newCachedSub = CachedSub(context: context)
+              newCachedSub.allow_galleries = y.allow_galleries ?? false
+              newCachedSub.allow_images = y.allow_images ?? false
+              newCachedSub.allow_videos = y.allow_videos ?? false
+              newCachedSub.over_18 = y.over_18 ?? false
+              newCachedSub.restrict_commenting = y.restrict_commenting ?? false
+              newCachedSub.user_has_favorited = y.user_has_favorited ?? false
+              newCachedSub.user_is_banned = y.user_is_banned ?? false
+              newCachedSub.user_is_moderator = y.user_is_moderator ?? false
+              newCachedSub.user_is_subscriber = y.user_is_subscriber ?? false
+              newCachedSub.banner_background_color = y.banner_background_color
+              newCachedSub.banner_background_image = y.banner_background_image
+              newCachedSub.banner_img = y.banner_img
+              newCachedSub.community_icon = y.community_icon
+              newCachedSub.display_name = y.display_name
+              newCachedSub.header_img = y.header_img
+              newCachedSub.icon_img = y.icon_img
+              newCachedSub.key_color = y.key_color
+              newCachedSub.name = y.name
+              newCachedSub.primary_color = y.primary_color
+              newCachedSub.title = y.title
+              newCachedSub.url = y.url
+              newCachedSub.user_flair_background_color = y.user_flair_background_color
+              newCachedSub.uuid = y.name
+              newCachedSub.subscribers = Double(y.subscribers ?? 0)
+              return newCachedSub
+            }
+            return nil
+          } ?? []
+          
+          if let x = c.data {
+            let newCachedSub = CachedMulti(context: context)
+            newCachedSub.over_18 = x.over_18 ?? false
+            newCachedSub.display_name = x.display_name
+            newCachedSub.icon_url = x.icon_url
+            newCachedSub.key_color = x.key_color
+            newCachedSub.name = x.name
+            newCachedSub.path = x.path
+            newCachedSub.uuid = x.id
+            subs.forEach { cachedSub in
+              newCachedSub.addToSubreddits(cachedSub)
+            }
+          }
+        }
+        
+        await MainActor.run {
           withAnimation {
-            Defaults[.multis] = toStore
+            try? context.save()
           }
         }
         return nil
       case .failure(let error):
-//        print("kmkm")
-                print(error)
+        //        print("kmkm")
+        print(error)
         return nil
       }
     } else {
@@ -57,7 +104,8 @@ extension RedditAPI {
   }
   
   struct MultiContainerResponse: Codable {
-      let kind: String?
-      var data: MultiData?
+    let kind: String?
+    var data: MultiData?
   }
 }
+

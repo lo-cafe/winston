@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import CoreData
 import Defaults
 import SwiftUI
 
@@ -22,11 +23,16 @@ extension Subreddit {
     self.init(id: id, api: api, typePrefix: "\(Subreddit.prefix)_")
   }
   
+  convenience init(entity: CachedSub, api: RedditAPI) {
+    self.init(id: entity.uuid ?? UUID().uuidString, api: api, typePrefix: "\(Subreddit.prefix)_")
+    self.data = SubredditData(entity: entity)
+  }
+  
   /// Add a subreddit to the local like list
   /// This is a seperate list from reddits liked intenden for usage with subreddits a user wants to favorite but not subscribe to
   /// returns true if added to favorites and false if removed
   func localFavoriteToggle() -> Bool {
-    @Default(.likedButNotSubbed) var likedButNotSubbed
+    var likedButNotSubbed = Defaults[.likedButNotSubbed]
     // If the user is not subscribed
     
     // If its already in liked remove it
@@ -34,25 +40,33 @@ extension Subreddit {
       likedButNotSubbed = likedButNotSubbed.filter{ $0.id != self.id }
       return false
     } else { // Else add it
-      likedButNotSubbed.append(self)
+      Defaults[.likedButNotSubbed].append(self)
       return true
     }
   }
   
-  func favoriteToggle() async {
+  func favoriteToggle(entity: CachedSub? = nil) async {
     if let favoritedStatus = data?.user_has_favorited, let name = data?.display_name {
-      await MainActor.run{
-        withAnimation {
-          data?.user_has_favorited = !favoritedStatus
+      
+      let context = PersistenceController.shared.container.viewContext
+      if let entity = entity {
+        entity.user_has_favorited = !favoritedStatus
+        await MainActor.run {
+          withAnimation {
+            try? context.save()
+          }
         }
       }
       
+      
       let result = await redditAPI.favorite(!favoritedStatus, subName: name)
       if !result {
-        await MainActor.run {
-          
-          withAnimation {
-            data?.user_has_favorited = favoritedStatus
+        if let entity = entity {
+          entity.user_has_favorited = favoritedStatus
+          await MainActor.run {
+            withAnimation {
+              try? context.save()
+            }
           }
         }
       }
@@ -63,59 +77,46 @@ extension Subreddit {
   
   func subscribeToggle(optimistic: Bool = false) async {
     if let data = data {
-      let subscribedStatus = Defaults[.subreddits].contains(where: { $0.data?.id == self.id })
-      let likedButNotSubbed = Defaults[.likedButNotSubbed]
+      let context = PersistenceController.shared.container.viewContext
+      let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "CachedSub")
+      guard let results = try? context.fetch(fetchRequest) as? [CachedSub] else { return }
+      
+      let foundSub = results.first(where: { $0.name == self.data?.name })
+//      let likedButNotSubbed = Defaults[.likedButNotSubbed]
       if optimistic {
+        if let foundSub = foundSub { // when unsubscribe
+          context.delete(foundSub)
+        } else {
+          _ = CachedSub(data: data, context: context)
+        }
         await MainActor.run {
-          @Default(.likedButNotSubbed) var likedButNotSubbed
           withAnimation(.default) {
-            if subscribedStatus { // when unsubscribe
-              Defaults[.subreddits] = Defaults[.subreddits].filter { sub in
-                sub.data?.id != self.id
-              }
-              likedButNotSubbed = likedButNotSubbed.filter{ $0.id != self.id }
-            } else {
-              Defaults[.subreddits].append(ListingChild(kind: "t5", data: data))
-            }
+            try? context.save()
           }
         }
       }
-      let result = await redditAPI.subscribe(subscribedStatus ? .unsub : .sub, subFullname: data.name)
+      let result = await redditAPI.subscribe(!foundSub.isNil ? .unsub : .sub, subFullname: data.name)
       if result {
         if !optimistic {
-          await MainActor.run {
-            //            doThisAfter(0) {
-            if subscribedStatus {
-              Defaults[.subreddits] = Defaults[.subreddits].filter { sub in
-                sub.data?.id != self.id
-              }
-            } else {
-              Defaults[.subreddits].append(ListingChild(kind: "t5", data: data))
-            }
-            //            }
+          if let foundSub = foundSub {
+            context.delete(foundSub)
+          } else {
+            _ = CachedSub(data: data, context: context)
           }
         }
       } else {
         if optimistic {
-          await MainActor.run {
-            withAnimation(spring) {
-              if !subscribedStatus {
-                Defaults[.subreddits] = Defaults[.subreddits].filter { sub in
-                  sub.data?.id != self.id
-                }
-              } else if !Defaults[.subreddits].contains(where: { $0.data?.id == self.id }) {
-                Defaults[.subreddits].append(ListingChild(kind: "t5", data: data))
-              }
-            }
+          if let foundSub = foundSub {
+            context.delete(foundSub)
+          } else {
+            _ = CachedSub(data: data, context: context)
           }
         }
       }
-      
-      if !subscribedStatus && likedButNotSubbed.contains(self){
-        await MainActor.run{
-          _ = self.localFavoriteToggle()
+      await MainActor.run {
+        withAnimation(.default) {
+          try? context.save()
         }
-        await self.favoriteToggle()
       }
     }
   }
@@ -160,75 +161,76 @@ extension Subreddit {
 //
 //}
 
-struct SubredditData: Codable, GenericRedditEntityDataType, Defaults.Serializable {
-  let user_flair_background_color: String?
-  var submit_text_html: String?
-  let restrict_posting: Bool?
-  var user_is_banned: Bool?
-  let free_form_reports: Bool?
-  let wiki_enabled: Bool?
-  let user_is_muted: Bool?
-  let user_can_flair_in_sr: Bool?
-  let display_name: String?
-  let header_img: String?
-  let title: String?
-  let allow_galleries: Bool?
-  let icon_size: [Int]?
-  let primary_color: String?
-  let active_user_count: Int?
-  let icon_img: String?
-  let display_name_prefixed: String?
-  let accounts_active: Int?
-  let public_traffic: Bool?
-  let subscribers: Int?
-  let name: String
-  let quarantine: Bool?
-  let hide_ads: Bool?
-  let prediction_leaderboard_entry_type: String?
-  let emojis_enabled: Bool?
-  let advertiser_category: String?
+struct SubredditData: Codable, GenericRedditEntityDataType, Defaults.Serializable, Identifiable {
+  var user_flair_background_color: String? = nil
+  var submit_text_html: String? = nil
+  var restrict_posting: Bool? = nil
+  var user_is_banned: Bool? = nil
+  var free_form_reports: Bool? = nil
+  var wiki_enabled: Bool? = nil
+  var user_is_muted: Bool? = nil
+  var user_can_flair_in_sr: Bool? = nil
+  var display_name: String? = nil
+  var header_img: String? = nil
+  var title: String? = nil
+  var allow_galleries: Bool? = nil
+  var icon_size: [Int]? = nil
+  var primary_color: String? = nil
+  var active_user_count: Int? = nil
+  var icon_img: String? = nil
+  var display_name_prefixed: String? = nil
+  var accounts_active: Int? = nil
+  var public_traffic: Bool? = nil
+  var subscribers: Int? = nil
+  var name: String
+  var quarantine: Bool? = nil
+  var hide_ads: Bool? = nil
+  var prediction_leaderboard_entry_type: String? = nil
+  var emojis_enabled: Bool? = nil
+  var advertiser_category: String? = nil
   var public_description: String
-  let comment_score_hide_mins: Int?
-  let allow_predictions: Bool?
-  var user_has_favorited: Bool?
-  let user_flair_template_id: String?
-  let community_icon: String?
-  let banner_background_image: String?
-  let original_content_tag_enabled: Bool?
-  let community_reviewed: Bool?
-  var submit_text: String?
-  var description_html: String?
-  let spoilers_enabled: Bool?
-  let allow_talks: Bool?
-  let is_enrolled_in_new_modmail: Bool?
-  let key_color: String?
-  let can_assign_user_flair: Bool?
-  let created: Double?
-  let show_media_preview: Bool?
-  var user_is_subscriber: Bool?
-  let allow_videogifs: Bool?
-  let should_archive_posts: Bool?
-  let user_flair_type: String?
-  let allow_polls: Bool?
-  var public_description_html: String?
-  let allow_videos: Bool?
-  let banner_img: String?
-  let user_flair_text: String?
-  let banner_background_color: String?
-  let show_media: Bool?
-  let id: String
-  let user_is_moderator: Bool?
-  var description: String?
-  let is_chat_post_feature_enabled: Bool?
-  let submit_link_label: String?
-  let user_flair_text_color: String?
-  let restrict_commenting: Bool?
-  let user_flair_css_class: String?
-  let allow_images: Bool?
-  let url: String
-  let created_utc: Double?
-  let user_is_contributor: Bool?
-  var winstonFlairs: [Flair]?
+  var comment_score_hide_mins: Int? = nil
+  var allow_predictions: Bool? = nil
+  var user_has_favorited: Bool? = nil
+  var user_flair_template_id: String? = nil
+  var community_icon: String? = nil
+  var banner_background_image: String? = nil
+  var original_content_tag_enabled: Bool? = nil
+  var community_reviewed: Bool? = nil
+  var over_18: Bool? = nil
+  var submit_text: String? = nil
+  var description_html: String? = nil
+  var spoilers_enabled: Bool? = nil
+  var allow_talks: Bool? = nil
+  var is_enrolled_in_new_modmail: Bool? = nil
+  var key_color: String? = nil
+  var can_assign_user_flair: Bool? = nil
+  var created: Double? = nil
+  var show_media_preview: Bool? = nil
+  var user_is_subscriber: Bool? = nil
+  var allow_videogifs: Bool? = nil
+  var should_archive_posts: Bool? = nil
+  var user_flair_type: String? = nil
+  var allow_polls: Bool? = nil
+  var public_description_html: String? = nil
+  var allow_videos: Bool? = nil
+  var banner_img: String? = nil
+  var user_flair_text: String? = nil
+  var banner_background_color: String? = nil
+  var show_media: Bool? = nil
+  var id: String
+  var user_is_moderator: Bool? = nil
+  var description: String? = nil
+  var is_chat_post_feature_enabled: Bool? = nil
+  var submit_link_label: String? = nil
+  var user_flair_text_color: String? = nil
+  var restrict_commenting: Bool? = nil
+  var user_flair_css_class: String? = nil
+  var allow_images: Bool? = nil
+  var url: String
+  var created_utc: Double? = nil
+  var user_is_contributor: Bool? = nil
+  var winstonFlairs: [Flair]? = nil
   //  let comment_contribution_settings: CommentContributionSettings
   //  let header_size: [Int]?
   //  let user_flair_position: String?
@@ -269,6 +271,106 @@ struct SubredditData: Codable, GenericRedditEntityDataType, Defaults.Serializabl
   enum CodingKeys: String, CodingKey {
     case user_flair_background_color, submit_text_html, restrict_posting, user_is_banned, free_form_reports, wiki_enabled, user_is_muted, user_can_flair_in_sr, display_name, header_img, title, allow_galleries, icon_size, primary_color, active_user_count, icon_img, display_name_prefixed, accounts_active, public_traffic, subscribers, name, quarantine, hide_ads, prediction_leaderboard_entry_type, emojis_enabled, advertiser_category, public_description, comment_score_hide_mins, allow_predictions, user_has_favorited, user_flair_template_id, community_icon, banner_background_image, original_content_tag_enabled, community_reviewed, submit_text, description_html, spoilers_enabled, allow_talks, is_enrolled_in_new_modmail, key_color, can_assign_user_flair, created, show_media_preview, user_is_subscriber, allow_videogifs, should_archive_posts, user_flair_type, allow_polls, public_description_html, allow_videos, banner_img, user_flair_text, banner_background_color, show_media, id, user_is_moderator, description, is_chat_post_feature_enabled, submit_link_label, user_flair_text_color, restrict_commenting, user_flair_css_class, allow_images, url, created_utc, user_is_contributor, winstonFlairs
   }
+  
+  
+  init(entity: CachedSub) {
+    self.user_flair_background_color = nil
+    self.submit_text_html = nil
+    self.restrict_posting = nil
+    self.user_is_banned = nil
+    self.free_form_reports = nil
+    self.wiki_enabled = nil
+    self.user_is_muted = nil
+    self.user_can_flair_in_sr = nil
+    self.display_name = nil
+    self.header_img = nil
+    self.title = nil
+    self.allow_galleries = nil
+    self.icon_size = nil
+    self.primary_color = nil
+    self.active_user_count = nil
+    self.icon_img = nil
+    self.display_name_prefixed = nil
+    self.accounts_active = nil
+    self.public_traffic = nil
+    self.subscribers = nil
+    self.quarantine = nil
+    self.hide_ads = nil
+    self.prediction_leaderboard_entry_type = nil
+    self.emojis_enabled = nil
+    self.advertiser_category = nil
+    self.comment_score_hide_mins = nil
+    self.allow_predictions = nil
+    self.user_has_favorited = nil
+    self.user_flair_template_id = nil
+    self.community_icon = nil
+    self.banner_background_image = nil
+    self.original_content_tag_enabled = nil
+    self.community_reviewed = nil
+    self.over_18 = nil
+    self.submit_text = nil
+    self.description_html = nil
+    self.spoilers_enabled = nil
+    self.allow_talks = nil
+    self.is_enrolled_in_new_modmail = nil
+    self.key_color = nil
+    self.can_assign_user_flair = nil
+    self.created = nil
+    self.show_media_preview = nil
+    self.user_is_subscriber = nil
+    self.allow_videogifs = nil
+    self.should_archive_posts = nil
+    self.user_flair_type = nil
+    self.allow_polls = nil
+    self.public_description = ""
+    self.public_description_html = nil
+    self.allow_videos = nil
+    self.banner_img = nil
+    self.user_flair_text = nil
+    self.banner_background_color = nil
+    self.show_media = nil
+    self.user_is_moderator = nil
+    self.description = nil
+    self.is_chat_post_feature_enabled = nil
+    self.submit_link_label = nil
+    self.user_flair_text_color = nil
+    self.restrict_commenting = nil
+    self.user_flair_css_class = nil
+    self.allow_images = nil
+    self.created_utc = nil
+    self.user_is_contributor = nil
+    self.winstonFlairs = nil
+    self.title = nil
+    
+    
+    
+    let x = entity
+    self.allow_galleries = x.allow_galleries
+    self.allow_images = x.allow_images
+    self.allow_videos = x.allow_videos
+    self.over_18 = x.over_18
+    self.restrict_commenting = x.restrict_commenting
+    self.user_has_favorited = x.user_has_favorited
+    self.user_is_banned = x.user_is_banned
+    self.user_is_moderator = x.user_is_moderator
+    self.user_is_subscriber = x.user_is_subscriber
+    self.banner_background_color = x.banner_background_color
+    self.banner_background_image = x.banner_background_image
+    self.banner_img = x.banner_img
+    self.community_icon = x.community_icon
+    self.display_name = x.display_name
+    self.header_img = x.header_img
+    self.icon_img = x.icon_img
+    self.key_color = x.key_color
+    self.name = x.name ?? ""
+    self.primary_color = x.primary_color
+    self.title = x.title
+    self.url = x.url ?? ""
+    self.user_flair_background_color = x.user_flair_background_color
+    self.id = x.uuid ?? UUID().uuidString
+    self.subscribers = Int(x.subscribers)
+  }
+  
   
   init(from decoder: Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)

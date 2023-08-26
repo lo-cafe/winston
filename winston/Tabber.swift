@@ -254,6 +254,10 @@ struct Tabber: View {
       Text("Something went wrong, but winston's is a fast cat, got the bug in his fangs and brought it to you. What do you wanna do?")
     }
     .onAppear {
+      if Defaults[.multis].count != 0 || Defaults[.subreddits].count != 0 {
+        Defaults[.multis] = []
+        Defaults[.subreddits] = []
+      }
       Task(priority: .background) { await updatePostsInBox(redditAPI) }
       if redditAPI.loggedUser.apiAppID == nil || redditAPI.loggedUser.apiAppSecret == nil {
         withAnimation(spring) {

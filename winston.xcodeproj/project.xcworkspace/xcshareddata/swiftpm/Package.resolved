@@ -82,15 +82,6 @@
       }
     },
     {
-      "identity" : "shallows",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/dreymonde/Shallows",
-      "state" : {
-        "revision" : "3a9d673a7c01d6fd4fbaa5cd592648dbae42d4a7",
-        "version" : "0.13.4"
-      }
-    },
-    {
       "identity" : "skeletonui",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/CSolanaM/SkeletonUI.git",

@@ -10,12 +10,13 @@ import Defaults
 
 struct SubscribeButton: View {
   @Environment(\.colorScheme) var colorScheme: ColorScheme
-  @Default(.subreddits) var subs
+//  @Default(.subreddits) var subs
+  @FetchRequest(sortDescriptors: [], animation: .default) var subs: FetchedResults<CachedSub>
   @ObservedObject var subreddit: Subreddit
   @State var loading = false
   @GestureState var pressing = false
     var body: some View {
-      let subscribed = subs.contains(where: { $0.data?.id == subreddit.id })
+      let subscribed = subs.contains(where: { $0.name == subreddit.data?.name })
       if let _ = subreddit.data {
         HStack {
           Group {
@@ -43,7 +44,7 @@ struct SubscribeButton: View {
         .overlay(RoundedRectangle(cornerRadius: 16, style: .continuous).stroke(.secondary.opacity(subscribed ? 0 : 0.2)))
         .brightness(pressing ? -0.1 : 0)
         .contentShape(Rectangle())
-        .animation(spring, value: subs)
+//        .animation(spring, value: subs)
         .onTapGesture {
           withAnimation(spring) {
             loading = true

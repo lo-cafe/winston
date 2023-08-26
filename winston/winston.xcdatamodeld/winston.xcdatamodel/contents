@@ -1,5 +1,52 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="21754" systemVersion="22F82" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithCloudKit="YES" userDefinedModelVersionIdentifier="">
+    <entity name="CachedMulti" representedClassName="CachedMulti" syncable="YES">
+        <attribute name="display_name" optional="YES" attributeType="String"/>
+        <attribute name="icon_url" optional="YES" attributeType="String"/>
+        <attribute name="key_color" optional="YES" attributeType="String"/>
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <attribute name="over_18" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="path" optional="YES" attributeType="String"/>
+        <attribute name="uuid" optional="YES" attributeType="String"/>
+        <relationship name="subreddits" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="CachedSub" inverseName="multis" inverseEntity="CachedSub"/>
+        <uniquenessConstraints>
+            <uniquenessConstraint>
+                <constraint value="uuid"/>
+            </uniquenessConstraint>
+        </uniquenessConstraints>
+    </entity>
+    <entity name="CachedSub" representedClassName="CachedSub" syncable="YES">
+        <attribute name="allow_galleries" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="allow_images" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="allow_videos" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="banner_background_color" optional="YES" attributeType="String"/>
+        <attribute name="banner_background_image" optional="YES" attributeType="String"/>
+        <attribute name="banner_img" optional="YES" attributeType="String"/>
+        <attribute name="community_icon" optional="YES" attributeType="String"/>
+        <attribute name="display_name" optional="YES" attributeType="String"/>
+        <attribute name="header_img" optional="YES" attributeType="String"/>
+        <attribute name="icon_img" optional="YES" attributeType="String"/>
+        <attribute name="key_color" optional="YES" attributeType="String"/>
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <attribute name="over_18" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="primary_color" optional="YES" attributeType="String"/>
+        <attribute name="restrict_commenting" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="subscribers" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="title" optional="YES" attributeType="String"/>
+        <attribute name="url" optional="YES" attributeType="String"/>
+        <attribute name="user_flair_background_color" optional="YES" attributeType="String"/>
+        <attribute name="user_has_favorited" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="user_is_banned" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="user_is_moderator" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="user_is_subscriber" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="uuid" optional="YES" attributeType="String"/>
+        <relationship name="multis" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="CachedMulti" inverseName="subreddits" inverseEntity="CachedMulti"/>
+        <uniquenessConstraints>
+            <uniquenessConstraint>
+                <constraint value="uuid"/>
+            </uniquenessConstraint>
+        </uniquenessConstraints>
+    </entity>
     <entity name="CollapsedComment" representedClassName="CollapsedComment" syncable="YES" codeGenerationType="class">
         <attribute name="commentID" optional="YES" attributeType="String"/>
     </entity>

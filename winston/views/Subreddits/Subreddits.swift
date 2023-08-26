@@ -8,37 +8,23 @@
 import SwiftUI
 import Defaults
 import Combine
+import Shallows
 
 let alphabetLetters = Array("ABCDEFGHIJKLMNOPQRSTUVWXYZ").map { String($0) }
 
 class SubsDictContainer: ObservableObject {
   @Published var data: [String: [Subreddit]] = [:]
-  
-  //  var cancellables = [AnyCancellable]()
-  //
-  //  init() {
-  //    self.observeChildrenChanges()
-  //  }
-  //
-  //  func observeChildrenChanges() {
-  //    cancellables.forEach { cancelable in
-  //      cancelable.cancel()
-  //    }
-  //    Array(data.values).flatMap { $0 }.forEach({
-  //      let c = $0.objectWillChange.sink(receiveValue: { _ in self.objectWillChange.send() })
-  //      self.cancellables.append(c)
-  //    })
-  //  }
 }
+
 
 struct Subreddits: View {
   var reset: Bool
+  @Environment(\.managedObjectContext) private var context
   @ObservedObject var router: Router
   @Environment(\.openURL) private var openURL
   @EnvironmentObject private var redditAPI: RedditAPI
-  //  @State private var subreddits: [ListingChild<SubredditData>] = Defaults[.subreddits]
-  @Default(.subreddits) private var subreddits
-  @Default(.multis) private var multis
+  @FetchRequest(sortDescriptors: [NSSortDescriptor(key: "name", ascending: true)], animation: .default) var subreddits: FetchedResults<CachedSub>
+  @FetchRequest(sortDescriptors: [NSSortDescriptor(key: "name", ascending: true)], animation: .default) var multis: FetchedResults<CachedMulti>
   @State private var searchText: String = ""
   @StateObject private var subsDict = SubsDictContainer()
   @State private var loaded = false
@@ -48,45 +34,31 @@ struct Subreddits: View {
   
   @Default(.preferenceDefaultFeed) var preferenceDefaultFeed // handle default feed selection routing
   @Default(.likedButNotSubbed) var likedButNotSubbed // subreddits that a user likes but is not subscribed to so they wont be in subsDict
-  func sort(_ subs: [ListingChild<SubredditData>]) -> [String: [Subreddit]] {
-    return Dictionary(grouping: subs.compactMap { $0.data }, by: { String($0.display_name?.prefix(1) ?? "").uppercased() })
-      .mapValues { items in items.sorted { ($0.display_name ?? "") < ($1.display_name ?? "") }.map { Subreddit(data: $0, api: redditAPI) } }
-  }
   
-  func setArrays(_ val: [ListingChild<SubredditData>]) {
-    Task(priority: .background) {
-      let newSubsDict = sort(val)
-      let newSubsArr = Array(newSubsDict.values).flatMap { $0 }
-      let newFavoritesArr = Array(newSubsArr.filter { $0.data?.user_has_favorited ?? false }).sorted { ($0.data?.display_name?.lowercased() ?? "") < ($1.data?.display_name?.lowercased() ?? "") }
-      + likedButNotSubbed
-      let newAvailableLetters = Array(newSubsDict.keys).sorted { $0 < $1 }
-      await MainActor.run {
-        withAnimation(.default) {
-          subsDict.data = newSubsDict
-          subsArr = newSubsArr
-          favoritesArr = newFavoritesArr
-          availableLetters = newAvailableLetters
-        }
-      }
+  var sections: [String:[CachedSub]] {
+    return Dictionary(grouping: Array(subreddits)) { sub in
+      return String((sub.display_name ?? "a").first!.uppercased())
     }
   }
   
   var body: some View {
-    let subsDictData = subsDict.data
+//    let groupedMultisCache = Dictionary(grouping: multis) { $0.display_name.prefix(1) }
+//    let groupedSubsCache = Dictionary(grouping: subreddits) { $0.display_name?.prefix(1) }
+
+//    let subsDictData = subsDict.data
     NavigationStack(path: $router.path) {
       ScrollViewReader { proxy in
-        List{
-          
+        List {
           if searchText == "" {
             VStack(spacing: 12) {
               HStack(spacing: 12) {
                 ListBigBtn(icon: "house.circle.fill", iconColor: .blue, label: "Home", destination: Subreddit(id: "home", api: redditAPI))
-                
+
                 ListBigBtn(icon: "chart.line.uptrend.xyaxis.circle.fill", iconColor: .red, label: "Popular", destination: Subreddit(id: "popular", api: redditAPI))
               }
               HStack(spacing: 12) {
                 ListBigBtn(icon: "signpost.right.and.left.circle.fill", iconColor: .orange, label: "All", destination: Subreddit(id: "all", api: redditAPI))
-                
+
                 ListBigBtn(icon: "bookmark.circle.fill", iconColor: .green, label: "Saved", destination: Subreddit(id: "saved", api: redditAPI))
                   .opacity(0.5).allowsHitTesting(false)
               }
@@ -97,19 +69,20 @@ struct Subreddits: View {
             .listRowBackground(Color.clear)
             .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
           }
-          
-          
+
+
           PostsInBoxView(someOpened: router.path.count > 0)
             .scrollIndicators(.hidden)
             .listRowInsets(EdgeInsets(top: 0, leading: 16, bottom: 0, trailing: 16))
             .listRowBackground(Color.clear)
-          
+
           if multis.count > 0 {
             Section("Multis") {
               ScrollView(.horizontal) {
                 HStack(spacing: 16) {
                   ForEach(multis) { multi in
-                    MultiLink(multi: multi, router: router)
+//                    let multi = Multi(
+                    MultiLink(multi: MultiData(entity: multi), router: router)
                   }
                 }
                 .padding(.horizontal, 16)
@@ -119,31 +92,30 @@ struct Subreddits: View {
             .listRowBackground(Color.clear)
           }
           
-          
           if searchText != "" {
             Section("Found subs") {
-              ForEach(Array(subsArr.filter { ($0.data?.display_name ?? "").lowercased().contains(searchText.lowercased()) }).sorted { ($0.data?.display_name?.lowercased() ?? "") < ($1.data?.display_name?.lowercased() ?? "") }, id: \.self.id) { sub in
-                SubItem(sub: sub)
+              ForEach(Array(subreddits.filter { ($0.display_name ?? "").lowercased().contains(searchText.lowercased()) }), id: \.self.id) { cachedSub in
+                SubItem(sub: Subreddit(data: SubredditData(entity: cachedSub), api: redditAPI), cachedSub: cachedSub)
               }
             }
           } else {
             Section("Favorites") {
-              ForEach(favoritesArr, id: \.self.id) { sub in
-                SubItem(sub: sub)
+              ForEach(subreddits.filter { $0.user_has_favorited }, id: \.self.id) { cachedSub in
+                  SubItem(sub: Subreddit(data: SubredditData(entity: cachedSub), api: redditAPI), cachedSub: cachedSub)
               }
               .onDelete(perform: deleteFromFavorites)
             }
-            ForEach(availableLetters, id: \.self) { letter in
-              if let subs = subsDictData[letter] {
-                Section(header: Text(letter)) {
-                  ForEach(subs) { sub in
-                    SubItem(sub: sub)
-                      .id("\(sub.id)-main")
+
+            ForEach(sections.keys.sorted(), id: \.self) { letter in
+              Section(header: Text(letter)) {
+                if let arr = sections[letter] {
+                  ForEach(arr) { cachedSub in
+                    SubItem(sub: Subreddit(data: SubredditData(entity: cachedSub), api: redditAPI), cachedSub: cachedSub)
                   }
-                  .onDelete(perform: { i in deleteFromList(at: i, letter: letter)})
                 }
               }
             }
+            
           }
         }
         .scrollIndicators(.hidden)
@@ -169,28 +141,24 @@ struct Subreddits: View {
           }
           _ = await redditAPI.fetchSubs()
         }
-        .onChange(of: subreddits) { val in
-          setArrays(val)
-        }
         .navigationTitle("Subs")
-        .onAppear {
+        .task {
+//          subsCacheUpdated(subredditsCache)
+//          multisCacheUpdated(multisCache)
           if !loaded {
             if subreddits.count > 0 {
-              setArrays(subreddits)
-              //              subsDict.data = sort(subreddits)
+//              setArrays(subreddits)
             }
-            Task(priority: .background) {
-              // MARK: Route to default feed
-              if preferenceDefaultFeed != "subList" && router.path.count == 0 { // we are in subList, can ignore
-                let tempSubreddit = Subreddit(id: preferenceDefaultFeed, api: redditAPI)
-                router.path.append(SubViewType.posts(tempSubreddit))
-              }
-              
-              _ = await redditAPI.fetchSubs()
-              _ = await redditAPI.fetchMyMultis()
-              withAnimation {
-                loaded = true
-              }
+            // MARK: Route to default feed
+            if preferenceDefaultFeed != "subList" && router.path.count == 0 { // we are in subList, can ignore
+              let tempSubreddit = Subreddit(id: preferenceDefaultFeed, api: redditAPI)
+              router.path.append(SubViewType.posts(tempSubreddit))
+            }
+
+            _ = await redditAPI.fetchSubs()
+            _ = await redditAPI.fetchMyMultis()
+            withAnimation {
+              loaded = true
             }
           }
         }
@@ -199,7 +167,7 @@ struct Subreddits: View {
         }
       }
       .defaultNavDestinations(router)
-      //        .onDelete(perform: deleteItems)
+//      .onDelete(perform: deleteItems)
     }
     .swipeAnywhere(router: router)
     .animation(.default, value: router.path)
