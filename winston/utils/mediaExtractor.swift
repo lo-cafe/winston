@@ -30,6 +30,10 @@ func mediaExtractor(_ post: Post) -> MediaExtractedType? {
   if let data = post.data {
     guard !data.is_self else { return nil }
     
+    if data.post_hint == "link", let linkURL = URL(string: data.url) {
+      return .link(linkURL)
+    }
+    
     if let is_gallery = data.is_gallery, is_gallery, let galleryData = data.gallery_data?.items, let metadata = post.data?.media_metadata {
       let galleryArr = galleryData.compactMap { item in
         let id = item.media_id
