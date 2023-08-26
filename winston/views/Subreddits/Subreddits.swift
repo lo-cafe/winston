@@ -8,7 +8,6 @@
 import SwiftUI
 import Defaults
 import Combine
-import Shallows
 
 let alphabetLetters = Array("ABCDEFGHIJKLMNOPQRSTUVWXYZ").map { String($0) }
 

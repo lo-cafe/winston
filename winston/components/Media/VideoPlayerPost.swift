@@ -76,6 +76,9 @@ struct VideoPlayerPost: View {
         sharedVideo.player.play()
       }
     }
+    .onDisappear() {
+      sharedVideo.player.pause()
+    }
     .fullScreenCover(isPresented: $fullscreen) {
       FullScreenVP(sharedVideo: sharedVideo)
     }
