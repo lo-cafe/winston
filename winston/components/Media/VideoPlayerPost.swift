@@ -24,7 +24,7 @@ struct VideoPlayerPost: View {
   @StateObject var sharedVideo: SharedVideo
   @Default(.preferenceShowPostsCards) var preferenceShowPostsCards
   @Default(.maxPostLinkImageHeightPercentage) var maxPostLinkImageHeightPercentage
-  @State private var initialized = false
+  @State private var firstFullscreen = false
   @State private var fullscreen = false
   @Default(.postLinksInnerHPadding) private var postLinksInnerHPadding
   @Default(.cardedPostLinksOuterHPadding) private var cardedPostLinksOuterHPadding
@@ -62,8 +62,14 @@ struct VideoPlayerPost: View {
         Color.clear
           .frame(width: compact ? scaledCompactModeThumbSize() : contentWidth, height: compact ? scaledCompactModeThumbSize() : CGFloat(finalHeight))
       }
-      
-        Image(systemName: "play.fill").foregroundColor(.white.opacity(0.75)).fontSize(32).shadow(color: .black.opacity(0.45), radius: 12, y: 8).opacity(autoPlayVideos ? 0 : 1).allowsHitTesting(false)
+      Image(systemName: "play.fill").foregroundColor(.white.opacity(0.75)).fontSize(32).shadow(color: .black.opacity(0.45), radius: 12, y: 8).opacity(autoPlayVideos ? 0 : 1).allowsHitTesting(false)
+    }
+    .onChange(of: fullscreen) { val in
+      if !firstFullscreen {
+        firstFullscreen = true
+        sharedVideo.player.play()
+      }
+      sharedVideo.player.volume = val ? 1.0 : 0.0
     }
     .onAppear {
       if autoPlayVideos {
@@ -88,27 +94,27 @@ struct FullScreenVP: View {
       .gesture(
         DragGesture(minimumDistance: 5)
           .onChanged { val in
-              var transaction = Transaction()
-              transaction.isContinuous = true
-              transaction.animation = .interpolatingSpring(stiffness: 1000, damping: 100, initialVelocity: 0)
-              
-              var endPos = val.translation
-//                if dragAxis == .horizontal {
-//                  endPos.height = 0
-//                }
-              withTransaction(transaction) {
-                drag = endPos
+            var transaction = Transaction()
+            transaction.isContinuous = true
+            transaction.animation = .interpolatingSpring(stiffness: 1000, damping: 100, initialVelocity: 0)
+            
+            var endPos = val.translation
+            //                if dragAxis == .horizontal {
+            //                  endPos.height = 0
+            //                }
+            withTransaction(transaction) {
+              drag = endPos
+            }
+          }
+          .onEnded { val in
+            let shouldClose = abs(val.translation.width) > 100 || abs(val.translation.height) > 100
+            print(abs(val.translation.width), abs(val.translation.height))
+            withAnimation(.interpolatingSpring(stiffness: 200, damping: 20, initialVelocity: 0)) {
+              drag = .zero
+              if shouldClose {
+                dismiss()
               }
             }
-          .onEnded { val in
-              let shouldClose = abs(val.translation.width) > 100 || abs(val.translation.height) > 100
-              print(abs(val.translation.width), abs(val.translation.height))
-              withAnimation(.interpolatingSpring(stiffness: 200, damping: 20, initialVelocity: 0)) {
-                drag = .zero
-                if shouldClose {
-                  dismiss()
-                }
-              }
           }
       )
   }
@@ -237,10 +243,10 @@ class NiceAVPlayer: AVPlayerViewController, AVPlayerViewControllerDelegate {
     let isPlaying = self.player?.isPlaying ?? false
     coordinator.animate(alongsideTransition: nil) { context in
       if context.isCancelled {
-//        // Still full screen
+        //        // Still full screen
       } else {
-//        // Embedded inline
-//        // Remove strong reference to playerViewController if held
+        //        // Embedded inline
+        //        // Remove strong reference to playerViewController if held
         doThisAfter(0) {
           self.player?.volume = 0.0
         }
