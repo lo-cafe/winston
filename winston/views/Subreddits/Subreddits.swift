@@ -111,7 +111,9 @@ struct Subreddits: View {
                   ForEach(arr) { cachedSub in
                     SubItem(sub: Subreddit(data: SubredditData(entity: cachedSub), api: redditAPI), cachedSub: cachedSub)
                   }
-                  .onDelete(perform: deleteFromList)
+                  .onDelete(perform: { i in
+                    deleteFromList(at: i, letter: letter)
+                  })
                 }
               }
             }
