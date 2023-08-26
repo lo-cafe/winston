@@ -81,7 +81,6 @@ struct Subreddits: View {
               ScrollView(.horizontal) {
                 HStack(spacing: 16) {
                   ForEach(multis) { multi in
-//                    let multi = Multi(
                     MultiLink(multi: MultiData(entity: multi), router: router)
                   }
                 }
@@ -112,6 +111,7 @@ struct Subreddits: View {
                   ForEach(arr) { cachedSub in
                     SubItem(sub: Subreddit(data: SubredditData(entity: cachedSub), api: redditAPI), cachedSub: cachedSub)
                   }
+                  .onDelete(perform: deleteFromList)
                 }
               }
             }
@@ -143,12 +143,7 @@ struct Subreddits: View {
         }
         .navigationTitle("Subs")
         .task {
-//          subsCacheUpdated(subredditsCache)
-//          multisCacheUpdated(multisCache)
           if !loaded {
-            if subreddits.count > 0 {
-//              setArrays(subreddits)
-            }
             // MARK: Route to default feed
             if preferenceDefaultFeed != "subList" && router.path.count == 0 { // we are in subList, can ignore
               let tempSubreddit = Subreddit(id: preferenceDefaultFeed, api: redditAPI)
