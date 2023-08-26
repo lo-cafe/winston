@@ -18,7 +18,11 @@ struct LiveTextInteraction: UIViewRepresentable {
   
   
   func makeUIView(context: Context) -> some UIView {
-    imageView.image = ImageRenderer(content: image).uiImage //we need to convert the Image into an UIImage
+    guard let image = ImageRenderer(content: image).uiImage else {
+      imageView.image = UIImage(named: "emptyThumb")
+      return imageView
+    }
+    imageView.image = image
     imageView.addInteraction(interaction)
     imageView.contentMode = .scaleAspectFit
     return imageView
@@ -28,13 +32,11 @@ struct LiveTextInteraction: UIViewRepresentable {
     Task {
       let configuration = ImageAnalyzer.Configuration([.text])
       do {
-        if let image = imageView.image {
-          let analysis = try? await analyzer.analyze(image, configuration: configuration)
-          if let analysis = analysis {
+        let analysis = try? await analyzer.analyze(imageView.image!, configuration: configuration)
+          if let analysis {
             interaction.preferredInteractionTypes = .textSelection
             interaction.analysis = analysis;
           }
-        }
       }
       
     }
