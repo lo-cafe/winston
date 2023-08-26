@@ -46,21 +46,50 @@ extension Multi {
 
 
 struct MultiData: GenericRedditEntityDataType, Defaults.Serializable {
-  let can_edit: Bool?
+  var can_edit: Bool? = nil
   let display_name, name: String
-  let description_html: String?
-  let num_subscribers: Int?
-  let copied_from: String?
-  let icon_url: String?
-  var subreddits: [MultiSub]?
-  let created_utc, created: Double?
+  var description_html: String? = nil
+  var num_subscribers: Int? = nil
+  var copied_from: String? = nil
+  var icon_url: String? = nil
+  var subreddits: [MultiSub]? = nil
+  var created_utc: Double? = nil
+  var created: Double? = nil
   let visibility: MultiVisibility?
-  let over_18: Bool?
+  var over_18: Bool? = nil
   let path: String
-  let owner, key_color: String?
-  let is_subscriber, is_favorited: Bool?
-  let owner_id, description_md: String?
+  var key_color: String? = nil
+  var owner: String? = nil
+  var is_subscriber: Bool? = nil
+  var is_favorited: Bool? = nil
+  var description_md: String? = nil
+  var owner_id: String? = nil
   var id: String { path }
+  
+  init(entity: CachedMulti) {
+//    self.can_edit = entity.can_edit
+    self.display_name = entity.display_name ?? ""
+    self.name = entity.name ?? ""
+    self.description_html = nil
+    self.num_subscribers = nil
+    self.copied_from = nil
+    self.icon_url = entity.icon_url
+    self.subreddits = entity.subsArray.map { x in
+      let data = SubredditData(entity: x)
+      return MultiSub(name: data.name, data: data)
+    }
+    self.created_utc = nil
+    self.visibility = nil
+    self.over_18 = entity.over_18
+    self.path = entity.path ?? ""
+    self.owner = nil
+    self.key_color = entity.key_color
+    self.is_subscriber = nil
+    self.is_favorited = nil
+    self.owner_id = nil
+    self.description_md = nil
+//    self.id = entity.uuid
+  }
 }
 
 
