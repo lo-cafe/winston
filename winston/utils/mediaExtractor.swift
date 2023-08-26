@@ -32,7 +32,7 @@ func mediaExtractor(_ post: Post) -> MediaExtractedType? {
     
     if let is_gallery = data.is_gallery, is_gallery, let galleryData = data.gallery_data?.items, let metadata = post.data?.media_metadata {
       let galleryArr = galleryData.compactMap { item in
-        let id = item.id
+        let id = item.media_id
         if let itemMeta = metadata[String(id)], let extArr = itemMeta?.m?.split(separator: "/"), let size = itemMeta?.s, let imgURL = URL(string: "https://i.redd.it/\(id).\(extArr[extArr.count - 1])") {
           return MediaExtracted(url: imgURL, size: CGSize(width: size.x, height: size.y))
         }
