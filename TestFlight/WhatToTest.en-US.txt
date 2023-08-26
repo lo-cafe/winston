@@ -4,5 +4,7 @@
 - Fixed links not appearing
 - Fixed galleries not appearing
 - Disabled autocorrection in search screen
+- Fixed not subbed subs appearing
+- Fixed alphabetical order everywhere
 
 Some medias will still not appear, hoping to fix that in a few days.

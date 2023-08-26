@@ -35,7 +35,7 @@ struct Subreddits: View {
   @Default(.likedButNotSubbed) var likedButNotSubbed // subreddits that a user likes but is not subscribed to so they wont be in subsDict
   
   var sections: [String:[CachedSub]] {
-    return Dictionary(grouping: Array(subreddits)) { sub in
+    return Dictionary(grouping: subreddits.filter({ $0.user_is_subscriber })) { sub in
       return String((sub.display_name ?? "a").first!.uppercased())
     }
   }
@@ -98,7 +98,9 @@ struct Subreddits: View {
             }
           } else {
             Section("Favorites") {
-              ForEach(subreddits.filter { $0.user_has_favorited }, id: \.self.id) { cachedSub in
+              ForEach(subreddits.filter { $0.user_has_favorited && $0.user_is_subscriber }.sorted(by: { x, y in
+                (x.display_name?.lowercased() ?? "a") < (y.display_name?.lowercased() ?? "a")
+              }), id: \.self.id) { cachedSub in
                   SubItem(sub: Subreddit(data: SubredditData(entity: cachedSub), api: redditAPI), cachedSub: cachedSub)
               }
               .onDelete(perform: deleteFromFavorites)
@@ -107,7 +109,9 @@ struct Subreddits: View {
             ForEach(sections.keys.sorted(), id: \.self) { letter in
               Section(header: Text(letter)) {
                 if let arr = sections[letter] {
-                  ForEach(arr) { cachedSub in
+                  ForEach(arr.sorted(by: { x, y in
+                    (x.display_name?.lowercased() ?? "a") < (y.display_name?.lowercased() ?? "a")
+                  })) { cachedSub in
                     SubItem(sub: Subreddit(data: SubredditData(entity: cachedSub), api: redditAPI), cachedSub: cachedSub)
                   }
                   .onDelete(perform: { i in
