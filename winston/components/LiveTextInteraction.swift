@@ -43,6 +43,39 @@ struct LiveTextInteraction: UIViewRepresentable {
   }
 }
 
+@MainActor
+struct ZoomableLiveTextInteraction: UIViewRepresentable {
+  var image: Image
+  let imageView = LiveTextImageView()
+  let analyzer = ImageAnalyzer()
+  let interaction = ImageAnalysisInteraction()
+  
+  
+  func makeUIView(context: Context) -> some UIView {
+    guard let image = ImageRenderer(content: image).uiImage else {
+      imageView.image = UIImage(named: "emptyThumb")
+      return imageView
+    }
+    imageView.image = image
+    imageView.addInteraction(interaction)
+    return imageView
+  }
+  
+  func updateUIView(_ uiView: UIViewType, context: Context) {
+    Task {
+      let configuration = ImageAnalyzer.Configuration([.text])
+      do {
+        let analysis = try? await analyzer.analyze(imageView.image!, configuration: configuration)
+          if let analysis {
+            interaction.preferredInteractionTypes = .textSelection
+            interaction.analysis = analysis;
+          }
+      }
+      
+    }
+  }
+}
+
 
 class LiveTextImageView: UIImageView {
   // Use intrinsicContentSize to change the default image size
