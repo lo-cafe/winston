@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		650ACAFC2A87A36900A7C600 /* calcVotes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 650ACAFB2A87A36900A7C600 /* calcVotes.swift */; };
 		651D19C72A90B7D6003867A9 /* PostFontSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 651D19C62A90B7D6003867A9 /* PostFontSettings.swift */; };
+		652377442A9B4E7700D7A792 /* ZoomableImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 652377432A9B4E7700D7A792 /* ZoomableImageView.swift */; };
 		653E2DA52A8E278800833556 /* GeneralPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 653E2DA42A8E278800833556 /* GeneralPanel.swift */; };
 		6543D8892A8D10B900A1FFF9 /* scaleEffectButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6543D8882A8D10B900A1FFF9 /* scaleEffectButtonStyle.swift */; };
 		6593CC432A88C9E8003CA58D /* AccessibilityPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6593CC422A88C9E8003CA58D /* AccessibilityPanel.swift */; };
@@ -278,6 +279,7 @@
 /* Begin PBXFileReference section */
 		650ACAFB2A87A36900A7C600 /* calcVotes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = calcVotes.swift; sourceTree = "<group>"; };
 		651D19C62A90B7D6003867A9 /* PostFontSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostFontSettings.swift; sourceTree = "<group>"; };
+		652377432A9B4E7700D7A792 /* ZoomableImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZoomableImageView.swift; sourceTree = "<group>"; };
 		653E2DA42A8E278800833556 /* GeneralPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneralPanel.swift; sourceTree = "<group>"; };
 		6543D8882A8D10B900A1FFF9 /* scaleEffectButtonStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = scaleEffectButtonStyle.swift; sourceTree = "<group>"; };
 		6593CC422A88C9E8003CA58D /* AccessibilityPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessibilityPanel.swift; sourceTree = "<group>"; };
@@ -1058,6 +1060,7 @@
 				EC1E7B652A815BC100DB459A /* LightBoxElementView.swift */,
 				EC08542F2A4CDF8A00E88389 /* LightBoxImage.swift */,
 				65BB79002A99FB2600EB83D5 /* LightBoxElementView2.swift */,
+				652377432A9B4E7700D7A792 /* ZoomableImageView.swift */,
 			);
 			path = LightBoxImage;
 			sourceTree = "<group>";
@@ -1401,6 +1404,7 @@
 				ECC68D492A7A9136005BC7B4 /* WDivider.swift in Sources */,
 				EC6373572A791A2D000A03A3 /* Onboarding5GettingSecret.swift in Sources */,
 				EC08541B2A4BFEB300E88389 /* User.swift in Sources */,
+				652377442A9B4E7700D7A792 /* ZoomableImageView.swift in Sources */,
 				EC2D275C2A4FBF00006444D6 /* ShrinkOnTap.swift in Sources */,
 				EC08542B2A4C2B6B00E88389 /* if.swift in Sources */,
 				65D531422A98DE8800FED4DE /* Subreddits.swift in Sources */,

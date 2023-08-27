@@ -136,30 +136,12 @@
       }
     },
     {
-      "identity" : "swiftui-image-viewer",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/Jake-Short/swiftui-image-viewer.git",
-      "state" : {
-        "revision" : "f61f298c0100c81dfb0c7908091e68aad12a892c",
-        "version" : "2.3.1"
-      }
-    },
-    {
       "identity" : "swiftui-introspect",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/siteline/swiftui-introspect",
       "state" : {
         "revision" : "6dce3c8f5bfa8bc20120c7497da27e984a8813aa",
         "version" : "0.7.0"
-      }
-    },
-    {
-      "identity" : "url-image",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/dmytro-anokhin/url-image.git",
-      "state" : {
-        "revision" : "ccab89ad1cedb04f25dd4df1776dd8c8583b914a",
-        "version" : "2.2.5"
       }
     },
     {

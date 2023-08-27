@@ -19,9 +19,11 @@ struct URLImage: View {
     LazyImage(url: url, transaction: Transaction(animation: .default)) { state in
       if let image = state.image {
         if doLiveText {
-          LiveTextInteraction(image: image.resizable())
+          LiveTextInteraction(image: image)
         } else {
-          image.resizable()
+          image
+            .resizable()
+            .scaledToFit()
         }
       } else if state.error != nil {
         Color.red.opacity(0.1)
