@@ -1086,6 +1086,7 @@
 				EC1E7B692A815BF300DB459A /* LightBoxOverlay.swift */,
 				EC08542F2A4CDF8A00E88389 /* LightBoxImage.swift */,
 				65BB79002A99FB2600EB83D5 /* LightBoxElementView2.swift */,
+				652377432A9B4E7700D7A792 /* ZoomableImageView.swift */,
 				65BB79002A99FB2600EB83D5 /* LightBoxElementView.swift */,
 				652377432A9B4E7700D7A792 /* ZoomableImageView.swift */,
 			);
