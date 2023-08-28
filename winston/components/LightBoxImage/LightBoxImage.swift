@@ -46,7 +46,7 @@ struct LightBoxImage: View {
     HStack(spacing: SPACING) {
       ForEach(Array(imagesArr.enumerated()), id: \.element.id) { i, img in
         let selected = i == activeIndex
-        LightBoxElementView(el: img, onTap: toggleOverlay, isPinching: $isPinching, doLiveText: doLiveText)
+        LightBoxElementView(el: img, onTap: toggleOverlay, doLiveText: doLiveText)
           .allowsHitTesting(selected)
           .scaleEffect(!selected ? 1 : interpolate([1, 0.9], true))
           .blur(radius: selected && loading ? 24 : 0)
@@ -54,7 +54,6 @@ struct LightBoxImage: View {
       }
     }
     .fixedSize(horizontal: true, vertical: false)
-    .offset(x: xPos + (dragAxis == .horizontal ? drag.width : 0))
     .frame(maxWidth: UIScreen.screenWidth, maxHeight: UIScreen.screenHeight, alignment: .leading)
     .highPriorityGesture(
       scale > 1

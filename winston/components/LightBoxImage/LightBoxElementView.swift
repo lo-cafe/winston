@@ -13,11 +13,7 @@ import NukeExtensions
 struct LightBoxElementView: View {
   var el: MediaExtracted
   var onTap: (()->())?
-  @Binding var isPinching: Bool
   var doLiveText: Bool = false
-  @State private var anchor: UnitPoint = .zero
-  @State private var offset: CGSize = .zero
-  @State private var altSize: CGSize = .zero
   var body: some View {
     ZoomableScrollView(onTap: onTap){
       URLImage(url: el.url, doLiveText: doLiveText)
