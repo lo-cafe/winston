@@ -101,7 +101,7 @@ struct ImageMediaPost: View {
     }
     .frame(maxWidth: compact ? nil : .infinity)
     .fullScreenCover(isPresented: $fullscreen, content: {
-      LightBoxImage(post: post, i: fullscreenIndex, imagesArr: images, namespace: presentationNamespace, doLiveText: true)
+      LightBoxImage(post: post, i: fullscreenIndex, imagesArr: images, namespace: presentationNamespace, doLiveText: Defaults[.useLiveText])
     })
   }
 }

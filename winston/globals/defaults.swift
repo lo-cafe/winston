@@ -119,6 +119,8 @@ extension Defaults.Keys {
   static let hapticFeedbackOnLPM = Key<Bool>("hapticFeedbackOnLPM", default: true)
   
   static let showTestersCelebrationModal = Key<Bool>("showTestersCelebrationModal", default: true)
+  
+  static let useLiveText = Key<Bool>("useLiveText", default: true)
 }
 
 extension UIScreen {

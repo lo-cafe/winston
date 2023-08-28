@@ -18,7 +18,7 @@ struct URLImage: View {
   var body: some View {
     LazyImage(url: url, transaction: Transaction(animation: .default)) { state in
       if let image = state.image {
-        if doLiveText {
+        if doLiveText && ImageAnalyzer.isSupported {
           LiveTextInteraction(image: image)
         } else {
           image
