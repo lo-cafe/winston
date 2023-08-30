@@ -36,8 +36,9 @@ struct PostLinkNoSub: View, Equatable {
   }
   var showSub = false
   var post: Post
+  var secondary = false
   var body: some View {
-    PostLinkSubContainer(showSub: showSub, post: post, sub: Subreddit(id: post.data?.subreddit ?? "Error", api: post.redditAPI))
+    PostLinkSubContainer(showSub: showSub, post: post, sub: Subreddit(id: post.data?.subreddit ?? "Error", api: post.redditAPI), secondary: secondary)
       .equatable()
   }
 }
@@ -49,9 +50,10 @@ struct PostLinkSubContainer: View, Equatable {
   var showSub = false
   var post: Post
   @StateObject var sub: Subreddit
+  var secondary = false
   
   var body: some View {
-      PostLink(post: post, sub: sub, showSub: showSub)
+    PostLink(post: post, sub: sub, showSub: showSub, secondary: secondary)
       .equatable()
   }
 }
@@ -61,10 +63,11 @@ struct PostLink: View, Equatable {
     lhs.post == rhs.post && lhs.sub == rhs.sub
   }
   
-  @EnvironmentObject private var router: Router
   @ObservedObject var post: Post
   @ObservedObject var sub: Subreddit
   var showSub = false
+  var secondary = false
+  @EnvironmentObject private var router: Router
   @Default(.preferenceShowPostsCards) private var preferenceShowPostsCards
   @Default(.preferenceShowPostsAvatars) private var preferenceShowPostsAvatars
   @Default(.blurPostLinkNSFW) private var blurPostLinkNSFW
@@ -225,10 +228,10 @@ struct PostLink: View, Equatable {
       .frame(maxWidth: .infinity, alignment: .leading)
       .background(
         ZStack {
-          if !preferenceShowPostsCards {
+          if !secondary && !preferenceShowPostsCards {
             Color.green.opacity((data.stickied ?? false) ? 0.1 : 0)
           } else {
-            RR(20, .listBG)
+            RR(20, secondary ? Color("primaryInverted").opacity(0.15) : .listBG)
             if (data.stickied ?? false) {
               RoundedRectangle(cornerRadius: 20, style: .continuous)
                 .stroke(.green.opacity(0.3), lineWidth: 4)
@@ -257,8 +260,8 @@ struct PostLink: View, Equatable {
           .allowsHitTesting(false)
         , alignment: .topTrailing
       )
-      .padding(.horizontal, preferenceShowPostsCards ? cardedPostLinksOuterHPadding : 0 )
-      .padding(.vertical, preferenceShowPostsCards ? cardedPostLinksOuterVPadding : 0)
+      .padding(.horizontal, !secondary && preferenceShowPostsCards ? cardedPostLinksOuterHPadding : 0 )
+      .padding(.vertical, !secondary && preferenceShowPostsCards ? cardedPostLinksOuterVPadding : 0)
       .compositingGroup()
       .opacity(fadeReadPosts && seen ? 0.6 : 1)
       .contentShape(Rectangle())
