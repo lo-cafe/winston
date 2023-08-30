@@ -21,6 +21,7 @@ struct SubredditPosts: View {
   @ObservedObject var subreddit: Subreddit
   @Environment(\.openURL) private var openURL
   @State private var loading = true
+  @State private var paginatedIsLoading = false
   @State private var posts: [Post] = []
   @State private var loadedPosts: Set<String> = []
   @State private var lastPostAfter: String?
@@ -29,7 +30,8 @@ struct SubredditPosts: View {
   @State private var newPost = false
   @EnvironmentObject private var redditAPI: RedditAPI
   @EnvironmentObject private var routerProxy: RouterProxy
-  
+  @EnvironmentObject private var router: Router
+
   func asyncFetch(force: Bool = false, loadMore: Bool = false) async {
     if (subreddit.data == nil || force) && !feedsAndSuch.contains(subreddit.id) {
       await subreddit.refreshSubreddit()
@@ -50,6 +52,10 @@ struct SubredditPosts: View {
         }
         loading = false
         lastPostAfter = result.1
+        
+        if isPaginatedFeed {
+          paginatedIsLoading = false
+        }
       }
       Task(priority: .background) {
         await redditAPI.updateAvatarURLCacheFromPosts(posts: newPosts)
@@ -113,17 +119,19 @@ struct SubredditPosts: View {
                 .id("post-loading")
             } else {
               Button(action: {
+                paginatedIsLoading = true
                 fetch(loadMore: true)
               }) {
                 HStack {
                   Spacer()
-                  Text("Load More")
+                  Text(paginatedIsLoading ? "Just a sec..." : "Load More")
                     .font(.headline)
                     .foregroundColor(.blue)
                   Spacer()
                 }
                 .padding(.vertical, 10)
               }
+              .disabled(paginatedIsLoading)
               .listRowBackground(Color(.systemBackground))
               .listRowSeparator(.hidden)
               .id("load-more-button")
