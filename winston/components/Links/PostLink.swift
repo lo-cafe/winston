@@ -293,7 +293,7 @@ struct PostLink: View, Equatable {
           ShareLink(item: perma) { Label("Share", systemImage: "square.and.arrow.up") }
         }
         
-      }, preview: { NavigationStack { PostView(post: post, subreddit: sub, forceCollapse: true) }.environmentObject(post.redditAPI) })
+      }, preview: { NavigationStack { PostView(post: post, subreddit: sub, forceCollapse: true) }.environmentObject(post.redditAPI).environmentObject(router) })
       .foregroundColor(.primary)
       .multilineTextAlignment(.leading)
       .zIndex(1)
