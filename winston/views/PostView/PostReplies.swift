@@ -54,7 +54,7 @@ struct PostReplies: View {
     if let closestIndex = commentPositions.min(by: { abs($0.value - screenTopOffset) < abs($1.value - screenTopOffset) })?.key {
       if closestIndex < commentsData.count - 1 {
         let tempIndex = closestIndex + 1
-        nextCommentTracker = "\(commentsData[tempIndex].id)-top-decoration"
+        nextCommentTracker = preferenceShowCommentsCards ? "\(commentsData[tempIndex].id)-top-decoration" : "\(commentsData[tempIndex].id)-top-spacer"
       }
     }
   }
