@@ -8,3 +8,4 @@
 - Added video loop option
 - Added "y" for more than 365 days in dates
 - Brought alphabet jumper back (sorry for that)
+- Fixed crashing on longpress of posts
