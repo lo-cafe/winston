@@ -111,7 +111,7 @@ struct Subreddits: View {
                 if let arr = sections[letter] {
                   ForEach(arr.sorted(by: { x, y in
                     (x.display_name?.lowercased() ?? "a") < (y.display_name?.lowercased() ?? "a")
-                  })) { cachedSub in
+                  }), id: \.id) { cachedSub in
                     SubItem(sub: Subreddit(data: SubredditData(entity: cachedSub), api: redditAPI), cachedSub: cachedSub)
                   }
                   .onDelete(perform: { i in

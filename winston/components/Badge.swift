@@ -11,6 +11,7 @@ import Defaults
 
 
 struct Badge: View {
+  var saved = false
   var usernameColor: Color = .green
   var showAvatar = true
   var author: String
@@ -20,36 +21,63 @@ struct Badge: View {
   var avatarSize: CGFloat = 30
   var nameSize: CGFloat = 13
   var labelSize: CGFloat = 12
-//  var extraInfo: [String:String] = [:]
+  //  var extraInfo: [String:String] = [:]
   var extraInfo: [BadgeExtraInfo] = []
   @EnvironmentObject private var router: Router
   @EnvironmentObject private var redditAPI: RedditAPI
+  let flagY: CGFloat = 16
+  let delay: CGFloat = 0.4
   var body: some View {
     HStack(spacing: 5) {
+      
+      if saved && !showAvatar {
+        Image(systemName: "bookmark.fill")
+          .fontSize(16)
+          .foregroundColor(.green)
+          .transition(.scale.combined(with: .opacity))
+      }
+      
       if showAvatar {
-        Avatar(url: avatarURL, userID: author, fullname: fullname, avatarSize: avatarSize)
-          .onTapGesture {
-            router.path.append(User(id: author, api: redditAPI))
-          }
-        //            .shrinkOnTap()
+        ZStack {
+          Avatar(url: avatarURL, userID: author, fullname: fullname, avatarSize: avatarSize)
+            .background(
+              ZStack {
+                Image(systemName: "bookmark.fill")
+                  .foregroundColor(.green)
+                  .offset(y: saved ? flagY : 0)
+                
+                Circle()
+                  .fill(.gray)
+                  .shadow(color: .black.opacity(0.15), radius: 4, y: 4)
+                  .frame(maxWidth: .infinity, maxHeight: .infinity)
+                  .mask(
+                    Image(systemName: "bookmark.fill")
+                      .foregroundColor(.black)
+                      .offset(y: saved ? flagY : 0)
+                  )
+                
+                Circle()
+                  .fill(.gray)
+                  .frame(maxWidth: .infinity, maxHeight: .infinity)
+              }
+                .compositingGroup()
+                .animation(.interpolatingSpring(stiffness: 150, damping: 12).delay(delay), value: saved)
+            )
+            .scaleEffect(1)
+            .onTapGesture {
+              router.path.append(User(id: author, api: redditAPI))
+            }
+        }
       }
       
       VStack(alignment: .leading) {
         
-        (Text("by ").font(.system(size: nameSize, weight: .medium)).foregroundColor(.primary.opacity(0.5)) + Text(author).font(.system(size: nameSize, weight: .semibold)).foregroundColor(author == "[deleted]" ? .red : usernameColor))
+        Text(author).font(.system(size: nameSize, weight: .semibold)).foregroundColor(author == "[deleted]" ? .red : usernameColor)
           .onTapGesture {
             router.path.append(User(id: author, api: redditAPI))
           }
         
         HStack(alignment: .center, spacing: 6) {
-//          ForEach(Array(extraInfo.keys), id: \.self) { icon in
-//            if let info = extraInfo[icon] {
-//              HStack(alignment: .center, spacing: 2) {
-//                Image(systemName: icon)
-//                Text(info)
-//              }
-//            }
-//          }
           ForEach(extraInfo, id: \.self){ elem in
             HStack(alignment: .center, spacing: 2){
               Image(systemName: elem.systemImage)
@@ -69,12 +97,10 @@ struct Badge: View {
         .opacity(0.5)
       }
     }
-    
-    //    }
-    //    .buttonStyle(ShrinkableBtnStyle())
+    .scaleEffect(1)
+    .animation(showAvatar ? nil : spring.delay(delay), value: saved)
   }
 }
-//
 
 struct BadgeExtraInfo: Hashable{
   var systemImage: String = ""
@@ -89,9 +115,9 @@ struct PresetBadgeExtraInfo{
   init(){}
   
   func upvotesExtraInfo(data: PostData) -> BadgeExtraInfo{
-//    let upvoted = data.likes != nil && data.likes!
-//    let downvoted = data.likes != nil && !data.likes!
-//    return BadgeExtraInfo(systemImage: upvoted  ? "arrow.up" : (downvoted ? "arrow.down" : "arrow.up"), text: "\(formatBigNumber(data.ups))",textColor: upvoted ? .orange : (downvoted ? .blue : .primary), iconColor:  upvoted ? .orange : (downvoted ? .blue : .primary))
+    //    let upvoted = data.likes != nil && data.likes!
+    //    let downvoted = data.likes != nil && !data.likes!
+    //    return BadgeExtraInfo(systemImage: upvoted  ? "arrow.up" : (downvoted ? "arrow.down" : "arrow.up"), text: "\(formatBigNumber(data.ups))",textColor: upvoted ? .orange : (downvoted ? .blue : .primary), iconColor:  upvoted ? .orange : (downvoted ? .blue : .primary))
     return BadgeExtraInfo(systemImage: "arrow.up", text: "\(formatBigNumber(data.ups))")
   }
   

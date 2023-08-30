@@ -26,8 +26,10 @@ enum MediaExtractedType {
   case user(username: String)
 }
 
+// ORDER MATTERS!
 func mediaExtractor(_ post: Post) -> MediaExtractedType? {
   if let data = post.data {
+//    print(data)
     guard !data.is_self else { return nil }
     
     if data.post_hint == "link", let linkURL = URL(string: data.url) {
@@ -57,12 +59,21 @@ func mediaExtractor(_ post: Post) -> MediaExtractedType? {
       return .youtube(videoID: ytID, size: CGSize(width: CGFloat(width), height: CGFloat(height)))
     }
     
+    
     if let postEmbed = data.crosspost_parent_list?[0] {
       return .repost(Post(data: postEmbed, api: post.redditAPI))
     }
     
-    if let images = data.preview?.images, images.count > 0, let image = images[0].source, let src = image.url?.replacing("/preview.", with: "/i."), let imgURL = URL(string: src.escape), let width = image.width, let height = image.height {
+    if let images = data.preview?.images, images.count > 0, let image = images[0].source, let src = image.url?.replacing("/preview.", with: "/i."), let imgURL = rootURL(src.escape), let width = image.width, let height = image.height {
       return .image(MediaExtracted(url: imgURL, size: CGSize(width: width, height: height)))
+    }
+    
+    if VIDEOS_FORMATS.contains(where: { data.url.hasSuffix($0) }), let url = URL(string: data.url) {
+      return .video(MediaExtracted(url: url, size: CGSize(width: 0, height: 0)))
+    }
+    
+    if IMAGES_FORMATS.contains(where: { data.url.hasSuffix($0) }), let url = rootURL(data.url) {
+      return .image(MediaExtracted(url: url, size: CGSize(width: 0, height: 0)))
     }
     
     guard let urlComponents = URLComponents(string: data.url) else {

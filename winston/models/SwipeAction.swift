@@ -204,9 +204,9 @@ struct SeenPostAction: SwipeAction {
         }
       }
     }
-    await MainActor.run { withAnimation { entity.toggleSeen(optimistic: true) } }
+    await entity.toggleSeen(optimistic: true)
   }
-  func active(_ entity: Post) -> Bool { false }
+  func active(_ entity: Post) -> Bool { entity.data?.winstonSeen ?? false }
   func enabled(_ entity: Post) -> Bool { true }
 }
 

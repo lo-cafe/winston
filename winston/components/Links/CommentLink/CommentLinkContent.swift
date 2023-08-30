@@ -85,12 +85,19 @@ struct CommentLinkContent: View {
               }
             }
           }
-          HStack {
+          HStack(spacing: 8) {
             if let author = data.author, let created = data.created {
               Badge(usernameColor: (post?.data?.author ?? "") == author ? Color.green : (coloredCommenNames ? Color.blue : Color.primary), showAvatar: preferenceShowCommentsAvatars, author: author, fullname: data.author_fullname, created: created, avatarURL: avatarsURL?[data.author_fullname!])
             }
-
+            
             Spacer()
+
+            if (data.saved ?? false) {
+              Image(systemName: "bookmark.fill")
+                .fontSize(14)
+                .foregroundColor(.green)
+                .transition(.scale.combined(with: .opacity))
+            }
 
             if selectable {
               HStack(spacing: 2) {

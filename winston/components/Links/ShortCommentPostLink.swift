@@ -28,7 +28,7 @@ struct ShortCommentPostLink: View {
         
         VStack(alignment: .leading, spacing: 2) {
           if let author = data.author {
-            (Text("by ").font(.system(size: 13, weight: .medium)).foregroundColor(.primary.opacity(0.5)) + Text(author).font(.system(size: 13, weight: .semibold)).foregroundColor(coloredCommentNames ? .blue : .primary))
+            (Text(author).font(.system(size: 13, weight: .semibold)).foregroundColor(coloredCommentNames ? .blue : .primary))
               .onTapGesture { router.path.append(User(id: data.author!, api: comment.redditAPI)) }
           }
           

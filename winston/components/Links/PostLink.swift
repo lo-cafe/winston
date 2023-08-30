@@ -110,6 +110,10 @@ struct PostLink: View, Equatable {
       VStack(alignment: .leading, spacing: 8) {
         layout {
           
+          /// /////////
+          /// <UPPER PART>
+          /// /////////
+          
           if showSubsAtTop && !compactMode {
             SubsNStuffLine(showSub: showSub, feedsAndSuch: feedsAndSuch, post: post, sub: sub, router: router, over18: over18, data: data)
           }
@@ -137,6 +141,11 @@ struct PostLink: View, Equatable {
             .clipped()
             .nsfw(over18 && blurPostLinkNSFW)
           }
+          
+          /// /////////
+          /// </UPPER PART>
+          /// /////////
+      
           
           VStack(alignment: .leading, spacing: compactMode ? 4 : 10) {
             Text(data.title.escape)
@@ -194,15 +203,11 @@ struct PostLink: View, Equatable {
         if !showSubsAtTop || compactMode {
           SubsNStuffLine(showSub: showSub, feedsAndSuch: feedsAndSuch, post: post, sub: sub, router: router, over18: over18, data: data)
         }
-        
 
-        
-        
-        
         if !compactMode {
           HStack {
             if let fullname = data.author_fullname {
-              Badge(showAvatar: preferenceShowPostsAvatars, author: data.author, fullname: fullname, created: data.created, extraInfo: !showVotes ? [PresetBadgeExtraInfo().commentsExtraInfo(data: data), PresetBadgeExtraInfo().upvotesExtraInfo(data: data)] : [PresetBadgeExtraInfo().commentsExtraInfo(data: data)])
+              Badge(saved: data.saved, showAvatar: preferenceShowPostsAvatars, author: data.author, fullname: fullname, created: data.created, extraInfo: !showVotes ? [PresetBadgeExtraInfo().commentsExtraInfo(data: data), PresetBadgeExtraInfo().upvotesExtraInfo(data: data)] : [PresetBadgeExtraInfo().commentsExtraInfo(data: data)])
             }
             
             Spacer()
@@ -219,11 +224,20 @@ struct PostLink: View, Equatable {
       .padding(.vertical, preferenceShowPostsCards ? cardedPostLinksInnerVPadding : postLinksInnerVPadding)
       .frame(maxWidth: .infinity, alignment: .leading)
       .background(
-        !preferenceShowPostsCards
-        ? nil
-        : RR(20, .listBG)
+        ZStack {
+          if !preferenceShowPostsCards {
+            Color.green.opacity((data.stickied ?? false) ? 0.1 : 0)
+          } else {
+            RR(20, .listBG)
+            if (data.stickied ?? false) {
+              RoundedRectangle(cornerRadius: 20, style: .continuous)
+                .stroke(.green.opacity(0.3), lineWidth: 4)
+            }
+          }
+        }
           .allowsHitTesting(false)
       )
+      
       .mask(RR(preferenceShowPostsCards ? 20 : 0, .black))
       .overlay(
         fadeReadPosts
@@ -286,7 +300,7 @@ struct PostLink: View, Equatable {
       .onDisappear {
         Task(priority: .background) {
           if readPostOnScroll {
-            post.toggleSeen(true, optimistic: true)
+            await post.toggleSeen(true, optimistic: true)
           }
           if hideReadPosts {
             await post.hide(true)

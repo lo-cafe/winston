@@ -123,7 +123,7 @@ struct ReplyModal<Content: View>: View {
     self.action = action
     self._textWrapper = StateObject(wrappedValue: TextFieldObserver(delay: 0.5, text: text))
   }
-    
+  
   var body: some View {
     NavigationView {
       ScrollView {
@@ -152,7 +152,7 @@ struct ReplyModal<Content: View>: View {
             content()
           }
           
-            
+          
         }
         .padding(.horizontal, 16)
         .padding(.bottom, 68)
@@ -167,8 +167,12 @@ struct ReplyModal<Content: View>: View {
             globalLoader.dismiss()
             if result {
               if let currentDraft = currentDraft {
-                viewContext.delete(currentDraft)
-                try? viewContext.save()
+                Task {
+                  await viewContext.perform(schedule: .enqueued) {
+                    viewContext.delete(currentDraft)
+                    try? viewContext.save()
+                  }
+                }
               }
             }
           }, textWrapper.replyText)
@@ -182,12 +186,20 @@ struct ReplyModal<Content: View>: View {
       )
       .onChange(of: textWrapper.debouncedTeplyText, perform: { val in
         currentDraft?.replyText = val
-        try? viewContext.save()
+        Task {
+          await viewContext.perform(schedule: .enqueued) {
+            try? viewContext.save()
+          }
+        }
       })
       .onDisappear {
         if textWrapper.replyText == "", let currentDraft = currentDraft {
-          viewContext.delete(currentDraft)
-          try? viewContext.save()
+          Task {
+            await viewContext.perform(schedule: .enqueued) {
+              viewContext.delete(currentDraft)
+              try? viewContext.save()
+            }
+          }
         }
       }
       .onAppear {
@@ -221,8 +233,12 @@ struct ReplyModal<Content: View>: View {
                     dismiss()
                   }
                   if let currentDraft = currentDraft {
-                    viewContext.delete(currentDraft)
-                    try? viewContext.save()
+                    Task {
+                      await viewContext.perform(schedule: .enqueued) {
+                        viewContext.delete(currentDraft)
+                        try? viewContext.save()
+                      }
+                    }
                   }
                 },
                 .cancel()
