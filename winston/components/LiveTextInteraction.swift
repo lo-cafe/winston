@@ -63,11 +63,11 @@ struct ZoomableLiveTextInteraction: UIViewRepresentable {
   
   func updateUIView(_ uiView: UIViewType, context: Context) {
     Task {
-      let configuration = ImageAnalyzer.Configuration([.text])
+      let configuration = ImageAnalyzer.Configuration([.text, .machineReadableCode, .visualLookUp])
       do {
         let analysis = try? await analyzer.analyze(imageView.image!, configuration: configuration)
           if let analysis {
-            interaction.preferredInteractionTypes = .textSelection
+            interaction.preferredInteractionTypes = .automatic
             interaction.analysis = analysis;
           }
       }
