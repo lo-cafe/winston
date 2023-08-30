@@ -124,7 +124,6 @@ struct SubredditPosts: View {
                 }
                 .padding(.vertical, 10)
               }
-              .buttonStyle(BorderlessButtonStyle())
               .listRowBackground(Color(.systemBackground))
               .listRowSeparator(.hidden)
               .id("load-more-button")
