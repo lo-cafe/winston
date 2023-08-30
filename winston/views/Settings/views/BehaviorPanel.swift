@@ -17,6 +17,7 @@ struct BehaviorPanel: View {
   @Default(.blurPostLinkNSFW) var blurPostLinkNSFW
   @Default(.blurPostNSFW) var blurPostNSFW
   @Default(.collapseAutoModerator) var collapseAutoModerator
+  @Default(.isPaginatedFeed) var isPaginatedFeed
   @Default(.readPostOnScroll) var readPostOnScroll
   @Default(.hideReadPosts) var hideReadPosts
   @Default(.enableSwipeAnywhere) var enableSwipeAnywhere
@@ -37,6 +38,8 @@ struct BehaviorPanel: View {
           Text("Subscription List").tag("subList")
         }
         .pickerStyle(DefaultPickerStyle())
+        
+        Toggle("Paginated Feed", isOn: $isPaginatedFeed)
       }
       
       Section {

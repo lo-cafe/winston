@@ -17,6 +17,7 @@ enum SubViewType: Hashable {
 
 struct SubredditPosts: View {
   @Default(.preferenceShowPostsCards) private var preferenceShowPostsCards
+  @Default(.isPaginatedFeed) var isPaginatedFeed
   @ObservedObject var subreddit: Subreddit
   @Environment(\.openURL) private var openURL
   @State private var loading = true
@@ -83,7 +84,11 @@ struct SubredditPosts: View {
 
             PostLink(post: post, sub: subreddit)
               .equatable()
-              .onAppear { if(Int(Double(posts.count) * 0.75) == i) { fetch(loadMore: true) } }
+              .onAppear() {
+                if (Int(Double(posts.count) * 0.75) == i) && !isPaginatedFeed {
+                  fetch(loadMore: true)
+                }
+              }
               .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
               .animation(.default, value: posts)
 
@@ -99,11 +104,31 @@ struct SubredditPosts: View {
             }
 
           }
+          
           if !lastPostAfter.isNil {
-            ProgressView()
-              .progressViewStyle(.circular)
-              .frame(maxWidth: .infinity, minHeight: posts.count > 0 ? 100 : UIScreen.screenHeight - 200 )
-              .id("post-loading")
+            if !isPaginatedFeed {
+              ProgressView()
+                .progressViewStyle(.circular)
+                .frame(maxWidth: .infinity, minHeight: posts.count > 0 ? 100 : UIScreen.screenHeight - 200 )
+                .id("post-loading")
+            } else {
+              Button(action: {
+                fetch(loadMore: true)
+              }) {
+                HStack {
+                  Spacer()
+                  Text("Load More")
+                    .font(.headline)
+                    .foregroundColor(.blue)
+                  Spacer()
+                }
+                .padding(.vertical, 10)
+              }
+              .buttonStyle(BorderlessButtonStyle())
+              .listRowBackground(Color(.systemBackground))
+              .listRowSeparator(.hidden)
+              .id("load-more-button")
+            }
           }
         }
         .listRowSeparator(.hidden)
