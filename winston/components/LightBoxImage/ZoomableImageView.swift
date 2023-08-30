@@ -14,7 +14,6 @@ struct ZoomableScrollView<Content: View>: UIViewRepresentable {
   private var content: Content
   private var onTap: (()->())?
   
-  
   init(onTap: (()->())? = nil, @ViewBuilder content: () -> Content) {
     self.content = content()
     //set up helper class
@@ -60,7 +59,6 @@ struct ZoomableScrollView<Content: View>: UIViewRepresentable {
     // update the hosting controller's SwiftUI content
     context.coordinator.hostingController.rootView = self.content
     assert(context.coordinator.hostingController.view.superview == uiView)
-    
   }
   
   func makeCoordinator() -> Coordinator {
