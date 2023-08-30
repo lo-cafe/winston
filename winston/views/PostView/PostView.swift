@@ -48,7 +48,7 @@ struct PostView: View {
       List {
         Group {
           Section {
-            PostContent(post: post, forceCollapse: forceCollapse)
+            PostContent(post: post, sub: subreddit, forceCollapse: forceCollapse)
             
             Text("Comments")
               .fontSize(20, .bold)

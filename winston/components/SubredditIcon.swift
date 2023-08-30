@@ -20,7 +20,7 @@ struct SubredditBaseIcon: View {
       URLImage(url: iconURL, processors: [ImageProcessors.Circle()])
       .scaledToFill()
       .frame(width: size, height: size)
-//      .mask(Circle())
+      .mask(Circle())
     } else {
       Text(String((name).prefix(1)).uppercased())
         .frame(width: size, height: size)

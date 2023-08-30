@@ -1,7 +1,7 @@
 import UIKit
 import SwiftUI
 
-class PinchZoomView: UIView {
+class PinchZoomView: UIView, UIGestureRecognizerDelegate {
     weak var delegate: PinchZoomViewDelgate?
   
   private(set) var scale: CGFloat = 1 {
@@ -56,14 +56,16 @@ class PinchZoomView: UIView {
     panGesture = newPanGesture
     addGestureRecognizer(newPanGesture)
     
-    let doubleTap = UIShortTapGestureRecognizer(target: self, action: #selector(doubleTap(gesture:)))
-    doubleTap.numberOfTapsRequired = 2
-    addGestureRecognizer(doubleTap)
+    if !onTap.isNil {
+      let doubleTap = UIShortTapGestureRecognizer(target: self, action: #selector(doubleTap(gesture:)))
+      doubleTap.numberOfTapsRequired = 2
+      addGestureRecognizer(doubleTap)
 
-    let monoTap = UITapGestureRecognizer(target: self, action: #selector(tap(gesture:)))
-    monoTap.require(toFail: doubleTap)
-    monoTap.numberOfTapsRequired = 1
-    addGestureRecognizer(monoTap)
+      let monoTap = UITapGestureRecognizer(target: self, action: #selector(tap(gesture:)))
+      monoTap.require(toFail: doubleTap)
+      monoTap.numberOfTapsRequired = 1
+      addGestureRecognizer(monoTap)
+    }
   }
   
   required init?(coder: NSCoder) {
@@ -121,12 +123,6 @@ class PinchZoomView: UIView {
       let disY = project(initialVelocity: velocity.y, decelerationRate: UIScrollView.DecelerationRate.fast.rawValue)
       
       let finalOffset = CGSize(width: startOffset.width + translation.x + disX, height: startOffset.height + translation.y + disY)
-      
-      
-      
-      
-      
-      
       
       let imageHeight = imgSize.height
       let imageWidth = imgSize.width

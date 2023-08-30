@@ -96,9 +96,9 @@ struct SwipeUI<T: GenericRedditEntityDataType>: ViewModifier {
         : HStack {
           
           if let infoRight = infoRight() {
-            let active = infoRight.3 ? actionsSet.leftSecond.active(entity) : actionsSet.leftFirst.active(entity)
+            let active = infoRight.3 ? actionsSet.rightSecond.active(entity) : actionsSet.rightFirst.active(entity)
             MasterButton(icon: active ? infoRight.0.active : infoRight.0.normal, color: Color.hex(active ? infoRight.2.active : infoRight.2.normal), textColor: Color.hex(active ? infoRight.1.active : infoRight.1.normal), proportional: .circle) {}
-              .scaleEffect(triggeredAction == .leftSecond ? 1.1 : triggeredAction == .leftFirst ? 1 : max(0.001, offsetXInterpolate([-0.9, 0.85], false)))
+              .scaleEffect(triggeredAction == .rightSecond ? 1.1 : triggeredAction == .rightFirst ? 1 : max(0.001, offsetXInterpolate([-0.9, 0.85], false)))
               .opacity(max(0, offsetXInterpolate([-0.9, 1], false)))
               .frame(width: actualOffsetX < 0 ? 10 : abs(actualOffsetX))
               .offset(x: -8)
@@ -107,9 +107,9 @@ struct SwipeUI<T: GenericRedditEntityDataType>: ViewModifier {
           Spacer()
           
           if let infoLeft = infoLeft() {
-            let active = infoLeft.3 ? actionsSet.rightSecond.active(entity) : actionsSet.rightFirst.active(entity)
+            let active = infoLeft.3 ? actionsSet.leftSecond.active(entity) : actionsSet.leftFirst.active(entity)
             MasterButton(icon: active ? infoLeft.0.active : infoLeft.0.normal, color: Color.hex(active ? infoLeft.2.active : infoLeft.2.normal), textColor: Color.hex(active ? infoLeft.1.active : infoLeft.1.normal), proportional: .circle) {}
-              .scaleEffect(triggeredAction == .rightSecond ? 1.1 : triggeredAction == .rightFirst ? 1 : max(0.001, offsetXNegativeInterpolate([-0.9, 0.85], false)))
+              .scaleEffect(triggeredAction == .leftSecond ? 1.1 : triggeredAction == .leftFirst ? 1 : max(0.001, offsetXNegativeInterpolate([-0.9, 0.85], false)))
               .opacity(max(0, offsetXNegativeInterpolate([-0.9, 1], false)))
               .frame(width: actualOffsetX > 0 ? 10 : abs(actualOffsetX))
               .offset(x: 8)
