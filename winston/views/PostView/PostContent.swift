@@ -100,28 +100,30 @@ struct PostContent: View {
         
         
         SubsNStuffLine(showSub: true, feedsAndSuch: feedsAndSuch, post: post, sub: sub, router: router, over18: over18, data: data)
+          .id("post-flair-divider")
+          .listRowInsets(EdgeInsets(top: 0, leading: 8, bottom: 8, trailing: 8))
         
-        HStack(spacing: 0) {
-          if let link_flair_text = data.link_flair_text {
-            Rectangle()
-              .fill(.primary.opacity(0.1))
-              .frame(maxWidth: .infinity, maxHeight: 1)
-            
-            Text(link_flair_text)
-              .fontSize(13)
-              .padding(.horizontal, 6)
-              .padding(.vertical, 2)
-              .background(Capsule(style: .continuous).fill(.secondary.opacity(0.25)))
-              .foregroundColor(.primary.opacity(0.5))
-              .fixedSize()
-          }
-          Rectangle()
-            .fill(.primary.opacity(0.1))
-            .frame(maxWidth: .infinity, maxHeight: 1)
-        }
-        .padding(.horizontal, 2)
-        .id("post-flair-divider")
-        .listRowInsets(EdgeInsets(top: 0, leading: 8, bottom: 8, trailing: 8))
+//        HStack(spacing: 0) {
+//          if let link_flair_text = data.link_flair_text {
+//            Rectangle()
+//              .fill(.primary.opacity(0.1))
+//              .frame(maxWidth: .infinity, maxHeight: 1)
+//
+//            Text(link_flair_text)
+//              .fontSize(13)
+//              .padding(.horizontal, 6)
+//              .padding(.vertical, 2)
+//              .background(Capsule(style: .continuous).fill(.secondary.opacity(0.25)))
+//              .foregroundColor(.primary.opacity(0.5))
+//              .fixedSize()
+//          }
+//          Rectangle()
+//            .fill(.primary.opacity(0.1))
+//            .frame(maxWidth: .infinity, maxHeight: 1)
+//        }
+//        .padding(.horizontal, 2)
+//        .id("post-flair-divider")
+//        .listRowInsets(EdgeInsets(top: 0, leading: 8, bottom: 8, trailing: 8))
       }
       .frame(maxWidth: .infinity, alignment: .leading)
       .foregroundColor(.primary)
