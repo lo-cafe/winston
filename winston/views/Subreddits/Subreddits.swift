@@ -116,11 +116,13 @@ struct Subreddits: View {
                     deleteFromList(at: i, letter: letter)
                   })
                 }
+                .onDelete(perform: { i in deleteFromList(at: i, letter: letter)})
               }
             }
             
           }
-        }
+          
+                  }
         .scrollIndicators(.hidden)
         .listStyle(.sidebar)
         .scrollDismissesKeyboard(.immediately)

@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		650ACAFC2A87A36900A7C600 /* calcVotes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 650ACAFB2A87A36900A7C600 /* calcVotes.swift */; };
 		651D19C72A90B7D6003867A9 /* PostFontSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 651D19C62A90B7D6003867A9 /* PostFontSettings.swift */; };
+		652C7C022A976279001DCD57 /* generateColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 652C7C012A976279001DCD57 /* generateColors.swift */; };
 		651D19C72A90B7D6003867A9 /* PostFontSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 651D19C62A90B7D6003867A9 /* PostFontSettings.swift */; };
 		651D19C72A90B7D6003867A9 /* postFontSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 651D19C62A90B7D6003867A9 /* postFontSettings.swift */; };
 		652C7C022A976279001DCD57 /* generateColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 652C7C012A976279001DCD57 /* generateColors.swift */; };
@@ -287,6 +288,7 @@
 /* Begin PBXFileReference section */
 		650ACAFB2A87A36900A7C600 /* calcVotes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = calcVotes.swift; sourceTree = "<group>"; };
 		651D19C62A90B7D6003867A9 /* PostFontSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostFontSettings.swift; sourceTree = "<group>"; };
+		652C7C012A976279001DCD57 /* generateColors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = generateColors.swift; sourceTree = "<group>"; };
 		651D19C62A90B7D6003867A9 /* PostFontSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostFontSettings.swift; sourceTree = "<group>"; };
 		651D19C62A90B7D6003867A9 /* postFontSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = postFontSettings.swift; sourceTree = "<group>"; };
 		652C7C012A976279001DCD57 /* generateColors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = generateColors.swift; sourceTree = "<group>"; };
@@ -998,6 +1000,11 @@
 				ECF064EC2A7F405C0088C2C0 /* KeyWindow.swift */,
 				EC31882A2A94439D00CB3738 /* mediaExtractor.swift */,
 				ECDD514D2A726E5900FD9498 /* modifyColor.swift */,
+				EC0854402A4D558D00E88389 /* Interpolator.swift */,
+				ECAEFF652A77C43B0052FCD3 /* isVideoPlayer.swift */,
+				ECF064EC2A7F405C0088C2C0 /* KeyWindow.swift */,
+				EC31882A2A94439D00CB3738 /* mediaExtractor.swift */,
+				ECDD514D2A726E5900FD9498 /* modifyColor.swift */,
 				EC08543E2A4D0C0700E88389 /* doThisAfter.swift */,
 				6543D8882A8D10B900A1FFF9 /* scaleEffectButtonStyle.swift */,
 				EC0854472A4D6E8C00E88389 /* getInitialSize.swift */,
@@ -1153,6 +1160,8 @@
 				EC3188082A91991900CB3738 /* AlertToast */,
 				EC31881E2A92C85800CB3738 /* Shallows */,
 				65EEAC5B2A98980F00B0D607 /* AllujaHaptics */,
+				EC31881E2A92C85800CB3738 /* Shallows */,
+				65EEAC5B2A98980F00B0D607 /* AllujaHaptics */,
 				EC50A5A72A9EEF8A00DE8122 /* Giffy */,
 			);
 			productName = winston;
@@ -1219,6 +1228,8 @@
 				ECAD0F2D2A8B4D4B001C88B5 /* XCRemoteSwiftPackageReference "swift-markdown" */,
 				EC828EA52A904E0A009478B1 /* XCRemoteSwiftPackageReference "ConfettiSwiftUI" */,
 				EC3188072A91991900CB3738 /* XCRemoteSwiftPackageReference "AlertToast" */,
+				EC31881D2A92C85800CB3738 /* XCRemoteSwiftPackageReference "Shallows" */,
+				65EEAC5A2A98980F00B0D607 /* XCRemoteSwiftPackageReference "Haptics" */,
 				EC31881D2A92C85800CB3738 /* XCRemoteSwiftPackageReference "Shallows" */,
 				65EEAC5A2A98980F00B0D607 /* XCRemoteSwiftPackageReference "Haptics" */,
 				EC50A5A62A9EEF8A00DE8122 /* XCRemoteSwiftPackageReference "Giffy" */,
