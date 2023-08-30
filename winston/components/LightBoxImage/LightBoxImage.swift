@@ -54,6 +54,9 @@ struct LightBoxImage: View {
       }
     }
     .fixedSize(horizontal: true, vertical: false)
+    // (imagesArr.count > 1 && activeIndex == 0) -- fixes a bug with zooming and panning around where the scroll view could get moved around and obstruct up to 50% of the image
+    // this also makes scrolling left on the first image a bit janky looking but thats less annoying than the other bug
+    .offset(x: xPos + (dragAxis == .horizontal ? (imagesArr.count > 1 && activeIndex == 0) ? 0 : drag.width : 0))
     .frame(maxWidth: UIScreen.screenWidth, maxHeight: UIScreen.screenHeight, alignment: .leading)
     .highPriorityGesture(
       scale > 1
