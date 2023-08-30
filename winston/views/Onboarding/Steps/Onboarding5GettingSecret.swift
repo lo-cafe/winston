@@ -31,6 +31,8 @@ struct Onboarding5GettingSecret: View {
           .frame(maxWidth: 300)
         
         TextField("", text: $appSecret, prompt: Text("Paste the secret key here"))
+          .autocorrectionDisabled(true)
+          .textInputAutocapitalization(.none)
           .fontSize(16, .medium)
           .frame(maxWidth: .infinity)
           .padding(.vertical, 12)
