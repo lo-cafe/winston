@@ -201,7 +201,13 @@ struct NewPostModal: View {
   
   @FetchRequest(sortDescriptors: []) var drafts: FetchedResults<PostDraft>
   
-  func save() { try? viewContext.save() }
+  func save() {
+    Task {
+      await viewContext.perform(schedule: .enqueued) {
+        try? viewContext.save()
+      }
+    }
+  }
   
   var body: some View {
     let isEmpty = postData.text.isEmpty && postData.title.isEmpty && (postData.url?.isEmpty ?? true)
@@ -274,8 +280,12 @@ struct NewPostModal: View {
       .onChange(of: postData.debUrl) { currentDraft?.url = $0; save() }
       .onDisappear {
         if isEmpty, let currentDraft = currentDraft {
-          viewContext.delete(currentDraft)
-          try? viewContext.save()
+          Task {
+            await viewContext.perform(schedule: .enqueued) {
+              viewContext.delete(currentDraft)
+              try? viewContext.save()
+            }
+          }
         }
       }
       .onAppear {
@@ -309,8 +319,12 @@ struct NewPostModal: View {
                     dismiss()
                   }
                   if let currentDraft = currentDraft {
-                    viewContext.delete(currentDraft)
-                    try? viewContext.save()
+                    Task {
+                      await viewContext.perform(schedule: .enqueued) {
+                        viewContext.delete(currentDraft)
+                        try? viewContext.save()
+                      }
+                    }
                   }
                 },
                 .cancel()

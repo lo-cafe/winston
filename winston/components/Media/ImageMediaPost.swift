@@ -35,7 +35,7 @@ struct ImageMediaPost: View {
         let propHeight = (contentWidth * sourceHeight) / sourceWidth
         let finalHeight = maxPostLinkImageHeightPercentage != 110 ? Double(min(maxHeight, propHeight)) : Double(propHeight)
         
-        GalleryThumb(ns: presentationNamespace, width: compact ? scaledCompactModeThumbSize() : contentWidth, height: compact ? scaledCompactModeThumbSize() : finalHeight, url: img.url)
+        GalleryThumb(ns: presentationNamespace, width: compact ? scaledCompactModeThumbSize() : contentWidth, height: compact ? scaledCompactModeThumbSize() : sourceHeight > 0 ? finalHeight : nil, url: img.url)
           .onTapGesture { withAnimation(spring) { fullscreen.toggle() } }
         
       } else if images.count > 1 {

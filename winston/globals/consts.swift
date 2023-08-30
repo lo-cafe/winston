@@ -17,8 +17,8 @@ let collapsedPresentation = PresentationDetent.height(75)
 let compactModeThumbSize: CGFloat = 75
 let screenScale = UIScreen.main.scale
 let feedsAndSuch = ["home", "saved", "all", "popular"]
-let IMAGES_FORMATS = [".png", ".jpg", ".jpeg", ".webp", ".bmp", ".tiff", ".svg", ".ico", ".heic", ".heif"]
-let VIDEOS_FORMATS = [".gif", ".mov", ".mp4", ".avi", ".mkv", ".flv", ".wmv", ".mpg", ".mpeg", ".webm"]
+let IMAGES_FORMATS = [".gif", ".png", ".jpg", ".jpeg", ".webp", ".bmp", ".tiff", ".svg", ".ico", ".heic", ".heif"]
+let VIDEOS_FORMATS = [".mov", ".mp4", ".avi", ".mkv", ".flv", ".wmv", ".mpg", ".mpeg", ".webm"]
 
 func getSafeArea()->UIEdgeInsets{
   let keyWindow = UIApplication

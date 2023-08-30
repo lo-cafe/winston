@@ -12,6 +12,7 @@ import AVFoundation
 
 struct PostContent: View {
   @ObservedObject var post: Post
+  var sub: Subreddit
   var forceCollapse: Bool = false
   @State private var height: CGFloat = 0
   @State private var collapsed = false
@@ -19,6 +20,7 @@ struct PostContent: View {
   @Default(.preferenceShowPostsAvatars) var showPostAvatars
   @Default(.postViewTitleSize) var postViewTitleSize
   @Default(.postViewBodySize) var postViewBodySize
+  @EnvironmentObject private var router: Router
   private var contentWidth: CGFloat { UIScreen.screenWidth - 16 }
   
   var body: some View {
@@ -31,7 +33,9 @@ struct PostContent: View {
           .fixedSize(horizontal: false, vertical: true)
           .id("post-title")
           .onAppear {
-            post.toggleSeen(true)
+            Task {
+              await post.toggleSeen(true)
+            }
           }
           .listRowInsets(EdgeInsets(top: 0, leading: 8, bottom: 6, trailing: 8))
                 
@@ -93,6 +97,9 @@ struct PostContent: View {
             .id("post-badge")
             .listRowInsets(EdgeInsets(top: 6, leading: 8, bottom: 8, trailing: 8))
         }
+        
+        
+        SubsNStuffLine(showSub: true, feedsAndSuch: feedsAndSuch, post: post, sub: sub, router: router, over18: over18, data: data)
         
         HStack(spacing: 0) {
           if let link_flair_text = data.link_flair_text {

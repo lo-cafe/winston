@@ -5,11 +5,16 @@ import AVKit
 import AVFoundation
 
 class SharedVideo: ObservableObject {
+//  @Published var item: AVPlayerItem
   @Published var player: AVPlayer
+//  @Published var looper: AVPlayerLooper
   @Published var size: CGSize
   @Published var url: URL
   
   init(url: URL, size: CGSize) {
+//    let newItem = AVPlayerItem(url: url)
+//    self.item = newItem
+////    self.looper = AVPlayerLooper(player: self.player, templateItem: self.item)
     self.url = url
     self.size = size
     let newPlayer = AVPlayer(url: url)
@@ -30,6 +35,7 @@ struct VideoPlayerPost: View {
   @Default(.cardedPostLinksOuterHPadding) private var cardedPostLinksOuterHPadding
   @Default(.cardedPostLinksInnerHPadding) private var cardedPostLinksInnerHPadding
   @Default(.autoPlayVideos) private var autoPlayVideos
+  @Default(.loopVideos) private var loopVideos
   
   var safe: Double { getSafeArea().top + getSafeArea().bottom }
   var rawContentWidth: CGFloat { UIScreen.screenWidth - ((preferenceShowPostsCards ? cardedPostLinksOuterHPadding : postLinksInnerHPadding) * 2) - (preferenceShowPostsCards ? (preferenceShowPostsCards ? cardedPostLinksInnerHPadding : 0) * 2 : 0) }
@@ -72,46 +78,80 @@ struct VideoPlayerPost: View {
       sharedVideo.player.volume = val ? 1.0 : 0.0
     }
     .onAppear {
+      if loopVideos {
+        addObserver()
+      }
       if autoPlayVideos {
         sharedVideo.player.play()
       }
     }
     .onDisappear() {
+      removeObserver()
       sharedVideo.player.pause()
     }
     .fullScreenCover(isPresented: $fullscreen) {
       FullScreenVP(sharedVideo: sharedVideo)
     }
   }
+  
+  func addObserver() {
+    NotificationCenter.default.addObserver(
+      forName: .AVPlayerItemDidPlayToEndTime,
+      object: sharedVideo.player.currentItem,
+      queue: nil) { notif in
+        sharedVideo.player.seek(to: .zero)
+        sharedVideo.player.play()
+      }
+  }
+  
+  func removeObserver() {
+    NotificationCenter.default.removeObserver(
+      self,
+      name: .AVPlayerItemDidPlayToEndTime,
+      object: sharedVideo.player.currentItem)
+  }
 }
 
 struct FullScreenVP: View {
-  @Environment(\.dismiss) private var dismiss
   @ObservedObject var sharedVideo: SharedVideo
+  @Environment(\.dismiss) private var dismiss
+  @State private var isPinching: Bool = false
   @State private var drag: CGSize = .zero
+  @State private var scale: CGFloat = 1.0
+  @State private var anchor: UnitPoint = .zero
+  @State private var offset: CGSize = .zero
+  @State private var altSize: CGSize = .zero
   var body: some View {
     let interpolate = interpolatorBuilder([0, 100], value: abs(drag.height))
     VideoPlayer(player: sharedVideo.player)
+      .background(
+        sharedVideo.size != .zero
+        ? nil
+        : GeometryReader { geo in
+          Color.clear
+            .onAppear { altSize = geo.size }
+            .onChange(of: geo.size) { newValue in altSize = newValue }
+        }
+      )
+//      .pinchToZoom(size: sharedVideo.size == .zero ? altSize : sharedVideo.size, isPinching: $isPinching, scale: $scale, anchor: $anchor, offset: $offset)
       .scaleEffect(interpolate([1, 0.9], true))
       .offset(drag)
       .gesture(
-        DragGesture(minimumDistance: 5)
+        scale != 1.0
+        ? nil
+        : DragGesture(minimumDistance: 5)
           .onChanged { val in
             var transaction = Transaction()
             transaction.isContinuous = true
             transaction.animation = .interpolatingSpring(stiffness: 1000, damping: 100, initialVelocity: 0)
             
             var endPos = val.translation
-            //                if dragAxis == .horizontal {
-            //                  endPos.height = 0
-            //                }
             withTransaction(transaction) {
               drag = endPos
             }
           }
           .onEnded { val in
             let shouldClose = abs(val.translation.width) > 100 || abs(val.translation.height) > 100
-            print(abs(val.translation.width), abs(val.translation.height))
             withAnimation(.interpolatingSpring(stiffness: 200, damping: 20, initialVelocity: 0)) {
               drag = .zero
               if shouldClose {
