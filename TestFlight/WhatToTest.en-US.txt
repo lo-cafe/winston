@@ -7,3 +7,4 @@
 - Added a few more media types (probably not all of them yet)
 - Added video loop option
 - Added "y" for more than 365 days in dates
+- Brought alphabet jumper back (sorry for that)

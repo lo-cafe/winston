@@ -27,9 +27,7 @@ struct Subreddits: View {
   @State private var searchText: String = ""
   @StateObject private var subsDict = SubsDictContainer()
   @State private var loaded = false
-  @State private var subsArr: [Subreddit] = []
   @State private var favoritesArr: [Subreddit] = []
-  @State private var availableLetters: [String] = []
   
   @Default(.preferenceDefaultFeed) var preferenceDefaultFeed // handle default feed selection routing
   @Default(.likedButNotSubbed) var likedButNotSubbed // subreddits that a user likes but is not subscribed to so they wont be in subsDict
@@ -134,7 +132,7 @@ struct Subreddits: View {
           }
         }
         .overlay(
-          AlphabetJumper(letters: availableLetters, proxy: proxy)
+          AlphabetJumper(letters: sections.keys.sorted(), proxy: proxy)
           , alignment: .trailing
         )
         .refreshable {
