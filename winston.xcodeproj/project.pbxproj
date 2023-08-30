@@ -81,6 +81,8 @@
 		EC31882B2A94439D00CB3738 /* mediaExtractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC31882A2A94439D00CB3738 /* mediaExtractor.swift */; };
 		EC31882D2A94736E00CB3738 /* MediaPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC31882C2A94736E00CB3738 /* MediaPresenter.swift */; };
 		EC3188322A94770700CB3738 /* GalleryThumb.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC3188312A94770700CB3738 /* GalleryThumb.swift */; };
+		EC50A5A82A9EEF8A00DE8122 /* Giffy in Frameworks */ = {isa = PBXBuildFile; productRef = EC50A5A72A9EEF8A00DE8122 /* Giffy */; };
+		EC50A5AA2A9EF59200DE8122 /* EnhancedVideoPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC50A5A92A9EF59200DE8122 /* EnhancedVideoPlayer.swift */; };
 		EC50B0E42A84563C00AB8F72 /* SwipeAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC50B0E32A84563C00AB8F72 /* SwipeAction.swift */; };
 		EC50B0E62A8460CD00AB8F72 /* replyModalPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC50B0E52A8460CD00AB8F72 /* replyModalPresenter.swift */; };
 		EC593AD82A4673B2002D6454 /* winstonApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC593AD72A4673B2002D6454 /* winstonApp.swift */; };
@@ -159,6 +161,7 @@
 		ECA30A322A621B9A00BB19D1 /* decodeString.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECA30A312A621B9A00BB19D1 /* decodeString.swift */; };
 		ECA30A372A622C2F00BB19D1 /* MD.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECA30A362A622C2F00BB19D1 /* MD.swift */; };
 		ECA30A3B2A6329CC00BB19D1 /* colors.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECA30A3A2A6329CC00BB19D1 /* colors.swift */; };
+		ECAA23822A9EC34100874731 /* inlineSymbol.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECAA23812A9EC34100874731 /* inlineSymbol.swift */; };
 		ECAA8B5A2A75004300D9D636 /* redditURLParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECAA8B592A75004300D9D636 /* redditURLParser.swift */; };
 		ECAA8B5C2A75025200D9D636 /* fetchInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECAA8B5B2A75025200D9D636 /* fetchInfo.swift */; };
 		ECAA8B602A75216E00D9D636 /* ShortPostLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECAA8B5F2A75216E00D9D636 /* ShortPostLink.swift */; };
@@ -349,6 +352,7 @@
 		EC31882A2A94439D00CB3738 /* mediaExtractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = mediaExtractor.swift; sourceTree = "<group>"; };
 		EC31882C2A94736E00CB3738 /* MediaPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaPresenter.swift; sourceTree = "<group>"; };
 		EC3188312A94770700CB3738 /* GalleryThumb.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GalleryThumb.swift; sourceTree = "<group>"; };
+		EC50A5A92A9EF59200DE8122 /* EnhancedVideoPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnhancedVideoPlayer.swift; sourceTree = "<group>"; };
 		EC50B0E32A84563C00AB8F72 /* SwipeAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwipeAction.swift; sourceTree = "<group>"; };
 		EC50B0E52A8460CD00AB8F72 /* replyModalPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = replyModalPresenter.swift; sourceTree = "<group>"; };
 		EC593AD42A4673B2002D6454 /* winston.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = winston.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -420,6 +424,7 @@
 		ECA30A312A621B9A00BB19D1 /* decodeString.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = decodeString.swift; sourceTree = "<group>"; };
 		ECA30A362A622C2F00BB19D1 /* MD.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MD.swift; sourceTree = "<group>"; };
 		ECA30A3A2A6329CC00BB19D1 /* colors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = colors.swift; sourceTree = "<group>"; };
+		ECAA23812A9EC34100874731 /* inlineSymbol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = inlineSymbol.swift; sourceTree = "<group>"; };
 		ECAA8B592A75004300D9D636 /* redditURLParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = redditURLParser.swift; sourceTree = "<group>"; };
 		ECAA8B5B2A75025200D9D636 /* fetchInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = fetchInfo.swift; sourceTree = "<group>"; };
 		ECAA8B5F2A75216E00D9D636 /* ShortPostLink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShortPostLink.swift; sourceTree = "<group>"; };
@@ -530,6 +535,7 @@
 				EC9BB1C02A8B05AA0070CD97 /* Nuke in Frameworks */,
 				ECDD515F2A748C5800FD9498 /* OpenGraph in Frameworks */,
 				ECDD51622A748DF600FD9498 /* SkeletonUI in Frameworks */,
+				EC50A5A82A9EEF8A00DE8122 /* Giffy in Frameworks */,
 				EC9269F22A51A732003F33B1 /* HighlightedTextEditor in Frameworks */,
 				ECAD0F2F2A8B4D4B001C88B5 /* Markdown in Frameworks */,
 			);
@@ -626,6 +632,7 @@
 		EC2D275A2A4FBEF7006444D6 /* modifiers */ = {
 			isa = PBXGroup;
 			children = (
+				EC0854402A4D558D00E88389 /* Interpolator.swift */,
 				EC5EDA702A4DA94A00140A08 /* SwipeActionsOld.swift */,
 				ECE449702A67610A00E2A3B7 /* VotesPopover.swift */,
 				EC2D275B2A4FBF00006444D6 /* ShrinkOnTap.swift */,
@@ -664,6 +671,7 @@
 				ECF0B7DC2A53DD5C002B9FAD /* ImageMediaPost.swift */,
 				ECF0B7DE2A53DD82002B9FAD /* VideoPlayerPost.swift */,
 				EC31882C2A94736E00CB3738 /* MediaPresenter.swift */,
+				EC31882A2A94439D00CB3738 /* mediaExtractor.swift */,
 				EC3188312A94770700CB3738 /* GalleryThumb.swift */,
 			);
 			path = Media;
@@ -964,7 +972,6 @@
 				EC9EAEC32A4AAB470074D06B /* fromHex.swift */,
 				EC08542A2A4C2B6B00E88389 /* if.swift */,
 				EC08543E2A4D0C0700E88389 /* doThisAfter.swift */,
-				EC0854402A4D558D00E88389 /* Interpolator.swift */,
 				6543D8882A8D10B900A1FFF9 /* scaleEffectButtonStyle.swift */,
 				EC0854472A4D6E8C00E88389 /* getInitialSize.swift */,
 				EC0854492A4D6EAE00E88389 /* blurTransitions.swift */,
@@ -993,7 +1000,7 @@
 				ECF064EE2A80383C0088C2C0 /* sumCGSize.swift */,
 				EC9ECA092A88602F00470F89 /* debounce.swift */,
 				ECE00EE12A8D68FE000A6E21 /* scaleEffectButtonStyle.swift */,
-				EC31882A2A94439D00CB3738 /* mediaExtractor.swift */,
+				ECAA23812A9EC34100874731 /* inlineSymbol.swift */,
 			);
 			path = utils;
 			sourceTree = "<group>";
@@ -1040,6 +1047,7 @@
 				ECAD0F2B2A8B4CD4001C88B5 /* Markdownosaur.swift */,
 				EC3188052A918FF300CB3738 /* URLImage.swift */,
 				EC31880A2A91AE6C00CB3738 /* MorphingGradientCircleScene.swift */,
+				EC50A5A92A9EF59200DE8122 /* EnhancedVideoPlayer.swift */,
 			);
 			path = components;
 			sourceTree = "<group>";
@@ -1122,6 +1130,7 @@
 				ECAD0F2E2A8B4D4B001C88B5 /* Markdown */,
 				EC828EA62A904E0A009478B1 /* ConfettiSwiftUI */,
 				EC3188082A91991900CB3738 /* AlertToast */,
+				EC50A5A72A9EEF8A00DE8122 /* Giffy */,
 			);
 			productName = winston;
 			productReference = EC593AD42A4673B2002D6454 /* winston.app */;
@@ -1187,6 +1196,7 @@
 				ECAD0F2D2A8B4D4B001C88B5 /* XCRemoteSwiftPackageReference "swift-markdown" */,
 				EC828EA52A904E0A009478B1 /* XCRemoteSwiftPackageReference "ConfettiSwiftUI" */,
 				EC3188072A91991900CB3738 /* XCRemoteSwiftPackageReference "AlertToast" */,
+				EC50A5A62A9EEF8A00DE8122 /* XCRemoteSwiftPackageReference "Giffy" */,
 			);
 			productRefGroup = EC593AD52A4673B2002D6454 /* Products */;
 			projectDirPath = "";
@@ -1240,6 +1250,7 @@
 				EC0854192A4BFC4600E88389 /* CommentLink.swift in Sources */,
 				EC63734F2A791369000A03A3 /* OnboardingBigStep.swift in Sources */,
 				EC31882B2A94439D00CB3738 /* mediaExtractor.swift in Sources */,
+				EC50A5AA2A9EF59200DE8122 /* EnhancedVideoPlayer.swift in Sources */,
 				ECE2859F2A501CD4009CF9DD /* fetchMe.swift in Sources */,
 				ECFDEAD02A7F151500DF102D /* PostsInBoxView.swift in Sources */,
 				651D19C72A90B7D6003867A9 /* PostFontSettings.swift in Sources */,
@@ -1442,6 +1453,7 @@
 				ECE449812A689C8A00E2A3B7 /* subscribe.swift in Sources */,
 				EC3188322A94770700CB3738 /* GalleryThumb.swift in Sources */,
 				EC0854432A4D6A4800E88389 /* MasterButton.swift in Sources */,
+				ECAA23822A9EC34100874731 /* inlineSymbol.swift in Sources */,
 				EC7DBDF32A86C92200D7C123 /* PostSwipePanel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1761,6 +1773,14 @@
 				kind = branch;
 			};
 		};
+		EC50A5A62A9EEF8A00DE8122 /* XCRemoteSwiftPackageReference "Giffy" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/tfmart/Giffy.git";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
 		EC593AFE2A47AFC1002D6454 /* XCRemoteSwiftPackageReference "Defaults" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/sindresorhus/Defaults";
@@ -1877,6 +1897,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = EC3188072A91991900CB3738 /* XCRemoteSwiftPackageReference "AlertToast" */;
 			productName = AlertToast;
+		};
+		EC50A5A72A9EEF8A00DE8122 /* Giffy */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = EC50A5A62A9EEF8A00DE8122 /* XCRemoteSwiftPackageReference "Giffy" */;
+			productName = Giffy;
 		};
 		EC593AFF2A47AFC1002D6454 /* Defaults */ = {
 			isa = XCSwiftPackageProductDependency;

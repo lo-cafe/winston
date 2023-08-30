@@ -45,28 +45,18 @@ extension Subreddit {
     }
   }
   
-  func favoriteToggle(entity: CachedSub? = nil) async {
+  func favoriteToggle(entity: CachedSub? = nil) {
     if let favoritedStatus = data?.user_has_favorited, let name = data?.display_name {
       
-      let context = PersistenceController.shared.container.viewContext
-      if let entity = entity {
+      if let entity = entity, let context = entity.managedObjectContext {
         entity.user_has_favorited = !favoritedStatus
-        await MainActor.run {
-          withAnimation {
+          try? context.save()
+        
+        Task {
+          let result = await redditAPI.favorite(!favoritedStatus, subName: name)
+          if !result {
+            entity.user_has_favorited = favoritedStatus
             try? context.save()
-          }
-        }
-      }
-      
-      
-      let result = await redditAPI.favorite(!favoritedStatus, subName: name)
-      if !result {
-        if let entity = entity {
-          entity.user_has_favorited = favoritedStatus
-          await MainActor.run {
-            withAnimation {
-              try? context.save()
-            }
           }
         }
       }
@@ -75,47 +65,49 @@ extension Subreddit {
   
   
   
-  func subscribeToggle(optimistic: Bool = false) async {
+  func subscribeToggle(optimistic: Bool = false, _ cb: (()->())? = nil) {
+    let context = PersistenceController.shared.container.viewContext
+    
     if let data = data {
-      let context = PersistenceController.shared.container.viewContext
       let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "CachedSub")
-      guard let results = try? context.fetch(fetchRequest) as? [CachedSub] else { return }
+      guard let results = (context.performAndWait { return try? context.fetch(fetchRequest) as? [CachedSub] }) else { return }
       
-      let foundSub = results.first(where: { $0.name == self.data?.name })
-//      let likedButNotSubbed = Defaults[.likedButNotSubbed]
+      let foundSub = context.performAndWait { results.first(where: { $0.name == self.data?.name }) }
+      //      let likedButNotSubbed = Defaults[.likedButNotSubbed]
       if optimistic {
         if let foundSub = foundSub { // when unsubscribe
           context.delete(foundSub)
         } else {
-          _ = CachedSub(data: data, context: context)
-        }
-        await MainActor.run {
-          withAnimation(.default) {
-            try? context.save()
-          }
-        }
-      }
-      let result = await redditAPI.subscribe(!foundSub.isNil ? .unsub : .sub, subFullname: data.name)
-      if result {
-        if !optimistic {
-          if let foundSub = foundSub {
-            context.delete(foundSub)
-          } else {
+          context.performAndWait {
             _ = CachedSub(data: data, context: context)
           }
         }
-      } else {
-        if optimistic {
-          if let foundSub = foundSub {
-            context.delete(foundSub)
-          } else {
-            _ = CachedSub(data: data, context: context)
-          }
-        }
-      }
-      await MainActor.run {
-        withAnimation(.default) {
+        context.performAndWait {
           try? context.save()
+        }
+      }
+      Task {
+        let result = await redditAPI.subscribe(!foundSub.isNil ? .unsub : .sub, subFullname: data.name)
+        context.performAndWait {
+          if result {
+            if !optimistic {
+              if let foundSub = foundSub {
+                context.delete(foundSub)
+              } else {
+                _ = CachedSub(data: data, context: context)
+              }
+            }
+          } else {
+            if optimistic {
+              if let foundSub = foundSub {
+                context.delete(foundSub)
+              } else {
+                _ = CachedSub(data: data, context: context)
+              }
+            }
+          }
+          try? context.save()
+          cb?()
         }
       }
     }

@@ -56,13 +56,15 @@ extension RedditAPI {
         }
         let context = PersistenceController.shared.container.viewContext
         
-        cleanSubs(finalSubs).compactMap { $0.data }.forEach { x in
-          let newCachedSub = CachedSub(data: x, context: context)
-        }
-        await MainActor.run {
-          withAnimation {
-            try? context.save()
+        await context.perform(schedule: .enqueued) {
+          cleanSubs(finalSubs).compactMap { $0.data }.forEach { x in
+//            context.performAndWait {
+              _ = CachedSub(data: x, context: context)
+//            }
           }
+        }
+        await context.perform(schedule: .enqueued) {
+          try? context.save()
         }
         return nil
       case .failure(let error):
@@ -78,7 +80,7 @@ extension RedditAPI {
   struct FetchSubsPayload: Codable {
     var limit: Int
     var after: String?
-//    var show = "all"
+    //    var show = "all"
     var count = 0
   }
 }

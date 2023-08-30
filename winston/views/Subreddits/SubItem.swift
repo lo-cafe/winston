@@ -29,6 +29,15 @@ struct SubItem: View {
   @ObservedObject var sub: Subreddit
   var cachedSub: CachedSub? = nil
   @Default(.likedButNotSubbed) var likedButNotSubbed
+  
+  func favoriteToggle() {
+      if likedButNotSubbed.contains(sub) {
+        _ = sub.localFavoriteToggle()
+      } else {
+        sub.favoriteToggle(entity: cachedSub)
+      }
+  }
+  
   var body: some View {
     if let data = sub.data {
       let favorite = data.user_has_favorited ?? false
@@ -43,7 +52,7 @@ struct SubItem: View {
           
           Image(systemName: "star.fill")
             .foregroundColor((favorite || localFav) ? .blue : .gray.opacity(0.3))
-            .highPriorityGesture( TapGesture().onEnded { Task(priority: .background){ localFav ? _ = sub.localFavoriteToggle() : await sub.favoriteToggle(entity: cachedSub) } } )
+            .highPriorityGesture( TapGesture().onEnded(favoriteToggle) )
         }
         .contentShape(Rectangle())
       }

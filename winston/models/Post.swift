@@ -23,23 +23,28 @@ extension Post {
   }
   
   static func initMultiple(datas: [T], api: RedditAPI) -> [Post] {
-    let context = PersistenceController.shared.container.viewContext
+    let context = PersistenceController.shared.container.newBackgroundContext()
     let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "SeenPost")
-    if let results = try? context.fetch(fetchRequest) as? [SeenPost] {
+      
+    if let results = (context.performAndWait { try? context.fetch(fetchRequest) as? [SeenPost] }) {
       return datas.map { data in
-        let isSeen = results.contains(where: { $0.postID == data.id })
-        let newPost = Post.init(data: data, api: api)
-        newPost.data?.winstonSeen = isSeen
-        return newPost
+        return context.performAndWait {
+          let isSeen = results.contains(where: { $0.postID == data.id })
+          let newPost = Post.init(data: data, api: api)
+          newPost.data?.winstonSeen = isSeen
+          return newPost
+        }
       }
     }
     return []
   }
   
-  func toggleSeen(_ seen: Bool? = nil, optimistic: Bool = false) -> Void {
-    if data?.winstonSeen == seen { return }
+  func toggleSeen(_ seen: Bool? = nil, optimistic: Bool = false) async -> Void {
+    let context = PersistenceController.shared.container.viewContext
+    
+    if self.data?.winstonSeen == seen { return }
     if optimistic {
-      let prev = data?.winstonSeen ?? false
+      let prev = self.data?.winstonSeen ?? false
       let new = seen == nil ? !prev : seen
       DispatchQueue.main.async {
         withAnimation {
@@ -47,35 +52,32 @@ extension Post {
         }
       }
     }
-    let context = PersistenceController.shared.container.viewContext
     let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "SeenPost")
-    do {
-      let results = try context.fetch(fetchRequest) as! [SeenPost]
-      let foundPost = results.first(where: { obj in obj.postID == id })
-      
-      if let foundPost = foundPost {
-        if seen == nil || seen == false {
-          context.delete(foundPost)
-          if !optimistic {
-            data?.winstonSeen = false
+    if let results = (await context.perform(schedule: .enqueued) { try? context.fetch(fetchRequest) as? [SeenPost] }) {
+      await context.perform(schedule: .enqueued) {
+        let foundPost = results.first(where: { obj in obj.postID == self.id })
+        
+        
+        if let foundPost = foundPost {
+          if seen == nil || seen == false {
+            context.delete(foundPost)
+            if !optimistic {
+              self.data?.winstonSeen = false
+            }
           }
-        }
-      } else if seen == nil || seen == true {
-        let newSeenPost = SeenPost(context: context)
-        newSeenPost.postID = id
-        context.performAndWait {
+        } else if seen == nil || seen == true {
+          let newSeenPost = SeenPost(context: context)
+          newSeenPost.postID = self.id
           try? context.save()
-        }
-        if !optimistic {
-          DispatchQueue.main.async {
-            withAnimation {
-              self.data?.winstonSeen = true
+          if !optimistic {
+            DispatchQueue.main.async {
+              withAnimation {
+                self.data?.winstonSeen = true
+              }
             }
           }
         }
       }
-    } catch {
-      print("Error fetching data from Core Data: \(error)")
     }
   }
   
@@ -293,6 +295,7 @@ struct PostData: GenericRedditEntityDataType, Defaults.Serializable {
   let banned_by: String?
   let author_flair_type: String?
   var likes: Bool?
+  var stickied: Bool?
   let suggested_sort: String?
   let banned_at_utc: String?
   let view_count: String?
