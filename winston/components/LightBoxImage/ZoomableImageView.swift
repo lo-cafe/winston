@@ -13,11 +13,13 @@ import SwiftUI
 struct ZoomableScrollView<Content: View>: UIViewRepresentable {
   private var content: Content
   private var onTap: (()->())?
-  
-  init(onTap: (()->())? = nil, @ViewBuilder content: () -> Content) {
+  @Binding var isZoomed: Bool // Add the binding parameter
+
+  init(onTap: (()->())? = nil,isZoomed: Binding<Bool>, @ViewBuilder content: () -> Content) {
     self.content = content()
     //set up helper class
     self.onTap = onTap
+    self._isZoomed = isZoomed // Initialize the binding
   }
   
   
@@ -62,7 +64,7 @@ struct ZoomableScrollView<Content: View>: UIViewRepresentable {
   }
   
   func makeCoordinator() -> Coordinator {
-    return Coordinator(hostingController: UIHostingController(rootView: self.content), onTap: self.onTap)
+    return Coordinator(hostingController: UIHostingController(rootView: self.content), onTap: self.onTap, isZoomed: $isZoomed)
   }
   
   // MARK: - Coordinator
@@ -70,14 +72,21 @@ struct ZoomableScrollView<Content: View>: UIViewRepresentable {
   class Coordinator: NSObject, UIScrollViewDelegate {
     var hostingController: UIHostingController<Content>
     var onTap: (() -> ())?
+    @Binding var isZoomed: Bool // Use the binding here
+
     
-    init(hostingController: UIHostingController<Content>, onTap: (() -> ())? = nil) {
+    init(hostingController: UIHostingController<Content>, onTap: (() -> ())? = nil, isZoomed: Binding<Bool>) {
       self.hostingController = hostingController
       self.onTap = onTap
+      _isZoomed = isZoomed
     }
     
     func viewForZooming(in scrollView: UIScrollView) -> UIView? {
       return hostingController.view
+    }
+    
+    func scrollViewDidZoom(_ scrollView: UIScrollView) {
+      isZoomed = scrollView.zoomScale > scrollView.minimumZoomScale
     }
     
     @objc func handleTap(_ gestureRecognizer: UITapGestureRecognizer) {

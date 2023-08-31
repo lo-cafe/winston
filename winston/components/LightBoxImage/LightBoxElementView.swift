@@ -15,8 +15,9 @@ struct LightBoxElementView: View {
   var onTap: (()->())?
   var doLiveText: Bool = false
   @State private var altSize: CGSize = .zero
+  @Binding var isZoomed: Bool
   var body: some View {
-    ZoomableScrollView(onTap: onTap){
+    ZoomableScrollView(onTap: onTap, isZoomed: $isZoomed){
       URLImage(url: el.url, doLiveText: doLiveText)
       .background(
         el.size != .zero
@@ -24,7 +25,9 @@ struct LightBoxElementView: View {
         : GeometryReader { geo in
           Color.clear
             .onAppear { altSize = geo.size }
-            .onChange(of: geo.size) { newValue in altSize = newValue }
+            .onChange(of: geo.size) {
+              newValue in altSize = newValue
+            }
         }
       )
     }
