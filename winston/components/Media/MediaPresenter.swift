@@ -8,9 +8,13 @@
 import SwiftUI
 import YouTubePlayerKit
 import Defaults
+import BetterSafariView
 
 struct OnlyURL: View {
   @Default(.postLinkTitleSize) var postLinkTitleSize
+  @EnvironmentObject private var router: Router
+  @State private var presentingSafariView: Bool = false
+  @State private var safariViewURL: URL? = nil
   var url: URL
   var body: some View {
     HStack {
@@ -26,9 +30,21 @@ struct OnlyURL: View {
     .foregroundColor(.white)
     .highPriorityGesture(TapGesture().onEnded {
       if let newURL = URL(string: url.absoluteString.replacingOccurrences(of: "https://reddit.com/", with: "winstonapp://")) {
-        openURLInWebView(url: newURL)
+        safariViewURL = newURL
+        presentingSafariView.toggle()
       }
     })
+    .safariView(isPresented: $presentingSafariView) {
+      SafariView(
+        url: safariViewURL ?? url,
+        configuration: SafariView.Configuration(
+          entersReaderIfAvailable: false,
+          barCollapsingEnabled: true
+        )
+      )
+      .preferredControlAccentColor(.accentColor)
+      .dismissButtonStyle(.done)
+    }
   }
 }
 
