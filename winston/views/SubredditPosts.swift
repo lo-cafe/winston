@@ -31,6 +31,7 @@ struct SubredditPosts: View {
   @EnvironmentObject private var redditAPI: RedditAPI
   @EnvironmentObject private var routerProxy: RouterProxy
   @EnvironmentObject private var router: Router
+  @State private var pageNumber = 1
 
   func asyncFetch(force: Bool = false, loadMore: Bool = false) async {
     if (subreddit.data == nil || force) && !feedsAndSuch.contains(subreddit.id) {
@@ -55,6 +56,7 @@ struct SubredditPosts: View {
         
         if isPaginatedFeed {
           paginatedIsLoading = false
+          pageNumber += 1
         }
       }
       Task(priority: .background) {
@@ -117,14 +119,14 @@ struct SubredditPosts: View {
                 .progressViewStyle(.circular)
                 .frame(maxWidth: .infinity, minHeight: posts.count > 0 ? 100 : UIScreen.screenHeight - 200 )
                 .id("post-loading")
-            } else {
+            } else if !loading {
               Button(action: {
                 paginatedIsLoading = true
                 fetch(loadMore: true)
               }) {
                 HStack {
                   Spacer()
-                  Text(paginatedIsLoading ? "Just a sec..." : "Load More")
+                  Text(paginatedIsLoading ? "Just a sec..." : "Load More - Page \(pageNumber)")
                     .font(.headline)
                     .foregroundColor(.blue)
                   Spacer()
@@ -136,6 +138,29 @@ struct SubredditPosts: View {
               .listRowSeparator(.hidden)
               .id("load-more-button")
             }
+          } else if !loading && !paginatedIsLoading {
+            ZStack(alignment: .center) {
+              Image("winstonEndOfFeed")
+                .resizable()
+                .scaledToFill()
+              
+              VStack(alignment: .center, spacing: 8) {
+                Text("Wow. You reached the bottom of the feed.")
+                  .font(.headline)
+                  .fontWeight(.bold)
+                  .foregroundColor(.white)
+                  .multilineTextAlignment(.center)
+                  .padding(.horizontal, 16)
+                  .padding(.top, 16)
+                
+                Text("But don't worry, there's always more to explore!")
+                  .font(.subheadline)
+                  .foregroundColor(.white)
+                  .multilineTextAlignment(.center)
+                  .padding(.horizontal, 16)
+              }
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
           }
         }
         .listRowSeparator(.hidden)
@@ -216,6 +241,7 @@ struct SubredditPosts: View {
         loading = true
         posts.removeAll()
         loadedPosts.removeAll()
+        pageNumber = 1
       }
       fetch()
       Defaults[.preferredSort] = sort
@@ -223,6 +249,7 @@ struct SubredditPosts: View {
     .searchable(text: $searchText, prompt: "Search r/\(subreddit.data?.display_name ?? subreddit.id)")
     .refreshable {
       loadedPosts.removeAll()
+      pageNumber = 1
       await asyncFetch(force: true)
     }
     .navigationTitle("\(feedsAndSuch.contains(subreddit.id) ? subreddit.id.capitalized : "r/\(subreddit.data?.display_name ?? subreddit.id)")")
