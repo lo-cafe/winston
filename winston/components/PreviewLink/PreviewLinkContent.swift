@@ -67,7 +67,6 @@ struct PreviewLinkContent: View {
   @StateObject var viewModel: PreviewViewModel
   var url: URL
   private let height: CGFloat = 88
-  @Environment(\.openURL) var openURL
   
   var body: some View {
     HStack(spacing: 16) {
@@ -133,7 +132,7 @@ struct PreviewLinkContent: View {
     }
     .highPriorityGesture(TapGesture().onEnded {
       if let newURL = URL(string: url.absoluteString.replacingOccurrences(of: "https://reddit.com/", with: "winstonapp://")) {
-        openURL(newURL)
+        openURLInWebView(url: newURL)
       }
     })
   }

@@ -12,7 +12,6 @@ import Defaults
 struct OnlyURL: View {
   @Default(.postLinkTitleSize) var postLinkTitleSize
   var url: URL
-  @Environment(\.openURL) private var openURL
   var body: some View {
     HStack {
       Image(systemName: "link")
@@ -27,7 +26,7 @@ struct OnlyURL: View {
     .foregroundColor(.white)
     .highPriorityGesture(TapGesture().onEnded {
       if let newURL = URL(string: url.absoluteString.replacingOccurrences(of: "https://reddit.com/", with: "winstonapp://")) {
-        openURL(newURL)
+        openURLInWebView(url: newURL)
       }
     })
   }
