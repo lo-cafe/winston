@@ -12,6 +12,7 @@ import OpenGraph
 import SkeletonUI
 import YouTubePlayerKit
 import Defaults
+import BetterSafariView
 
 class PreviewLinkCache {
   static var shared = PreviewLinkCache()
@@ -65,6 +66,11 @@ final class PreviewViewModel: ObservableObject {
 struct PreviewLinkContent: View {
   var compact: Bool
   @StateObject var viewModel: PreviewViewModel
+  @EnvironmentObject private var router: Router
+  
+  @State private var presentingSafariView: Bool = false
+  @State private var safariViewURL: URL? = nil
+  
   var url: URL
   private let height: CGFloat = 88
   
@@ -132,8 +138,20 @@ struct PreviewLinkContent: View {
     }
     .highPriorityGesture(TapGesture().onEnded {
       if let newURL = URL(string: url.absoluteString.replacingOccurrences(of: "https://reddit.com/", with: "winstonapp://")) {
-        openURLInWebView(url: newURL)
+        presentingSafariView.toggle()
+        safariViewURL = newURL
       }
     })
+    .safariView(isPresented: $presentingSafariView) {
+        SafariView(
+          url: safariViewURL ?? url,
+          configuration: SafariView.Configuration(
+            entersReaderIfAvailable: false,
+            barCollapsingEnabled: true
+          )
+        )
+        .preferredControlAccentColor(.accentColor)
+        .dismissButtonStyle(.done)
+    }
   }
 }
