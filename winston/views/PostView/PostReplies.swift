@@ -25,9 +25,10 @@ struct PostReplies: View {
   @State private var loading = true
   
   @Binding var nextCommentTracker: String
+  @State private var screenHeight: CGFloat = UIScreen.main.bounds.size.height
   @State private var screenTopOffset: CGFloat = 0
   @State private var commentPositions: [Int: CGFloat] = [:]
-    
+  
   func asyncFetch(_ full: Bool, _ altIgnoreSpecificComment: Bool? = nil) async {
     if let result = await post.refreshPost(commentID: (altIgnoreSpecificComment ?? ignoreSpecificComment) ? nil : highlightID, sort: sort, after: nil, subreddit: subreddit.data?.display_name ?? subreddit.id, full: full), let newComments = result.0 {
       Task(priority: .background) {
@@ -51,18 +52,12 @@ struct PostReplies: View {
   
   func determineNextComment() {
     let commentsData = comments.data
-    let screenHeight = UIScreen.main.bounds.size.height
     
-    // Check if commentPositions contains only one element and its pixel value is > 50% of the screen height
-    if commentPositions.count == 1, let solePosition = commentPositions.first, solePosition.value > (screenHeight / 2) {
-      nextCommentTracker = preferenceShowCommentsCards ? "\(commentsData[solePosition.key].id)-top-decoration" : "\(commentsData[solePosition.key].id)-top-spacer"
-    } else {
-      // If commentPositions doesn't meet the criteria, find the closest index as before
-      if let closestIndex = commentPositions.min(by: { abs($0.value - screenTopOffset) < abs($1.value - screenTopOffset) })?.key {
-        if closestIndex < commentsData.count - 1 {
-          let tempIndex = closestIndex + 1
-          nextCommentTracker = preferenceShowCommentsCards ? "\(commentsData[tempIndex].id)-top-decoration" : "\(commentsData[tempIndex].id)-top-spacer"
-        }
+    // If commentPositions doesn't meet the criteria, find the closest index as before
+    if let closestIndex = commentPositions.min(by: { abs($0.value - screenTopOffset) < abs($1.value - screenTopOffset) })?.key {
+      if closestIndex < commentsData.count - 1 {
+        let tempIndex = closestIndex + 1
+        nextCommentTracker = preferenceShowCommentsCards ? "\(commentsData[tempIndex].id)-top-decoration" : "\(commentsData[tempIndex].id)-top-spacer"
       }
     }
   }
@@ -91,10 +86,8 @@ struct PostReplies: View {
               CommentLink(highlightID: ignoreSpecificComment ? nil : highlightID, post: post, subreddit: subreddit, postFullname: postFullname, parentElement: .post(comments), comment: comment)
                 .background(
                   GeometryReader { geometry -> Color in
-                    let minY = geometry.frame(in: .global).minY
-                    
                     DispatchQueue.main.async {
-                      commentPositions[i] = minY
+                      commentPositions[i] = geometry.frame(in: .global).origin.y
                       determineNextComment()
                     }
                     
@@ -151,7 +144,7 @@ struct PostReplies: View {
         }
         .onAppear {
           DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
-            screenTopOffset = UIScreen.main.bounds.midY * 0.35
+            screenTopOffset = screenHeight * 0.2
             determineNextComment()
           }
         }
