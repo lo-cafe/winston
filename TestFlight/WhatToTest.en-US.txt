@@ -6,4 +6,6 @@
 - Increased image double tap delay tolerance
 - Fixed swipe gestures working full width (which caused it to mix with back gesture sometimes)
 - Fixed unaligned indent arrows in comments on flat view
+- Added user view infinite scrolling (thanks @ejbills)
+- Fix duplicate posts showing up in the feed (thanks @ejbills)
 - Design fixes
