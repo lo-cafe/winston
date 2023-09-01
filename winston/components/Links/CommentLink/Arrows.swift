@@ -34,7 +34,6 @@ enum ArrowKind {
 struct Arrows: View {
   var kind: ArrowKind
   var color: Color = ArrowColorPalette.monochrome.rawVal.first!
-  var color: Color = ArrowColorPalette.monochrome.rawVal.first!
 
   var body: some View {
       Group {
@@ -42,7 +41,6 @@ struct Arrows: View {
         case .curve:
           CurveShape()
             .stroke(color, style: StrokeStyle(lineWidth: 2, lineCap: .round))
-//            .padding(.top, -8)
         case .straight:
           StraightShape()
             .stroke(color, style: StrokeStyle(lineWidth: 2, lineCap: .round))

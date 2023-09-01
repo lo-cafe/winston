@@ -14,6 +14,10 @@
 		652C7C022A976279001DCD57 /* generateColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 652C7C012A976279001DCD57 /* generateColors.swift */; };
 		652C7C022A976279001DCD57 /* generateColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 652C7C012A976279001DCD57 /* generateColors.swift */; };
 		651D19C72A90B7D6003867A9 /* PostFontSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 651D19C62A90B7D6003867A9 /* PostFontSettings.swift */; };
+		651D19C72A90B7D6003867A9 /* postFontSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 651D19C62A90B7D6003867A9 /* postFontSettings.swift */; };
+		652C7C022A976279001DCD57 /* generateColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 652C7C012A976279001DCD57 /* generateColors.swift */; };
+		652C7C022A976279001DCD57 /* generateColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 652C7C012A976279001DCD57 /* generateColors.swift */; };
+		651D19C72A90B7D6003867A9 /* PostFontSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 651D19C62A90B7D6003867A9 /* PostFontSettings.swift */; };
 		651D19C72A90B7D6003867A9 /* PostFontSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 651D19C62A90B7D6003867A9 /* PostFontSettings.swift */; };
 		651D19C72A90B7D6003867A9 /* postFontSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 651D19C62A90B7D6003867A9 /* postFontSettings.swift */; };
 		652C7C022A976279001DCD57 /* generateColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 652C7C012A976279001DCD57 /* generateColors.swift */; };
@@ -28,6 +32,8 @@
 		659F68022A84E32300989300 /* VotesCluster.swift in Sources */ = {isa = PBXBuildFile; fileRef = 659F68012A84E32300989300 /* VotesCluster.swift */; };
 		659FDEA82A87798300103414 /* VoteButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 659FDEA72A87798300103414 /* VoteButton.swift */; };
 		65AA535D2A8BB27900275299 /* FAQPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65AA535C2A8BB27900275299 /* FAQPanel.swift */; };
+		65EEAC592A988CAE00B0D607 /* ThemeSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65EEAC582A988CAE00B0D607 /* ThemeSettings.swift */; };
+		65EEAC5C2A98980F00B0D607 /* AllujaHaptics in Frameworks */ = {isa = PBXBuildFile; productRef = 65EEAC5B2A98980F00B0D607 /* AllujaHaptics */; };
 		65EEAC592A988CAE00B0D607 /* ThemeSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65EEAC582A988CAE00B0D607 /* ThemeSettings.swift */; };
 		65EEAC5C2A98980F00B0D607 /* AllujaHaptics in Frameworks */ = {isa = PBXBuildFile; productRef = 65EEAC5B2A98980F00B0D607 /* AllujaHaptics */; };
 		65EEAC5C2A98980F00B0D607 /* AllujaHaptics in Frameworks */ = {isa = PBXBuildFile; productRef = 65EEAC5B2A98980F00B0D607 /* AllujaHaptics */; };
@@ -307,6 +313,10 @@
 		652C7C012A976279001DCD57 /* generateColors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = generateColors.swift; sourceTree = "<group>"; };
 		652C7C012A976279001DCD57 /* generateColors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = generateColors.swift; sourceTree = "<group>"; };
 		651D19C62A90B7D6003867A9 /* PostFontSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostFontSettings.swift; sourceTree = "<group>"; };
+		651D19C62A90B7D6003867A9 /* postFontSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = postFontSettings.swift; sourceTree = "<group>"; };
+		652C7C012A976279001DCD57 /* generateColors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = generateColors.swift; sourceTree = "<group>"; };
+		652C7C012A976279001DCD57 /* generateColors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = generateColors.swift; sourceTree = "<group>"; };
+		651D19C62A90B7D6003867A9 /* PostFontSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostFontSettings.swift; sourceTree = "<group>"; };
 		651D19C62A90B7D6003867A9 /* PostFontSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostFontSettings.swift; sourceTree = "<group>"; };
 		651D19C62A90B7D6003867A9 /* postFontSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = postFontSettings.swift; sourceTree = "<group>"; };
 		652C7C012A976279001DCD57 /* generateColors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = generateColors.swift; sourceTree = "<group>"; };
@@ -321,6 +331,7 @@
 		659F68012A84E32300989300 /* VotesCluster.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VotesCluster.swift; sourceTree = "<group>"; };
 		659FDEA72A87798300103414 /* VoteButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoteButton.swift; sourceTree = "<group>"; };
 		65AA535C2A8BB27900275299 /* FAQPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FAQPanel.swift; sourceTree = "<group>"; };
+		65EEAC582A988CAE00B0D607 /* ThemeSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeSettings.swift; sourceTree = "<group>"; };
 		65EEAC582A988CAE00B0D607 /* ThemeSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeSettings.swift; sourceTree = "<group>"; };
 		65EEAC582A988CAE00B0D607 /* ThemeSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeSettings.swift; sourceTree = "<group>"; };
 		65BB79002A99FB2600EB83D5 /* LightBoxElementView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightBoxElementView.swift; sourceTree = "<group>"; };
