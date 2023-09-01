@@ -134,6 +134,8 @@ extension Defaults.Keys {
   static let postAccessoryBackgroundColor = Key<Color>("postAccessoryBackgroundColor", default: .blue)
   static let arrowDividerColorPalette = Key<ArrowColorPalette>("arrowDividerColorPalette", default: ArrowColorPalette.monochrome)
   static let winstonCommentAccentStyle = Key<Bool>("winstonCommentAccentStyle", default: true)
+
+  static let showTipJarModal = Key<Bool>("showTipJarModal", default: true)
 }
 
 extension UIScreen {

@@ -57,10 +57,21 @@ struct Settings: View {
             Button {
               openURL(URL(string: "https://patreon.com/user?u=93745105")!)
             } label: {
-              Label("Support our work!", systemImage: "heart.fill")
+              Label("Donate monthly", systemImage: "heart.fill")
             }
-           
-            
+            Button {
+              openURL(URL(string: "https://ko-fi.com/locafe")!)
+            } label: {
+              HStack {
+                Image("jar")
+                  .resizable()
+                  .scaledToFit()
+                  .frame(width: 28, height: 16)
+                  .padding(.trailing, 9)
+                Text("Tip jar")
+              }
+            }
+
           }
         }
       }
