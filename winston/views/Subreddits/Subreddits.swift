@@ -120,31 +120,11 @@ struct Subreddits: View {
                     deleteFromList(at: i, letter: letter)
                   })
                 }
-                .onDelete(perform: { i in deleteFromList(at: i, letter: letter)})
               }
             }
             
           }
-          
-          Section("Favorites") {
-            ForEach(favoritesArr, id: \.self.id) { sub in
-              SubItem(sub: sub)
-            }
-            .onDelete(perform: deleteFromFavorites)
-          }
-          ForEach(availableLetters, id: \.self) { letter in
-            if let subs = subsDictData[letter] {
-              Section(header: Text(letter)) {
-                ForEach(subs) { sub in
-                  SubItem(sub: sub)
-                    .id("\(sub.id)-main")
-                }
-                .onDelete(perform: { i in deleteFromList(at: i, letter: letter)})
-              }
-            }
-          }
-          
-                  }
+        }
         .scrollIndicators(.hidden)
         .listStyle(.sidebar)
         .scrollDismissesKeyboard(.immediately)
@@ -178,7 +158,7 @@ struct Subreddits: View {
             }
 
             _ = await redditAPI.fetchSubs()
-            _ = await redditAPI.fetchMyMultis()
+//            _ = await redditAPI.fetchMyMultis()
             withAnimation {
               loaded = true
             }
