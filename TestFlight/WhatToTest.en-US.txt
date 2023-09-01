@@ -1,2 +1,3 @@
 - Fixes crash because of infinite upvotes count
 - Fixes Reddit links posts not appearing sometimes
+- Added tips jar

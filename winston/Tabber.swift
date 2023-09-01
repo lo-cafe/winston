@@ -55,8 +55,9 @@ struct Tabber: View {
     .settings: TabPayload(),
   ]
   @Default(.postsInBox) var postsInBox
-  @Default(.showTestersCelebrationModal) var showTestersCelebrationModal
   @Default(.showUsernameInTabBar) var showUsernameInTabBar
+  @Default(.showTestersCelebrationModal) var showTestersCelebrationModal
+  @Default(.showTipJarModal) var showTipJarModal
   
   var body: some View {
     let tabHeight = (tabBarHeight ?? 0) - getSafeArea().bottom
@@ -254,6 +255,12 @@ struct Tabber: View {
       Text("Something went wrong, but winston's is a fast cat, got the bug in his fangs and brought it to you. What do you wanna do?")
     }
     .onAppear {
+      if showTestersCelebrationModal {
+        showTipJarModal = false
+      }
+      if !showTestersCelebrationModal {
+        showTipJarModal
+      }
       if Defaults[.multis].count != 0 || Defaults[.subreddits].count != 0 {
         Defaults[.multis] = []
         Defaults[.subreddits] = []
@@ -296,6 +303,9 @@ struct Tabber: View {
     }
     .sheet(isPresented: $showTestersCelebrationModal) {
       TestersCelebration()
+    }
+    .sheet(isPresented: $showTipJarModal) {
+      TipJar()
     }
     .sheet(isPresented: $credModalOpen) {
       Onboarding(open: $credModalOpen)
