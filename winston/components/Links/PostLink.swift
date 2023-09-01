@@ -260,11 +260,6 @@ struct PostLink: View, Equatable {
           .allowsHitTesting(false)
         , alignment: .topTrailing
       )
-      .padding(.horizontal, !secondary && preferenceShowPostsCards ? cardedPostLinksOuterHPadding : 0 )
-      .padding(.vertical, !secondary && preferenceShowPostsCards ? cardedPostLinksOuterVPadding : 0)
-      .compositingGroup()
-      .opacity(fadeReadPosts && seen ? 0.6 : 1)
-      .contentShape(Rectangle())
       .swipyUI(
         onTap: {
           router.path.append(PostViewPayload(post: post, sub: feedsAndSuch.contains(sub.id) ? sub : sub))
@@ -272,6 +267,11 @@ struct PostLink: View, Equatable {
         actionsSet: postSwipeActions,
         entity: post
       )
+      .padding(.horizontal, !secondary && preferenceShowPostsCards ? cardedPostLinksOuterHPadding : 0 )
+      .padding(.vertical, !secondary && preferenceShowPostsCards ? cardedPostLinksOuterVPadding : 0)
+      .compositingGroup()
+      .opacity(fadeReadPosts && seen ? 0.6 : 1)
+      .contentShape(Rectangle())
       .contextMenu(menuItems: {
         
         if let perma = URL(string: "https://reddit.com\(data.permalink.escape.urlEncoded)") {

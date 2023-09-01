@@ -9,7 +9,7 @@ import Foundation
 import UIKit
 
 class UIShortTapGestureRecognizer: UITapGestureRecognizer {
-  var maximumTapLength: Double = 0.25
+  var maximumTapLength: Double = 0.35
   
   override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent) {
     super.touchesBegan(touches, with: event)

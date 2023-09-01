@@ -9,6 +9,7 @@ import Foundation
 import SwiftUI
 import Defaults
 
+
 struct SwipeUI<T: GenericRedditEntityDataType>: ViewModifier {
   private enum TriggeredAction: Int {
     case leftFirst = 1
@@ -43,7 +44,6 @@ struct SwipeUI<T: GenericRedditEntityDataType>: ViewModifier {
   
   private let firstActionThreshold: CGFloat = 75
   private let secondActionThreshold: CGFloat = 175
-  private let minimumDragDistance: CGFloat = 30
   
   func infoRight() -> (SwipeActionItem, SwipeActionItem, SwipeActionItem, Bool)? {
     let rightFirstNil = actionsSet.rightFirst.id == "none"
@@ -125,11 +125,11 @@ struct SwipeUI<T: GenericRedditEntityDataType>: ViewModifier {
       .gesture(
         enableSwipeAnywhere
         ? nil
-        : DragGesture(minimumDistance: minimumDragDistance, coordinateSpace: .local)
+        : DragGesture(minimumDistance: 0, coordinateSpace: .local)
           .onChanged { val in
             let x = val.translation.width
             if offset == nil && x != 0 {
-              offset = x < 0 ? -minimumDragDistance : minimumDragDistance
+              offset = x
             }
             if let offset = offset {
               var transaction = Transaction()

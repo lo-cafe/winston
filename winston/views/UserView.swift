@@ -14,22 +14,56 @@ import NukeUI
 
 struct UserView: View {
   @StateObject var user: User
-  @State private var loading = true
   @State private var lastActivities: [Either<PostData, CommentData>]?
   @State private var contentWidth: CGFloat = 0
+  @State private var loadingOverview = true
+  @State private var lastItemId: String? = nil
   
   func refresh() async {
     await user.refetchUser()
     if let data = await user.refetchOverview() {
       await MainActor.run {
         withAnimation {
+          loadingOverview = false
           lastActivities = data
         }
       }
+      
       await user.redditAPI.updateAvatarURLCacheFromOverview(subjects: data)
+      
+      if let lastItem = data.last {
+        lastItemId = getItemId(for: lastItem)
+      }
     }
   }
   
+  func loadNextData() {
+    Task {
+      if let lastId = lastItemId, let overviewData = await user.refetchOverview(lastId) {
+        await MainActor.run {
+          withAnimation {
+            lastActivities?.append(contentsOf: overviewData)
+          }
+        }
+
+        if let lastItem = overviewData.last {
+          lastItemId = getItemId(for: lastItem)
+        }
+      }
+    }
+  }
+  
+  func getItemId(for item: Either<PostData, CommentData>) -> String {
+    // As per API doc: https://www.reddit.com/dev/api/#GET_user_{username}_overview
+    switch item {
+      case .first(let post):
+      return "\(Post.prefix)_\(post.id)"
+        
+      case .second(let comment):
+      return "\(Comment.prefix)_\(comment.id)"
+    }
+  }
+
   var body: some View {
     List {
       if let data = user.data {
@@ -92,7 +126,7 @@ struct UserView: View {
             .padding(.horizontal, 16)
           
           if let lastActivities = lastActivities {
-            ForEach(lastActivities, id: \.self.hashValue) { item in
+            ForEach(Array(lastActivities.enumerated()), id: \.self.element.hashValue) { i, item in
               VStack(spacing: 0) {
                 switch item {
                 case .first(let post):
@@ -109,7 +143,15 @@ struct UserView: View {
                   .background(RR(20, .listBG))
                 }
               }
+              .onAppear { if lastActivities.count > 0 && (Int(Double(lastActivities.count) * 0.75) == i) { loadNextData() }}
             }
+          }
+          
+          if !lastItemId.isNil || loadingOverview {
+            ProgressView()
+              .progressViewStyle(.circular)
+              .frame(maxWidth: .infinity, minHeight: 100 )
+              .id("post-loading")
           }
         }
         .listRowInsets(EdgeInsets(top: 8, leading: 8, bottom: 8, trailing: 8))
@@ -117,8 +159,8 @@ struct UserView: View {
         .listRowBackground(Color.clear)
         .transition(.opacity)
       }
-      
     }
+    .loader(user.data.isNil)
     .background(Color(UIColor.systemGroupedBackground))
     .scrollContentBackground(.hidden)
     .listStyle(.plain)

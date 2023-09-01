@@ -19,19 +19,14 @@ extension User {
     self.init(id: id, api: api, typePrefix: "\(User.prefix)_")
   }
   
-  func refetchOverview() async -> [Either<PostData, CommentData>]? {
-//    await MainActor.run {
-//      self.loading = true
-//    }
-    if let name = data?.name, let data = await redditAPI.fetchUserOverview(name) {
-      await MainActor.run {
-        self.loading = false
+  func refetchOverview(_ after: String? = nil) async -> [Either<PostData, CommentData>]? {
+    if let name = data?.name, let overviewData = await redditAPI.fetchUserOverview(name, after) {
+        await MainActor.run {
+          self.loading = false
+        }
+        return overviewData
       }
-      return data
-    }
-//    await MainActor.run {
-//      self.loading = false
-//    }
+
     return nil
   }
   

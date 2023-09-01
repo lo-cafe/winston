@@ -69,6 +69,32 @@ extension CachedSub {
     newCachedSub.uuid = x.name
     newCachedSub.subscribers = Double(x.subscribers ?? 0)
   }
+  
+  func update(data x: SubredditData) {
+    self.allow_galleries = x.allow_galleries ?? false
+    self.allow_images = x.allow_images ?? false
+    self.allow_videos = x.allow_videos ?? false
+    self.over_18 = x.over_18 ?? false
+    self.restrict_commenting = x.restrict_commenting ?? false
+    self.user_has_favorited = x.user_has_favorited ?? false
+    self.user_is_banned = x.user_is_banned ?? false
+    self.user_is_moderator = x.user_is_moderator ?? false
+    self.user_is_subscriber = x.user_is_subscriber ?? false
+    self.banner_background_color = x.banner_background_color
+    self.banner_background_image = x.banner_background_image
+    self.banner_img = x.banner_img
+    self.community_icon = x.community_icon
+    self.display_name = x.display_name
+    self.header_img = x.header_img
+    self.icon_img = x.icon_img
+    self.key_color = x.key_color
+    self.name = x.name
+    self.primary_color = x.primary_color
+    self.title = x.title
+    self.url = x.url
+    self.user_flair_background_color = x.user_flair_background_color
+    self.subscribers = Double(x.subscribers ?? 0)
+  }
 
 }
 
