@@ -102,7 +102,7 @@ struct SubredditPosts: View {
           if !lastPostAfter.isNil {
             ProgressView()
               .progressViewStyle(.circular)
-              .frame(maxWidth: .infinity, minHeight: UIScreen.screenHeight - 200 )
+              .frame(maxWidth: .infinity, minHeight: posts.count > 0 ? 100 : UIScreen.screenHeight - 200 )
               .id("post-loading")
           }
         }

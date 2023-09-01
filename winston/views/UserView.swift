@@ -14,21 +14,18 @@ import NukeUI
 
 struct UserView: View {
   @StateObject var user: User
-  @State private var loading = true
   @State private var lastActivities: [Either<PostData, CommentData>]?
   @State private var contentWidth: CGFloat = 0
+  @State private var loadingOverview = true
   @State private var lastItemId: String? = nil
-
   
   func refresh() async {
-    loading = true
-    
     await user.refetchUser()
     if let data = await user.refetchOverview() {
       await MainActor.run {
         withAnimation {
+          loadingOverview = false
           lastActivities = data
-          loading = false
         }
       }
       
@@ -41,13 +38,11 @@ struct UserView: View {
   }
   
   func loadNextData() {
-    loading = true
     Task {
       if let lastId = lastItemId, let overviewData = await user.refetchOverview(lastId) {
         await MainActor.run {
           withAnimation {
             lastActivities?.append(contentsOf: overviewData)
-            loading = false
           }
         }
 
@@ -148,8 +143,15 @@ struct UserView: View {
                   .background(RR(20, .listBG))
                 }
               }
-              .onAppear { if lastActivities.count > 0 && (Int(Double(lastActivities.count) * 0.75) == i) && !loading { loadNextData() }}
+              .onAppear { if lastActivities.count > 0 && (Int(Double(lastActivities.count) * 0.75) == i) { loadNextData() }}
             }
+          }
+          
+          if !lastItemId.isNil || loadingOverview {
+            ProgressView()
+              .progressViewStyle(.circular)
+              .frame(maxWidth: .infinity, minHeight: 100 )
+              .id("post-loading")
           }
         }
         .listRowInsets(EdgeInsets(top: 8, leading: 8, bottom: 8, trailing: 8))
@@ -158,7 +160,7 @@ struct UserView: View {
         .transition(.opacity)
       }
     }
-    .loader(loading)
+    .loader(user.data.isNil)
     .background(Color(UIColor.systemGroupedBackground))
     .scrollContentBackground(.hidden)
     .listStyle(.plain)
