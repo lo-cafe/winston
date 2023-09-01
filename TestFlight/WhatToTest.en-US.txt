@@ -9,3 +9,6 @@
 - Added Haptic Feedback strength controls in Accessibility Settings
 - Fixed Show Self Text Thubmnail option
 - Clicking the Subreddit Name/Icon in the subreddit details view takes you to the subreddit feed
+- Fixes crash because of infinite upvotes count
+- Fixes Reddit links posts not appearing sometimes
+- Added tips jar

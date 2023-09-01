@@ -122,6 +122,19 @@ extension Defaults.Keys {
   static let hapticFeedbackOnLPM = Key<Bool>("hapticFeedbackOnLPM", default: true)
   
   static let showTestersCelebrationModal = Key<Bool>("showTestersCelebrationModal", default: true)
+  
+  //Color options
+  static let opUsernameColor = Key<Color>("opUsernameColor", default: .green)
+  
+  static let commentUsernameColor = Key<Color>("commentUsernameColor", default: .primary)
+  static let customCommentUsernameColor = Key<Bool>("customCommentUsernameColor", default: false)
+  static let customPostAccessoryTextColor = Key<Bool>("customPostAccessoryTextColor", default: false)
+  
+  static let postAccessoryColor = Key<Color>("postAccessoryColor", default: .primary)
+  static let postAccessoryBackgroundColor = Key<Color>("postAccessoryBackgroundColor", default: .blue)
+  static let arrowDividerColorPalette = Key<ArrowColorPalette>("arrowDividerColorPalette", default: ArrowColorPalette.monochrome)
+  static let winstonCommentAccentStyle = Key<Bool>("winstonCommentAccentStyle", default: true)
+
   static let showTipJarModal = Key<Bool>("showTipJarModal", default: true)
   
   //Color options
