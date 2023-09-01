@@ -4,3 +4,4 @@
 - New look for load more comments button
 - Fixed ANNOYING jumpy behavior of swipe actions
 - Increased image double tap delay tolerance
+- Fixed swipe gestures working full width (which caused it to mix with back gesture sometimes)
