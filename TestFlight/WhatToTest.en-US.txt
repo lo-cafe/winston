@@ -2,3 +2,4 @@
 - Fixes Reddit links posts not appearing sometimes
 - Added tips jar
 - New look for load more comments button
+- Fixed ANNOYING jumpy behavior of swipe actions
