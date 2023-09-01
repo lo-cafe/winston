@@ -26,7 +26,8 @@ struct PostView: View {
   @EnvironmentObject private var redditAPI: RedditAPI
   @EnvironmentObject private var router: Router
   @State var update = false
-
+  @State private var nextCommentTracker: String = ""
+  
   func asyncFetch(_ full: Bool = true) async {
     if full {
         update.toggle()
@@ -57,8 +58,7 @@ struct PostView: View {
           }
           .listRowBackground(Color.clear)
           
-          PostReplies(update: update, post: post, subreddit: subreddit, ignoreSpecificComment: ignoreSpecificComment, highlightID: highlightID, sort: sort, proxy: proxy)
-          
+          PostReplies(update: update, post: post, subreddit: subreddit, ignoreSpecificComment: ignoreSpecificComment, highlightID: highlightID, sort: sort, proxy: proxy, nextCommentTracker: $nextCommentTracker)
           
           if !ignoreSpecificComment && highlightID != nil {
             Section {
@@ -93,9 +93,12 @@ struct PostView: View {
       .refreshable {
         await asyncFetch(true)
       }
-      .overlay(
-        PostFloatingPill(post: post, subreddit: subreddit)
-        , alignment: .bottomTrailing)
+      .overlay(alignment: .bottomTrailing) {
+        // Floating button
+        HStack {
+          PostFloatingPill(post: post, subreddit: subreddit, proxy: proxy, nextCommentTracker: $nextCommentTracker)
+        }
+      }
       .navigationBarTitle("\(post.data?.num_comments ?? 0) comments", displayMode: .inline)
       .navigationBarItems(
         trailing:
