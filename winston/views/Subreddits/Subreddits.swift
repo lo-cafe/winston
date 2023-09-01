@@ -97,7 +97,7 @@ struct Subreddits: View {
               }
             }
           } else {
-            let favs = subreddits.filter { $0.user_has_favorited && $0.user_is_subscriber }
+            let favs = (subreddits + localFavs).filter { $0.user_has_favorited && $0.user_is_subscriber }
             if favs.count > 0 {
               Section("Favorites") {
                 ForEach(favs.sorted(by: { x, y in
