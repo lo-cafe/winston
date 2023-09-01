@@ -55,6 +55,13 @@ struct SubItem: View {
             .highPriorityGesture( TapGesture().onEnded(favoriteToggle) )
         }
         .contentShape(Rectangle())
+        .contextMenu{
+          if let data = sub.data {
+            ShareLink(item: "reddit.com/r/" + ((data.display_name != nil) ? data.display_name! : data.name)){
+              Label("Share Subreddit", systemImage: "square.and.arrow.up")
+            }
+          }
+        }
       }
       .buttonStyle(.automatic)
       

@@ -9,6 +9,8 @@ import SwiftUI
 import Defaults
 
 struct FlairTag: View {
+  @Default(.postAccessoryColor) var postAccessoryColor
+  @Default(.customPostAccessoryTextColor) var customPostAccessoryTextColor
   var text: String
   var color: Color = .secondary
   var body: some View {
@@ -16,8 +18,8 @@ struct FlairTag: View {
       .fontSize(13)
       .padding(.horizontal, 9)
       .padding(.vertical, 2)
-      .background(Capsule(style: .continuous).fill(color.opacity(0.2)))
-      .foregroundColor(.primary.opacity(0.5))
+      .background(Capsule(style: .continuous).fill(color))
+      .foregroundColor(customPostAccessoryTextColor ? postAccessoryColor : Color.primary.opacity(0.5))
       .frame(maxWidth: 150, alignment: .leading)
       .fixedSize(horizontal: true, vertical: false)
       .lineLimit(1)
@@ -99,6 +101,8 @@ struct PostLink: View, Equatable {
   @Default(.showSubsAtTop) var showSubsAtTop
   @Default(.showTitleAtTop) var showTitleAtTop
   
+  
+  
   @StateObject private var appeared = Appeared()
   
   var contentWidth: CGFloat { UIScreen.screenWidth - ((preferenceShowPostsCards ? cardedPostLinksOuterHPadding : postLinksInnerHPadding) * 2) - (preferenceShowPostsCards ? (preferenceShowPostsCards ? cardedPostLinksInnerHPadding : 0) * 2 : 0)  }
@@ -143,6 +147,8 @@ struct PostLink: View, Equatable {
             .frame(maxWidth: compactMode ? compactModeThumbSize : .infinity, maxHeight: compactMode ? compactModeThumbSize : nil, alignment: .leading)
             .clipped()
             .nsfw(over18 && blurPostLinkNSFW)
+          } else if (!thumbnailPositionRight && compactMode) || (!compactMode && !showTitleAtTop) {
+            EmptyThumbnail()
           }
           
           /// /////////
@@ -170,7 +176,7 @@ struct PostLink: View, Equatable {
             
             if compactMode {
               if let fullname = data.author_fullname {
-                Badge(showAvatar: preferenceShowPostsAvatars, author: data.author, fullname: fullname, created: data.created, extraInfo: [PresetBadgeExtraInfo().commentsExtraInfo(data:data), PresetBadgeExtraInfo().upvotesExtraInfo(data: data)])
+                Badge(showAvatar: preferenceShowPostsAvatars,author: data.author, fullname: fullname, created: data.created, extraInfo: [PresetBadgeExtraInfo().commentsExtraInfo(data:data), PresetBadgeExtraInfo().upvotesExtraInfo(data: data)])
               }
             }
           }
@@ -181,6 +187,8 @@ struct PostLink: View, Equatable {
             .frame(maxWidth: compactMode ? compactModeThumbSize : .infinity, maxHeight: compactMode ? compactModeThumbSize : nil, alignment: .leading)
             .clipped()
             .nsfw(over18 && blurPostLinkNSFW)
+          } else if (thumbnailPositionRight && compactMode) || (!compactMode && showTitleAtTop) {
+            EmptyThumbnail()
           }
           
           if compactMode && showVotes && voteButtonPositionRight {
@@ -356,6 +364,8 @@ struct EmptyThumbnail: View {
 
 
 struct SubsNStuffLine: View {
+  @Default(.postAccessoryBackgroundColor) var postAccessoryBackgroundColor
+  
   var showSub: Bool
   var feedsAndSuch: [String]
   var post: Post
@@ -368,7 +378,7 @@ struct SubsNStuffLine: View {
     HStack(spacing: 0) {
       
       if showSub || feedsAndSuch.contains(sub.id) {
-        FlairTag(text: "r/\(sub.data?.display_name ?? post.data?.subreddit ?? "Error")", color: .blue)
+        FlairTag(text: "r/\(sub.data?.display_name ?? post.data?.subreddit ?? "Error")", color: postAccessoryBackgroundColor)
           .highPriorityGesture(TapGesture() .onEnded {
             router.path.append(SubViewType.posts(Subreddit(id: post.data?.subreddit ?? "", api: post.redditAPI)))
           })

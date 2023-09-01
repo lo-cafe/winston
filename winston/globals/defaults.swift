@@ -109,6 +109,8 @@ extension Defaults.Keys {
   static let showSubsAtTop = Key<Bool>("showSubsAtTop", default: false)
   static let showTitleAtTop = Key<Bool>("showTitleAtTop", default: true)
   
+  static let preferredThemeMode = Key<PreferredThemeMode>("preferredThemeMode", default: .automatic)
+  
   static let postLinkTitleSize = Key<CGFloat>("postLinkTitleSize", default: 16)
   static let postLinkBodySize = Key<CGFloat>("postLinkBodySize", default: 14)
   static let postViewTitleSize = Key<CGFloat>("postViewTitleSize", default: 20)
@@ -124,6 +126,18 @@ extension Defaults.Keys {
   
   static let useLiveText = Key<Bool>("useLiveText", default: true)
   static let showTipJarModal = Key<Bool>("showTipJarModal", default: true)
+  
+  //Color options
+  static let opUsernameColor = Key<Color>("opUsernameColor", default: .green)
+  
+  static let commentUsernameColor = Key<Color>("commentUsernameColor", default: .primary)
+  static let customCommentUsernameColor = Key<Bool>("customCommentUsernameColor", default: false)
+  static let customPostAccessoryTextColor = Key<Bool>("customPostAccessoryTextColor", default: false)
+  
+  static let postAccessoryColor = Key<Color>("postAccessoryColor", default: .primary)
+  static let postAccessoryBackgroundColor = Key<Color>("postAccessoryBackgroundColor", default: .blue)
+  static let arrowDividerColorPalette = Key<ArrowColorPalette>("arrowDividerColorPalette", default: ArrowColorPalette.monochrome)
+  static let winstonCommentAccentStyle = Key<Bool>("winstonCommentAccentStyle", default: true)
 }
 
 extension UIScreen {
@@ -131,3 +145,5 @@ extension UIScreen {
    static let screenHeight = UIScreen.main.bounds.size.height
    static let screenSize = UIScreen.main.bounds.size
 }
+
+

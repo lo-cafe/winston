@@ -158,7 +158,7 @@ struct Subreddits: View {
             }
 
             _ = await redditAPI.fetchSubs()
-            _ = await redditAPI.fetchMyMultis()
+//            _ = await redditAPI.fetchMyMultis()
             withAnimation {
               loaded = true
             }

@@ -23,6 +23,7 @@ struct PostView: View {
   @Default(.preferenceShowCommentsCards) private var preferenceShowCommentsCards
   @State private var ignoreSpecificComment = false
   @State private var sort: CommentSortOption = Defaults[.preferredCommentSort]
+  @State private var sortIsSuggested: Bool = false
   @EnvironmentObject private var redditAPI: RedditAPI
   @EnvironmentObject private var router: Router
   @State var update = false
@@ -44,6 +45,11 @@ struct PostView: View {
   }
   
   var body: some View {
+    
+    //var newsort = (subreddit.data?.suggested_comment_sort != nil ? convertStringToCommentSortOption(string: subreddit.data?.suggested_comment_sort ?? "new") : sort)
+    
+
+    
     ScrollViewReader{ proxy in
       List {
         Group {
@@ -109,7 +115,7 @@ struct PostView: View {
                   sort = opt
                 } label: {
                   HStack {
-                    Text(opt.rawVal.value.capitalized)
+                    (sortIsSuggested && opt.rawVal.value == sort.rawVal.value) ? Text(opt.addSuggestedText().value.capitalized) :Text(opt.rawVal.value.capitalized)
                     Spacer()
                     Image(systemName: opt.rawVal.icon)
                       .foregroundColor(.blue)
@@ -129,7 +135,7 @@ struct PostView: View {
               Button {
                 router.path.append(SubViewType.info(subreddit))
               } label: {
-                SubredditIcon(data: data)
+                SubredditIcon(data: data, forceNSFWOFF: true)
               }
             }
           }
@@ -139,6 +145,10 @@ struct PostView: View {
         updateComments()
       }
       .onAppear {
+        if let data = post.data, let newsort = data.suggested_sort {
+            sortIsSuggested = true
+            sort = convertStringToCommentSortOption(string: newsort)
+        }
         Task(priority: .background) {
           if subreddit.data == nil && subreddit.id != "home" {
             await subreddit.refreshSubreddit()

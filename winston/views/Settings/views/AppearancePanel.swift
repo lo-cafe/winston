@@ -49,14 +49,18 @@ struct AppearancePanel: View {
   @Default(.showSelfPostThumbnails) var showSelfPostThumbnails
   
   @Default(.commentLinkBodySize) var commentLinkBodySize
-
   var body: some View {
     List {
+      Section("Themes"){
+        NavigationLink(destination: ThemeSettings()){
+          Label("Themes", systemImage: "paintpalette")
+        }
+      }
       Section("General") {
         Toggle("Blur Reply Background", isOn: $replyModalBlurBackground)
         Toggle("Blur New Post Background", isOn: $newPostModalBlurBackground)
         Toggle("Show Username in Tab Bar", isOn: $showUsernameInTabBar)
-        
+       
       }
       
       Section("Posts") {
@@ -279,6 +283,7 @@ struct AppearancePanel: View {
     .navigationTitle("Appearance")
     .navigationBarTitleDisplayMode(.inline)
   }
+  
 }
 //
 //struct Appearance_Previews: PreviewProvider {
@@ -313,3 +318,23 @@ enum ThumbnailSizeModifier:  Codable, CaseIterable, Identifiable, Defaults.Seria
   }
 }
 
+enum PreferredThemeMode: Codable, CaseIterable, Identifiable, Defaults.Serializable {
+  var id: Int {
+    self.rawVal
+  }
+  
+  case automatic
+  case dark
+  case light
+  
+  var rawVal: Int {
+    switch self{
+    case .automatic:
+      0
+    case .light:
+      1
+    case .dark:
+      2
+    }
+  }
+}
