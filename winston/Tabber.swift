@@ -258,9 +258,6 @@ struct Tabber: View {
       if showTestersCelebrationModal {
         showTipJarModal = false
       }
-      if !showTestersCelebrationModal {
-        showTipJarModal
-      }
       if Defaults[.multis].count != 0 || Defaults[.subreddits].count != 0 {
         Defaults[.multis] = []
         Defaults[.subreddits] = []
