@@ -71,7 +71,7 @@ struct MediaPresenter: View {
             PreviewLink(url, compact: compact)
           }
         } else {
-          PostLinkNoSub(post: post)
+          PostLinkNoSub(post: post, secondary: true)
         }
       } else if let postData = post.data, let url = URL(string: "https://reddit.com/r/\(postData.subreddit)/comments/\(post.id)") {
         OnlyURL(url: url)

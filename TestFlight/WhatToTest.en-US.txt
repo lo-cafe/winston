@@ -1,11 +1,3 @@
-- Tries to fix crashes (please god)
-- Adds sub tag in post view
-- Fixed action icon bounce when sliding posts/comments
-- Fixed wrong icons sides
-- Added Saved bookmark icon on posts and comments (it's BEAUTIFUL with avatars on, I'm simply a DA VINCI of code)
-- Added green accent detail for pinned posts
-- Added a few more media types (probably not all of them yet)
-- Added video loop option
-- Added "y" for more than 365 days in dates
-- Brought alphabet jumper back (sorry for that)
-- Fixed crashing on longpress of posts
+- Fixes crash because of infinite upvotes count
+- Fixes Reddit links posts not appearing sometimes
+- Added tips jar

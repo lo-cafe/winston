@@ -29,6 +29,7 @@ enum ProportionalTypes {
 
 struct MasterButton: View {
   var icon: String? = nil
+  var img: String? = nil
   var label: String? = nil
   var mode: MasterButtonMode = .normal
   var color: Color = .blue
@@ -74,6 +75,12 @@ struct MasterButton: View {
     //      }
     //    } label: {
     HStack {
+      if let img = img {
+        Image(img)
+          .resizable()
+          .scaledToFit()
+          .frame(height: textSize)
+      }
       if let icon = icon {
         Image(systemName: icon)
           .transition(.scaleAndBlur)

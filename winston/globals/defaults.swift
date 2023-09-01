@@ -122,6 +122,7 @@ extension Defaults.Keys {
   static let showTestersCelebrationModal = Key<Bool>("showTestersCelebrationModal", default: true)
   
   static let useLiveText = Key<Bool>("useLiveText", default: true)
+  static let showTipJarModal = Key<Bool>("showTipJarModal", default: true)
 }
 
 extension UIScreen {
