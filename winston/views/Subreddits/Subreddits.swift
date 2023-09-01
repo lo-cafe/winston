@@ -50,12 +50,12 @@ struct Subreddits: View {
             VStack(spacing: 12) {
               HStack(spacing: 12) {
                 ListBigBtn(icon: "house.circle.fill", iconColor: .blue, label: "Home", destination: Subreddit(id: "home", api: redditAPI))
-
+                
                 ListBigBtn(icon: "chart.line.uptrend.xyaxis.circle.fill", iconColor: .red, label: "Popular", destination: Subreddit(id: "popular", api: redditAPI))
               }
               HStack(spacing: 12) {
                 ListBigBtn(icon: "signpost.right.and.left.circle.fill", iconColor: .orange, label: "All", destination: Subreddit(id: "all", api: redditAPI))
-
+                
                 ListBigBtn(icon: "bookmark.circle.fill", iconColor: .green, label: "Saved", destination: Subreddit(id: "saved", api: redditAPI))
                   .opacity(0.5).allowsHitTesting(false)
               }
@@ -65,27 +65,27 @@ struct Subreddits: View {
             .listRowSeparator(.hidden)
             .listRowBackground(Color.clear)
             .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
-          }
-
-
-          PostsInBoxView(someOpened: router.path.count > 0)
-            .scrollIndicators(.hidden)
-            .listRowInsets(EdgeInsets(top: 0, leading: 16, bottom: 0, trailing: 16))
-            .listRowBackground(Color.clear)
-
-          if multis.count > 0 {
-            Section("Multis") {
-              ScrollView(.horizontal) {
-                HStack(spacing: 16) {
-                  ForEach(multis) { multi in
-                    MultiLink(multi: MultiData(entity: multi), router: router)
+            
+            
+            PostsInBoxView(someOpened: router.path.count > 0)
+              .scrollIndicators(.hidden)
+              .listRowInsets(EdgeInsets(top: 0, leading: 16, bottom: 0, trailing: 16))
+              .listRowBackground(Color.clear)
+            
+            if multis.count > 0 {
+              Section("Multis") {
+                ScrollView(.horizontal) {
+                  HStack(spacing: 16) {
+                    ForEach(multis) { multi in
+                      MultiLink(multi: MultiData(entity: multi), router: router)
+                    }
                   }
+                  .padding(.horizontal, 16)
                 }
-                .padding(.horizontal, 16)
+                .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
               }
-              .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
+              .listRowBackground(Color.clear)
             }
-            .listRowBackground(Color.clear)
           }
           
           if searchText != "" {
@@ -95,14 +95,17 @@ struct Subreddits: View {
               }
             }
           } else {
-            Section("Favorites") {
-              ForEach(subreddits.filter { $0.user_has_favorited && $0.user_is_subscriber }.sorted(by: { x, y in
-                (x.display_name?.lowercased() ?? "a") < (y.display_name?.lowercased() ?? "a")
-              }), id: \.self) { cachedSub in
+            let favs = subreddits.filter { $0.user_has_favorited && $0.user_is_subscriber }
+            if favs.count > 0 {
+              Section("Favorites") {
+                ForEach(favs.sorted(by: { x, y in
+                  (x.display_name?.lowercased() ?? "a") < (y.display_name?.lowercased() ?? "a")
+                }), id: \.self) { cachedSub in
                   SubItem(sub: Subreddit(data: SubredditData(entity: cachedSub), api: redditAPI), cachedSub: cachedSub)
-                  .id("\(cachedSub.uuid ?? "")-fav")
+                    .id("\(cachedSub.uuid ?? "")-fav")
+                }
+                .onDelete(perform: deleteFromFavorites)
               }
-              .onDelete(perform: deleteFromFavorites)
             }
 
             ForEach(sections.keys.sorted(), id: \.self) { letter in

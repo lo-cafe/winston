@@ -11,4 +11,6 @@
 - Covered more media types
 - User subs don't show up as subs anymore
 - Fixed subs refresh duplication issue
+- Now favorites section won't show if empty
+- Now multis and postbox won't show when searching subs
 - Design fixes
