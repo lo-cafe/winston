@@ -9,7 +9,6 @@ import SwiftUI
 import Defaults
 
 struct CommentLinkMore: View {
-  @Default(.preferenceShowCommentsCards) var preferenceShowCommentsCards
   var arrowKinds: [ArrowKind]
   var comment: Comment
   var postFullname: String?
@@ -17,9 +16,11 @@ struct CommentLinkMore: View {
   var indentLines: Int?
   @State var loadMoreLoading = false
   
-  @Default(.cardedCommentsInnerHPadding) var cardedCommentsInnerHPadding
+  @Default(.preferenceShowCommentsCards) private var preferenceShowCommentsCards
+  @Default(.cardedCommentsInnerHPadding) private var cardedCommentsInnerHPadding
 
   var body: some View {
+    let horPad = preferenceShowCommentsCards ? cardedCommentsInnerHPadding : 0
     if let data = comment.data, let count = data.count, let parentElement = parentElement, count > 0 {
       HStack(spacing: 0) {
         if data.depth != 0 && indentLines != 0 {
@@ -62,7 +63,7 @@ struct CommentLinkMore: View {
         .fontSize(15, .medium)
         .foregroundColor(.blue)
       }
-      .padding(.horizontal, cardedCommentsInnerHPadding)
+      .padding(.horizontal, horPad)
       .frame(maxWidth: .infinity, alignment: .leading)
       .background(preferenceShowCommentsCards ? Color.listBG : .clear)
       .contentShape(Rectangle())
