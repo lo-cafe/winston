@@ -21,6 +21,7 @@ struct SubredditPosts: View {
   @Environment(\.openURL) private var openURL
   @State private var loading = true
   @State private var posts: [Post] = []
+  @State private var loadedPosts: Set<String> = []
   @State private var lastPostAfter: String?
   @State private var searchText: String = ""
   @State private var sort: SubListingSortOption = Defaults[.preferredSort]
@@ -38,9 +39,13 @@ struct SubredditPosts: View {
     if let result = await subreddit.fetchPosts(sort: sort, after: loadMore ? lastPostAfter : nil), let newPosts = result.0 {
       withAnimation {
         if loadMore {
-          posts.append(contentsOf: newPosts)
+          let newPostsFiltered = newPosts.filter { !loadedPosts.contains($0.id) }
+          posts.append(contentsOf: newPostsFiltered)
+          newPostsFiltered.forEach { loadedPosts.insert($0.id) }
         } else {
-          posts = newPosts
+          let newPostsFiltered = newPosts.filter { !loadedPosts.contains($0.id) }
+          posts = newPostsFiltered
+          newPostsFiltered.forEach { loadedPosts.insert($0.id) }
         }
         loading = false
         lastPostAfter = result.1
@@ -178,12 +183,16 @@ struct SubredditPosts: View {
       withAnimation {
         loading = true
         posts.removeAll()
+        loadedPosts.removeAll()
       }
       fetch()
       Defaults[.preferredSort] = sort
     }
     .searchable(text: $searchText, prompt: "Search r/\(subreddit.data?.display_name ?? subreddit.id)")
-    .refreshable { await asyncFetch(force: true) }
+    .refreshable {
+      loadedPosts.removeAll()
+      await asyncFetch(force: true)
+    }
     .navigationTitle("\(feedsAndSuch.contains(subreddit.id) ? subreddit.id.capitalized : "r/\(subreddit.data?.display_name ?? subreddit.id)")")
     .background(.thinMaterial)
   }
