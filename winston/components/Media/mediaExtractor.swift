@@ -60,7 +60,13 @@ func mediaExtractor(_ post: Post) -> MediaExtractedType? {
     }
     
     if IMAGES_FORMATS.contains(where: { data.url.hasSuffix($0) }), let url = rootURL(data.url) {
-      return .image(MediaExtracted(url: url, size: CGSize(width: 0, height: 0)))
+      var actualWidth = 0
+      var actualHeight = 0
+      if let images = data.preview?.images, images.count > 0, let image = images[0].source, let width = image.width, let height = image.height {
+        actualWidth = width
+        actualHeight = height
+      }
+      return .image(MediaExtracted(url: url, size: CGSize(width: actualWidth, height: actualHeight)))
     }
     
     if let images = data.preview?.images, images.count > 0, let image = images[0].source, let src = image.url?.replacing("/preview.", with: "/i."), !src.contains("external-preview"), let imgURL = rootURL(src.escape), let width = image.width, let height = image.height {
