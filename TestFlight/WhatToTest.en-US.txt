@@ -1,6 +1,7 @@
 - Fixes crash because of infinite upvotes count
 - Fixes Reddit links posts not appearing sometimes
 - Added tips jar
+--- EXTRA UPDATE ---
 - New look for load more comments button
 - Fixed ANNOYING jumpy behavior of swipe actions
 - Increased image double tap delay tolerance
@@ -13,4 +14,5 @@
 - Fixed subs refresh duplication issue
 - Now favorites section won't show if empty
 - Now multis and postbox won't show when searching subs
+- Fixes tab bar overlay getting pushed by keyboard
 - Design fixes
