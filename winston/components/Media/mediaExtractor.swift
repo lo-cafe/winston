@@ -29,12 +29,8 @@ enum MediaExtractedType {
 // ORDER MATTERS!
 func mediaExtractor(_ post: Post) -> MediaExtractedType? {
   if let data = post.data {
-//    print(data)
+    //    print(data)
     guard !data.is_self else { return nil }
-    
-    if data.post_hint == "link", let linkURL = URL(string: data.url) {
-      return .link(linkURL)
-    }
     
     if let is_gallery = data.is_gallery, is_gallery, let galleryData = data.gallery_data?.items, let metadata = post.data?.media_metadata {
       let galleryArr = galleryData.compactMap { item in
@@ -76,12 +72,13 @@ func mediaExtractor(_ post: Post) -> MediaExtractedType? {
       return .image(MediaExtracted(url: url, size: CGSize(width: 0, height: 0)))
     }
     
-    guard let urlComponents = URLComponents(string: data.url) else {
+    let actualURL = data.url.hasPrefix("/r/") || data.url.hasPrefix("/u/") ? "https://reddit.com\(data.url)" : data.url
+    guard let urlComponents = URLComponents(string: actualURL) else {
       return nil
     }
     
     let pathComponents = urlComponents.path.components(separatedBy: "/").filter({ !$0.isEmpty })
-      
+    
     if urlComponents.host?.hasSuffix("reddit.com") == true || urlComponents.host?.hasSuffix("app.winston.lo.cafe") == true, pathComponents.count > 1 {
       switch pathComponents[0] {
       case "r":
@@ -105,6 +102,10 @@ func mediaExtractor(_ post: Post) -> MediaExtractedType? {
           return .link(linkURL)
         }
       }
+    }
+    
+    if data.post_hint == "link", let linkURL = URL(string: data.url) {
+      return .link(linkURL)
     }
   }
   return nil

@@ -52,7 +52,7 @@ struct TestersCelebration: View {
             Text("Winston hit ") + Text("7000").foregroundColor(.yellow) + Text(" testers! (but it needs help)")
           )
           .fontSize(24, .bold)
-          Text("Yesterday we hit 7000 testers on TestFlight and this couldn't make us happier. Thank you so much for using and supporting Winston.")
+          Text("We hit 8500 testers on TestFlight and this couldn't make us happier. Thank you so much for using and supporting Winston.")
           Text("However...")
           VStack(spacing: 16) {
             Text("...unfortunately, lo.cafe (the team/group of friends behind Winston) isn't self sustainable yet.\nEven though we have other software for sale, we still have dayjobs.")
@@ -126,17 +126,19 @@ struct TestersCelebration: View {
       thanks
       ? nil
       : HStack {
-        MasterButton(label: "Never show again", mode: .soft, color: .primary, colorHoverEffect: .animated, textSize: 17, height: 48, cornerRadius: 16, action: {
-          withAnimation(spring) {
-            showTestersCelebrationModal = false
-          }
-        })
-        MasterButton(icon: "heart.fill", label: "Donate", colorHoverEffect: .animated, textSize: 18, height: 48, fullWidth: true, cornerRadius: 16, action: {
+        MasterButton(icon: "heart.fill", label: "Donate", color: .pink, colorHoverEffect: .animated, textSize: 18, height: 48, fullWidth: true, cornerRadius: 16) {
           openURL(URL(string: "https://patreon.com/user?u=93745105")!)
           withAnimation {
             thanks = true
           }
-        })
+        }
+        
+        MasterButton(img: "whiteJar", label: "Tip jar", colorHoverEffect: .animated, textSize: 18, height: 48, fullWidth: true, cornerRadius: 16) {
+          openURL(URL(string: "https://ko-fi.com/locafe")!)
+          withAnimation {
+            thanks = true
+          }
+        }
       }
         .padding(.bottom, 40)
         .padding(.top, 24)
@@ -156,6 +158,11 @@ struct TestersCelebration: View {
         )
       , alignment: .bottom
     )
+    .closeSheetBtn {
+      withAnimation(spring) {
+        showTestersCelebrationModal = false
+      }
+    }
     .ignoresSafeArea(.all)
     .multilineTextAlignment(.center)
     .confettiCannon(counter: $counter, num: 30, openingAngle: Angle.degrees(60), closingAngle: Angle.degrees(120), radius: UIScreen.screenWidth)
