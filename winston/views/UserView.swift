@@ -62,9 +62,10 @@ struct UserView: View {
     // As per API doc: https://www.reddit.com/dev/api/#GET_user_{username}_overview
     switch item {
       case .first(let post):
-        return "t3_\(post.id)"
+      return "\(Post.prefix)_\(post.id)"
+        
       case .second(let comment):
-        return "t1_\(comment.id)"
+      return "\(Comment.prefix)_\(comment.id)"
     }
   }
 
