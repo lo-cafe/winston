@@ -24,6 +24,8 @@ struct Subreddits: View {
   @EnvironmentObject private var redditAPI: RedditAPI
   @FetchRequest(sortDescriptors: [NSSortDescriptor(key: "name", ascending: true)], animation: .default) var subreddits: FetchedResults<CachedSub>
   @FetchRequest(sortDescriptors: [NSSortDescriptor(key: "name", ascending: true)], animation: .default) var multis: FetchedResults<CachedMulti>
+  @FetchRequest(sortDescriptors: [NSSortDescriptor(key: "title", ascending: true)], animation: .default) var localFavs: FetchedResults<LocalFavorite>
+  
   @State private var searchText: String = ""
   @StateObject private var subsDict = SubsDictContainer()
   @State private var loaded = false
@@ -98,7 +100,7 @@ struct Subreddits: View {
             Section("Favorites") {
               ForEach(subreddits.filter { $0.user_has_favorited && $0.user_is_subscriber }.sorted(by: { x, y in
                 (x.display_name?.lowercased() ?? "a") < (y.display_name?.lowercased() ?? "a")
-              }), id: \.self.id) { cachedSub in
+              } + localFavs), id: \.self.id) { cachedSub in
                   SubItem(sub: Subreddit(data: SubredditData(entity: cachedSub), api: redditAPI), cachedSub: cachedSub)
               }
               .onDelete(perform: deleteFromFavorites)
