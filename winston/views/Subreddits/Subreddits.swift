@@ -90,7 +90,7 @@ struct Subreddits: View {
           
           if searchText != "" {
             Section("Found subs") {
-              ForEach(Array(subreddits.filter { ($0.display_name ?? "").lowercased().contains(searchText.lowercased()) }), id: \.self.id) { cachedSub in
+              ForEach(Array(subreddits.filter { ($0.display_name ?? "").lowercased().contains(searchText.lowercased()) }), id: \.self.uuid) { cachedSub in
                 SubItem(sub: Subreddit(data: SubredditData(entity: cachedSub), api: redditAPI), cachedSub: cachedSub)
               }
             }
@@ -98,8 +98,9 @@ struct Subreddits: View {
             Section("Favorites") {
               ForEach(subreddits.filter { $0.user_has_favorited && $0.user_is_subscriber }.sorted(by: { x, y in
                 (x.display_name?.lowercased() ?? "a") < (y.display_name?.lowercased() ?? "a")
-              }), id: \.self.id) { cachedSub in
+              }), id: \.self) { cachedSub in
                   SubItem(sub: Subreddit(data: SubredditData(entity: cachedSub), api: redditAPI), cachedSub: cachedSub)
+                  .id("\(cachedSub.uuid ?? "")-fav")
               }
               .onDelete(perform: deleteFromFavorites)
             }
@@ -109,7 +110,7 @@ struct Subreddits: View {
                 if let arr = sections[letter] {
                   ForEach(arr.sorted(by: { x, y in
                     (x.display_name?.lowercased() ?? "a") < (y.display_name?.lowercased() ?? "a")
-                  }), id: \.id) { cachedSub in
+                  }), id: \.self.uuid) { cachedSub in
                     SubItem(sub: Subreddit(data: SubredditData(entity: cachedSub), api: redditAPI), cachedSub: cachedSub)
                   }
                   .onDelete(perform: { i in

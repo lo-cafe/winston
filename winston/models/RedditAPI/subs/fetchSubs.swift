@@ -9,6 +9,7 @@ import Foundation
 import Alamofire
 import Defaults
 import SwiftUI
+import CoreData
 
 func cleanSubs(_ subs: [ListingChild<SubredditData>]) -> [ListingChild<SubredditData>] {
   return subs.compactMap({ y in
@@ -54,15 +55,33 @@ extension RedditAPI {
         if !after.isNil {
           return finalSubs
         }
+        
+        finalSubs = finalSubs.filter { $0.data?.subreddit_type != "user" }
+        
         let context = PersistenceController.shared.container.viewContext
+        
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "CachedSub")
+        let results = (context.performAndWait { try? context.fetch(fetchRequest) as? [CachedSub] }) ?? []
+          results.forEach { cachedSub in
+            context.performAndWait {
+              if !finalSubs.contains(where: { listingChild in
+                cachedSub.uuid == listingChild.data?.name
+              }) {
+                context.delete(cachedSub)
+              }
+            }
+          }
         
         await context.perform(schedule: .enqueued) {
           cleanSubs(finalSubs).compactMap { $0.data }.forEach { x in
-//            context.performAndWait {
+            if let found = results.first(where: { $0.uuid == x.name }) {
+              found.update(data: x)
+            } else {
               _ = CachedSub(data: x, context: context)
-//            }
+            }
           }
         }
+        
         await context.perform(schedule: .enqueued) {
           try? context.save()
         }

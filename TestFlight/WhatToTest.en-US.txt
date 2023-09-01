@@ -8,4 +8,7 @@
 - Fixed unaligned indent arrows in comments on flat view
 - Added user view infinite scrolling (thanks @ejbills)
 - Fix duplicate posts showing up in the feed (thanks @ejbills)
+- Covered more media types
+- User subs don't show up as subs anymore
+- Fixed subs refresh duplication issue
 - Design fixes
