@@ -222,6 +222,7 @@ struct CommentLinkContent: View {
               .offset(x: offsetX)
               .animation(.interpolatingSpring(stiffness: 1000, damping: 100, initialVelocity: 0), value: offsetX)
               .padding(.top, 6)
+              .padding(.bottom, data.depth == 0 && comment.childrenWinston.data.count == 0 ? 0 : 6)
               .contentShape(Rectangle())
               .swipyUI(
                 offsetYAction: -15,
