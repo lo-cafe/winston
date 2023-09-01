@@ -27,6 +27,8 @@
 		65D531422A98DE8800FED4DE /* Subreddits.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65D531412A98DE8800FED4DE /* Subreddits.swift */; };
 		65EEAC592A988CAE00B0D607 /* ThemeSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65EEAC582A988CAE00B0D607 /* ThemeSettings.swift */; };
 		65EEAC5C2A98980F00B0D607 /* AllujaHaptics in Frameworks */ = {isa = PBXBuildFile; productRef = 65EEAC5B2A98980F00B0D607 /* AllujaHaptics */; };
+		65D381B32AA1D7E500FFA50C /* LocalFavorite+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65D381B22AA1D7E500FFA50C /* LocalFavorite+CoreDataClass.swift */; };
+		65D381B52AA1D84400FFA50C /* LocalFavorite+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65D381B42AA1D84400FFA50C /* LocalFavorite+CoreDataProperties.swift */; };
 		EC082F252A65FB4300BA2727 /* MeasureOnce.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC082F242A65FB4300BA2727 /* MeasureOnce.swift */; };
 		EC082F272A66132600BA2727 /* CommentLinkMore.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC082F262A66132600BA2727 /* CommentLinkMore.swift */; };
 		EC082F292A66134C00BA2727 /* CommentLinkFull.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC082F282A66134C00BA2727 /* CommentLinkFull.swift */; };
@@ -308,6 +310,8 @@
 		65D5313F2A98D75000FED4DE /* LiveTextInteraction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveTextInteraction.swift; sourceTree = "<group>"; };
 		65D531412A98DE8800FED4DE /* Subreddits.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Subreddits.swift; sourceTree = "<group>"; };
 		65EEAC582A988CAE00B0D607 /* ThemeSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeSettings.swift; sourceTree = "<group>"; };
+		65D381B22AA1D7E500FFA50C /* LocalFavorite+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LocalFavorite+CoreDataClass.swift"; sourceTree = "<group>"; };
+		65D381B42AA1D84400FFA50C /* LocalFavorite+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LocalFavorite+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		EC082F242A65FB4300BA2727 /* MeasureOnce.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeasureOnce.swift; sourceTree = "<group>"; };
 		EC082F262A66132600BA2727 /* CommentLinkMore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentLinkMore.swift; sourceTree = "<group>"; };
 		EC082F282A66134C00BA2727 /* CommentLinkFull.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentLinkFull.swift; sourceTree = "<group>"; };
