@@ -17,19 +17,57 @@ struct UserView: View {
   @State private var loading = true
   @State private var lastActivities: [Either<PostData, CommentData>]?
   @State private var contentWidth: CGFloat = 0
+  @State private var lastItemId: String? = nil
+
   
   func refresh() async {
+    loading = true
+    
     await user.refetchUser()
     if let data = await user.refetchOverview() {
       await MainActor.run {
         withAnimation {
           lastActivities = data
+          loading = false
         }
       }
+      
       await user.redditAPI.updateAvatarURLCacheFromOverview(subjects: data)
+      
+      if let lastItem = data.last {
+        lastItemId = getItemId(for: lastItem)
+      }
     }
   }
   
+  func loadNextData() {
+    loading = true
+    Task {
+      if let lastId = lastItemId, let overviewData = await user.refetchOverview(lastId) {
+        await MainActor.run {
+          withAnimation {
+            lastActivities?.append(contentsOf: overviewData)
+            loading = false
+          }
+        }
+
+        if let lastItem = overviewData.last {
+          lastItemId = getItemId(for: lastItem)
+        }
+      }
+    }
+  }
+  
+  func getItemId(for item: Either<PostData, CommentData>) -> String {
+    // As per API doc: https://www.reddit.com/dev/api/#GET_user_{username}_overview
+    switch item {
+      case .first(let post):
+        return "t3_\(post.id)"
+      case .second(let comment):
+        return "t1_\(comment.id)"
+    }
+  }
+
   var body: some View {
     List {
       if let data = user.data {
@@ -92,7 +130,7 @@ struct UserView: View {
             .padding(.horizontal, 16)
           
           if let lastActivities = lastActivities {
-            ForEach(lastActivities, id: \.self.hashValue) { item in
+            ForEach(Array(lastActivities.enumerated()), id: \.self.element.hashValue) { i, item in
               VStack(spacing: 0) {
                 switch item {
                 case .first(let post):
@@ -109,6 +147,7 @@ struct UserView: View {
                   .background(RR(20, .listBG))
                 }
               }
+              .onAppear { if lastActivities.count > 0 && (Int(Double(lastActivities.count) * 0.75) == i) && !loading { loadNextData() }}
             }
           }
         }
@@ -117,8 +156,8 @@ struct UserView: View {
         .listRowBackground(Color.clear)
         .transition(.opacity)
       }
-      
     }
+    .loader(loading)
     .background(Color(UIColor.systemGroupedBackground))
     .scrollContentBackground(.hidden)
     .listStyle(.plain)
