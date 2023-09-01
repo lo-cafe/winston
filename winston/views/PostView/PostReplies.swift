@@ -51,10 +51,18 @@ struct PostReplies: View {
   
   func determineNextComment() {
     let commentsData = comments.data
-    if let closestIndex = commentPositions.min(by: { abs($0.value - screenTopOffset) < abs($1.value - screenTopOffset) })?.key {
-      if closestIndex < commentsData.count - 1 {
-        let tempIndex = closestIndex + 1
-        nextCommentTracker = preferenceShowCommentsCards ? "\(commentsData[tempIndex].id)-top-decoration" : "\(commentsData[tempIndex].id)-top-spacer"
+    let screenHeight = UIScreen.main.bounds.size.height
+    
+    // Check if commentPositions contains only one element and its pixel value is > 50% of the screen height
+    if commentPositions.count == 1, let solePosition = commentPositions.first, solePosition.value > (screenHeight / 2) {
+      nextCommentTracker = preferenceShowCommentsCards ? "\(commentsData[solePosition.key].id)-top-decoration" : "\(commentsData[solePosition.key].id)-top-spacer"
+    } else {
+      // If commentPositions doesn't meet the criteria, find the closest index as before
+      if let closestIndex = commentPositions.min(by: { abs($0.value - screenTopOffset) < abs($1.value - screenTopOffset) })?.key {
+        if closestIndex < commentsData.count - 1 {
+          let tempIndex = closestIndex + 1
+          nextCommentTracker = preferenceShowCommentsCards ? "\(commentsData[tempIndex].id)-top-decoration" : "\(commentsData[tempIndex].id)-top-spacer"
+        }
       }
     }
   }
