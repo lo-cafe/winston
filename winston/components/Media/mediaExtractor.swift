@@ -56,7 +56,7 @@ func mediaExtractor(_ post: Post) -> MediaExtractedType? {
     }
     
     
-    if let postEmbed = data.crosspost_parent_list?[0] {
+    if let postEmbed = data.crosspost_parent_list?.first {
       return .repost(Post(data: postEmbed, api: post.redditAPI))
     }
     
