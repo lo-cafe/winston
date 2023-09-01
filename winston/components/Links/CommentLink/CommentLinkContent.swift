@@ -73,6 +73,7 @@ struct CommentLinkContent: View {
     if let data = comment.data {
       let collapsed = data.collapsed ?? false
       Group {
+        
         HStack {
           if data.depth != 0 && indentLines != 0 {
             HStack(alignment:. bottom, spacing: 6) {
@@ -150,6 +151,7 @@ struct CommentLinkContent: View {
           .offset(x: offsetX)
           .animation(draggingAnimation, value: offsetX)
           .contentShape(Rectangle())
+          .padding(.top, data.depth != 0 ? 6 : 0)
           .swipyUI(
             controlledDragAmount: $offsetX,
             controlledIsSource: false,
@@ -162,7 +164,6 @@ struct CommentLinkContent: View {
           cell.layer.masksToBounds = false
         }
         .padding(.horizontal, horPad)
-        .padding(.top, data.depth != 0 ? 6 : 0)
         .frame(height: data.depth != 0 ? 42 : 30, alignment: .leading)
         .mask(Color.listBG)
         .background(Color.blue.opacity(highlight ? 0.2 : 0))
