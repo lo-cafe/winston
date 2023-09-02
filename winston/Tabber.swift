@@ -285,6 +285,7 @@ struct Tabber: View {
       }
     }
     .onOpenURL { url in
+      print("here")
       let parsed = parseRedditURL(url.absoluteString)
       withAnimation {
         switch parsed {

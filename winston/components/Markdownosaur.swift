@@ -33,6 +33,8 @@ public struct Markdownosaur: MarkupVisitor {
         let textRange = NSRange(location: 0, length: plainText.utf16.count)
         let attributedString = NSMutableAttributedString(string: plainText, attributes: [.font: UIFont.systemFont(ofSize: baseFontSize, weight: .regular)])
 
+        applyUsernameRegex(attributedString: attributedString, text: plainText, range: textRange)
+        applySubredditRegex(attributedString: attributedString, text: plainText, range: textRange)
         applyUrlDetector(attributedString: attributedString, text: plainText, range: textRange)
 
         return attributedString
@@ -443,6 +445,11 @@ extension NSAttributedString {
     }
 }
 
+let usernameRegex: NSRegularExpression? = try? NSRegularExpression(pattern: "(?<!\\S)(?:/u/|u/)([\\w-]+)", options: .caseInsensitive)
+let communityRegex: NSRegularExpression? = try? NSRegularExpression(pattern: "(?<!\\S)(?:/r/|r/)([\\w-]+)", options: .caseInsensitive)
+
+//let spoilerRegex: NSRegularExpression? = try? NSRegularExpression(pattern: "\\|\\|(.+?)\\|\\|", options: .caseInsensitive)
+
 let urlDetector: NSDataDetector? = try? NSDataDetector(types: NSTextCheckingResult.CheckingType.link.rawValue)
 
 public func applyUrlDetector(attributedString: NSMutableAttributedString, text: String, range: NSRange) {
@@ -462,5 +469,46 @@ public func applyUrlDetector(attributedString: NSMutableAttributedString, text: 
             .font: existingFont
         ]
         attributedString.setAttributes(linkAttributes, range: match.range)
+    }
+}
+
+
+public func applyUsernameRegex(attributedString: NSMutableAttributedString, text: String, range: NSRange) {
+    let existingFont: UIFont
+    if attributedString.length > 0 {
+        existingFont = attributedString.attribute(.font, at: 0, effectiveRange: nil) as? UIFont ?? UIFont.systemFont(ofSize: UIFont.systemFontSize)
+    } else {
+        existingFont = UIFont.systemFont(ofSize: UIFont.systemFontSize)
+    }
+    
+    let matches = usernameRegex?.matches(in: text, options: [], range: range) ?? []
+    for match in matches {
+        let usernameRange = match.range(at: 0)
+        let usernameName = (text as NSString).substring(with: match.range(at: 1))
+        let profileLinkAttributes: [NSAttributedString.Key: Any] = [
+            .link: "https://www.reddit.com/u/\(usernameName)",
+            .font: existingFont
+        ]
+        attributedString.setAttributes(profileLinkAttributes, range: usernameRange)
+    }
+}
+
+public func applySubredditRegex(attributedString: NSMutableAttributedString, text: String, range: NSRange) {
+    let existingFont: UIFont
+    if attributedString.length > 0 {
+        existingFont = attributedString.attribute(.font, at: 0, effectiveRange: nil) as? UIFont ?? UIFont.systemFont(ofSize: UIFont.systemFontSize)
+    } else {
+        existingFont = UIFont.systemFont(ofSize: UIFont.systemFontSize)
+    }
+    
+    let matches = communityRegex?.matches(in: text, options: [], range: range) ?? []
+    for match in matches {
+        let communityRange = match.range(at: 0)
+        let communityName = (text as NSString).substring(with: match.range(at: 1))
+        let communityLinkAttributes: [NSAttributedString.Key: Any] = [
+            .link: "https://www.reddit.com/r/\(communityName)",
+            .font: existingFont
+        ]
+        attributedString.addAttributes(communityLinkAttributes, range: communityRange)
     }
 }
