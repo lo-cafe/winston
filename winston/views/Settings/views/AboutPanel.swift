@@ -23,7 +23,7 @@ struct AboutPanel: View {
               Text("Winston")
                 .fontSize(20, .bold)
               HStack{
-                Text("Beta v" + (appVersion ?? "-1")) 
+                Text("Alpha v" + (appVersion ?? "-1"))
               }
             }
           }
