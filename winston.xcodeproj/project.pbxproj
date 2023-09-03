@@ -1645,7 +1645,7 @@
 				ENABLE_PREVIEWS = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = winston/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = Winston;
+				INFOPLIST_KEY_CFBundleDisplayName = "Winston (Alpha)";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "winston needs access to your library to be able to download images.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -1681,7 +1681,7 @@
 				ENABLE_PREVIEWS = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = winston/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = Winston;
+				INFOPLIST_KEY_CFBundleDisplayName = "Winston (Alpha)";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "winston needs access to your library to be able to download images.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
