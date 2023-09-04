@@ -8,14 +8,14 @@
 import SwiftUI
 
 struct ListBigBtn: View {
-  @EnvironmentObject private var router: Router
+  @EnvironmentObject private var routerProxy: RouterProxy
   var icon: String
   var iconColor: Color
   var label: String
   var destination: Subreddit
   var body: some View {
     Button {
-      router.path.append(SubViewType.posts(destination))
+      routerProxy.router.path.append(SubViewType.posts(destination))
     } label: {
       VStack(alignment: .leading, spacing: 8) {
         Image(systemName: icon)

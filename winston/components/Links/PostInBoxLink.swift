@@ -10,13 +10,14 @@ import NukeUI
 import Defaults
 
 struct PostInBoxLink: View {
-  @EnvironmentObject private var router: Router
+  @EnvironmentObject private var routerProxy: RouterProxy
   @Default(.postsInBox) private var postsInBox
   @EnvironmentObject private var redditAPI: RedditAPI
   var post: PostInBox
   @State private var dragging = false
   @State private var deleting = false
   @State private var offsetY: CGFloat?
+  @StateObject var attrStrLoader = AttributedStringLoader()
   var body: some View {
     //    Button {
     //      openPost(post)
@@ -31,6 +32,7 @@ struct PostInBoxLink: View {
         .lineLimit(2)
         .fontSize(16, .semibold)
         .fixedSize(horizontal: false, vertical: true)
+        .onAppear { if let selfBody = post.body { attrStrLoader.load(str: selfBody) } }
       
       Spacer()
         .frame(maxHeight: .infinity)
@@ -42,8 +44,7 @@ struct PostInBoxLink: View {
           HStack(alignment: .center, spacing: 2) {
             Image(systemName: "message.fill")
             Text(formatBigNumber(post.commentsCount ?? 0))
-              .transition(.asymmetric(insertion: .offset(y: 16), removal: .offset(y: -16)).combined(with: .opacity))
-              .id(post.commentsCount)
+              .contentTransition(.numericText())
           }
           
           if let createdAt = post.createdAt {
@@ -107,7 +108,7 @@ struct PostInBoxLink: View {
         .scaleEffect(deleting ? 1 : 0.85)
     )
     .onTapGesture {
-      router.path.append(PostViewPayload(post: Post(id: post.id, api: redditAPI), sub: Subreddit(id: post.subredditName, api: redditAPI)))
+      routerProxy.router.path.append(PostViewPayload(post: Post(id: post.id, api: redditAPI), postSelfAttr: attrStrLoader.data, sub: Subreddit(id: post.subredditName, api: redditAPI)))
     }
     .gesture(
       LongPressGesture(minimumDuration: 0.5, maximumDistance: 10)

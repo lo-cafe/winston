@@ -17,9 +17,18 @@ struct GeneralPanel: View {
     var body: some View {
       List{
         Section("Advanced"){
+          
+          Button {
+            resetPreferences()
+          } label: {
+            Label("Reset preferences", systemImage: "trash")
+              .foregroundColor(.red)
+          }
+          
           Button{
             clearCache()
-            
+            resetCaches()
+            resetCoreData()
           } label: {
             Label("Clear Cache (" + totalCacheSize + ")", systemImage: "trash")
               .foregroundColor(.red)

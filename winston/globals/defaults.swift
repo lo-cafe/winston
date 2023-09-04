@@ -75,14 +75,11 @@ extension Defaults.Keys {
   static let cardedPostLinksInnerVPadding = Key<CGFloat>("cardedPostLinksInnerVPadding", default: 14)
   
   static let commentsInnerHPadding = Key<CGFloat>("commentsInnerHPadding", default: 8)
-//  static let commentsInnerVPadding = Key<CGFloat>("commentsInnerVPadding", default: 0)
   static let coloredCommentNames = Key<Bool>("coloredCommentNames", default: false)
   static let showVotes = Key<Bool>("showVotes", default: true)
   static let showSelfText = Key<Bool>("showSelfText", default: true)
   static let cardedCommentsOuterHPadding = Key<CGFloat>("cardedCommentsOuterHPadding", default: 8)
-//  static let cardedCommentsOuterVPadding = Key<CGFloat>("cardedCommentsOuterVPadding", default: 0)
   static let cardedCommentsInnerHPadding = Key<CGFloat>("cardedCommentsInnerHPadding", default: 13)
-//  static let cardedCommentsInnerVPadding = Key<CGFloat>("cardedCommentsInnerVPadding", default: 0)
     
   static let preferenceShowPostsAvatars = Key<Bool>("preferenceShowPostsAvatars", default: true)
   static let preferenceShowPostsCards = Key<Bool>("preferenceShowPostsCards", default: true)
@@ -99,6 +96,7 @@ extension Defaults.Keys {
   static let showPopularFeed = Key<Bool>("showPopularFeed", default: true)
   static let showAllFeed = Key<Bool>("showAllFeed", default: true)
   static let readPostOnScroll = Key<Bool>("readPostOnScroll", default: false)
+  static let lightboxViewsPost = Key<Bool>("lightboxViewsPost", default: false)
   static let hideReadPosts = Key<Bool>("hideReadPosts", default: false)
   static let fadeReadPosts = Key<Bool>("fadeReadPosts", default: false)
   static let showSavedFeed = Key<Bool>("showSavedFeed", default: true)
@@ -121,6 +119,7 @@ extension Defaults.Keys {
   
   static let showTestersCelebrationModal = Key<Bool>("showTestersCelebrationModal", default: true)
   static let showTipJarModal = Key<Bool>("showTipJarModal", default: true)
+  static let disableAlphabetLettersSectionsInSubsList = Key<Bool>("disableAlphabetLettersSectionsInSubsList", default: false)
 }
 
 extension UIScreen {

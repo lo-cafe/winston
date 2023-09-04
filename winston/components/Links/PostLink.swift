@@ -7,6 +7,7 @@
 
 import SwiftUI
 import Defaults
+import Markdown
 
 struct FlairTag: View {
   var text: String
@@ -58,16 +59,34 @@ struct PostLinkSubContainer: View, Equatable {
   }
 }
 
+class AttributedStringLoader: ObservableObject {
+  @Published var data: AttributedString?
+  @Default(.postViewBodySize) private var postViewBodySize
+  
+  func load(str: String) {
+    Task(priority: .background) {
+      let decoder = JSONDecoder()
+      let jsonData = (try? decoder.decode(AttributedString.self, from: str.data(using: .utf8)!)) ?? AttributedString()
+      await MainActor.run {
+        withAnimation {
+          self.data = jsonData
+        }
+      }
+    }
+  }
+}
+
 struct PostLink: View, Equatable {
   static func == (lhs: PostLink, rhs: PostLink) -> Bool {
-    lhs.post == rhs.post && lhs.sub == rhs.sub
+    return lhs.post == rhs.post && lhs.sub == rhs.sub
   }
   
   @ObservedObject var post: Post
   @ObservedObject var sub: Subreddit
+  @StateObject var attrStrLoader = AttributedStringLoader()
   var showSub = false
   var secondary = false
-  @EnvironmentObject private var router: Router
+  @EnvironmentObject private var routerProxy: RouterProxy
   @Default(.preferenceShowPostsCards) private var preferenceShowPostsCards
   @Default(.preferenceShowPostsAvatars) private var preferenceShowPostsAvatars
   @Default(.blurPostLinkNSFW) private var blurPostLinkNSFW
@@ -91,13 +110,14 @@ struct PostLink: View, Equatable {
   @Default(.readPostOnScroll) private var readPostOnScroll
   @Default(.hideReadPosts) private var hideReadPosts
   
-  @Default(.showUpvoteRatio) var showUpvoteRatio
-  @Default(.fadeReadPosts) var fadeReadPosts
+  @Default(.showUpvoteRatio) private var showUpvoteRatio
+  @Default(.fadeReadPosts) private var fadeReadPosts
   
-  @Default(.postLinkTitleSize) var postLinkTitleSize
-  @Default(.postLinkBodySize) var postLinkBodySize
-  @Default(.showSubsAtTop) var showSubsAtTop
-  @Default(.showTitleAtTop) var showTitleAtTop
+  @Default(.postLinkTitleSize) private var postLinkTitleSize
+  @Default(.postLinkBodySize) private var postLinkBodySize
+  @Default(.showSubsAtTop) private var showSubsAtTop
+  @Default(.postViewBodySize) private var postViewBodySize
+  @Default(.showTitleAtTop) private var showTitleAtTop
   
   @StateObject private var appeared = Appeared()
   
@@ -118,7 +138,7 @@ struct PostLink: View, Equatable {
           /// /////////
           
           if showSubsAtTop && !compactMode {
-            SubsNStuffLine(showSub: showSub, feedsAndSuch: feedsAndSuch, post: post, sub: sub, router: router, over18: over18, data: data)
+            SubsNStuffLine(showSub: showSub, feedsAndSuch: feedsAndSuch, post: post, sub: sub, routerProxy: routerProxy, over18: over18)
           }
           
           if compactMode && showVotes && !voteButtonPositionRight {
@@ -137,35 +157,37 @@ struct PostLink: View, Equatable {
             .fontSize(22, .medium)
           }
           
-
+          
           if (!thumbnailPositionRight && compactMode) || (!compactMode && !showTitleAtTop), let extractedMedia = extractedMedia {
             MediaPresenter(media: extractedMedia, post: post, compact: compactMode, contentWidth: contentWidth)
-            .frame(maxWidth: compactMode ? compactModeThumbSize : .infinity, maxHeight: compactMode ? compactModeThumbSize : nil, alignment: .leading)
-            .clipped()
-            .nsfw(over18 && blurPostLinkNSFW)
+              .equatable()
+              .frame(maxWidth: compactMode ? compactModeThumbSize : .infinity, maxHeight: compactMode ? compactModeThumbSize : nil, alignment: .leading)
+              .clipped()
+              .nsfw(over18 && blurPostLinkNSFW)
           }
           
           /// /////////
           /// </UPPER PART>
           /// /////////
-      
+          
           
           VStack(alignment: .leading, spacing: compactMode ? 4 : 10) {
             Text(data.title.escape)
               .fontSize(postLinkTitleSize, .medium)
               .frame(maxWidth: .infinity, alignment: .topLeading)
             
-            
             if compactMode, let extractedMedia = extractedMedia {
               MediaPresenter(showURLInstead: true, media: extractedMedia, post: post, compact: compactMode, contentWidth: contentWidth)
-              .frame(maxWidth: .infinity, alignment: .topLeading)
+                .equatable()
+                .frame(maxWidth: .infinity, alignment: .topLeading)
             }
             
-            if data.selftext != "" && showSelfText && !compactMode {
+            if data.selftext != "" && showSelfText && !compactMode, let winstonSelftextAttrEncoded = data.winstonSelftextAttrEncoded {
               Text(data.selftext.md()).lineLimit(3)
                 .fontSize(postLinkBodySize)
                 .opacity(0.75)
                 .frame(maxWidth: .infinity, alignment: .topLeading)
+                .onAppear { attrStrLoader.load(str: winstonSelftextAttrEncoded) }
             }
             
             if compactMode {
@@ -175,12 +197,13 @@ struct PostLink: View, Equatable {
             }
           }
           .frame(maxWidth: compactMode ? .infinity : nil, alignment: .topLeading)
-                    
+          
           if (thumbnailPositionRight && compactMode) || (!compactMode && showTitleAtTop), let extractedMedia = extractedMedia {
             MediaPresenter(media: extractedMedia, post: post, compact: compactMode, contentWidth: contentWidth)
-            .frame(maxWidth: compactMode ? compactModeThumbSize : .infinity, maxHeight: compactMode ? compactModeThumbSize : nil, alignment: .leading)
-            .clipped()
-            .nsfw(over18 && blurPostLinkNSFW)
+              .equatable()
+              .frame(maxWidth: compactMode ? compactModeThumbSize : .infinity, maxHeight: compactMode ? compactModeThumbSize : nil, alignment: .leading)
+              .clipped()
+              .nsfw(over18 && blurPostLinkNSFW)
           }
           
           if compactMode && showVotes && voteButtonPositionRight {
@@ -204,9 +227,9 @@ struct PostLink: View, Equatable {
         .frame(maxWidth: .infinity, alignment: .topLeading)
         
         if !showSubsAtTop || compactMode {
-          SubsNStuffLine(showSub: showSub, feedsAndSuch: feedsAndSuch, post: post, sub: sub, router: router, over18: over18, data: data)
+          SubsNStuffLine(showSub: showSub, feedsAndSuch: feedsAndSuch, post: post, sub: sub, routerProxy: routerProxy, over18: over18)
         }
-
+        
         if !compactMode {
           HStack {
             if let fullname = data.author_fullname {
@@ -240,7 +263,6 @@ struct PostLink: View, Equatable {
         }
           .allowsHitTesting(false)
       )
-      
       .mask(RR(preferenceShowPostsCards ? 20 : 0, .black))
       .overlay(
         fadeReadPosts
@@ -260,9 +282,11 @@ struct PostLink: View, Equatable {
           .allowsHitTesting(false)
         , alignment: .topTrailing
       )
+      .scaleEffect(1)
+      .contentShape(Rectangle())
       .swipyUI(
         onTap: {
-          router.path.append(PostViewPayload(post: post, sub: feedsAndSuch.contains(sub.id) ? sub : sub))
+          routerProxy.router.path.append(PostViewPayload(post: post, postSelfAttr: attrStrLoader.data, sub: feedsAndSuch.contains(sub.id) ? sub : sub))
         },
         actionsSet: postSwipeActions,
         entity: post
@@ -271,7 +295,6 @@ struct PostLink: View, Equatable {
       .padding(.vertical, !secondary && preferenceShowPostsCards ? cardedPostLinksOuterVPadding : 0)
       .compositingGroup()
       .opacity(fadeReadPosts && seen ? 0.6 : 1)
-      .contentShape(Rectangle())
       .contextMenu(menuItems: {
         
         if let perma = URL(string: "https://reddit.com\(data.permalink.escape.urlEncoded)") {
@@ -296,7 +319,7 @@ struct PostLink: View, Equatable {
           ShareLink(item: perma) { Label("Share", systemImage: "square.and.arrow.up") }
         }
         
-      }, preview: { NavigationStack { PostView(post: post, subreddit: sub, forceCollapse: true) }.environmentObject(post.redditAPI).environmentObject(router) })
+      }, preview: { NavigationStack { PostView(post: post, subreddit: sub, forceCollapse: true) }.environmentObject(post.redditAPI).environmentObject(routerProxy) })
       .foregroundColor(.primary)
       .multilineTextAlignment(.leading)
       .zIndex(1)
@@ -360,9 +383,8 @@ struct SubsNStuffLine: View {
   var feedsAndSuch: [String]
   var post: Post
   var sub: Subreddit
-  var router: Router
+  var routerProxy: RouterProxy
   var over18: Bool
-  var data: PostData
   
   var body: some View {
     HStack(spacing: 0) {
@@ -370,7 +392,7 @@ struct SubsNStuffLine: View {
       if showSub || feedsAndSuch.contains(sub.id) {
         FlairTag(text: "r/\(sub.data?.display_name ?? post.data?.subreddit ?? "Error")", color: .blue)
           .highPriorityGesture(TapGesture() .onEnded {
-            router.path.append(SubViewType.posts(Subreddit(id: post.data?.subreddit ?? "", api: post.redditAPI)))
+            routerProxy.router.path.append(SubViewType.posts(Subreddit(id: post.data?.subreddit ?? "", api: post.redditAPI)))
           })
         
         WDivider()
@@ -381,7 +403,7 @@ struct SubsNStuffLine: View {
         WDivider()
       }
       
-      if let link_flair_text = data.link_flair_text {
+      if let link_flair_text = post.data?.link_flair_text {
         FlairTag(text: link_flair_text.emojied())
           .allowsHitTesting(false)
       }
