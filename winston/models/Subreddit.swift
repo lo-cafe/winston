@@ -141,8 +141,8 @@ extension Subreddit {
     return nil
   }
   
-  func fetchPosts(sort: SubListingSortOption = .best, after: String? = nil) async -> ([Post]?, String?)? {
-    if let response = await redditAPI.fetchSubPosts(data?.url ?? (id == "home" ? "" : id), sort: sort, after: after), let data = response.0 {
+  func fetchPosts(sort: SubListingSortOption = .best, after: String? = nil, searchText: String? = nil) async -> ([Post]?, String?)? {
+    if let response = await redditAPI.fetchSubPosts(data?.url ?? (id == "home" ? "" : id), sort: sort, after: after, searchText: searchText), let data = response.0 {
       return (Post.initMultiple(datas: data.compactMap { $0.data }, api: redditAPI), response.1)
     }
     return nil

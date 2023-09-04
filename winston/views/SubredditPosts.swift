@@ -29,14 +29,14 @@ struct SubredditPosts: View {
   @EnvironmentObject private var redditAPI: RedditAPI
   @EnvironmentObject private var router: Router
   
-  func asyncFetch(force: Bool = false, loadMore: Bool = false) async {
+  func asyncFetch(force: Bool = false, loadMore: Bool = false, searchText: String? = nil) async {
     if (subreddit.data == nil || force) && !feedsAndSuch.contains(subreddit.id) {
       await subreddit.refreshSubreddit()
     }
     if posts.count > 0 && lastPostAfter == nil && !force {
       return
     }
-    if let result = await subreddit.fetchPosts(sort: sort, after: loadMore ? lastPostAfter : nil), let newPosts = result.0 {
+    if let result = await subreddit.fetchPosts(sort: sort, after: loadMore ? lastPostAfter : nil, searchText: searchText), let newPosts = result.0 {
       withAnimation {
         if loadMore {
           let newPostsFiltered = newPosts.filter { !loadedPosts.contains($0.id) }
@@ -56,10 +56,26 @@ struct SubredditPosts: View {
     }
   }
   
-  func fetch(loadMore: Bool = false) {
+  func fetch(loadMore: Bool = false, searchText: String? = nil) {
     Task(priority: .background) {
-      await asyncFetch(loadMore: loadMore)
+      await asyncFetch(loadMore: loadMore, searchText: searchText)
     }
+  }
+  
+  func clearAndLoadData(withSearchText searchText: String? = nil) {
+    withAnimation {
+      loading = true
+      posts.removeAll()
+      loadedPosts.removeAll()
+    }
+    
+    if let searchText = searchText, !searchText.isEmpty {
+      fetch(searchText: searchText)
+    } else {
+      fetch()
+    }
+    
+    Defaults[.preferredSort] = sort
   }
   
   var body: some View {
@@ -83,7 +99,15 @@ struct SubredditPosts: View {
 
             PostLink(post: post, sub: subreddit)
               .equatable()
-              .onAppear { if(Int(Double(posts.count) * 0.75) == i) { fetch(loadMore: true) } }
+              .onAppear {
+                if(Int(Double(posts.count) * 0.75) == i) {
+                  if !searchText.isEmpty {
+                    fetch(loadMore: true, searchText: searchText)
+                  } else {
+                    fetch(loadMore: true)
+                  }
+                }
+              }
               .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
               .animation(.default, value: posts)
 
@@ -202,15 +226,17 @@ struct SubredditPosts: View {
       }
     }
     .onChange(of: sort) { val in
-      withAnimation {
-        loading = true
-        posts.removeAll()
-        loadedPosts.removeAll()
-      }
-      fetch()
-      Defaults[.preferredSort] = sort
+      clearAndLoadData()
     }
     .searchable(text: $searchText, prompt: "Search r/\(subreddit.data?.display_name ?? subreddit.id)")
+    .onSubmit(of: .search) {
+      clearAndLoadData(withSearchText: searchText)
+    }
+    .onChange(of: searchText) { val in
+      if searchText.isEmpty {
+        clearAndLoadData()
+      }
+    }
     .refreshable {
       loadedPosts.removeAll()
       await asyncFetch(force: true)

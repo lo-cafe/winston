@@ -9,15 +9,17 @@ import Foundation
 import Alamofire
 
 extension RedditAPI {
-  func fetchSubPosts(_ id: String, sort: SubListingSortOption = .best, after: String? = nil) async -> ([ListingChild<PostData>]?, String?)? {
+  func fetchSubPosts(_ id: String, sort: SubListingSortOption = .best, after: String? = nil, searchText: String? = nil) async -> ([ListingChild<PostData>]?, String?)? {
     await refreshToken()
     if let headers = self.getRequestHeaders() {
-      let subID = buildSubID(id, sort, after)
+      let subID = buildSubID(id, sort, after, searchText)
 
       let params = FetchSubsPayload(limit: 25, after: after)
+      
+      let urlString = "\(RedditAPI.redditApiURLBase)\(subID)".replacingOccurrences(of: " ", with: "%20")
 
       let response = await AF.request(
-        "\(RedditAPI.redditApiURLBase)\(subID)",
+        urlString,
         method: .get,
         parameters: params,
         encoder: URLEncodedFormParameterEncoder(destination: .queryString),
@@ -38,28 +40,39 @@ extension RedditAPI {
     }
   }
 
-  private func buildSubID(_ id: String, _ sort: SubListingSortOption, _ after: String?) -> String {
-    let appendedJson = ".json"
+  private func buildSubID(_ id: String, _ sort: SubListingSortOption, _ after: String?, _ searchText: String?) -> String {
+    let appendedFileType = ".json"
     
     var subID = id == "" ? "/" : id.hasPrefix("/r/") ? id : "/r/\(id)"
     subID = !subID.hasSuffix("/") ? "\(subID)/" : subID
-
-    switch sort {
-    case .best:
-      subID += "best\(appendedJson)"
-    case .hot:
-      subID += "hot\(appendedJson)"
-    case .new:
-      subID += "new\(appendedJson)"
-    case .top(let topSortOption):
-      subID += "top\(appendedJson)"
-      subID += buildTopSortQuery(topSortOption)
+    
+    if searchText != nil {
+      subID += "search\(appendedFileType)"
+    } else {
+      switch sort {
+      case .best:
+        subID += "best\(appendedFileType)"
+      case .hot:
+        subID += "hot\(appendedFileType)"
+      case .new:
+        subID += "new\(appendedFileType)"
+      case .top(let topSortOption):
+        subID += "top\(appendedFileType)"
+        subID += buildTopSortQuery(topSortOption)
+      }
     }
 
-    if id == "saved", let myName = me?.data?.name {
-      subID = "/user/\(myName)/saved/"
-    }
+    // Commenting this out since loading saved posts is currently disabled within the app. We need to re-evaluate how to append this with the added functionality of sorting and searching in subreddits.
+    // TODO: Re-evaluate user saved endpoint load
+//    if id == "saved", let myName = me?.data?.name {
+//      subID = "/user/\(myName)/saved/"
+//    }
 
+    if let searchText = searchText {
+      subID += subID.contains("?") ? "&q=\(searchText)" : "?q=\(searchText)"
+      subID += "&restrict_sr=on"
+    }
+    
     if let after = after {
       subID += subID.contains("?") ? "&after=\(after)" : "?after=\(after)"
     }
