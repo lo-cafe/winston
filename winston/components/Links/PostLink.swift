@@ -321,10 +321,6 @@ struct PostLink: View, Equatable {
           }
         }
         
-        if let perma = URL(string: "https://reddit.com\(data.permalink.escape.urlEncoded)") {
-          ShareLink(item: perma) { Label("Share", systemImage: "square.and.arrow.up") }
-        }
-        
       }, preview: { NavigationStack { PostView(post: post, subreddit: sub, forceCollapse: true) }.environmentObject(post.redditAPI).environmentObject(routerProxy) })
       .foregroundColor(.primary)
       .multilineTextAlignment(.leading)
