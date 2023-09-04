@@ -20,6 +20,7 @@
 		659FDEA82A87798300103414 /* VoteButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 659FDEA72A87798300103414 /* VoteButton.swift */; };
 		65AA535D2A8BB27900275299 /* FAQPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65AA535C2A8BB27900275299 /* FAQPanel.swift */; };
 		65BE92A52AA0F15D0033F686 /* BetterSafariView in Frameworks */ = {isa = PBXBuildFile; productRef = 65BE92A42AA0F15D0033F686 /* BetterSafariView */; };
+		65BE92A52AA0F15D0033F686 /* BetterSafariView in Frameworks */ = {isa = PBXBuildFile; productRef = 65BE92A42AA0F15D0033F686 /* BetterSafariView */; };
 		65BB79012A99FB2600EB83D5 /* LightBoxElementView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65BB79002A99FB2600EB83D5 /* LightBoxElementView.swift */; };
 		65D2A3882AA26E3F00EC04ED /* mediaExtractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65D2A3872AA26E3F00EC04ED /* mediaExtractor.swift */; };
 		65D531402A98D75000FED4DE /* LiveTextInteraction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65D5313F2A98D75000FED4DE /* LiveTextInteraction.swift */; };
@@ -1809,6 +1810,14 @@
 				kind = branch;
 			};
 		};
+		65BE92A32AA0F15D0033F686 /* XCRemoteSwiftPackageReference "BetterSafariView" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/stleamist/BetterSafariView.git";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
 		65EEAC5A2A98980F00B0D607 /* XCRemoteSwiftPackageReference "Haptics" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/Alluja-LLC/Haptics.git";
@@ -1948,6 +1957,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		65BE92A42AA0F15D0033F686 /* BetterSafariView */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 65BE92A32AA0F15D0033F686 /* XCRemoteSwiftPackageReference "BetterSafariView" */;
+			productName = BetterSafariView;
+		};
 		65BE92A42AA0F15D0033F686 /* BetterSafariView */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 65BE92A32AA0F15D0033F686 /* XCRemoteSwiftPackageReference "BetterSafariView" */;
