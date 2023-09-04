@@ -7,6 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		517959792AA6181400CB3B17 /* appstore-release.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 517959782AA6181400CB3B17 /* appstore-release.xcconfig */; };
+		5179597A2AA6181400CB3B17 /* appstore-release.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 517959782AA6181400CB3B17 /* appstore-release.xcconfig */; };
+		5179597C2AA6183D00CB3B17 /* beta-release.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 5179597B2AA6183D00CB3B17 /* beta-release.xcconfig */; };
+		5179597D2AA6183D00CB3B17 /* beta-release.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 5179597B2AA6183D00CB3B17 /* beta-release.xcconfig */; };
+		517959802AA6186C00CB3B17 /* alpha-release.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 5179597F2AA6186C00CB3B17 /* alpha-release.xcconfig */; };
+		517959812AA6186C00CB3B17 /* alpha-release.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 5179597F2AA6186C00CB3B17 /* alpha-release.xcconfig */; };
 		650ACAFC2A87A36900A7C600 /* calcVotes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 650ACAFB2A87A36900A7C600 /* calcVotes.swift */; };
 		651D19C72A90B7D6003867A9 /* PostFontSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 651D19C62A90B7D6003867A9 /* PostFontSettings.swift */; };
 		652377442A9B4E7700D7A792 /* ZoomableImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 652377432A9B4E7700D7A792 /* ZoomableImageView.swift */; };
@@ -287,6 +293,9 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		517959782AA6181400CB3B17 /* appstore-release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "appstore-release.xcconfig"; sourceTree = "<group>"; };
+		5179597B2AA6183D00CB3B17 /* beta-release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "beta-release.xcconfig"; sourceTree = "<group>"; };
+		5179597F2AA6186C00CB3B17 /* alpha-release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "alpha-release.xcconfig"; sourceTree = "<group>"; };
 		650ACAFB2A87A36900A7C600 /* calcVotes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = calcVotes.swift; sourceTree = "<group>"; };
 		651D19C62A90B7D6003867A9 /* PostFontSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostFontSettings.swift; sourceTree = "<group>"; };
 		652377432A9B4E7700D7A792 /* ZoomableImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZoomableImageView.swift; sourceTree = "<group>"; };
@@ -565,6 +574,16 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		517959772AA6176C00CB3B17 /* build-configs */ = {
+			isa = PBXGroup;
+			children = (
+				517959782AA6181400CB3B17 /* appstore-release.xcconfig */,
+				5179597B2AA6183D00CB3B17 /* beta-release.xcconfig */,
+				5179597F2AA6186C00CB3B17 /* alpha-release.xcconfig */,
+			);
+			path = "build-configs";
+			sourceTree = "<group>";
+		};
 		651D19C52A90B7B5003867A9 /* subSettingView */ = {
 			isa = PBXGroup;
 			children = (
@@ -695,6 +714,7 @@
 		EC593ACB2A4673B2002D6454 = {
 			isa = PBXGroup;
 			children = (
+				517959772AA6176C00CB3B17 /* build-configs */,
 				EC6495AA2A99A52800B1852C /* managed */,
 				ECA30A152A5FA06D00BB19D1 /* TestFlight */,
 				EC22A3152A5B74AC0062A112 /* ci_scripts */,
@@ -1245,6 +1265,9 @@
 			files = (
 				EC22A3172A5B74CE0062A112 /* ci_post_clone.sh in Resources */,
 				EC593ADC2A4673B3002D6454 /* Assets.xcassets in Resources */,
+				517959802AA6186C00CB3B17 /* alpha-release.xcconfig in Resources */,
+				5179597C2AA6183D00CB3B17 /* beta-release.xcconfig in Resources */,
+				517959792AA6181400CB3B17 /* appstore-release.xcconfig in Resources */,
 				EC6CBE332A7D6BF80089EAA0 /* README.md in Resources */,
 				ECA30A172A5FA08500BB19D1 /* WhatToTest.en-US.txt in Resources */,
 			);
@@ -1254,9 +1277,12 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5179597D2AA6183D00CB3B17 /* beta-release.xcconfig in Resources */,
 				ECAA8B712A75261000D9D636 /* background.js in Resources */,
+				5179597A2AA6181400CB3B17 /* appstore-release.xcconfig in Resources */,
 				ECAA8B772A75261000D9D636 /* popup.css in Resources */,
 				ECAA8B752A75261000D9D636 /* popup.html in Resources */,
+				517959812AA6186C00CB3B17 /* alpha-release.xcconfig in Resources */,
 				ECAA8B6D2A75261000D9D636 /* images in Resources */,
 				ECAA8B6F2A75261000D9D636 /* manifest.json in Resources */,
 				ECAA8B6B2A75261000D9D636 /* _locales in Resources */,
@@ -1518,6 +1544,7 @@
 /* Begin XCBuildConfiguration section */
 		5179596E2AA610F600CB3B17 /* winston-alpha */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5179597F2AA6186C00CB3B17 /* alpha-release.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -1573,6 +1600,7 @@
 		};
 		5179596F2AA610F600CB3B17 /* winston-alpha */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5179597F2AA6186C00CB3B17 /* alpha-release.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -1609,6 +1637,7 @@
 		};
 		517959702AA610F600CB3B17 /* winston-alpha */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5179597F2AA6186C00CB3B17 /* alpha-release.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -1639,6 +1668,7 @@
 		};
 		517959712AA610FD00CB3B17 /* winston-beta */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5179597B2AA6183D00CB3B17 /* beta-release.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -1694,6 +1724,7 @@
 		};
 		517959722AA610FD00CB3B17 /* winston-beta */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5179597B2AA6183D00CB3B17 /* beta-release.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -1706,7 +1737,7 @@
 				ENABLE_PREVIEWS = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = winston/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "Winston (Alpha)";
+				INFOPLIST_KEY_CFBundleDisplayName = Winston;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "winston needs access to your library to be able to download images.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -1730,6 +1761,7 @@
 		};
 		517959732AA610FD00CB3B17 /* winston-beta */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5179597B2AA6183D00CB3B17 /* beta-release.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -1821,6 +1853,7 @@
 		};
 		EC593AE72A4673B3002D6454 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 517959782AA6181400CB3B17 /* appstore-release.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -1887,7 +1920,7 @@
 				ENABLE_PREVIEWS = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = winston/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "Winston (Alpha)";
+				INFOPLIST_KEY_CFBundleDisplayName = "Winston (Debug)";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "winston needs access to your library to be able to download images.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -1911,6 +1944,7 @@
 		};
 		EC593AEA2A4673B3002D6454 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 517959782AA6181400CB3B17 /* appstore-release.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -1923,7 +1957,7 @@
 				ENABLE_PREVIEWS = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = winston/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "Winston (Alpha)";
+				INFOPLIST_KEY_CFBundleDisplayName = Winston;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "winston needs access to your library to be able to download images.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -1977,6 +2011,7 @@
 		};
 		ECAA8B802A75261000D9D636 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 517959782AA6181400CB3B17 /* appstore-release.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
