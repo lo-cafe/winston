@@ -120,7 +120,10 @@ struct PreviewLinkContent: View {
   var url: URL
   static let height: CGFloat = 88
   @Environment(\.openURL) var openURL
-  
+  @EnvironmentObject private var router: Router
+  @Default(.useIntegratedBrowser) private var useIntegratedBrowser
+  @Default(.defaultReaderMode) private var defaultReaderMode
+
   var body: some View {
     HStack(spacing: 16) {
       
@@ -184,6 +187,10 @@ struct PreviewLinkContent: View {
       }
     }
     .highPriorityGesture(TapGesture().onEnded {
+      if useIntegratedBrowser {
+        router.path.append(SafariViewPayload(url: url, useReader: defaultReaderMode))
+        return
+      }
       if let newURL = URL(string: url.absoluteString.replacingOccurrences(of: "https://reddit.com/", with: "winstonapp://")) {
         openURL(newURL)
       }

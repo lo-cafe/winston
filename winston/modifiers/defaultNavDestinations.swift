@@ -45,6 +45,12 @@ extension View {
         UserView(user: user)
           .environmentObject(router)
       }
+      .navigationDestination(for: SafariViewPayload.self) { payload in
+        SafariView(payload: payload)
+          .frame(maxHeight: .infinity)
+          .navigationBarTitleDisplayMode(.inline)
+          .environmentObject(router)
+      }
       .environmentObject(router)
   }
 }
