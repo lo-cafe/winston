@@ -420,7 +420,7 @@ struct CommentData: GenericRedditEntityDataType {
   //  let collapsed_reason: String?
   //  let distinguished: String?
   //  let associated_award: String?
-  let stickied: Bool?
+  //  let stickied: Bool?
   //  let author_premium: Bool?
   //  let can_gild: Bool?
   //  let gildings: [String: String]?
@@ -429,7 +429,7 @@ struct CommentData: GenericRedditEntityDataType {
   //  let score_hidden: Bool?
     var permalink: String?
   //  let subreddit_type: String?
-  let locked: Bool?
+  //  let locked: Bool?
   //  let report_reasons: String?
   var created: Double?
   //  let author_flair_text: String?
