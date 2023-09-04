@@ -1,18 +1,16 @@
-- Fixes crash because of infinite upvotes count
-- Fixes Reddit links posts not appearing sometimes
-- Added tips jar
---- EXTRA UPDATE ---
-- New look for load more comments button
-- Fixed ANNOYING jumpy behavior of swipe actions
-- Increased image double tap delay tolerance
-- Fixed swipe gestures working full width (which caused it to mix with back gesture sometimes)
-- Fixed unaligned indent arrows in comments on flat view
-- Added user view infinite scrolling (thanks @ejbills)
-- Fix duplicate posts showing up in the feed (thanks @ejbills)
-- Covered more media types
-- User subs don't show up as subs anymore
-- Fixed subs refresh duplication issue
-- Now favorites section won't show if empty
-- Now multis and postbox won't show when searching subs
-- Fixes tab bar overlay getting pushed by keyboard
-- Design fixes
+PERFORMANCE UPDATE!
+
+-- FUN CHANGELOG --
+- The app should be way smoother now
+- Fixed bug where multis weren't properly updated when changed
+- Fixed tap area of post links
+- Added option to mark post as read on media preview
+- Added number transition to votes
+
+-- BORING PERFORMANCE CHANGELOG --
+- Now navigating between routes won't update any view other than root
+- Youtube videos, links, internal links, none of that will reload every time it appears
+- Now cache of the things mentioned in the previous point won't accumulate eternally and won't take your RAM usage to the sky (sorry about that)
+- Now Markdown parsing if posts happens when fetching instead of when opening the post up
+- Many things won't rerender for no reason anymore
+- Replaced some shadows with a more performant version

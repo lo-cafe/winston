@@ -23,7 +23,7 @@ struct Badge: View {
   var labelSize: CGFloat = 12
   //  var extraInfo: [String:String] = [:]
   var extraInfo: [BadgeExtraInfo] = []
-  @EnvironmentObject private var router: Router
+  @EnvironmentObject private var routerProxy: RouterProxy
   @EnvironmentObject private var redditAPI: RedditAPI
   let flagY: CGFloat = 16
   let delay: CGFloat = 0.4
@@ -48,7 +48,7 @@ struct Badge: View {
                 
                 Circle()
                   .fill(.gray)
-                  .shadow(color: .black.opacity(0.15), radius: 4, y: 4)
+                  .performantShadow(cornerRadius: 15, color: .black, opacity: 0.15, radius: 4, offsetY: 4, size: CGSize(width: 30, height: 30))
                   .frame(maxWidth: .infinity, maxHeight: .infinity)
                   .mask(
                     Image(systemName: "bookmark.fill")
@@ -65,7 +65,7 @@ struct Badge: View {
             )
             .scaleEffect(1)
             .onTapGesture {
-              router.path.append(User(id: author, api: redditAPI))
+              routerProxy.router.path.append(User(id: author, api: redditAPI))
             }
         }
       }
@@ -74,7 +74,7 @@ struct Badge: View {
         
         Text(author).font(.system(size: nameSize, weight: .semibold)).foregroundColor(author == "[deleted]" ? .red : usernameColor)
           .onTapGesture {
-            router.path.append(User(id: author, api: redditAPI))
+            routerProxy.router.path.append(User(id: author, api: redditAPI))
           }
         
         HStack(alignment: .center, spacing: 6) {

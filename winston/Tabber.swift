@@ -63,7 +63,7 @@ struct Tabber: View {
     let tabHeight = (tabBarHeight ?? 0) - getSafeArea().bottom
     TabView(selection: $activeTab.onUpdate { newTab in if activeTab == newTab { payload[newTab]!.reset.toggle() } }) {
       
-      Subreddits(reset: payload[.posts]!.reset, router: payload[.posts]!.router)
+        Subreddits(reset: payload[.posts]!.reset, router: payload[.posts]!.router)
         .background(TabBarAccessor { tabBar in
           if tabBarHeight != tabBar.bounds.height { tabBarHeight = tabBar.bounds.height }
         })
@@ -74,8 +74,8 @@ struct Tabber: View {
           }
         }
         .tag(TabIdentifier.posts)
-      
-      Inbox(reset: payload[.inbox]!.reset, router: payload[.inbox]!.router)
+
+        Inbox(reset: payload[.inbox]!.reset, router: payload[.inbox]!.router)
         .background(TabBarAccessor { tabBar in
           if tabBarHeight != tabBar.bounds.height { tabBarHeight = tabBar.bounds.height }
         })
@@ -86,8 +86,8 @@ struct Tabber: View {
           }
         }
         .tag(TabIdentifier.inbox)
-      
-      Me(reset: payload[.me]!.reset, router: payload[.me]!.router)
+
+        Me(reset: payload[.me]!.reset, router: payload[.me]!.router)
         .background(TabBarAccessor { tabBar in
           if tabBarHeight != tabBar.bounds.height { tabBarHeight = tabBar.bounds.height }
         })
@@ -102,8 +102,8 @@ struct Tabber: View {
           }
         }
         .tag(TabIdentifier.me)
-      
-      Search(reset: payload[.search]!.reset, router: payload[.search]!.router)
+
+        Search(reset: payload[.search]!.reset, router: payload[.search]!.router)
         .background(TabBarAccessor { tabBar in
           if tabBarHeight != tabBar.bounds.height { tabBarHeight = tabBar.bounds.height }
         })
@@ -114,8 +114,8 @@ struct Tabber: View {
           }
         }
         .tag(TabIdentifier.search)
-      
-      Settings(reset: payload[.settings]!.reset, router: payload[.settings]!.router)
+
+        Settings(reset: payload[.settings]!.reset, router: payload[.settings]!.router)
         .background(TabBarAccessor { tabBar in
           if tabBarHeight != tabBar.bounds.height { tabBarHeight = tabBar.bounds.height }
         })
@@ -235,7 +235,7 @@ struct Tabber: View {
           )
           .frame(width: geo.size.width, height: tabHeight)
           .contentShape(Rectangle())
-          .swipeAnywhere(router: payload[activeTab]!.router, forceEnable: true)
+          .swipeAnywhere(routerProxy: RouterProxy(payload[activeTab]!.router), forceEnable: true)
           .frame(width: geo.size.width, height: geo.size.height, alignment: .bottom)
       }
         .ignoresSafeArea(.keyboard)

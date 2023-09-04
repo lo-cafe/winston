@@ -8,7 +8,7 @@
 import SwiftUI
 import Defaults
 struct ShortCommentPostLink: View {
-  @EnvironmentObject private var router: Router
+  @EnvironmentObject private var routerProxy: RouterProxy
   var comment: Comment
   @State var openedPost = false
   @State var openedSub = false
@@ -25,16 +25,17 @@ struct ShortCommentPostLink: View {
           .lineLimit(2)
           .multilineTextAlignment(.leading)
           .fixedSize(horizontal: false, vertical: true)
+//          .onAppear { attrStrLoader.load(str: data.selftext) }
         
         VStack(alignment: .leading, spacing: 2) {
           if let author = data.author {
             (Text(author).font(.system(size: 13, weight: .semibold)).foregroundColor(coloredCommentNames ? .blue : .primary))
-              .onTapGesture { router.path.append(User(id: data.author!, api: comment.redditAPI)) }
+              .onTapGesture { routerProxy.router.path.append(User(id: data.author!, api: comment.redditAPI)) }
           }
           
           if let subreddit = data.subreddit {
             (Text("on ").font(.system(size: 13, weight: .medium)).foregroundColor(.primary.opacity(0.5)) + Text("r/\(subreddit)").font(.system(size: 14, weight: .semibold)).foregroundColor(.primary.opacity(0.75)))
-              .onTapGesture { router.path.append(SubViewType.posts(Subreddit(id: data.subreddit!, api: comment.redditAPI))) }
+              .onTapGesture { routerProxy.router.path.append(SubViewType.posts(Subreddit(id: data.subreddit!, api: comment.redditAPI))) }
           }
         }
       }
@@ -52,7 +53,7 @@ struct ShortCommentPostLink: View {
       .contentShape(Rectangle())
       .highPriorityGesture (
         TapGesture().onEnded {
-          router.path.append(PostViewPayload(post: Post(id: data.link_id!, api: comment.redditAPI), sub: Subreddit(id: data.subreddit!, api: comment.redditAPI)))
+          routerProxy.router.path.append(PostViewPayload(post: Post(id: data.link_id!, api: comment.redditAPI), sub: Subreddit(id: data.subreddit!, api: comment.redditAPI)))
         }
       )
       .foregroundColor(.primary)

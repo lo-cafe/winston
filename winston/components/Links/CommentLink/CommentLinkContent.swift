@@ -38,10 +38,7 @@ class MyDefaults {
 
 struct CommentLinkContent: View {
   var highlightID: String?
-  @Default(.preferenceShowCommentsCards) private var preferenceShowCommentsCards
-  @Default(.preferenceShowCommentsAvatars) private var preferenceShowCommentsAvatars
 //  @Default(.commentSwipeActions) private var commentSwipeActions
-  @State private var commentSwipeActions: SwipeActionsSet = Defaults[.commentSwipeActions]
   var forcedBodySize: CGSize?
   var showReplies = true
   var arrowKinds: [ArrowKind]
@@ -52,18 +49,20 @@ struct CommentLinkContent: View {
   @State var sizer = Sizer()
   var avatarsURL: [String:String]?
   //  @Binding var collapsed: Bool
-  @State var showReplyModal = false
-  @State var pressing = false
-  @State var dragging = false
-  @State var offsetX: CGFloat = 0
-  @State var bodySize: CGSize = .zero
-  @State var highlight = false
+  @State private var showReplyModal = false
+  @State private var pressing = false
+  @State private var dragging = false
+  @State private var offsetX: CGFloat = 0
+  @State private var bodySize: CGSize = .zero
+  @State private var highlight = false
+  @State private var commentSwipeActions: SwipeActionsSet = Defaults[.commentSwipeActions]
   
-  @Default(.cardedCommentsInnerHPadding) var cardedCommentsInnerHPadding
-  @Default(.coloredCommentNames) var coloredCommenNames
-  
-  @Default(.collapseAutoModerator) var collapseAutoModerator
-  @Default(.commentLinkBodySize) var commentLinkBodySize
+  @Default(.preferenceShowCommentsCards) private var preferenceShowCommentsCards
+  @Default(.preferenceShowCommentsAvatars) private var preferenceShowCommentsAvatars
+  @Default(.cardedCommentsInnerHPadding) private var cardedCommentsInnerHPadding
+  @Default(.coloredCommentNames) private var coloredCommenNames
+  @Default(.collapseAutoModerator) private var collapseAutoModerator
+  @Default(.commentLinkBodySize) private var commentLinkBodySize
   
   @State var commentViewLoaded = false
   
@@ -122,7 +121,9 @@ struct CommentLinkContent: View {
 
                 let downup = Int(ups - downs)
                 Text(formatBigNumber(downup))
-                  .foregroundColor(data.likes != nil ? (data.likes! ? .orange : .blue) : .gray) 
+                  .foregroundColor(data.likes != nil ? (data.likes! ? .orange : .blue) : .gray)
+                  .contentTransition(.numericText())
+                  
                 //                  .foregroundColor(downup == 0 ? .gray : downup > 0 ? .orange : .blue)
                   .fontSize(14, .semibold)
 
@@ -133,8 +134,9 @@ struct CommentLinkContent: View {
               .padding(.horizontal, 6)
               .padding(.vertical, 2)
               .background(Capsule(style: .continuous).fill(.secondary.opacity(0.1)))
-              .viewVotes(ups, downs)
+//              .viewVotes(ups, downs)
               .allowsHitTesting(!collapsed)
+              .scaleEffect(1)
 
               if collapsed {
                 Image(systemName: "eye.slash.fill")
@@ -205,7 +207,7 @@ struct CommentLinkContent: View {
                       .fontSize(15)
                       .lineLimit(lineLimit)
                   } else {
-                    MD(str: body, fontSize: commentLinkBodySize)
+                    MD(data.winstonBodyAttrEncoded.isNil ? .str(body) : .json(data.winstonBodyAttrEncoded!), fontSize: commentLinkBodySize)
                       .fixedSize(horizontal: false, vertical: true)
                       .overlay(
                         !selectable
@@ -223,6 +225,7 @@ struct CommentLinkContent: View {
               .animation(.interpolatingSpring(stiffness: 1000, damping: 100, initialVelocity: 0), value: offsetX)
               .padding(.top, 6)
               .padding(.bottom, data.depth == 0 && comment.childrenWinston.data.count == 0 ? 0 : 6)
+              .scaleEffect(1)
               .contentShape(Rectangle())
               .swipyUI(
                 offsetYAction: -15,
