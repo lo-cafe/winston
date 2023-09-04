@@ -123,7 +123,6 @@ struct SubredditPosts: View {
             }
 
           }
-          
           if !lastPostAfter.isNil {
             ProgressView()
               .progressViewStyle(.circular)
@@ -139,6 +138,7 @@ struct SubredditPosts: View {
       .listStyle(.plain)
       .environment(\.defaultMinListRowHeight, 1)
     }
+    .loader(loading && posts.count == 0)
     .overlay(
       feedsAndSuch.contains(subreddit.id)
       ? nil
