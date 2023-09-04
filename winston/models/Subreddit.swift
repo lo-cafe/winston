@@ -487,12 +487,12 @@ enum SubListingSortOption: Codable, Identifiable, Defaults.Serializable, Hashabl
     
     var icon: String {
       switch self {
-        case .hour: return "clock"
-        case .day: return "sun.max"
-        case .week: return "calendar"
-        case .month: return "calendar.badge.clock"
-        case .year: return "calendar.badge.exclamationmark"
-        case .all: return "chart.line.uptrend.xyaxis"
+        case .hour: return "hourglass"
+        case .day: return "clock"
+        case .week: return "clock.arrow.2.circlepath"
+        case .month: return "calendar"
+        case .year: return "calendar.badge.clock"
+        case .all: return "arrow.up.circle.badge.clock"
       }
     }
   }
