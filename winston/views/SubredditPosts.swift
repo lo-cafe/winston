@@ -20,7 +20,6 @@ struct SubredditPosts: View {
   @Default(.isPaginatedFeed) var isPaginatedFeed
   @ObservedObject var subreddit: Subreddit
   @Environment(\.openURL) private var openURL
-  @State private var loading = true
   @State private var paginatedIsLoading = false
   @State private var posts: [Post] = []
   @State private var loadedPosts: Set<String> = []
@@ -51,7 +50,6 @@ struct SubredditPosts: View {
           posts = newPostsFiltered
           newPostsFiltered.forEach { loadedPosts.insert($0.id) }
         }
-        loading = false
         lastPostAfter = result.1
         
         if isPaginatedFeed {
@@ -119,9 +117,12 @@ struct SubredditPosts: View {
                 .progressViewStyle(.circular)
                 .frame(maxWidth: .infinity, minHeight: posts.count > 0 ? 100 : UIScreen.screenHeight - 200 )
                 .id("post-loading")
-            } else if !loading {
+            } else if posts.count != 0 {
               Button(action: {
-                paginatedIsLoading = true
+                withAnimation {
+                  paginatedIsLoading = true
+                }
+                
                 fetch(loadMore: true)
               }) {
                 HStack {
@@ -129,6 +130,7 @@ struct SubredditPosts: View {
                   Text(paginatedIsLoading ? "Just a sec..." : "Load More - Page \(pageNumber)")
                     .font(.headline)
                     .foregroundColor(.blue)
+                    .contentTransition(.interpolate)
                   Spacer()
                 }
                 .padding(.vertical, 10)
@@ -138,7 +140,7 @@ struct SubredditPosts: View {
               .listRowSeparator(.hidden)
               .id("load-more-button")
             }
-          } else if !loading && !paginatedIsLoading {
+          } else if posts.count != 0 {
             ZStack(alignment: .center) {
               Image("winstonEndOfFeed")
                 .resizable()
@@ -171,7 +173,6 @@ struct SubredditPosts: View {
       .listStyle(.plain)
       .environment(\.defaultMinListRowHeight, 1)
     }
-    .loader(loading && posts.count == 0)
     .overlay(
       feedsAndSuch.contains(subreddit.id)
       ? nil
@@ -238,7 +239,6 @@ struct SubredditPosts: View {
     }
     .onChange(of: sort) { val in
       withAnimation {
-        loading = true
         posts.removeAll()
         loadedPosts.removeAll()
         pageNumber = 1
