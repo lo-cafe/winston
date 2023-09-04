@@ -16,6 +16,15 @@ extension Post {
   static var prefix = "t3"
   convenience init(data: T, api: RedditAPI) {
     self.init(data: data, api: api, typePrefix: "\(Post.prefix)_")
+    
+    if let body = self.data?.selftext {
+      let newWinstonBodyAttr = stringToAttr(body, fontSize: Defaults[.commentLinkBodySize])
+      let encoder = JSONEncoder()
+      if let jsonData = try? encoder.encode(newWinstonBodyAttr) {
+        let json = String(decoding: jsonData, as: UTF8.self)
+        self.data?.winstonSelftextAttrEncoded = json
+      }
+    }
   }
   
   convenience init(id: String, api: RedditAPI) {
@@ -231,6 +240,7 @@ extension Post {
 struct PostData: GenericRedditEntityDataType, Defaults.Serializable {
   let subreddit: String
   let selftext: String
+  var winstonSelftextAttrEncoded: String?
   let author_fullname: String?
   var saved: Bool
   let gilded: Int

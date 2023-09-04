@@ -5,16 +5,16 @@ import AVKit
 import AVFoundation
 
 class SharedVideo: ObservableObject {
-//  @Published var item: AVPlayerItem
+  //  @Published var item: AVPlayerItem
   @Published var player: AVPlayer
-//  @Published var looper: AVPlayerLooper
+  //  @Published var looper: AVPlayerLooper
   @Published var size: CGSize
   @Published var url: URL
   
   init(url: URL, size: CGSize) {
-//    let newItem = AVPlayerItem(url: url)
-//    self.item = newItem
-////    self.looper = AVPlayerLooper(player: self.player, templateItem: self.item)
+    //    let newItem = AVPlayerItem(url: url)
+    //    self.item = newItem
+    ////    self.looper = AVPlayerLooper(player: self.player, templateItem: self.item)
     self.url = url
     self.size = size
     let newPlayer = AVPlayer(url: url)
@@ -24,6 +24,7 @@ class SharedVideo: ObservableObject {
 }
 
 struct VideoPlayerPost: View {
+  @ObservedObject var post: Post
   var compact = false
   var overrideWidth: CGFloat?
   @StateObject var sharedVideo: SharedVideo
@@ -36,6 +37,7 @@ struct VideoPlayerPost: View {
   @Default(.cardedPostLinksInnerHPadding) private var cardedPostLinksInnerHPadding
   @Default(.autoPlayVideos) private var autoPlayVideos
   @Default(.loopVideos) private var loopVideos
+  @Default(.lightboxViewsPost) private var lightboxViewsPost
   
   var safe: Double { getSafeArea().top + getSafeArea().bottom }
   var rawContentWidth: CGFloat { UIScreen.screenWidth - ((preferenceShowPostsCards ? cardedPostLinksOuterHPadding : postLinksInnerHPadding) * 2) - (preferenceShowPostsCards ? (preferenceShowPostsCards ? cardedPostLinksInnerHPadding : 0) * 2 : 0) }
@@ -59,6 +61,7 @@ struct VideoPlayerPost: View {
             Color.clear
               .contentShape(Rectangle())
               .onTapGesture {
+                if lightboxViewsPost { Task(priority: .background) { await post.toggleSeen(true) } }
                 withAnimation {
                   fullscreen = true
                 }
@@ -133,7 +136,7 @@ struct FullScreenVP: View {
             .onChange(of: geo.size) { newValue in altSize = newValue }
         }
       )
-//      .pinchToZoom(size: sharedVideo.size == .zero ? altSize : sharedVideo.size, isPinching: $isPinching, scale: $scale, anchor: $anchor, offset: $offset)
+    //      .pinchToZoom(size: sharedVideo.size == .zero ? altSize : sharedVideo.size, isPinching: $isPinching, scale: $scale, anchor: $anchor, offset: $offset)
       .scaleEffect(interpolate([1, 0.9], true))
       .offset(drag)
       .gesture(

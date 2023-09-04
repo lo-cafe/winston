@@ -31,7 +31,8 @@ struct SubredditPosts: View {
   @EnvironmentObject private var redditAPI: RedditAPI
   @EnvironmentObject private var router: Router
   @State private var pageNumber = 1
-
+  @EnvironmentObject private var routerProxy: RouterProxy
+  
   func asyncFetch(force: Bool = false, loadMore: Bool = false) async {
     if (subreddit.data == nil || force) && !feedsAndSuch.contains(subreddit.id) {
       await subreddit.refreshSubreddit()
@@ -219,7 +220,7 @@ struct SubredditPosts: View {
 
           if let data = subreddit.data {
             Button {
-              router.path.append(SubViewType.info(subreddit))
+              routerProxy.router.path.append(SubViewType.info(subreddit))
             } label: {
               SubredditIcon(data: data, forceNSFWOFF: true)
             }

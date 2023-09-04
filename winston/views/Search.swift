@@ -85,45 +85,47 @@ struct Search: View {
   
   var body: some View {
     NavigationStack(path: $router.path) {
-      List {
-        Group {
-          Section {
-            HStack {
-              SearchOption(activateSearchType: { searchType = .subreddit }, active: searchType == SearchType.subreddit, searchType: .subreddit)
-              SearchOption(activateSearchType: { searchType = .user }, active: searchType == SearchType.user, searchType: .user)
-            }
-            .id("options")
-          }
-          
-          Section {
-            switch searchType {
-            case .subreddit:
-              ForEach(resultsSubs.data) { sub in
-                SubredditLink(sub: sub)
+      DefaultDestinationInjector(routerProxy: RouterProxy(router)) {
+        List {
+          Group {
+            Section {
+              HStack {
+                SearchOption(activateSearchType: { searchType = .subreddit }, active: searchType == SearchType.subreddit, searchType: .subreddit)
+                SearchOption(activateSearchType: { searchType = .user }, active: searchType == SearchType.user, searchType: .user)
               }
-            case .user:
-              ForEach(resultsUsers.data) { user in
-                UserLink(user: user)
+              .id("options")
+            }
+            
+            Section {
+              switch searchType {
+              case .subreddit:
+                ForEach(resultsSubs.data) { sub in
+                  SubredditLink(sub: sub)
+                }
+              case .user:
+                ForEach(resultsUsers.data) { user in
+                  UserLink(user: user)
+                }
               }
             }
           }
+          .listRowSeparator(.hidden)
+          .listRowBackground(Color.clear)
+          .listRowInsets(EdgeInsets(top: 6, leading: 16, bottom: 6, trailing: 16))
         }
-        .listRowSeparator(.hidden)
-        .listRowBackground(Color.clear)
-        .listRowInsets(EdgeInsets(top: 6, leading: 16, bottom: 6, trailing: 16))
-      }
-      .listStyle(.plain)
-      .background(Color(UIColor.systemGroupedBackground))
-      .scrollContentBackground(.hidden)
-      .loader(loading, hideSpinner && !searchQuery.text.isEmpty)
-      .onChange(of: searchType) { _ in fetch() }
-      .onChange(of: reset) { _ in router.path.removeLast(router.path.count) }
-      .onChange(of: searchQuery.debounced) { val in
-        if val == "" {
-          resultsSubs.data = []
-          resultsUsers.data = []
+        .listStyle(.plain)
+        .background(Color(UIColor.systemGroupedBackground))
+        .scrollContentBackground(.hidden)
+        .loader(loading, hideSpinner && !searchQuery.text.isEmpty)
+        .onChange(of: searchType) { _ in fetch() }
+        .onChange(of: reset) { _ in router.path.removeLast(router.path.count) }
+        .onChange(of: searchQuery.debounced) { val in
+          if val == "" {
+            resultsSubs.data = []
+            resultsUsers.data = []
+          }
+          fetch()
         }
-        fetch()
       }
       .searchable(text: $searchQuery.text, placement: .toolbar)
       .autocorrectionDisabled(true)
@@ -131,9 +133,9 @@ struct Search: View {
       .refreshable { fetch() }
       .onSubmit(of: .search) { fetch() }
       .navigationTitle("Search")
-      .defaultNavDestinations(router)
+//      .defaultNavDestinations(router)
     }
-    .swipeAnywhere(router: router)
+    .swipeAnywhere(routerProxy: RouterProxy(router))
   }
 }
 
