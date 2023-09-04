@@ -28,8 +28,6 @@
 		<key>NSAllowsArbitraryLoads</key>
 		<true/>
 	</dict>
-	<key>releaseVersionName</key>
-	<string>${releaseVersionName}</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>audio</string>
@@ -37,5 +35,7 @@
 		<string>processing</string>
 		<string>remote-notification</string>
 	</array>
+	<key>releaseVersionName</key>
+	<string>${releaseVersionName}</string>
 </dict>
 </plist>
