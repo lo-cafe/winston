@@ -29,6 +29,7 @@ struct SubredditPosts: View {
   @State private var sort: SubListingSortOption = Defaults[.preferredSort]
   @State private var newPost = false
   @EnvironmentObject private var redditAPI: RedditAPI
+  @EnvironmentObject private var routerProxy: RouterProxy
   @EnvironmentObject private var router: Router
   @State private var pageNumber = 1
 
@@ -219,7 +220,7 @@ struct SubredditPosts: View {
 
           if let data = subreddit.data {
             Button {
-              router.path.append(SubViewType.info(subreddit))
+              routerProxy.router.path.append(SubViewType.info(subreddit))
             } label: {
               SubredditIcon(data: data, forceNSFWOFF: true)
             }

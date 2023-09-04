@@ -13,10 +13,38 @@ import SkeletonUI
 import YouTubePlayerKit
 import Defaults
 
-class PreviewLinkCache {
+class PreviewLinkCache: ObservableObject {
+  struct CacheItem {
+    let model: PreviewViewModel
+    let date: Date
+  }
+
   static var shared = PreviewLinkCache()
-  var cache: [String:PreviewViewModel] = [:]
+  @Published var cache: [String: CacheItem] = [:]
+  let cacheLimit = 50
+
+  func addKeyValue(key: String, url: URL) {
+    if !cache[key].isNil { return }
+    Task(priority: .background) {
+      // Create a new CacheItem with the current date
+      let item = CacheItem(model: PreviewViewModel(url), date: Date())
+      let oldestKey = cache.count > cacheLimit ? cache.min { a, b in a.value.date < b.value.date }?.key : nil
+
+      // Add the item to the cache
+      await MainActor.run {
+        withAnimation {
+          cache[key] = item
+          if let oldestKey = oldestKey { cache.removeValue(forKey: oldestKey) }
+        }
+      }
+    }
+  }
 }
+
+//class PreviewLinkCache: ObservableObject {
+//  static var shared = PreviewLinkCache()
+//  @Published var cache: [String:PreviewViewModel] = [:]
+//}
 
 final class PreviewViewModel: ObservableObject {
   
@@ -26,7 +54,13 @@ final class PreviewViewModel: ObservableObject {
   @Published var description: String?
   @Published var loading = true
   
-  let previewURL: URL?
+  var previewURL: URL? {
+    didSet {
+      if !previewURL.isNil { fetchMetadata() }
+    }
+  }
+  
+  init() {}
   
   init(_ url: URL) {
     self.previewURL = url

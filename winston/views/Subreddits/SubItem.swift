@@ -10,11 +10,11 @@ import Defaults
 
 struct SubItemButton: View {
   @StateObject var sub: Subreddit
-  @EnvironmentObject private var router: Router
+  @EnvironmentObject private var routerProxy: RouterProxy
   var body: some View {
     if let data = sub.data {
       Button {
-        router.path.append(SubViewType.posts(sub))
+        routerProxy.router.path.append(SubViewType.posts(sub))
       } label: {
         HStack {
           Text(data.display_name ?? "")
@@ -25,7 +25,12 @@ struct SubItemButton: View {
   }
 }
 
-struct SubItem: View {
+struct SubItem: View, Equatable {
+  static func == (lhs: SubItem, rhs: SubItem) -> Bool {
+    lhs.sub.id == rhs.sub.id && lhs.sub.data == rhs.sub.data
+  }
+  
+  
   @ObservedObject var sub: Subreddit
   var cachedSub: CachedSub? = nil
   @Default(.likedButNotSubbed) var likedButNotSubbed
