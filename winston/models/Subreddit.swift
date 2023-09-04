@@ -467,7 +467,7 @@ struct SubListingSort: Codable, Identifiable {
   }
 }
 
-enum SubListingSortOption: Codable, CaseIterable, Identifiable, Defaults.Serializable {
+enum SubListingSortOption: Codable, Identifiable, Defaults.Serializable, Hashable {
   var id: String {
     self.rawVal.id
   }
@@ -475,19 +475,45 @@ enum SubListingSortOption: Codable, CaseIterable, Identifiable, Defaults.Seriali
   case best
   case hot
   case new
-  case top
+  case top(TopListingSortOption)
+  
+  enum TopListingSortOption: String, Codable, CaseIterable, Hashable {
+    case hour
+    case day
+    case week
+    case month
+    case year
+    case all
+    
+    var icon: String {
+      switch self {
+        case .hour: return "clock"
+        case .day: return "sun.max"
+        case .week: return "calendar"
+        case .month: return "calendar.badge.clock"
+        case .year: return "calendar.badge.exclamationmark"
+        case .all: return "chart.line.uptrend.xyaxis"
+      }
+    }
+  }
   
   var rawVal: SubListingSort {
     switch self {
-    case .best:
-      return SubListingSort(icon: "trophy", value: "best")
-    case .hot:
-      return SubListingSort(icon: "flame", value: "hot")
-    case .new:
-      return SubListingSort(icon: "newspaper", value: "new")
-    case .top:
-      return SubListingSort(icon: "chart.line.uptrend.xyaxis", value: "top")
-      
+      case .best: return SubListingSort(icon: "trophy", value: "best")
+      case .hot: return SubListingSort(icon: "flame", value: "hot")
+      case .new: return SubListingSort(icon: "newspaper", value: "new")
+      case .top(let subOption):
+        if subOption == .all {
+          return SubListingSort(icon: subOption.icon, value: "top")
+        } else {
+          return SubListingSort(icon: subOption.icon, value: "top/\(subOption.rawValue)")
+        }
     }
+  }
+}
+
+extension SubListingSortOption: CaseIterable {
+  static var allCases: [SubListingSortOption] {
+    return [.best, .hot, .new, .top(.all)]
   }
 }

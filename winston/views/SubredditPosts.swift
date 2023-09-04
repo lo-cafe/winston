@@ -141,15 +141,37 @@ struct SubredditPosts: View {
         HStack {
           Menu {
             ForEach(SubListingSortOption.allCases) { opt in
-              Button {
-                sort = opt
-              } label: {
-                HStack {
-                  Text(opt.rawVal.value.capitalized)
-                  Spacer()
-                  Image(systemName: opt.rawVal.icon)
+              if case .top(_) = opt {
+                Menu {
+                  ForEach(SubListingSortOption.TopListingSortOption.allCases, id: \.self) { topOpt in
+                    Button {
+                      sort = .top(topOpt)
+                    } label: {
+                      HStack {
+                        Text(topOpt.rawValue.capitalized)
+                        Spacer()
+                        Image(systemName: topOpt.icon)
+                          .foregroundColor(.blue)
+                          .font(.system(size: 17, weight: .bold))
+                      }
+                    }
+                  }
+                } label: {
+                  Label(opt.rawVal.value.capitalized, systemImage: opt.rawVal.icon)
                     .foregroundColor(.blue)
-                    .fontSize(17, .bold)
+                    .font(.system(size: 17, weight: .bold))
+                }
+              } else {
+                Button {
+                  sort = opt
+                } label: {
+                  HStack {
+                    Text(opt.rawVal.value.capitalized)
+                    Spacer()
+                    Image(systemName: opt.rawVal.icon)
+                      .foregroundColor(.blue)
+                      .font(.system(size: 17, weight: .bold))
+                  }
                 }
               }
             }
