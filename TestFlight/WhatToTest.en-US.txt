@@ -1,14 +1,16 @@
-- NSFW Subreddits get blurred in search
-- Added preferred device theme setting
-- Added pinned comment indicator
-- Added locked comment indicator
-- Added suggested sort to posts
-- Subreddits can now be shared when long pressing them in the subs list or by navigating to the subreddit details
-- Added ability to override colored text colors
-- Added color themes for comment accents
-- Added Haptic Feedback strength controls in Accessibility Settings
-- Fixed Show Self Text Thubmnail option
-- Clicking the Subreddit Name/Icon in the subreddit details view takes you to the subreddit feed
-- Fixes crash because of infinite upvotes count
-- Fixes Reddit links posts not appearing sometimes
-- Added tips jar
+PERFORMANCE UPDATE!
+
+-- FUN CHANGELOG --
+- The app should be way smoother now
+- Fixed bug where multis weren't properly updated when changed
+- Fixed tap area of post links
+- Added option to mark post as read on media preview
+- Added number transition to votes
+
+-- BORING PERFORMANCE CHANGELOG --
+- Now navigating between routes won't update any view other than root
+- Youtube videos, links, internal links, none of that will reload every time it appears
+- Now cache of the things mentioned in the previous point won't accumulate eternally and won't take your RAM usage to the sky (sorry about that)
+- Now Markdown parsing if posts happens when fetching instead of when opening the post up
+- Many things won't rerender for no reason anymore
+- Replaced some shadows with a more performant version

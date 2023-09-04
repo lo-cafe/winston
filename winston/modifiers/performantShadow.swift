@@ -18,18 +18,13 @@ struct PerformantShadow: UIViewRepresentable {
   
   func makeUIView(context: Context) -> UIView {
     let view = UIView()
-    view.backgroundColor = .clear
-//    DispatchQueue.main.async {
+
       context.coordinator.addRoundedRectangleShadow(to: view, cornerRadius: cornerRadius, color: UIColor(color), opacity: Float(opacity), radius: radius, offsetY: offsetY, size: size)
-//    }
     return view
   }
   
   func updateUIView(_ uiView: UIView, context: Context) {
-//    DispatchQueue.main.async {
-//      uiView.layer.sublayers?.removeAll(where: { $0.name == "shapeLayer" || $0.name == "shadowLayer" })
       context.coordinator.updateRoundedRectangleShadow(for: uiView, cornerRadius: cornerRadius, color: UIColor(color), opacity: Float(opacity), radius: radius, offsetY: offsetY, size: size)
-//    }
   }
   
   func makeCoordinator() -> Coordinator {
@@ -60,7 +55,6 @@ struct PerformantShadow: UIViewRepresentable {
       guard let shapeLayer = view.layer.sublayers?.first(where: { $0.name == "shapeLayer" }) as? CAShapeLayer,
             let shadowLayer = view.layer.sublayers?.first(where: { $0.name == "shadowLayer" }) as? CAShapeLayer else { return }
       shapeLayer.path = UIBezierPath(roundedRect: CGRect(origin: .zero, size: size), cornerRadius: cornerRadius).cgPath
-      
       shadowLayer.path = shapeLayer.path
       shadowLayer.fillColor = UIColor.clear.cgColor
       shadowLayer.shadowColor = color.cgColor
@@ -73,9 +67,9 @@ struct PerformantShadow: UIViewRepresentable {
 }
 
 extension View {
-  func performantShadow(horizontalPadding: CGFloat = 0, cornerRadius: CGFloat, color: Color, opacity: Double, radius: CGFloat, offsetY: CGFloat) -> some View {
+  func performantShadow(horizontalPadding: CGFloat = 0, cornerRadius: CGFloat, color: Color, opacity: Double, radius: CGFloat, offsetY: CGFloat, size: CGSize) -> some View {
     self.background(
-      PerformantShadow(cornerRadius: cornerRadius, color: color, opacity: opacity, radius: radius, offsetY: offsetY, size: CGSize(width: 10, height: 10))
+      PerformantShadow(cornerRadius: cornerRadius, color: color, opacity: opacity, radius: radius, offsetY: offsetY, size: size)
         .padding(.all, 1)
         .padding(.horizontal, horizontalPadding)
         .frame(maxWidth: .infinity, maxHeight: .infinity)

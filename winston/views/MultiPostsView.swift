@@ -26,7 +26,7 @@ struct MultiPostsView: View {
   @State private var newPost = false
   @Environment(\.openURL) private var openURL
   @EnvironmentObject private var redditAPI: RedditAPI
-  @EnvironmentObject private var router: Router
+  @EnvironmentObject private var routerProxy: RouterProxy
   
   func asyncFetch(force: Bool = false, loadMore: Bool = false) async {
     //    if (multi.data == nil || force) {
@@ -122,7 +122,7 @@ struct MultiPostsView: View {
           
           if let imgLink = multi.data?.icon_url, let imgURL = URL(string: imgLink) {
             Button {
-//              router.path.append(SubViewType.info(subreddit))
+//              routerProxy.router.path.append(SubViewType.info(subreddit))
             } label: {
               URLImage(url: imgURL)
                 .scaledToFill()
@@ -146,7 +146,6 @@ struct MultiPostsView: View {
         posts.removeAll()
       }
       fetch()
-      Defaults[.preferredSort] = sort
     }
 //    .searchable(text: $searchText, prompt: "Search r/\(subreddit.data?.display_name ?? subreddit.id)")
     .refreshable { await asyncFetch(force: true) }

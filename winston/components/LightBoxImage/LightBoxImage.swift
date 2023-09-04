@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-import CoreMedia
+import Defaults
 
 private let SPACING = 24.0
 
@@ -26,6 +26,7 @@ struct LightBoxImage: View {
   @State private var loading = false
   @State private var done = false
   @State private var showOverlay = true
+  @Default(.lightboxViewsPost) private var lightboxViewsPost
   
   @State private var isPinching: Bool = false
   @State private var isZoomed: Bool = false
@@ -160,6 +161,7 @@ struct LightBoxImage: View {
       }
     }
     .onAppear {
+      if lightboxViewsPost { Task(priority: .background) { await post.toggleSeen(true) } }
       xPos = -CGFloat(i) * (UIScreen.screenWidth + SPACING)
       activeIndex = i
       withAnimation(.easeOut) {
