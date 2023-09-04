@@ -47,6 +47,7 @@ struct AppearancePanel: View {
   @Default(.thumbnailPositionRight) var thumbnailPositionRight
   @Default(.voteButtonPositionRight) var voteButtonPositionRight
   @Default(.showSelfPostThumbnails) var showSelfPostThumbnails
+  @Default(.disableAlphabetLettersSectionsInSubsList) var disableAlphabetLettersSectionsInSubsList
   
   @Default(.commentLinkBodySize) var commentLinkBodySize
 
@@ -56,7 +57,7 @@ struct AppearancePanel: View {
         Toggle("Blur Reply Background", isOn: $replyModalBlurBackground)
         Toggle("Blur New Post Background", isOn: $newPostModalBlurBackground)
         Toggle("Show Username in Tab Bar", isOn: $showUsernameInTabBar)
-        
+        Toggle("Disable subs list letter sections", isOn: $disableAlphabetLettersSectionsInSubsList)
       }
       
       Section("Posts") {

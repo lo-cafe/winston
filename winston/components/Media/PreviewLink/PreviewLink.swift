@@ -13,12 +13,15 @@ import YouTubePlayerKit
 struct PreviewLink: View {
   var url: URL
   var compact = false
-  @StateObject var sharedCache = PreviewLinkCache.shared
+  @ObservedObject private var sharedCache = PreviewLinkCache.shared
+  
+  init(url: URL, compact: Bool = false) {
+    self.url = url
+    self.compact = compact
+    sharedCache.addKeyValue(key: url.absoluteString, url: url)
+  }
   
   var body: some View {
-    PreviewLinkContent(compact: compact, viewModel: sharedCache.cache[url.absoluteString]?.model ?? PreviewViewModel(url), url: url)
-      .onAppear {
-        sharedCache.addKeyValue(key: url.absoluteString, url: url)
-      }
+    PreviewLinkContent(compact: compact, viewModel: sharedCache[url.absoluteString]?.model ?? PreviewViewModel(url), url: url)
   }
 }

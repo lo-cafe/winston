@@ -28,6 +28,7 @@ struct TestersCelebration: View {
   @Environment(\.scenePhase) var scenePhase
   @Environment(\.openURL) var openURL
   @Default(.showTestersCelebrationModal) var showTestersCelebrationModal
+  @Default(.showTipJarModal) var showTipJarModal
   @State private var counter: Int = 0
   @State private var thanks = false
   @State private var plans = false
@@ -167,6 +168,7 @@ struct TestersCelebration: View {
     .multilineTextAlignment(.center)
     .confettiCannon(counter: $counter, num: 30, openingAngle: Angle.degrees(60), closingAngle: Angle.degrees(120), radius: UIScreen.screenWidth)
     .onAppear {
+      if showTipJarModal { showTipJarModal = false }
       doThisAfter(1) { withAnimation { counter += 1 } }
     }
     .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in

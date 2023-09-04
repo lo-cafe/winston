@@ -119,6 +119,7 @@ extension Defaults.Keys {
   
   static let showTestersCelebrationModal = Key<Bool>("showTestersCelebrationModal", default: true)
   static let showTipJarModal = Key<Bool>("showTipJarModal", default: true)
+  static let disableAlphabetLettersSectionsInSubsList = Key<Bool>("disableAlphabetLettersSectionsInSubsList", default: false)
 }
 
 extension UIScreen {
