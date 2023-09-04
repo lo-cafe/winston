@@ -12,6 +12,7 @@ import OpenGraph
 import SkeletonUI
 import YouTubePlayerKit
 import Defaults
+import Combine
 
 class PreviewLinkCache: ObservableObject {
   struct CacheItem {
@@ -38,6 +39,23 @@ class PreviewLinkCache: ObservableObject {
         }
       }
     }
+  }
+  
+  private let _objectWillChange = PassthroughSubject<Void, Never>()
+  
+  var objectWillChange: AnyPublisher<Void, Never> { _objectWillChange.eraseToAnyPublisher() }
+  
+  subscript(key: String) -> CacheItem? {
+    get { cache[key] }
+    set {
+      cache[key] = newValue
+      _objectWillChange.send()
+    }
+  }
+  
+  func merge(_ dict: [String:CacheItem]) {
+    cache.merge(dict) { (_, new) in new }
+    _objectWillChange.send()
   }
 }
 
@@ -100,7 +118,7 @@ struct PreviewLinkContent: View {
   var compact: Bool
   @StateObject var viewModel: PreviewViewModel
   var url: URL
-  private let height: CGFloat = 88
+  static let height: CGFloat = 88
   @Environment(\.openURL) var openURL
   
   var body: some View {
@@ -156,7 +174,7 @@ struct PreviewLinkContent: View {
     .padding(.vertical, compact ? 0 : 6)
     .padding(.leading, compact ? 0 : 10)
     .padding(.trailing, compact ? 0 : 6)
-    .frame(maxWidth: compact ? nil : .infinity, minHeight: compact ? nil : height, maxHeight: compact ? nil : height)
+    .frame(maxWidth: compact ? nil : .infinity, minHeight: compact ? nil : PreviewLinkContent.height, maxHeight: compact ? nil : PreviewLinkContent.height)
     .background(compact ? nil : RR(16, .primary.opacity(0.05)))
     .contextMenu {
       Button {

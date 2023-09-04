@@ -23,7 +23,7 @@ class AvatarCache: ObservableObject {
   private init() {}
   
   private let _objectWillChange = PassthroughSubject<Void, Never>()
-  private var data = [String:String]()
+  var data = [String:String]()
   
   var objectWillChange: AnyPublisher<Void, Never> { _objectWillChange.eraseToAnyPublisher() }
   
@@ -64,7 +64,7 @@ class RedditAPI: ObservableObject {
   }
   
   func refreshToken(_ force: Bool = false, count: Int = 0) async -> Void {
-    if force {
+    if force || loggedUser.lastRefresh.isNil {
       await MainActor.run {
         loggedUser.lastRefresh = Date(seconds: Date().timeIntervalSince1970 - Double(loggedUser.expiration ?? 86400 * 10))
       }
