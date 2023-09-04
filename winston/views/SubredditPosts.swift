@@ -229,7 +229,6 @@ struct SubredditPosts: View {
         .animation(nil, value: sort)
     )
     .onAppear {
-      //      sort = Defaults[.preferredSort]
       if posts.count == 0 {
         doThisAfter(0) {
           fetch()
@@ -244,7 +243,6 @@ struct SubredditPosts: View {
         pageNumber = 1
       }
       fetch()
-      Defaults[.preferredSort] = sort
     }
     .searchable(text: $searchText, prompt: "Search r/\(subreddit.data?.display_name ?? subreddit.id)")
     .refreshable {

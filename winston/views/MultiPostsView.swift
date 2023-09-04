@@ -146,7 +146,6 @@ struct MultiPostsView: View {
         posts.removeAll()
       }
       fetch()
-      Defaults[.preferredSort] = sort
     }
 //    .searchable(text: $searchText, prompt: "Search r/\(subreddit.data?.display_name ?? subreddit.id)")
     .refreshable { await asyncFetch(force: true) }
