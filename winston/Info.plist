@@ -28,6 +28,8 @@
 		<key>NSAllowsArbitraryLoads</key>
 		<true/>
 	</dict>
+	<key>releaseVersionName</key>
+	<string>${releaseVersionName}</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>audio</string>
