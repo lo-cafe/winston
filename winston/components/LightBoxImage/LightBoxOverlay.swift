@@ -70,7 +70,7 @@ struct LightBoxOverlay: View {
           }
         }
         
-        LightBoxButton(icon: "icloud.and.arrow.down") {
+        LightBoxButton(icon: "square.and.arrow.down") {
           withAnimation(spring) {
             loading = true
           }
