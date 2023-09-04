@@ -165,9 +165,9 @@ struct PostLink: View, Equatable {
           if (!thumbnailPositionRight && compactMode) || (!compactMode && !showTitleAtTop), let extractedMedia = extractedMedia {
             MediaPresenter(media: extractedMedia, post: post, compact: compactMode, contentWidth: contentWidth)
               .equatable()
-            .frame(maxWidth: compactMode ? compactModeThumbSize : .infinity, maxHeight: compactMode ? compactModeThumbSize : nil, alignment: .leading)
-            .clipped()
-            .nsfw(over18 && blurPostLinkNSFW)
+              .frame(maxWidth: compactMode ? compactModeThumbSize : .infinity, maxHeight: compactMode ? compactModeThumbSize : nil, alignment: .leading)
+              .clipped()
+              .nsfw(over18 && blurPostLinkNSFW)
           } else if (!thumbnailPositionRight && compactMode) || (!compactMode && !showTitleAtTop) {
             EmptyThumbnail()
           }
@@ -207,11 +207,9 @@ struct PostLink: View, Equatable {
           if (thumbnailPositionRight && compactMode) || (!compactMode && showTitleAtTop), let extractedMedia = extractedMedia {
             MediaPresenter(media: extractedMedia, post: post, compact: compactMode, contentWidth: contentWidth)
               .equatable()
-            .frame(maxWidth: compactMode ? compactModeThumbSize : .infinity, maxHeight: compactMode ? compactModeThumbSize : nil, alignment: .leading)
-            .clipped()
-            .nsfw(over18 && blurPostLinkNSFW)
-          } else if (thumbnailPositionRight && compactMode) || (!compactMode && showTitleAtTop) {
-            EmptyThumbnail()
+              .frame(maxWidth: compactMode ? compactModeThumbSize : .infinity, maxHeight: compactMode ? compactModeThumbSize : nil, alignment: .leading)
+              .clipped()
+              .nsfw(over18 && blurPostLinkNSFW)
           }
           
           if compactMode && showVotes && voteButtonPositionRight {
