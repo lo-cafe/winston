@@ -51,8 +51,9 @@ struct AccountPanel: View {
           isPresentingConfirm = true
         }
         .foregroundColor(.red)
-        .confirmationDialog("Are you sure you wanna logoff?", isPresented: $isPresentingConfirm) {
-          Button("Forget API Credentials?", role: .destructive) {
+        .confirmationDialog("Are you sure you wanna logoff?", isPresented: $isPresentingConfirm, actions: {
+          Button("Reset winston", role: .destructive) {
+            resetApp()
             redditAPI.loggedUser.accessToken = nil
             redditAPI.loggedUser.refreshToken = nil
             redditAPI.loggedUser.expiration = nil
@@ -60,7 +61,7 @@ struct AccountPanel: View {
             redditAPI.loggedUser.apiAppID = nil
             redditAPI.loggedUser.apiAppSecret = nil
           }
-        }
+        }, message: { Text("This will clear everything in the app (your Reddit account is safe).") })
       }
       
       

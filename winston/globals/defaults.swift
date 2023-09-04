@@ -124,6 +124,7 @@ extension Defaults.Keys {
   
   static let useLiveText = Key<Bool>("useLiveText", default: true)
   static let showTipJarModal = Key<Bool>("showTipJarModal", default: true)
+  static let disableAlphabetLettersSectionsInSubsList = Key<Bool>("disableAlphabetLettersSectionsInSubsList", default: false)
   
   //Color options
   static let opUsernameColor = Key<Color>("opUsernameColor", default: .green)

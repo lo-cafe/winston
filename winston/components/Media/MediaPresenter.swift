@@ -52,7 +52,7 @@ struct MediaPresenter: View, Equatable {
       }
     case .video(let videoMediaExtracted):
       if !showURLInstead {
-        VideoPlayerPost(post: post, compact: compact, overrideWidth: contentWidth, sharedVideo: SharedVideo(url: videoMediaExtracted.url, size: CGSize(width: videoMediaExtracted.size.width, height: videoMediaExtracted.size.height)))
+        VideoPlayerPost(post: post, compact: compact, overrideWidth: contentWidth, url: videoMediaExtracted.url, size: CGSize(width: videoMediaExtracted.size.width, height: videoMediaExtracted.size.height))
       }
     case .gallery(let imgs):
       if !showURLInstead {

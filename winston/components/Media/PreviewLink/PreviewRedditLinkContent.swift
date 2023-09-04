@@ -6,17 +6,16 @@
 //
 
 import SwiftUI
+import Combine
 
-
-
-private enum ThingType {
+enum ThingType {
   case post(Post)
   case comment(Comment)
   case user(User)
   case subreddit(Subreddit)
 }
 
-private class ThingEntityCache: ObservableObject {
+class ThingEntityCache: ObservableObject {
   static var shared = ThingEntityCache()
   @Published var thingEntities: [RedditURLType:ThingType] = [:]
   
@@ -70,6 +69,23 @@ private class ThingEntityCache: ObservableObject {
       }
     }
   }
+  
+  private let _objectWillChange = PassthroughSubject<Void, Never>()
+  
+  var objectWillChange: AnyPublisher<Void, Never> { _objectWillChange.eraseToAnyPublisher() }
+  
+  subscript(key: RedditURLType) -> ThingType? {
+    get { thingEntities[key] }
+    set {
+      thingEntities[key] = newValue
+      _objectWillChange.send()
+    }
+  }
+  
+  func merge(_ dict: [RedditURLType:ThingType]) {
+    thingEntities.merge(dict) { (_, new) in new }
+    _objectWillChange.send()
+  }
 }
 
 struct PreviewRedditLinkContent: View {
@@ -80,7 +96,7 @@ struct PreviewRedditLinkContent: View {
   
   var body: some View {
     HStack(spacing: 16) {
-      if let entity = thingEntitiesCache.thingEntities[thing] {
+      if let entity = thingEntitiesCache[thing] {
         switch entity {
         case .comment(let comment):
           VStack {
