@@ -163,6 +163,7 @@
 		ECA30A322A621B9A00BB19D1 /* decodeString.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECA30A312A621B9A00BB19D1 /* decodeString.swift */; };
 		ECA30A372A622C2F00BB19D1 /* MD.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECA30A362A622C2F00BB19D1 /* MD.swift */; };
 		ECA30A3B2A6329CC00BB19D1 /* colors.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECA30A3A2A6329CC00BB19D1 /* colors.swift */; };
+		ECA5E6482AA5D36E00F6C7A5 /* resetApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECA5E6472AA5D36E00F6C7A5 /* resetApp.swift */; };
 		ECAA23822A9EC34100874731 /* inlineSymbol.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECAA23812A9EC34100874731 /* inlineSymbol.swift */; };
 		ECAA8B5A2A75004300D9D636 /* redditURLParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECAA8B592A75004300D9D636 /* redditURLParser.swift */; };
 		ECAA8B5C2A75025200D9D636 /* fetchInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECAA8B5B2A75025200D9D636 /* fetchInfo.swift */; };
@@ -430,6 +431,7 @@
 		ECA30A312A621B9A00BB19D1 /* decodeString.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = decodeString.swift; sourceTree = "<group>"; };
 		ECA30A362A622C2F00BB19D1 /* MD.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MD.swift; sourceTree = "<group>"; };
 		ECA30A3A2A6329CC00BB19D1 /* colors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = colors.swift; sourceTree = "<group>"; };
+		ECA5E6472AA5D36E00F6C7A5 /* resetApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = resetApp.swift; sourceTree = "<group>"; };
 		ECAA23812A9EC34100874731 /* inlineSymbol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = inlineSymbol.swift; sourceTree = "<group>"; };
 		ECAA8B592A75004300D9D636 /* redditURLParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = redditURLParser.swift; sourceTree = "<group>"; };
 		ECAA8B5B2A75025200D9D636 /* fetchInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = fetchInfo.swift; sourceTree = "<group>"; };
@@ -1004,6 +1006,7 @@
 				ECE00EE12A8D68FE000A6E21 /* scaleEffectButtonStyle.swift */,
 				ECAA23812A9EC34100874731 /* inlineSymbol.swift */,
 				EC77B1842AA434DD00C482DF /* stringToAttr.swift */,
+				ECA5E6472AA5D36E00F6C7A5 /* resetApp.swift */,
 			);
 			path = utils;
 			sourceTree = "<group>";
@@ -1315,6 +1318,7 @@
 				EC8F34A12A6FC99000EB8249 /* updatePostsInBox.swift in Sources */,
 				6543D8892A8D10B900A1FFF9 /* scaleEffectButtonStyle.swift in Sources */,
 				EC50B0E42A84563C00AB8F72 /* SwipeAction.swift in Sources */,
+				ECA5E6482AA5D36E00F6C7A5 /* resetApp.swift in Sources */,
 				ECF0B7E52A541449002B9FAD /* newReply.swift in Sources */,
 				EC1906E92A55240600A0300E /* cancelableTimer.swift in Sources */,
 				ECA30A232A60B25500BB19D1 /* fetchComment.swift in Sources */,

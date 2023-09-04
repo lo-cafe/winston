@@ -9,8 +9,9 @@ import Foundation
 import SwiftUI
 import YouTubePlayerKit
 import Defaults
+import Combine
 
-private class YTPlayersCache: ObservableObject {
+class YTPlayersCache: ObservableObject {
   struct CacheItem {
     let player: YouTubePlayer
     let date: Date
@@ -36,6 +37,23 @@ private class YTPlayersCache: ObservableObject {
       }
     }
   }
+  
+  private let _objectWillChange = PassthroughSubject<Void, Never>()
+  
+  var objectWillChange: AnyPublisher<Void, Never> { _objectWillChange.eraseToAnyPublisher() }
+  
+  subscript(key: String) -> CacheItem? {
+    get { cache[key] }
+    set {
+      cache[key] = newValue
+      _objectWillChange.send()
+    }
+  }
+  
+  func merge(_ dict: [String:CacheItem]) {
+    cache.merge(dict) { (_, new) in new }
+    _objectWillChange.send()
+  }
 }
 
 struct PreviewYTLink: View, Equatable {
@@ -59,7 +77,7 @@ struct PreviewYTLink: View, Equatable {
   
   var body: some View {
     let actualHeight = (contentWidth * CGFloat(size.height)) / CGFloat(size.width)
-    if let player = playersCache.cache[videoID]?.player {
+    if let player = playersCache[videoID]?.player {
       YouTubePlayerView(player)
         .frame(width: contentWidth, height: actualHeight)
         .mask(RR(12, .black))

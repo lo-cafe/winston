@@ -47,6 +47,7 @@ extension CachedSub {
   }
   
   func update(data x: SubredditData) {
+    self.uuid = x.name
     self.allow_galleries = x.allow_galleries ?? false
     self.allow_images = x.allow_images ?? false
     self.allow_videos = x.allow_videos ?? false

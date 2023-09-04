@@ -31,6 +31,7 @@ struct Subreddits: View {
   
   @Default(.preferenceDefaultFeed) var preferenceDefaultFeed // handle default feed selection routing
   @Default(.likedButNotSubbed) var likedButNotSubbed // subreddits that a user likes but is not subscribed to so they wont be in subsDict
+  @Default(.disableAlphabetLettersSectionsInSubsList) var disableAlphabetLettersSectionsInSubsList
   
   var sections: [String:[CachedSub]] {
     return Dictionary(grouping: subreddits.filter({ $0.user_is_subscriber })) { sub in
@@ -39,10 +40,10 @@ struct Subreddits: View {
   }
   
   var body: some View {
-//    let groupedMultisCache = Dictionary(grouping: multis) { $0.display_name.prefix(1) }
-//    let groupedSubsCache = Dictionary(grouping: subreddits) { $0.display_name?.prefix(1) }
-
-//    let subsDictData = subsDict.data
+    //    let groupedMultisCache = Dictionary(grouping: multis) { $0.display_name.prefix(1) }
+    //    let groupedSubsCache = Dictionary(grouping: subreddits) { $0.display_name?.prefix(1) }
+    
+    //    let subsDictData = subsDict.data
     NavigationStack(path: $router.path) {
       DefaultDestinationInjector(routerProxy: RouterProxy(router)) {
         ScrollViewReader { proxy in
@@ -111,21 +112,36 @@ struct Subreddits: View {
                 }
               }
               
-              ForEach(sections.keys.sorted(), id: \.self) { letter in
-                Section(header: Text(letter)) {
-                  if let arr = sections[letter] {
-                    ForEach(arr.sorted(by: { x, y in
-                      (x.display_name?.lowercased() ?? "a") < (y.display_name?.lowercased() ?? "a")
-                    }), id: \.self.uuid) { cachedSub in
-                      SubItem(sub: Subreddit(data: SubredditData(entity: cachedSub), api: redditAPI), cachedSub: cachedSub)
-                        .equatable()
+              if disableAlphabetLettersSectionsInSubsList {
+                
+                ForEach(subreddits.filter({ $0.user_is_subscriber }).sorted(by: { x, y in
+                  (x.display_name?.lowercased() ?? "a") < (y.display_name?.lowercased() ?? "a")
+                })) { cachedSub in
+                  SubItem(sub: Subreddit(data: SubredditData(entity: cachedSub), api: redditAPI), cachedSub: cachedSub)
+                    .equatable()
+                }
+                
+              } else {
+                
+                ForEach(sections.keys.sorted(), id: \.self) { letter in
+                  Section(header: Text(letter)) {
+                    if let arr = sections[letter] {
+                      ForEach(arr.sorted(by: { x, y in
+                        (x.display_name?.lowercased() ?? "a") < (y.display_name?.lowercased() ?? "a")
+                      }), id: \.self.uuid) { cachedSub in
+                        SubItem(sub: Subreddit(data: SubredditData(entity: cachedSub), api: redditAPI), cachedSub: cachedSub)
+                          .equatable()
+                      }
+                      .onDelete(perform: { i in
+                        deleteFromList(at: i, letter: letter)
+                      })
                     }
-                    .onDelete(perform: { i in
-                      deleteFromList(at: i, letter: letter)
-                    })
                   }
                 }
+                
               }
+              
+              
               
             }
           }
@@ -173,8 +189,8 @@ struct Subreddits: View {
           }
         }
       }
-//      .defaultNavDestinations(router)
-//      .onDelete(perform: deleteItems)
+      //      .defaultNavDestinations(router)
+      //      .onDelete(perform: deleteItems)
     }
     .swipeAnywhere(routerProxy: RouterProxy(router))
     .animation(.default, value: router.path)
