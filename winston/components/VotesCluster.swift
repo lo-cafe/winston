@@ -16,15 +16,16 @@ struct VotesCluster: View {
   @Default(.showUpvoteRatio) var showUpvoteRatio
   
   var body: some View {
-    let votes = calculateUpAndDownVotes(upvoteRatio: data.upvote_ratio, score: data.ups)
+//    let votes = calculateUpAndDownVotes(upvoteRatio: data.upvote_ratio, score: data.ups)
     HStack(spacing: showUpvoteRatio ? 4 : 8){
       VoteButton(color: data.likes != nil && data.likes! ? .orange : .gray, voteAction: .up,image: "arrow.up", post: post)
       
       VStack{
         Text(formatBigNumber(data.ups))
+          .contentTransition(.numericText())
           .foregroundColor(data.likes != nil ? (data.likes! ? .orange : .blue) : .gray)
           .fontSize(16, .semibold)
-          .viewVotes(votes.upvotes, votes.downvotes)
+//          .viewVotes(votes.upvotes, votes.downvotes)
         
         if likeRatio != nil, let ratio = likeRatio {
           Label(title: {

@@ -38,6 +38,14 @@ extension Comment {
       self.parentWinston = parent
     }
     self.kind = kind
+    if let body = self.data?.body {
+      let newWinstonBodyAttr = stringToAttr(body, fontSize: Defaults[.commentLinkBodySize])
+      let encoder = JSONEncoder()
+      if let jsonData = try? encoder.encode(newWinstonBodyAttr) {
+        let json = String(decoding: jsonData, as: UTF8.self)
+        self.data?.winstonBodyAttrEncoded = json
+      }
+    }
     if let replies = self.data?.replies {
       switch replies {
       case .first(_):
@@ -57,43 +65,42 @@ extension Comment {
   convenience init(message: Message) throws {
     let rawMessage = message
     if let message = message.data {
-      self.init(data: CommentData(
-        subreddit_id: nil,
-        subreddit: message.subreddit,
-        likes: nil,
-        replies: .first(""),
-        saved: false,
-        id: message.id,
-        archived: false,
-        count: nil,
-        author: message.author,
-        created_utc: message.created_utc,
-        send_replies: false,
-        parent_id: message.parent_id,
-        score: nil,
-        author_fullname: message.author_fullname,
-        approved_by: nil,
-        mod_note: nil,
-        collapsed: false,
-        body: message.body,
-        top_awarded_type: nil,
-        name: message.name,
-        is_submitter: nil,
-        downs: nil,
-        children: nil,
-        body_html: message.body_html,
-        permalink: nil,
-        created: message.created,
-        link_id: nil,
-        link_title: message.link_title,
-        subreddit_name_prefixed: message.subreddit_name_prefixed,
-        depth: nil,
-        author_flair_background_color: nil,
-        collapsed_because_crowd_control: nil,
-        mod_reports: nil,
-        num_reports: nil,
-        ups: nil
-      ), api: rawMessage.redditAPI, typePrefix: "\(Comment.prefix)_")
+      var commentData = CommentData(id: message.id)
+      commentData.subreddit_id = nil
+      commentData.subreddit = message.subreddit
+      commentData.likes = nil
+      commentData.replies = .first("")
+      commentData.saved = false
+      commentData.archived = false
+      commentData.count = nil
+      commentData.author = message.author
+      commentData.created_utc = message.created_utc
+      commentData.send_replies = false
+      commentData.parent_id = message.parent_id
+      commentData.score = nil
+      commentData.author_fullname = message.author_fullname
+      commentData.approved_by = nil
+      commentData.mod_note = nil
+      commentData.collapsed = false
+      commentData.body = message.body
+      commentData.top_awarded_type = nil
+      commentData.name = message.name
+      commentData.is_submitter = nil
+      commentData.downs = nil
+      commentData.children = nil
+      commentData.body_html = message.body_html
+      commentData.permalink = nil
+      commentData.created = message.created
+      commentData.link_id = nil
+      commentData.link_title = message.link_title
+      commentData.subreddit_name_prefixed = message.subreddit_name_prefixed
+      commentData.depth = nil
+      commentData.author_flair_background_color = nil
+      commentData.collapsed_because_crowd_control = nil
+      commentData.mod_reports = nil
+      commentData.num_reports = nil
+      commentData.ups = nil
+      self.init(data: commentData, api: rawMessage.redditAPI, typePrefix: "\(Comment.prefix)_")
     } else {
       throw RandomErr.oops
     }
@@ -107,9 +114,9 @@ extension Comment {
         context.performAndWait {
           if let data = x.data {
             let isCollapsed = results.contains(where: { $0.commentID == data.id })
-            let newPost = Comment.init(data: data, api: api, kind: x.kind, parent: parent)
-            newPost.data?.collapsed = isCollapsed
-            return newPost
+            let newComment = Comment.init(data: data, api: api, kind: x.kind, parent: parent)
+            newComment.data?.collapsed = isCollapsed
+            return newComment
           }
           return nil
         }
@@ -220,43 +227,41 @@ extension Comment {
     if let fullname = data?.name {
       let result = await redditAPI.newReply(text, fullname) ?? false
       if result, let data = data {
-        let newComment = CommentData(
-          subreddit_id: data.subreddit_id,
-          subreddit: data.subreddit,
-          likes: true,
-          saved: false,
-          id: UUID().uuidString,
-          archived: false,
-          count: 0,
-          author: redditAPI.me?.data?.name ?? "",
-          created_utc: nil,
-          send_replies: nil,
-          parent_id: id,
-          score: nil,
-          author_fullname: "t2_\(redditAPI.me?.data?.id ?? "")",
-          approved_by: nil,
-          mod_note: nil,
-          collapsed: nil,
-          body: text,
-          top_awarded_type: nil,
-          name: nil,
-          is_submitter: nil,
-          downs: 0,
-          children: nil,
-          body_html: nil,
-          permalink: nil,
-          created: Double(Int(Date().timeIntervalSince1970)),
-          link_id: data.link_id,
-          link_title: data.link_title,
-          subreddit_name_prefixed: data.subreddit_name_prefixed,
-          depth: (data.depth ?? 0) + 1,
-          author_flair_background_color: nil,
-          collapsed_because_crowd_control: nil,
-          mod_reports: nil,
-          num_reports: nil,
-          ups: 1
-        )
-        await MainActor.run {
+        var newComment = CommentData(id: UUID().uuidString)
+        newComment.subreddit_id = data.subreddit_id
+        newComment.subreddit = data.subreddit
+        newComment.likes = true
+        newComment.saved = false
+        newComment.archived = false
+        newComment.count = 0
+        newComment.author = redditAPI.me?.data?.name ?? ""
+        newComment.created_utc = nil
+        newComment.send_replies = nil
+        newComment.parent_id = id
+        newComment.score = nil
+        newComment.author_fullname = "t2_\(redditAPI.me?.data?.id ?? "")"
+        newComment.approved_by = nil
+        newComment.mod_note = nil
+        newComment.collapsed = nil
+        newComment.body = text
+        newComment.top_awarded_type = nil
+        newComment.name = nil
+        newComment.is_submitter = nil
+        newComment.downs = 0
+        newComment.children = nil
+        newComment.body_html = nil
+        newComment.permalink = nil
+        newComment.created = Double(Int(Date().timeIntervalSince1970))
+        newComment.link_id = data.link_id
+        newComment.link_title = data.link_title
+        newComment.subreddit_name_prefixed = data.subreddit_name_prefixed
+        newComment.depth = (data.depth ?? 0) + 1
+        newComment.author_flair_background_color = nil
+        newComment.collapsed_because_crowd_control = nil
+        newComment.mod_reports = nil
+        newComment.num_reports = nil
+        newComment.ups = 1
+        await MainActor.run { [newComment] in
           withAnimation {
             childrenWinston.data.append(Comment(data: newComment, api: self.redditAPI))
           }
@@ -360,7 +365,12 @@ extension Comment {
 }
 
 struct CommentData: GenericRedditEntityDataType {
-  let subreddit_id: String?
+  
+  init(id: String) {
+    self.id = id
+  }
+  
+  var subreddit_id: String?
   //  let approved_at_utc: Int?
   //  let author_is_blocked: Bool?
   //  let comment_type: String?
@@ -369,42 +379,43 @@ struct CommentData: GenericRedditEntityDataType {
   //  let banned_by: String?
   //  let author_flair_type: String?
   //  let total_awards_received: Int?
-  let subreddit: String?
+  var subreddit: String?
   //  let author_flair_template_id: String?
   var likes: Bool?
   var replies: Either<String, Listing<CommentData>>?
   //  let user_reports: [String]?
   var saved: Bool?
-  let id: String
+  var id: String
   //  let banned_at_utc: String?
   //  let mod_reason_title: String?
   //  let gilded: Int?
-  let archived: Bool?
+  var archived: Bool?
   //  let collapsed_reason_code: String?
   //  let no_follow: Bool?
   var count: Int?
-  let author: String?
+  var author: String?
   //  let can_mod_post: Bool?
-  let created_utc: Double?
-  let send_replies: Bool?
-  let parent_id: String?
-  let score: Int?
-  let author_fullname: String?
-  let approved_by: String?
-  let mod_note: String?
+  var created_utc: Double?
+  var send_replies: Bool?
+  var parent_id: String?
+  var score: Int?
+  var author_fullname: String?
+  var approved_by: String?
+  var mod_note: String?
   //  let all_awardings: [String]?
   var collapsed: Bool?
   var body: String?
+  var winstonBodyAttrEncoded: String?
   //  let edited: Bool?
-  let top_awarded_type: String?
+  var top_awarded_type: String?
   //  let author_flair_css_class: String?
-  let name: String?
-  let is_submitter: Bool?
-  let downs: Int?
+  var name: String?
+  var is_submitter: Bool?
+  var downs: Int?
   //  let author_flair_richtext: [String]?
   //  let author_patreon_flair: Bool?
   var children: [String]?
-  let body_html: String?
+  var body_html: String?
   //  let removal_reason: String?
   //  let collapsed_reason: String?
   //  let distinguished: String?
@@ -416,25 +427,36 @@ struct CommentData: GenericRedditEntityDataType {
   //  let unrepliable_reason: String?
   //  let author_flair_text_color: String?
   //  let score_hidden: Bool?
-    let permalink: String?
+    var permalink: String?
   //  let subreddit_type: String?
   //  let locked: Bool?
   //  let report_reasons: String?
-  let created: Double?
+  var created: Double?
   //  let author_flair_text: String?
   //  let treatment_tags: [String]?
-  let link_id: String?
-  let link_title: String?
-  let subreddit_name_prefixed: String?
+  var link_id: String?
+  var link_title: String?
+  var subreddit_name_prefixed: String?
   //  let controversiality: Int?
-  let depth: Int?
-  let author_flair_background_color: String?
-  let collapsed_because_crowd_control: String?
-  let mod_reports: [String]?
-  let num_reports: Int?
+  var depth: Int?
+  var author_flair_background_color: String?
+  var collapsed_because_crowd_control: String?
+  var mod_reports: [String]?
+  var num_reports: Int?
   var ups: Int?
   var winstonSelecting: Bool? = false
 }
+
+// Encode AttributedString manually
+//func encode(to encoder: Encoder) throws {
+//   var container = encoder.container(keyedBy: CodingKeys.self)
+//
+//   // ...encode all other properties...
+//
+//   if let winstonBodyAttr = winstonBodyAttr {
+//       try container.encode(winstonBodyAttr.markdownRepresentation, forKey: .winstonBodyAttr)
+//   }
+//}
 
 struct Gildings: Codable {
 }

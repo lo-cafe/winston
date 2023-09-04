@@ -11,12 +11,14 @@ import AVFoundation
 import AlertToast
 struct PostViewPayload: Hashable {
   let post: Post
+  var postSelfAttr: AttributedString? = nil
   let sub: Subreddit
   var highlightID: String? = nil
 }
 
 struct PostView: View {
   var post: Post
+  var selfAttr: AttributedString? = nil
   @ObservedObject var subreddit: Subreddit
   var highlightID: String?
   var forceCollapse: Bool = false
@@ -24,7 +26,7 @@ struct PostView: View {
   @State private var ignoreSpecificComment = false
   @State private var sort: CommentSortOption = Defaults[.preferredCommentSort]
   @EnvironmentObject private var redditAPI: RedditAPI
-  @EnvironmentObject private var router: Router
+  @EnvironmentObject private var routerProxy: RouterProxy
   @State var update = false
 
   func asyncFetch(_ full: Bool = true) async {
@@ -47,7 +49,7 @@ struct PostView: View {
       List {
         Group {
           Section {
-            PostContent(post: post, sub: subreddit, forceCollapse: forceCollapse)
+            PostContent(post: post, selfAttr: selfAttr, sub: subreddit, forceCollapse: forceCollapse)
             
             Text("Comments")
               .fontSize(20, .bold)
@@ -124,7 +126,7 @@ struct PostView: View {
             
             if let data = subreddit.data, !feedsAndSuch.contains(subreddit.id) {
               Button {
-                router.path.append(SubViewType.info(subreddit))
+                routerProxy.router.path.append(SubViewType.info(subreddit))
               } label: {
                 SubredditIcon(data: data)
               }

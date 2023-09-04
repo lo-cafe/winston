@@ -8,6 +8,7 @@
 import Foundation
 import SwiftUI
 import Nuke
+import NukeUI
 
 struct SubredditBaseIcon: View {
   var name: String
@@ -15,9 +16,29 @@ struct SubredditBaseIcon: View {
   var id: String
   var size: CGFloat = 30
   var color: String?
+  
+  private static let pipeline = ImagePipeline {
+    $0.dataLoader = DataLoader(configuration: {
+      DataLoader.defaultConfiguration
+    }())
+    
+    $0.imageCache = ImageCache()
+    $0.dataCache = try? DataCache(name: "lo.cafe.winston-cache")
+  }
+  
   var body: some View {
     if let icon = iconURLStr, !icon.isEmpty, let iconURL = URL(string: icon) {
-      URLImage(url: iconURL, processors: [ImageProcessors.Circle()])
+      LazyImage(url: iconURL, transaction: Transaction(animation: .default)) { state in
+        if let image = state.image {
+          image.resizable()
+        } else if state.error != nil {
+          Color.red.opacity(0.1)
+            .overlay(Image(systemName: "xmark.circle.fill").foregroundColor(.red))
+        } else {
+          ProgressView()
+        }
+      }
+      .pipeline(SubredditBaseIcon.pipeline)
       .scaledToFill()
       .frame(width: size, height: size)
       .mask(Circle())

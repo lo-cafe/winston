@@ -12,6 +12,7 @@ import AVFoundation
 
 struct PostContent: View {
   @ObservedObject var post: Post
+  var selfAttr: AttributedString? = nil
   var sub: Subreddit
   var forceCollapse: Bool = false
   @State private var height: CGFloat = 0
@@ -20,7 +21,7 @@ struct PostContent: View {
   @Default(.preferenceShowPostsAvatars) var showPostAvatars
   @Default(.postViewTitleSize) var postViewTitleSize
   @Default(.postViewBodySize) var postViewBodySize
-  @EnvironmentObject private var router: Router
+  @EnvironmentObject private var routerProxy: RouterProxy
   private var contentWidth: CGFloat { UIScreen.screenWidth - 16 }
   
   var body: some View {
@@ -49,7 +50,7 @@ struct PostContent: View {
             
             if data.selftext != "" {
               VStack {
-                MD(str: data.selftext, fontSize: postViewBodySize)
+                MD(selfAttr.isNil ? .str(data.selftext) : .attr(selfAttr!), fontSize: postViewBodySize)
               }
               .contentShape(Rectangle())
               .onTapGesture { withAnimation(spring) { collapsed.toggle() } }
@@ -99,7 +100,7 @@ struct PostContent: View {
         }
         
         
-        SubsNStuffLine(showSub: true, feedsAndSuch: feedsAndSuch, post: post, sub: sub, router: router, over18: over18, data: data)
+        SubsNStuffLine(showSub: true, feedsAndSuch: feedsAndSuch, post: post, sub: sub, routerProxy: routerProxy, over18: over18)
           .id("post-flair-divider")
           .listRowInsets(EdgeInsets(top: 0, leading: 8, bottom: 8, trailing: 8))
         

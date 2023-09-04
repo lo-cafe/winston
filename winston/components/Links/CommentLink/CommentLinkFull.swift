@@ -9,7 +9,7 @@ import SwiftUI
 import Defaults
 
 struct CommentLinkFull: View {
-  @EnvironmentObject private var router: Router
+  @EnvironmentObject private var routerProxy: RouterProxy
   @Default(.preferenceShowCommentsCards) private var preferenceShowCommentsCards
   var post: Post
   var subreddit: Subreddit
@@ -18,6 +18,7 @@ struct CommentLinkFull: View {
   var indentLines: Int?
   @State private var loadMoreLoading = false
   @State private var id = UUID().uuidString
+  @StateObject private var attrStrLoader = AttributedStringLoader()
   @Default(.cardedCommentsInnerHPadding) var cardedCommentsInnerHPadding
   var body: some View {
     let horPad = preferenceShowCommentsCards ? cardedCommentsInnerHPadding : 0
@@ -38,6 +39,7 @@ struct CommentLinkFull: View {
           HStack {
             Image(systemName: "plus.message.fill")
             Text(loadMoreLoading ? "Just a sec..." : "View full conversation")
+              .onAppear { if let selfBody = post.data?.selftext { attrStrLoader.load(str: selfBody) } }
           }
           .allowsHitTesting(false)
           .padding(.vertical, 12)
@@ -50,7 +52,7 @@ struct CommentLinkFull: View {
       .background(preferenceShowCommentsCards ? Color.listBG : .clear)
       .contentShape(Rectangle())
       .onTapGesture {
-        router.path.append(PostViewPayload(post: post, sub: subreddit))
+        routerProxy.router.path.append(PostViewPayload(post: post, postSelfAttr: attrStrLoader.data, sub: subreddit))
       }
       .allowsHitTesting(!loadMoreLoading)
       .opacity(loadMoreLoading ? 0.5 : 1)

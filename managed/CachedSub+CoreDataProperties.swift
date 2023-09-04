@@ -41,36 +41,13 @@ extension CachedSub {
     @NSManaged public var user_is_subscriber: Bool
     @NSManaged public var uuid: String?
   
-  convenience init(data x: SubredditData, context: NSManagedObjectContext) {
+  convenience init(data: SubredditData, context: NSManagedObjectContext) {
     self.init(context: context)
-    let newCachedSub = self
-    newCachedSub.allow_galleries = x.allow_galleries ?? false
-    newCachedSub.allow_images = x.allow_images ?? false
-    newCachedSub.allow_videos = x.allow_videos ?? false
-    newCachedSub.over_18 = x.over_18 ?? false
-    newCachedSub.restrict_commenting = x.restrict_commenting ?? false
-    newCachedSub.user_has_favorited = x.user_has_favorited ?? false
-    newCachedSub.user_is_banned = x.user_is_banned ?? false
-    newCachedSub.user_is_moderator = x.user_is_moderator ?? false
-    newCachedSub.user_is_subscriber = x.user_is_subscriber ?? false
-    newCachedSub.banner_background_color = x.banner_background_color
-    newCachedSub.banner_background_image = x.banner_background_image
-    newCachedSub.banner_img = x.banner_img
-    newCachedSub.community_icon = x.community_icon
-    newCachedSub.display_name = x.display_name
-    newCachedSub.header_img = x.header_img
-    newCachedSub.icon_img = x.icon_img
-    newCachedSub.key_color = x.key_color
-    newCachedSub.name = x.name
-    newCachedSub.primary_color = x.primary_color
-    newCachedSub.title = x.title
-    newCachedSub.url = x.url
-    newCachedSub.user_flair_background_color = x.user_flair_background_color
-    newCachedSub.uuid = x.name
-    newCachedSub.subscribers = Double(x.subscribers ?? 0)
+    update(data: data)
   }
   
   func update(data x: SubredditData) {
+    self.uuid = x.name
     self.allow_galleries = x.allow_galleries ?? false
     self.allow_images = x.allow_images ?? false
     self.allow_videos = x.allow_videos ?? false
