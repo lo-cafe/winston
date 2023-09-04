@@ -23,6 +23,8 @@ struct BehaviorPanel: View {
   @Default(.autoPlayVideos) var autoPlayVideos
   @Default(.loopVideos) private var loopVideos
   @Default(.lightboxViewsPost) private var lightboxViewsPost
+  @Default(.useIntegratedBrowser) var useIntegratedBrowser
+  @Default(.defaultReaderMode) var defaultReaderMode
   
   var body: some View {
     List {
@@ -38,6 +40,13 @@ struct BehaviorPanel: View {
           Text("Subscription List").tag("subList")
         }
         .pickerStyle(DefaultPickerStyle())
+      }
+      
+      Section {
+        Toggle("Use integrated browser", isOn: $useIntegratedBrowser)
+        Toggle("Default browser to reader mode", isOn: $defaultReaderMode)
+      } footer: {
+        Text("Instead of opening links in Safari, you can open them inside winston's own browser. If you prefer, the integrated browser can also automatically use reader mode (when available) for a cleaner reading experience.")
       }
       
       Section {

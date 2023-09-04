@@ -106,6 +106,9 @@ extension Defaults.Keys {
   static let showSubsAtTop = Key<Bool>("showSubsAtTop", default: false)
   static let showTitleAtTop = Key<Bool>("showTitleAtTop", default: true)
   
+  static let useIntegratedBrowser = Key<Bool>("useIntegratedBrowser", default: false)
+  static let defaultReaderMode = Key<Bool>("defaultReaderMode", default: false)
+  
   static let postLinkTitleSize = Key<CGFloat>("postLinkTitleSize", default: 16)
   static let postLinkBodySize = Key<CGFloat>("postLinkBodySize", default: 14)
   static let postViewTitleSize = Key<CGFloat>("postViewTitleSize", default: 20)
