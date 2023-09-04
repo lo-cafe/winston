@@ -64,7 +64,6 @@ struct SubredditPosts: View {
   
   func clearAndLoadData(withSearchText searchText: String? = nil) {
     withAnimation {
-      loading = true
       posts.removeAll()
       loadedPosts.removeAll()
     }
