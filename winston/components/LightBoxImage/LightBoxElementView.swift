@@ -19,7 +19,7 @@ struct LightBoxElementView: View {
   var onTap: (()->())?
   @Binding var isPinching: Bool
   @State private var scale: CGFloat = 1.0
-  @State private var anchor: UnitPoint = .zero
+  @State private var anchor: UnitPoint = .center
   @State private var offset: CGSize = .zero
   @State private var altSize: CGSize = .zero
   var body: some View {

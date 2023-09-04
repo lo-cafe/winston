@@ -27,7 +27,7 @@ struct SubredditPosts: View {
   @State private var sort: SubListingSortOption = Defaults[.preferredSort]
   @State private var newPost = false
   @EnvironmentObject private var redditAPI: RedditAPI
-  @EnvironmentObject private var router: Router
+  @EnvironmentObject private var routerProxy: RouterProxy
   
   func asyncFetch(force: Bool = false, loadMore: Bool = false) async {
     if (subreddit.data == nil || force) && !feedsAndSuch.contains(subreddit.id) {
@@ -163,7 +163,7 @@ struct SubredditPosts: View {
 
           if let data = subreddit.data {
             Button {
-              router.path.append(SubViewType.info(subreddit))
+              routerProxy.router.path.append(SubViewType.info(subreddit))
             } label: {
               SubredditIcon(data: data)
             }

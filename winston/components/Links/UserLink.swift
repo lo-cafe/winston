@@ -18,7 +18,7 @@ struct UserLinkContainer: View {
 struct UserLink: View {
   var noHPad = false
   var user: User
-  @EnvironmentObject private var router: Router
+  @EnvironmentObject private var routerProxy: RouterProxy
     var body: some View {
       if let data = user.data {
         HStack(spacing: 12) {
@@ -40,7 +40,7 @@ struct UserLink: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(RR(20, noHPad ? .clear : .listBG))
         .onTapGesture {
-          router.path.append(user)
+          routerProxy.router.path.append(user)
         }
       }
     }
