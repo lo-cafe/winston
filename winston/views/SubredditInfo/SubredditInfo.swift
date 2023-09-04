@@ -29,17 +29,25 @@ struct SubredditInfo: View {
   @State private var myPostsLoaded = false
   @State private var addedToFavs = false
   @Default(.likedButNotSubbed) var likedButNotSubbed
+  @EnvironmentObject private var router: Router
+
   var body: some View {
     let isliked = likedButNotSubbed.contains(subreddit)
     List {
       Group {
         if let data = subreddit.data {
           VStack(spacing: 12) {
-            SubredditIcon(data: data, size: 125)
+            SubredditIcon(data: data, size: 125, forceNSFWOFF: true)
+              .onTapGesture {
+                router.path.append(SubViewType.posts(Subreddit(id: subreddit.data?.display_name ?? "", api: subreddit.redditAPI)))
+              }
             
             VStack {
               Text("r/\(data.display_name ?? "")")
                 .fontSize(22, .bold)
+                .onTapGesture {
+                  router.path.append(SubViewType.posts(Subreddit(id: subreddit.data?.display_name ?? "", api: subreddit.redditAPI)))
+                }
               Text("Created \(data.created.isNil ? "at some point" : Date(timeIntervalSince1970: TimeInterval(data.created!)).toFormat("MMM dd, yyyy"))")
                 .fontSize(16, .medium)
                 .opacity(0.5)
@@ -64,7 +72,17 @@ struct SubredditInfo: View {
           .listRowBackground(Color.clear)
           .listRowInsets(EdgeInsets(top: 8, leading: 0, bottom: 8, trailing: 0))
           .toolbar{
+            
             ToolbarItem(){
+              if let data = subreddit.data {
+                ShareLink(item: "reddit.com/r/" + ((data.display_name != nil) ? data.display_name! : data.name)){
+                  Label("Share Subreddit", systemImage: "square.and.arrow.up")
+                }
+              }
+            }
+            
+            ToolbarItem(){
+              
               Button{
                 Task{
                   if !data.user_has_favorited! {
@@ -81,6 +99,7 @@ struct SubredditInfo: View {
                   .foregroundColor(.blue)
                   .labelStyle(.iconOnly)
               }
+              
             }
           }
             

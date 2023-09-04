@@ -9,7 +9,7 @@ import Foundation
 import CoreData
 import Defaults
 import SwiftUI
-
+import CoreData
 
 typealias Subreddit = GenericRedditEntity<SubredditData>
 
@@ -31,18 +31,48 @@ extension Subreddit {
   /// Add a subreddit to the local like list
   /// This is a seperate list from reddits liked intenden for usage with subreddits a user wants to favorite but not subscribe to
   /// returns true if added to favorites and false if removed
+//  func localFavoriteToggle() -> Bool {
+//    var likedButNotSubbed = Defaults[.likedButNotSubbed]
+//    // If the user is not subscribed
+//    
+//    // If its already in liked remove it
+//    if likedButNotSubbed.contains(self) {
+//      likedButNotSubbed = likedButNotSubbed.filter{ $0.id != self.id }
+//      return false
+//    } else { // Else add it
+//      Defaults[.likedButNotSubbed].append(self)
+//      return true
+//    }
+//  }
+  
   func localFavoriteToggle() -> Bool {
-    var likedButNotSubbed = Defaults[.likedButNotSubbed]
-    // If the user is not subscribed
-    
-    // If its already in liked remove it
-    if likedButNotSubbed.contains(self) {
-      likedButNotSubbed = likedButNotSubbed.filter{ $0.id != self.id }
-      return false
-    } else { // Else add it
-      Defaults[.likedButNotSubbed].append(self)
-      return true
-    }
+//    let context = PersistenceController.shared.container.viewContext
+//
+//    if let data {
+//      let fetRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "LocalFavorite")
+//      
+//      guard let results = (context.performAndWait{ return try?
+//        context.fetch(fetRequest) as? [LocalFavorite]
+//      }) else { return false}
+//      
+//      let foundSub = context.performAndWait{
+//        results.first(where: {
+//          $0.title == self.data?.title
+//        })
+//      }
+//      
+//      if let foundSub = foundSub {
+//        context.delete(foundSub)
+//      } else {
+//        context.performAndWait{
+//          _ = LocalFavorite(context: context)
+//        }
+//      }
+//      context.performAndWait{
+//        try? context.save()
+//      }
+//    }
+    return true
   }
   
   func favoriteToggle(entity: CachedSub? = nil) {

@@ -25,10 +25,12 @@ struct PostView: View {
   @Default(.preferenceShowCommentsCards) private var preferenceShowCommentsCards
   @State private var ignoreSpecificComment = false
   @State private var sort: CommentSortOption = Defaults[.preferredCommentSort]
+  @State private var sortIsSuggested: Bool = false
   @EnvironmentObject private var redditAPI: RedditAPI
   @EnvironmentObject private var routerProxy: RouterProxy
   @State var update = false
-
+  @State private var nextCommentTracker: String = ""
+  
   func asyncFetch(_ full: Bool = true) async {
     if full {
         update.toggle()
@@ -45,6 +47,11 @@ struct PostView: View {
   }
   
   var body: some View {
+    
+    //var newsort = (subreddit.data?.suggested_comment_sort != nil ? convertStringToCommentSortOption(string: subreddit.data?.suggested_comment_sort ?? "new") : sort)
+    
+
+    
     ScrollViewReader{ proxy in
       List {
         Group {
@@ -59,8 +66,7 @@ struct PostView: View {
           }
           .listRowBackground(Color.clear)
           
-          PostReplies(update: update, post: post, subreddit: subreddit, ignoreSpecificComment: ignoreSpecificComment, highlightID: highlightID, sort: sort, proxy: proxy)
-          
+          PostReplies(update: update, post: post, subreddit: subreddit, ignoreSpecificComment: ignoreSpecificComment, highlightID: highlightID, sort: sort, proxy: proxy, nextCommentTracker: $nextCommentTracker)
           
           if !ignoreSpecificComment && highlightID != nil {
             Section {
@@ -95,9 +101,12 @@ struct PostView: View {
       .refreshable {
         await asyncFetch(true)
       }
-      .overlay(
-        PostFloatingPill(post: post, subreddit: subreddit)
-        , alignment: .bottomTrailing)
+      .overlay(alignment: .bottomTrailing) {
+        // Floating button
+        HStack {
+          PostFloatingPill(post: post, subreddit: subreddit, proxy: proxy, nextCommentTracker: $nextCommentTracker)
+        }
+      }
       .navigationBarTitle("\(post.data?.num_comments ?? 0) comments", displayMode: .inline)
       .navigationBarItems(
         trailing:
@@ -108,7 +117,7 @@ struct PostView: View {
                   sort = opt
                 } label: {
                   HStack {
-                    Text(opt.rawVal.value.capitalized)
+                    (sortIsSuggested && opt.rawVal.value == sort.rawVal.value) ? Text(opt.addSuggestedText().value.capitalized) :Text(opt.rawVal.value.capitalized)
                     Spacer()
                     Image(systemName: opt.rawVal.icon)
                       .foregroundColor(.blue)
@@ -128,7 +137,7 @@ struct PostView: View {
               Button {
                 routerProxy.router.path.append(SubViewType.info(subreddit))
               } label: {
-                SubredditIcon(data: data)
+                SubredditIcon(data: data, forceNSFWOFF: true)
               }
             }
           }
@@ -138,6 +147,10 @@ struct PostView: View {
         updateComments()
       }
       .onAppear {
+        if let data = post.data, let newsort = data.suggested_sort {
+            sortIsSuggested = true
+            sort = convertStringToCommentSortOption(string: newsort)
+        }
         Task(priority: .background) {
           if subreddit.data == nil && subreddit.id != "home" {
             await subreddit.refreshSubreddit()

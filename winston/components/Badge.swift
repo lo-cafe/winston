@@ -12,7 +12,7 @@ import Defaults
 
 struct Badge: View {
   var saved = false
-  var usernameColor: Color = .green
+  var usernameColor: Color = Defaults[.opUsernameColor]
   var showAvatar = true
   var author: String
   var fullname: String? = nil
@@ -21,7 +21,11 @@ struct Badge: View {
   var avatarSize: CGFloat = 30
   var nameSize: CGFloat = 13
   var labelSize: CGFloat = 12
-  //  var extraInfo: [String:String] = [:]
+  
+  var stickied: Bool = false
+  var locked: Bool = false
+  var edited: Bool = false
+//  var extraInfo: [String:String] = [:]
   var extraInfo: [BadgeExtraInfo] = []
   @EnvironmentObject private var routerProxy: RouterProxy
   @EnvironmentObject private var redditAPI: RedditAPI
@@ -90,7 +94,23 @@ struct Badge: View {
           HStack(alignment: .center, spacing: 2) {
             Image(systemName: "hourglass.bottomhalf.filled")
             Text(timeSince(Int(created)))
+            
+            if stickied {
+              Image(systemName: "pin.fill")
+                .foregroundColor(.green)
+            }
+            
+            if locked {
+              Image(systemName: "lock.fill")
+                .foregroundColor(.green)
+            }
+            
+            if edited {
+              Image(systemName: "pencil")
+            }
           }
+          
+          
         }
         .font(.system(size: labelSize, weight: .medium))
         .compositingGroup()
@@ -115,10 +135,14 @@ struct PresetBadgeExtraInfo{
   init(){}
   
   func upvotesExtraInfo(data: PostData) -> BadgeExtraInfo{
-    //    let upvoted = data.likes != nil && data.likes!
-    //    let downvoted = data.likes != nil && !data.likes!
-    //    return BadgeExtraInfo(systemImage: upvoted  ? "arrow.up" : (downvoted ? "arrow.down" : "arrow.up"), text: "\(formatBigNumber(data.ups))",textColor: upvoted ? .orange : (downvoted ? .blue : .primary), iconColor:  upvoted ? .orange : (downvoted ? .blue : .primary))
+//    let upvoted = data.likes != nil && data.likes!
+//    let downvoted = data.likes != nil && !data.likes!
+//    return BadgeExtraInfo(systemImage: "arrow.up", text: "fuck this shit", iconColor: data.likes == nil ? .primary : data.likes! ? .orange : .blue)
     return BadgeExtraInfo(systemImage: "arrow.up", text: "\(formatBigNumber(data.ups))")
+  }
+  
+  func upvotesExtraInfo2(upvoted: Bool, downvoted: Bool, upvotes: Int) -> BadgeExtraInfo{
+    return BadgeExtraInfo(systemImage: upvoted  ? "arrow.up" : (downvoted ? "arrow.down" : "arrow.up"), text: "\(formatBigNumber(upvotes))",textColor: upvoted ? .orange : (downvoted ? .blue : .primary), iconColor:  upvoted ? .orange : (downvoted ? .blue : .primary))
   }
   
   func commentsExtraInfo(data: PostData) -> BadgeExtraInfo{

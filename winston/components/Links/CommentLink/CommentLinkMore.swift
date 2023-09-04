@@ -18,6 +18,7 @@ struct CommentLinkMore: View {
   
   @Default(.preferenceShowCommentsCards) private var preferenceShowCommentsCards
   @Default(.cardedCommentsInnerHPadding) private var cardedCommentsInnerHPadding
+  @Default(.arrowDividerColorPalette) var arrowDividerColorPalette
 
   var body: some View {
     let horPad = preferenceShowCommentsCards ? cardedCommentsInnerHPadding : 0
@@ -29,7 +30,7 @@ struct CommentLinkMore: View {
             ForEach(shapes, id: \.self) { i in
               if arrowKinds.indices.contains(i - 1) {
                 let actualArrowKind = arrowKinds[i - 1]
-                Arrows(kind: actualArrowKind)
+                Arrows(kind: actualArrowKind, color: getColorFromPalette(index: i, palette: arrowDividerColorPalette.rawVal))
               }
             }
           }

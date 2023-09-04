@@ -10,6 +10,8 @@ import Defaults
 import Markdown
 
 struct FlairTag: View {
+  @Default(.postAccessoryColor) var postAccessoryColor
+  @Default(.customPostAccessoryTextColor) var customPostAccessoryTextColor
   var text: String
   var color: Color = .secondary
   var body: some View {
@@ -17,8 +19,8 @@ struct FlairTag: View {
       .fontSize(13)
       .padding(.horizontal, 9)
       .padding(.vertical, 2)
-      .background(Capsule(style: .continuous).fill(color.opacity(0.2)))
-      .foregroundColor(.primary.opacity(0.5))
+      .background(Capsule(style: .continuous).fill(color))
+      .foregroundColor(customPostAccessoryTextColor ? postAccessoryColor : Color.primary.opacity(0.5))
       .frame(maxWidth: 150, alignment: .leading)
       .fixedSize(horizontal: true, vertical: false)
       .lineLimit(1)
@@ -119,6 +121,8 @@ struct PostLink: View, Equatable {
   @Default(.postViewBodySize) private var postViewBodySize
   @Default(.showTitleAtTop) private var showTitleAtTop
   
+  
+  
   @StateObject private var appeared = Appeared()
   
   var contentWidth: CGFloat { UIScreen.screenWidth - ((preferenceShowPostsCards ? cardedPostLinksOuterHPadding : postLinksInnerHPadding) * 2) - (preferenceShowPostsCards ? (preferenceShowPostsCards ? cardedPostLinksInnerHPadding : 0) * 2 : 0)  }
@@ -164,6 +168,8 @@ struct PostLink: View, Equatable {
               .frame(maxWidth: compactMode ? compactModeThumbSize : .infinity, maxHeight: compactMode ? compactModeThumbSize : nil, alignment: .leading)
               .clipped()
               .nsfw(over18 && blurPostLinkNSFW)
+          } else if (!thumbnailPositionRight && compactMode) || (!compactMode && !showTitleAtTop) {
+            EmptyThumbnail()
           }
           
           /// /////////
@@ -192,7 +198,7 @@ struct PostLink: View, Equatable {
             
             if compactMode {
               if let fullname = data.author_fullname {
-                Badge(showAvatar: preferenceShowPostsAvatars, author: data.author, fullname: fullname, created: data.created, extraInfo: [PresetBadgeExtraInfo().commentsExtraInfo(data:data), PresetBadgeExtraInfo().upvotesExtraInfo(data: data)])
+                Badge(showAvatar: preferenceShowPostsAvatars,author: data.author, fullname: fullname, created: data.created, extraInfo: [PresetBadgeExtraInfo().commentsExtraInfo(data:data), PresetBadgeExtraInfo().upvotesExtraInfo(data: data)])
               }
             }
           }
@@ -315,10 +321,6 @@ struct PostLink: View, Equatable {
           }
         }
         
-        if let perma = URL(string: "https://reddit.com\(data.permalink.escape.urlEncoded)") {
-          ShareLink(item: perma) { Label("Share", systemImage: "square.and.arrow.up") }
-        }
-        
       }, preview: { NavigationStack { PostView(post: post, subreddit: sub, forceCollapse: true) }.environmentObject(post.redditAPI).environmentObject(routerProxy) })
       .foregroundColor(.primary)
       .multilineTextAlignment(.leading)
@@ -379,6 +381,8 @@ struct EmptyThumbnail: View {
 
 
 struct SubsNStuffLine: View {
+  @Default(.postAccessoryBackgroundColor) var postAccessoryBackgroundColor
+  
   var showSub: Bool
   var feedsAndSuch: [String]
   var post: Post
@@ -390,7 +394,7 @@ struct SubsNStuffLine: View {
     HStack(spacing: 0) {
       
       if showSub || feedsAndSuch.contains(sub.id) {
-        FlairTag(text: "r/\(sub.data?.display_name ?? post.data?.subreddit ?? "Error")", color: .blue)
+        FlairTag(text: "r/\(sub.data?.display_name ?? post.data?.subreddit ?? "Error")", color: postAccessoryBackgroundColor)
           .highPriorityGesture(TapGesture() .onEnded {
             routerProxy.router.path.append(SubViewType.posts(Subreddit(id: post.data?.subreddit ?? "", api: post.redditAPI)))
           })

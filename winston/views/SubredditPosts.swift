@@ -31,7 +31,7 @@ struct SubredditPosts: View {
   @EnvironmentObject private var routerProxy: RouterProxy
   @EnvironmentObject private var router: Router
   @State private var pageNumber = 1
-
+  
   func asyncFetch(force: Bool = false, loadMore: Bool = false) async {
     if (subreddit.data == nil || force) && !feedsAndSuch.contains(subreddit.id) {
       await subreddit.refreshSubreddit()
@@ -131,6 +131,7 @@ struct SubredditPosts: View {
                     .font(.headline)
                     .foregroundColor(.blue)
                     .contentTransition(.interpolate)
+
                   Spacer()
                 }
                 .padding(.vertical, 10)
@@ -223,14 +224,13 @@ struct SubredditPosts: View {
             Button {
               routerProxy.router.path.append(SubViewType.info(subreddit))
             } label: {
-              SubredditIcon(data: data)
+              SubredditIcon(data: data, forceNSFWOFF: true)
             }
           }
         }
         .animation(nil, value: sort)
     )
     .onAppear {
-      //      sort = Defaults[.preferredSort]
       if posts.count == 0 {
         doThisAfter(0) {
           fetch()
@@ -244,7 +244,6 @@ struct SubredditPosts: View {
         pageNumber = 1
       }
       fetch()
-      Defaults[.preferredSort] = sort
     }
     .searchable(text: $searchText, prompt: "Search r/\(subreddit.data?.display_name ?? subreddit.id)")
     .refreshable {

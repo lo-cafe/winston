@@ -53,16 +53,13 @@ class GlobalLoader: ObservableObject {
   }
   
   func dismiss() {
-    let heavy = UIImpactFeedbackGenerator(style: .heavy)
-    let soft = UIImpactFeedbackGenerator(style: .rigid)
-    heavy.prepare()
-    soft.prepare()
+
     withAnimation(.easeOut) {
       self.loadingText = nil
     }
-    heavy.impactOccurred()
+    _ = WinstonHapticPatterns.clickHard
     doThisAfter(0.2) {
-      soft.impactOccurred()
+      _ = WinstonHapticPatterns.click
     }
     doThisAfter(0.75) {
       withAnimation(spring) {

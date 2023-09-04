@@ -24,6 +24,11 @@ struct PostReplies: View {
   @ObservedObject private var globalLoader = TempGlobalState.shared.globalLoader
   @State private var loading = true
   
+  @Binding var nextCommentTracker: String
+  @State private var screenHeight: CGFloat = UIScreen.main.bounds.size.height
+  @State private var screenTopOffset: CGFloat = 0
+  @State private var commentPositions: [Int: CGFloat] = [:]
+  
   func asyncFetch(_ full: Bool, _ altIgnoreSpecificComment: Bool? = nil) async {
     if let result = await post.refreshPost(commentID: (altIgnoreSpecificComment ?? ignoreSpecificComment) ? nil : highlightID, sort: sort, after: nil, subreddit: subreddit.data?.display_name ?? subreddit.id, full: full), let newComments = result.0 {
       Task(priority: .background) {
@@ -41,6 +46,18 @@ struct PostReplies: View {
         withAnimation {
           loading = false
         }
+      }
+    }
+  }
+  
+  func determineNextComment() {
+    let commentsData = comments.data
+    
+    // If commentPositions doesn't meet the criteria, find the closest index as before
+    if let closestIndex = commentPositions.min(by: { abs($0.value - screenTopOffset) < abs($1.value - screenTopOffset) })?.key {
+      if closestIndex < commentsData.count - 1 {
+        let tempIndex = closestIndex + 1
+        nextCommentTracker = preferenceShowCommentsCards ? "\(commentsData[tempIndex].id)-top-decoration" : "\(commentsData[tempIndex].id)-top-spacer"
       }
     }
   }
@@ -67,6 +84,16 @@ struct PostReplies: View {
                   .id("\(comment.id)-top-spacer")
               }
               CommentLink(highlightID: ignoreSpecificComment ? nil : highlightID, post: post, subreddit: subreddit, postFullname: postFullname, parentElement: .post(comments), comment: comment)
+                .background(
+                  GeometryReader { geometry -> Color in
+                    DispatchQueue.main.async {
+                      commentPositions[i] = geometry.frame(in: .global).origin.y
+                      determineNextComment()
+                    }
+                    
+                    return Color.clear
+                  }
+                )
               if preferenceShowCommentsCards {
                 Spacer()
                   .frame(maxWidth: .infinity, minHeight: 24, maxHeight: 24)
@@ -89,6 +116,7 @@ struct PostReplies: View {
             .listRowBackground(Color.clear)
             .listRowInsets(EdgeInsets(top: 0, leading: horPad, bottom: 0, trailing: horPad))
           }
+          
           Section {
             Spacer()
               .frame(height: 1)
@@ -113,6 +141,12 @@ struct PostReplies: View {
           }
           .listRowBackground(Color.clear)
           .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
+        }
+        .onAppear {
+          DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
+            screenTopOffset = screenHeight * 0.2
+            determineNextComment()
+          }
         }
       } else {
         if loading {

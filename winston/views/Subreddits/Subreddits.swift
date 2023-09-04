@@ -24,6 +24,8 @@ struct Subreddits: View {
   @EnvironmentObject private var redditAPI: RedditAPI
   @FetchRequest(sortDescriptors: [NSSortDescriptor(key: "name", ascending: true)], animation: .default) var subreddits: FetchedResults<CachedSub>
   @FetchRequest(sortDescriptors: [NSSortDescriptor(key: "name", ascending: true)], animation: .default) var multis: FetchedResults<CachedMulti>
+//  @FetchRequest(sortDescriptors: [NSSortDescriptor(key: "title", ascending: true)], animation: .default) var localFavs: FetchedResults<LocalFavorite>
+  
   @State private var searchText: String = ""
   @StateObject private var subsDict = SubsDictContainer()
   @State private var loaded = false

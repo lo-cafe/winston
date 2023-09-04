@@ -16,10 +16,13 @@ struct PostFloatingPill: View {
   @ObservedObject var subreddit: Subreddit
   @State var showReplyModal = false
   var updateComments: (()->())?
+  var proxy: ScrollViewProxy
 
   @State var showAddedToast: Bool = false
   @State var showRemovedToast: Bool = false
   var thisPinnedPost: Bool { postsInBox.contains { $0.id == post.id } }
+  
+  @Binding var nextCommentTracker: String
   
   var body: some View {
     HStack(spacing: 2) {
@@ -77,6 +80,19 @@ struct PostFloatingPill: View {
             LightBoxButton(icon: "arrowshape.turn.up.left.fill") {
               withAnimation(spring) {
                 showReplyModal = true
+              }
+            }
+            
+            LightBoxButton(icon: "arrowshape.bounce.right.fill") {
+              // Action to scroll to next comment
+              if !nextCommentTracker.isEmpty {
+                withAnimation {
+                  proxy.scrollTo(nextCommentTracker, anchor: .top)
+                }
+              } else {
+                withAnimation {
+                  proxy.scrollTo("end-spacer", anchor: .top)
+                }
               }
             }
           }

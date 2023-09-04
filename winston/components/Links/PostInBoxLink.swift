@@ -8,7 +8,7 @@
 import SwiftUI
 import NukeUI
 import Defaults
-
+import AllujaHaptics
 struct PostInBoxLink: View {
   @EnvironmentObject private var routerProxy: RouterProxy
   @Default(.postsInBox) private var postsInBox
@@ -24,7 +24,7 @@ struct PostInBoxLink: View {
     //    } label: {
     VStack(alignment: .leading, spacing: 4) {
       HStack {
-        SubredditBaseIcon(name: post.subredditName, iconURLStr: post.subredditIconURL, id: post.id, size: 20, color: post.subColor)
+        SubredditBaseIcon(name: post.subredditName, iconURLStr: post.subredditIconURL, id: post.id, size: 20, color: post.subColor, isNSFW: false)
         Text(post.subredditName)
           .fontSize(13,.medium)
       }
@@ -116,10 +116,7 @@ struct PostInBoxLink: View {
           withAnimation(spring) {
             dragging = true
           }
-          let impact = UIImpactFeedbackGenerator(style: .rigid)
-          impact.prepare()
-          impact.impactOccurred()
-//          try? haptics.fire(intensity: 1, sharpness: 1)
+          _ = WinstonHapticPatterns.clickHard
         }
         .sequenced(before: DragGesture())
         .onChanged{ sequence in
@@ -138,17 +135,14 @@ struct PostInBoxLink: View {
                 withAnimation(spring) {
                   deleting = true
                 }
-                let impact = UIImpactFeedbackGenerator(style: .rigid)
-                impact.prepare()
-                impact.impactOccurred()
+                _ = WinstonHapticPatterns.clickHard
               }
               if abs(dragVal.translation.height) < 70 && deleting {
                 withAnimation(spring) {
                   deleting = false
                 }
-                let impact = UIImpactFeedbackGenerator(style: .rigid)
-                impact.prepare()
-                impact.impactOccurred()
+                _ = WinstonHapticPatterns.clickHard
+
               }
             }
           }

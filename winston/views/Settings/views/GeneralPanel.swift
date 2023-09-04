@@ -8,14 +8,39 @@
 import SwiftUI
 import Defaults
 import WebKit
+import VisionKit
 
 struct GeneralPanel: View {
   @Default(.likedButNotSubbed) var likedButNotSubbed
-  @State private var totalCacheSize: String = ""
+  @Default(.useLiveText) var useLiveText
 
+  @State private var totalCacheSize: String = ""
+  @State private var imageAnalyzerSupport: Bool = true
 
     var body: some View {
       List{
+        Section("Media"){
+          VStack{
+            Toggle("Live Text Analyzer", isOn: $useLiveText)
+              .disabled(!imageAnalyzerSupport)
+              .onAppear{
+               imageAnalyzerSupport = ImageAnalyzer.isSupported
+                if !ImageAnalyzer.isSupported {
+                  useLiveText = false
+                }
+              }
+            
+            if !imageAnalyzerSupport{
+              HStack{
+                Text("Your iPhone does not support Live Text :(")
+                  .fontSize(12)
+                  .opacity(0.5)
+                Spacer()
+              }
+              
+            }
+          }
+        }
         Section("Advanced"){
           
           Button {
