@@ -32,7 +32,6 @@ struct SubredditPosts: View {
   @EnvironmentObject private var routerProxy: RouterProxy
   @EnvironmentObject private var router: Router
   @State private var pageNumber = 1
-  @EnvironmentObject private var routerProxy: RouterProxy
   
   func asyncFetch(force: Bool = false, loadMore: Bool = false) async {
     if (subreddit.data == nil || force) && !feedsAndSuch.contains(subreddit.id) {

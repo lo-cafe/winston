@@ -46,32 +46,33 @@ extension Subreddit {
 //  }
   
   func localFavoriteToggle() -> Bool {
-    let context = PersistenceController.shared.container.viewContext
-
-    if let data {
-      let fetRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "LocalFavorite")
-      
-      guard let results = (context.performAndWait{ return try?
-        context.fetch(fetRequest) as? [LocalFavorite]
-      }) else { return }
-      
-      let foundSub = context.performAndWait{
-        results.first(where: {
-          $0.title == self.data?.title
-        })
-      }
-      
-      if let foundSub = foundSub {
-        context.delete(foundSub)
-      } else {
-        context.performAndWait{
-          _ = LocalFavorite(context: context)
-        }
-      }
-      context.performAndWait{
-        try? context.save()
-      }
-    }
+//    let context = PersistenceController.shared.container.viewContext
+//
+//    if let data {
+//      let fetRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "LocalFavorite")
+//      
+//      guard let results = (context.performAndWait{ return try?
+//        context.fetch(fetRequest) as? [LocalFavorite]
+//      }) else { return false}
+//      
+//      let foundSub = context.performAndWait{
+//        results.first(where: {
+//          $0.title == self.data?.title
+//        })
+//      }
+//      
+//      if let foundSub = foundSub {
+//        context.delete(foundSub)
+//      } else {
+//        context.performAndWait{
+//          _ = LocalFavorite(context: context)
+//        }
+//      }
+//      context.performAndWait{
+//        try? context.save()
+//      }
+//    }
+    return true
   }
   
   func favoriteToggle(entity: CachedSub? = nil) {

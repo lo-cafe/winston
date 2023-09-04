@@ -100,6 +100,8 @@ extension Comment {
       commentData.mod_reports = nil
       commentData.num_reports = nil
       commentData.ups = nil
+      commentData.stickied = false
+      commentData.locked = false
       self.init(data: commentData, api: rawMessage.redditAPI, typePrefix: "\(Comment.prefix)_")
     } else {
       throw RandomErr.oops
@@ -261,6 +263,8 @@ extension Comment {
         newComment.mod_reports = nil
         newComment.num_reports = nil
         newComment.ups = 1
+        newComment.stickied = false
+        newComment.locked = false
         await MainActor.run { [newComment] in
           withAnimation {
             childrenWinston.data.append(Comment(data: newComment, api: self.redditAPI))
@@ -420,7 +424,7 @@ struct CommentData: GenericRedditEntityDataType {
   //  let collapsed_reason: String?
   //  let distinguished: String?
   //  let associated_award: String?
-  //  let stickied: Bool?
+  var stickied: Bool?
   //  let author_premium: Bool?
   //  let can_gild: Bool?
   //  let gildings: [String: String]?
@@ -429,7 +433,7 @@ struct CommentData: GenericRedditEntityDataType {
   //  let score_hidden: Bool?
     var permalink: String?
   //  let subreddit_type: String?
-  //  let locked: Bool?
+  var locked: Bool?
   //  let report_reasons: String?
   var created: Double?
   //  let author_flair_text: String?

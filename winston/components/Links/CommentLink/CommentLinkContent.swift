@@ -26,6 +26,7 @@ struct CommentLinkContentPreview: View {
     if let data = comment.data {
       VStack(alignment: .leading, spacing: 0) {
         CommentLinkContent(forcedBodySize: sizer.size, showReplies: showReplies, arrowKinds: arrowKinds, indentLines: indentLines, lineLimit: lineLimit, post: post, comment: comment, avatarsURL: avatarsURL)
+        
       }
       .frame(width: UIScreen.screenWidth, height: sizer.size.height + CGFloat((data.depth != 0 ? 42 : 30) + 16))
     }
@@ -38,7 +39,7 @@ class MyDefaults {
 
 struct CommentLinkContent: View {
   var highlightID: String?
-//  @Default(.commentSwipeActions) private var commentSwipeActions
+  //  @Default(.commentSwipeActions) private var commentSwipeActions
   var forcedBodySize: CGSize?
   var showReplies = true
   var arrowKinds: [ArrowKind]
@@ -64,6 +65,11 @@ struct CommentLinkContent: View {
   @Default(.collapseAutoModerator) private var collapseAutoModerator
   @Default(.commentLinkBodySize) private var commentLinkBodySize
   
+  @Default(.opUsernameColor) var opUsernameColor
+  @Default(.commentUsernameColor) var commentUsernameColor
+  @Default(.arrowDividerColorPalette) var arrowDividerColorPalette
+  @Default(.customCommentUsernameColor) var customCommentUsernameColor
+  
   @State var commentViewLoaded = false
   
   var body: some View {
@@ -80,25 +86,26 @@ struct CommentLinkContent: View {
               ForEach(shapes, id: \.self) { i in
                 if arrowKinds.indices.contains(i - 1) {
                   let actualArrowKind = arrowKinds[i - 1]
-                  Arrows(kind: actualArrowKind)
+                  Arrows(kind: actualArrowKind, color: getColorFromPalette(index: i, palette: arrowDividerColorPalette.rawVal))
                 }
               }
             }
           }
           HStack(spacing: 8) {
             if let author = data.author, let created = data.created {
-              Badge(usernameColor: (post?.data?.author ?? "") == author ? Color.green : (coloredCommenNames ? Color.blue : Color.primary), showAvatar: preferenceShowCommentsAvatars, author: author, fullname: data.author_fullname, created: created, avatarURL: avatarsURL?[data.author_fullname!])
+              Badge(usernameColor: (post?.data?.author ?? "") == author ? opUsernameColor : (customCommentUsernameColor ? commentUsernameColor : Color.primary), showAvatar: preferenceShowCommentsAvatars, author: author, fullname: data.author_fullname, created: created, avatarURL: avatarsURL?[data.author_fullname!], stickied: data.stickied ?? false, locked: data.locked ?? false)
+
             }
             
             Spacer()
-
+            
             if (data.saved ?? false) {
               Image(systemName: "bookmark.fill")
                 .fontSize(14)
                 .foregroundColor(.green)
                 .transition(.scale.combined(with: .opacity))
             }
-
+            
             if selectable {
               HStack(spacing: 2) {
                 Circle()
@@ -113,20 +120,20 @@ struct CommentLinkContent: View {
               .background(.orange, in: Capsule(style: .continuous))
               .onTapGesture { withAnimation { comment.data?.winstonSelecting = false } }
             }
-
+            
             if let ups = data.ups, let downs = data.downs {
               HStack(alignment: .center, spacing: 4) {
                 Image(systemName: "arrow.up")
                   .foregroundColor(data.likes != nil && data.likes! ? .orange : .gray)
-
+                
                 let downup = Int(ups - downs)
                 Text(formatBigNumber(downup))
                   .foregroundColor(data.likes != nil ? (data.likes! ? .orange : .blue) : .gray)
                   .contentTransition(.numericText())
-                  
+                
                 //                  .foregroundColor(downup == 0 ? .gray : downup > 0 ? .orange : .blue)
                   .fontSize(14, .semibold)
-
+                
                 Image(systemName: "arrow.down")
                   .foregroundColor(data.likes != nil && !data.likes! ? .blue : .gray)
               }
@@ -134,17 +141,17 @@ struct CommentLinkContent: View {
               .padding(.horizontal, 6)
               .padding(.vertical, 2)
               .background(Capsule(style: .continuous).fill(.secondary.opacity(0.1)))
-//              .viewVotes(ups, downs)
+              //              .viewVotes(ups, downs)
               .allowsHitTesting(!collapsed)
               .scaleEffect(1)
-
+              
               if collapsed {
                 Image(systemName: "eye.slash.fill")
                   .fontSize(14, .medium)
                   .opacity(0.5)
                   .allowsHitTesting(false)
               }
-
+              
             }
           }
           .padding(.top, data.depth != 0 ? 6 : 0)
@@ -193,7 +200,7 @@ struct CommentLinkContent: View {
                 ForEach(shapes, id: \.self) { i in
                   if arrowKinds.indices.contains(i - 1) {
                     let actualArrowKind = arrowKinds[i - 1]
-                    Arrows(kind: actualArrowKind.child)
+                    Arrows(kind: actualArrowKind.child, color: getColorFromPalette(index: i, palette: arrowDividerColorPalette.rawVal))
                   }
                 }
               }
@@ -242,7 +249,7 @@ struct CommentLinkContent: View {
           .introspect(.listCell, on: .iOS(.v16, .v17)) { cell in
             cell.layer.masksToBounds = false
           }
-//          .padding(.horizontal, preferenceShowCommentsCards ? 13 : 0)
+          //          .padding(.horizontal, preferenceShowCommentsCards ? 13 : 0)
           .padding(.horizontal, horPad)
           .mask(Color.black.padding(.top, -(data.depth != 0 ? 42 : 30)).padding(.bottom, -8))
           .background(Color.blue.opacity(highlight ? 0.2 : 0))
@@ -262,7 +269,7 @@ struct CommentLinkContent: View {
                   }
                 }
               }
-
+              
               if let permalink = data.permalink, let permaURL = URL(string: "https://reddit.com\(permalink.escape.urlEncoded)") {
                 ShareLink(item: permaURL) { Label("Share", systemImage: "square.and.arrow.up") }
               }
@@ -273,9 +280,9 @@ struct CommentLinkContent: View {
               .id("\(data.id)-preview")
           }
           
-//          .sheet(isPresented: $showReplyModal) {
-//            ReplyModalComment(comment: comment)
-//          }
+          //          .sheet(isPresented: $showReplyModal) {
+          //            ReplyModalComment(comment: comment)
+          //          }
           .id("\(data.id)-body\(forcedBodySize == nil ? "" : "-preview")")
         }
       }
@@ -312,9 +319,4 @@ struct AnimatingCellHeight: AnimatableModifier {
   func body(content: Content) -> some View {
     content.frame(maxHeight: disable ? nil : height, alignment: .topLeading)
   }
-}
-
-/// A function that returns a color from a color palette (array of colors) given an index
-func getColorFromPalette(index: Int, palette: [Color]) -> Color{
-  return palette[(index - 1) % palette.count]
 }

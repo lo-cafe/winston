@@ -129,4 +129,9 @@ enum ArrowColorPalette: Codable, CaseIterable, Identifiable, Defaults.Serializab
   
 }
 
+/// A function that returns a color from a color palette (array of colors) given an index
+func getColorFromPalette(index: Int, palette: [Color]) -> Color{
+  return palette[(index - 1) % palette.count]
+}
+
 

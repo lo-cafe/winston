@@ -40,7 +40,6 @@
         <attribute name="user_is_moderator" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="user_is_subscriber" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="uuid" optional="YES" attributeType="String"/>
-        <relationship name="local_favs" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="LocalFavorite" inverseName="subreddits" inverseEntity="LocalFavorite"/>
         <relationship name="multis" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="CachedMulti" inverseName="subreddits" inverseEntity="CachedMulti"/>
         <uniquenessConstraints>
             <uniquenessConstraint>
@@ -50,10 +49,6 @@
     </entity>
     <entity name="CollapsedComment" representedClassName="CollapsedComment" syncable="YES" codeGenerationType="class">
         <attribute name="commentID" optional="YES" attributeType="String"/>
-    </entity>
-    <entity name="LocalFavorite" representedClassName="LocalFavorite" syncable="YES" codeGenerationType="class">
-        <attribute name="title" optional="YES" attributeType="String"/>
-        <relationship name="subreddits" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CachedSub" inverseName="local_favs" inverseEntity="CachedSub"/>
     </entity>
     <entity name="PostDraft" representedClassName="PostDraft" syncable="YES" codeGenerationType="class">
         <attribute name="flairID" optional="YES" attributeType="String"/>
