@@ -10,7 +10,7 @@ import Popovers
 
 struct MultiLink: View {
   var multi: MultiData
-  @ObservedObject var router: Router
+  @StateObject var routerProxy: RouterProxy
   @EnvironmentObject private var redditAPI: RedditAPI
   
   var body: some View {
@@ -37,7 +37,7 @@ struct MultiLink: View {
       .multilineTextAlignment(.center)
       .contentShape(Rectangle())
     } primaryAction: {
-      router.path.append(MultiViewType.posts(Multi(data: multi, api: redditAPI)))
+      routerProxy.router.path.append(MultiViewType.posts(Multi(data: multi, api: redditAPI)))
     }
 
 //    .onTapGesture {

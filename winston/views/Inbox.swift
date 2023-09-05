@@ -33,21 +33,23 @@ struct Inbox: View {
   
   var body: some View {
     NavigationStack(path: $router.path) {
-      List {
-        Group {
-          if loading {
-            ProgressView()
-              .frame(maxWidth: .infinity, minHeight: 500)
-              .id("loading")
-          } else {
-            ForEach(messages.data, id: \.self.id) { message in
-              MessageLink(message: message)
+      DefaultDestinationInjector(routerProxy: RouterProxy(router)) {
+        List {
+          Group {
+            if loading {
+              ProgressView()
+                .frame(maxWidth: .infinity, minHeight: 500)
+                .id("loading")
+            } else {
+              ForEach(messages.data, id: \.self.id) { message in
+                MessageLink(message: message)
+              }
             }
           }
+          .listRowSeparator(.hidden)
+          .listRowBackground(Color.clear)
+          .listRowInsets(EdgeInsets(top: 6, leading: 0, bottom: 6, trailing: 0))
         }
-        .listRowSeparator(.hidden)
-        .listRowBackground(Color.clear)
-        .listRowInsets(EdgeInsets(top: 6, leading: 0, bottom: 6, trailing: 0))
       }
       .onAppear {
         Task(priority: .background) {
@@ -58,9 +60,8 @@ struct Inbox: View {
         await fetch(false, true)
       }
       .navigationTitle("Inbox")
-      .defaultNavDestinations(router)
     }
-    .swipeAnywhere(router: router)
+    .swipeAnywhere(routerProxy: RouterProxy(router))
   }
 }
 

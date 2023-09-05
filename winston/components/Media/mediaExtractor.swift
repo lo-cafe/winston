@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct MediaExtracted {
+struct MediaExtracted: Codable, Equatable {
   let url: URL
   let size: CGSize
   var id: String { self.url.absoluteString }

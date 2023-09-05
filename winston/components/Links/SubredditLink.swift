@@ -19,7 +19,7 @@ struct SubredditLink: View {
   var noHPad = false
   var sub: Subreddit
   @State var opened = false
-  @EnvironmentObject private var router: Router
+  @EnvironmentObject private var routerProxy: RouterProxy
     var body: some View {
       if let data = sub.data {
         HStack(spacing: 12) {
@@ -39,7 +39,7 @@ struct SubredditLink: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(RR(20, noHPad ? .clear : .listBG))
         .onTapGesture {
-          router.path.append(SubViewType.posts(sub))
+          routerProxy.router.path.append(SubViewType.posts(sub))
         }
       }
     }
