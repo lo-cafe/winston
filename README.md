@@ -9,11 +9,6 @@ This is a WIP, both the app and this README.
 You can join the TestFlight here:
 https://testflight.apple.com/join/3UF8bAUN
 
-You can support this project by subscribing to our Patreon:
-https://patreon.com/user?u=93745105
+You can support this project by subscribing to our [Patreon](https://patreon.com/user?u=93745105), or if you don't like subscriptions, by [buying us a coffee](https://ko-fi.com/locafe). ❤️🐱
 
-Join our super awesome Discord server:
-https://discord.gg/Jw3Syb3nrz 
-
-Subscribe to our galactic subreddit:
-https://www.reddit.com/r/winstonappfoss/
+If you have any questions, ideas, or want to contribute, or if you simply want to join our awesome community, join our Discord. You're welcome! https://discord.gg/Jw3Syb3nrz
