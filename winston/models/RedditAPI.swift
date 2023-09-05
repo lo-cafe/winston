@@ -18,26 +18,26 @@ import Combine
 //}
 
 class AvatarCache: ObservableObject {
-
-    static let shared = AvatarCache()
-    private init() {}
-
-    private let _objectWillChange = PassthroughSubject<Void, Never>()
-    private var data = [String:String]()
-
-    var objectWillChange: AnyPublisher<Void, Never> { _objectWillChange.eraseToAnyPublisher() }
-
-    subscript(key: String) -> String? {
-        get { data[key] }
-        set {
-          data[key] = newValue
-            _objectWillChange.send()
-        }
+  
+  static let shared = AvatarCache()
+  private init() {}
+  
+  private let _objectWillChange = PassthroughSubject<Void, Never>()
+  var data = [String:String]()
+  
+  var objectWillChange: AnyPublisher<Void, Never> { _objectWillChange.eraseToAnyPublisher() }
+  
+  subscript(key: String) -> String? {
+    get { data[key] }
+    set {
+      data[key] = newValue
+      _objectWillChange.send()
     }
+  }
   
   func merge(_ dict: [String:String]) {
-      data.merge(dict) { (_, new) in new }
-      _objectWillChange.send()
+    data.merge(dict) { (_, new) in new }
+    _objectWillChange.send()
   }
 }
 
@@ -64,36 +64,36 @@ class RedditAPI: ObservableObject {
   }
   
   func refreshToken(_ force: Bool = false, count: Int = 0) async -> Void {
-    if force {
+    if force || loggedUser.lastRefresh.isNil {
       await MainActor.run {
         loggedUser.lastRefresh = Date(seconds: Date().timeIntervalSince1970 - Double(loggedUser.expiration ?? 86400 * 10))
       }
     }
     if let headers = getRequestHeaders(includeAuth: false), let refreshToken = loggedUser.refreshToken, let apiKeyID = loggedUser.apiAppID, let apiKeySecret = loggedUser.apiAppSecret, Double(Date().timeIntervalSince1970 - loggedUser.lastRefresh!.timeIntervalSince1970) > Double(max(0, (loggedUser.expiration ?? 0) - 100)) {
-        let payload = RefreshAccessTokenPayload(refresh_token: refreshToken)
-        let response = await AF.request(
-          "\(RedditAPI.redditWWWApiURLBase)/api/v1/access_token",
-          method: .post,
-          parameters: payload,
-          encoder: URLEncodedFormParameterEncoder(destination: .httpBody),
-          headers: headers)
-          .authenticate(username: apiKeyID, password: apiKeySecret)
-          .serializingDecodable(RefreshAccessTokenResponse.self).response
-        switch response.result {
-        case .success(let data):
-          await MainActor.run {
-            self.loggedUser.accessToken = data.access_token
-            self.loggedUser.expiration = data.expires_in
-            self.loggedUser.lastRefresh = Date()
-          }
-          return
-        case .failure(let error):
-          if count < 4 {
-            await self.refreshToken(force, count: count + 1)
-          }
-          print(error)
-          return
+      let payload = RefreshAccessTokenPayload(refresh_token: refreshToken)
+      let response = await AF.request(
+        "\(RedditAPI.redditWWWApiURLBase)/api/v1/access_token",
+        method: .post,
+        parameters: payload,
+        encoder: URLEncodedFormParameterEncoder(destination: .httpBody),
+        headers: headers)
+        .authenticate(username: apiKeyID, password: apiKeySecret)
+        .serializingDecodable(RefreshAccessTokenResponse.self).response
+      switch response.result {
+      case .success(let data):
+        await MainActor.run {
+          self.loggedUser.accessToken = data.access_token
+          self.loggedUser.expiration = data.expires_in
+          self.loggedUser.lastRefresh = Date()
         }
+        return
+      case .failure(let error):
+        if count < 4 {
+          await self.refreshToken(force, count: count + 1)
+        }
+        print(error)
+        return
+      }
     }
   }
   
@@ -131,14 +131,14 @@ class RedditAPI: ObservableObject {
             print(error)
             
             
-//            var errorString: String?
-//            if let data = response.data {
-//              if let json = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: String] {
-//                errorString = json["error"]
-//              }
-//            }
+            //            var errorString: String?
+            //            if let data = response.data {
+            //              if let json = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: String] {
+            //                errorString = json["error"]
+            //              }
+            //            }
             
-//            print(errorString)
+            //            print(errorString)
             
             
             self.loggedUser.apiAppID = nil

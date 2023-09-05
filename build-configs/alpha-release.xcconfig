@@ -1,0 +1,10 @@
+//
+//  alpha-release.xcconfig
+//  winston
+//
+//  Created by Josef Hofer on 04.09.23.
+//
+
+// Configuration settings file format documentation can be found at:
+// https://help.apple.com/xcode/#/dev745c5c974
+releaseVersionName = Alpha

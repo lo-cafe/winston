@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum RedditURLType: Equatable {
+enum RedditURLType: Equatable, Hashable {
   case post(id: String, subreddit: String)
   case comment(id: String, postID: String, subreddit: String)
   case subreddit(name: String)

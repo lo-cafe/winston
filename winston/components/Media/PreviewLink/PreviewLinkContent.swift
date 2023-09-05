@@ -12,12 +12,57 @@ import OpenGraph
 import SkeletonUI
 import YouTubePlayerKit
 import Defaults
-import BetterSafariView
+import Combine
 
-class PreviewLinkCache {
+class PreviewLinkCache: ObservableObject {
+  struct CacheItem {
+    let model: PreviewViewModel
+    let date: Date
+  }
+
   static var shared = PreviewLinkCache()
-  var cache: [String:PreviewViewModel] = [:]
+  @Published var cache: [String: CacheItem] = [:]
+  let cacheLimit = 50
+
+  func addKeyValue(key: String, url: URL) {
+    if !cache[key].isNil { return }
+    Task(priority: .background) {
+      // Create a new CacheItem with the current date
+      let item = CacheItem(model: PreviewViewModel(url), date: Date())
+      let oldestKey = cache.count > cacheLimit ? cache.min { a, b in a.value.date < b.value.date }?.key : nil
+
+      // Add the item to the cache
+      await MainActor.run {
+        withAnimation {
+          cache[key] = item
+          if let oldestKey = oldestKey { cache.removeValue(forKey: oldestKey) }
+        }
+      }
+    }
+  }
+  
+  private let _objectWillChange = PassthroughSubject<Void, Never>()
+  
+  var objectWillChange: AnyPublisher<Void, Never> { _objectWillChange.eraseToAnyPublisher() }
+  
+  subscript(key: String) -> CacheItem? {
+    get { cache[key] }
+    set {
+      cache[key] = newValue
+      _objectWillChange.send()
+    }
+  }
+  
+  func merge(_ dict: [String:CacheItem]) {
+    cache.merge(dict) { (_, new) in new }
+    _objectWillChange.send()
+  }
 }
+
+//class PreviewLinkCache: ObservableObject {
+//  static var shared = PreviewLinkCache()
+//  @Published var cache: [String:PreviewViewModel] = [:]
+//}
 
 final class PreviewViewModel: ObservableObject {
   
@@ -27,7 +72,13 @@ final class PreviewViewModel: ObservableObject {
   @Published var description: String?
   @Published var loading = true
   
-  let previewURL: URL?
+  var previewURL: URL? {
+    didSet {
+      if !previewURL.isNil { fetchMetadata() }
+    }
+  }
+  
+  init() {}
   
   init(_ url: URL) {
     self.previewURL = url
@@ -66,13 +117,9 @@ final class PreviewViewModel: ObservableObject {
 struct PreviewLinkContent: View {
   var compact: Bool
   @StateObject var viewModel: PreviewViewModel
-  @EnvironmentObject private var router: Router
-  
-  @State private var presentingSafariView: Bool = false
-  @State private var safariViewURL: URL? = nil
-  
   var url: URL
-  private let height: CGFloat = 88
+  static let height: CGFloat = 88
+  @Environment(\.openURL) var openURL
   
   var body: some View {
     HStack(spacing: 16) {
@@ -127,7 +174,7 @@ struct PreviewLinkContent: View {
     .padding(.vertical, compact ? 0 : 6)
     .padding(.leading, compact ? 0 : 10)
     .padding(.trailing, compact ? 0 : 6)
-    .frame(maxWidth: compact ? nil : .infinity, minHeight: compact ? nil : height, maxHeight: compact ? nil : height)
+    .frame(maxWidth: compact ? nil : .infinity, minHeight: compact ? nil : PreviewLinkContent.height, maxHeight: compact ? nil : PreviewLinkContent.height)
     .background(compact ? nil : RR(16, .primary.opacity(0.05)))
     .contextMenu {
       Button {
@@ -138,20 +185,8 @@ struct PreviewLinkContent: View {
     }
     .highPriorityGesture(TapGesture().onEnded {
       if let newURL = URL(string: url.absoluteString.replacingOccurrences(of: "https://reddit.com/", with: "winstonapp://")) {
-        presentingSafariView.toggle()
-        safariViewURL = newURL
+        openURL(newURL)
       }
     })
-    .safariView(isPresented: $presentingSafariView) {
-        SafariView(
-          url: safariViewURL ?? url,
-          configuration: SafariView.Configuration(
-            entersReaderIfAvailable: false,
-            barCollapsingEnabled: true
-          )
-        )
-        .preferredControlAccentColor(.accentColor)
-        .dismissButtonStyle(.done)
-    }
   }
 }

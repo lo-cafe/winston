@@ -35,5 +35,7 @@
 		<string>processing</string>
 		<string>remote-notification</string>
 	</array>
+	<key>releaseVersionName</key>
+	<string>${releaseVersionName}</string>
 </dict>
 </plist>

@@ -16,7 +16,7 @@ struct LightBoxOverlay: View {
   var activeIndex: Int
   @Binding var loading: Bool
   @Binding var done: Bool
-  @EnvironmentObject private var router: Router
+  @EnvironmentObject private var routerProxy: RouterProxy
   @Environment(\.dismiss) var dismiss
   
   @State private var isPresentingShareSheet = false
@@ -65,12 +65,12 @@ struct LightBoxOverlay: View {
         //
         LightBoxButton(icon: "bubble.right") {
           if let data = post.data {
-            router.path.append(PostViewPayload(post: Post(id: post.id, api: post.redditAPI), sub: Subreddit(id: data.subreddit, api: post.redditAPI)))
+            routerProxy.router.path.append(PostViewPayload(post: Post(id: post.id, api: post.redditAPI), sub: Subreddit(id: data.subreddit, api: post.redditAPI)))
             dismiss()
           }
         }
         
-        LightBoxButton(icon: "icloud.and.arrow.down") {
+        LightBoxButton(icon: "square.and.arrow.down") {
           withAnimation(spring) {
             loading = true
           }

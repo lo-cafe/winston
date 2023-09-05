@@ -44,7 +44,7 @@ struct SubredditRulesTab: View {
                   Text(rule.short_name ?? "Unamed rule")
                     .fontSize(22, .bold)
                   
-                  MD(str: rule.description ?? "Rule without description.", fontSize: 16)
+                  MD(.str(rule.description ?? "Rule without description."), fontSize: 16)
                 }
               }
               .multilineTextAlignment(.leading)
