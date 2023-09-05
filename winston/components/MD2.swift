@@ -1,0 +1,63 @@
+//
+//  MD2.swift
+//  winston
+//
+//  Created by Daniel Inama on 05/09/23.
+//
+
+import SwiftUI
+import UIKit
+import Markdown
+import BetterSafariView
+import SafariServices
+
+struct MD2: UIViewRepresentable {
+  var attributedString: NSAttributedString
+  
+  init(str: String, fontSize: CGFloat = 15) {
+    let document = Document(parsing: str)
+    var markdownosaur = Markdownosaur(baseFontSize: fontSize)
+    let attributedString = markdownosaur.attributedString(from: document)
+    self.attributedString = attributedString
+  }
+  
+  func makeUIView(context: Context) -> UITextView {
+    let textView = UITextView()
+    textView.isEditable = false
+    textView.isSelectable = true
+    textView.isScrollEnabled = true
+    textView.attributedText = attributedString
+    textView.delegate = context.coordinator // Set the delegate
+    return textView
+  }
+  
+  func updateUIView(_ uiView: UITextView, context: Context) {
+    uiView.attributedText = attributedString
+  }
+  
+  // Coordinator to handle the delegate method
+  func makeCoordinator() -> Coordinator {
+    Coordinator(self)
+  }
+  
+  // Coordinator class to handle delegate methods
+  class Coordinator: NSObject, UITextViewDelegate {
+    var parent: MD2
+    
+    init(_ parent: MD2) {
+      self.parent = parent
+    }
+    
+    // Implement the UITextViewDelegate method to handle URL interaction
+    func textView(_ textView: UITextView, shouldInteractWith URL: URL, in characterRange: NSRange, interaction: UITextItemInteraction) -> Bool {
+      // Handle URL interaction here
+      // You can open the URL, display it differently, or perform any other action as needed
+      print("Interacted with URL: \(URL.absoluteString)")
+      var vc = SFSafariViewController(url: URL)
+      UIApplication.shared.windows.first?.rootViewController?.present(vc, animated: true)
+      // Return false to allow the default action to be performed (e.g., open the URL)
+      return false
+    }
+  }
+}
+

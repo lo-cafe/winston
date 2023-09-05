@@ -212,7 +212,8 @@ struct CommentLinkContent: View {
                       .fontSize(15)
                       .lineLimit(lineLimit)
                   } else {
-                    MD(str: body, fontSize: commentLinkBodySize)
+                    MD2(str: body, fontSize: commentLinkBodySize)
+                      .frame(minWidth: 100, maxWidth: .infinity, minHeight: 100, maxHeight: .infinity)
                       .fixedSize(horizontal: false, vertical: true)
                       .overlay(
                         !selectable
@@ -221,6 +222,7 @@ struct CommentLinkContent: View {
                           .frame(width: sizer.size.width, height: sizer.size.height, alignment: .topLeading)
                           .background(Rectangle().fill(Color.listBG))
                       )
+
                   }
                 }
               }
