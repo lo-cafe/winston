@@ -47,6 +47,12 @@ struct DefaultDestinationInjector<Content: View>: View {
         UserView(user: user)
           .environmentObject(routerProxy)
       }
+      .navigationDestination(for: SafariViewPayload.self) { payload in
+        SafariView(payload: payload)
+          .frame(maxHeight: .infinity)
+          .navigationBarTitleDisplayMode(.inline)
+          .environmentObject(routerProxy)
+      }
       .environmentObject(routerProxy)
   }
 }

@@ -22,12 +22,12 @@ var dismissHandler: DoneButtonHandler?
 
 struct SafariView: UIViewControllerRepresentable {
   
-  @EnvironmentObject private var router: Router
+  @EnvironmentObject private var routerProxy: RouterProxy
   
   let payload:  SafariViewPayload
   
   func goBack() {
-    router.path.removeLast()
+    routerProxy.router.path.removeLast()
   }
   
 
