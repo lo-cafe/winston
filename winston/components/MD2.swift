@@ -33,6 +33,7 @@ struct MD2: UIViewRepresentable {
   
   func makeUIView(context: Context) -> UITextView {
     let textView = UITextView()
+    textView.attributedText = NSAttributedString(attributedString)
     textView.isEditable = false
     textView.isSelectable = true
     textView.isScrollEnabled = false
@@ -42,8 +43,8 @@ struct MD2: UIViewRepresentable {
     textView.setContentCompressionResistancePriority(.defaultLow, for: .horizontal) // Adjust horizontal
     textView.textContainerInset = .zero
     
-    textView.font = UIFont.systemFont(ofSize: fontSize) // Set the desired font size here
-    textView.attributedText = NSAttributedString(attributedString)
+//    textView.font = UIFont.systemFont(ofSize: fontSize) // Set the desired font size here
+    textView.textColor = UIColor.green
     textView.delegate = context.coordinator // Set the delegate
     return textView
   }
