@@ -83,6 +83,7 @@ extension Defaults.Keys {
     
   static let preferenceShowPostsAvatars = Key<Bool>("preferenceShowPostsAvatars", default: true)
   static let preferenceShowPostsCards = Key<Bool>("preferenceShowPostsCards", default: true)
+  static let jumpBackEnabled = Key<Bool>("jumpBackEnabled", default: false)
   static let preferenceShowCommentsAvatars = Key<Bool>("preferenceShowCommentsAvatars", default: true)
   static let preferenceShowCommentsCards = Key<Bool>("preferenceShowCommentsCards", default: true)
   static let enableVotesPopover = Key<Bool>("preferenceShowCommentsCards", default: true)

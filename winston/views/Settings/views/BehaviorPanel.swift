@@ -18,6 +18,7 @@ struct BehaviorPanel: View {
   @Default(.blurPostNSFW) var blurPostNSFW
   @Default(.collapseAutoModerator) var collapseAutoModerator
   @Default(.readPostOnScroll) var readPostOnScroll
+  @Default(.jumpBackEnabled) var jumpBackEnabled
   @Default(.hideReadPosts) var hideReadPosts
   @Default(.enableSwipeAnywhere) var enableSwipeAnywhere
   @Default(.autoPlayVideos) var autoPlayVideos
@@ -38,6 +39,7 @@ struct BehaviorPanel: View {
           Text("Subscription List").tag("subList")
         }
         .pickerStyle(DefaultPickerStyle())
+        Toggle("Jump back to previous scroll position in feed", isOn: $jumpBackEnabled)
       }
       
       Section {
