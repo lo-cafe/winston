@@ -8,6 +8,7 @@
 import SwiftUI
 import Defaults
 import _SpriteKit_SwiftUI
+import SafariServices
 
 class Oops: ObservableObject {
   static var shared = Oops()
@@ -297,9 +298,15 @@ struct Tabber: View {
         case .user(_):
           OpenFromWeb.shared.data = parsed
           activeTab = .posts
+        case .other(let url):
+          print(url)
+          break
+          //let vc = SFSafariViewController(url: URL(string: url)!)
+          //UIApplication.shared.windows.first?.rootViewController?.present(vc, animated: true)
         default:
           break
         }
+
       }
     }
     .sheet(isPresented: $showTestersCelebrationModal) {

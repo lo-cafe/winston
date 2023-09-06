@@ -14,6 +14,7 @@ import SafariServices
 struct MD2: UIViewRepresentable {
   var attributedString: AttributedString
   var str: String?
+  var fontSize: CGFloat
   
   init(_ content: MDType, fontSize: CGFloat = 15) {
     switch content {
@@ -27,6 +28,7 @@ struct MD2: UIViewRepresentable {
       let jsonData = (try? decoder.decode(AttributedString.self, from: json.data(using: .utf8)!)) ?? AttributedString()
       self.attributedString = jsonData
     }
+    self.fontSize = fontSize
   }
   
   func makeUIView(context: Context) -> UITextView {
@@ -34,7 +36,13 @@ struct MD2: UIViewRepresentable {
     textView.isEditable = false
     textView.isSelectable = true
     textView.isScrollEnabled = false
-    textView.sizeToFit()
+    textView.isUserInteractionEnabled = true
+    textView.backgroundColor = .clear
+    textView.textContainer.lineFragmentPadding = 0
+    textView.setContentCompressionResistancePriority(.defaultLow, for: .horizontal) // Adjust horizontal
+    textView.textContainerInset = .zero
+    
+    textView.font = UIFont.systemFont(ofSize: fontSize) // Set the desired font size here
     textView.attributedText = NSAttributedString(attributedString)
     textView.delegate = context.coordinator // Set the delegate
     return textView
