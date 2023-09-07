@@ -10,6 +10,7 @@ import SwiftUI
 enum SearchType: String {
   case subreddit = "Subreddit"
   case user = "User"
+  case post = "Post"
 }
 
 struct SearchOption: View {
@@ -33,7 +34,11 @@ struct SearchOption: View {
   }
 }
 
-typealias SearchTypeArr = Either<[Subreddit], [User]>
+enum SearchTypeArr {
+  case subreddit([Subreddit])
+  case user([User])
+  case post([Post])
+}
 
 struct Search: View {
   var reset: Bool
@@ -41,10 +46,13 @@ struct Search: View {
   @State private var searchType: SearchType = .subreddit
   @StateObject private var resultsSubs = ObservableArray<Subreddit>()
   @StateObject private var resultsUsers = ObservableArray<User>()
+  @StateObject private var resultPosts = ObservableArray<Post>()
   @State private var loading = false
   @State private var hideSpinner = false
   @StateObject var searchQuery = DebouncedText(delay: 0.25)
   @EnvironmentObject private var redditAPI: RedditAPI
+  @State private var dummyAllSub: Subreddit? = nil
+  @State private var searchViewLoaded: Bool = false
   
   func fetch() {
     if searchQuery.text == "" { return }
@@ -80,6 +88,20 @@ struct Search: View {
           }
         }
       }
+    case .post:
+      resultPosts.data.removeAll()
+      Task(priority: .background) {
+        if let dummyAllSub = dummyAllSub, let result = await dummyAllSub.fetchPosts(searchText: searchQuery.text), let newPosts = result.0 {
+          await MainActor.run {
+            withAnimation {
+              resultPosts.data = newPosts
+              loading = false
+              
+              hideSpinner = resultPosts.data.isEmpty
+            }
+          }
+        }
+      }
     }
   }
   
@@ -92,6 +114,7 @@ struct Search: View {
               HStack {
                 SearchOption(activateSearchType: { searchType = .subreddit }, active: searchType == SearchType.subreddit, searchType: .subreddit)
                 SearchOption(activateSearchType: { searchType = .user }, active: searchType == SearchType.user, searchType: .user)
+                SearchOption(activateSearchType: { searchType = .post }, active: searchType == SearchType.post, searchType: .post)
               }
               .id("options")
             }
@@ -105,6 +128,15 @@ struct Search: View {
               case .user:
                 ForEach(resultsUsers.data) { user in
                   UserLink(user: user)
+                }
+              case .post:
+                if let dummyAllSub = dummyAllSub {
+                  ForEach(resultPosts.data) { post in
+                    PostLink(post: post, sub: dummyAllSub)
+                      .equatable()
+                      .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
+                      .animation(.default, value: resultPosts.data)
+                  }
                 }
               }
             }
@@ -123,6 +155,7 @@ struct Search: View {
           if val == "" {
             resultsSubs.data = []
             resultsUsers.data = []
+            resultPosts.data = []
           }
           fetch()
         }
@@ -133,6 +166,12 @@ struct Search: View {
       .refreshable { fetch() }
       .onSubmit(of: .search) { fetch() }
       .navigationTitle("Search")
+      .onAppear() {
+        if !searchViewLoaded {
+          dummyAllSub = Subreddit(id: "all", api: redditAPI)
+          searchViewLoaded = true
+        }
+      }
 //      .defaultNavDestinations(router)
     }
     .swipeAnywhere(routerProxy: RouterProxy(router))
