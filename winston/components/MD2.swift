@@ -16,6 +16,12 @@ import BetterSafariView
 import SafariServices
 import NukeUI
 
+import SwiftUI
+import UIKit
+import BetterSafariView
+import SafariServices
+import NukeUI
+
 struct MD2: UIViewRepresentable {
   var attributedString: AttributedString
   var fontSize: CGFloat
