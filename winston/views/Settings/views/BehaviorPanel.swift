@@ -55,11 +55,47 @@ struct BehaviorPanel: View {
         Toggle("Hide read posts", isOn: $hideReadPosts)
         Toggle("Blur NSFW in opened posts", isOn: $blurPostNSFW)
         Toggle("Blur NSFW in posts links", isOn: $blurPostLinkNSFW)
-        Picker("Posts sorting", selection: $preferredSort) {
-          ForEach(SubListingSortOption.allCases, id: \.self) { val in
-            Label(val.rawVal.id.capitalized, systemImage: val.rawVal.icon)
+        Menu {
+          ForEach(SubListingSortOption.allCases) { opt in
+            if case .top(_) = opt {
+              Menu {
+                ForEach(SubListingSortOption.TopListingSortOption.allCases, id: \.self) { topOpt in
+                  Button {
+                    preferredSort = .top(topOpt)
+                  } label: {
+                    HStack {
+                      Text(topOpt.rawValue.capitalized)
+                      Spacer()
+                      Image(systemName: topOpt.icon)
+                    }
+                  }
+                }
+              } label: {
+                Label(opt.rawVal.value.capitalized, systemImage: opt.rawVal.icon)
+              }
+            } else {
+              Button {
+                preferredSort = opt
+              } label: {
+                HStack {
+                  Text(opt.rawVal.value.capitalized)
+                  Spacer()
+                  Image(systemName: opt.rawVal.icon)
+                }
+              }
+            }
+          }
+        } label: {
+          Button { } label: {
+            HStack {
+              Text("Default post sorting")
+              Spacer()
+              Image(systemName: preferredSort.rawVal.icon)
+            }
+            .foregroundColor(.primary)
           }
         }
+        
         VStack(alignment: .leading) {
           HStack {
             Text("Max Posts Image Height")
