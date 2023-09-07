@@ -22,13 +22,17 @@
 		6543D8892A8D10B900A1FFF9 /* scaleEffectButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6543D8882A8D10B900A1FFF9 /* scaleEffectButtonStyle.swift */; };
 		6593CC432A88C9E8003CA58D /* AccessibilityPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6593CC422A88C9E8003CA58D /* AccessibilityPanel.swift */; };
 		6593CC452A88D128003CA58D /* hapticFeedbackModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6593CC442A88D128003CA58D /* hapticFeedbackModifier.swift */; };
+		6597547E2AA8CDB9003B5BAE /* HandleDeepLinks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6597547D2AA8CDB9003B5BAE /* HandleDeepLinks.swift */; };
 		659F68022A84E32300989300 /* VotesCluster.swift in Sources */ = {isa = PBXBuildFile; fileRef = 659F68012A84E32300989300 /* VotesCluster.swift */; };
 		659FDEA82A87798300103414 /* VoteButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 659FDEA72A87798300103414 /* VoteButton.swift */; };
 		65AA535D2A8BB27900275299 /* FAQPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65AA535C2A8BB27900275299 /* FAQPanel.swift */; };
 		65BB79012A99FB2600EB83D5 /* LightBoxElementView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65BB79002A99FB2600EB83D5 /* LightBoxElementView.swift */; };
+		65BE92A52AA0F15D0033F686 /* BetterSafariView in Frameworks */ = {isa = PBXBuildFile; productRef = 65BE92A42AA0F15D0033F686 /* BetterSafariView */; };
 		65D2A3882AA26E3F00EC04ED /* mediaExtractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65D2A3872AA26E3F00EC04ED /* mediaExtractor.swift */; };
 		65D531402A98D75000FED4DE /* LiveTextInteraction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65D5313F2A98D75000FED4DE /* LiveTextInteraction.swift */; };
 		65D531422A98DE8800FED4DE /* Subreddits.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65D531412A98DE8800FED4DE /* Subreddits.swift */; };
+		65DE934F2AA76E3D009F4342 /* webView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65DE934E2AA76E3D009F4342 /* webView.swift */; };
+		65DE93512AA77196009F4342 /* MD2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65DE93502AA77196009F4342 /* MD2.swift */; };
 		65EEAC592A988CAE00B0D607 /* ThemeSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65EEAC582A988CAE00B0D607 /* ThemeSettings.swift */; };
 		65EEAC5C2A98980F00B0D607 /* AllujaHaptics in Frameworks */ = {isa = PBXBuildFile; productRef = 65EEAC5B2A98980F00B0D607 /* AllujaHaptics */; };
 		EC082F252A65FB4300BA2727 /* MeasureOnce.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC082F242A65FB4300BA2727 /* MeasureOnce.swift */; };
@@ -308,6 +312,7 @@
 		6543D8882A8D10B900A1FFF9 /* scaleEffectButtonStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = scaleEffectButtonStyle.swift; sourceTree = "<group>"; };
 		6593CC422A88C9E8003CA58D /* AccessibilityPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessibilityPanel.swift; sourceTree = "<group>"; };
 		6593CC442A88D128003CA58D /* hapticFeedbackModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = hapticFeedbackModifier.swift; sourceTree = "<group>"; };
+		6597547D2AA8CDB9003B5BAE /* HandleDeepLinks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HandleDeepLinks.swift; sourceTree = "<group>"; };
 		659F68012A84E32300989300 /* VotesCluster.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VotesCluster.swift; sourceTree = "<group>"; };
 		659FDEA72A87798300103414 /* VoteButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoteButton.swift; sourceTree = "<group>"; };
 		65AA535C2A8BB27900275299 /* FAQPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FAQPanel.swift; sourceTree = "<group>"; };
@@ -315,6 +320,8 @@
 		65D2A3872AA26E3F00EC04ED /* mediaExtractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = mediaExtractor.swift; path = ../../utils/mediaExtractor.swift; sourceTree = "<group>"; };
 		65D5313F2A98D75000FED4DE /* LiveTextInteraction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveTextInteraction.swift; sourceTree = "<group>"; };
 		65D531412A98DE8800FED4DE /* Subreddits.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Subreddits.swift; sourceTree = "<group>"; };
+		65DE934E2AA76E3D009F4342 /* webView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = webView.swift; sourceTree = "<group>"; };
+		65DE93502AA77196009F4342 /* MD2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MD2.swift; sourceTree = "<group>"; };
 		65EEAC582A988CAE00B0D607 /* ThemeSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeSettings.swift; sourceTree = "<group>"; };
 		EC082F242A65FB4300BA2727 /* MeasureOnce.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeasureOnce.swift; sourceTree = "<group>"; };
 		EC082F262A66132600BA2727 /* CommentLinkMore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentLinkMore.swift; sourceTree = "<group>"; };
@@ -567,6 +574,7 @@
 				EC50A5A82A9EEF8A00DE8122 /* Giffy in Frameworks */,
 				EC9269F22A51A732003F33B1 /* HighlightedTextEditor in Frameworks */,
 				ECAD0F2F2A8B4D4B001C88B5 /* Markdown in Frameworks */,
+				65BE92A52AA0F15D0033F686 /* BetterSafariView in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1038,6 +1046,7 @@
 				EC77B1842AA434DD00C482DF /* stringToAttr.swift */,
 				ECA5E6472AA5D36E00F6C7A5 /* resetApp.swift */,
 				652C7C012A976279001DCD57 /* generateColors.swift */,
+				65DE934E2AA76E3D009F4342 /* webView.swift */,
 			);
 			path = utils;
 			sourceTree = "<group>";
@@ -1062,11 +1071,13 @@
 				ECD1FC082A570B4F00723016 /* PostFloatingPill.swift */,
 				65D5313F2A98D75000FED4DE /* LiveTextInteraction.swift */,
 				ECEFC2602A5DBC6A0003C6C4 /* PostViewContainer.swift */,
+				65DE93502AA77196009F4342 /* MD2.swift */,
 				ECEFC2702A5F489E0003C6C4 /* fullscreenPresent.swift */,
 				ECA30A182A604ACC00BB19D1 /* SubredditIcon.swift */,
 				ECA30A362A622C2F00BB19D1 /* MD.swift */,
 				ECE4497E2A6896B700E2A3B7 /* SubscribeButton.swift */,
 				ECD1FC062A56D46D00723016 /* ObservableArray.swift */,
+				6597547D2AA8CDB9003B5BAE /* HandleDeepLinks.swift */,
 				EC8F349A2A6F92DC00EB8249 /* PillTab.swift */,
 				ECDD51512A7359D100FD9498 /* MDEditor.swift */,
 				ECDD51652A74E4DD00FD9498 /* SubredditPostsContainer.swift */,
@@ -1181,6 +1192,7 @@
 				EC3188082A91991900CB3738 /* AlertToast */,
 				65EEAC5B2A98980F00B0D607 /* AllujaHaptics */,
 				EC50A5A72A9EEF8A00DE8122 /* Giffy */,
+				65BE92A42AA0F15D0033F686 /* BetterSafariView */,
 			);
 			productName = winston;
 			productReference = EC593AD42A4673B2002D6454 /* winston.app */;
@@ -1248,6 +1260,7 @@
 				EC3188072A91991900CB3738 /* XCRemoteSwiftPackageReference "AlertToast" */,
 				65EEAC5A2A98980F00B0D607 /* XCRemoteSwiftPackageReference "Haptics" */,
 				EC50A5A62A9EEF8A00DE8122 /* XCRemoteSwiftPackageReference "Giffy" */,
+				65BE92A32AA0F15D0033F686 /* XCRemoteSwiftPackageReference "BetterSafariView" */,
 			);
 			productRefGroup = EC593AD52A4673B2002D6454 /* Products */;
 			projectDirPath = "";
@@ -1325,6 +1338,7 @@
 				652C7C022A976279001DCD57 /* generateColors.swift in Sources */,
 				ECDD515C2A73A90700FD9498 /* PreviewLink.swift in Sources */,
 				EC5EDA712A4DA94A00140A08 /* SwipeActionsOld.swift in Sources */,
+				65DE934F2AA76E3D009F4342 /* webView.swift in Sources */,
 				ECF0B7E92A543795002B9FAD /* fetchUsers.swift in Sources */,
 				EC6495A92A999C4A00B1852C /* CachedMulti+CoreDataProperties.swift in Sources */,
 				EC22A31C2A5C75AA0062A112 /* fetchInbox.swift in Sources */,
@@ -1373,6 +1387,7 @@
 				EC08541E2A4BFEFE00E88389 /* fetchSubPosts.swift in Sources */,
 				ECF0B7DF2A53DD82002B9FAD /* VideoPlayerPost.swift in Sources */,
 				659FDEA82A87798300103414 /* VoteButton.swift in Sources */,
+				6597547E2AA8CDB9003B5BAE /* HandleDeepLinks.swift in Sources */,
 				ECDD51642A74C03C00FD9498 /* sendErrorEmail.swift in Sources */,
 				EC0854172A4BF45C00E88389 /* Comment.swift in Sources */,
 				EC8F34A32A6FCB3500EB8249 /* timeSince.swift in Sources */,
@@ -1468,6 +1483,7 @@
 				ECA30A322A621B9A00BB19D1 /* decodeString.swift in Sources */,
 				ECD1FC092A570B4F00723016 /* PostFloatingPill.swift in Sources */,
 				EC8F34972A6F667900EB8249 /* NewPostModal.swift in Sources */,
+				65DE93512AA77196009F4342 /* MD2.swift in Sources */,
 				ECF0B7E12A53DE17002B9FAD /* ShortCommentPostLink.swift in Sources */,
 				65EEAC592A988CAE00B0D607 /* ThemeSettings.swift in Sources */,
 				EC22A31E2A5C7D330062A112 /* MessageLink.swift in Sources */,
@@ -2083,6 +2099,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		65BE92A32AA0F15D0033F686 /* XCRemoteSwiftPackageReference "BetterSafariView" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/stleamist/BetterSafariView.git";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
 		65EEAC5A2A98980F00B0D607 /* XCRemoteSwiftPackageReference "Haptics" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/Alluja-LLC/Haptics.git";
@@ -2222,6 +2246,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		65BE92A42AA0F15D0033F686 /* BetterSafariView */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 65BE92A32AA0F15D0033F686 /* XCRemoteSwiftPackageReference "BetterSafariView" */;
+			productName = BetterSafariView;
+		};
 		65EEAC5B2A98980F00B0D607 /* AllujaHaptics */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 65EEAC5A2A98980F00B0D607 /* XCRemoteSwiftPackageReference "Haptics" */;

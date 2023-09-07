@@ -50,7 +50,7 @@ struct PostContent: View {
             
             if data.selftext != "" {
               VStack {
-                MD(selfAttr.isNil ? .str(data.selftext) : .attr(selfAttr!), fontSize: postViewBodySize)
+                MD2(selfAttr.isNil ? .str(data.selftext) : .attr(selfAttr!), fontSize: postViewBodySize)
               }
               .contentShape(Rectangle())
               .onTapGesture { withAnimation(spring) { collapsed.toggle() } }

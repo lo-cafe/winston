@@ -17,6 +17,7 @@ enum RedditURLType: Equatable, Hashable {
 }
 
 func parseRedditURL(_ rawUrlString: String) -> RedditURLType {
+  print(rawUrlString)
   let urlString = rawUrlString.replacingOccurrences(of: "winstonapp://", with: "https://app.winston.lo.cafe/")
   guard let urlComponents = URLComponents(string: urlString) else {
     return .other(link: urlString)
@@ -43,7 +44,7 @@ func parseRedditURL(_ rawUrlString: String) -> RedditURLType {
       return .user(username: username)
       
     default:
-      return .other(link: urlString)
+      return .other(link: urlString.replacingOccurrences(of: "https://app.winston.lo.cafe/https//", with: "https://"))
     }
   } else if urlComponents.host?.contains("youtube.com") == true,
             let queryItems = urlComponents.queryItems,
