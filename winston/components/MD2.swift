@@ -11,24 +11,28 @@ import Markdown
 import BetterSafariView
 import SafariServices
 
+import SwiftUI
+import UIKit
+import BetterSafariView
+import SafariServices
+import NukeUI
+
 struct MD2: UIViewRepresentable {
   var attributedString: AttributedString
-  var str: String?
   var fontSize: CGFloat
   
   init(_ content: MDType, fontSize: CGFloat = 15) {
+    self.fontSize = fontSize
     switch content {
     case .attr(let attr):
       self.attributedString = attr
     case .str(let str):
-      self.str = str
       self.attributedString = stringToAttr(str, fontSize: fontSize)
     case .json(let json):
       let decoder = JSONDecoder()
       let jsonData = (try? decoder.decode(AttributedString.self, from: json.data(using: .utf8)!)) ?? AttributedString()
       self.attributedString = jsonData
     }
-    self.fontSize = fontSize
   }
   
   func makeUIView(context: Context) -> UITextView {
@@ -43,9 +47,8 @@ struct MD2: UIViewRepresentable {
     textView.setContentCompressionResistancePriority(.defaultLow, for: .horizontal) // Adjust horizontal
     textView.textContainerInset = .zero
     
-//    textView.font = UIFont.systemFont(ofSize: fontSize) // Set the desired font size here
-    textView.textColor = UIColor.green
     textView.delegate = context.coordinator // Set the delegate
+    
     return textView
   }
   
@@ -61,8 +64,6 @@ struct MD2: UIViewRepresentable {
   // Coordinator class to handle delegate methods
   class Coordinator: NSObject, UITextViewDelegate {
     var parent: MD2
-    @EnvironmentObject private var routerProxy: RouterProxy
-    
     
     init(_ parent: MD2) {
       self.parent = parent
@@ -72,12 +73,20 @@ struct MD2: UIViewRepresentable {
     func textView(_ textView: UITextView, shouldInteractWith URL: URL, in characterRange: NSRange, interaction: UITextItemInteraction) -> Bool {
       // Handle URL interaction here
       // You can open the URL, display it differently, or perform any other action as needed
-//      print("Interacted with URL: \(URL.absoluteString)")
-      var vc: SFSafariViewController?
+      
+      var vc: UIViewController?
       
       switch interaction {
       case .invokeDefaultAction:
-        vc = SFSafariViewController(url: URL)
+        if isImageUrl(URL.absoluteString)  {
+          let imageView = ImageView(url: URL) // Create a custom ImageView
+          let hostingController = UIHostingController(rootView: imageView)
+          
+          UIApplication.shared.windows.first?.rootViewController?.present(hostingController, animated: true)
+          return false // Prevent default action
+        } else {
+          vc = SFSafariViewController(url: URL)
+        }
       case .presentActions:
         break
       case .preview:
@@ -86,7 +95,6 @@ struct MD2: UIViewRepresentable {
         break
       }
       
-      // Return false to allow the default action to be performed (e.g., open the URL)
       if let vc {
         UIApplication.shared.windows.first?.rootViewController?.present(vc, animated: true)
         return false
@@ -97,3 +105,13 @@ struct MD2: UIViewRepresentable {
   }
 }
 
+struct ImageView: View {
+  var url: URL
+  @State var isZoomed: Bool = false
+  var body: some View {
+    ZoomableScrollView(isZoomed: $isZoomed){
+      URLImage(url: url)
+    }
+    .overlay(SimpleLightBoxOverlay(opacity: 1, url: url))
+  }
+}
