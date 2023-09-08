@@ -19,15 +19,6 @@
       }
     },
     {
-      "identity" : "bettersafariview",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/stleamist/BetterSafariView.git",
-      "state" : {
-        "branch" : "main",
-        "revision" : "dffd42bc70287e761979bc81dd278db5c80f0deb"
-      }
-    },
-    {
       "identity" : "confettiswiftui",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/simibac/ConfettiSwiftUI.git",
@@ -61,15 +52,6 @@
       "state" : {
         "branch" : "main",
         "revision" : "7300767fc9509ce7f86d9c6a2750ceb18f93a464"
-      }
-    },
-    {
-      "identity" : "haptics",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/Alluja-LLC/Haptics.git",
-      "state" : {
-        "branch" : "main",
-        "revision" : "d17ae2a5d736fa7569c6f4d6b76374da3e595311"
       }
     },
     {

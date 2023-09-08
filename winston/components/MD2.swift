@@ -8,7 +8,6 @@
 import SwiftUI
 import UIKit
 import Markdown
-import BetterSafariView
 import SafariServices
 
 import SwiftUI
