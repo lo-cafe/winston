@@ -205,7 +205,6 @@ struct SwipeUI<T: GenericRedditEntityDataType>: ViewModifier {
           let isSecond = triggering == .leftSecond || triggering == .rightSecond
           
           let impact = UIImpactFeedbackGenerator(style: increasing ? .rigid : .soft)
-          _ = increasing ? WinstonHapticPatterns.clickHard : WinstonHapticPatterns.click
           impact.prepare()
           impact.impactOccurred()
           //          try? haptics.fire(intensity: increasing ? 0.5 : 0.35, sharpness: increasing ? 0.25 : 0.5)

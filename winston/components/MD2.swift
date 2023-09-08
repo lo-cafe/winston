@@ -8,7 +8,6 @@
 import SwiftUI
 import UIKit
 import Markdown
-import BetterSafariView
 import SafariServices
 
 struct MD2: UIViewRepresentable {
@@ -96,4 +95,3 @@ struct MD2: UIViewRepresentable {
     }
   }
 }
-
