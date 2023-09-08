@@ -1,22 +1,4 @@
-PERFORMANCE (and a few options) UPDATE!
-
--- FUN CHANGELOG --
-- The app should be way smoother now
-- Fixed bug where multis weren't properly updated when changed
-- Fixed tap area of post links
-- Added option to mark post as read on media preview
-- Added number transition to votes
-- Dragging horizontally in videos won't close it anymore (it was messing with the progress bar sliding)
-- Added setting to disable the alphabet letters in subs list for a simpler look
-- Added clear preferences in General
-
--- BORING PERFORMANCE CHANGELOG --
-- Now navigating between routes won't update any view other than root
-- Youtube videos, links, internal links, none of that will reload every time it appears, they now have caches
-- Now cache of the things mentioned in the previous point won't accumulate eternally and won't take your RAM usage to the sky (sorry about that)
-- Now Markdown parsing if posts happens when fetching instead of when opening the post up
-- Many things won't rerender for no reason anymore
-- Replaced some shadows with a more performant version
-- Caches updates won't reload all views related to the whole cache anymore
-- Removed live text from videos that was cause a lot of lag and didn't work
-- Much improved performance in subs with many videos
+- Added hyperlinks for r/Sub and u/User in markdown texts (comments, post etc) - (Thanks, @rogue!)
+- Added hour, day, week, month, year and all to top sorting options - (Thanks, @rogue!)
+- Added search in subreddits - (Thanks, @rogue!)
+- Added search posts in whole reddit - (Thanks, @rogue!)
