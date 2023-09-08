@@ -8,7 +8,6 @@
 import SwiftUI
 import NukeUI
 import Defaults
-import AllujaHaptics
 struct PostInBoxLink: View {
   @EnvironmentObject private var routerProxy: RouterProxy
   @Default(.postsInBox) private var postsInBox
@@ -116,7 +115,9 @@ struct PostInBoxLink: View {
           withAnimation(spring) {
             dragging = true
           }
-          _ = WinstonHapticPatterns.clickHard
+          let impact = UIImpactFeedbackGenerator(style: .rigid)
+          impact.prepare()
+          impact.impactOccurred()
         }
         .sequenced(before: DragGesture())
         .onChanged{ sequence in
@@ -135,14 +136,17 @@ struct PostInBoxLink: View {
                 withAnimation(spring) {
                   deleting = true
                 }
-                _ = WinstonHapticPatterns.clickHard
+                let impact = UIImpactFeedbackGenerator(style: .rigid)
+                impact.prepare()
+                impact.impactOccurred()
               }
               if abs(dragVal.translation.height) < 70 && deleting {
                 withAnimation(spring) {
                   deleting = false
                 }
-                _ = WinstonHapticPatterns.clickHard
-
+                let impact = UIImpactFeedbackGenerator(style: .rigid)
+                impact.prepare()
+                impact.impactOccurred()
               }
             }
           }

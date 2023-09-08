@@ -178,7 +178,7 @@ struct SwipeActionsModifier: ViewModifier {
               }
             if abs(newValue) > 20 {
 //              let impact = UIImpactFeedbackGenerator(style: firstActioning ? .rigid : .soft)
-              _ = firstActioning ? WinstonHapticPatterns.clickHard : WinstonHapticPatterns.click
+//              _ = firstActioning ? WinstonHapticPatterns.clickHard : WinstonHapticPatterns.click
 //              try? haptics.fire(intensity: firstActioning ? 0.5 : 0.35, sharpness: firstActioning ? 0.25 : 0.5)
             }
           }
@@ -188,7 +188,7 @@ struct SwipeActionsModifier: ViewModifier {
                 secondAction = secondActioning
               }
 //              let impact = UIImpactFeedbackGenerator(style: secondActioning ? .rigid : .soft)
-              _ = firstActioning ? WinstonHapticPatterns.clickHard : WinstonHapticPatterns.click
+//              _ = firstActioning ? WinstonHapticPatterns.clickHard : WinstonHapticPatterns.click
 //                try? haptics.fire(intensity: secondActioning ? 0.5 : 0.35, sharpness: secondActioning ? 0.25 : 0.5)
             }
           }
