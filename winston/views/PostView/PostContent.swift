@@ -17,13 +17,14 @@ struct PostContent: View {
   var forceCollapse: Bool = false
   @State private var height: CGFloat = 0
   @State private var collapsed = false
+  @State private var userClickedLink = false
   @Default(.blurPostNSFW) private var blurPostNSFW
   @Default(.preferenceShowPostsAvatars) var showPostAvatars
   @Default(.postViewTitleSize) var postViewTitleSize
   @Default(.postViewBodySize) var postViewBodySize
   @EnvironmentObject private var routerProxy: RouterProxy
   private var contentWidth: CGFloat { UIScreen.screenWidth - 16 }
-  
+  @State var isInteracting: Bool = false
   var body: some View {
     let isCollapsed = forceCollapse || collapsed
     if let data = post.data {
@@ -50,7 +51,9 @@ struct PostContent: View {
             
             if data.selftext != "" {
               VStack {
-                MD2(selfAttr.isNil ? .str(data.selftext) : .attr(selfAttr!), fontSize: postViewBodySize)
+                MD2(selfAttr.isNil ? .str(data.selftext) : .attr(selfAttr!),
+                    fontSize: postViewBodySize
+                )
               }
               .contentShape(Rectangle())
               .onTapGesture { withAnimation(spring) { collapsed.toggle() } }

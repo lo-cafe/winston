@@ -10,23 +10,14 @@ import UIKit
 import Markdown
 import SafariServices
 
-import SwiftUI
-import UIKit
-import BetterSafariView
-import SafariServices
-import NukeUI
-
-import SwiftUI
-import UIKit
-import BetterSafariView
-import SafariServices
-import NukeUI
-
 struct MD2: UIViewRepresentable {
   var attributedString: AttributedString
   var fontSize: CGFloat
   
-  init(_ content: MDType, fontSize: CGFloat = 15) {
+  
+  init(_ content: MDType,
+       fontSize: CGFloat = 15
+  ) {
     self.fontSize = fontSize
     switch content {
     case .attr(let attr):
@@ -51,7 +42,6 @@ struct MD2: UIViewRepresentable {
     textView.textContainer.lineFragmentPadding = 0
     textView.setContentCompressionResistancePriority(.defaultLow, for: .horizontal) // Adjust horizontal
     textView.textContainerInset = .zero
-    
     textView.delegate = context.coordinator // Set the delegate
     
     return textView
@@ -78,7 +68,6 @@ struct MD2: UIViewRepresentable {
     func textView(_ textView: UITextView, shouldInteractWith URL: URL, in characterRange: NSRange, interaction: UITextItemInteraction) -> Bool {
       // Handle URL interaction here
       // You can open the URL, display it differently, or perform any other action as needed
-      
       var vc: UIViewController?
       
       switch interaction {
@@ -86,9 +75,8 @@ struct MD2: UIViewRepresentable {
         if isImageUrl(URL.absoluteString)  {
           let imageView = ImageView(url: URL) // Create a custom ImageView
           let hostingController = UIHostingController(rootView: imageView)
-          
-          UIApplication.shared.windows.first?.rootViewController?.present(hostingController, animated: true)
-          return false // Prevent default action
+          hostingController.overrideUserInterfaceStyle = .dark
+          vc = hostingController
         } else {
           vc = SFSafariViewController(url: URL)
         }
@@ -112,11 +100,9 @@ struct MD2: UIViewRepresentable {
 
 struct ImageView: View {
   var url: URL
-  @State var isZoomed: Bool = false
+  @Namespace var presentationNamespace
+  
   var body: some View {
-    ZoomableScrollView(isZoomed: $isZoomed){
-      URLImage(url: url)
-    }
-    .overlay(SimpleLightBoxOverlay(opacity: 1, url: url))
+    LightBoxImage(post: nil, i: 0, imagesArr: [MediaExtracted(url: url, size: CGSize(width: 100, height: 100))], namespace: presentationNamespace)
   }
 }

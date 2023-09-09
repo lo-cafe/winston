@@ -11,6 +11,7 @@ struct SubredditRulesTab: View {
   @ObservedObject var subreddit: Subreddit
   @State var loading = true
   @State var data: RedditAPI.FetchSubRulesResponse?
+  @State var isInteracting: Bool = false
     var body: some View {
       if loading {
         ProgressView()
@@ -44,7 +45,9 @@ struct SubredditRulesTab: View {
                   Text(rule.short_name ?? "Unamed rule")
                     .fontSize(22, .bold)
                   
-                  MD2(.str(rule.description ?? "Rule without description."), fontSize: 16)
+                  MD2(.str(rule.description ?? "Rule without description."),
+                      fontSize: 16
+                  )
                 }
               }
               .multilineTextAlignment(.leading)
