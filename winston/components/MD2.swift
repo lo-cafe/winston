@@ -9,6 +9,7 @@ import SwiftUI
 import UIKit
 import Markdown
 import SafariServices
+import Defaults
 
 struct MD2: UIViewRepresentable {
   var attributedString: AttributedString
@@ -68,6 +69,8 @@ struct MD2: UIViewRepresentable {
     func textView(_ textView: UITextView, shouldInteractWith URL: URL, in characterRange: NSRange, interaction: UITextItemInteraction) -> Bool {
       // Handle URL interaction here
       // You can open the URL, display it differently, or perform any other action as needed
+      let vcConfig = SFSafariViewController.Configuration()
+      vcConfig.entersReaderIfAvailable = Defaults[.useReaderMode]
       var vc: UIViewController?
       
       switch interaction {
@@ -78,7 +81,7 @@ struct MD2: UIViewRepresentable {
           hostingController.overrideUserInterfaceStyle = .dark
           vc = hostingController
         } else {
-          vc = SFSafariViewController(url: URL)
+          vc = SFSafariViewController(url: URL, configuration: vcConfig)
         }
       case .presentActions:
         break
@@ -88,8 +91,8 @@ struct MD2: UIViewRepresentable {
         break
       }
       
-      if let vc {
-        UIApplication.shared.windows.first?.rootViewController?.present(vc, animated: true)
+      if vc != nil && Defaults[.useBuiltInBrowser]{
+        UIApplication.shared.windows.first?.rootViewController?.present(vc!, animated: true)
         return false
       } else {
         return true
