@@ -24,7 +24,6 @@ struct PostContent: View {
   @Default(.postViewBodySize) var postViewBodySize
   @EnvironmentObject private var routerProxy: RouterProxy
   private var contentWidth: CGFloat { UIScreen.screenWidth - 16 }
-  @State var isInteracting: Bool = false
   var body: some View {
     let isCollapsed = forceCollapse || collapsed
     if let data = post.data {

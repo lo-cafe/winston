@@ -35,7 +35,6 @@ struct SwipeUI<T: GenericRedditEntityDataType>: ViewModifier {
   var onTapAction: (() -> Void)?
   var actionsSet: SwipeActionsSet
   @ObservedObject var entity: GenericRedditEntity<T>
-  @State var isInteracting: Bool = false
   //  var leftActionIcon: String
   //  var rightActionIcon: String
   //  var secondActionIcon: String
@@ -227,7 +226,6 @@ extension View {
     onTap: (() -> Void)? = nil,
     actionsSet: SwipeActionsSet,
     entity: GenericRedditEntity<T>,
-    isInteracting: Bool = false,
     disabled: Bool = false
   ) -> some View {
     self.modifier(SwipeUI(
@@ -237,7 +235,6 @@ extension View {
       onTapAction: onTap,
       actionsSet: actionsSet,
       entity: entity,
-      isInteracting: isInteracting,
       disabled: disabled))
   }
 }
