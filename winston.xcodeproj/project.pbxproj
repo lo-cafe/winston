@@ -314,6 +314,7 @@
 		659E64462AAB36F0001FC1B2 /* isImageUrl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = isImageUrl.swift; sourceTree = "<group>"; };
 		659F68012A84E32300989300 /* VotesCluster.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VotesCluster.swift; sourceTree = "<group>"; };
 		659FDEA72A87798300103414 /* VoteButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoteButton.swift; sourceTree = "<group>"; };
+		65A7AE972AB1972600FC394B /* winston-everywhere.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "winston-everywhere.entitlements"; sourceTree = "<group>"; };
 		65AA535C2A8BB27900275299 /* FAQPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FAQPanel.swift; sourceTree = "<group>"; };
 		65BB79002A99FB2600EB83D5 /* LightBoxElementView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightBoxElementView.swift; sourceTree = "<group>"; };
 		65D2A3872AA26E3F00EC04ED /* mediaExtractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = mediaExtractor.swift; path = ../../utils/mediaExtractor.swift; sourceTree = "<group>"; };
@@ -950,6 +951,7 @@
 		ECAA8B662A75261000D9D636 /* winston-everywhere */ = {
 			isa = PBXGroup;
 			children = (
+				65A7AE972AB1972600FC394B /* winston-everywhere.entitlements */,
 				ECAA8B672A75261000D9D636 /* SafariWebExtensionHandler.swift */,
 				ECAA8B7A2A75261000D9D636 /* Info.plist */,
 				ECAA8B692A75261000D9D636 /* Resources */,
@@ -1651,6 +1653,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5179597F2AA6186C00CB3B17 /* alpha-release.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = "winston-everywhere/winston-everywhere.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = "";
@@ -1775,6 +1778,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5179597B2AA6183D00CB3B17 /* beta-release.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = "winston-everywhere/winston-everywhere.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = "";
@@ -1994,6 +1998,7 @@
 		ECAA8B7F2A75261000D9D636 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = "winston-everywhere/winston-everywhere.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = "";
@@ -2025,6 +2030,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 517959782AA6181400CB3B17 /* appstore-release.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = "winston-everywhere/winston-everywhere.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = "";
