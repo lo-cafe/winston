@@ -90,6 +90,21 @@ extension Post {
     }
   }
   
+  func toggleFilterSubreddit(_ subreddit: String) async -> Void {
+    var filteredSubreddits = Defaults[.filteredSubreddits]
+    
+    if let index = filteredSubreddits.firstIndex(of: subreddit) {
+      // Subreddit exists in the array, remove it
+      filteredSubreddits.remove(at: index)
+    } else {
+      // Subreddit doesn't exist in the array, add it
+      filteredSubreddits.append(subreddit)
+    }
+    
+    // Update the Defaults value with the modified array
+    Defaults[.filteredSubreddits] = filteredSubreddits
+  }
+  
   func reply(_ text: String, updateComments: (() -> ())? = nil) async -> Bool {
     if let fullname = data?.name {
       let result = await redditAPI.newReply(text, fullname) ?? false

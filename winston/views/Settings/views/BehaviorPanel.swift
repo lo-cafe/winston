@@ -38,6 +38,11 @@ struct BehaviorPanel: View {
           Text("Subscription List").tag("subList")
         }
         .pickerStyle(DefaultPickerStyle())
+        
+        NavigationLink(value: SettingsPages.filteredSubreddits){
+          Label("Filtered Subreddits", systemImage: "list.bullet")
+            .labelStyle(.titleOnly)
+        }
       }
       
       Section {

@@ -35,7 +35,7 @@ struct SwipeActionsSet: Codable, Defaults.Serializable, Equatable {
 }
 
 
-let allPostSwipeActions: [AnySwipeAction] = [AnySwipeAction(UpvotePostAction()), AnySwipeAction(DownvotePostAction()), AnySwipeAction(SavePostAction()), AnySwipeAction(ReplyPostAction()), AnySwipeAction(SeenPostAction())/**, AnySwipeAction(SharePostAction()) **/, AnySwipeAction(NoneAction())]
+let allPostSwipeActions: [AnySwipeAction] = [AnySwipeAction(UpvotePostAction()), AnySwipeAction(DownvotePostAction()), AnySwipeAction(SavePostAction()), AnySwipeAction(ReplyPostAction()), AnySwipeAction(SeenPostAction()), AnySwipeAction(FilterSubredditAction())/**, AnySwipeAction(SharePostAction()) **/, AnySwipeAction(NoneAction())]
 
 let allCommentSwipeActions: [AnySwipeAction] = [
   AnySwipeAction(UpvoteCommentAction()), AnySwipeAction(DownvoteCommentAction()), AnySwipeAction(EditCommentAction()), AnySwipeAction(ReplyCommentAction()), AnySwipeAction(SaveCommentAction()), AnySwipeAction(SelectTextCommentAction())/**, AnySwipeAction(ShareCommentAction())**/, AnySwipeAction(CopyCommentAction()), AnySwipeAction(DeleteCommentAction()), AnySwipeAction(NoneAction())]
@@ -207,6 +207,30 @@ struct SeenPostAction: SwipeAction {
     await entity.toggleSeen(optimistic: true)
   }
   func active(_ entity: Post) -> Bool { entity.data?.winstonSeen ?? false }
+  func enabled(_ entity: Post) -> Bool { true }
+}
+
+struct FilterSubredditAction: SwipeAction {
+  var id = "filter-subreddit-swipe-action"
+  var label = "Filter Subreddit"
+  var icon = SwipeActionItem(normal: "hand.raised.fill", active: "hand.raised.slash.fill")
+  var color = SwipeActionItem(normal: "0B84FE")
+  var bgColor = SwipeActionItem(normal: "353439")
+  func action(_ entity: Post) async {
+    if let subreddit = entity.data?.subreddit {
+      Task(priority: .background) {
+        await entity.toggleFilterSubreddit(subreddit)
+      }
+    }
+  }
+  func active(_ entity: Post) -> Bool {
+    print(Defaults[.filteredSubreddits])
+    if let subreddit = entity.data?.subreddit {
+      return Defaults[.filteredSubreddits].contains(subreddit)
+    }
+    
+    return false
+  }
   func enabled(_ entity: Post) -> Bool { true }
 }
 

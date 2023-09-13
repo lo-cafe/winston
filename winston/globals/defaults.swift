@@ -45,6 +45,7 @@ extension Defaults.Keys {
   static let redditAPITokenExpiration = Key<Int?>("redditAPITokenExpiration", default: nil)
   static let multis = Key<[MultiData]>("multis", default: [])
   static let subreddits = Key<[ListingChild<SubredditData>]>("subreddits", default: [])
+  static let filteredSubreddits = Key<[String]>("filteredSubreddits", default: [])
   static let postsInBox = Key<[PostInBox]>("postsInBox-v2", default: [])
   static let likedButNotSubbed = Key<[Subreddit]>("likedButNotSubbed", default: [])
   static let preferredSort = Key<SubListingSortOption>("preferredSort", default: .best)
