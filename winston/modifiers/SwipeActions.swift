@@ -28,6 +28,7 @@ struct SwipeUI<T: GenericRedditEntityDataType>: ViewModifier {
   @State private var secondAction = false
   @State private var triggeredAction: TriggeredAction = .none
   
+  
   var offsetYAction: CGFloat = 0
   var controlledDragAmount: Binding<CGFloat>?
   var controlledIsSource = true
@@ -120,7 +121,7 @@ struct SwipeUI<T: GenericRedditEntityDataType>: ViewModifier {
           .allowsHitTesting(false)
       )
       .onTapGesture {
-        onTapAction?()
+          onTapAction?()
       }
       .gesture(
         enableSwipeAnywhere

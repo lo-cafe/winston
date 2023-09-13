@@ -7,8 +7,19 @@
 
 import Foundation
 import SafariServices
+import Defaults
+import SwiftUI
 
 func openInWebView(url: URL){
-  var vc = SFSafariViewController(url: url)
-  UIApplication.shared.windows.first?.rootViewController?.present(vc, animated: true)
+
+  let vcConfig = SFSafariViewController.Configuration()
+  vcConfig.entersReaderIfAvailable = Defaults[.useReaderMode]
+  var vc = SFSafariViewController(url: url, configuration: vcConfig)
+  
+  if Defaults[.useBuiltInBrowser] {
+   UIApplication.shared.windows.first?.rootViewController?.present(vc, animated: true)
+  } else {
+    @Environment(\.openURL) var openURL
+    openURL(url)
+  }
 }

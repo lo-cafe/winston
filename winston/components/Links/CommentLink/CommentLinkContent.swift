@@ -164,7 +164,7 @@ struct CommentLinkContent: View {
           .swipyUI(
             controlledDragAmount: $offsetX,
             controlledIsSource: false,
-            onTap: { withAnimation(spring) { comment.toggleCollapsed(optimistic: true) } },
+            onTap: { withAnimation(spring) { comment.toggleCollapsed(optimistic: true) }},
             actionsSet: commentSwipeActions,
             entity: comment
           )
@@ -214,7 +214,9 @@ struct CommentLinkContent: View {
                       .fontSize(15)
                       .lineLimit(lineLimit)
                   } else {
-                    MD2(data.winstonBodyAttrEncoded.isNil ? .str(body) : .json(data.winstonBodyAttrEncoded!), fontSize: commentLinkBodySize)
+                    MD2(data.winstonBodyAttrEncoded.isNil ? .str(body) : .json(data.winstonBodyAttrEncoded!),
+                        fontSize: commentLinkBodySize
+                    )
                       .fixedSize(horizontal: false, vertical: true)
                       .overlay(
                         !selectable
@@ -238,7 +240,7 @@ struct CommentLinkContent: View {
               .swipyUI(
                 offsetYAction: -15,
                 controlledDragAmount: $offsetX,
-                onTap: { if !selectable { withAnimation(spring) { comment.toggleCollapsed(optimistic: true) } } },
+                onTap: { withAnimation(spring) { comment.toggleCollapsed(optimistic: true) } },
                 actionsSet: commentSwipeActions,
                 entity: comment
               )

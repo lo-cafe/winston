@@ -23,6 +23,7 @@
 		6543D8892A8D10B900A1FFF9 /* scaleEffectButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6543D8882A8D10B900A1FFF9 /* scaleEffectButtonStyle.swift */; };
 		6593CC432A88C9E8003CA58D /* AccessibilityPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6593CC422A88C9E8003CA58D /* AccessibilityPanel.swift */; };
 		6597547E2AA8CDB9003B5BAE /* HandleDeepLinks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6597547D2AA8CDB9003B5BAE /* HandleDeepLinks.swift */; };
+		659E64472AAB36F0001FC1B2 /* isImageUrl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 659E64462AAB36F0001FC1B2 /* isImageUrl.swift */; };
 		659F68022A84E32300989300 /* VotesCluster.swift in Sources */ = {isa = PBXBuildFile; fileRef = 659F68012A84E32300989300 /* VotesCluster.swift */; };
 		659FDEA82A87798300103414 /* VoteButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 659FDEA72A87798300103414 /* VoteButton.swift */; };
 		65AA535D2A8BB27900275299 /* FAQPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65AA535C2A8BB27900275299 /* FAQPanel.swift */; };
@@ -30,7 +31,6 @@
 		65D2A3882AA26E3F00EC04ED /* mediaExtractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65D2A3872AA26E3F00EC04ED /* mediaExtractor.swift */; };
 		65D531402A98D75000FED4DE /* LiveTextInteraction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65D5313F2A98D75000FED4DE /* LiveTextInteraction.swift */; };
 		65D531422A98DE8800FED4DE /* Subreddits.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65D531412A98DE8800FED4DE /* Subreddits.swift */; };
-		65DE934F2AA76E3D009F4342 /* webView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65DE934E2AA76E3D009F4342 /* webView.swift */; };
 		65DE93512AA77196009F4342 /* MD2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65DE93502AA77196009F4342 /* MD2.swift */; };
 		65EEAC592A988CAE00B0D607 /* ThemeSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65EEAC582A988CAE00B0D607 /* ThemeSettings.swift */; };
 		EC082F252A65FB4300BA2727 /* MeasureOnce.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC082F242A65FB4300BA2727 /* MeasureOnce.swift */; };
@@ -311,14 +311,15 @@
 		6543D8882A8D10B900A1FFF9 /* scaleEffectButtonStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = scaleEffectButtonStyle.swift; sourceTree = "<group>"; };
 		6593CC422A88C9E8003CA58D /* AccessibilityPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessibilityPanel.swift; sourceTree = "<group>"; };
 		6597547D2AA8CDB9003B5BAE /* HandleDeepLinks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HandleDeepLinks.swift; sourceTree = "<group>"; };
+		659E64462AAB36F0001FC1B2 /* isImageUrl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = isImageUrl.swift; sourceTree = "<group>"; };
 		659F68012A84E32300989300 /* VotesCluster.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VotesCluster.swift; sourceTree = "<group>"; };
 		659FDEA72A87798300103414 /* VoteButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoteButton.swift; sourceTree = "<group>"; };
+		65A7AE972AB1972600FC394B /* winston-everywhere.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "winston-everywhere.entitlements"; sourceTree = "<group>"; };
 		65AA535C2A8BB27900275299 /* FAQPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FAQPanel.swift; sourceTree = "<group>"; };
 		65BB79002A99FB2600EB83D5 /* LightBoxElementView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightBoxElementView.swift; sourceTree = "<group>"; };
 		65D2A3872AA26E3F00EC04ED /* mediaExtractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = mediaExtractor.swift; path = ../../utils/mediaExtractor.swift; sourceTree = "<group>"; };
 		65D5313F2A98D75000FED4DE /* LiveTextInteraction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveTextInteraction.swift; sourceTree = "<group>"; };
 		65D531412A98DE8800FED4DE /* Subreddits.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Subreddits.swift; sourceTree = "<group>"; };
-		65DE934E2AA76E3D009F4342 /* webView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = webView.swift; sourceTree = "<group>"; };
 		65DE93502AA77196009F4342 /* MD2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MD2.swift; sourceTree = "<group>"; };
 		65EEAC582A988CAE00B0D607 /* ThemeSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeSettings.swift; sourceTree = "<group>"; };
 		EC082F242A65FB4300BA2727 /* MeasureOnce.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeasureOnce.swift; sourceTree = "<group>"; };
@@ -950,6 +951,7 @@
 		ECAA8B662A75261000D9D636 /* winston-everywhere */ = {
 			isa = PBXGroup;
 			children = (
+				65A7AE972AB1972600FC394B /* winston-everywhere.entitlements */,
 				ECAA8B672A75261000D9D636 /* SafariWebExtensionHandler.swift */,
 				ECAA8B7A2A75261000D9D636 /* Info.plist */,
 				ECAA8B692A75261000D9D636 /* Resources */,
@@ -1017,6 +1019,7 @@
 				ECAEFF652A77C43B0052FCD3 /* isVideoPlayer.swift */,
 				ECF064EC2A7F405C0088C2C0 /* KeyWindow.swift */,
 				ECDD514D2A726E5900FD9498 /* modifyColor.swift */,
+				659E64462AAB36F0001FC1B2 /* isImageUrl.swift */,
 				EC08543E2A4D0C0700E88389 /* doThisAfter.swift */,
 				EC0854472A4D6E8C00E88389 /* getInitialSize.swift */,
 				EC0854492A4D6EAE00E88389 /* blurTransitions.swift */,
@@ -1042,7 +1045,6 @@
 				EC77B1842AA434DD00C482DF /* stringToAttr.swift */,
 				ECA5E6472AA5D36E00F6C7A5 /* resetApp.swift */,
 				652C7C012A976279001DCD57 /* generateColors.swift */,
-				65DE934E2AA76E3D009F4342 /* webView.swift */,
 			);
 			path = utils;
 			sourceTree = "<group>";
@@ -1330,7 +1332,6 @@
 				652C7C022A976279001DCD57 /* generateColors.swift in Sources */,
 				ECDD515C2A73A90700FD9498 /* PreviewLink.swift in Sources */,
 				EC5EDA712A4DA94A00140A08 /* SwipeActionsOld.swift in Sources */,
-				65DE934F2AA76E3D009F4342 /* webView.swift in Sources */,
 				ECF0B7E92A543795002B9FAD /* fetchUsers.swift in Sources */,
 				EC6495A92A999C4A00B1852C /* CachedMulti+CoreDataProperties.swift in Sources */,
 				EC22A31C2A5C75AA0062A112 /* fetchInbox.swift in Sources */,
@@ -1345,6 +1346,7 @@
 				EC8F349D2A6F988900EB8249 /* Placeholder.swift in Sources */,
 				EC3188182A92B5DD00CB3738 /* duplicateMulti.swift in Sources */,
 				ECE00EE72A8D6A20000A6E21 /* TabBar.swift in Sources */,
+				659E64472AAB36F0001FC1B2 /* isImageUrl.swift in Sources */,
 				ECEFC25D2A5DADDC0003C6C4 /* searchInSubreddit.swift in Sources */,
 				EC7DBDEF2A846D0C00D7C123 /* save.swift in Sources */,
 				ECA30A1B2A604FD600BB19D1 /* unreadMessage.swift in Sources */,
@@ -1621,11 +1623,11 @@
 				CODE_SIGN_ENTITLEMENTS = winston/winston.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = Z2NNLU4F7U;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = winston/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "Winston (Alpha)";
+				INFOPLIST_KEY_CFBundleDisplayName = Winston;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "winston needs access to your library to be able to download images.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -1651,9 +1653,10 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5179597F2AA6186C00CB3B17 /* alpha-release.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = "winston-everywhere/winston-everywhere.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = Z2NNLU4F7U;
+				DEVELOPMENT_TEAM = "";
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "winston-everywhere/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "Winston Everywhere";
@@ -1745,7 +1748,7 @@
 				CODE_SIGN_ENTITLEMENTS = winston/winston.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = Z2NNLU4F7U;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = winston/Info.plist;
@@ -1775,9 +1778,10 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5179597B2AA6183D00CB3B17 /* beta-release.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = "winston-everywhere/winston-everywhere.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = Z2NNLU4F7U;
+				DEVELOPMENT_TEAM = "";
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "winston-everywhere/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "Winston Everywhere";
@@ -1928,11 +1932,11 @@
 				CODE_SIGN_ENTITLEMENTS = winston/winston.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = Z2NNLU4F7U;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = winston/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "Winston (Debug)";
+				INFOPLIST_KEY_CFBundleDisplayName = Winston;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "winston needs access to your library to be able to download images.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -1965,7 +1969,7 @@
 				CODE_SIGN_ENTITLEMENTS = winston/winston.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = Z2NNLU4F7U;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = winston/Info.plist;
@@ -1994,9 +1998,10 @@
 		ECAA8B7F2A75261000D9D636 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = "winston-everywhere/winston-everywhere.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = Z2NNLU4F7U;
+				DEVELOPMENT_TEAM = "";
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "winston-everywhere/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "Winston Everywhere";
@@ -2025,9 +2030,10 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 517959782AA6181400CB3B17 /* appstore-release.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = "winston-everywhere/winston-everywhere.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = Z2NNLU4F7U;
+				DEVELOPMENT_TEAM = "";
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "winston-everywhere/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "Winston Everywhere";

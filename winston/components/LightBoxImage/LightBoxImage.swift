@@ -11,7 +11,7 @@ import Defaults
 private let SPACING = 24.0
 
 struct LightBoxImage: View {
-  @ObservedObject var post: Post
+  var post: Post?
   var i: Int
   var imagesArr: [MediaExtracted]
   var namespace: Namespace.ID
@@ -161,7 +161,7 @@ struct LightBoxImage: View {
       }
     }
     .onAppear {
-      if lightboxViewsPost { Task(priority: .background) { await post.toggleSeen(true) } }
+      if lightboxViewsPost { Task(priority: .background) { await post?.toggleSeen(true) } }
       xPos = -CGFloat(i) * (UIScreen.screenWidth + SPACING)
       activeIndex = i
       withAnimation(.easeOut) {

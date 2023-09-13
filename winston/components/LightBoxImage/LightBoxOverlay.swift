@@ -10,7 +10,7 @@ import Nuke
 
 
 struct LightBoxOverlay: View {
-  var post: Post
+  var post: Post?
   var opacity: CGFloat
   var imagesArr: [MediaExtracted]
   var activeIndex: Int
@@ -26,16 +26,18 @@ struct LightBoxOverlay: View {
     
     VStack(alignment: .leading) {
       
-      VStack(alignment: .leading, spacing: 8) {
-        if let title = post.data?.title {
-          Text(title)
-            .fontSize(20, .semibold)
-            .allowsHitTesting(false)
-        }
-        if let data = post.data, let fullname = data.author_fullname {
-          Badge(author: data.author, fullname: fullname, created: data.created)
-            .id("post-badge")
-            .listRowInsets(EdgeInsets(top: 6, leading: 8, bottom: 8, trailing: 8))
+      if let post {
+        VStack(alignment: .leading, spacing: 8) {
+          if let title = post.data?.title {
+            Text(title)
+              .fontSize(20, .semibold)
+              .allowsHitTesting(false)
+          }
+          if let data = post.data, let fullname = data.author_fullname {
+            Badge(author: data.author, fullname: fullname, created: data.created)
+              .id("post-badge")
+              .listRowInsets(EdgeInsets(top: 6, leading: 8, bottom: 8, trailing: 8))
+          }
         }
       }
       
@@ -63,10 +65,12 @@ struct LightBoxOverlay: View {
         //            }
         //        }
         //
-        LightBoxButton(icon: "bubble.right") {
-          if let data = post.data {
-            routerProxy.router.path.append(PostViewPayload(post: Post(id: post.id, api: post.redditAPI), sub: Subreddit(id: data.subreddit, api: post.redditAPI)))
-            dismiss()
+        if let post {
+          LightBoxButton(icon: "bubble.right") {
+            if let data = post.data {
+              routerProxy.router.path.append(PostViewPayload(post: Post(id: post.id, api: post.redditAPI), sub: Subreddit(id: data.subreddit, api: post.redditAPI)))
+              dismiss()
+            }
           }
         }
         

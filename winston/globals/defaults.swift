@@ -137,6 +137,10 @@ extension Defaults.Keys {
   static let postAccessoryBackgroundColor = Key<Color>("postAccessoryBackgroundColor", default: .blue)
   static let arrowDividerColorPalette = Key<ArrowColorPalette>("arrowDividerColorPalette", default: ArrowColorPalette.monochrome)
   static let winstonCommentAccentStyle = Key<Bool>("winstonCommentAccentStyle", default: true)
+  
+  //Safari Settings
+  static let useBuiltInBrowser = Key<Bool>("userBuiltInBrowser", default: true)
+  static let useReaderMode = Key<Bool>("useReaderMode", default: false)
 }
 
 extension UIScreen {
