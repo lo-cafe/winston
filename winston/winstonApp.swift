@@ -12,12 +12,14 @@ struct winstonApp: App {
   @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
   let persistenceController = PersistenceController.shared
   @State var redditAPI = RedditAPI()
+  @StateObject var navigationState = NavigationState()
   
     var body: some Scene {
         WindowGroup {
             Tabber()
                 .environment(\.managedObjectContext, persistenceController.container.viewContext)
                 .environmentObject(redditAPI)
+                .environmentObject(navigationState)
                 .alertToastRoot()
         }
     }
