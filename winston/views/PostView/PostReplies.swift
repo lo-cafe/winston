@@ -12,6 +12,7 @@ struct PostReplies: View {
   @Default(.preferenceShowCommentsCards) private var preferenceShowCommentsCards
   @Default(.commentsInnerHPadding) private var commentsInnerHPadding
   @Default(.cardedCommentsOuterHPadding) private var cardedCommentsOuterHPadding
+
   var update: Bool
   @ObservedObject var post: Post
   @ObservedObject var subreddit: Subreddit
@@ -151,5 +152,6 @@ struct PostReplies: View {
         }
       }
     }
+
   }
 }

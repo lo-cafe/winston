@@ -18,7 +18,6 @@ enum SubViewType: Hashable {
 struct SubredditPosts: View {
   @Default(.preferenceShowPostsCards) private var preferenceShowPostsCards
   @ObservedObject var subreddit: Subreddit
-  @EnvironmentObject var navigationState: NavigationState
   @Environment(\.openURL) private var openURL
   @State private var loading = true
   @State private var posts: [Post] = []
@@ -208,7 +207,7 @@ struct SubredditPosts: View {
           }
           
           Button{
-//            routerProxy.router.path.append(navigationState)
+            routerProxy.tryToNavBack()
           } label: {
             Label("Go Back", systemImage: "arrowshape.backward")
           }

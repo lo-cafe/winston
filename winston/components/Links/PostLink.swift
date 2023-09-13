@@ -286,7 +286,7 @@ struct PostLink: View, Equatable {
       .contentShape(Rectangle())
       .swipyUI(
         onTap: {
-          routerProxy.router.path.append(PostViewPayload(post: post, postSelfAttr: attrStrLoader.data, sub: feedsAndSuch.contains(sub.id) ? sub : sub))
+          routerProxy.router.path.append(PostViewPayload(post: post, postSelfAttr: attrStrLoader.data, sub: sub))
         },
         actionsSet: postSwipeActions,
         entity: post

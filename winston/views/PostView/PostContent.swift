@@ -12,6 +12,7 @@ import AVFoundation
 
 struct PostContent: View {
   @ObservedObject var post: Post
+
   var selfAttr: AttributedString? = nil
   var sub: Subreddit
   var forceCollapse: Bool = false
@@ -129,6 +130,8 @@ struct PostContent: View {
       .frame(maxWidth: .infinity, alignment: .leading)
       .foregroundColor(.primary)
       .multilineTextAlignment(.leading)
+
+
     } else {
       VStack {
         ProgressView()
@@ -138,4 +141,5 @@ struct PostContent: View {
       }
     }
   }
+    
 }

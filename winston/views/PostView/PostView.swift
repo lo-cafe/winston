@@ -145,6 +145,7 @@ struct PostView: View {
         }
       }
     }
+    .capturePoppedView(view: PostViewPayload(post: post, postSelfAttr: selfAttr, sub: subreddit), in: routerProxy.router)
 
   }
 }
