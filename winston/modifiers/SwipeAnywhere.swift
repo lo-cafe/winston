@@ -11,7 +11,8 @@ import Defaults
 struct SwipeAywhereState {
   var activated = false
   var offset: CGSize = .zero
-  var dragging: Bool? = nil
+  var draggingRight: Bool? = nil
+  var draggingLeft: Bool? = nil
 }
 
 struct SwipeAnywhere: ViewModifier {
@@ -30,13 +31,14 @@ struct SwipeAnywhere: ViewModifier {
     let finalOffset = dragState.offset + staticOffset
     let interpolate = interpolatorBuilder([0, activatedAmount], value: (abs(finalOffset.width) + abs(finalOffset.height)) / 2)
     content
+    //left to right gesture
       .gesture(
         !enabled
         ? nil
         : DragGesture()
           .updating($dragState) { val, state, trans in
-            if state.dragging.isNil { state.dragging = abs(val.translation.width) > abs(val.translation.height) }
-            guard let dragging = state.dragging, dragging else { return }
+            if state.draggingRight.isNil { state.draggingRight = abs(val.translation.width) > abs(val.translation.height) }
+            guard let dragging = state.draggingRight, dragging else { return }
             let translation = val.translation
             trans.isContinuous = true
             var newDragState = state
@@ -64,12 +66,53 @@ struct SwipeAnywhere: ViewModifier {
       )
       .onChange(of: dragState.activated) { val in
         Task(priority: .background) {
-          if !(dragState.dragging ?? false) { return }
+          if !(dragState.draggingRight ?? false) { return }
           let impact = val ? rigid : soft
           impact.prepare()
           impact.impactOccurred()
         }
       }
+    // right to left gesture
+      .gesture(
+        DragGesture()
+          .updating($dragState){ value, state, trans in
+            let direction = detectDirection(value: value)
+            if direction == .right && value.startLocation.x > CGFloat(UIScreen.screenWidth - (100 - activatedAmount)) {
+              let translation = value.translation
+              state.draggingLeft = true
+              state.offset = translation
+            }
+          }
+          .onEnded{ value in
+            let direction = detectDirection(value: value)
+            if direction == .right && value.startLocation.x > CGFloat(UIScreen.screenWidth - (100 - activatedAmount)) {
+              // your code here
+              print("swiping right")
+              routerProxy.tryToNavBack()
+            }
+          }
+      )
+    
+    
+      .overlay(
+        Image(systemName: "arrowshape.right.fill")
+          .fontSize(24, .semibold)
+          .foregroundColor(.blue)
+          .animation(.easeOut(duration: 0.2), value: (dragState.draggingLeft ?? false))
+          .frame(width: 56, height: 56)
+          .background(
+            Circle().fill(.bar).shadow(radius: 8)
+              .overlay(Circle().stroke(Color.primary.opacity(0.05), lineWidth: 0.5).padding(.all, 0.5))
+          )
+          .scaleEffect(interpolate([0.5, (dragState.draggingLeft ?? false) ? 1 : 0.9], true))
+          .offset(x: routerProxy.router.lastPoppedView == nil ? UIScreen.screenWidth + 100 : 76 + finalOffset.width, y: finalOffset.height)
+          .frame(width: UIScreen.screenWidth, height: UIScreen.screenHeight, alignment: .trailing)
+          .ignoresSafeArea()
+          .allowsHitTesting(false)
+        //          .drawingGroup()
+        , alignment: .bottomLeading
+      )
+      
       .overlay(
         !enableSwipeAnywhere && !forceEnable
         ? nil
@@ -97,4 +140,24 @@ extension View {
   func swipeAnywhere(routerProxy: RouterProxy, forceEnable: Bool = false) -> some View {
     self.modifier(SwipeAnywhere(routerProxy: routerProxy, forceEnable: forceEnable))
   }
+}
+
+enum SwipeHVDirection: String {
+  case left, right, up, down, none
+}
+
+func detectDirection(value: DragGesture.Value) -> SwipeHVDirection {
+  if value.startLocation.x < value.location.x - 24 {
+    return .left
+  }
+  if value.startLocation.x > value.location.x + 24 {
+    return .right
+  }
+  if value.startLocation.y < value.location.y - 24 {
+    return .down
+  }
+  if value.startLocation.y > value.location.y + 24 {
+    return .up
+  }
+  return .none
 }

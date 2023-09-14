@@ -19,8 +19,8 @@ class RouterProxy: ObservableObject {
   init(_ router: Router) { self.router = router }
   
   func tryToNavBack(){
-    if router.lastPoppedView != nil {
-      router.path.append(router.lastPoppedView)
+    if let lastPoppedView = router.lastPoppedView {
+      router.path.append(lastPoppedView)
     } else {
       print("No Last Popped View")
     }
