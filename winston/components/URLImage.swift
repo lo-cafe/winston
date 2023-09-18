@@ -11,7 +11,11 @@ import Nuke
 import NukeExtensions
 import Giffy
 
-struct URLImage: View {
+struct URLImage: View, Equatable {
+  static func == (lhs: URLImage, rhs: URLImage) -> Bool {
+    return lhs.url == rhs.url
+  }
+  
   let url: URL
   var pipeline: ImagePipeline? = nil
   var processors: [ImageProcessing]? = nil

@@ -197,7 +197,8 @@ struct NewPostModal: View {
   @State var postKind: RedditAPI.PostType = .text
   @State private var selection: PresentationDetent = .medium
   @State var selectedFlair: Flair?
-  @Default(.newPostModalBlurBackground) var newPostModalBlurBackground
+  @Environment(\.useTheme) private var selectedTheme
+  @Environment(\.colorScheme) private var cs
   
   @FetchRequest(sortDescriptors: []) var drafts: FetchedResults<PostDraft>
   
@@ -242,7 +243,7 @@ struct NewPostModal: View {
       }
       .padding(.vertical, 8)
       .frame(maxWidth: .infinity, maxHeight: .infinity)
-      //          .background(RR(16, .secondary.opacity(0.1)))
+      //          .background(RR(16, Color.secondary.opacity(0.1)))
       .allowsHitTesting(!loading)
       .blur(radius: loading ? 24 : 0)
       .overlay(
@@ -343,12 +344,20 @@ struct NewPostModal: View {
       .navigationTitle("New post")
       .navigationBarTitleDisplayMode(.inline)
     }
+    .background(
+      !selectedTheme.modalsBG.blurry
+      ? nil
+      : GeometryReader { geo in
+        selectedTheme.modalsBG.color.cs(cs).color()
+          .frame(width: geo.size.width, height: geo.size.height)
+      }
+        .edgesIgnoringSafeArea(.all)
+    )
+    .presentationBackground(selectedTheme.modalsBG.blurry ? AnyShapeStyle(.bar) : AnyShapeStyle(selectedTheme.modalsBG.color.cs(cs).color()))
     .scrollDismissesKeyboard(.immediately)
-    //    .backport.presentationDetents([.medium,.large], selection: $selection)
     .presentationDetents([.large, .fraction(0.75), .medium, collapsedPresentation], selection: $selection)
     .presentationCornerRadius(32)
     .presentationBackgroundInteraction(.enabled)
-    .presentationBackground(newPostModalBlurBackground ? AnyShapeStyle(.bar) : AnyShapeStyle(Color.listBG))
     .presentationDragIndicator(.hidden)
     //    .backport.presentationDragIndicator(.visible)
     //    .backport.interactiveDismissDisabled(alertExit) {

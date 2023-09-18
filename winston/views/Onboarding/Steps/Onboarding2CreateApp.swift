@@ -23,7 +23,7 @@ struct Onboarding2CreateApp: View {
         .resizable()
         .scaledToFit()
         .frame(maxWidth: UIScreen.screenWidth * 0.75)
-        .mask(RR(12, .black))
+        .mask(RR(12, Color.black))
       
       Text("Then, come back here!")
       

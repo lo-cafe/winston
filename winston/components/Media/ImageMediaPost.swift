@@ -55,7 +55,7 @@ struct ImageMediaPost: View {
                 : Text("\(images.count - 1)+")
                   .fontSize(24, .semibold)
                   .frame(maxWidth: .infinity, maxHeight: .infinity)
-                  .background(RR(12, .black.opacity(0.2)))
+                  .background(RR(12, Color.black.opacity(0.2)))
                   .allowsHitTesting(false)
               )
             if !compact {

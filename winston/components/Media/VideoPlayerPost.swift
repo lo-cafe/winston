@@ -119,7 +119,7 @@ struct VideoPlayerPost: View {
         }
           .frame(width: compact ? scaledCompactModeThumbSize() : contentWidth, height: compact ? scaledCompactModeThumbSize() : CGFloat(finalHeight))
           .allowsHitTesting(false)
-          .mask(RR(12, .black))
+          .mask(RR(12, Color.black))
           .overlay(
             Color.clear
               .contentShape(Rectangle())

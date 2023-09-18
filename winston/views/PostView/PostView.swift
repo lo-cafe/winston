@@ -16,15 +16,21 @@ struct PostViewPayload: Hashable {
   var highlightID: String? = nil
 }
 
-struct PostView: View {
+struct PostView: View, Equatable {
+  static func == (lhs: PostView, rhs: PostView) -> Bool {
+    lhs.post.id == rhs.post.id && lhs.subreddit.id == rhs.subreddit.id
+  }
+  
   var post: Post
   var selfAttr: AttributedString? = nil
-  @ObservedObject var subreddit: Subreddit
+  var subreddit: Subreddit
   var highlightID: String?
   var forceCollapse: Bool = false
-  @Default(.preferenceShowCommentsCards) private var preferenceShowCommentsCards
+  @Environment(\.useTheme) private var selectedTheme
+  @Environment(\.colorScheme) private var cs
   @State private var ignoreSpecificComment = false
   @State private var sort: CommentSortOption = Defaults[.preferredCommentSort]
+//  @State private var sort: CommentSortOption = .confidence
   @EnvironmentObject private var redditAPI: RedditAPI
   @EnvironmentObject private var routerProxy: RouterProxy
   @State var update = false
@@ -45,22 +51,23 @@ struct PostView: View {
   }
   
   var body: some View {
-    ScrollViewReader{ proxy in
+    let commentsHPad = selectedTheme.comments.theme.type == .card ? selectedTheme.comments.theme.outerHPadding : selectedTheme.comments.theme.innerPadding.horizontal
+    ScrollViewReader { proxy in
       List {
         Group {
           Section {
             PostContent(post: post, selfAttr: selfAttr, sub: subreddit, forceCollapse: forceCollapse)
+//              .equatable()
             
             Text("Comments")
               .fontSize(20, .bold)
               .frame(maxWidth: .infinity, alignment: .leading)
               .id("comments-header")
-              .listRowInsets(EdgeInsets(top: 8, leading: 8, bottom: 8, trailing: 8))
+              .listRowInsets(EdgeInsets(top: selectedTheme.posts.commentsDistance / 2, leading:commentsHPad, bottom: 8, trailing: commentsHPad))
           }
           .listRowBackground(Color.clear)
           
           PostReplies(update: update, post: post, subreddit: subreddit, ignoreSpecificComment: ignoreSpecificComment, highlightID: highlightID, sort: sort, proxy: proxy)
-          
           
           if !ignoreSpecificComment && highlightID != nil {
             Section {
@@ -87,7 +94,7 @@ struct PostView: View {
         }
         .listRowSeparator(.hidden)
       }
-      .background(Color(UIColor.systemGroupedBackground))
+      .themedListBG(selectedTheme.posts.bg)
       .scrollContentBackground(.hidden)
       .transition(.opacity)
       .environment(\.defaultMinListRowHeight, 1)
@@ -123,7 +130,7 @@ struct PostView: View {
                   .fontSize(17, .bold)
               }
             }
-            
+
             if let data = subreddit.data, !feedsAndSuch.contains(subreddit.id) {
               Button {
                 routerProxy.router.path.append(SubViewType.info(subreddit))

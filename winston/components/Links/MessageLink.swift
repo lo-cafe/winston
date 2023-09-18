@@ -35,7 +35,7 @@ struct MessageLink: View {
       .frame(maxWidth: .infinity, alignment: .topLeading)
       .if(preferenceShowPostsCards) { view in
         view
-          .background(RR(20, .listBG).allowsHitTesting(false))
+          .background(RR(20, Color.listBG).allowsHitTesting(false))
           .mask(RR(20, .black))
       }
       .compositingGroup()

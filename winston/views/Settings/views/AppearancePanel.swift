@@ -60,6 +60,14 @@ struct AppearancePanel: View {
         Toggle("Disable subs list letter sections", isOn: $disableAlphabetLettersSectionsInSubsList)
       }
       
+      Section {
+        NavigationLink(value: SettingsPages.themes) {
+          Label("Themes", systemImage: "paintbrush.fill")
+        }
+      } footer: {
+        Text("This is a special menu because in Winston you can change 90% of what you see. Enjoy the theming system!")
+      }
+      
       Section("Posts") {
         Picker("", selection: Binding(get: {
           preferenceShowPostsCards ? "Card" : "Flat"

@@ -42,7 +42,7 @@ enum SearchTypeArr {
 
 struct Search: View {
   var reset: Bool
-  @ObservedObject var router: Router
+  @StateObject var router: Router
   @State private var searchType: SearchType = .subreddit
   @StateObject private var resultsSubs = ObservableArray<Subreddit>()
   @StateObject private var resultsUsers = ObservableArray<User>()
@@ -174,7 +174,7 @@ struct Search: View {
       }
 //      .defaultNavDestinations(router)
     }
-    .swipeAnywhere(routerProxy: RouterProxy(router))
+    .swipeAnywhere(router: router)
   }
 }
 

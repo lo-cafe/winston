@@ -7,7 +7,7 @@
 
 import SwiftUI
 import Defaults
-import _SpriteKit_SwiftUI
+import SpriteKit
 
 class Oops: ObservableObject {
   static var shared = Oops()
@@ -25,14 +25,15 @@ class Oops: ObservableObject {
 class TempGlobalState: ObservableObject {
   static var shared = TempGlobalState()
   @Published var globalLoader = GlobalLoader()
+  @Published var tabBarHeight: CGFloat? = nil
 }
 
 enum TabIdentifier {
   case posts, inbox, me, search, settings
 }
 
-struct TabPayload {
-  var reset = false
+class TabPayload: ObservableObject {
+  @Published var reset = false
   var router = Router()
 }
 
@@ -44,53 +45,81 @@ struct Tabber: View {
   @State var credModalOpen = false
   @State var choosingAccount = false
   @State var accountDrag: CGSize = .zero
-  @State var tabBarHeight: CGFloat?
+//  @State var tabBarHeight: CGFloat?
   @State private var morph = MorphingGradientCircleScene()
   @State var medium = UIImpactFeedbackGenerator(style: .soft)
-  @State var payload: [TabIdentifier:TabPayload] = [
-    .inbox: TabPayload(),
-    .me: TabPayload(),
-    .posts: TabPayload(),
-    .search: TabPayload(),
-    .settings: TabPayload(),
-  ]
-  @Default(.postsInBox) var postsInBox
-  @Default(.showUsernameInTabBar) var showUsernameInTabBar
-  @Default(.showTestersCelebrationModal) var showTestersCelebrationModal
-  @Default(.showTipJarModal) var showTipJarModal
+  @StateObject private var inboxPayload = TabPayload()
+  @StateObject private var mePayload = TabPayload()
+  @StateObject private var postsPayload = TabPayload()
+  @StateObject private var searchPayload = TabPayload()
+  @State private var settingsPayload = TabPayload()
+  @Environment(\.useTheme) private var currentTheme
+  @Environment(\.colorScheme) private var colorScheme
+  @Default(.showUsernameInTabBar) private var showUsernameInTabBar
+  @Default(.showTestersCelebrationModal) private var showTestersCelebrationModal
+  @Default(.showTipJarModal) private var showTipJarModal
+  
+  var payload: [TabIdentifier:TabPayload] { [
+    .inbox: inboxPayload,
+    .me: mePayload,
+    .posts: postsPayload,
+    .search: searchPayload,
+    .settings: settingsPayload,
+  ] }
+  
+  init(theme: WinstonTheme, cs: ColorScheme) {
+    Tabber.updateTabAndNavBar(tabTheme: theme.tabBarBG, navTheme: theme.navPanelBG, cs)
+  }
+  
+  static func updateTabAndNavBar(tabTheme: ThemeForegroundBG, navTheme: ThemeForegroundBG, _ cs: ColorScheme) {
+    let toolbarAppearence = UINavigationBarAppearance()
+    if !navTheme.blurry {
+      toolbarAppearence.configureWithOpaqueBackground()
+    }
+    toolbarAppearence.backgroundColor = UIColor(navTheme.color.cs(cs).color())
+    UINavigationBar.appearance().standardAppearance = toolbarAppearence
+    let transparentAppearence = UITabBarAppearance()
+    if !tabTheme.blurry {
+      transparentAppearence.configureWithOpaqueBackground()
+    }
+    transparentAppearence.backgroundColor = UIColor(tabTheme.color.cs(cs).color())
+    UITabBar.appearance().standardAppearance = transparentAppearence
+  }
   
   var body: some View {
+    let tabBarHeight = tempGlobalState.tabBarHeight
     let tabHeight = (tabBarHeight ?? 0) - getSafeArea().bottom
     TabView(selection: $activeTab.onUpdate { newTab in if activeTab == newTab { payload[newTab]!.reset.toggle() } }) {
       
-        Subreddits(reset: payload[.posts]!.reset, router: payload[.posts]!.router)
+      Subreddits(reset: payload[.posts]!.reset, router: payload[.posts]!.router)
         .background(TabBarAccessor { tabBar in
-          if tabBarHeight != tabBar.bounds.height { tabBarHeight = tabBar.bounds.height }
+          if tabBarHeight != tabBar.bounds.height { tempGlobalState.tabBarHeight = tabBar.bounds.height }
         })
+        .tag(TabIdentifier.posts)
         .tabItem {
           VStack {
             Image(systemName: "doc.text.image")
             Text("Posts")
           }
         }
-        .tag(TabIdentifier.posts)
-
-        Inbox(reset: payload[.inbox]!.reset, router: payload[.inbox]!.router)
+      
+      Inbox(reset: payload[.inbox]!.reset, router: payload[.inbox]!.router)
         .background(TabBarAccessor { tabBar in
-          if tabBarHeight != tabBar.bounds.height { tabBarHeight = tabBar.bounds.height }
+          if tabBarHeight != tabBar.bounds.height { tempGlobalState.tabBarHeight = tabBar.bounds.height }
         })
+        .tag(TabIdentifier.inbox)
         .tabItem {
           VStack {
             Image(systemName: "bell.fill")
             Text("Inbox")
           }
         }
-        .tag(TabIdentifier.inbox)
-
-        Me(reset: payload[.me]!.reset, router: payload[.me]!.router)
+      
+      Me(reset: payload[.me]!.reset, router: payload[.me]!.router)
         .background(TabBarAccessor { tabBar in
-          if tabBarHeight != tabBar.bounds.height { tabBarHeight = tabBar.bounds.height }
+          if tabBarHeight != tabBar.bounds.height { tempGlobalState.tabBarHeight = tabBar.bounds.height }
         })
+        .tag(TabIdentifier.me)
         .tabItem {
           VStack {
             Image(systemName: "person.fill")
@@ -101,36 +130,39 @@ struct Tabber: View {
             }
           }
         }
-        .tag(TabIdentifier.me)
-
-        Search(reset: payload[.search]!.reset, router: payload[.search]!.router)
+      
+      Search(reset: payload[.search]!.reset, router: payload[.search]!.router)
         .background(TabBarAccessor { tabBar in
-          if tabBarHeight != tabBar.bounds.height { tabBarHeight = tabBar.bounds.height }
+          if tabBarHeight != tabBar.bounds.height { tempGlobalState.tabBarHeight = tabBar.bounds.height }
         })
+        .tag(TabIdentifier.search)
         .tabItem {
           VStack {
             Image(systemName: "magnifyingglass")
             Text("Search")
           }
         }
-        .tag(TabIdentifier.search)
-
-        Settings(reset: payload[.settings]!.reset, router: payload[.settings]!.router)
+      
+      Settings(reset: payload[.settings]!.reset, router: payload[.settings]!.router)
         .background(TabBarAccessor { tabBar in
-          if tabBarHeight != tabBar.bounds.height { tabBarHeight = tabBar.bounds.height }
+          if tabBarHeight != tabBar.bounds.height { tempGlobalState.tabBarHeight = tabBar.bounds.height }
         })
+        .tag(TabIdentifier.settings)
         .tabItem {
           VStack {
             Image(systemName: "gearshape.fill")
             Text("Settings")
           }
         }
-        .tag(TabIdentifier.settings)
       
     }
     .replyModalPresenter()
     .overlay(
-      GlobalLoaderView()
+      GeometryReader { geo in
+        GlobalLoaderView()
+          .frame(width: geo.size.width, height: geo.size.height, alignment: .bottom)
+      }
+        .ignoresSafeArea(.keyboard)
       , alignment: .bottom
     )
     .overlay(
@@ -142,15 +174,6 @@ struct Tabber: View {
           .overlay(
             !choosingAccount
             ? nil
-            //          : BlurRadialGradientView()
-            //                      .frame(width: 150, height: 150)
-            //                      .clipShape(Circle())
-            //          Circle()
-            //            .fill(RadialGradient(gradient: Gradient(colors: [.blue, .blue.opacity(0)]), center: .center, startRadius: 0, endRadius: 150))
-            //            .opacity(choosingAccount ? 0.75 : 0)
-            //            .frame(width: 300, height: 300)
-            //            .allowsHitTesting(false)
-            
             : ZStack {
               Circle()
                 .fill( RadialGradient(
@@ -199,7 +222,11 @@ struct Tabber: View {
           )
           .contentShape(Rectangle())
           .onTapGesture {
-            activeTab = .me
+            if activeTab == .me {
+              payload[.me]!.reset.toggle()
+            } else {
+              activeTab = .me
+            }
           }
           .gesture(
             LongPressGesture()
@@ -235,7 +262,7 @@ struct Tabber: View {
           )
           .frame(width: geo.size.width, height: tabHeight)
           .contentShape(Rectangle())
-          .swipeAnywhere(routerProxy: RouterProxy(payload[activeTab]!.router), forceEnable: true)
+          .swipeAnywhere(router: payload[activeTab]!.router, forceEnable: true)
           .frame(width: geo.size.width, height: geo.size.height, alignment: .bottom)
       }
         .ignoresSafeArea(.keyboard)
@@ -277,6 +304,12 @@ struct Tabber: View {
         }
       }
     }
+//    .onChange(of: currentTheme.tabBarBG, perform: { val in
+//      Tabber.updateTabAndNavBar(tabTheme: val, navTheme: currentTheme.navPanelBG, colorScheme)
+//    })
+//    .onChange(of: currentTheme.navPanelBG, perform: { val in
+//      Tabber.updateTabAndNavBar(tabTheme: currentTheme.tabBarBG, navTheme: val, colorScheme)
+//    })
     .onChange(of: redditAPI.loggedUser) { user in
       if user.apiAppID == nil || user.apiAppSecret == nil {
         withAnimation(spring) {
@@ -312,6 +345,8 @@ struct Tabber: View {
       Onboarding(open: $credModalOpen)
         .interactiveDismissDisabled(true)
     }
+    .accentColor(currentTheme.accentColor.cs(colorScheme).color())
+//    .id(currentTheme.tabBarBG)
   }
 }
 
@@ -364,7 +399,9 @@ struct TabBarAccessor: UIViewControllerRepresentable {
     override func viewWillAppear(_ animated: Bool) {
       super.viewWillAppear(animated)
       if let tabBar = self.tabBarController {
-        self.callback(tabBar.tabBar)
+        Task(priority: .background) {
+          self.callback(tabBar.tabBar)
+        }
       }
     }
   }

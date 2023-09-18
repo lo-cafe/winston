@@ -6,13 +6,15 @@
 //
 
 import SwiftUI
+import Defaults
 
 struct Inbox: View {
   var reset: Bool
-  @ObservedObject var router: Router
+  @StateObject var router: Router
   @StateObject var messages = ObservableArray<Message>()
   @State var loading = false
   @EnvironmentObject var redditAPI: RedditAPI
+  @Environment(\.useTheme) private var selectedTheme
   
   func fetch(_ loadMore: Bool = false, _ force: Bool = false) async {
     if messages.data.count > 0 && !force { return }
@@ -50,6 +52,9 @@ struct Inbox: View {
           .listRowBackground(Color.clear)
           .listRowInsets(EdgeInsets(top: 6, leading: 0, bottom: 6, trailing: 0))
         }
+        .themedListBG(selectedTheme.lists.bg)
+        .scrollContentBackground(.hidden)
+        .onChange(of: reset) { _ in router.path.removeLast(router.path.count) }
       }
       .onAppear {
         Task(priority: .background) {
@@ -61,7 +66,7 @@ struct Inbox: View {
       }
       .navigationTitle("Inbox")
     }
-    .swipeAnywhere(routerProxy: RouterProxy(router))
+    .swipeAnywhere(router: router)
   }
 }
 

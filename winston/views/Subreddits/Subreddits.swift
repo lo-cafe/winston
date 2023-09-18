@@ -19,7 +19,7 @@ class SubsDictContainer: ObservableObject {
 struct Subreddits: View {
   var reset: Bool
   @Environment(\.managedObjectContext) private var context
-  @ObservedObject var router: Router
+  @StateObject var router: Router
   @Environment(\.openURL) private var openURL
   @EnvironmentObject private var redditAPI: RedditAPI
   @FetchRequest(sortDescriptors: [NSSortDescriptor(key: "name", ascending: true)], animation: .default) var subreddits: FetchedResults<CachedSub>
@@ -32,6 +32,8 @@ struct Subreddits: View {
   @Default(.preferenceDefaultFeed) var preferenceDefaultFeed // handle default feed selection routing
   @Default(.likedButNotSubbed) var likedButNotSubbed // subreddits that a user likes but is not subscribed to so they wont be in subsDict
   @Default(.disableAlphabetLettersSectionsInSubsList) var disableAlphabetLettersSectionsInSubsList
+  @Environment(\.useTheme) private var selectedTheme
+  @Environment(\.colorScheme) private var cs
   
   var sections: [String:[CachedSub]] {
     return Dictionary(grouping: subreddits.filter({ $0.user_is_subscriber })) { sub in
@@ -90,61 +92,69 @@ struct Subreddits: View {
               }
             }
             
-            if searchText != "" {
-              Section("Found subs") {
-                ForEach(Array(subreddits.filter { ($0.display_name ?? "").lowercased().contains(searchText.lowercased()) }), id: \.self.uuid) { cachedSub in
-                  SubItem(sub: Subreddit(data: SubredditData(entity: cachedSub), api: redditAPI), cachedSub: cachedSub)
-                    .equatable()
-                }
-              }
-            } else {
-              let favs = subreddits.filter { $0.user_has_favorited && $0.user_is_subscriber }
-              if favs.count > 0 {
-                Section("Favorites") {
-                  ForEach(favs.sorted(by: { x, y in
-                    (x.display_name?.lowercased() ?? "a") < (y.display_name?.lowercased() ?? "a")
-                  }), id: \.self) { cachedSub in
+            Group {
+              if searchText != "" {
+                Section("Found subs") {
+                  ForEach(Array(subreddits.filter { ($0.display_name ?? "").lowercased().contains(searchText.lowercased()) }), id: \.self.uuid) { cachedSub in
                     SubItem(sub: Subreddit(data: SubredditData(entity: cachedSub), api: redditAPI), cachedSub: cachedSub)
                       .equatable()
-                      .id("\(cachedSub.uuid ?? "")-fav")
                   }
-                  .onDelete(perform: deleteFromFavorites)
                 }
-              }
-              
-              if disableAlphabetLettersSectionsInSubsList {
-                
-                ForEach(subreddits.filter({ $0.user_is_subscriber }).sorted(by: { x, y in
-                  (x.display_name?.lowercased() ?? "a") < (y.display_name?.lowercased() ?? "a")
-                })) { cachedSub in
-                  SubItem(sub: Subreddit(data: SubredditData(entity: cachedSub), api: redditAPI), cachedSub: cachedSub)
-                    .equatable()
-                }
-                
               } else {
+                let favs = subreddits.filter { $0.user_has_favorited && $0.user_is_subscriber }
+                if favs.count > 0 {
+                  Section("Favorites") {
+                    ForEach(favs.sorted(by: { x, y in
+                      (x.display_name?.lowercased() ?? "a") < (y.display_name?.lowercased() ?? "a")
+                    }), id: \.self) { cachedSub in
+                      SubItem(sub: Subreddit(data: SubredditData(entity: cachedSub), api: redditAPI), cachedSub: cachedSub)
+                        .equatable()
+                        .id("\(cachedSub.uuid ?? "")-fav")
+                    }
+                    .onDelete(perform: deleteFromFavorites)
+                  }
+                }
                 
-                ForEach(sections.keys.sorted(), id: \.self) { letter in
-                  Section(header: Text(letter)) {
-                    if let arr = sections[letter] {
-                      ForEach(arr.sorted(by: { x, y in
-                        (x.display_name?.lowercased() ?? "a") < (y.display_name?.lowercased() ?? "a")
-                      }), id: \.self.uuid) { cachedSub in
-                        SubItem(sub: Subreddit(data: SubredditData(entity: cachedSub), api: redditAPI), cachedSub: cachedSub)
-                          .equatable()
-                      }
-                      .onDelete(perform: { i in
-                        deleteFromList(at: i, letter: letter)
-                      })
+                if disableAlphabetLettersSectionsInSubsList {
+                  
+                  Section("Subs") {
+                    ForEach(subreddits.filter({ $0.user_is_subscriber }).sorted(by: { x, y in
+                      (x.display_name?.lowercased() ?? "a") < (y.display_name?.lowercased() ?? "a")
+                    })) { cachedSub in
+                      SubItem(sub: Subreddit(data: SubredditData(entity: cachedSub), api: redditAPI), cachedSub: cachedSub)
+                        .equatable()
                     }
                   }
+                  
+                } else {
+                  
+                  ForEach(sections.keys.sorted(), id: \.self) { letter in
+                    Section(header: Text(letter)) {
+                      if let arr = sections[letter] {
+                        ForEach(arr.sorted(by: { x, y in
+                          (x.display_name?.lowercased() ?? "a") < (y.display_name?.lowercased() ?? "a")
+                        }), id: \.self.uuid) { cachedSub in
+                          SubItem(sub: Subreddit(data: SubredditData(entity: cachedSub), api: redditAPI), cachedSub: cachedSub)
+                            .equatable()
+                        }
+                        .onDelete(perform: { i in
+                          deleteFromList(at: i, letter: letter)
+                        })
+                      }
+                    }
+                  }
+                  
                 }
                 
+                
+                
               }
-              
-              
-              
             }
+            .listRowSeparatorTint(selectedTheme.lists.dividersColors.cs(cs).color())
+            .listRowBackground(Rectangle().fill(selectedTheme.lists.foreground.blurry ? AnyShapeStyle(.bar) : AnyShapeStyle(selectedTheme.lists.foreground.color.cs(cs).color())).overlay(!selectedTheme.lists.foreground.blurry ? nil : Rectangle().fill(selectedTheme.lists.foreground.color.cs(cs).color())))
           }
+          .themedListBG(selectedTheme.lists.bg)
+          .scrollContentBackground(.hidden)
           .scrollIndicators(.hidden)
           .listStyle(.sidebar)
           .scrollDismissesKeyboard(.immediately)
@@ -192,7 +202,7 @@ struct Subreddits: View {
       //      .defaultNavDestinations(router)
       //      .onDelete(perform: deleteItems)
     }
-    .swipeAnywhere(routerProxy: RouterProxy(router))
+    .swipeAnywhere(router: router)
     .animation(.default, value: router.path)
   }
   

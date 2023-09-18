@@ -102,6 +102,7 @@ struct PreviewRedditLinkContent: View {
           VStack {
             //            ShortCommentPostLink(comment: comment)
             CommentLink(showReplies: false, comment: comment)
+//              .equatable()
           }
           .padding(.vertical, 8)
         case .post(let post):

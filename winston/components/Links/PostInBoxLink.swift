@@ -95,8 +95,8 @@ struct PostInBoxLink: View {
         .clipped()
       : nil
     )
-    .background(RR(20, .listBG))
-    .mask(RR(20, .listBG))
+    .background(RR(20, Color.listBG))
+    .mask(RR(20, Color.listBG))
     .offset(y: offsetY ?? 0)
     .scaleEffect(dragging ? 0.975 : 1)
     .background(

@@ -9,7 +9,7 @@ import SwiftUI
 
 struct Me: View {
   var reset: Bool
-  @ObservedObject var router: Router
+  @StateObject var router: Router
   @Environment(\.openURL) private var openURL
   @EnvironmentObject private var redditAPI: RedditAPI
   @State private var loading = true
@@ -31,11 +31,11 @@ struct Me: View {
               }
           }
         }
+        .onChange(of: reset) { _ in router.path.removeLast(router.path.count) }
       }
 //      .defaultNavDestinations(router)
     }
-    .onChange(of: reset) { _ in router.path.removeLast(router.path.count) }
-    .swipeAnywhere(routerProxy: RouterProxy(router))
+    .swipeAnywhere(router: router)
   }
 }
 

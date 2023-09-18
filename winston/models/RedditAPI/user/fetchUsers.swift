@@ -91,7 +91,7 @@ extension RedditAPI {
 
 func getNamesFromComments(_ comments: [Comment]? = nil, _ commentDatas: [CommentData]? = nil) -> [String] {
   var namesArr: [String] = []
-  let actualComments = commentDatas ?? comments!.map { $0.data! }
+  let actualComments = commentDatas ?? comments?.compactMap { $0.data } ?? []
   actualComments.forEach { comment in
     if let fullname = comment.author_fullname {
       namesArr.append(fullname)

@@ -10,10 +10,11 @@ import SwiftUI
 
 struct ObservedScrollView<Content: View>: View {
     @Binding var offset: CGFloat
+    var showsIndicators = true
     let content: () -> Content
 
     var body: some View {
-        ScrollView {
+        ScrollView(showsIndicators: showsIndicators) {
             VStack {
                 content()
             }

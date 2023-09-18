@@ -67,12 +67,12 @@ struct PostFloatingPill: View {
                 }
               }
             }
-            .toast(isPresenting: $showAddedToast, tapToDismiss: true){
-              AlertToast(displayMode: .hud, type: .systemImage("plus.circle", Color.blue), title: "Added to Posts Box!")
-            }
-            .toast(isPresenting: $showRemovedToast, tapToDismiss: true){
-              AlertToast(displayMode: .hud, type: .systemImage("trash", Color.blue), title: "Removed from Posts Box!")
-            }
+//            .toast(isPresenting: $showAddedToast, tapToDismiss: true){
+//              AlertToast(displayMode: .hud, type: .systemImage("plus.circle", Color.blue), title: "Added to Posts Box!")
+//            }
+//            .toast(isPresenting: $showRemovedToast, tapToDismiss: true){
+//              AlertToast(displayMode: .hud, type: .systemImage("trash", Color.blue), title: "Removed from Posts Box!")
+//            }
             
             LightBoxButton(icon: "arrowshape.turn.up.left.fill") {
               withAnimation(spring) {

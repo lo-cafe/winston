@@ -10,7 +10,6 @@ import Defaults
 
 struct CommentLinkFull: View {
   @EnvironmentObject private var routerProxy: RouterProxy
-  @Default(.preferenceShowCommentsCards) private var preferenceShowCommentsCards
   var post: Post
   var subreddit: Subreddit
   var arrowKinds: [ArrowKind]
@@ -19,8 +18,12 @@ struct CommentLinkFull: View {
   @State private var loadMoreLoading = false
   @State private var id = UUID().uuidString
   @StateObject private var attrStrLoader = AttributedStringLoader()
-  @Default(.cardedCommentsInnerHPadding) var cardedCommentsInnerHPadding
+  @Environment(\.useTheme) private var selectedTheme
+  @Environment(\.colorScheme) private var cs
+  
   var body: some View {
+    let cardedCommentsInnerHPadding = selectedTheme.comments.theme.innerPadding.horizontal
+    let preferenceShowCommentsCards = selectedTheme.comments.theme.type == .card
     let horPad = preferenceShowCommentsCards ? cardedCommentsInnerHPadding : 0
     if let data = comment.data {
       HStack {
@@ -49,7 +52,7 @@ struct CommentLinkFull: View {
       }
       .padding(.horizontal, horPad)
       .frame(maxWidth: .infinity, alignment: .leading)
-      .background(preferenceShowCommentsCards ? Color.listBG : .clear)
+      .background(selectedTheme.comments.theme.bg.cs(cs).color())
       .contentShape(Rectangle())
       .onTapGesture {
         routerProxy.router.path.append(PostViewPayload(post: post, postSelfAttr: attrStrLoader.data, sub: subreddit))

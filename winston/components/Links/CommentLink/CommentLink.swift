@@ -9,7 +9,6 @@ import SwiftUI
 import Defaults
 import SwiftUIIntrospect
 
-let NEST_LINES_WIDTH: CGFloat = 12
 let ZINDEX_SLOTS_COMMENT = 100000
 
 struct Top: Shape {
@@ -27,6 +26,7 @@ enum CommentBGSide {
 }
 
 struct CommentBG: Shape {
+  var cornerRadius: CGFloat = 10
   var pos: CommentBGSide
   func path(in rect: CGRect) -> Path {
     var roundingCorners: UIRectCorner = []
@@ -41,7 +41,7 @@ struct CommentBG: Shape {
     case .single:
       roundingCorners = [.bottomLeft, .bottomRight, .topLeft, .topRight]
     }
-    let path = UIBezierPath(roundedRect: rect, byRoundingCorners: roundingCorners, cornerRadii: CGSize(width: 20, height: 20))
+    let path = UIBezierPath(roundedRect: rect, byRoundingCorners: roundingCorners, cornerRadii: CGSize(width: cornerRadius, height: cornerRadius))
     return Path(path.cgPath)
   }
 }
@@ -51,7 +51,14 @@ class SubCommentsReferencesContainer: ObservableObject {
   @Published var data: [Comment] = []
 }
 
-struct CommentLink: View {
+struct CommentLink: View, Equatable {
+  static func == (lhs: CommentLink, rhs: CommentLink) -> Bool {
+    lhs.post?.data == rhs.post?.data &&
+    lhs.subreddit?.data == rhs.subreddit?.data &&
+    lhs.indentLines == rhs.indentLines &&
+    lhs.highlightID == rhs.highlightID
+  }
+  
   var lineLimit: Int?
   var highlightID: String?
   var post: Post?
@@ -89,6 +96,7 @@ struct CommentLink: View {
             let childrenCount = comment.childrenWinston.data.count
             if let _ = commentChild.data {
               CommentLink(post: post, arrowKinds: arrowKinds.map { $0.child } + [(childrenCount - 1 == index ? ArrowKind.curve : ArrowKind.straightCurve)], postFullname: postFullname, parentElement: .comment(comment), comment: commentChild)
+//                .equatable()
             }
           }
         }

@@ -39,9 +39,5 @@ struct MultiLink: View {
     } primaryAction: {
       routerProxy.router.path.append(MultiViewType.posts(Multi(data: multi, api: redditAPI)))
     }
-
-//    .onTapGesture {
-//      router.path.append(MultiViewType.posts(Multi(data: multi, api: redditAPI)))
-//    }
   }
 }

@@ -10,27 +10,33 @@ import Defaults
 import AVKit
 import AVFoundation
 
-struct PostContent: View {
+struct PostContent: View, Equatable {
+  static func == (lhs: PostContent, rhs: PostContent) -> Bool {
+    lhs.post.id == rhs.post.id
+  }
+  
   @ObservedObject var post: Post
   var selfAttr: AttributedString? = nil
   var sub: Subreddit
   var forceCollapse: Bool = false
-  @State private var height: CGFloat = 0
+  @State private var size: CGSize = .zero
   @State private var collapsed = false
   @Default(.blurPostNSFW) private var blurPostNSFW
-  @Default(.preferenceShowPostsAvatars) var showPostAvatars
-  @Default(.postViewTitleSize) var postViewTitleSize
-  @Default(.postViewBodySize) var postViewBodySize
   @EnvironmentObject private var routerProxy: RouterProxy
-  private var contentWidth: CGFloat { UIScreen.screenWidth - 16 }
+  @Environment(\.useTheme) private var selectedTheme
+  @Environment(\.colorScheme) private var cs
+  
+  var contentWidth: CGFloat { UIScreen.screenWidth - (selectedTheme.posts.padding.horizontal * 2) }
   
   var body: some View {
+    let postsTheme = selectedTheme.posts
     let isCollapsed = forceCollapse || collapsed
     if let data = post.data {
       let over18 = data.over_18 ?? false
       Group {
         Text(data.title)
-          .fontSize(postViewTitleSize, .semibold)
+          .fontSize(postsTheme.titleText.size, .semibold)
+          .foregroundColor(postsTheme.titleText.color.cs(cs).color())
           .fixedSize(horizontal: false, vertical: true)
           .id("post-title")
           .onAppear {
@@ -38,10 +44,10 @@ struct PostContent: View {
               await post.toggleSeen(true)
             }
           }
-          .listRowInsets(EdgeInsets(top: 0, leading: 8, bottom: 6, trailing: 8))
+          .listRowInsets(EdgeInsets(top: postsTheme.padding.vertical, leading: postsTheme.padding.horizontal, bottom: postsTheme.spacing / 2, trailing: selectedTheme.posts.padding.horizontal))
                 
         VStack(spacing: 0) {
-          VStack(spacing: 12) {
+          VStack(spacing: selectedTheme.posts.spacing) {
             
             if let extractedMedia = mediaExtractor(post) {
               MediaPresenter(media: extractedMedia, post: post, compact: false, contentWidth: contentWidth)
@@ -50,7 +56,9 @@ struct PostContent: View {
             
             if data.selftext != "" {
               VStack {
-                MD(selfAttr.isNil ? .str(data.selftext) : .attr(selfAttr!), fontSize: postViewBodySize)
+                MD(selfAttr.isNil ? .str(data.selftext) : .attr(selfAttr!), fontSize: postsTheme.bodyText.size)
+                  .foregroundColor(postsTheme.bodyText.color.cs(cs).color())
+                  .frame(maxWidth: .infinity, alignment: .leading)
               }
               .contentShape(Rectangle())
               .onTapGesture { withAnimation(spring) { collapsed.toggle() } }
@@ -58,7 +66,8 @@ struct PostContent: View {
             }
           }
           .fixedSize(horizontal: false, vertical: true)
-          .modifier(AnimatingCellHeight(height: isCollapsed ? 75 : height, disable: !forceCollapse && height == 0))
+          .measure($size)
+          .modifier(AnimatingCellHeight(height: isCollapsed ? 75 : size.height, disable: !forceCollapse && size.height == 0))
           .clipped()
           .opacity(isCollapsed ? 0.3 : 1)
           .mask(
@@ -85,49 +94,48 @@ struct PostContent: View {
               .opacity(isCollapsed ? 1 : 0)
             , alignment: .bottom
           )
-          .background(GeometryReader { geo in Color.clear.onAppear {
-            if height == 0 && !forceCollapse { height = geo.size.height }
-          }})
           .nsfw(over18 && blurPostNSFW)
         }
         .id("post-content")
-        .listRowInsets(EdgeInsets(top: 6, leading: 8, bottom: 6, trailing: 8))
+        .listRowInsets(EdgeInsets(top: postsTheme.spacing / 2, leading: postsTheme.padding.horizontal, bottom: postsTheme.spacing / 2, trailing: postsTheme.spacing / 2))
         
         if let fullname = data.author_fullname {
-          Badge(showAvatar: showPostAvatars, author: data.author, fullname: fullname, created: data.created)
+          Badge(author: data.author, fullname: fullname, created: data.created, theme: postsTheme.badge)
+            .equatable()
             .id("post-badge")
-            .listRowInsets(EdgeInsets(top: 6, leading: 8, bottom: 8, trailing: 8))
+            .listRowInsets(EdgeInsets(top: postsTheme.spacing / 2, leading: postsTheme.padding.horizontal, bottom: postsTheme.spacing * 0.75, trailing: postsTheme.padding.horizontal))
         }
         
         
         SubsNStuffLine(showSub: true, feedsAndSuch: feedsAndSuch, post: post, sub: sub, routerProxy: routerProxy, over18: over18)
+          .equatable()
           .id("post-flair-divider")
-          .listRowInsets(EdgeInsets(top: 0, leading: 8, bottom: 8, trailing: 8))
+          .listRowInsets(EdgeInsets(top: 0, leading: postsTheme.padding.horizontal, bottom: postsTheme.commentsDistance / 2, trailing: postsTheme.padding.horizontal))
         
-//        HStack(spacing: 0) {
-//          if let link_flair_text = data.link_flair_text {
-//            Rectangle()
-//              .fill(.primary.opacity(0.1))
-//              .frame(maxWidth: .infinity, maxHeight: 1)
-//
-//            Text(link_flair_text)
-//              .fontSize(13)
-//              .padding(.horizontal, 6)
-//              .padding(.vertical, 2)
-//              .background(Capsule(style: .continuous).fill(.secondary.opacity(0.25)))
-//              .foregroundColor(.primary.opacity(0.5))
-//              .fixedSize()
-//          }
-//          Rectangle()
-//            .fill(.primary.opacity(0.1))
-//            .frame(maxWidth: .infinity, maxHeight: 1)
-//        }
-//        .padding(.horizontal, 2)
-//        .id("post-flair-divider")
-//        .listRowInsets(EdgeInsets(top: 0, leading: 8, bottom: 8, trailing: 8))
+        HStack(spacing: 0) {
+          if let link_flair_text = data.link_flair_text {
+            Rectangle()
+              .fill(.primary.opacity(0.1))
+              .frame(maxWidth: .infinity, maxHeight: 1)
+
+            Text(link_flair_text)
+              .fontSize(13)
+              .padding(.horizontal, 6)
+              .padding(.vertical, 2)
+              .background(Capsule(style: .continuous).fill(.secondary.opacity(0.25)))
+              .foregroundColor(.primary.opacity(0.5))
+              .fixedSize()
+          }
+          Rectangle()
+            .fill(.primary.opacity(0.1))
+            .frame(maxWidth: .infinity, maxHeight: 1)
+        }
+        .padding(.horizontal, 2)
+        .id("post-flair-divider")
+        .listRowInsets(EdgeInsets(top: 0, leading: 8, bottom: 8, trailing: 8))
       }
       .frame(maxWidth: .infinity, alignment: .leading)
-      .foregroundColor(.primary)
+//      .foregroundColor(.primary)
       .multilineTextAlignment(.leading)
     } else {
       VStack {
