@@ -16,20 +16,20 @@ class SubsDictContainer: ObservableObject {
 }
 
 
-struct Subreddits: View {
-  var reset: Bool
+struct Subreddits: View, Equatable {
+  static func == (lhs: Subreddits, rhs: Subreddits) -> Bool {
+    return lhs.loaded == rhs.loaded
+  }
+  var loaded: Bool
+  @StateObject var routerProxy: RouterProxy
   @Environment(\.managedObjectContext) private var context
-  @StateObject var router: Router
-  @Environment(\.openURL) private var openURL
   @EnvironmentObject private var redditAPI: RedditAPI
   @FetchRequest(sortDescriptors: [NSSortDescriptor(key: "name", ascending: true)], animation: .default) var subreddits: FetchedResults<CachedSub>
   @FetchRequest(sortDescriptors: [NSSortDescriptor(key: "name", ascending: true)], animation: .default) var multis: FetchedResults<CachedMulti>
   @State private var searchText: String = ""
   @StateObject private var subsDict = SubsDictContainer()
-  @State private var loaded = false
   @State private var favoritesArr: [Subreddit] = []
   
-  @Default(.preferenceDefaultFeed) var preferenceDefaultFeed // handle default feed selection routing
   @Default(.likedButNotSubbed) var likedButNotSubbed // subreddits that a user likes but is not subscribed to so they wont be in subsDict
   @Default(.disableAlphabetLettersSectionsInSubsList) var disableAlphabetLettersSectionsInSubsList
   @Environment(\.useTheme) private var selectedTheme
@@ -42,168 +42,138 @@ struct Subreddits: View {
   }
   
   var body: some View {
-    //    let groupedMultisCache = Dictionary(grouping: multis) { $0.display_name.prefix(1) }
-    //    let groupedSubsCache = Dictionary(grouping: subreddits) { $0.display_name?.prefix(1) }
-    
-    //    let subsDictData = subsDict.data
-    NavigationStack(path: $router.path) {
-      DefaultDestinationInjector(routerProxy: RouterProxy(router)) {
-        ScrollViewReader { proxy in
-          List {
-            if searchText == "" {
-              VStack(spacing: 12) {
-                HStack(spacing: 12) {
-                  ListBigBtn(icon: "house.circle.fill", iconColor: .blue, label: "Home", destination: Subreddit(id: "home", api: redditAPI))
-                  
-                  ListBigBtn(icon: "chart.line.uptrend.xyaxis.circle.fill", iconColor: .red, label: "Popular", destination: Subreddit(id: "popular", api: redditAPI))
-                }
-                HStack(spacing: 12) {
-                  ListBigBtn(icon: "signpost.right.and.left.circle.fill", iconColor: .orange, label: "All", destination: Subreddit(id: "all", api: redditAPI))
-                  
-                  ListBigBtn(icon: "bookmark.circle.fill", iconColor: .green, label: "Saved", destination: Subreddit(id: "saved", api: redditAPI))
-                    .opacity(0.5).allowsHitTesting(false)
-                }
-              }
-              .frame(maxWidth: .infinity)
-              .id("bigButtons")
-              .listRowSeparator(.hidden)
-              .listRowBackground(Color.clear)
-              .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
+    ScrollViewReader { proxy in
+      List {
+        if searchText == "" {
+          VStack(spacing: 12) {
+            HStack(spacing: 12) {
+              ListBigBtn(icon: "house.circle.fill", iconColor: .blue, label: "Home", destination: Subreddit(id: "home", api: redditAPI))
               
+              ListBigBtn(icon: "chart.line.uptrend.xyaxis.circle.fill", iconColor: .red, label: "Popular", destination: Subreddit(id: "popular", api: redditAPI))
+            }
+            HStack(spacing: 12) {
+              ListBigBtn(icon: "signpost.right.and.left.circle.fill", iconColor: .orange, label: "All", destination: Subreddit(id: "all", api: redditAPI))
               
-              PostsInBoxView(someOpened: router.path.count > 0)
-                .scrollIndicators(.hidden)
-                .listRowInsets(EdgeInsets(top: 0, leading: 16, bottom: 0, trailing: 16))
-                .listRowBackground(Color.clear)
-              
-              if multis.count > 0 {
-                Section("Multis") {
-                  ScrollView(.horizontal) {
-                    HStack(spacing: 16) {
-                      ForEach(multis) { multi in
-                        MultiLink(multi: MultiData(entity: multi), routerProxy: RouterProxy(router))
-                      }
-                    }
-                    .padding(.horizontal, 16)
+              ListBigBtn(icon: "bookmark.circle.fill", iconColor: .green, label: "Saved", destination: Subreddit(id: "saved", api: redditAPI))
+                .opacity(0.5).allowsHitTesting(false)
+            }
+          }
+          .frame(maxWidth: .infinity)
+          .id("bigButtons")
+          .listRowSeparator(.hidden)
+          .listRowBackground(Color.clear)
+          .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
+          
+          
+          PostsInBoxView()
+            .scrollIndicators(.hidden)
+            .listRowInsets(EdgeInsets(top: 0, leading: 16, bottom: 0, trailing: 16))
+            .listRowBackground(Color.clear)
+          
+          if multis.count > 0 {
+            Section("Multis") {
+              ScrollView(.horizontal) {
+                HStack(spacing: 16) {
+                  ForEach(multis) { multi in
+                    MultiLink(multi: MultiData(entity: multi), routerProxy: routerProxy)
                   }
-                  .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
                 }
-                .listRowBackground(Color.clear)
+                .padding(.horizontal, 16)
+              }
+              .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
+            }
+            .listRowBackground(Color.clear)
+          }
+        }
+        
+        Group {
+          if searchText != "" {
+            Section("Found subs") {
+              ForEach(Array(subreddits.filter { ($0.display_name ?? "").lowercased().contains(searchText.lowercased()) }), id: \.self.uuid) { cachedSub in
+                SubItem(sub: Subreddit(data: SubredditData(entity: cachedSub), api: redditAPI), cachedSub: cachedSub)
+                  .equatable()
+              }
+            }
+          } else {
+            let favs = subreddits.filter { $0.user_has_favorited && $0.user_is_subscriber }
+            if favs.count > 0 {
+              Section("Favorites") {
+                ForEach(favs.sorted(by: { x, y in
+                  (x.display_name?.lowercased() ?? "a") < (y.display_name?.lowercased() ?? "a")
+                }), id: \.self) { cachedSub in
+                  SubItem(sub: Subreddit(data: SubredditData(entity: cachedSub), api: redditAPI), cachedSub: cachedSub)
+                    .equatable()
+                    .id("\(cachedSub.uuid ?? "")-fav")
+                }
+                .onDelete(perform: deleteFromFavorites)
               }
             }
             
-            Group {
-              if searchText != "" {
-                Section("Found subs") {
-                  ForEach(Array(subreddits.filter { ($0.display_name ?? "").lowercased().contains(searchText.lowercased()) }), id: \.self.uuid) { cachedSub in
-                    SubItem(sub: Subreddit(data: SubredditData(entity: cachedSub), api: redditAPI), cachedSub: cachedSub)
-                      .equatable()
-                  }
+            if disableAlphabetLettersSectionsInSubsList {
+              
+              Section("Subs") {
+                ForEach(subreddits.filter({ $0.user_is_subscriber }).sorted(by: { x, y in
+                  (x.display_name?.lowercased() ?? "a") < (y.display_name?.lowercased() ?? "a")
+                })) { cachedSub in
+                  SubItem(sub: Subreddit(data: SubredditData(entity: cachedSub), api: redditAPI), cachedSub: cachedSub)
+                    .equatable()
                 }
-              } else {
-                let favs = subreddits.filter { $0.user_has_favorited && $0.user_is_subscriber }
-                if favs.count > 0 {
-                  Section("Favorites") {
-                    ForEach(favs.sorted(by: { x, y in
-                      (x.display_name?.lowercased() ?? "a") < (y.display_name?.lowercased() ?? "a")
-                    }), id: \.self) { cachedSub in
-                      SubItem(sub: Subreddit(data: SubredditData(entity: cachedSub), api: redditAPI), cachedSub: cachedSub)
-                        .equatable()
-                        .id("\(cachedSub.uuid ?? "")-fav")
-                    }
-                    .onDelete(perform: deleteFromFavorites)
-                  }
-                }
-                
-                if disableAlphabetLettersSectionsInSubsList {
-                  
-                  Section("Subs") {
-                    ForEach(subreddits.filter({ $0.user_is_subscriber }).sorted(by: { x, y in
-                      (x.display_name?.lowercased() ?? "a") < (y.display_name?.lowercased() ?? "a")
-                    })) { cachedSub in
-                      SubItem(sub: Subreddit(data: SubredditData(entity: cachedSub), api: redditAPI), cachedSub: cachedSub)
-                        .equatable()
-                    }
-                  }
-                  
-                } else {
-                  
-                  ForEach(sections.keys.sorted(), id: \.self) { letter in
-                    Section(header: Text(letter)) {
-                      if let arr = sections[letter] {
-                        ForEach(arr.sorted(by: { x, y in
-                          (x.display_name?.lowercased() ?? "a") < (y.display_name?.lowercased() ?? "a")
-                        }), id: \.self.uuid) { cachedSub in
-                          SubItem(sub: Subreddit(data: SubredditData(entity: cachedSub), api: redditAPI), cachedSub: cachedSub)
-                            .equatable()
-                        }
-                        .onDelete(perform: { i in
-                          deleteFromList(at: i, letter: letter)
-                        })
-                      }
-                    }
-                  }
-                  
-                }
-                
-                
-                
-              }
-            }
-            .listRowSeparatorTint(selectedTheme.lists.dividersColors.cs(cs).color())
-            .listRowBackground(Rectangle().fill(selectedTheme.lists.foreground.blurry ? AnyShapeStyle(.bar) : AnyShapeStyle(selectedTheme.lists.foreground.color.cs(cs).color())).overlay(!selectedTheme.lists.foreground.blurry ? nil : Rectangle().fill(selectedTheme.lists.foreground.color.cs(cs).color())))
-          }
-          .themedListBG(selectedTheme.lists.bg)
-          .scrollContentBackground(.hidden)
-          .scrollIndicators(.hidden)
-          .listStyle(.sidebar)
-          .scrollDismissesKeyboard(.immediately)
-          .loader(!loaded && subreddits.count == 0)
-          .searchable(text: $searchText, prompt: "Search my subreddits")
-          .toolbar {
-            ToolbarItem(placement: .navigationBarTrailing) {
-              EditButton()
-            }
-          }
-          .overlay(
-            AlphabetJumper(letters: sections.keys.sorted(), proxy: proxy)
-            , alignment: .trailing
-          )
-          .refreshable {
-            Task(priority: .background) {
-              await updatePostsInBox(redditAPI, force: true)
-            }
-            Task(priority: .background) {
-              _ = await redditAPI.fetchMyMultis()
-            }
-            _ = await redditAPI.fetchSubs()
-          }
-          .navigationTitle("Subs")
-          .task {
-            if !loaded {
-              // MARK: Route to default feed
-              if preferenceDefaultFeed != "subList" && router.path.count == 0 { // we are in subList, can ignore
-                let tempSubreddit = Subreddit(id: preferenceDefaultFeed, api: redditAPI)
-                router.path.append(SubViewType.posts(tempSubreddit))
               }
               
-              _ = await redditAPI.fetchSubs()
-              _ = await redditAPI.fetchMyMultis()
-              withAnimation {
-                loaded = true
+            } else {
+              
+              ForEach(sections.keys.sorted(), id: \.self) { letter in
+                Section(header: Text(letter)) {
+                  if let arr = sections[letter] {
+                    ForEach(arr.sorted(by: { x, y in
+                      (x.display_name?.lowercased() ?? "a") < (y.display_name?.lowercased() ?? "a")
+                    }), id: \.self.uuid) { cachedSub in
+                      SubItem(sub: Subreddit(data: SubredditData(entity: cachedSub), api: redditAPI), cachedSub: cachedSub)
+                        .equatable()
+                    }
+                    .onDelete(perform: { i in
+                      deleteFromList(at: i, letter: letter)
+                    })
+                  }
+                }
               }
+              
             }
-          }
-          .onChange(of: reset) { _ in
-            router.path.removeLast(router.path.count)
+            
+            
+            
           }
         }
+        .listRowSeparatorTint(selectedTheme.lists.dividersColors.cs(cs).color())
+//        .listRowBackground(Rectangle().fill(selectedTheme.lists.foreground.blurry ? AnyShapeStyle(.bar) : AnyShapeStyle(selectedTheme.lists.foreground.color.cs(cs).color())).overlay(!selectedTheme.lists.foreground.blurry ? nil : Rectangle().fill(selectedTheme.lists.foreground.color.cs(cs).color())))
       }
-      //      .defaultNavDestinations(router)
-      //      .onDelete(perform: deleteItems)
+      .themedListBG(selectedTheme.lists.bg)
+      .scrollContentBackground(.hidden)
+      .scrollIndicators(.hidden)
+      .listStyle(.sidebar)
+      .scrollDismissesKeyboard(.immediately)
+      .loader(!loaded && subreddits.count == 0)
+      .searchable(text: $searchText, prompt: "Search my subreddits")
+      .toolbar {
+        ToolbarItem(placement: .navigationBarTrailing) {
+          EditButton()
+        }
+      }
+      .overlay(
+        AlphabetJumper(letters: sections.keys.sorted(), proxy: proxy)
+        , alignment: .trailing
+      )
+      .refreshable {
+        Task(priority: .background) {
+          await updatePostsInBox(redditAPI, force: true)
+        }
+        Task(priority: .background) {
+          _ = await redditAPI.fetchMyMultis()
+        }
+        _ = await redditAPI.fetchSubs()
+      }
+      .navigationTitle("Subs")
     }
-    .swipeAnywhere(router: router)
-    .animation(.default, value: router.path)
   }
   
   func deleteFromFavorites(at offsets: IndexSet) {

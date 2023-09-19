@@ -37,7 +37,7 @@ class ThemeEditedInstance: ObservableObject {
 }
 
 enum ThemeEditPanels {
-  case general, posts, comments, postLinks, feed
+  case general, posts, comments, postLinks, feed, commonLists
 }
 
 struct ThemeEditPanel: View {
@@ -65,6 +65,9 @@ struct ThemeEditPanel: View {
       Section("Theming") {
         NavigationLink(value: ThemeEditPanels.general) {
           Label("General", systemImage: "paintbrush.pointed.fill")
+        }
+        NavigationLink(value: ThemeEditPanels.commonLists) {
+          Label("Common lists", systemImage: "list.bullet")
         }
         NavigationLink(value: ThemeEditPanels.feed) {
           Label("Posts feed", systemImage: "rectangle.grid.1x2.fill")
@@ -120,16 +123,7 @@ struct ThemeEditPanel: View {
       
     }
     .scrollDismissesKeyboard(.interactively)
-    .onAppear {
-        themeEditedInstance.load()
-    }
-    //    .onChange(of: theme, debounceTime: .seconds(1)) { newTheme in
-    //      if let i = Defaults[.themesPresets].firstIndex(where: { preset in
-    //        preset.id == newTheme.id
-    //      }) {
-    //        Defaults[.themesPresets][i] = newTheme
-    //      }
-    //    }
+    .onAppear { themeEditedInstance.load() }
     .navigationTitle(theme.metadata.name)
     .navigationBarTitleDisplayMode(.inline)
     .navigationDestination(for: ThemeEditPanels.self) { x in
@@ -145,6 +139,8 @@ struct ThemeEditPanel: View {
           PostThemingPanel(theme: $themeEditedInstance.winstonTheme)
         case .feed:
           FeedThemingPanel(theme: $themeEditedInstance.winstonTheme)
+        case .commonLists:
+          CommonListsThemingPanel(theme: $themeEditedInstance.winstonTheme)
         }
       }
       .environment(\.useTheme, theme)

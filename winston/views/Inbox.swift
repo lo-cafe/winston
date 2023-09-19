@@ -66,7 +66,7 @@ struct Inbox: View {
       }
       .navigationTitle("Inbox")
     }
-    .swipeAnywhere(router: router)
+    .swipeAnywhere(routerContainer: SwipeAnywhereRouterContainer(router))
   }
 }
 

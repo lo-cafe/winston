@@ -25,6 +25,7 @@ struct PostInBoxLink: View {
     VStack(alignment: .leading, spacing: 4) {
       HStack {
         SubredditBaseIcon(name: post.subredditName, iconURLStr: post.subredditIconURL, id: post.id, size: 20, color: post.subColor)
+          .equatable()
         Text(post.subredditName)
           .fontSize(13,.medium)
       }

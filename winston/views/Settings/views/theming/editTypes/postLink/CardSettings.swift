@@ -9,6 +9,7 @@ import SwiftUI
 
 struct CardSettings: View {
   @Binding var theme: PostLinkTheme
+  @State var asas = "askmo"
   var body: some View {
     Group {
       
@@ -53,11 +54,12 @@ struct CardSettings: View {
                 CarouselTagElement<UnseenType>(label: "Fade", value: UnseenType.fade, active: theme.unseenType.isEqual(.fade))
               ]
             )
+            
           }
           .padding(.horizontal, 16)
           .resetter($theme.unseenType, defaultTheme.postLinks.theme.unseenType)
           .frame(maxWidth: .infinity)
-
+          
           switch theme.unseenType {
           case .dot(let themeColor):
             SchemesColorPicker(theme: Binding(get: { themeColor }, set: { val, _ in

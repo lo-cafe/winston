@@ -10,7 +10,7 @@ import Popovers
 
 struct MultiLink: View {
   var multi: MultiData
-  @StateObject var routerProxy: RouterProxy
+  var routerProxy: RouterProxy
   @EnvironmentObject private var redditAPI: RedditAPI
   
   var body: some View {

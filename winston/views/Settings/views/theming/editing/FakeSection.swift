@@ -32,7 +32,7 @@ struct FakeSection<Content: View>: View {
       
       if let footer = footer {
         Text(footer)
-          .font(.caption)
+          .fontSize(13)
           .padding(.horizontal, 16)
           .opacity(0.5)
       }

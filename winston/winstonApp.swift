@@ -34,7 +34,7 @@ struct AppContent: View {
       .environment(\.useTheme, selectedTheme)
       .environmentObject(redditAPI)
     //        .alertToastRoot()
-    //        .tint(selectedTheme.accentColor.cs(cs).color())
+    //        .tint(selectedTheme.general.accentColor.cs(cs).color())
   }
 }
 

@@ -15,7 +15,7 @@ func saveImage(image: UIImage) -> String? {
   guard let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else { return nil }
   
   let id = UUID().uuidString
-  let fileName = id
+//  let fileName = id
   var data: Data?
   var ext: String?
   if let newData = image.jpegData(compressionQuality: 1) {

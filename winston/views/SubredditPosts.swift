@@ -78,7 +78,6 @@ struct SubredditPosts: View {
   }
   
   var body: some View {
-    let preferenceShowPostsCards = selectedTheme.postLinks.theme.type == .card
     //      if IPAD {
     //        ScrollView(.vertical) {
     //          WaterfallGrid(posts, id: \.self.id) { el in

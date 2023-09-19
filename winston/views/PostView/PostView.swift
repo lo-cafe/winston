@@ -29,15 +29,16 @@ struct PostView: View, Equatable {
   @Environment(\.useTheme) private var selectedTheme
   @Environment(\.colorScheme) private var cs
   @State private var ignoreSpecificComment = false
+  @State private var hideElements = true
   @State private var sort: CommentSortOption = Defaults[.preferredCommentSort]
-//  @State private var sort: CommentSortOption = .confidence
+  //  @State private var sort: CommentSortOption = .confidence
   @EnvironmentObject private var redditAPI: RedditAPI
   @EnvironmentObject private var routerProxy: RouterProxy
   @State var update = false
-
+  
   func asyncFetch(_ full: Bool = true) async {
     if full {
-        update.toggle()
+      update.toggle()
     }
     if let result = await post.refreshPost(commentID: ignoreSpecificComment ? nil : highlightID, sort: sort, after: nil, subreddit: subreddit.data?.display_name ?? subreddit.id, full: full), let newComments = result.0 {
       Task {
@@ -57,7 +58,7 @@ struct PostView: View, Equatable {
         Group {
           Section {
             PostContent(post: post, selfAttr: selfAttr, sub: subreddit, forceCollapse: forceCollapse)
-//              .equatable()
+            //              .equatable()
             
             Text("Comments")
               .fontSize(20, .bold)
@@ -67,7 +68,9 @@ struct PostView: View, Equatable {
           }
           .listRowBackground(Color.clear)
           
-          PostReplies(update: update, post: post, subreddit: subreddit, ignoreSpecificComment: ignoreSpecificComment, highlightID: highlightID, sort: sort, proxy: proxy)
+          if !hideElements {
+            PostReplies(update: update, post: post, subreddit: subreddit, ignoreSpecificComment: ignoreSpecificComment, highlightID: highlightID, sort: sort, proxy: proxy)
+          }
           
           if !ignoreSpecificComment && highlightID != nil {
             Section {
@@ -94,6 +97,7 @@ struct PostView: View, Equatable {
         }
         .listRowSeparator(.hidden)
       }
+      .scrollIndicators(.never)
       .themedListBG(selectedTheme.posts.bg)
       .scrollContentBackground(.hidden)
       .transition(.opacity)
@@ -104,60 +108,62 @@ struct PostView: View, Equatable {
       }
       .overlay(
         PostFloatingPill(post: post, subreddit: subreddit)
-        , alignment: .bottomTrailing)
-      .navigationBarTitle("\(post.data?.num_comments ?? 0) comments", displayMode: .inline)
-      .navigationBarItems(
-        trailing:
-          HStack {
-            Menu {
-              ForEach(CommentSortOption.allCases) { opt in
-                Button {
-                  sort = opt
-                } label: {
-                  HStack {
-                    Text(opt.rawVal.value.capitalized)
-                    Spacer()
-                    Image(systemName: opt.rawVal.icon)
-                      .foregroundColor(.blue)
-                      .fontSize(17, .bold)
-                  }
-                }
-              }
-            } label: {
-              Button { } label: {
-                Image(systemName: sort.rawVal.icon)
-                  .foregroundColor(.blue)
-                  .fontSize(17, .bold)
-              }
-            }
-
-            if let data = subreddit.data, !feedsAndSuch.contains(subreddit.id) {
-              Button {
-                routerProxy.router.path.append(SubViewType.info(subreddit))
-              } label: {
-                SubredditIcon(data: data)
-              }
-            }
-          }
-          .animation(nil, value: sort)
+        , alignment: .bottomTrailing
       )
+      .navigationBarTitle("\(post.data?.num_comments ?? 0) comments", displayMode: .inline)
+      .toolbar { Toolbar(hideElements: hideElements, subreddit: subreddit, routerProxy: routerProxy, sort: $sort) }
       .onChange(of: sort) { val in
         updateComments()
       }
       .onAppear {
         Task(priority: .background) {
+          doThisAfter(0.5) {
+            hideElements = false
+          }
           if subreddit.data == nil && subreddit.id != "home" {
             await subreddit.refreshSubreddit()
           }
         }
       }
     }
-
+    
   }
 }
 
-//struct Post_Previews: PreviewProvider {
-//    static var previews: some View {
-//        PostLink()
-//    }
-//}
+private struct Toolbar: View {
+  var hideElements: Bool
+  var subreddit: Subreddit
+  var routerProxy: RouterProxy
+  @Binding var sort: CommentSortOption
+  var body: some View {
+    HStack {
+      Menu {
+        if !hideElements {
+          ForEach(CommentSortOption.allCases) { opt in
+            Button {
+              sort = opt
+            } label: {
+              HStack {
+                Text(opt.rawVal.value.capitalized)
+                Spacer()
+                Image(systemName: opt.rawVal.icon)
+                  .foregroundColor(.blue)
+                  .fontSize(17, .bold)
+              }
+            }
+          }
+        }
+      } label: {
+        Image(systemName: sort.rawVal.icon)
+          .foregroundColor(.blue)
+          .fontSize(17, .bold)
+      }
+      
+      if let data = subreddit.data, !feedsAndSuch.contains(subreddit.id) {
+        SubredditIcon(data: data)
+          .onTapGesture { routerProxy.router.path.append(SubViewType.info(subreddit)) }
+      }
+    }
+    .animation(nil, value: sort)
+  }
+}

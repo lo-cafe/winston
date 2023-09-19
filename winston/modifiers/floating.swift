@@ -16,9 +16,9 @@ struct FloatingModifier: ViewModifier {
     content
       .background(
         Capsule(style: .continuous)
-          .fill(.bar.opacity(selectedTheme.floatingPanelsBG.blurry ? 1 : 0))
+          .fill(.bar.opacity(selectedTheme.general.floatingPanelsBG.blurry ? 1 : 0))
           .shadow(radius: 8, y: 8)
-          .overlay(Circle().fill(selectedTheme.floatingPanelsBG.color.cs(cs).color()))
+          .overlay(Circle().fill(selectedTheme.general.floatingPanelsBG.color.cs(cs).color()))
       )
       .overlay(
         Capsule(style: .continuous)

@@ -40,7 +40,11 @@ struct URLImage: View, Equatable {
           Color.red.opacity(0.1)
             .overlay(Image(systemName: "xmark.circle.fill").foregroundColor(.red))
         } else {
-          ProgressView()
+          Image(.loader)
+            .resizable()
+            .scaledToFill()
+            .mask(Circle())
+            .frame(maxWidth: 50, maxHeight: 50)
         }
       }
       .processors(processors)

@@ -24,6 +24,7 @@ struct PostLinkThemingPanel: View {
   
   var body: some View {
     
+//    ScrollWithPreview(theme: theme.postLinks.bg) {
     ScrollWithPreview(theme: theme.postLinks.bg) {
       VStack(alignment: .trailing, spacing: 24) {
         TagsOptionsCarousel($selectedCategory, (Category.allCases.map { $0.rawValue }))
@@ -40,7 +41,7 @@ struct PostLinkThemingPanel: View {
         }
         
       }
-      .animation(nil, value: selectedCategory)
+//      .animation(nil, value: selectedCategory)
       .padding(.top, 12)
       .padding(.bottom, 12)
     } preview: {

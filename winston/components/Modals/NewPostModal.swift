@@ -345,15 +345,15 @@ struct NewPostModal: View {
       .navigationBarTitleDisplayMode(.inline)
     }
     .background(
-      !selectedTheme.modalsBG.blurry
+      !selectedTheme.general.modalsBG.blurry
       ? nil
       : GeometryReader { geo in
-        selectedTheme.modalsBG.color.cs(cs).color()
+        selectedTheme.general.modalsBG.color.cs(cs).color()
           .frame(width: geo.size.width, height: geo.size.height)
       }
         .edgesIgnoringSafeArea(.all)
     )
-    .presentationBackground(selectedTheme.modalsBG.blurry ? AnyShapeStyle(.bar) : AnyShapeStyle(selectedTheme.modalsBG.color.cs(cs).color()))
+    .presentationBackground(selectedTheme.general.modalsBG.blurry ? AnyShapeStyle(.bar) : AnyShapeStyle(selectedTheme.general.modalsBG.color.cs(cs).color()))
     .scrollDismissesKeyboard(.immediately)
     .presentationDetents([.large, .fraction(0.75), .medium, collapsedPresentation], selection: $selection)
     .presentationCornerRadius(32)

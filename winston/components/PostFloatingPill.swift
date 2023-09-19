@@ -28,7 +28,7 @@ struct PostFloatingPill: View {
           
           //          LightBoxButton(icon: "bookmark.fill") {
           //
-          //          }µ
+          //          }
           HStack(spacing: -12) {
             if let perma = URL(string: "https://reddit.com\(data.permalink.escape.urlEncoded)") {
               ShareLink(item: perma) {

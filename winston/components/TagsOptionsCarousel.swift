@@ -12,7 +12,7 @@ private struct Option<T: Hashable>: View {
   @Binding var selected: T
   
   func select() {
-    withAnimation(.default.speed(2)) {
+    withAnimation(.default) {
       selected = option.value
     }
   }
@@ -30,6 +30,7 @@ private struct Option<T: Hashable>: View {
     .foregroundColor(option.active || selected == option.value ? .white : .primary)
     .background(Capsule(style: .continuous).fill(option.active || selected == option.value ? .blue : .primary.opacity(0.1)))
     .onTapGesture(perform: select)
+    .animation(.default, value: selected)
   }
 }
 

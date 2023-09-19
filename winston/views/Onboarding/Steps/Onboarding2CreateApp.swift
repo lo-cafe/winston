@@ -10,7 +10,6 @@ import SwiftUI
 struct Onboarding2CreateApp: View {
   var prevStep: ()->()
   var nextStep: ()->()
-  @Environment(\.openURL) var openURL
   var body: some View {
     VStack(spacing: 16) {
       OnboardingBigStep(step: 2)

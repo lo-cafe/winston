@@ -76,17 +76,19 @@ let defaultTheme = WinstonTheme(
     ),
     spacing: 12,
     divider: .init(style: .line, thickness: 1, color: dividerColor)
-//    bg: defaultThemeBG
+    //    bg: defaultThemeBG
   ),
   lists: .init(
     bg: defaultThemeBG,
     foreground: .init(blurry: false, color: listSectionBGTheme),
     dividersColors: dividerColor
   ),
-  navPanelBG: .init(blurry: true, color: clearColor),
-  tabBarBG: .init(blurry: true, color: clearColor),
-  floatingPanelsBG: .init(blurry: true, color: clearColor),
-  modalsBG: .init(blurry: true, color: clearColor),
-  accentColor: .init(light: .init(hex: "0B84FE"), dark: .init(hex: "0B84FE"))
+  general: .init(
+    navPanelBG: .init(blurry: true, color: clearColor),
+    tabBarBG: .init(blurry: true, color: clearColor),
+    floatingPanelsBG: .init(blurry: true, color: clearColor),
+    modalsBG: .init(blurry: true, color: clearColor),
+    accentColor: .init(light: .init(hex: "0B84FE"), dark: .init(hex: "0B84FE"))
+  )
 )
 

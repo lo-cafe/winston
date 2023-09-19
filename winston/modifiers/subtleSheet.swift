@@ -15,12 +15,14 @@ private let bodyRadius: CGFloat = 32
 
 struct SubtleSheetModifier<T: View>: ViewModifier {
   var handlerBGOnly = false
+  var scrollContentHeight: CGFloat
   @Binding var sheetContentSize: CGSize
   var forcedOffset: CGFloat = 0
   var sheetContent: (CGFloat) -> T
   var bg: any ShapeStyle
   @State private var disappear = true
-  @State private var dragOffset: CGFloat = 0
+  @State private var dragOffsetPersist: CGFloat = 0
+  @GestureState private var dragOffsetRaw: CGFloat?
   @State private var initialDragOffset: CGFloat?
   @State private var currentStepIndex: Int = 0
   //  @ObservedObject private var tempGlobalState = TempGlobalState.shared
@@ -29,26 +31,45 @@ struct SubtleSheetModifier<T: View>: ViewModifier {
   var stepPoints: [CGFloat] { [pointZero - forcedOffset, pointZero - (sheetContentSize.height / 2) - max(0, forcedOffset - (sheetContentSize.height / 2)), pointZero - sheetContentSize.height] }
   
   func body(content: Content) -> some View {
+    let dragOffset = dragOffsetRaw ?? 0
     let isDragging = !initialDragOffset.isNil
     let disabled = abs(sheetContentSize.height - forcedOffset) < 2
     let interpolate = interpolatorBuilder([handlerDashWidth, 0], value: abs(sheetContentSize.height - forcedOffset))
     let dragGesture = DragGesture(minimumDistance: 0)
-      .onChanged({ val in
+      .updating($dragOffsetRaw) { val, state, trans in
         let y = val.translation.height
         if initialDragOffset == nil && y != 0 {
-          initialDragOffset = y
-        }
-        if let initialDragOffset = initialDragOffset {
-          var trans = Transaction()
-          trans.isContinuous = true
-//          trans.animation = .interpolatingSpring(stiffness: 1000, damping: 100)
-          trans.animation = .interactiveSpring()
-          withTransaction(trans) {
-            dragOffset = y - initialDragOffset
+          Task {
+            initialDragOffset = y
           }
         }
-      }).onEnded({ val in
-        initialDragOffset = nil
+        if let initialDragOffset = initialDragOffset {
+          trans.isContinuous = true
+          //          trans.animation = .interpolatingSpring(stiffness: 1000, damping: 100)
+          trans.animation = .interactiveSpring()
+          withTransaction(trans) {
+            state = y - initialDragOffset
+          }
+        }
+      }
+//      .onChanged({ val in
+//        let y = val.translation.height
+//        if initialDragOffset == nil && y != 0 {
+//          initialDragOffset = y
+//        }
+//        if let initialDragOffset = initialDragOffset {
+//          var trans = Transaction()
+//          trans.isContinuous = true
+////          trans.animation = .interpolatingSpring(stiffness: 1000, damping: 100)
+//          trans.animation = .interactiveSpring()
+//          withTransaction(trans) {
+//            dragOffset = y - initialDragOffset
+//          }
+//        }
+//      })
+      .onEnded({ val in
+        dragOffsetPersist = val.translation.height - (initialDragOffset ?? 0)
+//        initialDragOffset = nil
         //                offset += val.translation.height
         guard let nextI = stepPoints.closest(to: stepPoints[currentStepIndex] + val.predictedEndTranslation.height) else { return }
         //                let newI = max(0, min(stepPoints.count - 1, nextI + (abs(endLocationDiff) > 100 ? endLocationDiff > 0 ? 1 : -1 : 0)))
@@ -59,7 +80,7 @@ struct SubtleSheetModifier<T: View>: ViewModifier {
 //        withAnimation(.interpolatingSpring(stiffness: 150, damping: 17, initialVelocity: initialVel)) {
           withAnimation(.spring()) {
           currentStepIndex = newI
-          dragOffset = 0
+          dragOffsetPersist = 0
         }
         
       })
@@ -81,33 +102,36 @@ struct SubtleSheetModifier<T: View>: ViewModifier {
           .overlay(
             Capsule(style: .continuous).fill(.ultraThinMaterial)
               .overlay(Capsule(style: .continuous).fill(.primary.opacity(!isDragging ? 0.15 : 0.3)))
-              .frame(width: interpolate([handlerDashWidth, 8], false) - (isDragging ? 8 : 0), height: isDragging ? 10 : 8)
+              .frame(width: interpolate([handlerDashWidth - (isDragging ? 8 : 0), 8], false), height: isDragging ? 10 : 8)
               .padding(.top, 12)
               .animation(.spring(), value: isDragging)
+              .allowsHitTesting(false)
             , alignment: .top
           )
           .background(
             SheetShape(width: UIScreen.screenWidth, height: UIScreen.screenHeight)
               .fill(AnyShapeStyle(bg))
               .shadow(radius: 16)
-              .allowsHitTesting(false)
+//              .allowsHitTesting(false)
           )
           .contentShape(SheetShape(width: UIScreen.screenWidth, height: UIScreen.screenHeight))
           .scaleEffect(1)
           .compositingGroup()
-          .offset(y: max(stepPoints[stepPoints.count - 1], stepPoints[currentStepIndex] + dragOffset))
+          .offset(y: max(stepPoints[stepPoints.count - 1], stepPoints[currentStepIndex] + dragOffset + dragOffsetPersist))
+          .animation(.default, value: scrollContentHeight)
           .gesture(handlerBGOnly || disabled ? nil : dragGesture)
           .opacity(disappear ? 0 : 1)
           .offset(y: disappear ? handlerHeight : 0)
           .onAppear { doThisAfter(0.3) { withAnimation(spring) { disappear = false } } }
+          .onChange(of: dragOffsetRaw.isNil) { newValue in if newValue { initialDragOffset = nil } }
         , alignment: .bottom
       )
   }
 }
 
 extension View {
-  func subtleSheet(handlerBGOnly: Bool = false, sheetContentSize: Binding<CGSize>, forcedOffset: CGFloat = 0, bg: any ShapeStyle, @ViewBuilder _ content: @escaping (CGFloat) -> (some View)) -> some View {
-    self.modifier(SubtleSheetModifier(handlerBGOnly: handlerBGOnly, sheetContentSize: sheetContentSize, forcedOffset: forcedOffset, sheetContent: content, bg: bg))
+  func subtleSheet(handlerBGOnly: Bool = false, scrollContentHeight: CGFloat, sheetContentSize: Binding<CGSize>, forcedOffset: CGFloat = 0, bg: any ShapeStyle, @ViewBuilder _ content: @escaping (CGFloat) -> (some View)) -> some View {
+    self.modifier(SubtleSheetModifier(handlerBGOnly: handlerBGOnly, scrollContentHeight: scrollContentHeight, sheetContentSize: sheetContentSize, forcedOffset: forcedOffset, sheetContent: content, bg: bg))
   }
 }
 

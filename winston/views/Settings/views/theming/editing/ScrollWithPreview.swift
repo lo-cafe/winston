@@ -34,7 +34,7 @@ struct ScrollWithPreview<Content: View, Preview: View>: View {
           .padding(.bottom, previewContentSize.height + 40 + 16)
           .measure($contentSize)
       }
-      .subtleSheet(handlerBGOnly: handlerBGOnly, sheetContentSize: $previewContentSize, forcedOffset: interpolate([0, previewContentSize.height], false), bg: defaultBG.cs(cs).color()) { handlerHeight in
+      .subtleSheet(handlerBGOnly: handlerBGOnly, scrollContentHeight: contentSize.height, sheetContentSize: $previewContentSize, forcedOffset: interpolate([0, previewContentSize.height], false), bg: defaultBG.cs(cs).color()) { handlerHeight in
         VStack(spacing: 12) {
           let opts = [
             CarouselTagElement(label: "Blur", icon: { Image(systemName: "circle.dotted") }, value: PreviewBG.blur),
@@ -61,6 +61,7 @@ struct ScrollWithPreview<Content: View, Preview: View>: View {
           ? nil
           : defaultBG.cs(cs).color().allowsHitTesting(false)
         )
+        
       }
     }
 }

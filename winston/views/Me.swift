@@ -10,7 +10,6 @@ import SwiftUI
 struct Me: View {
   var reset: Bool
   @StateObject var router: Router
-  @Environment(\.openURL) private var openURL
   @EnvironmentObject private var redditAPI: RedditAPI
   @State private var loading = true
   var body: some View {
@@ -35,7 +34,7 @@ struct Me: View {
       }
 //      .defaultNavDestinations(router)
     }
-    .swipeAnywhere(router: router)
+    .swipeAnywhere(routerContainer: SwipeAnywhereRouterContainer(router))
   }
 }
 

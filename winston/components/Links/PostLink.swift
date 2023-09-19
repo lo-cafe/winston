@@ -27,10 +27,6 @@ struct FlairTag: View {
 
 let POSTLINK_INNER_H_PAD: CGFloat = 16
 
-private class Appeared: ObservableObject {
-  @Published var isIt: Bool = false
-}
-
 struct PostLinkNoSub: View, Equatable {
   static func == (lhs: PostLinkNoSub, rhs: PostLinkNoSub) -> Bool {
     lhs.post == rhs.post
@@ -63,7 +59,9 @@ class AttributedStringLoader: ObservableObject {
   @Published var data: AttributedString?
   
   func load(str: String) {
-    Task(priority: .background) {
+    Task.detached(priority: .background) {
+//    }
+//    Task(priority: .background) {
       let decoder = JSONDecoder()
       let jsonData = (try? decoder.decode(AttributedString.self, from: str.data(using: .utf8)!)) ?? AttributedString()
       await MainActor.run {
@@ -88,22 +86,14 @@ struct PostLink: View, Equatable {
   var secondary = false
   @EnvironmentObject private var routerProxy: RouterProxy
   @Default(.blurPostLinkNSFW) private var blurPostLinkNSFW
-  @State private var postSwipeActions: SwipeActionsSet = Defaults[.postSwipeActions]
   
   //Compact Mode
-  @Default(.compactMode) var compactMode
-  @Default(.showVotes) var showVotes
-  @Default(.showSelfText) var showSelfText
-  @Default(.thumbnailPositionRight) var thumbnailPositionRight
-  @Default(.voteButtonPositionRight) var voteButtonPositionRight
-  
-  //  @Default(.postLinksInnerHPadding) private var postLinksInnerHPadding
-  //  @Default(.postLinksInnerVPadding) private var postLinksInnerVPadding
-  
-  //  @Default(.cardedPostLinksOuterHPadding) private var cardedPostLinksOuterHPadding
-  //  @Default(.cardedPostLinksOuterVPadding) private var cardedPostLinksOuterVPadding
-  //  @Default(.cardedPostLinksInnerHPadding) private var cardedPostLinksInnerHPadding
-  //  @Default(.cardedPostLinksInnerVPadding) private var cardedPostLinksInnerVPadding
+  @Default(.postSwipeActions) private var postSwipeActions
+  @Default(.compactMode) private var compactMode
+  @Default(.showVotes) private var showVotes
+  @Default(.showSelfText) private var showSelfText
+  @Default(.thumbnailPositionRight) private var thumbnailPositionRight
+  @Default(.voteButtonPositionRight) private var voteButtonPositionRight
   
   @Default(.readPostOnScroll) private var readPostOnScroll
   @Default(.hideReadPosts) private var hideReadPosts
@@ -117,9 +107,7 @@ struct PostLink: View, Equatable {
   @Default(.showTitleAtTop) private var showTitleAtTop
   @Environment(\.useTheme) private var selectedTheme
   @Environment(\.colorScheme) private var cs
-  
-  @StateObject private var appeared = Appeared()
-  
+    
   var contentWidth: CGFloat {
     let theme = selectedTheme.postLinks.theme
     return UIScreen.screenWidth - ((theme.innerPadding.horizontal + theme.outerHPadding) * 2)

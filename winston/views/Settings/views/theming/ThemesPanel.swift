@@ -13,7 +13,6 @@ import Zip
 struct ThemesPanel: View {
   @Default(.themesPresets) private var themesPresets
   @State private var isUnzipping = false
-  
   var body: some View {
     List {
       
@@ -116,6 +115,7 @@ struct ThemesPanel: View {
 struct ThemeNavLink: View {
   @Default(.selectedThemeID) private var selectedThemeID
   @Default(.themesPresets) private var themesPresets
+  @State private var restartAlert = false
   
   @Environment(\.useTheme) private var selectedTheme
   @State private var isMoving = false
@@ -150,7 +150,10 @@ struct ThemeNavLink: View {
       
       Spacer()
       
-      Toggle("", isOn: Binding(get: { selectedTheme == theme  }, set: { _ in selectedThemeID = theme.id }))
+      Toggle("", isOn: Binding(get: { selectedTheme == theme  }, set: { _ in
+        if themesPresets.first(where: { $0.id == selectedThemeID })?.general != theme.general { restartAlert = true  }
+        selectedThemeID = theme.id
+      }))
     }
     .contextMenu {
       Button {
@@ -172,8 +175,7 @@ struct ThemeNavLink: View {
           imgNames.append(schemesStr.light)
           imgNames.append(schemesStr.dark)
         }
-        print(imgNames)
-        createZipFile(with: imgNames, theme: theme) { url in
+        createZipFile(with: imgNames, theme: theme.duplicate()) { url in
           self.zipUrl = url
           self.isMoving = true
         }
@@ -189,6 +191,13 @@ struct ThemeNavLink: View {
         print("Failed to move the file with error \(error)")
       }
     })
+    .alert("Restart required", isPresented: $restartAlert) {
+      Button("Gotcha!", role: .cancel) {
+        restartAlert = false
+      }
+    } message: {
+      Text("This theme changes a few settings that requires an app restart to take effect.")
+    }
   }
   
   func createZipFile(with imgNames: [String], theme: WinstonTheme, completion: @escaping(_ url: URL?) -> Void) {

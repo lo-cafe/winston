@@ -16,11 +16,12 @@ struct WinstonTheme: Codable, Identifiable, Hashable, Defaults.Serializable {
   var posts: PostTheme
   var comments: CommentsSectionTheme
   var lists: ListsTheme
-  var navPanelBG: ThemeForegroundBG
-  var tabBarBG: ThemeForegroundBG
-  var floatingPanelsBG: ThemeForegroundBG
-  var modalsBG: ThemeForegroundBG
-  var accentColor: ColorSchemes<ThemeColor>
+  var general: GeneralTheme
+//  var navPanelBG: ThemeForegroundBG
+//  var tabBarBG: ThemeForegroundBG
+//  var floatingPanelsBG: ThemeForegroundBG
+//  var modalsBG: ThemeForegroundBG
+//  var accentColor: ColorSchemes<ThemeColor>
   
   func duplicate() -> WinstonTheme {
     var copy = self

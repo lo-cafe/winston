@@ -21,7 +21,7 @@ func randomWord(wordLength: Int = 6) -> String {
   ]
   
   // consonant combinations that cannot start a word
-  var cons_cant_start: [String] = [
+  let cons_cant_start: [String] = [
     "ck", "cm",
     "dr", "ds",
     "ft",
