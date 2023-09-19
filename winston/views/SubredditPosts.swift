@@ -132,6 +132,7 @@ struct SubredditPosts: View {
     }
     .themedListBG(selectedTheme.postLinks.bg)
     .scrollContentBackground(.hidden)
+    .scrollIndicators(.never)
     .listStyle(.plain)
     .environment(\.defaultMinListRowHeight, 1)
     .loader(loading && posts.count == 0)

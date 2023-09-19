@@ -149,7 +149,6 @@ struct Subreddits: View, Equatable {
       }
       .themedListBG(selectedTheme.lists.bg)
       .scrollContentBackground(.hidden)
-      .scrollIndicators(.hidden)
       .listStyle(.sidebar)
       .scrollDismissesKeyboard(.immediately)
       .loader(!loaded && subreddits.count == 0)
