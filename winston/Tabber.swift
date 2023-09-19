@@ -34,7 +34,12 @@ enum TabIdentifier {
 
 class TabPayload: ObservableObject {
   @Published var reset = false
-  var router = Router()
+  var router = Router(id: "FeedThemingPanel")
+  
+  init(_ id: String, reset: Bool = false) {
+    self.reset = reset
+    self.router = Router(id: id)
+  }
 }
 
 struct Tabber: View {
@@ -45,11 +50,11 @@ struct Tabber: View {
   @State var credModalOpen = false
 
 //  @State var tabBarHeight: CGFloat?
-  @StateObject private var inboxPayload = TabPayload()
-  @StateObject private var mePayload = TabPayload()
-  @StateObject private var postsPayload = TabPayload()
-  @StateObject private var searchPayload = TabPayload()
-  @State private var settingsPayload = TabPayload()
+  @StateObject private var inboxPayload = TabPayload("inboxRouter")
+  @StateObject private var mePayload = TabPayload("meRouter")
+  @StateObject private var postsPayload = TabPayload("postsRouter")
+  @StateObject private var searchPayload = TabPayload("searchRouter")
+  @State private var settingsPayload = TabPayload("settingsRouter")
   @Environment(\.useTheme) private var currentTheme
   @Environment(\.colorScheme) private var colorScheme
   @Default(.showUsernameInTabBar) private var showUsernameInTabBar
@@ -173,7 +178,7 @@ struct Tabber: View {
     .overlay(
       tabBarHeight.isNil
       ? nil
-      : TabBarOverlay(router: payload[activeTab]!.router, tabHeight: tabHeight, meTabTap: meTabTap)
+      : TabBarOverlay(router: payload[activeTab]!.router, tabHeight: tabHeight, meTabTap: meTabTap).id(payload[activeTab]!.router.id)
       , alignment: .bottom
     )
     .background(OFWOpener(router: payload[TabIdentifier.posts]!.router))

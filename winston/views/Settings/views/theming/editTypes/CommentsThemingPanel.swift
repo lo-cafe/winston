@@ -59,7 +59,7 @@ struct CommentsGeneralSettings: View {
 struct CommentsThemingPanel: View {
   @Binding var theme: WinstonTheme
   @State private var selectedCategory = Category.general.rawValue
-  @StateObject private var routerProxy = RouterProxy(Router())
+  @StateObject private var routerProxy = RouterProxy(Router(id: "CommentsThemingPanel"))
   @StateObject private var sampleComment = Comment(data: getCommentSampleData(), api: RedditAPI())
 //  @EnvironmentObject private var redditAPI: RedditAPI
   var body: some View {

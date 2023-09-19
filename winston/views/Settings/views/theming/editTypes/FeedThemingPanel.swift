@@ -9,7 +9,7 @@ import SwiftUI
 
 struct FeedThemingPanel: View {
   @Binding var theme: WinstonTheme
-  @StateObject private var routerProxy = RouterProxy(Router())
+  @StateObject private var routerProxy = RouterProxy(Router(id: "FeedThemingPanel"))
   @EnvironmentObject private var redditAPI: RedditAPI
   var body: some View {
     ScrollWithPreview(handlerBGOnly: false, theme: theme.postLinks.bg) {

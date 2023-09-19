@@ -17,21 +17,26 @@ struct SwipeAywhereState {
 
 class SwipeAnywhereRouterContainer: ObservableObject {
   @Published var isRoot: Bool = false
-
+  
   let router: Router
-
+  var cancellable: AnyCancellable? = nil
+  
   init(_ router: Router) {
-      self.router = router
-      self.router.objectWillChange.sink { [weak self] _ in
+    self.router = router
+    doThisAfter(0) {
+      self.cancellable = self.router.objectWillChange.sink { [weak self] val in
         let isIt = self?.router.path.count == 0
+//        print("amo", isIt, self?.router.path.count, val)
         if self?.isRoot != isIt { self?.isRoot = isIt }
       }
+    }
   }
 }
 
 
 struct SwipeAnywhere: ViewModifier {
-  @StateObject var routerContainer: SwipeAnywhereRouterContainer
+  @StateObject var routerProxy: RouterProxy
+  @StateObject var routerContainer: RouterIsRoot
   var forceEnable: Bool = false
   
   @Default(.enableSwipeAnywhere) private var enableSwipeAnywhere
@@ -74,7 +79,7 @@ struct SwipeAnywhere: ViewModifier {
               staticOffset = .zero
             }
             if !routerContainer.isRoot && val.translation.width > 0 && ((abs(val.translation.width) + abs(val.translation.height)) / 2) >= activatedAmount {
-              routerContainer.router.path.removeLast(1)
+              routerProxy.router.path.removeLast(1)
             }
           }
       )
@@ -110,7 +115,7 @@ struct SwipeAnywhere: ViewModifier {
 }
 
 extension View {
-  func swipeAnywhere(routerContainer: SwipeAnywhereRouterContainer, forceEnable: Bool = false) -> some View {
-    self.modifier(SwipeAnywhere(routerContainer: routerContainer, forceEnable: forceEnable))
+  func swipeAnywhere(routerProxy: RouterProxy, routerContainer: RouterIsRoot, forceEnable: Bool = false) -> some View {
+    self.modifier(SwipeAnywhere(routerProxy: routerProxy, routerContainer: routerContainer, forceEnable: forceEnable))
   }
 }

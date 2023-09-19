@@ -110,7 +110,7 @@ struct TabBarOverlay: View {
           )
           .frame(width: geo.size.width, height: tabHeight)
           .contentShape(Rectangle())
-          .swipeAnywhere(routerContainer: SwipeAnywhereRouterContainer(router), forceEnable: true)
+          .swipeAnywhere(routerProxy: RouterProxy(router), routerContainer: router.isRootWrapper, forceEnable: true)
           .frame(width: geo.size.width, height: geo.size.height, alignment: .bottom)
       }
         .ignoresSafeArea(.keyboard)

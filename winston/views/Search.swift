@@ -174,7 +174,7 @@ struct Search: View {
       }
 //      .defaultNavDestinations(router)
     }
-    .swipeAnywhere(routerContainer: SwipeAnywhereRouterContainer(router))
+    .swipeAnywhere(routerProxy: RouterProxy(router), routerContainer: router.isRootWrapper)
   }
 }
 

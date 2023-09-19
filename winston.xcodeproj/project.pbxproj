@@ -170,6 +170,7 @@
 		EC91C8542AB9601000F2AD30 /* TabBarOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC91C8532AB9601000F2AD30 /* TabBarOverlay.swift */; };
 		EC91C8562AB9838D00F2AD30 /* CommonListsThemingPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC91C8552AB9838D00F2AD30 /* CommonListsThemingPanel.swift */; };
 		EC91C8582AB9884F00F2AD30 /* GeneralTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC91C8572AB9884F00F2AD30 /* GeneralTheme.swift */; };
+		EC91C85A2AB98D8F00F2AD30 /* defaultFlatTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC91C8592AB98D8F00F2AD30 /* defaultFlatTheme.swift */; };
 		EC9269E82A514AA6003F33B1 /* DownAttributedString.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC9269E72A514AA6003F33B1 /* DownAttributedString.swift */; };
 		EC9269F22A51A732003F33B1 /* HighlightedTextEditor in Frameworks */ = {isa = PBXBuildFile; productRef = EC9269F12A51A732003F33B1 /* HighlightedTextEditor */; };
 		EC9269F72A52B02E003F33B1 /* Shrinkable.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC9269F62A52B02E003F33B1 /* Shrinkable.swift */; };
@@ -493,6 +494,7 @@
 		EC91C8532AB9601000F2AD30 /* TabBarOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarOverlay.swift; sourceTree = "<group>"; };
 		EC91C8552AB9838D00F2AD30 /* CommonListsThemingPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommonListsThemingPanel.swift; sourceTree = "<group>"; };
 		EC91C8572AB9884F00F2AD30 /* GeneralTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneralTheme.swift; sourceTree = "<group>"; };
+		EC91C8592AB98D8F00F2AD30 /* defaultFlatTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = defaultFlatTheme.swift; sourceTree = "<group>"; };
 		EC9269E72A514AA6003F33B1 /* DownAttributedString.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownAttributedString.swift; sourceTree = "<group>"; };
 		EC9269F62A52B02E003F33B1 /* Shrinkable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shrinkable.swift; sourceTree = "<group>"; };
 		EC92FBDD2A589BE200391D1D /* SquircleUIKit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SquircleUIKit.swift; sourceTree = "<group>"; };
@@ -932,6 +934,7 @@
 				ECD2A3762A69C26900EDD02D /* consts.swift */,
 				EC8F34982A6F7DDB00EB8249 /* winstonMDEditorPreset.swift */,
 				ECE08B7F2AA9F9BA00F84DC9 /* defaultTheme.swift */,
+				EC91C8592AB98D8F00F2AD30 /* defaultFlatTheme.swift */,
 			);
 			path = globals;
 			sourceTree = "<group>";
@@ -1692,6 +1695,7 @@
 				ECEFC2672A5DE60C0003C6C4 /* UserLink.swift in Sources */,
 				ECC68D492A7A9136005BC7B4 /* WDivider.swift in Sources */,
 				EC6373572A791A2D000A03A3 /* Onboarding5GettingSecret.swift in Sources */,
+				EC91C85A2AB98D8F00F2AD30 /* defaultFlatTheme.swift in Sources */,
 				ECF1478F2AB620A400572352 /* CommentSample.swift in Sources */,
 				ECE08B682AA9E62900F84DC9 /* AvatarTheme.swift in Sources */,
 				EC08541B2A4BFEB300E88389 /* User.swift in Sources */,

@@ -24,7 +24,7 @@ struct PostThemingPanel: View {
   @Default(.themesPresets) private var themesPresets
   @ObservedObject var tempGlobalState = TempGlobalState.shared
   @Environment(\.colorScheme) private var cs
-  @StateObject private var routerProxy = RouterProxy(Router())
+  @StateObject private var routerProxy = RouterProxy(Router(id: "PostThemingPanelRouer"))
   @EnvironmentObject private var redditAPI: RedditAPI
   
   var body: some View {

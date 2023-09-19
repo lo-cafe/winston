@@ -1,33 +1,22 @@
 //
-//  defaultTheme.swift
+//  defaultFlatTheme.swift
 //  winston
 //
-//  Created by Igor Marcossi on 07/09/23.
+//  Created by Igor Marcossi on 19/09/23.
 //
 
 import Foundation
-import SwiftUI
 
 private let defaultAvatarTheme = AvatarTheme(size: 30, cornerRadius: 15, visible: true)
 private let primary: ColorSchemes<ThemeColor> = .init(light: .init(hex: "000000"), dark: .init(hex: "ffffff"))
 private let primaryInverted: ColorSchemes<ThemeColor> = .init(light: .init(hex: "ffffff"), dark: .init(hex: "000000"))
-let listSectionBGTheme: ColorSchemes<ThemeColor> = .init(light: .init(hex: "ffffff"), dark: .init(hex: "1C1C1E"))
-let defaultBG: ColorSchemes<ThemeColor> = .init(light: .init(hex: "F2F2F7"), dark: .init(hex: "000000"))
 private let clearColor: ColorSchemes<ThemeColor> = .init(light: .init(hex: "ffffff", alpha: 0), dark: .init(hex: "ffffff", alpha: 0))
 private let dividerColor: ColorSchemes<ThemeColor> = .init(light: .init(hex: "C6C6C8"), dark: .init(hex: "3D3C41"))
-let listDefaultBGImage: ColorSchemes<String> = .init(light: "winstonNoBG", dark: "winstonNoBG")
-let defaultFancyDivider: LineTheme = .init(style: .fancy, thickness: 6, color: .init(light: .init(hex: "ffffff", alpha: 0.5), dark: .init(hex: "1C1C1E", alpha: 0.5)))
-let defaultThemeBG: ThemeBG = .color(defaultBG)
 
-let badgeTheme: BadgeTheme = .init(
-  avatar: AvatarTheme(size: 30, cornerRadius: 15, visible: true),
-  authorText: .init(size: 13, color: primary, weight: .semibold),
-  statsText: .init(size: 12, color: .init(light: .init(hex: "000000", alpha: 0.5), dark: .init(hex: "ffffff", alpha: 0.5)), weight: .medium), spacing: 5)
-
-let defaultTheme = WinstonTheme(
+let defaultFlatTheme = WinstonTheme(
   metadata: .init(
-    name: "Default",
-    description: "The default Winston theme. Follows iOS style.",
+    name: "Default flat",
+    description: "The default Winston Apollo-like flat theme. Follows iOS style.",
     color: .init(hex: "0B84FE"),
     icon: "paintbrush.fill",
     author: "lo.cafe"
@@ -91,4 +80,3 @@ let defaultTheme = WinstonTheme(
     accentColor: .init(light: .init(hex: "0B84FE"), dark: .init(hex: "0B84FE"))
   )
 )
-

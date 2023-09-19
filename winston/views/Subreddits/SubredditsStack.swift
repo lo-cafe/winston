@@ -39,7 +39,7 @@ struct SubredditsStack: View {
         router.path.removeLast(router.path.count)
       }
     }
-    .swipeAnywhere(routerContainer: SwipeAnywhereRouterContainer(router))
+    .swipeAnywhere(routerProxy: RouterProxy(router), routerContainer: router.isRootWrapper)
     .animation(.default, value: router.path)
   }
 }
