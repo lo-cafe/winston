@@ -12,6 +12,7 @@ struct BehaviorPanel: View {
   @Default(.maxPostLinkImageHeightPercentage) var maxPostLinkImageHeightPercentage
   @Default(.openYoutubeApp) var openYoutubeApp
   @Default(.preferenceDefaultFeed) var preferenceDefaultFeed
+  @Default(.useFaceID) var useFaceID
   @Default(.preferredSort) var preferredSort
   @Default(.preferredCommentSort) var preferredCommentSort
   @Default(.blurPostLinkNSFW) var blurPostLinkNSFW
@@ -34,11 +35,12 @@ struct BehaviorPanel: View {
           Text("Home").tag("home")
           Text("Popular").tag("popular")
           Text("All").tag("all")
-          
           Text("Subscription List").tag("subList")
         }
         .pickerStyle(DefaultPickerStyle())
         
+        Toggle("Lock App With FaceID", isOn: $useFaceID)
+
         NavigationLink(value: SettingsPages.filteredSubreddits){
           Label("Filtered Subreddits", systemImage: "list.bullet")
             .labelStyle(.titleOnly)

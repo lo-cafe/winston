@@ -35,5 +35,7 @@
 		<string>processing</string>
 		<string>remote-notification</string>
 	</array>
+	<key>NSFaceIDUsageDescription</key>
+	<string>Use FaceID lock and unlock the app.</string>
 </dict>
 </plist>
