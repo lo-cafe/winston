@@ -171,6 +171,7 @@
 		EC91C8562AB9838D00F2AD30 /* CommonListsThemingPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC91C8552AB9838D00F2AD30 /* CommonListsThemingPanel.swift */; };
 		EC91C8582AB9884F00F2AD30 /* GeneralTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC91C8572AB9884F00F2AD30 /* GeneralTheme.swift */; };
 		EC91C85A2AB98D8F00F2AD30 /* defaultFlatTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC91C8592AB98D8F00F2AD30 /* defaultFlatTheme.swift */; };
+		EC91C85C2AB99E5600F2AD30 /* FilteredSubredditsSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC91C85B2AB99E5600F2AD30 /* FilteredSubredditsSettings.swift */; };
 		EC9269E82A514AA6003F33B1 /* DownAttributedString.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC9269E72A514AA6003F33B1 /* DownAttributedString.swift */; };
 		EC9269F22A51A732003F33B1 /* HighlightedTextEditor in Frameworks */ = {isa = PBXBuildFile; productRef = EC9269F12A51A732003F33B1 /* HighlightedTextEditor */; };
 		EC9269F72A52B02E003F33B1 /* Shrinkable.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC9269F62A52B02E003F33B1 /* Shrinkable.swift */; };
@@ -495,6 +496,7 @@
 		EC91C8552AB9838D00F2AD30 /* CommonListsThemingPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommonListsThemingPanel.swift; sourceTree = "<group>"; };
 		EC91C8572AB9884F00F2AD30 /* GeneralTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneralTheme.swift; sourceTree = "<group>"; };
 		EC91C8592AB98D8F00F2AD30 /* defaultFlatTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = defaultFlatTheme.swift; sourceTree = "<group>"; };
+		EC91C85B2AB99E5600F2AD30 /* FilteredSubredditsSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilteredSubredditsSettings.swift; sourceTree = "<group>"; };
 		EC9269E72A514AA6003F33B1 /* DownAttributedString.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownAttributedString.swift; sourceTree = "<group>"; };
 		EC9269F62A52B02E003F33B1 /* Shrinkable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shrinkable.swift; sourceTree = "<group>"; };
 		EC92FBDD2A589BE200391D1D /* SquircleUIKit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SquircleUIKit.swift; sourceTree = "<group>"; };
@@ -726,6 +728,7 @@
 				6593CC422A88C9E8003CA58D /* AccessibilityPanel.swift */,
 				65AA535C2A8BB27900275299 /* FAQPanel.swift */,
 				653E2DA42A8E278800833556 /* GeneralPanel.swift */,
+				EC91C85B2AB99E5600F2AD30 /* FilteredSubredditsSettings.swift */,
 			);
 			path = views;
 			sourceTree = "<group>";
@@ -1709,6 +1712,7 @@
 				ECE08B862AAA43F400F84DC9 /* NiceDivider.swift in Sources */,
 				EC12D7182A59C7A800C300B3 /* Arrows.swift in Sources */,
 				ECDD514E2A726E5900FD9498 /* modifyColor.swift in Sources */,
+				EC91C85C2AB99E5600F2AD30 /* FilteredSubredditsSettings.swift in Sources */,
 				ECE08B8A2AAB421400F84DC9 /* randWord.swift in Sources */,
 				EC593AF62A47AE30002D6454 /* Me.swift in Sources */,
 				EC3188142A92A43300CB3738 /* fetchMultiInfo.swift in Sources */,
