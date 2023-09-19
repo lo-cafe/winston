@@ -10,14 +10,14 @@ import SwiftUI
 
 struct FilledRoundedRectangle: View {
     let cornerRadius: CGFloat
-    let fill: Color
+    let fill: any ShapeStyle
     
     var body: some View {
         RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
-            .fill(fill)
+            .fill(AnyShapeStyle(fill))
     }
 }
 
-func RR(_ cornerRadius: CGFloat, _ fill: Color) -> FilledRoundedRectangle {
+func RR(_ cornerRadius: CGFloat, _ fill: any ShapeStyle) -> FilledRoundedRectangle {
     return FilledRoundedRectangle(cornerRadius: cornerRadius, fill: fill)
 }

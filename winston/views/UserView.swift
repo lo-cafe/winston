@@ -7,6 +7,7 @@
 
 import SwiftUI
 import NukeUI
+import Defaults
 
 //enum UserViewSections: Int {
 //  case
@@ -18,6 +19,7 @@ struct UserView: View {
   @State private var contentWidth: CGFloat = 0
   @State private var loadingOverview = true
   @State private var lastItemId: String? = nil
+  @Environment(\.useTheme) private var selectedTheme
   
   func refresh() async {
     await user.refetchUser()
@@ -45,7 +47,7 @@ struct UserView: View {
             lastActivities?.append(contentsOf: overviewData)
           }
         }
-
+        
         if let lastItem = overviewData.last {
           lastItemId = getItemId(for: lastItem)
         }
@@ -56,14 +58,14 @@ struct UserView: View {
   func getItemId(for item: Either<PostData, CommentData>) -> String {
     // As per API doc: https://www.reddit.com/dev/api/#GET_user_{username}_overview
     switch item {
-      case .first(let post):
+    case .first(let post):
       return "\(Post.prefix)_\(post.id)"
-        
-      case .second(let comment):
+      
+    case .second(let comment):
       return "\(Comment.prefix)_\(comment.id)"
     }
   }
-
+  
   var body: some View {
     List {
       if let data = user.data {
@@ -72,17 +74,17 @@ struct UserView: View {
             ZStack {
               if let bannerImgFull = data.subreddit?.banner_img, !bannerImgFull.isEmpty, let bannerImg = URL(string: String(bannerImgFull.split(separator: "?")[0])) {
                 URLImage(url: bannerImg)
-                .scaledToFill()
-                .frame(width: contentWidth, height: 160)
-                .mask(RR(16, .black))
+                  .scaledToFill()
+                  .frame(width: contentWidth, height: 160)
+                  .mask(RR(16, Color.black))
               }
               if let iconFull = data.subreddit?.icon_img, iconFull != "", let icon = URL(string: String(iconFull.split(separator: "?")[0])) {
                 
                 URLImage(url: icon)
-                .scaledToFill()
-                .frame(width: 125, height: 125)
-                .mask(Circle())
-                .offset(y: data.subreddit?.banner_img == "" || data.subreddit?.banner_img == nil ? 0 : 80)
+                  .scaledToFill()
+                  .frame(width: 125, height: 125)
+                  .mask(Circle())
+                  .offset(y: data.subreddit?.banner_img == "" || data.subreddit?.banner_img == nil ? 0 : 80)
               }
             }
             .frame(maxWidth: .infinity)
@@ -135,12 +137,13 @@ struct UserView: View {
                   VStack {
                     ShortCommentPostLink(comment: Comment(data: comment, api: user.redditAPI))
                     CommentLink(lineLimit: 3, showReplies: false, comment: Comment(data: comment, api: user.redditAPI))
+//                      .equatable()
                       .allowsHitTesting(false)
                   }
                   .padding(.horizontal, 12)
                   .padding(.top, 12)
                   .padding(.bottom, 10)
-                  .background(RR(20, .listBG))
+                  .background(RR(20, Color.listBG))
                 }
               }
               .onAppear { if lastActivities.count > 0 && (Int(Double(lastActivities.count) * 0.75) == i) { loadNextData() }}
@@ -161,7 +164,7 @@ struct UserView: View {
       }
     }
     .loader(user.data.isNil)
-    .background(Color(UIColor.systemGroupedBackground))
+    .themedListBG(selectedTheme.lists.bg)
     .scrollContentBackground(.hidden)
     .listStyle(.plain)
     .refreshable {

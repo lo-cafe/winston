@@ -35,7 +35,7 @@ struct OnlyURL: View {
 
 struct MediaPresenter: View, Equatable {
   static func == (lhs: MediaPresenter, rhs: MediaPresenter) -> Bool {
-    lhs.media == rhs.media
+    lhs.media == rhs.media && lhs.contentWidth == rhs.contentWidth && lhs.compact == rhs.compact
   }
   
   var showURLInstead = false

@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Defaults
 
 struct LightBoxOverlay: View {
   var post: Post
@@ -14,7 +15,8 @@ struct LightBoxOverlay: View {
   var activeIndex: Int
   @Binding var loading: Bool
   @Binding var done: Bool
-    var body: some View {
+  @Environment(\.useTheme) private var selectedTheme
+  var body: some View {
       VStack(alignment: .leading) {
         VStack(alignment: .leading, spacing: 8) {
           if let title = post.data?.title {
@@ -23,7 +25,8 @@ struct LightBoxOverlay: View {
               .allowsHitTesting(false)
           }
           if let data = post.data, let fullname = data.author_fullname {
-            Badge(author: data.author, fullname: fullname, created: data.created)
+            Badge(author: data.author, fullname: fullname, created: data.created, theme: selectedTheme.postLinks.theme.badge)
+              .equatable()
               .id("post-badge")
               .listRowInsets(EdgeInsets(top: 6, leading: 8, bottom: 8, trailing: 8))
           }

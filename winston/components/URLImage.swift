@@ -11,7 +11,11 @@ import Nuke
 import NukeExtensions
 import Giffy
 
-struct URLImage: View {
+struct URLImage: View, Equatable {
+  static func == (lhs: URLImage, rhs: URLImage) -> Bool {
+    return lhs.url == rhs.url
+  }
+  
   let url: URL
   var pipeline: ImagePipeline? = nil
   var processors: [ImageProcessing]? = nil
@@ -36,7 +40,11 @@ struct URLImage: View {
           Color.red.opacity(0.1)
             .overlay(Image(systemName: "xmark.circle.fill").foregroundColor(.red))
         } else {
-          ProgressView()
+          Image(.loader)
+            .resizable()
+            .scaledToFill()
+            .mask(Circle())
+            .frame(maxWidth: 50, maxHeight: 50)
         }
       }
       .processors(processors)

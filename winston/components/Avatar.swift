@@ -16,9 +16,10 @@ struct Avatar: View {
   var url: String?
   var userID: String
   var fullname: String? = nil
-  var avatarSize: CGFloat = 30
-  @EnvironmentObject var redditAPI: RedditAPI
-  @ObservedObject var avatarCache = AvatarCache.shared
+  var theme: AvatarTheme?
+  var avatarSize: CGFloat?
+  @EnvironmentObject private var redditAPI: RedditAPI
+  @ObservedObject private var avatarCache = AvatarCache.shared
   
   var avatarURL: String? {
     let raw = url ?? avatarCache[fullname ?? userID]
@@ -26,13 +27,14 @@ struct Avatar: View {
   }
   
   var body: some View {
+    let avatarSize = avatarSize ?? theme?.size ?? 0
+    let cornerRadius = (theme?.cornerRadius ?? (avatarSize / 2))
     Group {
       if userID == "[deleted]" {
         Image(systemName: "trash")
           .foregroundColor(.red)
           .background(
-            Circle()
-              .fill(.gray.opacity(0.5))
+            RR(cornerRadius, Color.gray.opacity(0.5))
               .frame(width: avatarSize, height: avatarSize)
           )
       } else {
@@ -44,15 +46,14 @@ struct Avatar: View {
           Text(userID.prefix(1).uppercased())
             .fontSize(avatarSize / 2)
             .background(
-              Circle()
-                .fill(.gray.opacity(0.5))
+              RR(cornerRadius, .gray.opacity(0.5))
                 .frame(width: avatarSize, height: avatarSize)
             )
         }
       }
     }
     .frame(width: avatarSize, height: avatarSize)
-    .mask(Circle())
+    .mask(RR(cornerRadius, .black))
   }
 }
 //

@@ -38,7 +38,7 @@ struct UserLink: View {
         .padding(.horizontal, noHPad ? 0 : 16)
         .padding(.vertical, 14)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(RR(20, noHPad ? .clear : .listBG))
+        .background(RR(20, noHPad ? Color.clear : Color.listBG))
         .onTapGesture {
           routerProxy.router.path.append(user)
         }

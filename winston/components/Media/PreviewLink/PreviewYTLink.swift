@@ -80,7 +80,7 @@ struct PreviewYTLink: View, Equatable {
     if let player = playersCache[videoID]?.player {
       YouTubePlayerView(player)
         .frame(width: contentWidth, height: actualHeight)
-        .mask(RR(12, .black))
+        .mask(RR(12, Color.black))
         .allowsHitTesting(!openYoutubeApp)
         .contentShape(Rectangle())
         .highPriorityGesture(TapGesture().onEnded { if openYoutubeApp { openURL(URL(string: "https://www.youtube.com/watch?v=\(videoID)")!) } })

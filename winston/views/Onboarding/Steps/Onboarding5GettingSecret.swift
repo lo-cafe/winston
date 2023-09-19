@@ -24,7 +24,7 @@ struct Onboarding5GettingSecret: View {
           .resizable()
           .scaledToFit()
           .frame(maxWidth: UIScreen.screenWidth * 0.85)
-          .mask(RR(12, .black))
+          .mask(RR(12, Color.black))
         
         Text("Now paste it here:")
           .fixedSize(horizontal: false, vertical: true)
@@ -36,7 +36,7 @@ struct Onboarding5GettingSecret: View {
           .fontSize(16, .medium)
           .frame(maxWidth: .infinity)
           .padding(.vertical, 12)
-          .background(RR(16, .black.opacity(0.1)))
+          .background(RR(16, Color.black.opacity(0.1)))
         
         HStack {
           MasterButton(icon: "arrowshape.backward.fill", label: "Go back", mode: .soft, color: .primary, colorHoverEffect: .animated, textSize: 18, height: 48, cornerRadius: 16, action: {

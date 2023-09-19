@@ -26,6 +26,6 @@ struct DataBlock: View {
     }
     .padding(.all, 8)
     .frame(maxWidth: .infinity, maxHeight: .infinity)
-    .background(RR(20, .listBG))
+    .background(RR(20, Color.listBG))
   }
 }

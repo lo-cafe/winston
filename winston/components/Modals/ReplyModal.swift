@@ -66,6 +66,7 @@ struct ReplyModalComment: View {
     ReplyModal(thingFullname: comment.data?.name ?? "", action: action) {
       VStack {
         CommentLink(indentLines: 0, showReplies: false, comment: comment)
+//          .equatable()
       }
     }
   }
@@ -111,8 +112,9 @@ struct ReplyModal<Content: View>: View {
   @State private var editorHeight: CGFloat = 200
   @State private var loading = false
   @State private var selection: PresentationDetent = .medium
-  @Default(.replyModalBlurBackground) var replyModalBlurBackground
+  @Environment(\.useTheme) private var selectedTheme
   @FetchRequest(sortDescriptors: []) var drafts: FetchedResults<ReplyDraft>
+  @Environment(\.colorScheme) private var cs
   
   init(title: String = "Replying", loadingLabel: String = "Commenting...", submitBtnLabel: String = "Send", thingFullname: String, action: @escaping (@escaping (Bool) -> Void, String) -> Void, text: String? = nil, content: (() -> Content)?) {
     self.title = title
@@ -131,14 +133,15 @@ struct ReplyModal<Content: View>: View {
           
           VStack(alignment: .leading) {
             if let me = redditAPI.me?.data {
-              Badge(author: me.name, fullname: me.name, created: Date().timeIntervalSince1970, avatarURL: me.icon_img ?? me.snoovatar_img)
+              Badge(author: me.name, fullname: me.name, created: Date().timeIntervalSince1970, avatarURL: me.icon_img ?? me.snoovatar_img, theme: selectedTheme.comments.theme.badge)
+                .equatable()
             }
             MDEditor(text: $textWrapper.replyText)
           }
           .padding(.horizontal, 12)
           .padding(.vertical, 8)
           .frame(maxWidth: .infinity, minHeight: 200)
-          .background(RR(16, .secondary.opacity(0.1)))
+          .background(RR(16, Color.secondary.opacity(0.1)))
           .allowsHitTesting(!loading)
           .blur(radius: loading ? 24 : 0)
           .overlay(
@@ -257,10 +260,19 @@ struct ReplyModal<Content: View>: View {
       .navigationBarTitleDisplayMode(.inline)
       .navigationTitle(title)
     }
+    .background(
+      !selectedTheme.general.modalsBG.blurry
+      ? nil
+      : GeometryReader { geo in
+        selectedTheme.general.modalsBG.color.cs(cs).color()
+          .frame(width: geo.size.width, height: geo.size.height)
+      }
+        .edgesIgnoringSafeArea(.all)
+    )
+    .presentationBackground(selectedTheme.general.modalsBG.blurry ? AnyShapeStyle(.bar) : AnyShapeStyle(selectedTheme.general.modalsBG.color.cs(cs).color()))
     .presentationDetents([.large, .fraction(0.75), .medium, collapsedPresentation], selection: $selection)
     .presentationCornerRadius(32)
     .presentationBackgroundInteraction(.enabled)
-    .presentationBackground(replyModalBlurBackground ? AnyShapeStyle(.bar) : AnyShapeStyle(Color.listBG))
     .presentationDragIndicator(.hidden)
   }
 }

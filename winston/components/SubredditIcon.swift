@@ -10,21 +10,25 @@ import SwiftUI
 import Nuke
 import NukeUI
 
-struct SubredditBaseIcon: View {
-  var name: String
-  var iconURLStr: String?
-  var id: String
-  var size: CGFloat = 30
-  var color: String?
-  
-  private static let pipeline = ImagePipeline {
-    $0.dataLoader = DataLoader(configuration: {
-      DataLoader.defaultConfiguration
-    }())
-    
-    $0.imageCache = ImageCache()
-    $0.dataCache = try? DataCache(name: "lo.cafe.winston-cache")
+struct SubredditBaseIcon: View, Equatable {
+  static func == (lhs: SubredditBaseIcon, rhs: SubredditBaseIcon) -> Bool {
+    return lhs.iconURLStr == rhs.iconURLStr && lhs.id == rhs.id && lhs.name == rhs.name
   }
+  
+  let name: String
+  let iconURLStr: String?
+  let id: String
+  var size: CGFloat = 30
+  let color: String?
+  
+//  private static let pipeline = ImagePipeline {
+//    $0.dataLoader = DataLoader(configuration: {
+//      DataLoader.defaultConfiguration
+//    }())
+//    
+//    $0.imageCache = ImageCache()
+//    $0.dataCache = try? DataCache(name: "lo.cafe.winston-cache")
+//  }
   
   var body: some View {
     if let icon = iconURLStr, !icon.isEmpty, let iconURL = URL(string: icon) {
@@ -35,10 +39,14 @@ struct SubredditBaseIcon: View {
           Color.red.opacity(0.1)
             .overlay(Image(systemName: "xmark.circle.fill").foregroundColor(.red))
         } else {
-          ProgressView()
+          Image(.loader)
+            .resizable()
+            .scaledToFill()
+            .mask(Circle())
+            .frame(maxWidth: 50, maxHeight: 50)
         }
       }
-      .pipeline(SubredditBaseIcon.pipeline)
+//      .pipeline(SubredditBaseIcon.pipeline)
       .scaledToFill()
       .frame(width: size, height: size)
       .mask(Circle())
@@ -60,6 +68,7 @@ struct SubredditIcon: View {
     let communityIcon = data.community_icon?.split(separator: "?") ?? []
     let icon = data.icon_img == "" || data.icon_img == nil ? communityIcon.count > 0 ? String(communityIcon[0]) : "" : data.icon_img
     SubredditBaseIcon(name: data.display_name ?? data.id, iconURLStr: icon == "" ? nil : icon, id: data.id, size: size, color: firstNonEmptyString(data.key_color, data.primary_color, "#828282") ?? "")
+      .equatable()
   }
 }
 

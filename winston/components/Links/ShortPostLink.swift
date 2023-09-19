@@ -12,8 +12,9 @@ struct ShortPostLink: View {
   var noHPad = false
   var post: Post
   @StateObject private var attrStrLoader = AttributedStringLoader()
-  @Default(.preferenceShowPostsAvatars) private var preferenceShowPostsAvatars
   @EnvironmentObject private var routerProxy: RouterProxy
+  @Environment(\.useTheme) private var selectedTheme
+
   var body: some View {
     if let data = post.data {
       VStack(alignment: .leading) {
@@ -24,7 +25,8 @@ struct ShortPostLink: View {
           .onAppear { attrStrLoader.load(str: data.selftext) }
         HStack {
           if let fullname = data.author_fullname {
-            Badge(showAvatar: preferenceShowPostsAvatars, author: data.author, fullname: fullname, created: data.created, extraInfo: [PresetBadgeExtraInfo().commentsExtraInfo(data: data), PresetBadgeExtraInfo().upvotesExtraInfo(data: data)])
+            Badge(author: data.author, fullname: fullname, created: data.created, theme: selectedTheme.postLinks.theme.badge, extraInfo: [PresetBadgeExtraInfo().commentsExtraInfo(data: data), PresetBadgeExtraInfo().upvotesExtraInfo(data: data)])
+              .equatable()
           }
           Spacer()
           FlairTag(text: "r/\(data.subreddit)", color: .blue)
@@ -36,7 +38,7 @@ struct ShortPostLink: View {
       .padding(.horizontal, noHPad ? 0 : 16)
       .padding(.vertical, 14)
       .frame(maxWidth: .infinity, alignment: .leading)
-      .background(RR(20, noHPad ? .clear : .listBG))
+      .background(RR(20, noHPad ? Color.clear : Color.listBG))
       .onTapGesture {
         routerProxy.router.path.append(PostViewPayload(post: post, postSelfAttr: attrStrLoader.data, sub: Subreddit(id: data.subreddit, api: post.redditAPI)))
       }

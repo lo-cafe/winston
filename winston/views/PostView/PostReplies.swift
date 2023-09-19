@@ -9,9 +9,6 @@ import SwiftUI
 import Defaults
 
 struct PostReplies: View {
-  @Default(.preferenceShowCommentsCards) private var preferenceShowCommentsCards
-  @Default(.commentsInnerHPadding) private var commentsInnerHPadding
-  @Default(.cardedCommentsOuterHPadding) private var cardedCommentsOuterHPadding
   var update: Bool
   @ObservedObject var post: Post
   @ObservedObject var subreddit: Subreddit
@@ -19,6 +16,8 @@ struct PostReplies: View {
   var highlightID: String?
   var sort: CommentSortOption
   var proxy: ScrollViewProxy
+  @Environment(\.useTheme) private var selectedTheme
+  @Environment(\.colorScheme) private var cs
   @EnvironmentObject private var redditAPI: RedditAPI
   @StateObject private var comments = ObservableArray<Comment>()
   @ObservedObject private var globalLoader = TempGlobalState.shared.globalLoader
@@ -32,8 +31,8 @@ struct PostReplies: View {
       newComments.forEach { $0.parentWinston = comments }
       await MainActor.run {
         withAnimation {
-            comments.data = newComments
-            loading = false
+          comments.data = newComments
+          loading = false
         }
       }
     } else {
@@ -46,45 +45,48 @@ struct PostReplies: View {
   }
   
   var body: some View {
-    let horPad = preferenceShowCommentsCards ? cardedCommentsOuterHPadding : commentsInnerHPadding
+    let theme = selectedTheme.comments
+    let preferenceShowCommentsCards = theme.theme.type == .card
+    let horPad = preferenceShowCommentsCards ? theme.theme.outerHPadding : theme.theme.innerPadding.horizontal
     Group {
       let commentsData = comments.data
       if commentsData.count > 0, let postFullname = post.data?.name {
         Group {
           ForEach(Array(commentsData.enumerated()), id: \.element.id) { i, comment in
             Section {
-              if preferenceShowCommentsCards {
-                Spacer()
-                  .frame(maxWidth: .infinity, minHeight: 24, maxHeight: 24)
-                  .background(CommentBG(pos: .top).fill(Color.listBG))
-                  .frame(maxWidth: .infinity, minHeight: 13, maxHeight: 13, alignment: .top)
-                  .clipped()
-                  .id("\(comment.id)-top-decoration")
-                  .listRowInsets(EdgeInsets(top: 6, leading: horPad, bottom: 0, trailing: horPad))
-              } else {
-                Spacer()
-                  .frame(maxWidth: .infinity, minHeight: 8, maxHeight: 8)
-                  .id("\(comment.id)-top-spacer")
-              }
+              
+              Spacer()
+                .frame(maxWidth: .infinity, minHeight: theme.spacing / 2, maxHeight: theme.spacing / 2)
+                .id("\(comment.id)-top-spacer")
+              
+              Spacer()
+                .frame(maxWidth: .infinity, minHeight: theme.theme.cornerRadius * 2, maxHeight: theme.theme.cornerRadius * 2, alignment: .top)
+                .background(CommentBG(cornerRadius: theme.theme.cornerRadius, pos: .top).fill(theme.theme.bg.cs(cs).color()))
+                .frame(maxWidth: .infinity, minHeight: theme.theme.cornerRadius, maxHeight: theme.theme.cornerRadius, alignment: .top)
+                .clipped()
+                .id("\(comment.id)-top-decoration")
+                .listRowInsets(EdgeInsets(top: 0, leading: horPad, bottom: 0, trailing: horPad))
+              
               CommentLink(highlightID: ignoreSpecificComment ? nil : highlightID, post: post, subreddit: subreddit, postFullname: postFullname, parentElement: .post(comments), comment: comment)
-              if preferenceShowCommentsCards {
-                Spacer()
-                  .frame(maxWidth: .infinity, minHeight: 24, maxHeight: 24)
-                  .background(CommentBG(pos: .bottom).fill(Color.listBG))
-                  .frame(maxWidth: .infinity, minHeight: 13, maxHeight: 13, alignment: .bottom)
-                  .clipped()
-                  .id("\(comment.id)-bot-decoration")
-                  .listRowInsets(EdgeInsets(top: 0, leading: horPad, bottom: 6, trailing: horPad))
-              } else {
-                VStack {
-                  Spacer()
-                    .frame(maxWidth: .infinity, minHeight: 8, maxHeight: 8)
-                  if commentsData.count - 1 != i {
-                    Divider()
-                  }
-                }
+              //                .equatable()
+              
+              Spacer()
+                .frame(maxWidth: .infinity, minHeight: theme.theme.cornerRadius * 2, maxHeight: theme.theme.cornerRadius * 2, alignment: .top)
+                .background(CommentBG(cornerRadius: theme.theme.cornerRadius, pos: .bottom).fill(theme.theme.bg.cs(cs).color()))
+                .frame(maxWidth: .infinity, minHeight: theme.theme.cornerRadius, maxHeight: theme.theme.cornerRadius, alignment: .bottom)
+                .clipped()
+                .id("\(comment.id)-bot-decoration")
+                .listRowInsets(EdgeInsets(top: 0, leading: horPad, bottom: 0, trailing: horPad))
+              
+              Spacer()
+                .frame(maxWidth: .infinity, minHeight: theme.spacing / 2, maxHeight: theme.spacing / 2)
                 .id("\(comment.id)-bot-spacer")
+              
+              if commentsData.count - 1 != i {
+                NiceDivider(divider: theme.divider)
+                  .id("\(comment.id)-bot-divider")
               }
+              
             }
             .listRowBackground(Color.clear)
             .listRowInsets(EdgeInsets(top: 0, leading: horPad, bottom: 0, trailing: horPad))
