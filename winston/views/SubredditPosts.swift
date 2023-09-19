@@ -16,6 +16,7 @@ enum SubViewType: Hashable {
 }
 
 struct SubredditPosts: View {
+  @Default(.filteredSubreddits) private var filteredSubreddits
   @ObservedObject var subreddit: Subreddit
   @State private var loading = true
   @State private var posts: [Post] = []
@@ -38,15 +39,16 @@ struct SubredditPosts: View {
     }
     if let result = await subreddit.fetchPosts(sort: sort, after: loadMore ? lastPostAfter : nil, searchText: searchText), let newPosts = result.0 {
       withAnimation {
+        let newPostsFiltered = newPosts.filter { !loadedPosts.contains($0.id) && !filteredSubreddits.contains($0.data?.subreddit ?? "") }
+        
         if loadMore {
-          let newPostsFiltered = newPosts.filter { !loadedPosts.contains($0.id) }
           posts.append(contentsOf: newPostsFiltered)
-          newPostsFiltered.forEach { loadedPosts.insert($0.id) }
         } else {
-          let newPostsFiltered = newPosts.filter { !loadedPosts.contains($0.id) }
           posts = newPostsFiltered
-          newPostsFiltered.forEach { loadedPosts.insert($0.id) }
         }
+        
+        newPostsFiltered.forEach { loadedPosts.insert($0.id) }
+          
         loading = false
         lastPostAfter = result.1
       }

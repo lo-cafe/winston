@@ -10,7 +10,7 @@ import Defaults
 //import SceneKit
 
 enum SettingsPages {
-  case behavior, appearance, account, about, commentSwipe, postSwipe, accessibility, faq, general, postFontSettings, themes
+  case behavior, appearance, account, about, commentSwipe, postSwipe, accessibility, faq, general, postFontSettings, themes, filteredSubreddits
 }
 
 struct Settings: View {
@@ -103,6 +103,8 @@ struct Settings: View {
             AccessibilityPanel()
           case .postFontSettings:
             PostFontSettings()
+          case .filteredSubreddits:
+            FilteredSubredditsSettings()
           case .faq:
             FAQPanel()
           case .themes:
