@@ -10,7 +10,7 @@ import Defaults
 //import SceneKit
 
 enum SettingsPages {
-  case behavior, appearance, account, about, commentSwipe, postSwipe, accessibility, faq, general, postFontSettings, filteredSubreddits
+  case behavior, appearance, account, about, commentSwipe, postSwipe, accessibility, faq, general, postFontSettings, themes, filteredSubreddits
 }
 
 struct Settings: View {
@@ -18,11 +18,13 @@ struct Settings: View {
   @ObservedObject var router: Router
   @Environment(\.openURL) private var openURL
   @Default(.likedButNotSubbed) var likedButNotSubbed
+  @Environment(\.useTheme) private var selectedTheme
+  @Environment(\.colorScheme) private var cs
+  @State private var id = UUID().uuidString
   var body: some View {
     NavigationStack(path: $router.path) {
-      VStack {
-        List {
-          
+      List {
+        Group {
           Section {
             NavigationLink(value: SettingsPages.general) {
               Label("General", systemImage: "gear")
@@ -36,9 +38,9 @@ struct Settings: View {
             NavigationLink(value: SettingsPages.account) {
               Label("Account", systemImage: "person.crop.circle")
             }
-//            NavigationLink(value: SettingsPages.accessibility) {
-//              Label("Accessibility", systemImage: "figure.roll")
-//            }
+            //            NavigationLink(value: SettingsPages.accessibility) {
+            //              Label("Accessibility", systemImage: "figure.roll")
+            //            }
             
           }
           
@@ -71,10 +73,15 @@ struct Settings: View {
                 Text("Tip jar")
               }
             }
-
+            
           }
         }
+        .listRowSeparatorTint(selectedTheme.lists.dividersColors.cs(cs).color())
+//        .listRowBackground(Rectangle().fill(selectedTheme.lists.foreground.blurry ? AnyShapeStyle(.bar) : AnyShapeStyle(selectedTheme.lists.foreground.color.cs(cs).color())).overlay(!selectedTheme.lists.foreground.blurry ? nil : Rectangle().fill(selectedTheme.lists.foreground.color.cs(cs).color())))
+        
       }
+      .themedListBG(selectedTheme.lists.bg)
+      .scrollContentBackground(.hidden)
       .navigationDestination(for: SettingsPages.self) { x in
         Group {
           switch x {
@@ -100,6 +107,8 @@ struct Settings: View {
             FilteredSubredditsSettings()
           case .faq:
             FAQPanel()
+          case .themes:
+            ThemesPanel()
           }
         }
         .environmentObject(router)
@@ -107,7 +116,6 @@ struct Settings: View {
       .navigationTitle("Settings")
       .environmentObject(router)
       .onChange(of: reset) { _ in router.path.removeLast(router.path.count) }
-      .animation(.default, value: router.path)
     }
   }
 }

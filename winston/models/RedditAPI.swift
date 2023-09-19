@@ -23,7 +23,7 @@ class AvatarCache: ObservableObject {
   private init() {}
   
   private let _objectWillChange = PassthroughSubject<Void, Never>()
-  var data = [String:String]()
+  var data: [String:String] = ["t2_winston_sample":"https://winston.cafe/square-icon.jpg"]
   
   var objectWillChange: AnyPublisher<Void, Never> { _objectWillChange.eraseToAnyPublisher() }
   

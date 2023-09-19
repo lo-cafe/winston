@@ -54,7 +54,9 @@ extension RedditAPI {
         }
       }
     }
-    DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: HideDebouncer.shared.workItem!) // delay of 5 seconds
+    if let workItem = HideDebouncer.shared.workItem {
+      DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: workItem) // delay of 5 seconds
+    }
   }
   
   struct HidePayload: Codable {

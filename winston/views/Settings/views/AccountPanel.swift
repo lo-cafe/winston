@@ -10,7 +10,6 @@ import Defaults
 
 struct AccountPanel: View {
   @Default(.redditAPIUserAgent) var redditAPIUserAgent
-  @Environment(\.openURL) var openURL
   @EnvironmentObject var redditAPI: RedditAPI
   @State private var isPresentingConfirm: Bool = false
   

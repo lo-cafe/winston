@@ -27,10 +27,6 @@ struct FlairTag: View {
 
 let POSTLINK_INNER_H_PAD: CGFloat = 16
 
-private class Appeared: ObservableObject {
-  @Published var isIt: Bool = false
-}
-
 struct PostLinkNoSub: View, Equatable {
   static func == (lhs: PostLinkNoSub, rhs: PostLinkNoSub) -> Bool {
     lhs.post == rhs.post
@@ -61,10 +57,11 @@ struct PostLinkSubContainer: View, Equatable {
 
 class AttributedStringLoader: ObservableObject {
   @Published var data: AttributedString?
-  @Default(.postViewBodySize) private var postViewBodySize
   
   func load(str: String) {
-    Task(priority: .background) {
+    Task.detached(priority: .background) {
+//    }
+//    Task(priority: .background) {
       let decoder = JSONDecoder()
       let jsonData = (try? decoder.decode(AttributedString.self, from: str.data(using: .utf8)!)) ?? AttributedString()
       await MainActor.run {
@@ -81,56 +78,52 @@ struct PostLink: View, Equatable {
     return lhs.post == rhs.post && lhs.sub == rhs.sub
   }
   
+  var disableOuterVSpacing = false
   @ObservedObject var post: Post
   @ObservedObject var sub: Subreddit
   @StateObject var attrStrLoader = AttributedStringLoader()
   var showSub = false
   var secondary = false
   @EnvironmentObject private var routerProxy: RouterProxy
-  @Default(.preferenceShowPostsCards) private var preferenceShowPostsCards
-  @Default(.preferenceShowPostsAvatars) private var preferenceShowPostsAvatars
   @Default(.blurPostLinkNSFW) private var blurPostLinkNSFW
-  @State private var postSwipeActions: SwipeActionsSet = Defaults[.postSwipeActions]
   
   //Compact Mode
-  @Default(.compactMode) var compactMode
-  @Default(.showVotes) var showVotes
-  @Default(.showSelfText) var showSelfText
-  @Default(.thumbnailPositionRight) var thumbnailPositionRight
-  @Default(.voteButtonPositionRight) var voteButtonPositionRight
-  
-  @Default(.postLinksInnerHPadding) private var postLinksInnerHPadding
-  @Default(.postLinksInnerVPadding) private var postLinksInnerVPadding
-  
-  @Default(.cardedPostLinksOuterHPadding) private var cardedPostLinksOuterHPadding
-  @Default(.cardedPostLinksOuterVPadding) private var cardedPostLinksOuterVPadding
-  @Default(.cardedPostLinksInnerHPadding) private var cardedPostLinksInnerHPadding
-  @Default(.cardedPostLinksInnerVPadding) private var cardedPostLinksInnerVPadding
+  @Default(.postSwipeActions) private var postSwipeActions
+  @Default(.compactMode) private var compactMode
+  @Default(.showVotes) private var showVotes
+  @Default(.showSelfText) private var showSelfText
+  @Default(.thumbnailPositionRight) private var thumbnailPositionRight
+  @Default(.voteButtonPositionRight) private var voteButtonPositionRight
   
   @Default(.readPostOnScroll) private var readPostOnScroll
   @Default(.hideReadPosts) private var hideReadPosts
   
   @Default(.showUpvoteRatio) private var showUpvoteRatio
-  @Default(.fadeReadPosts) private var fadeReadPosts
+  //  @Default(.fadeReadPosts) private var fadeReadPosts
   
-  @Default(.postLinkTitleSize) private var postLinkTitleSize
-  @Default(.postLinkBodySize) private var postLinkBodySize
+//  @Default(.postLinkTitleSize) private var postLinkTitleSize
+//  @Default(.postLinkBodySize) private var postLinkBodySize
   @Default(.showSubsAtTop) private var showSubsAtTop
-  @Default(.postViewBodySize) private var postViewBodySize
   @Default(.showTitleAtTop) private var showTitleAtTop
-  
-  @StateObject private var appeared = Appeared()
-  
-  var contentWidth: CGFloat { UIScreen.screenWidth - ((preferenceShowPostsCards ? cardedPostLinksOuterHPadding : postLinksInnerHPadding) * 2) - (preferenceShowPostsCards ? (preferenceShowPostsCards ? cardedPostLinksInnerHPadding : 0) * 2 : 0)  }
+  @Environment(\.useTheme) private var selectedTheme
+  @Environment(\.colorScheme) private var cs
+    
+  var contentWidth: CGFloat {
+    let theme = selectedTheme.postLinks.theme
+    return UIScreen.screenWidth - ((theme.innerPadding.horizontal + theme.outerHPadding) * 2)
+  }
   
   var body: some View {
+    let theme = selectedTheme.postLinks
+    let fadeReadPosts = theme.theme.unseenType == .fade
+    let isCard = theme.theme.type == .card
     let extractedMedia = mediaExtractor(post)
-    let layout = compactMode ? AnyLayout(HStackLayout(alignment: .top, spacing: 12)) : AnyLayout(VStackLayout(alignment: .leading, spacing: 12))
+    let layout = compactMode ? AnyLayout(HStackLayout(alignment: .top, spacing: theme.theme.verticalElementsSpacing)) : AnyLayout(VStackLayout(alignment: .leading, spacing: theme.theme.verticalElementsSpacing))
     if let data = post.data {
       let seen = (data.winstonSeen ?? false)
       let over18 = data.over_18 ?? false
       
-      VStack(alignment: .leading, spacing: 8) {
+      VStack(alignment: .leading, spacing: theme.theme.verticalElementsSpacing) {
         layout {
           
           /// /////////
@@ -139,6 +132,7 @@ struct PostLink: View, Equatable {
           
           if showSubsAtTop && !compactMode {
             SubsNStuffLine(showSub: showSub, feedsAndSuch: feedsAndSuch, post: post, sub: sub, routerProxy: routerProxy, over18: over18)
+              .equatable()
           }
           
           if compactMode && showVotes && !voteButtonPositionRight {
@@ -171,9 +165,11 @@ struct PostLink: View, Equatable {
           /// /////////
           
           
-          VStack(alignment: .leading, spacing: compactMode ? 4 : 10) {
+          VStack(alignment: .leading, spacing: compactMode ? theme.theme.verticalElementsSpacing / 2 : theme.theme.verticalElementsSpacing * 1.25) {
             Text(data.title.escape)
-              .fontSize(postLinkTitleSize, .medium)
+              .fontSize(theme.theme.titleText.size, theme.theme.titleText.weight.t)
+              .foregroundColor(theme.theme.titleText.color.cs(cs).color())
+              .fixedSize(horizontal: false, vertical: true)
               .frame(maxWidth: .infinity, alignment: .topLeading)
             
             if compactMode, let extractedMedia = extractedMedia {
@@ -184,15 +180,17 @@ struct PostLink: View, Equatable {
             
             if data.selftext != "" && showSelfText && !compactMode, let winstonSelftextAttrEncoded = data.winstonSelftextAttrEncoded {
               Text(data.selftext.md()).lineLimit(3)
-                .fontSize(postLinkBodySize)
-                .opacity(0.75)
+                .fontSize(theme.theme.bodyText.size, theme.theme.bodyText.weight.t)
+                .foregroundColor(theme.theme.bodyText.color.cs(cs).color())
+                .fixedSize(horizontal: false, vertical: true)
                 .frame(maxWidth: .infinity, alignment: .topLeading)
                 .onAppear { attrStrLoader.load(str: winstonSelftextAttrEncoded) }
             }
             
             if compactMode {
               if let fullname = data.author_fullname {
-                Badge(showAvatar: preferenceShowPostsAvatars, author: data.author, fullname: fullname, created: data.created, extraInfo: [PresetBadgeExtraInfo().commentsExtraInfo(data:data), PresetBadgeExtraInfo().upvotesExtraInfo(data: data)])
+                Badge(author: data.author, fullname: fullname, created: data.created, theme: theme.theme.badge, extraInfo: [PresetBadgeExtraInfo().commentsExtraInfo(data:data), PresetBadgeExtraInfo().upvotesExtraInfo(data: data)])
+                  .equatable()
               }
             }
           }
@@ -228,12 +226,14 @@ struct PostLink: View, Equatable {
         
         if !showSubsAtTop || compactMode {
           SubsNStuffLine(showSub: showSub, feedsAndSuch: feedsAndSuch, post: post, sub: sub, routerProxy: routerProxy, over18: over18)
+            .equatable()
         }
         
         if !compactMode {
           HStack {
             if let fullname = data.author_fullname {
-              Badge(saved: data.saved, showAvatar: preferenceShowPostsAvatars, author: data.author, fullname: fullname, created: data.created, extraInfo: !showVotes ? [PresetBadgeExtraInfo().commentsExtraInfo(data: data), PresetBadgeExtraInfo().upvotesExtraInfo(data: data)] : [PresetBadgeExtraInfo().commentsExtraInfo(data: data)])
+              Badge(saved: data.saved, author: data.author, fullname: fullname, created: data.created, theme: theme.theme.badge, extraInfo: !showVotes ? [PresetBadgeExtraInfo().commentsExtraInfo(data: data), PresetBadgeExtraInfo().upvotesExtraInfo(data: data)] : [PresetBadgeExtraInfo().commentsExtraInfo(data: data)])
+                .equatable()
             }
             
             Spacer()
@@ -246,35 +246,44 @@ struct PostLink: View, Equatable {
         }
         
       }
-      .padding(.horizontal, preferenceShowPostsCards ? cardedPostLinksInnerHPadding : postLinksInnerHPadding)
-      .padding(.vertical, preferenceShowPostsCards ? cardedPostLinksInnerVPadding : postLinksInnerVPadding)
+      .padding(.horizontal, theme.theme.innerPadding.horizontal)
+      .padding(.vertical, theme.theme.innerPadding.vertical)
       .frame(maxWidth: .infinity, alignment: .leading)
       .background(
         ZStack {
-          if !secondary && !preferenceShowPostsCards {
-            Color.green.opacity((data.stickied ?? false) ? 0.1 : 0)
+          if !secondary && !isCard {
+            theme.theme.bg.color.cs(cs).color()
+            theme.theme.stickyPostBorderColor.color.cs(cs).color()
           } else {
-            RR(20, secondary ? Color("primaryInverted").opacity(0.15) : .listBG)
+            if theme.theme.bg.blurry {
+              RR(theme.theme.cornerRadius, .ultraThinMaterial)
+            }
+            RR(theme.theme.cornerRadius, secondary ? Color("primaryInverted").opacity(0.15) : theme.theme.bg.color.cs(cs).color())
             if (data.stickied ?? false) {
-              RoundedRectangle(cornerRadius: 20, style: .continuous)
-                .stroke(.green.opacity(0.3), lineWidth: 4)
+              RoundedRectangle(cornerRadius: theme.theme.cornerRadius, style: .continuous)
+                .stroke(theme.theme.stickyPostBorderColor.color.cs(cs).color(), lineWidth: theme.theme.stickyPostBorderColor.thickness)
             }
           }
         }
           .allowsHitTesting(false)
       )
-      .mask(RR(preferenceShowPostsCards ? 20 : 0, .black))
+      .mask(RR(theme.theme.cornerRadius, Color.black))
       .overlay(
-        fadeReadPosts
-        ? nil
-        : ZStack {
-          Circle()
-            .fill(Color.hex("CFFFDE"))
-            .frame(width: 5, height: 5)
-          Circle()
-            .fill(Color.hex("4FFF85"))
-            .frame(width: 8, height: 8)
-            .blur(radius: 8)
+        ZStack {
+          switch theme.theme.unseenType {
+          case .dot(let color):
+            ZStack {
+              Circle()
+                .fill(Color.hex("CFFFDE"))
+                .frame(width: 5, height: 5)
+              Circle()
+                .fill(color.cs(cs).color())
+                .frame(width: 8, height: 8)
+                .blur(radius: 8)
+            }
+          case .fade:
+            EmptyView()
+          }
         }
           .padding(.all, 11)
           .scaleEffect(seen ? 0.1 : 1)
@@ -291,8 +300,8 @@ struct PostLink: View, Equatable {
         actionsSet: postSwipeActions,
         entity: post
       )
-      .padding(.horizontal, !secondary && preferenceShowPostsCards ? cardedPostLinksOuterHPadding : 0 )
-      .padding(.vertical, !secondary && preferenceShowPostsCards ? cardedPostLinksOuterVPadding : 0)
+      .padding(.horizontal, !secondary && isCard ? theme.theme.outerHPadding : 0 )
+      .padding(.vertical, !disableOuterVSpacing && !secondary && isCard ? (theme.spacing / 2) : 0)
       .compositingGroup()
       .opacity(fadeReadPosts && seen ? 0.6 : 1)
       .contextMenu(menuItems: {
@@ -319,7 +328,7 @@ struct PostLink: View, Equatable {
           ShareLink(item: perma) { Label("Share", systemImage: "square.and.arrow.up") }
         }
         
-      }, preview: { NavigationStack { PostView(post: post, subreddit: sub, forceCollapse: true) }.environmentObject(post.redditAPI).environmentObject(routerProxy) })
+      }, preview: { NavigationStack { PostView(post: post, subreddit: sub, forceCollapse: true).equatable() }.environmentObject(post.redditAPI).environmentObject(routerProxy) })
       .foregroundColor(.primary)
       .multilineTextAlignment(.leading)
       .zIndex(1)
@@ -370,7 +379,7 @@ struct EmptyThumbnail: View {
         .resizable()
         .scaledToFill()
         .clipped()
-        .mask(RR(12, .black))
+        .mask(RR(12, Color.black))
         .contentShape(Rectangle())
         .frame(width: scaledCompactModeThumbSize(), height: scaledCompactModeThumbSize())
     }
@@ -378,7 +387,11 @@ struct EmptyThumbnail: View {
 }
 
 
-struct SubsNStuffLine: View {
+struct SubsNStuffLine: View, Equatable {
+  static func == (lhs: SubsNStuffLine, rhs: SubsNStuffLine) -> Bool {
+    lhs.post.id == rhs.post.id
+  }
+  
   var showSub: Bool
   var feedsAndSuch: [String]
   var post: Post

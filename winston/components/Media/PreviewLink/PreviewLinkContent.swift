@@ -168,14 +168,14 @@ struct PreviewLinkContent: View {
       }
       .frame(width:  compact ? scaledCompactModeThumbSize() : 76, height:  compact ? scaledCompactModeThumbSize() : 76)
       .clipped()
-      .mask(RR(12, .black))
-      .background(RR(12, .primary.opacity(0.05)))
+      .mask(RR(12, Color.black))
+      .background(RR(12, Color.primary.opacity(0.05)))
     }
     .padding(.vertical, compact ? 0 : 6)
     .padding(.leading, compact ? 0 : 10)
     .padding(.trailing, compact ? 0 : 6)
     .frame(maxWidth: compact ? nil : .infinity, minHeight: compact ? nil : PreviewLinkContent.height, maxHeight: compact ? nil : PreviewLinkContent.height)
-    .background(compact ? nil : RR(16, .primary.opacity(0.05)))
+    .background(compact ? nil : RR(16, Color.primary.opacity(0.05)))
     .contextMenu {
       Button {
         UIPasteboard.general.string = viewModel.url ?? url.absoluteString

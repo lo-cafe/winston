@@ -255,8 +255,8 @@ extension Post {
 struct PostData: GenericRedditEntityDataType, Defaults.Serializable {
   let subreddit: String
   let selftext: String
-  var winstonSelftextAttrEncoded: String?
-  let author_fullname: String?
+  var winstonSelftextAttrEncoded: String? = nil
+  var author_fullname: String? = nil
   var saved: Bool
   let gilded: Int
   let clicked: Bool
@@ -266,10 +266,10 @@ struct PostData: GenericRedditEntityDataType, Defaults.Serializable {
   var ups: Int
   var downs: Int
   let hide_score: Bool
-  let post_hint: String?
+  var post_hint: String? = nil
   let name: String
   let quarantine: Bool
-  let link_flair_text_color: String?
+  var link_flair_text_color: String? = nil
   let upvote_ratio: Double
   let subreddit_type: String
   let total_awards_received: Int
@@ -277,81 +277,81 @@ struct PostData: GenericRedditEntityDataType, Defaults.Serializable {
   let created: Double
   let domain: String
   let allow_live_comments: Bool
-  let selftext_html: String?
+  var selftext_html: String? = nil
   let id: String
   let is_robot_indexable: Bool
   let author: String
   let num_comments: Int
   let send_replies: Bool
-  let whitelist_status: String?
+  var whitelist_status: String? = nil
   let contest_mode: Bool
   let permalink: String
   let url: String
   let subreddit_subscribers: Int
-  let created_utc: Double?
+  var created_utc: Double? = nil
   let num_crossposts: Int
-  let is_video: Bool?
-  let is_gallery: Bool?
-  let gallery_data: GalleryData?
-  let crosspost_parent_list: [PostData]?
-  var media_metadata: [String:MediaMetadataItem?]?
+  var is_video: Bool? = nil
+  var is_gallery: Bool? = nil
+  var gallery_data: GalleryData? = nil
+  var crosspost_parent_list: [PostData]? = nil
+  var media_metadata: [String:MediaMetadataItem?]? = nil
   // Optional properties
-  let wls: Int?
-  let pwls: Int?
-  let link_flair_text: String?
-  let thumbnail: String?
+  var wls: Int? = nil
+  var pwls: Int? = nil
+  var link_flair_text: String? = nil
+  var thumbnail: String? = nil
   //  let edited: Edited?
-  let link_flair_template_id: String?
-  let author_flair_text: String?
-  let media: Media?
-  let approved_at_utc: Int?
-  let mod_reason_title: String?
-  let top_awarded_type: String?
-  let author_flair_background_color: String?
-  let approved_by: String?
-  let is_created_from_ads_ui: Bool?
-  let author_premium: Bool?
-  let author_flair_css_class: String?
-  let gildings: [String: Int]?
-  let content_categories: [String]?
-  let mod_note: String?
-  let link_flair_type: String?
-  let removed_by_category: String?
-  let banned_by: String?
-  let author_flair_type: String?
-  var likes: Bool?
-  var stickied: Bool?
-  let suggested_sort: String?
-  let banned_at_utc: String?
-  let view_count: String?
-  let archived: Bool?
-  let no_follow: Bool?
-  let is_crosspostable: Bool?
-  let pinned: Bool?
-  let over_18: Bool?
+  var link_flair_template_id: String? = nil
+  var author_flair_text: String? = nil
+  var media: Media? = nil
+  var approved_at_utc: Int? = nil
+  var mod_reason_title: String? = nil
+  var top_awarded_type: String? = nil
+  var author_flair_background_color: String? = nil
+  var approved_by: String? = nil
+  var is_created_from_ads_ui: Bool? = nil
+  var author_premium: Bool? = nil
+  var author_flair_css_class: String? = nil
+  var gildings: [String: Int]? = nil
+  var content_categories: [String]? = nil
+  var mod_note: String? = nil
+  var link_flair_type: String? = nil
+  var removed_by_category: String? = nil
+  var banned_by: String? = nil
+  var author_flair_type: String? = nil
+  var likes: Bool? = nil
+  var stickied: Bool? = nil
+  var suggested_sort: String? = nil
+  var banned_at_utc: String? = nil
+  var view_count: String? = nil
+  var archived: Bool? = nil
+  var no_follow: Bool? = nil
+  var is_crosspostable: Bool? = nil
+  var pinned: Bool? = nil
+  var over_18: Bool? = nil
   //  let all_awardings: [Awarding]?
-  let awarders: [String]?
-  let media_only: Bool?
-  let can_gild: Bool?
-  let spoiler: Bool?
-  let locked: Bool?
-  let treatment_tags: [String]?
-  let visited: Bool?
-  let removed_by: String?
-  let num_reports: Int?
-  let distinguished: String?
-  let subreddit_id: String?
-  let author_is_blocked: Bool?
-  let mod_reason_by: String?
-  let removal_reason: String?
-  let link_flair_background_color: String?
-  let report_reasons: [String]?
-  let discussion_type: String?
-  let secure_media: Media?
-  let secure_media_embed: SecureMediaEmbed?
-  let preview: Preview?
-  var winstonSeen: Bool?
-  var winstonHidden: Bool?
+  var awarders: [String]? = nil
+  var media_only: Bool? = nil
+  var can_gild: Bool? = nil
+  var spoiler: Bool? = nil
+  var locked: Bool? = nil
+  var treatment_tags: [String]? = nil
+  var visited: Bool? = nil
+  var removed_by: String? = nil
+  var num_reports: Int? = nil
+  var distinguished: String? = nil
+  var subreddit_id: String? = nil
+  var author_is_blocked: Bool? = nil
+  var mod_reason_by: String? = nil
+  var removal_reason: String? = nil
+  var link_flair_background_color: String? = nil
+  var report_reasons: [String]? = nil
+  var discussion_type: String? = nil
+  var secure_media: Media? = nil
+  var secure_media_embed: SecureMediaEmbed? = nil
+  var preview: Preview? = nil
+  var winstonSeen: Bool? = nil
+  var winstonHidden: Bool? = nil
 }
 
 struct GalleryData: Codable, Hashable {

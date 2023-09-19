@@ -24,7 +24,6 @@ struct MultiPostsView: View {
   @State private var searchText: String = ""
   @State private var sort: SubListingSortOption = Defaults[.preferredSort]
   @State private var newPost = false
-  @Environment(\.openURL) private var openURL
   @EnvironmentObject private var redditAPI: RedditAPI
   @EnvironmentObject private var routerProxy: RouterProxy
   

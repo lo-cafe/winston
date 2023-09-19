@@ -27,7 +27,7 @@ struct ListBigBtn: View {
       .padding(.all, 10)
       .frame(maxWidth: .infinity, alignment: .leading)
       .foregroundColor(.primary)
-      .background(RR(13, .listBG))
+      .background(RR(13, Color.listBG))
       .contentShape(RoundedRectangle(cornerRadius: 13))
       //    .onChange(of: reset) { _ in active = false }
     }

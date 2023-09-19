@@ -28,6 +28,15 @@
       }
     },
     {
+      "identity" : "debouncedonchange",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Tunous/DebouncedOnChange.git",
+      "state" : {
+        "revision" : "b699017e13966e35c9388c8cc97151c8883dda1e",
+        "version" : "1.1.0"
+      }
+    },
+    {
       "identity" : "defaults",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/sindresorhus/Defaults",
@@ -154,6 +163,15 @@
       }
     },
     {
+      "identity" : "symbolpicker",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/xnth97/SymbolPicker.git",
+      "state" : {
+        "revision" : "34f118e2a4712e3ceef05481b9f15ab1e890bc37",
+        "version" : "1.5.0"
+      }
+    },
+    {
       "identity" : "waterfallgrid",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/paololeonardi/WaterfallGrid.git",
@@ -169,6 +187,15 @@
       "state" : {
         "revision" : "6bbba75c8a8927e8073765849e22707d96b55205",
         "version" : "1.5.2"
+      }
+    },
+    {
+      "identity" : "zip",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/marmelroy/Zip.git",
+      "state" : {
+        "revision" : "67fa55813b9e7b3b9acee9c0ae501def28746d76",
+        "version" : "2.1.2"
       }
     }
   ],

@@ -44,12 +44,12 @@ struct ShortCommentPostLink: View {
       .padding(.vertical, 8)
       .frame(maxWidth: .infinity, alignment: .leading)
       .background(
-        RR(14, .secondary.opacity(0.075))
+        RR(14, Color.secondary.opacity(0.075))
           .onTapGesture {
             openedPost = true
           }
       )
-      .mask(RR(14, .black))
+      .mask(RR(14, Color.black))
       .contentShape(Rectangle())
       .highPriorityGesture (
         TapGesture().onEnded {

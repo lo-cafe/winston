@@ -28,7 +28,7 @@ struct PostFloatingPill: View {
           
           //          LightBoxButton(icon: "bookmark.fill") {
           //
-          //          }µ
+          //          }
           HStack(spacing: -12) {
             if let perma = URL(string: "https://reddit.com\(data.permalink.escape.urlEncoded)") {
               ShareLink(item: perma) {
@@ -67,12 +67,12 @@ struct PostFloatingPill: View {
                 }
               }
             }
-            .toast(isPresenting: $showAddedToast, tapToDismiss: true){
-              AlertToast(displayMode: .hud, type: .systemImage("plus.circle", Color.blue), title: "Added to Posts Box!")
-            }
-            .toast(isPresenting: $showRemovedToast, tapToDismiss: true){
-              AlertToast(displayMode: .hud, type: .systemImage("trash", Color.blue), title: "Removed from Posts Box!")
-            }
+//            .toast(isPresenting: $showAddedToast, tapToDismiss: true){
+//              AlertToast(displayMode: .hud, type: .systemImage("plus.circle", Color.blue), title: "Added to Posts Box!")
+//            }
+//            .toast(isPresenting: $showRemovedToast, tapToDismiss: true){
+//              AlertToast(displayMode: .hud, type: .systemImage("trash", Color.blue), title: "Removed from Posts Box!")
+//            }
             
             LightBoxButton(icon: "arrowshape.turn.up.left.fill") {
               withAnimation(spring) {

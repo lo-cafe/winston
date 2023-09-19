@@ -195,12 +195,14 @@ extension Comment {
                 if (self.data?.children?.count ?? 0) <= 25 {
                   comment.childrenWinston.data.remove(at: index)
                 } else {
+                  print("momaq")
                   self.data?.children?.removeFirst(childrensLimit)
                   if let _ = self.data?.count {
                     self.data?.count! -= children.count
                   }
                 }
-                comment.childrenWinston.data.insert(contentsOf: loadedComments, at: index)
+                let final = loadedComments.dropFirst()
+                comment.childrenWinston.data.insert(contentsOf: final, at: index)
               }
             }
           case .post(let postArr):

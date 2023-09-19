@@ -57,18 +57,18 @@ struct CommentLinkContent: View {
   @State private var highlight = false
   @State private var commentSwipeActions: SwipeActionsSet = Defaults[.commentSwipeActions]
   
-  @Default(.preferenceShowCommentsCards) private var preferenceShowCommentsCards
-  @Default(.preferenceShowCommentsAvatars) private var preferenceShowCommentsAvatars
-  @Default(.cardedCommentsInnerHPadding) private var cardedCommentsInnerHPadding
-  @Default(.coloredCommentNames) private var coloredCommenNames
   @Default(.collapseAutoModerator) private var collapseAutoModerator
-  @Default(.commentLinkBodySize) private var commentLinkBodySize
+  
+  @Environment(\.useTheme) private var selectedTheme
+  @Environment(\.colorScheme) private var cs
   
   @State var commentViewLoaded = false
   
   var body: some View {
+    let theme = selectedTheme.comments
+    let preferenceShowCommentsCards = theme.theme.type == .card
     let selectable = (comment.data?.winstonSelecting ?? false)
-    let horPad = preferenceShowCommentsCards ? cardedCommentsInnerHPadding : 0
+    let horPad = preferenceShowCommentsCards ? theme.theme.innerPadding.horizontal : 0
     if let data = comment.data {
       let collapsed = data.collapsed ?? false
       Group {
@@ -80,14 +80,15 @@ struct CommentLinkContent: View {
               ForEach(shapes, id: \.self) { i in
                 if arrowKinds.indices.contains(i - 1) {
                   let actualArrowKind = arrowKinds[i - 1]
-                  Arrows(kind: actualArrowKind)
+                  Arrows(kind: actualArrowKind, offset: theme.theme.innerPadding.vertical + theme.theme.repliesSpacing)
                 }
               }
             }
           }
           HStack(spacing: 8) {
             if let author = data.author, let created = data.created {
-              Badge(usernameColor: (post?.data?.author ?? "") == author ? Color.green : (coloredCommenNames ? Color.blue : Color.primary), showAvatar: preferenceShowCommentsAvatars, author: author, fullname: data.author_fullname, created: created, avatarURL: avatarsURL?[data.author_fullname!])
+              Badge(usernameColor: (post?.data?.author ?? "") == author ? Color.green : nil, author: author, fullname: data.author_fullname, created: created, avatarURL: avatarsURL?[data.author_fullname!], theme: theme.theme.badge)
+                .equatable()
             }
             
             Spacer()
@@ -114,12 +115,12 @@ struct CommentLinkContent: View {
               .onTapGesture { withAnimation { comment.data?.winstonSelecting = false } }
             }
 
-            if let ups = data.ups, let downs = data.downs {
+            if let ups = data.ups {
               HStack(alignment: .center, spacing: 4) {
                 Image(systemName: "arrow.up")
                   .foregroundColor(data.likes != nil && data.likes! ? .orange : .gray)
 
-                let downup = Int(ups - downs)
+                let downup = Int(ups)
                 Text(formatBigNumber(downup))
                   .foregroundColor(data.likes != nil ? (data.likes! ? .orange : .blue) : .gray)
                   .contentTransition(.numericText())
@@ -147,13 +148,13 @@ struct CommentLinkContent: View {
 
             }
           }
-          .padding(.top, data.depth != 0 ? 6 : 0)
+          .padding(.top, data.depth != 0 ? theme.theme.innerPadding.vertical + theme.theme.repliesSpacing : 0)
           .compositingGroup()
           .opacity(collapsed ? 0.5 : 1)
           .offset(x: offsetX)
           .animation(draggingAnimation, value: offsetX)
           .contentShape(Rectangle())
-          .padding(.top, data.depth != 0 ? 6 : 0)
+//          .padding(.top, data.depth != 0 ? 6 : 0)
           .swipyUI(
             controlledDragAmount: $offsetX,
             controlledIsSource: false,
@@ -166,10 +167,10 @@ struct CommentLinkContent: View {
           cell.layer.masksToBounds = false
         }
         .padding(.horizontal, horPad)
-        .frame(height: data.depth != 0 ? 42 : 30, alignment: .leading)
+        .frame(height: max((theme.theme.badge.authorText.size + theme.theme.badge.statsText.size + 2), theme.theme.badge.avatar.size) + (data.depth != 0 ? theme.theme.innerPadding.vertical + theme.theme.repliesSpacing : 0), alignment: .leading)
         .mask(Color.listBG)
         .background(Color.blue.opacity(highlight ? 0.2 : 0))
-        .background(preferenceShowCommentsCards && showReplies ? Color.listBG : .clear)
+        .background(showReplies ? theme.theme.bg.cs(cs).color() : .clear)
         .onAppear {
           let newCommentSwipeActions = Defaults[.commentSwipeActions]
           if commentSwipeActions != newCommentSwipeActions {
@@ -181,6 +182,15 @@ struct CommentLinkContent: View {
             doThisAfter(0.1) {
               withAnimation(.easeOut(duration: 4)) { highlight = false }
             }
+          }
+        }
+        .onAppear() {
+          if !commentViewLoaded && collapseAutoModerator {
+            if data.depth == 0 && data.author == "AutoModerator" && !(data.collapsed ?? false) {
+              comment.toggleCollapsed(optimistic: true)
+            }
+          } else {
+            commentViewLoaded = true
           }
         }
         .id("\(data.id)-header\(forcedBodySize == nil ? "" : "-preview")")
@@ -204,27 +214,28 @@ struct CommentLinkContent: View {
                 Group {
                   if lineLimit != nil {
                     Text(body.md())
-                      .fontSize(15)
+                      .fontSize(theme.theme.bodyText.size)
                       .lineLimit(lineLimit)
                   } else {
-                    MD(data.winstonBodyAttrEncoded.isNil ? .str(body) : .json(data.winstonBodyAttrEncoded!), fontSize: commentLinkBodySize)
+                    MD(data.winstonBodyAttrEncoded.isNil ? .str(body) : .json(data.winstonBodyAttrEncoded!), fontSize: theme.theme.bodyText.size)
                       .fixedSize(horizontal: false, vertical: true)
                       .overlay(
                         !selectable
                         ? nil
                         : TextViewWrapper(attributedText: NSAttributedString(body.md()), maxLayoutWidth: sizer.size.width)
                           .frame(width: sizer.size.width, height: sizer.size.height, alignment: .topLeading)
-                          .background(Rectangle().fill(Color.listBG))
+                          .background(Rectangle().fill(theme.theme.bg.cs(cs).color()))
                       )
                   }
                 }
+                .foregroundColor(theme.theme.bodyText.color.cs(cs).color())
               }
               //              .padding(.leading, 6)
               .frame(maxWidth: .infinity, alignment: .topLeading)
               .offset(x: offsetX)
               .animation(.interpolatingSpring(stiffness: 1000, damping: 100, initialVelocity: 0), value: offsetX)
-              .padding(.top, 6)
-              .padding(.bottom, data.depth == 0 && comment.childrenWinston.data.count == 0 ? 0 : 6)
+              .padding(.top, theme.theme.bodyAuthorSpacing)
+              .padding(.bottom, data.depth == 0 && comment.childrenWinston.data.count == 0 ? 0 : theme.theme.innerPadding.vertical)
               .scaleEffect(1)
               .contentShape(Rectangle())
               .swipyUI(
@@ -246,7 +257,7 @@ struct CommentLinkContent: View {
           .padding(.horizontal, horPad)
           .mask(Color.black.padding(.top, -(data.depth != 0 ? 42 : 30)).padding(.bottom, -8))
           .background(Color.blue.opacity(highlight ? 0.2 : 0))
-          .background(preferenceShowCommentsCards && showReplies ? Color.listBG : .clear)
+          .background(showReplies ? theme.theme.bg.cs(cs).color() : .clear)
           .contextMenu {
             if !selectable && forcedBodySize == nil {
               ForEach(allCommentSwipeActions) { action in
@@ -277,15 +288,6 @@ struct CommentLinkContent: View {
 //            ReplyModalComment(comment: comment)
 //          }
           .id("\(data.id)-body\(forcedBodySize == nil ? "" : "-preview")")
-        }
-      }
-      .onAppear() {
-        if !commentViewLoaded && collapseAutoModerator {
-          if data.depth == 0 && data.author == "AutoModerator" && !(data.collapsed ?? false) {
-            comment.toggleCollapsed(optimistic: true)
-          }
-        } else {
-          commentViewLoaded = true
         }
       }
     } else {
