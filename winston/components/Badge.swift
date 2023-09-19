@@ -10,25 +10,34 @@ import SwiftUI
 import Defaults
 
 
-struct Badge: View {
+struct Badge: View, Equatable {
+  static func == (lhs: Badge, rhs: Badge) -> Bool {
+    lhs.extraInfo == rhs.extraInfo && lhs.theme == rhs.theme && lhs.avatarURL == rhs.avatarURL
+  }
+  
   var saved = false
-  var usernameColor: Color = .green
-  var showAvatar = true
+  var usernameColor: Color?
+  //  var showAvatar = true
   var author: String
   var fullname: String? = nil
   var created: Double
   var avatarURL: String?
-  var avatarSize: CGFloat = 30
-  var nameSize: CGFloat = 13
-  var labelSize: CGFloat = 12
+  var theme: BadgeTheme
+  //  var avatarSize: CGFloat = 30
+  //  var nameSize: CGFloat = 13
+  //  var labelSize: CGFloat = 12
   //  var extraInfo: [String:String] = [:]
   var extraInfo: [BadgeExtraInfo] = []
   @EnvironmentObject private var routerProxy: RouterProxy
   @EnvironmentObject private var redditAPI: RedditAPI
+  @Environment(\.colorScheme) private var cs
+  
   let flagY: CGFloat = 16
   let delay: CGFloat = 0.4
   var body: some View {
-    HStack(spacing: 5) {
+    let showAvatar = theme.avatar.visible
+    
+    HStack(spacing: theme.spacing) {
       
       if saved && !showAvatar {
         Image(systemName: "bookmark.fill")
@@ -39,7 +48,7 @@ struct Badge: View {
       
       if showAvatar {
         ZStack {
-          Avatar(url: avatarURL, userID: author, fullname: fullname, avatarSize: avatarSize)
+          Avatar(url: avatarURL, userID: author, fullname: fullname, theme: theme.avatar)
             .background(
               ZStack {
                 Image(systemName: "bookmark.fill")
@@ -70,9 +79,9 @@ struct Badge: View {
         }
       }
       
-      VStack(alignment: .leading) {
+      VStack(alignment: .leading, spacing: 2) {
         
-        Text(author).font(.system(size: nameSize, weight: .semibold)).foregroundColor(author == "[deleted]" ? .red : usernameColor)
+        Text(author).font(.system(size: theme.authorText.size, weight: theme.authorText.weight.t)).foregroundColor(author == "[deleted]" ? .red : usernameColor ?? theme.authorText.color.cs(cs).color())
           .onTapGesture {
             routerProxy.router.path.append(User(id: author, api: redditAPI))
           }
@@ -81,9 +90,8 @@ struct Badge: View {
           ForEach(extraInfo, id: \.self){ elem in
             HStack(alignment: .center, spacing: 2){
               Image(systemName: elem.systemImage)
-                .foregroundColor(elem.iconColor)
+                .foregroundColor(elem.iconColor ?? theme.statsText.color.cs(cs).color())
               Text(elem.text)
-                .foregroundStyle(elem.textColor)
             }
           }
           
@@ -92,9 +100,9 @@ struct Badge: View {
             Text(timeSince(Int(created)))
           }
         }
-        .font(.system(size: labelSize, weight: .medium))
+        .foregroundColor(theme.statsText.color.cs(cs).color())
+        .font(.system(size: theme.statsText.size, weight: theme.statsText.weight.t))
         .compositingGroup()
-        .opacity(0.5)
       }
     }
     .scaleEffect(1)
@@ -102,15 +110,15 @@ struct Badge: View {
   }
 }
 
-struct BadgeExtraInfo: Hashable{
+struct BadgeExtraInfo: Hashable {
   var systemImage: String = ""
   var text: String
-  var textColor: Color = Color.primary
-  var iconColor: Color = Color.primary
+  //  var textColor: Color = Color.primary
+  var iconColor: Color?
 }
 
 
-struct PresetBadgeExtraInfo{
+struct PresetBadgeExtraInfo {
   
   init(){}
   

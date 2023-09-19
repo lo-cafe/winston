@@ -16,9 +16,7 @@ enum SubViewType: Hashable {
 }
 
 struct SubredditPosts: View {
-  @Default(.preferenceShowPostsCards) private var preferenceShowPostsCards
   @ObservedObject var subreddit: Subreddit
-  @Environment(\.openURL) private var openURL
   @State private var loading = true
   @State private var posts: [Post] = []
   @State private var loadedPosts: Set<String> = []
@@ -28,6 +26,8 @@ struct SubredditPosts: View {
   @State private var newPost = false
   @EnvironmentObject private var redditAPI: RedditAPI
   @EnvironmentObject private var routerProxy: RouterProxy
+  @Environment(\.useTheme) private var selectedTheme
+  @Environment(\.colorScheme) private var cs
   
   func asyncFetch(force: Bool = false, loadMore: Bool = false, searchText: String? = nil) async {
     if (subreddit.data == nil || force) && !feedsAndSuch.contains(subreddit.id) {
@@ -74,69 +74,67 @@ struct SubredditPosts: View {
       fetch()
     }
     
-    Defaults[.preferredSort] = sort
+    //    Defaults[.preferredSort] = sort
   }
   
   var body: some View {
-    Group {
-      //      if IPAD {
-      //        ScrollView(.vertical) {
-      //          WaterfallGrid(posts, id: \.self.id) { el in
-      //            PostLink(post: el, sub: subreddit)
-      //          }
-      //          .gridStyle(columns: 2, spacing: 16, animation: .easeInOut(duration: 0.5))
-      //          .scrollOptions(direction: .vertical)
-      //          .padding(.horizontal, 16)
-      //        }
-      //        .introspect(.scrollView, on: .iOS(.v13, .v14, .v15, .v16, .v17)) { scrollView in
-      //          scrollView.backgroundColor = UIColor.systemGroupedBackground
-      //        }
-      //      } else {
-      List {
-        Section {
-          ForEach(Array(posts.enumerated()), id: \.self.element.id) { i, post in
-
-            PostLink(post: post, sub: subreddit)
-              .equatable()
-              .onAppear {
-                if(Int(Double(posts.count) * 0.75) == i) {
-                  if !searchText.isEmpty {
-                    fetch(loadMore: true, searchText: searchText)
-                  } else {
-                    fetch(loadMore: true)
-                  }
+    //      if IPAD {
+    //        ScrollView(.vertical) {
+    //          WaterfallGrid(posts, id: \.self.id) { el in
+    //            PostLink(post: el, sub: subreddit)
+    //          }
+    //          .gridStyle(columns: 2, spacing: 16, animation: .easeInOut(duration: 0.5))
+    //          .scrollOptions(direction: .vertical)
+    //          .padding(.horizontal, 16)
+    //        }
+    //        .introspect(.scrollView, on: .iOS(.v13, .v14, .v15, .v16, .v17)) { scrollView in
+    //          scrollView.backgroundColor = UIColor.systemGroupedBackground
+    //        }
+    //      } else {
+    List {
+      
+      
+      Section {
+        if posts.count == 0 { Color.clear }
+        
+        ForEach(Array(posts.enumerated()), id: \.self.element.id) { i, post in
+          
+          PostLink(post: post, sub: subreddit)
+            .equatable()
+            .onAppear {
+              if(Int(Double(posts.count) * 0.75) == i) {
+                if !searchText.isEmpty {
+                  fetch(loadMore: true, searchText: searchText)
+                } else {
+                  fetch(loadMore: true)
                 }
               }
-              .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
-              .animation(.default, value: posts)
-
-            if !preferenceShowPostsCards && i != (posts.count - 1) {
-              VStack(spacing: 0) {
-                Divider()
-                Color.listBG
-                  .frame(maxWidth: .infinity, minHeight: 6, maxHeight: 6)
-                Divider()
-              }
+            }
+            .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
+            .animation(.default, value: posts)
+          
+          if selectedTheme.postLinks.divider.style != .no && i != (posts.count - 1) {
+            NiceDivider(divider: selectedTheme.postLinks.divider)
               .id("\(post.id)-divider")
               .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
-            }
-
           }
-          if !lastPostAfter.isNil {
-            ProgressView()
-              .progressViewStyle(.circular)
-              .frame(maxWidth: .infinity, minHeight: posts.count > 0 ? 100 : UIScreen.screenHeight - 200 )
-              .id("post-loading")
-          }
+          
         }
-        .listRowSeparator(.hidden)
-        .listRowBackground(Color.clear)
+        if !lastPostAfter.isNil {
+          ProgressView()
+            .progressViewStyle(.circular)
+            .frame(maxWidth: .infinity, minHeight: posts.count > 0 ? 100 : UIScreen.screenHeight - 200 )
+            .id("post-loading")
+        }
       }
-      .background(Color(UIColor.systemGroupedBackground))
-      .scrollContentBackground(.hidden)
-      .listStyle(.plain)
-      .environment(\.defaultMinListRowHeight, 1)
+      .listRowSeparator(.hidden)
+      .listRowBackground(Color.clear)
     }
+    .themedListBG(selectedTheme.postLinks.bg)
+    .scrollContentBackground(.hidden)
+    .scrollIndicators(.never)
+    .listStyle(.plain)
+    .environment(\.defaultMinListRowHeight, 1)
     .loader(loading && posts.count == 0)
     .overlay(
       feedsAndSuch.contains(subreddit.id)
@@ -205,7 +203,7 @@ struct SubredditPosts: View {
                 .fontSize(17, .bold)
             }
           }
-
+          
           if let data = subreddit.data {
             Button {
               routerProxy.router.path.append(SubViewType.info(subreddit))
@@ -217,7 +215,6 @@ struct SubredditPosts: View {
         .animation(nil, value: sort)
     )
     .onAppear {
-      //      sort = Defaults[.preferredSort]
       if posts.count == 0 {
         doThisAfter(0) {
           fetch()
@@ -241,7 +238,6 @@ struct SubredditPosts: View {
       await asyncFetch(force: true)
     }
     .navigationTitle("\(feedsAndSuch.contains(subreddit.id) ? subreddit.id.capitalized : "r/\(subreddit.data?.display_name ?? subreddit.id)")")
-    .background(.thinMaterial)
   }
   
 }

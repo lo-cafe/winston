@@ -1,4 +1,16 @@
-- Added hyperlinks for r/Sub and u/User in markdown texts (comments, post etc) - (Thanks, @rogue!)
-- Added hour, day, week, month, year and all to top sorting options - (Thanks, @rogue!)
-- Added search in subreddits - (Thanks, @rogue!)
-- Added search posts in whole reddit - (Thanks, @rogue!)
+HUGE UPDATE! But I'm too tired to write a full changelog.
+
+-----
+IMPORTANT 1: THIS IS THE FIRST BUILD OF THE NEW THEMES SYSTEM. EXPECT BUGS/CRASHES AND PLEASE REPORT THEM IN THE DISCORD CHANNEL (if you feel like doing so)
+-----
+
+-----
+IMPORTANT 2: Posts filtering is coming in the next update, sorry about thi.
+-----
+
+- Themes: fantastic new option for you to customize everything in the app. It's a WIP, but it's already very good!
+- Great performance improvements
+- Crashes fixes
+- Many other stuff you may find around, good exploring.
+
+

@@ -53,7 +53,7 @@ struct MasterButton: View {
   var hoverWorkaround = false
   let action: () -> Void
   
-  @State var initialSize = CGSize.zero
+//  @State var initialSize = CGSize.zero
   @State var confirming = false
   @GestureState var pressing = false
   
@@ -138,20 +138,21 @@ struct MasterButton: View {
           }
         }
     )
-        .simultaneousGesture(
-          colorHoverEffect == .none
-          ? nil
-          : LongPressGesture(minimumDuration: 1, maximumDistance: 1)
-            .updating($pressing, body: { newPressing, pressing, transaction in
-              pressing = newPressing
-            })
-        )
+//    .simultaneousGesture(
+//      colorHoverEffect == .none
+//      ? nil
+//      : LongPressGesture(minimumDuration: 1, maximumDistance: 1)
+//        .updating($pressing, body: { newPressing, pressing, transaction in
+//          pressing = newPressing
+//        })
+//    )
     .disabled(disabled)
     .saturation(disabled ? 0 : 1)
     .opacity(disabled ? 0.65 : 1)
     .fixedSize(horizontal: confirming, vertical: confirming)
     //    .getInitialSize($initialSize)
-    .frame(maxWidth: fullWidth ? .infinity : confirming ? initialSize.width : nil, alignment: growAnchor)
+//    .frame(maxWidth: fullWidth ? .infinity : confirming ? initialSize.width : nil, alignment: growAnchor)
+    .frame(maxWidth: fullWidth ? .infinity : nil, alignment: growAnchor)
 //    .buttonStyle(NoBtnStyle())
     .onChange(of: confirming) { newValue in
       if newValue {

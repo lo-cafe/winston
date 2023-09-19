@@ -120,6 +120,8 @@ extension Defaults.Keys {
   static let showTestersCelebrationModal = Key<Bool>("showTestersCelebrationModal", default: true)
   static let showTipJarModal = Key<Bool>("showTipJarModal", default: true)
   static let disableAlphabetLettersSectionsInSubsList = Key<Bool>("disableAlphabetLettersSectionsInSubsList", default: false)
+  static let themesPresets = Key<[WinstonTheme]>("themesPresets", default: [defaultTheme])
+  static let selectedThemeID = Key<String>("selectedThemeID", default: "default")
 }
 
 extension UIScreen {

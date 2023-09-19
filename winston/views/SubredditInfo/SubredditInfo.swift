@@ -48,9 +48,9 @@ struct SubredditInfo: View {
                 
               }
             }
-            .toast(isPresenting: $addedToFavs){
-              AlertToast(displayMode: .hud, type: .systemImage("star.fill", Color.blue), title: "Added to Favorites")
-            }
+//            .toast(isPresenting: $addedToFavs){
+//              AlertToast(displayMode: .hud, type: .systemImage("star.fill", Color.blue), title: "Added to Favorites")
+//            }
             
             Picker("", selection: $selectedTab) {
               ForEach(SubInfoTabs.allCases) { tab in

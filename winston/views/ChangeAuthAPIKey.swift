@@ -16,7 +16,7 @@ struct SmallStep<Content: View>: View {
       .padding(.vertical, 12)
       .padding(.horizontal, 16)
       .frame(maxWidth: .infinity, alignment: .leading)
-      .background(RR(16, .black.opacity(0.1)))
+      .background(RR(16, Color.black.opacity(0.1)))
       .padding(.horizontal, -8)
       .fontSize(15)
     }
@@ -98,7 +98,7 @@ struct CopiableValue: View {
         : Text("Copied!")
           .foregroundColor(.white)
           .frame(maxWidth: .infinity, maxHeight: .infinity)
-          .background(RR(16, .black.opacity(0.5)))
+          .background(RR(16, Color.black.opacity(0.5)))
       )
       .fontSize(15)
       .onTapGesture {
@@ -153,7 +153,7 @@ struct ChangeAuthAPIKey: View {
                       .resizable()
                       .scaledToFit()
                       .frame(maxWidth: .infinity)
-                      .mask(RR(12, .black))
+                      .mask(RR(12, Color.black))
                     
                   }
                 }
@@ -165,7 +165,7 @@ struct ChangeAuthAPIKey: View {
                       .resizable()
                       .scaledToFill()
                       .frame(maxWidth: .infinity, maxHeight: 72, alignment: .top)
-                      .mask(RR(12, .black))
+                      .mask(RR(12, Color.black))
                   }
                 }
               .fixedSize(horizontal: false, vertical: true)
@@ -185,7 +185,7 @@ struct ChangeAuthAPIKey: View {
                     .resizable()
                     .scaledToFill()
                     .frame(maxWidth: 150)
-                    .mask(RR(12, .black))
+                    .mask(RR(12, Color.black))
                 }
               }
               .fixedSize(horizontal: false, vertical: true)
@@ -207,7 +207,7 @@ struct ChangeAuthAPIKey: View {
                     .resizable()
                     .scaledToFill()
                     .frame(maxWidth: .infinity, maxHeight: 72)
-                    .mask(RR(12, .black))
+                    .mask(RR(12, Color.black))
                     .frame(maxWidth: .infinity)
                     Text("In the new app you created, find the app ID and paste it below:")
 //                  }

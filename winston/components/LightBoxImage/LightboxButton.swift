@@ -19,18 +19,16 @@ struct LightBoxButton: View {
       .background(Circle().fill(.secondary.opacity(pressed ? 0.15 : 0)))
       .contentShape(Circle())
       .scaleEffect(pressed ? 0.95 : 1)
-      .if(!disabled) {
-        $0.onTapGesture {
-          action?()
-        }
-        .simultaneousGesture(
-          LongPressGesture(minimumDuration: 1)
-            .updating($pressed, body: { newPressed, state, transaction in
-              transaction.animation = .interpolatingSpring(stiffness: 250, damping: 15)
-              state = newPressed
-            })
-        )
-      }
+      .onTapGesture { if !disabled { action?() }}
+      .simultaneousGesture(
+        disabled
+        ? nil
+        : LongPressGesture(minimumDuration: 1)
+          .updating($pressed, body: { newPressed, state, transaction in
+            transaction.animation = .interpolatingSpring(stiffness: 250, damping: 15)
+            state = newPressed
+          })
+      )
       .transition(.scaleAndBlur)
       .id(icon)
   }
