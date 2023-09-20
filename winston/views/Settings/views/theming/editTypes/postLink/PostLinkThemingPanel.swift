@@ -45,11 +45,15 @@ struct PostLinkThemingPanel: View {
       .padding(.top, 12)
       .padding(.bottom, 12)
     } preview: {
-      PostLink(disableOuterVSpacing: true, post: Post(data: previewPostSampleData, api: redditAPI), sub: Subreddit(id: postSampleData.subreddit, api: redditAPI))
-        .equatable()
-        .environment(\.useTheme, theme)
-        .environmentObject(routerProxy)
-        .allowsHitTesting(false)
+      
+      VStack {
+        PostLink(disableOuterVSpacing: true, post: Post(data: previewPostSampleData, api: redditAPI), sub: Subreddit(id: postSampleData.subreddit, api: redditAPI))
+          .equatable()
+          .environment(\.useTheme, theme)
+          .environmentObject(routerProxy)
+          .allowsHitTesting(false)
+      }
+      .fixedSize(horizontal: false, vertical: true)
       
       FakeSection("Options") {
         HStack {

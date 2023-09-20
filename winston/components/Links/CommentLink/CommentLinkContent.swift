@@ -214,7 +214,6 @@ struct CommentLinkContent: View {
                 Group {
                   if lineLimit != nil {
                     Text(body.md())
-                      .fontSize(theme.theme.bodyText.size)
                       .lineLimit(lineLimit)
                   } else {
                     MD(data.winstonBodyAttrEncoded.isNil ? .str(body) : .json(data.winstonBodyAttrEncoded!), fontSize: theme.theme.bodyText.size)
@@ -228,7 +227,15 @@ struct CommentLinkContent: View {
                       )
                   }
                 }
+                .fontSize(theme.theme.bodyText.size, theme.theme.bodyText.weight.t)
                 .foregroundColor(theme.theme.bodyText.color.cs(cs).color())
+              }
+              .onChange(of: theme) { newTheme in
+                let encoder = JSONEncoder()
+                if let jsonData = try? encoder.encode(stringToAttr(body, fontSize: newTheme.theme.bodyText.size)) {
+                  let json = String(decoding: jsonData, as: UTF8.self)
+                  comment.data?.winstonBodyAttrEncoded = json
+                }
               }
               //              .padding(.leading, 6)
               .frame(maxWidth: .infinity, alignment: .topLeading)

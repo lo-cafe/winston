@@ -13,6 +13,7 @@ struct ListBigBtn: View {
   var iconColor: Color
   var label: String
   var destination: Subreddit
+  @Environment(\.useTheme) private var theme
   var body: some View {
     Button {
       routerProxy.router.path.append(SubViewType.posts(destination))
@@ -27,10 +28,11 @@ struct ListBigBtn: View {
       .padding(.all, 10)
       .frame(maxWidth: .infinity, alignment: .leading)
       .foregroundColor(.primary)
-      .background(RR(13, Color.listBG))
+      .themedListRowBG()
+      .mask(RR(10, .black))
       .contentShape(RoundedRectangle(cornerRadius: 13))
       //    .onChange(of: reset) { _ in active = false }
     }
-    .buttonStyle(.plain)
+    .buttonStyle(WNavLinkButtonStyle())
   }
 }

@@ -39,9 +39,10 @@ struct AlphabetJumper: View {
     }
     .fontSize(11, .semibold)
     .frame(width: 16, alignment: .trailing)
-    .background(Color(uiColor: UIColor.systemGroupedBackground))
+//    .background(Color(uiColor: UIColor.systemGroupedBackground))
+    .background(Color.clear)
     .contentShape(Rectangle())
-    .gesture(
+    .highPriorityGesture(
       DragGesture(minimumDistance: 0)
         .onChanged { val in
           let stepI = Int(val.location.y / 15.3)

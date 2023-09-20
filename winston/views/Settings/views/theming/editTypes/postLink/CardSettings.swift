@@ -30,6 +30,11 @@ struct CardSettings: View {
       FakeSection("Card") {
         LabeledSlider(label: "Corner radius", value: $theme.cornerRadius, range: 0...64)
           .resetter($theme.cornerRadius, defaultTheme.postLinks.theme.cornerRadius)
+        
+        Divider()
+        
+        LabeledSlider(label: "Media corner radius", value: $theme.mediaCornerRadius, range: 0...64)
+          .resetter($theme.mediaCornerRadius, defaultTheme.postLinks.theme.mediaCornerRadius)
 
         Divider()
 

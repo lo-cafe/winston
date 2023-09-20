@@ -28,9 +28,14 @@ struct AppContent: View {
   @Default(.selectedThemeID) private var selectedThemeID
   @Environment(\.colorScheme) private var cs
   
-  var selectedTheme: WinstonTheme { themesPresets.first { $0.id == selectedThemeID } ?? defaultTheme }
+  var selectedThemeRaw: WinstonTheme? { themesPresets.first { $0.id == selectedThemeID } }
   var body: some View {
+    let selectedTheme = selectedThemeRaw ?? defaultTheme
     Tabber(theme: selectedTheme, cs: cs)
+      .onAppear {
+        themesPresets = themesPresets.filter { $0.id != "default" }
+        if selectedThemeRaw.isNil { selectedThemeID = "default" }
+      }
       .environment(\.useTheme, selectedTheme)
       .environmentObject(redditAPI)
     //        .alertToastRoot()

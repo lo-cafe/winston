@@ -75,7 +75,7 @@ let defaultTheme = WinstonTheme(
       bg: listSectionBGTheme
     ),
     spacing: 12,
-    divider: .init(style: .line, thickness: 1, color: dividerColor)
+    divider: .init(style: .no, thickness: 1, color: dividerColor)
     //    bg: defaultThemeBG
   ),
   lists: .init(

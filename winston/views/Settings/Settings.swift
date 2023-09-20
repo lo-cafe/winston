@@ -23,99 +23,101 @@ struct Settings: View {
   @State private var id = UUID().uuidString
   var body: some View {
     NavigationStack(path: $router.path) {
-      List {
-        Group {
-          Section {
-            NavigationLink(value: SettingsPages.general) {
-              Label("General", systemImage: "gear")
-            }
-            NavigationLink(value: SettingsPages.behavior) {
-              Label("Behavior", systemImage: "arrow.triangle.turn.up.right.diamond.fill")
-            }
-            NavigationLink(value: SettingsPages.appearance) {
-              Label("Appearance", systemImage: "theatermask.and.paintbrush.fill")
-            }
-            NavigationLink(value: SettingsPages.account) {
-              Label("Account", systemImage: "person.crop.circle")
-            }
-            //            NavigationLink(value: SettingsPages.accessibility) {
-            //              Label("Accessibility", systemImage: "figure.roll")
-            //            }
-            
-          }
-          
-          Section {
-            NavigationLink(value: SettingsPages.faq){
-              Label("FAQ", systemImage: "exclamationmark.questionmark")
-            }
-            NavigationLink(value: SettingsPages.about) {
-              Label("About", systemImage: "cup.and.saucer.fill")
-            }
-            Button {
-              sendCustomEmail()
-            } label: {
-              Label("Report a bug", systemImage: "ladybug.fill")
-            }
-            Button {
-              openURL(URL(string: "https://patreon.com/user?u=93745105")!)
-            } label: {
-              Label("Donate monthly", systemImage: "heart.fill")
-            }
-            Button {
-              openURL(URL(string: "https://ko-fi.com/locafe")!)
-            } label: {
-              HStack {
-                Image("jar")
-                  .resizable()
-                  .scaledToFit()
-                  .frame(width: 28, height: 16)
-                  .padding(.trailing, 9)
-                Text("Tip jar")
+      RouterProxyInjector(routerProxy: RouterProxy(router)) { routerProxy in
+        List {
+          Group {
+            Section {
+              WNavigationLink(value: SettingsPages.general) {
+                Label("General", systemImage: "gear")
+              }
+              WNavigationLink(value: SettingsPages.behavior) {
+                Label("Behavior", systemImage: "arrow.triangle.turn.up.right.diamond.fill")
+              }
+              WNavigationLink(value: SettingsPages.appearance) {
+                Label("Appearance", systemImage: "theatermask.and.paintbrush.fill")
+              }
+              WNavigationLink(value: SettingsPages.account) {
+                Label("Account", systemImage: "person.crop.circle")
               }
             }
             
+            Section {
+              WNavigationLink(value: SettingsPages.faq){
+                Label("FAQ", systemImage: "exclamationmark.questionmark")
+              }
+              WNavigationLink(value: SettingsPages.about) {
+                Label("About", systemImage: "cup.and.saucer.fill")
+              }
+              
+              WListButton {
+                sendCustomEmail()
+              } label: {
+                Label("Report a bug", systemImage: "ladybug.fill")
+              }
+              
+              WSListButton("Donate monthly", icon: "heart.fill") {
+                openURL(URL(string: "https://patreon.com/user?u=93745105")!)
+              }
+              .accentColor(.red)
+              
+              WListButton {
+                openURL(URL(string: "https://ko-fi.com/locafe")!)
+              } label: {
+                HStack {
+                  Image("jar")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 28, height: 20)
+                    .padding(.trailing, 9)
+                    .foregroundStyle(Color.accentColor)
+                  Text("Tip jar")
+                }
+              }
+              
+            }
           }
+          .themedListDividers()
+          
         }
-        .listRowSeparatorTint(selectedTheme.lists.dividersColors.cs(cs).color())
-//        .listRowBackground(Rectangle().fill(selectedTheme.lists.foreground.blurry ? AnyShapeStyle(.bar) : AnyShapeStyle(selectedTheme.lists.foreground.color.cs(cs).color())).overlay(!selectedTheme.lists.foreground.blurry ? nil : Rectangle().fill(selectedTheme.lists.foreground.color.cs(cs).color())))
-        
-      }
-      .themedListBG(selectedTheme.lists.bg)
-      .scrollContentBackground(.hidden)
-      .navigationDestination(for: SettingsPages.self) { x in
-        Group {
-          switch x {
-          case .general:
-            GeneralPanel()
-          case .behavior:
-            BehaviorPanel()
-          case .appearance:
-            AppearancePanel()
-          case .account:
-            AccountPanel()
-          case .about:
-            AboutPanel()
-          case .commentSwipe:
-            CommentSwipePanel()
-          case .postSwipe:
-            PostSwipePanel()
-          case .accessibility:
-            AccessibilityPanel()
-          case .postFontSettings:
-            PostFontSettings()
-          case .filteredSubreddits:
-            FilteredSubredditsSettings()
-          case .faq:
-            FAQPanel()
-          case .themes:
-            ThemesPanel()
+        .themedListBG(selectedTheme.lists.bg)
+        .scrollContentBackground(.hidden)
+        .navigationDestination(for: SettingsPages.self) { x in
+          Group {
+            switch x {
+            case .general:
+              GeneralPanel()
+            case .behavior:
+              BehaviorPanel()
+            case .appearance:
+              AppearancePanel()
+            case .account:
+              AccountPanel()
+            case .about:
+              AboutPanel()
+            case .commentSwipe:
+              CommentSwipePanel()
+            case .postSwipe:
+              PostSwipePanel()
+            case .accessibility:
+              AccessibilityPanel()
+            case .postFontSettings:
+              PostFontSettings()
+            case .filteredSubreddits:
+              FilteredSubredditsSettings()
+            case .faq:
+              FAQPanel()
+            case .themes:
+              ThemesPanel()
+            }
           }
+          .environmentObject(router)
+          .environmentObject(routerProxy)
         }
         .environmentObject(router)
+        .environmentObject(routerProxy)
+        .navigationTitle("Settings")
+        .onChange(of: reset) { _ in router.path.removeLast(router.path.count) }
       }
-      .navigationTitle("Settings")
-      .environmentObject(router)
-      .onChange(of: reset) { _ in router.path.removeLast(router.path.count) }
     }
   }
 }

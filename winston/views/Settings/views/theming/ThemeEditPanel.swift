@@ -44,6 +44,7 @@ struct ThemeEditPanel: View {
   @StateObject var themeEditedInstance: ThemeEditedInstance
   @State private var iconPickerOpen = false
   @State private var themeColor: Color = .blue
+  @EnvironmentObject private var routerProxy: RouterProxy
   
   //  init(theme: WinstonTheme) {
   //    self.index = Defaults[.themesPresets].firstIndex(of: theme) ?? 0
@@ -63,25 +64,14 @@ struct ThemeEditPanel: View {
         .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
       
       Section("Theming") {
-        NavigationLink(value: ThemeEditPanels.general) {
-          Label("General", systemImage: "paintbrush.pointed.fill")
-        }
-        NavigationLink(value: ThemeEditPanels.commonLists) {
-          Label("Common lists", systemImage: "list.bullet")
-        }
-        NavigationLink(value: ThemeEditPanels.feed) {
-          Label("Posts feed", systemImage: "rectangle.grid.1x2.fill")
-        }
-        NavigationLink(value: ThemeEditPanels.postLinks) {
-          Label("Posts links", systemImage: "rectangle.and.hand.point.up.left.fill")
-        }
-        NavigationLink(value: ThemeEditPanels.posts) {
-          Label("Post page", systemImage: "doc.richtext.fill")
-        }
-        NavigationLink(value: ThemeEditPanels.comments) {
-          Label("Comments", systemImage: "message.fill")
-        }
+        WSNavigationLink(ThemeEditPanels.general, "General", icon: "paintbrush.pointed.fill")
+        WSNavigationLink(ThemeEditPanels.commonLists, "Common lists", icon: "list.bullet")
+        WSNavigationLink(ThemeEditPanels.feed, "Posts feed", icon: "rectangle.grid.1x2.fill")
+        WSNavigationLink(ThemeEditPanels.postLinks, "Posts links", icon: "rectangle.and.hand.point.up.left.fill")
+        WSNavigationLink(ThemeEditPanels.posts, "Post page", icon: "doc.richtext.fill")
+        WSNavigationLink(ThemeEditPanels.comments, "Comments", icon: "message.fill")
       }
+      .themedListDividers()
       
       Section("Metadatas") {
         
@@ -97,31 +87,37 @@ struct ThemeEditPanel: View {
             Image(systemName: theme.metadata.icon)
               .foregroundColor(theme.metadata.color.color())
           }
+          .themedListRowBG(enablePadding: true)
         }
+        .buttonStyle(WNavLinkButtonStyle())
         .sheet(isPresented: $iconPickerOpen) {
           SymbolPicker(symbol: $themeEditedInstance.winstonTheme.metadata.icon)
         }
         
-        ThemeColorPicker("Icon background color", $themeEditedInstance.winstonTheme.metadata.color)
-        
-        LabeledTextField("Name", $themeEditedInstance.winstonTheme.metadata.name)
-        LabeledTextField("Author", $themeEditedInstance.winstonTheme.metadata.author)
-        
-        VStack(alignment: .leading, spacing: 4) {
-          Text("Description:")
-            .padding(.top, 8)
-          TextEditor(text: $themeEditedInstance.winstonTheme.metadata.description)
-            .frame(maxWidth: .infinity, minHeight: 100)
-            .padding(.horizontal, 6)
-            .background(.primary.opacity(0.05))
-            .mask(RR(8, .black))
-            .padding(.bottom, 8)
-            .fontSize(15)
+        Group {
+          ThemeColorPicker("Icon background color", $themeEditedInstance.winstonTheme.metadata.color)
+          LabeledTextField("Name", $themeEditedInstance.winstonTheme.metadata.name)
+          LabeledTextField("Author", $themeEditedInstance.winstonTheme.metadata.author)
+          
+          VStack(alignment: .leading, spacing: 4) {
+            Text("Description:")
+              .padding(.top, 8)
+            TextEditor(text: $themeEditedInstance.winstonTheme.metadata.description)
+              .frame(maxWidth: .infinity, minHeight: 100)
+              .padding(.horizontal, 6)
+              .background(.primary.opacity(0.05))
+              .mask(RR(8, .black))
+              .padding(.bottom, 8)
+              .fontSize(15)
+          }
         }
+        .themedListRowBG(enablePadding: true)
         
       }
+      .themedListDividers()
       
     }
+    .themedListBG(themeEditedInstance.winstonTheme.lists.bg)
     .scrollDismissesKeyboard(.interactively)
     .onAppear { themeEditedInstance.load() }
     .navigationTitle(theme.metadata.name)
@@ -144,6 +140,7 @@ struct ThemeEditPanel: View {
         }
       }
       .environment(\.useTheme, theme)
+      .environmentObject(routerProxy)
     }
     .environment(\.useTheme, theme)
   }

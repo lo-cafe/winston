@@ -13,6 +13,8 @@ struct ShortCommentPostLink: View {
   @State var openedPost = false
   @State var openedSub = false
   @Default(.coloredCommentNames) var coloredCommentNames
+  @Environment(\.useTheme) private var selectedTheme
+  @Environment(\.colorScheme) private var cs
   var body: some View {
     if let data = comment.data, let _ = data.link_id, let _ = data.subreddit {
       //      Button {
@@ -29,7 +31,7 @@ struct ShortCommentPostLink: View {
         
         VStack(alignment: .leading, spacing: 2) {
           if let author = data.author {
-            (Text(author).font(.system(size: 13, weight: .semibold)).foregroundColor(coloredCommentNames ? .blue : .primary))
+            (Text(author).font(.system(size: selectedTheme.postLinks.theme.badge.authorText.size, weight: selectedTheme.postLinks.theme.badge.authorText.weight.t)).foregroundColor(author == "[deleted]" ? .red: selectedTheme.postLinks.theme.badge.authorText.color.cs(cs).color()))
               .onTapGesture { routerProxy.router.path.append(User(id: data.author!, api: comment.redditAPI)) }
           }
           
