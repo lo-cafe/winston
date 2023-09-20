@@ -186,8 +186,10 @@ struct Tabber: View {
     .fullScreenCover(isPresented: Binding(get: { !tempGlobalState.inAppBrowserURL.isNil }, set: { val in
       tempGlobalState.inAppBrowserURL = nil
     })) {
-      SafariWebView(url: URL(string: "https://sarunw.com")!)
-        .ignoresSafeArea()
+      if let url = tempGlobalState.inAppBrowserURL {
+        SafariWebView(url: url)
+          .ignoresSafeArea()
+      }
     }
     .environmentObject(tempGlobalState)
     .alert("OMG! Winston found a squirky bug!", isPresented: $errorAlert.asking) {
