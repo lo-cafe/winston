@@ -20,6 +20,7 @@ struct CommentLinkMore: View {
   @Environment(\.colorScheme) private var cs
   
   var body: some View {
+    let curveColor = selectedTheme.comments.theme.indentColor.cs(cs).color()
     let preferenceShowCommentsCards = selectedTheme.comments.theme.type == .card
     let cardedCommentsInnerHPadding = selectedTheme.comments.theme.innerPadding.horizontal
     let horPad = preferenceShowCommentsCards ? cardedCommentsInnerHPadding : 0
@@ -59,7 +60,7 @@ struct CommentLinkMore: View {
         .padding(.vertical, 8)
         .padding(.horizontal, 12)
         .opacity(loadMoreLoading ? 0.5 : 1)
-        .background(Capsule(style: .continuous).fill(Color("divider")))
+        .background(Capsule(style: .continuous).fill(curveColor))
         .padding(.vertical, 4)
         .compositingGroup()
         .fontSize(selectedTheme.comments.theme.bodyText.size, .medium)

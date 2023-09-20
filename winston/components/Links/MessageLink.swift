@@ -29,12 +29,12 @@ struct MessageLink: View {
           Text((data.body ?? "").md()).lineLimit(2).fontSize(15).opacity(0.75)
         }
       }
-      .allowsHitTesting(false)
       .padding(.horizontal, 16)
       .padding(.vertical, 12)
       .frame(maxWidth: .infinity, alignment: .topLeading)
       .themedListRowBG()
       .mask(RR(20, .black))
+      .allowsHitTesting(false)
       .compositingGroup()
       .opacity(!(data.new ?? false) ? 0.65 : 1)
       .swipyActions(pressing: $pressed, onTap: {

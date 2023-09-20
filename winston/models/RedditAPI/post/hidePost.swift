@@ -18,14 +18,13 @@ private class HideDebouncer {
 
 extension RedditAPI {
   func hidePost(_ hide: Bool, fullnames: [String]) async -> () {
-    if !HideDebouncer.shared.workItem.isNil {
-      HideDebouncer.shared.workItem?.cancel()
-      HideDebouncer.shared.workItem = nil
-    }
     HideDebouncer.shared.names += fullnames
+    if !HideDebouncer.shared.workItem.isNil { return }
+    print("kmkm")
     HideDebouncer.shared.workItem = DispatchWorkItem {
       HideDebouncer.shared.workItem = nil
       let names = HideDebouncer.shared.names
+      print("kmkm", names)
       HideDebouncer.shared.names.removeAll()
       Task(priority: .background) {
         await self.refreshToken()
@@ -55,7 +54,7 @@ extension RedditAPI {
       }
     }
     if let workItem = HideDebouncer.shared.workItem {
-      DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: workItem) // delay of 5 seconds
+      DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: workItem)
     }
   }
   

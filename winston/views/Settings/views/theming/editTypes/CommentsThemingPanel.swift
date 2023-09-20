@@ -42,9 +42,11 @@ struct CommentsGeneralSettings: View {
         FontSelector(theme: $theme.comments.theme.bodyText, defaultVal: defaultTheme.comments.theme.bodyText)
       }
       
-      FakeSection("General") {
-        LabeledSlider(label: "Indentation curve", value: $theme.comments.theme.indentCurve, range: 3...32)
+      FakeSection("Indentation lines") {
+        LabeledSlider(label: "Corner curvature", value: $theme.comments.theme.indentCurve, range: 3...32)
           .resetter($theme.comments.theme.indentCurve, defaultTheme.comments.theme.indentCurve)
+        
+        SchemesColorPicker(theme: $theme.comments.theme.indentColor, defaultVal: defaultTheme.comments.theme.indentColor)
       }
       
       FakeSection("Background") {
@@ -53,7 +55,7 @@ struct CommentsGeneralSettings: View {
           .resetter($theme.comments.theme.cornerRadius, defaultTheme.comments.theme.cornerRadius)
       }
       
-      FakeSection("Lines") {
+      FakeSection("Comments divider") {
         LineThemeEditor(theme: $theme.comments.divider, defaultVal: defaultTheme.comments.divider)
       }
     }

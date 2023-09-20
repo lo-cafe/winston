@@ -22,6 +22,7 @@ struct CommentLinkFull: View {
   @Environment(\.colorScheme) private var cs
   
   var body: some View {
+    let curveColor = selectedTheme.comments.theme.indentColor.cs(cs).color()
     let cardedCommentsInnerHPadding = selectedTheme.comments.theme.innerPadding.horizontal
     let preferenceShowCommentsCards = selectedTheme.comments.theme.type == .card
     let horPad = preferenceShowCommentsCards ? cardedCommentsInnerHPadding : 0
@@ -52,7 +53,7 @@ struct CommentLinkFull: View {
       }
       .padding(.horizontal, horPad)
       .frame(maxWidth: .infinity, alignment: .leading)
-      .background(selectedTheme.comments.theme.bg.cs(cs).color())
+      .background(curveColor)
       .contentShape(Rectangle())
       .onTapGesture {
         routerProxy.router.path.append(PostViewPayload(post: post, postSelfAttr: attrStrLoader.data, sub: subreddit))

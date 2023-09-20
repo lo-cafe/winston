@@ -149,6 +149,7 @@
 		EC6CBE352A7D6E760089EAA0 /* LICENSE.md in Sources */ = {isa = PBXBuildFile; fileRef = EC6CBE342A7D6E760089EAA0 /* LICENSE.md */; };
 		EC77B1832AA4021D00C482DF /* DefaultDestinationInjector.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC77B1822AA4021D00C482DF /* DefaultDestinationInjector.swift */; };
 		EC77B1852AA434DD00C482DF /* stringToAttr.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC77B1842AA434DD00C482DF /* stringToAttr.swift */; };
+		EC7933742ABACF9E0094B6F1 /* ifIOS17.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC7933732ABACF9E0094B6F1 /* ifIOS17.swift */; };
 		EC7DBDEF2A846D0C00D7C123 /* save.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC7DBDEE2A846D0C00D7C123 /* save.swift */; };
 		EC7DBDF12A86C91A00D7C123 /* CommentSwipePanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC7DBDF02A86C91A00D7C123 /* CommentSwipePanel.swift */; };
 		EC7DBDF32A86C92200D7C123 /* PostSwipePanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC7DBDF22A86C92200D7C123 /* PostSwipePanel.swift */; };
@@ -479,6 +480,7 @@
 		EC6CBE342A7D6E760089EAA0 /* LICENSE.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = LICENSE.md; sourceTree = "<group>"; };
 		EC77B1822AA4021D00C482DF /* DefaultDestinationInjector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultDestinationInjector.swift; sourceTree = "<group>"; };
 		EC77B1842AA434DD00C482DF /* stringToAttr.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = stringToAttr.swift; sourceTree = "<group>"; };
+		EC7933732ABACF9E0094B6F1 /* ifIOS17.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ifIOS17.swift; sourceTree = "<group>"; };
 		EC7DBDEE2A846D0C00D7C123 /* save.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = save.swift; sourceTree = "<group>"; };
 		EC7DBDF02A86C91A00D7C123 /* CommentSwipePanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentSwipePanel.swift; sourceTree = "<group>"; };
 		EC7DBDF22A86C92200D7C123 /* PostSwipePanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostSwipePanel.swift; sourceTree = "<group>"; };
@@ -783,6 +785,7 @@
 				EC3AC9E82AB317CB0078EC78 /* subtleSheet.swift */,
 				EC46E9292ABA4340001BC068 /* themedListRowBG.swift */,
 				EC46E92B2ABA4460001BC068 /* themedListDividers.swift */,
+				EC7933732ABACF9E0094B6F1 /* ifIOS17.swift */,
 			);
 			path = modifiers;
 			sourceTree = "<group>";
@@ -1592,6 +1595,7 @@
 				EC92FBDE2A589BE200391D1D /* SquircleUIKit.swift in Sources */,
 				ECAA8B602A75216E00D9D636 /* ShortPostLink.swift in Sources */,
 				ECE08B5B2AA9C43B00F84DC9 /* saveAndLoadImages.swift in Sources */,
+				EC7933742ABACF9E0094B6F1 /* ifIOS17.swift in Sources */,
 				EC5EDA732A4E8EC400140A08 /* fetchSub.swift in Sources */,
 				EC46E9282ABA3B05001BC068 /* WNavigationLink.swift in Sources */,
 				EC08543F2A4D0C0700E88389 /* doThisAfter.swift in Sources */,

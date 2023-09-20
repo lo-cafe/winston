@@ -10,7 +10,7 @@ import SwiftUI
 private let handlerWidth: CGFloat = 108
 private let handlerDashWidth: CGFloat = 56
 private let handlerHeight: CGFloat = 36
-private let handlerRadius: CGFloat = 21
+private let handlerRadius: CGFloat = 18
 private let bodyRadius: CGFloat = 32
 
 struct SubtleSheetModifier<T: View>: ViewModifier {
@@ -20,6 +20,7 @@ struct SubtleSheetModifier<T: View>: ViewModifier {
   var forcedOffset: CGFloat = 0
   var sheetContent: (CGFloat) -> T
   var bg: any ShapeStyle
+  var border = false
   @State private var disappear = true
   @State private var dragOffsetPersist: CGFloat = 0
   @GestureState private var dragOffsetRaw: CGFloat?
@@ -114,6 +115,12 @@ struct SubtleSheetModifier<T: View>: ViewModifier {
               .shadow(radius: 16)
 //              .allowsHitTesting(false)
           )
+//          .overlay {
+//            !border
+//            ? nil
+//            : SheetShape(width: UIScreen.screenWidth, height: UIScreen.screenHeight)
+//              .strokeBorder(Color.primary.opacity(0.25), lineWidth: 2)
+//          }
           .contentShape(SheetShape(width: UIScreen.screenWidth, height: UIScreen.screenHeight))
           .scaleEffect(1)
           .compositingGroup()
@@ -130,15 +137,22 @@ struct SubtleSheetModifier<T: View>: ViewModifier {
 }
 
 extension View {
-  func subtleSheet(handlerBGOnly: Bool = false, scrollContentHeight: CGFloat, sheetContentSize: Binding<CGSize>, forcedOffset: CGFloat = 0, bg: any ShapeStyle, @ViewBuilder _ content: @escaping (CGFloat) -> (some View)) -> some View {
-    self.modifier(SubtleSheetModifier(handlerBGOnly: handlerBGOnly, scrollContentHeight: scrollContentHeight, sheetContentSize: sheetContentSize, forcedOffset: forcedOffset, sheetContent: content, bg: bg))
+  func subtleSheet(handlerBGOnly: Bool = false, scrollContentHeight: CGFloat, sheetContentSize: Binding<CGSize>, forcedOffset: CGFloat = 0, bg: any ShapeStyle, border: Bool = false, @ViewBuilder _ content: @escaping (CGFloat) -> (some View)) -> some View {
+    self.modifier(SubtleSheetModifier(handlerBGOnly: handlerBGOnly, scrollContentHeight: scrollContentHeight, sheetContentSize: sheetContentSize, forcedOffset: forcedOffset, sheetContent: content, bg: bg, border: border))
   }
 }
 
 
-struct SheetShape: Shape {
+struct SheetShape: InsettableShape {
   var width: CGFloat
   var height: CGFloat
+  var insetAmount = 0.0
+  
+  func inset(by amount: CGFloat) -> some InsettableShape {
+      var arc = self
+      arc.insetAmount += amount
+      return arc
+  }
   
   func path(in rect: CGRect) -> Path {
 //    let bodyHeight = height - handlerHeight
@@ -146,49 +160,49 @@ struct SheetShape: Shape {
     var path = Path()
     
     // start from the top left corner of the handler
-    path.move(to: CGPoint(x: (width - handlerWidth) / 2 + handlerRadius, y: 0))
+    path.move(to: CGPoint(x: ((width - handlerWidth) / 2 + handlerRadius) + insetAmount, y: 0 + insetAmount))
     
     // top edge of the handler
-    path.addLine(to: CGPoint(x: (width + handlerWidth) / 2 - handlerRadius, y: 0))
+    path.addLine(to: CGPoint(x: ((width + handlerWidth) / 2 - handlerRadius) - insetAmount, y: 0 + insetAmount))
     
     // top right corner of the handler
-    path.addArc(center: CGPoint(x: (width + handlerWidth) / 2 - handlerRadius, y: handlerRadius), radius: handlerRadius, startAngle: .radians(-1.5 * .pi), endAngle: .radians(0), clockwise: false)
+    path.addArc(center: CGPoint(x: ((width + handlerWidth) / 2 - handlerRadius) - insetAmount, y: handlerRadius + insetAmount), radius: handlerRadius - insetAmount, startAngle: .radians(-1.5 * .pi), endAngle: .radians(0), clockwise: false)
     
     // right edge of the handler
-    path.addLine(to: CGPoint(x: (width + handlerWidth) / 2, y: handlerHeight - handlerRadius))
+    path.addLine(to: CGPoint(x: ((width + handlerWidth) / 2) - insetAmount, y: (handlerHeight - handlerRadius) + insetAmount))
     
     // bottom right corner of the handler
-    path.addArc(center: CGPoint(x: (width + handlerWidth) / 2 + handlerRadius, y: handlerHeight - handlerRadius), radius: handlerRadius, startAngle: .radians(.pi), endAngle: .radians(0.5 * .pi), clockwise: true)
+    path.addArc(center: CGPoint(x: ((width + handlerWidth) / 2 + handlerRadius) + insetAmount, y: handlerHeight - handlerRadius + insetAmount), radius: handlerRadius + insetAmount, startAngle: .radians(.pi), endAngle: .radians(0.5 * .pi), clockwise: true)
     
     // connection between the handler and the body on the right side
-    path.addLine(to: CGPoint(x: width - bodyRadius, y: handlerHeight))
+    path.addLine(to: CGPoint(x: width - bodyRadius - insetAmount, y: handlerHeight + insetAmount))
     
     // top right corner of the body
-    path.addArc(center: CGPoint(x: width - bodyRadius, y: handlerHeight + bodyRadius), radius: bodyRadius, startAngle: .radians(-0.5 * .pi), endAngle: .radians(0), clockwise: false)
+    path.addArc(center: CGPoint(x: width - bodyRadius - insetAmount, y: handlerHeight + bodyRadius + insetAmount), radius: bodyRadius - insetAmount, startAngle: .radians(-0.5 * .pi), endAngle: .radians(0), clockwise: false)
     
     // right edge of the body
-    path.addLine(to: CGPoint(x: width, y: height))
+    path.addLine(to: CGPoint(x: width - insetAmount, y: height - insetAmount))
     
     // bottom edge of the body
-    path.addLine(to: CGPoint(x: 0, y: height))
+    path.addLine(to: CGPoint(x: 0, y: height - insetAmount))
     
     // left edge of the body
-    path.addLine(to: CGPoint(x: 0, y: handlerHeight + bodyRadius))
+    path.addLine(to: CGPoint(x: 0, y: handlerHeight + bodyRadius + insetAmount))
     
     // top left corner of the body
-    path.addArc(center: CGPoint(x: bodyRadius, y: handlerHeight + bodyRadius), radius: bodyRadius, startAngle: .radians(.pi), endAngle: .radians(1.5 * .pi), clockwise: false)
+    path.addArc(center: CGPoint(x: bodyRadius + insetAmount, y: handlerHeight + bodyRadius + insetAmount), radius: bodyRadius - insetAmount, startAngle: .radians(.pi), endAngle: .radians(1.5 * .pi), clockwise: false)
     
     // connection between the handler and the body on the left side
-    path.addLine(to: CGPoint(x: (width - handlerWidth) / 2, y: handlerHeight))
+    path.addLine(to: CGPoint(x: ((width - handlerWidth) / 2) + insetAmount, y: handlerHeight + insetAmount))
     
     // bottom left corner of the handler
-    path.addArc(center: CGPoint(x: (width - handlerWidth) / 2 - handlerRadius, y: handlerHeight - handlerRadius), radius: handlerRadius, startAngle: .radians(0.5 * .pi), endAngle: .radians(0), clockwise: true)
+    path.addArc(center: CGPoint(x: ((width - handlerWidth) / 2 - handlerRadius) + insetAmount, y: (handlerHeight - handlerRadius) + insetAmount), radius: handlerRadius + insetAmount, startAngle: .radians(0.5 * .pi), endAngle: .radians(0), clockwise: true)
     
     // left edge of the handler
-    path.addLine(to: CGPoint(x: (width - handlerWidth) / 2, y: handlerRadius))
+    path.addLine(to: CGPoint(x: ((width - handlerWidth) / 2) + insetAmount, y: handlerRadius + insetAmount))
     
     // top left corner of the handler
-    path.addArc(center: CGPoint(x: (width - handlerWidth) / 2 + handlerRadius, y: handlerRadius), radius:  handlerRadius, startAngle: .radians(.pi), endAngle: .radians(-0.5 * .pi), clockwise: false)
+    path.addArc(center: CGPoint(x: ((width - handlerWidth) / 2 + handlerRadius) + insetAmount, y: handlerRadius + insetAmount), radius:  handlerRadius - insetAmount, startAngle: .radians(.pi), endAngle: .radians(-0.5 * .pi), clockwise: false)
     
     return path
   }
