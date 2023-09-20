@@ -10,4 +10,11 @@ IMPORTANT 1: THIS IS THE FIRST BUILD OF THE NEW THEMES SYSTEM. EXPECT BUGS/CRASH
 - Subreddits filter
 - Many other stuff you may find around, good exploring.
 
+--- QUICK EXTRA UPDATE ---
+- Fixed alphaber jumper wrong background
+- Added comment body text customization
+- Fixed crash on export themes
+- Added media corner radius to post links
+- Added foreground color for all lists in the app
+- IN APP BROWSER \o/ (for post links)
 

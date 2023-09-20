@@ -16,7 +16,6 @@ enum MultiViewType: Hashable {
 }
 
 struct MultiPostsView: View {
-  @Default(.preferenceShowPostsCards) private var preferenceShowPostsCards
   @ObservedObject var multi: Multi
   @State private var loading = true
   @State private var posts: [Post] = []
@@ -26,6 +25,7 @@ struct MultiPostsView: View {
   @State private var newPost = false
   @EnvironmentObject private var redditAPI: RedditAPI
   @EnvironmentObject private var routerProxy: RouterProxy
+  @Environment(\.useTheme) private var selectedTheme
   
   func asyncFetch(force: Bool = false, loadMore: Bool = false) async {
     //    if (multi.data == nil || force) {
@@ -67,15 +67,10 @@ struct MultiPostsView: View {
             .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
             .animation(.default, value: posts)
           
-          if !preferenceShowPostsCards && i != (posts.count - 1) {
-            VStack(spacing: 0) {
-              Divider()
-              Color.listBG
-                .frame(maxWidth: .infinity, minHeight: 6, maxHeight: 6)
-              Divider()
-            }
-            .id("\(post.id)-divider")
-            .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
+          if selectedTheme.postLinks.divider.style != .no && i != (posts.count - 1) {
+            NiceDivider(divider: selectedTheme.postLinks.divider)
+              .id("\(post.id)-divider")
+              .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
           }
           
         }
@@ -89,8 +84,7 @@ struct MultiPostsView: View {
       .listRowSeparator(.hidden)
       .listRowBackground(Color.clear)
     }
-    .background(Color(UIColor.systemGroupedBackground))
-    .scrollContentBackground(.hidden)
+    .themedListBG(selectedTheme.postLinks.bg)
     .listStyle(.plain)
     .environment(\.defaultMinListRowHeight, 1)
     .loader(loading && posts.count == 0)

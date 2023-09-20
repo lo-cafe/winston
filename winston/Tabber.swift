@@ -26,6 +26,7 @@ class TempGlobalState: ObservableObject {
   static var shared = TempGlobalState()
   @Published var globalLoader = GlobalLoader()
   @Published var tabBarHeight: CGFloat? = nil
+  @Published var inAppBrowserURL: URL? = nil
 }
 
 enum TabIdentifier {
@@ -182,6 +183,12 @@ struct Tabber: View {
       , alignment: .bottom
     )
     .background(OFWOpener(router: payload[TabIdentifier.posts]!.router))
+    .fullScreenCover(isPresented: Binding(get: { !tempGlobalState.inAppBrowserURL.isNil }, set: { val in
+      tempGlobalState.inAppBrowserURL = nil
+    })) {
+      SafariWebView(url: URL(string: "https://sarunw.com")!)
+        .ignoresSafeArea()
+    }
     .environmentObject(tempGlobalState)
     .alert("OMG! Winston found a squirky bug!", isPresented: $errorAlert.asking) {
       Button("Gratefully accept the weird gift") {

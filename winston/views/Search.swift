@@ -54,6 +54,8 @@ struct Search: View {
   @State private var dummyAllSub: Subreddit? = nil
   @State private var searchViewLoaded: Bool = false
   
+  @Environment(\.useTheme) private var theme
+  
   func fetch() {
     if searchQuery.text == "" { return }
     withAnimation {
@@ -145,6 +147,7 @@ struct Search: View {
           .listRowBackground(Color.clear)
           .listRowInsets(EdgeInsets(top: 6, leading: 16, bottom: 6, trailing: 16))
         }
+        .themedListBG(theme.lists.bg)
         .listStyle(.plain)
         .background(Color(UIColor.systemGroupedBackground))
         .scrollContentBackground(.hidden)

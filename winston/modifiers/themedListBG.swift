@@ -27,6 +27,7 @@ struct ThemedListBGModifier: ViewModifier {
       }
       .background(disable ? nil : GeometryReader { geo in returnColor(bg: bg, cs: cs).frame(width: geo.size.width, height: geo.size.height) }.edgesIgnoringSafeArea(.all).allowsHitTesting(false))
       .background(disable ? nil : GeometryReader { geo in Image(uiImage: uiImage).antialiased(true).resizable().scaledToFill().frame(width: geo.size.width, height: geo.size.height) }.edgesIgnoringSafeArea(.all).allowsHitTesting(false))
+      .scrollContentBackground(.hidden)
   }
 }
 

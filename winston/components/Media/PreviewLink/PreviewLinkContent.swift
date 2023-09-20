@@ -19,18 +19,18 @@ class PreviewLinkCache: ObservableObject {
     let model: PreviewViewModel
     let date: Date
   }
-
+  
   static var shared = PreviewLinkCache()
   @Published var cache: [String: CacheItem] = [:]
   let cacheLimit = 50
-
+  
   func addKeyValue(key: String, url: URL) {
     if !cache[key].isNil { return }
     Task(priority: .background) {
       // Create a new CacheItem with the current date
       let item = CacheItem(model: PreviewViewModel(url), date: Date())
       let oldestKey = cache.count > cacheLimit ? cache.min { a, b in a.value.date < b.value.date }?.key : nil
-
+      
       // Add the item to the cache
       await MainActor.run {
         withAnimation {
@@ -119,7 +119,10 @@ struct PreviewLinkContent: View {
   @StateObject var viewModel: PreviewViewModel
   var url: URL
   static let height: CGFloat = 88
-  @Environment(\.openURL) var openURL
+  @Environment(\.openURL) private var openURL
+  @EnvironmentObject private var routerProxy: RouterProxy
+  @ObservedObject private var tempGlobalState = TempGlobalState.shared
+  @Default(.openLinksInSafari) private var openLinksInSafari
   
   var body: some View {
     HStack(spacing: 16) {
@@ -185,7 +188,11 @@ struct PreviewLinkContent: View {
     }
     .highPriorityGesture(TapGesture().onEnded {
       if let newURL = URL(string: url.absoluteString.replacingOccurrences(of: "https://reddit.com/", with: "winstonapp://")) {
-        openURL(newURL)
+        if openLinksInSafari {
+          openURL(newURL)
+        } else {
+          tempGlobalState.inAppBrowserURL = newURL
+        }
       }
     })
   }

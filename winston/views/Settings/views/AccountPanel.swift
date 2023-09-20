@@ -13,6 +13,8 @@ struct AccountPanel: View {
   @EnvironmentObject var redditAPI: RedditAPI
   @State private var isPresentingConfirm: Bool = false
   
+  @Environment(\.useTheme) private var theme
+  
   var body: some View {
     List {
       Section {
@@ -26,12 +28,14 @@ struct AccountPanel: View {
             Text("Your API credentials are 👌")
           }
         }
+        .themedListRowBG(enablePadding: true)
         
         if let accessToken = redditAPI.loggedUser.accessToken {
-          Button("Copy Current Access Token") {
+          WSListButton("Copy Current Access Token", icon: "clipboard") {
             UIPasteboard.general.string = accessToken
           }
-          Button("Refresh Access Token") {
+          
+          WSListButton("Refresh Access Token", icon: "arrow.clockwise") {
             Task(priority: .background) {
               await redditAPI.refreshToken(true)
             }
@@ -39,14 +43,18 @@ struct AccountPanel: View {
         }
         
         Text("If Reddit ban the user-agent this app uses, you can change it to a custom one here:")
+          .themedListRowBG(enablePadding: true)
+        
         HStack {
           Image(systemName: "person.crop.circle.fill")
           TextField("User Agent", text: $redditAPIUserAgent)
         }
+        .themedListRowBG(enablePadding: true)
       }
+      .themedListDividers()
       
       Section {
-        Button("Logout") {
+        WSListButton("Logout", icon: "door.right.hand.open") {
           isPresentingConfirm = true
         }
         .foregroundColor(.red)
@@ -62,16 +70,10 @@ struct AccountPanel: View {
           }
         }, message: { Text("This will clear everything in the app (your Reddit account is safe).") })
       }
-      
-      
+      .themedListDividers()      
     }
+    .themedListBG(theme.lists.bg)
     .navigationTitle("Account")
     .navigationBarTitleDisplayMode(.inline)
-  }
-}
-
-struct AccountPanel_Previews: PreviewProvider {
-  static var previews: some View {
-    AccountPanel()
   }
 }

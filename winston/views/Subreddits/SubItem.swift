@@ -26,6 +26,7 @@ struct SubItemButton: View {
 }
 
 struct SubItem: View, Equatable {
+  var routerProxy: RouterProxy
   static func == (lhs: SubItem, rhs: SubItem) -> Bool {
     lhs.sub.id == rhs.sub.id && lhs.sub.data == rhs.sub.data
   }
@@ -48,7 +49,7 @@ struct SubItem: View, Equatable {
       let favorite = data.user_has_favorited ?? false
       let localFav = likedButNotSubbed.contains(sub)
       
-      NavigationLink(value: SubViewType.posts(sub)) {
+      WNavigationLink(SubViewType.posts(sub)) {
         HStack {
           SubredditIcon(data: data)
           Text(data.display_name ?? "")
@@ -59,9 +60,23 @@ struct SubItem: View, Equatable {
             .foregroundColor((favorite || localFav) ? .blue : .gray.opacity(0.3))
             .highPriorityGesture( TapGesture().onEnded(favoriteToggle) )
         }
-        .contentShape(Rectangle())
       }
-      .buttonStyle(.automatic)
+//      Button {
+//        routerProxy.router.path.append(SubViewType.posts(sub))
+//      } label: {
+//        HStack {
+//          SubredditIcon(data: data)
+//          Text(data.display_name ?? "")
+//          
+//          Spacer()
+//          
+//          Image(systemName: "star.fill")
+//            .foregroundColor((favorite || localFav) ? .blue : .gray.opacity(0.3))
+//            .highPriorityGesture( TapGesture().onEnded(favoriteToggle) )
+//        }
+//        .contentShape(Rectangle())
+//      }
+//      .buttonStyle(.plain)
       
     } else {
       Text("Error")

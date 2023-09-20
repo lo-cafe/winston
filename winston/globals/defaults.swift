@@ -118,10 +118,11 @@ extension Defaults.Keys {
   static let forceFeedbackModifiers = Key<ForceFeedbackModifiers>("forceFeedbackModifiers", default: .medium)
   static let hapticFeedbackOnLPM = Key<Bool>("hapticFeedbackOnLPM", default: true)
   
+  static let openLinksInSafari = Key<Bool>("openLinksInSafari", default: true)
   static let showTestersCelebrationModal = Key<Bool>("showTestersCelebrationModal", default: true)
   static let showTipJarModal = Key<Bool>("showTipJarModal", default: true)
   static let disableAlphabetLettersSectionsInSubsList = Key<Bool>("disableAlphabetLettersSectionsInSubsList", default: false)
-  static let themesPresets = Key<[WinstonTheme]>("themesPresets", default: [defaultTheme])
+  static let themesPresets = Key<[WinstonTheme]>("themesPresets", default: [])
   static let selectedThemeID = Key<String>("selectedThemeID", default: "default")
 }
 
