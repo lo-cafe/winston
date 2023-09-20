@@ -8,7 +8,7 @@ This is a WIP, both the app and this README.
 
 ## Installing
 
-Right now Winston's not on the App Store, so you have to options for using it:
+Right now Winston's not on the App Store, so you have two options for using it:
 
 1- You can join the TestFlight here (if it's not full or down because testflight recently has been failing pretty often):
 https://testflight.apple.com/join/3UF8bAUN
