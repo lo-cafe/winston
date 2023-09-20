@@ -21,7 +21,7 @@ let defaultFlatTheme = WinstonTheme(
     icon: "paintbrush.fill",
     author: "lo.cafe"
   ),
-  id: "default",
+  id: "default-flat",
   postLinks: .init(
     theme: .init(
       type: .card,
@@ -57,6 +57,7 @@ let defaultFlatTheme = WinstonTheme(
       outerHPadding: 8,
       repliesSpacing: 0,
       indentCurve: 12,
+      indentColor: dividerColor,
       cornerRadius: 10,
       badge: badgeTheme,
       bodyText: .init(size: 15, color: primary),

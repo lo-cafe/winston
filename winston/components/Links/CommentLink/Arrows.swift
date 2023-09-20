@@ -34,21 +34,23 @@ struct Arrows: View {
   var kind: ArrowKind
   var offset: CGFloat = 0
   @Environment(\.useTheme) private var selectedTheme
+  @Environment(\.colorScheme) private var cs
   var body: some View {
     let curve = selectedTheme.comments.theme.indentCurve
+    let curveColor = selectedTheme.comments.theme.indentColor
     let avatarSize = selectedTheme.comments.theme.badge.avatar.size
       Group {
         switch kind {
         case .curve:
           CurveShape(offset: offset, curve: curve, avatarSize: avatarSize)
-            .stroke(Color("divider"), style: StrokeStyle(lineWidth: 2, lineCap: .round))
+            .stroke(curveColor.cs(cs).color(), style: StrokeStyle(lineWidth: 2, lineCap: .round))
         case .straight:
           StraightShape()
-            .stroke(Color("divider"), style: StrokeStyle(lineWidth: 2, lineCap: .round))
+            .stroke(curveColor.cs(cs).color(), style: StrokeStyle(lineWidth: 2, lineCap: .round))
             .padding(.vertical, -1)
         case .straightCurve:
           StraightCurveShape(offset: offset, curve: curve, avatarSize: avatarSize)
-            .stroke(Color("divider"), style: StrokeStyle(lineWidth: 2, lineCap: .round))
+            .stroke(curveColor.cs(cs).color(), style: StrokeStyle(lineWidth: 2, lineCap: .round))
             .padding(.vertical, -1)
         case .empty:
           Color.clear

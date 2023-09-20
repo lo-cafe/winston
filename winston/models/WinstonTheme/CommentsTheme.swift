@@ -20,6 +20,7 @@ struct CommentTheme: Codable, Hashable {
   var outerHPadding: CGFloat
   var repliesSpacing: CGFloat
   var indentCurve: CGFloat
+  var indentColor: ColorSchemes<ThemeColor>
   var cornerRadius: CGFloat
   var badge: BadgeTheme
   var bodyText: ThemeText

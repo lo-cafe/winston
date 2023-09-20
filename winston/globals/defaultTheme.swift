@@ -68,6 +68,7 @@ let defaultTheme = WinstonTheme(
       outerHPadding: 8,
       repliesSpacing: 0,
       indentCurve: 12,
+      indentColor: dividerColor,
       cornerRadius: 10,
       badge: badgeTheme,
       bodyText: .init(size: 15, color: primary),
