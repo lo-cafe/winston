@@ -9,6 +9,7 @@ import SwiftUI
 import Defaults
 import AVFoundation
 import AlertToast
+
 struct PostViewPayload: Hashable {
   let post: Post
   var postSelfAttr: AttributedString? = nil
@@ -22,6 +23,7 @@ struct PostView: View, Equatable {
   }
   
   var post: Post
+  @ObservedObject private var cachesPostsAttrStr = Caches.postsAttrStr
   var selfAttr: AttributedString? = nil
   var subreddit: Subreddit
   var highlightID: String?
@@ -57,7 +59,7 @@ struct PostView: View, Equatable {
       List {
         Group {
           Section {
-            PostContent(post: post, selfAttr: selfAttr, sub: subreddit, forceCollapse: forceCollapse)
+            PostContent(post: post, selfAttr: cachesPostsAttrStr.cache[post.id]?.data ?? selfAttr, sub: subreddit, forceCollapse: forceCollapse)
             //              .equatable()
             
             Text("Comments")

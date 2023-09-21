@@ -55,24 +55,6 @@ struct PostLinkSubContainer: View, Equatable {
   }
 }
 
-class AttributedStringLoader: ObservableObject {
-  @Published var data: AttributedString?
-  
-  func load(str: String) {
-    Task.detached(priority: .background) {
-//    }
-//    Task(priority: .background) {
-      let decoder = JSONDecoder()
-      let jsonData = (try? decoder.decode(AttributedString.self, from: str.data(using: .utf8)!)) ?? AttributedString()
-      await MainActor.run {
-        withAnimation {
-          self.data = jsonData
-        }
-      }
-    }
-  }
-}
-
 struct PostLink: View, Equatable {
   static func == (lhs: PostLink, rhs: PostLink) -> Bool {
     return lhs.post == rhs.post && lhs.sub == rhs.sub
@@ -81,7 +63,6 @@ struct PostLink: View, Equatable {
   var disableOuterVSpacing = false
   @ObservedObject var post: Post
   @ObservedObject var sub: Subreddit
-  @StateObject var attrStrLoader = AttributedStringLoader()
   var showSub = false
   var secondary = false
   @EnvironmentObject private var routerProxy: RouterProxy
@@ -178,13 +159,13 @@ struct PostLink: View, Equatable {
                 .frame(maxWidth: .infinity, alignment: .topLeading)
             }
             
-            if data.selftext != "" && showSelfText && !compactMode, let winstonSelftextAttrEncoded = data.winstonSelftextAttrEncoded {
+            if data.selftext != "" && showSelfText && !compactMode {
               Text(data.selftext.md()).lineLimit(3)
                 .fontSize(theme.theme.bodyText.size, theme.theme.bodyText.weight.t)
                 .foregroundColor(theme.theme.bodyText.color.cs(cs).color())
                 .fixedSize(horizontal: false, vertical: true)
                 .frame(maxWidth: .infinity, alignment: .topLeading)
-                .onAppear { attrStrLoader.load(str: winstonSelftextAttrEncoded) }
+                .onAppear { decodePostToCache(post: post) }
             }
             
             if compactMode {
@@ -295,7 +276,7 @@ struct PostLink: View, Equatable {
       .contentShape(Rectangle())
       .swipyUI(
         onTap: {
-          routerProxy.router.path.append(PostViewPayload(post: post, postSelfAttr: attrStrLoader.data, sub: feedsAndSuch.contains(sub.id) ? sub : sub))
+          routerProxy.router.path.append(PostViewPayload(post: post, postSelfAttr: nil, sub: feedsAndSuch.contains(sub.id) ? sub : sub))
         },
         actionsSet: postSwipeActions,
         entity: post

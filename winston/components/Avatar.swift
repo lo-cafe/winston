@@ -18,7 +18,6 @@ struct Avatar: View {
   var fullname: String? = nil
   var theme: AvatarTheme?
   var avatarSize: CGFloat?
-  @EnvironmentObject private var redditAPI: RedditAPI
   @ObservedObject private var avatarCache = AvatarCache.shared
   
   var avatarURL: String? {

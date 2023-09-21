@@ -150,8 +150,8 @@ struct PreviewLinkContent: View {
             .opacity(0.75)
             .fixedSize(horizontal: false, vertical: true)
         }
-        .skeleton(with: viewModel.loading)
-        .multiline(lines: 4, scales: [1: 1, 2: 0.5, 3: 0.75, 4: 0.75])
+//        .skeleton(with: viewModel.loading)
+//        .multiline(lines: 4, scales: [1: 1, 2: 0.5, 3: 0.75, 4: 0.75])
         .frame(maxWidth: .infinity, alignment: .leading)
         .multilineTextAlignment(.leading)
       }

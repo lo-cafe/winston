@@ -31,7 +31,8 @@ func resetPreferences() {
 }
 
 func resetCaches() {
-  YTPlayersCache.shared.cache.removeAll()
+  Caches.ytPlayers.cache.removeAll()
+  Caches.postsAttrStr.cache.removeAll()
   PreviewLinkCache.shared.cache.removeAll()
   ThingEntityCache.shared.thingEntities.removeAll()
   SharedVideoCache.shared.cache.removeAll()
