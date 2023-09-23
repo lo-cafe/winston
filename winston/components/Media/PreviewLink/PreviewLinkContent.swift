@@ -136,7 +136,7 @@ struct PreviewLinkContent: View {
               .truncationMode(.tail)
               .fixedSize(horizontal: false, vertical: true)
             
-            Text(viewModel.url == nil || viewModel.url?.isEmpty == true ? url.absoluteString : viewModel.url!)
+            Text(viewModel.url == nil || viewModel.url?.isEmpty == true ? cleanURL(url: url) : cleanURL(url: URL(string: viewModel.url!)!))
               .fontSize(13)
               .opacity(0.5)
               .lineLimit(1)
