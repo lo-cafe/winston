@@ -34,32 +34,35 @@ struct AppContent: View {
   @State private var lockBlur = UserDefaults.standard.bool(forKey: "useAuth") ? 50 : 0 // Set initial startup blur
 
   var selectedThemeRaw: WinstonTheme? { themesPresets.first { $0.id == selectedThemeID } }
-  var body: some View {
-      ZStack {
-          let selectedTheme = selectedThemeRaw ?? defaultTheme
-          Tabber(theme: selectedTheme, cs: cs)
-              .environment(\.useTheme, selectedTheme)
-              .environmentObject(redditAPI)
-      }.onChange(of: scenePhase) { newPhase in
-          let useAuth = UserDefaults.standard.bool(forKey: "useAuth") // Get fresh value
-
-          if (useAuth && !isAuthenticating) {
-              if (newPhase == .active && lockBlur == 50){
-                  // Not authing, active and blur visible = Need to auth
-                  isAuthenticating = true
-                  biometrics.authenticateUser { success in
-                      if success {
-                          lockBlur = 0
-                      }
-                  }
-                  isAuthenticating = false
-              }
-              else if (newPhase != .active) {
-                  lockBlur = 50
-              }
-          }
-      }.blur(radius: CGFloat(lockBlur)) // Set lockscreen blur
-  }
+    var body: some View {
+        let selectedTheme = selectedThemeRaw ?? defaultTheme
+        Tabber(theme: selectedTheme, cs: cs)
+            .onAppear {
+                themesPresets = themesPresets.filter { $0.id != "default" }
+                if selectedThemeRaw.isNil { selectedThemeID = "default" }
+            }
+            .environment(\.useTheme, selectedTheme)
+            .environmentObject(redditAPI)
+            .onChange(of: scenePhase) { newPhase in
+                let useAuth = UserDefaults.standard.bool(forKey: "useAuth") // Get fresh value
+                
+                if (useAuth && !isAuthenticating) {
+                    if (newPhase == .active && lockBlur == 50){
+                        // Not authing, active and blur visible = Need to auth
+                        isAuthenticating = true
+                        biometrics.authenticateUser { success in
+                            if success {
+                                lockBlur = 0
+                            }
+                        }
+                        isAuthenticating = false
+                    }
+                    else if (newPhase != .active) {
+                        lockBlur = 50
+                    }
+                }
+            }.blur(radius: CGFloat(lockBlur)) // Set lockscreen blur
+    }
 }
 
 private struct CurrentThemeKey: EnvironmentKey {

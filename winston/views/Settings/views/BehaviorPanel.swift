@@ -36,6 +36,9 @@ struct BehaviorPanel: View {
           Toggle("Open links in Safari", isOn: $openLinksInSafari)
           Toggle("Open Youtube Videos Externally", isOn: $openYoutubeApp)
           
+          let auth_type = Biometrics().biometricType()
+          Toggle("Lock Winston With \(auth_type)", isOn: $useAuth)
+
           Picker("Default Launch Feed", selection: $preferenceDefaultFeed) {
             Text("Home").tag("home")
             Text("Popular").tag("popular")
@@ -43,10 +46,10 @@ struct BehaviorPanel: View {
             Text("Subscription List").tag("subList")
           }
           .pickerStyle(DefaultPickerStyle())
-
-          let auth_type = Biometrics().biometricType()
-          Toggle("Lock Winston With \(auth_type)", isOn: $useAuth)
         }
+        .themedListRowBG(enablePadding: true)
+
+        WSNavigationLink(SettingsPages.filteredSubreddits, "Filtered Subreddits")
       }
       .themedListDividers()
       
