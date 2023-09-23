@@ -12,7 +12,6 @@ import LocalAuthentication
 class Biometrics {
     let context = LAContext()
     var error: NSError?
-    var lockScreenView: UIView?
 
     func checkIfEnrolled() -> Bool {
         var isEnrolled = false
@@ -60,19 +59,12 @@ class Biometrics {
         // We're all good, let's authenticate
         context.evaluatePolicy(.deviceOwnerAuthentication, localizedReason: "Identify Yourself!") { success, error in
             if success {
-                print("Success!")
+                print("Auth Success")
                 completion(true)
             } else {
-                print("Failure!")
-                print(error?.localizedDescription ?? "Failed to authenticate")
+                print("Auth Failure: \(error?.localizedDescription ?? "Failed to authenticate")")
                 completion(false)
             }
         }
     }
-}
-
-struct LockScreenView: View {
-    var body: some View {
-        Color.yellow.ignoresSafeArea()
-    }    
 }

@@ -29,9 +29,9 @@ struct AppContent: View {
   @Environment(\.colorScheme) private var cs
   @Environment(\.scenePhase) var scenePhase
   
-  var biometrics = Biometrics()
+  let biometrics = Biometrics()
   @State private var isAuthenticating = false
-  @State private var isLockScreenVisible = false
+  @State private var lockBlur = !UserDefaults.standard.bool(forKey: "useAuth") ? 0 : 50 // Set initial blur for startup
 
   var selectedTheme: WinstonTheme { themesPresets.first { $0.id == selectedThemeID } ?? defaultTheme }
   var body: some View {
@@ -39,32 +39,25 @@ struct AppContent: View {
           Tabber(theme: selectedTheme, cs: cs)
               .environment(\.useTheme, selectedTheme)
               .environmentObject(redditAPI)
-          
-          if isLockScreenVisible {
-              LockScreenView().zIndex(1).edgesIgnoringSafeArea(.all)
-          }
-
       }.onChange(of: scenePhase) { newPhase in
-          let useAuth = UserDefaults.standard.bool(forKey: "useAuth")
-          
-          print("New phase: \(newPhase), FaceID: \(useAuth), LS: \(isLockScreenVisible), IA: \(isAuthenticating)")
-          
+          let useAuth = UserDefaults.standard.bool(forKey: "useAuth") // Get fresh value
+
           if (useAuth && !isAuthenticating) {
-              if (newPhase == .active && isLockScreenVisible){
-                  // Not authing, active and LS visible = Need to auth
+              if (newPhase == .active && lockBlur == 50){
+                  // Not authing, active and blur visible = Need to auth
                   isAuthenticating = true
                   biometrics.authenticateUser { success in
-                      isLockScreenVisible = !success
+                      if success {
+                          lockBlur = 0
+                      }
                   }
                   isAuthenticating = false
               }
               else if (newPhase != .active) {
-                  isLockScreenVisible = true
+                  lockBlur = 50
               }
           }
-      }
-    //        .alertToastRoot()
-    //        .tint(selectedTheme.general.accentColor.cs(cs).color())
+      }.blur(radius: CGFloat(lockBlur)) // Set lockscreen blur
   }
 }
 
