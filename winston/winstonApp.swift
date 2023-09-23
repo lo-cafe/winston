@@ -31,7 +31,7 @@ struct AppContent: View {
   
   let biometrics = Biometrics()
   @State private var isAuthenticating = false
-  @State private var lockBlur = !UserDefaults.standard.bool(forKey: "useAuth") ? 0 : 50 // Set initial blur for startup
+  @State private var lockBlur = UserDefaults.standard.bool(forKey: "useAuth") ? 50 : 0 // Set initial startup blur
 
   var selectedTheme: WinstonTheme { themesPresets.first { $0.id == selectedThemeID } ?? defaultTheme }
   var body: some View {

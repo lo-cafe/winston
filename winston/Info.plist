@@ -36,6 +36,6 @@
 		<string>remote-notification</string>
 	</array>
 	<key>NSFaceIDUsageDescription</key>
-	<string>Use FaceID lock and unlock the app.</string>
+	<string>Uses FaceID to lock and unlock Winston</string>
 </dict>
 </plist>

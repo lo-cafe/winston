@@ -40,7 +40,7 @@ struct BehaviorPanel: View {
         .pickerStyle(DefaultPickerStyle())
         
         let auth_type = Biometrics().biometricType()
-        Toggle("Lock App With \(auth_type)", isOn: $useAuth)
+        Toggle("Lock Winston With \(auth_type)", isOn: $useAuth)
 
         NavigationLink(value: SettingsPages.filteredSubreddits){
           Label("Filtered Subreddits", systemImage: "list.bullet")
