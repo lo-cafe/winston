@@ -27,20 +27,41 @@ struct AppContent: View {
   @Default(.themesPresets) private var themesPresets
   @Default(.selectedThemeID) private var selectedThemeID
   @Environment(\.colorScheme) private var cs
+  @Environment(\.scenePhase) var scenePhase
   
   var biometrics = Biometrics()
-  var useFaceID = UserDefaults.standard.bool(forKey: "useFaceID")
+  @State private var isAuthenticating = false
+  @State private var isLockScreenVisible = false
+
   var selectedTheme: WinstonTheme { themesPresets.first { $0.id == selectedThemeID } ?? defaultTheme }
   var body: some View {
-    Tabber(theme: selectedTheme, cs: cs)
-      .environment(\.useTheme, selectedTheme)
-      .environmentObject(redditAPI)
-      .onAppear {
-        // Biometrics
-        if useFaceID {
-          biometrics.showLockedScreen(backgroundColor: .systemYellow, logo: nil, width: 0, toView: UIApplication.shared.windows.first!)
-          biometrics.authenticateUser()
-        }
+      ZStack {
+          Tabber(theme: selectedTheme, cs: cs)
+              .environment(\.useTheme, selectedTheme)
+              .environmentObject(redditAPI)
+          
+          if isLockScreenVisible {
+              LockScreenView().zIndex(1).edgesIgnoringSafeArea(.all)
+          }
+
+      }.onChange(of: scenePhase) { newPhase in
+          let useAuth = UserDefaults.standard.bool(forKey: "useAuth")
+          
+          print("New phase: \(newPhase), FaceID: \(useAuth), LS: \(isLockScreenVisible), IA: \(isAuthenticating)")
+          
+          if (useAuth && !isAuthenticating) {
+              if (newPhase == .active && isLockScreenVisible){
+                  // Not authing, active and LS visible = Need to auth
+                  isAuthenticating = true
+                  biometrics.authenticateUser { success in
+                      isLockScreenVisible = !success
+                  }
+                  isAuthenticating = false
+              }
+              else if (newPhase != .active) {
+                  isLockScreenVisible = true
+              }
+          }
       }
     //        .alertToastRoot()
     //        .tint(selectedTheme.general.accentColor.cs(cs).color())

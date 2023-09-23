@@ -12,7 +12,7 @@ struct BehaviorPanel: View {
   @Default(.maxPostLinkImageHeightPercentage) var maxPostLinkImageHeightPercentage
   @Default(.openYoutubeApp) var openYoutubeApp
   @Default(.preferenceDefaultFeed) var preferenceDefaultFeed
-  @Default(.useFaceID) var useFaceID
+  @Default(.useAuth) var useAuth
   @Default(.preferredSort) var preferredSort
   @Default(.preferredCommentSort) var preferredCommentSort
   @Default(.blurPostLinkNSFW) var blurPostLinkNSFW
@@ -39,7 +39,8 @@ struct BehaviorPanel: View {
         }
         .pickerStyle(DefaultPickerStyle())
         
-        Toggle("Lock App With FaceID", isOn: $useFaceID)
+        let auth_type = Biometrics().biometricType()
+        Toggle("Lock App With \(auth_type)", isOn: $useAuth)
 
         NavigationLink(value: SettingsPages.filteredSubreddits){
           Label("Filtered Subreddits", systemImage: "list.bullet")
