@@ -1,13 +1,4 @@
-HUGE UPDATE! But I'm too tired to write a full changelog.
-
------
-IMPORTANT 1: THIS IS THE FIRST BUILD OF THE NEW THEMES SYSTEM. EXPECT BUGS/CRASHES AND PLEASE REPORT THEM IN THE DISCORD CHANNEL (if you feel like doing so)
------
-
-- Themes: fantastic new option for you to customize everything in the app. It's a WIP, but it's already very good!
-- Great performance improvements
-- Crashes fixes
-- Subreddits filter
-- Many other stuff you may find around, good exploring.
-
-
+- Fixes posts not loading when opened externally
+- Performance improvements
+- Added color setting for indentation lines
+- Fixes inbox links not clickable

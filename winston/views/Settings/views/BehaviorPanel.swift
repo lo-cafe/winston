@@ -24,109 +24,123 @@ struct BehaviorPanel: View {
   @Default(.autoPlayVideos) var autoPlayVideos
   @Default(.loopVideos) private var loopVideos
   @Default(.lightboxViewsPost) private var lightboxViewsPost
+  @Default(.openLinksInSafari) private var openLinksInSafari
+  
+  @Environment(\.useTheme) private var theme
   
   var body: some View {
     List {
       
       Section("General") {
-        Toggle("Open Youtube Videos Externally", isOn: $openYoutubeApp)
-        
-        Picker("Default Launch Feed", selection: $preferenceDefaultFeed) {
-          Text("Home").tag("home")
-          Text("Popular").tag("popular")
-          Text("All").tag("all")
-          Text("Subscription List").tag("subList")
-        }
-        .pickerStyle(DefaultPickerStyle())
-        
-        let auth_type = Biometrics().biometricType()
-        Toggle("Lock Winston With \(auth_type)", isOn: $useAuth)
+        Group {
+          Toggle("Open links in Safari", isOn: $openLinksInSafari)
+          Toggle("Open Youtube Videos Externally", isOn: $openYoutubeApp)
+          
+          Picker("Default Launch Feed", selection: $preferenceDefaultFeed) {
+            Text("Home").tag("home")
+            Text("Popular").tag("popular")
+            Text("All").tag("all")
+            Text("Subscription List").tag("subList")
+          }
+          .pickerStyle(DefaultPickerStyle())
 
-        NavigationLink(value: SettingsPages.filteredSubreddits){
-          Label("Filtered Subreddits", systemImage: "list.bullet")
-            .labelStyle(.titleOnly)
+          let auth_type = Biometrics().biometricType()
+          Toggle("Lock Winston With \(auth_type)", isOn: $useAuth)
         }
       }
+      .themedListDividers()
       
       Section {
         Toggle("Navigation everywhere", isOn: $enableSwipeAnywhere)
+          .themedListRowBG(enablePadding: true)
       } footer: {
         Text("This will allow you to do go back by swiping anywhere in the screen, but will disable post and comments swipe gestures.")
       }
+      .themedListDividers()
       
       Section("Posts") {
-        NavigationLink("Posts swipe settings", value: SettingsPages.postSwipe)
-        Toggle("Loop videos", isOn: $loopVideos)
-        Toggle("Autoplay videos (muted)", isOn: $autoPlayVideos)
-        Toggle("Read on preview media", isOn: $lightboxViewsPost)
-        Toggle("Read on scroll", isOn: $readPostOnScroll)
-        Toggle("Hide read posts", isOn: $hideReadPosts)
-        Toggle("Blur NSFW in opened posts", isOn: $blurPostNSFW)
-        Toggle("Blur NSFW in posts links", isOn: $blurPostLinkNSFW)
-        Menu {
-          ForEach(SubListingSortOption.allCases) { opt in
-            if case .top(_) = opt {
-              Menu {
-                ForEach(SubListingSortOption.TopListingSortOption.allCases, id: \.self) { topOpt in
-                  Button {
-                    preferredSort = .top(topOpt)
-                  } label: {
-                    HStack {
-                      Text(topOpt.rawValue.capitalized)
-                      Spacer()
-                      Image(systemName: topOpt.icon)
+        WSNavigationLink(SettingsPages.postSwipe, "Posts swipe settings")
+        Group {
+          Toggle("Loop videos", isOn: $loopVideos)
+          Toggle("Autoplay videos (muted)", isOn: $autoPlayVideos)
+          Toggle("Read on preview media", isOn: $lightboxViewsPost)
+          Toggle("Read on scroll", isOn: $readPostOnScroll)
+          Toggle("Hide read posts", isOn: $hideReadPosts)
+          Toggle("Blur NSFW in opened posts", isOn: $blurPostNSFW)
+          Toggle("Blur NSFW in posts links", isOn: $blurPostLinkNSFW)
+          Menu {
+            ForEach(SubListingSortOption.allCases) { opt in
+              if case .top(_) = opt {
+                Menu {
+                  ForEach(SubListingSortOption.TopListingSortOption.allCases, id: \.self) { topOpt in
+                    Button {
+                      preferredSort = .top(topOpt)
+                    } label: {
+                      HStack {
+                        Text(topOpt.rawValue.capitalized)
+                        Spacer()
+                        Image(systemName: topOpt.icon)
+                      }
                     }
                   }
+                } label: {
+                  Label(opt.rawVal.value.capitalized, systemImage: opt.rawVal.icon)
                 }
-              } label: {
-                Label(opt.rawVal.value.capitalized, systemImage: opt.rawVal.icon)
-              }
-            } else {
-              Button {
-                preferredSort = opt
-              } label: {
-                HStack {
-                  Text(opt.rawVal.value.capitalized)
-                  Spacer()
-                  Image(systemName: opt.rawVal.icon)
+              } else {
+                Button {
+                  preferredSort = opt
+                } label: {
+                  HStack {
+                    Text(opt.rawVal.value.capitalized)
+                    Spacer()
+                    Image(systemName: opt.rawVal.icon)
+                  }
                 }
               }
             }
+          } label: {
+            Button { } label: {
+              HStack {
+                Text("Default post sorting")
+                Spacer()
+                Image(systemName: preferredSort.rawVal.icon)
+              }
+              .foregroundColor(.primary)
+            }
           }
-        } label: {
-          Button { } label: {
+          
+          VStack(alignment: .leading) {
             HStack {
-              Text("Default post sorting")
+              Text("Max Posts Image Height")
               Spacer()
-              Image(systemName: preferredSort.rawVal.icon)
+              Text(maxPostLinkImageHeightPercentage == 110 ? "Original" : "\(Int(maxPostLinkImageHeightPercentage))%")
+                .opacity(0.6)
             }
-            .foregroundColor(.primary)
+            Slider(value: $maxPostLinkImageHeightPercentage, in: 10...110, step: 10)
           }
         }
-        
-        VStack(alignment: .leading) {
-          HStack {
-            Text("Max Posts Image Height")
-            Spacer()
-            Text(maxPostLinkImageHeightPercentage == 110 ? "Original" : "\(Int(maxPostLinkImageHeightPercentage))%")
-              .opacity(0.6)
-          }
-          Slider(value: $maxPostLinkImageHeightPercentage, in: 10...110, step: 10)
-        }
+        .themedListRowBG(enablePadding: true)
       }
+      .themedListDividers()
       
       Section("Comments") {
-        NavigationLink("Comments Swipe Settings", value: SettingsPages.commentSwipe)
-        Picker("Comments Sorting", selection: $preferredCommentSort) {
-          ForEach(CommentSortOption.allCases, id: \.self) { val in
-            Label(val.rawVal.id.capitalized, systemImage: val.rawVal.icon)
-          }
-        }
+        WSNavigationLink(SettingsPages.commentSwipe, "Comments Swipe Settings")
         
-        Toggle("Collapse AutoModerator comments", isOn: $collapseAutoModerator)
+        Group {
+          Picker("Comments Sorting", selection: $preferredCommentSort) {
+            ForEach(CommentSortOption.allCases, id: \.self) { val in
+              Label(val.rawVal.id.capitalized, systemImage: val.rawVal.icon)
+            }
+          }
+          
+          Toggle("Collapse AutoModerator comments", isOn: $collapseAutoModerator)
+        }
+        .themedListRowBG(enablePadding: true)
       }
+      .themedListDividers()
       
     }
+    .themedListBG(theme.lists.bg)
     .navigationTitle("Behavior")
     .navigationBarTitleDisplayMode(.inline)
   }

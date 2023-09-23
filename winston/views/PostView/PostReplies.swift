@@ -34,6 +34,14 @@ struct PostReplies: View {
           comments.data = newComments
           loading = false
         }
+        if var specificID = highlightID {
+          specificID = specificID.hasPrefix("t1_") ? String(specificID.dropFirst(3)) : specificID
+          doThisAfter(0.1) {
+            withAnimation(spring) {
+              proxy.scrollTo("\(specificID)-body", anchor: .center)
+            }
+          }
+        }
       }
     } else {
       await MainActor.run {
@@ -50,73 +58,72 @@ struct PostReplies: View {
     let horPad = preferenceShowCommentsCards ? theme.theme.outerHPadding : theme.theme.innerPadding.horizontal
     Group {
       let commentsData = comments.data
-      if commentsData.count > 0, let postFullname = post.data?.name {
-        Group {
-          ForEach(Array(commentsData.enumerated()), id: \.element.id) { i, comment in
-            Section {
-              
-              Spacer()
-                .frame(maxWidth: .infinity, minHeight: theme.spacing / 2, maxHeight: theme.spacing / 2)
-                .id("\(comment.id)-top-spacer")
-              
-              Spacer()
-                .frame(maxWidth: .infinity, minHeight: theme.theme.cornerRadius * 2, maxHeight: theme.theme.cornerRadius * 2, alignment: .top)
-                .background(CommentBG(cornerRadius: theme.theme.cornerRadius, pos: .top).fill(theme.theme.bg.cs(cs).color()))
-                .frame(maxWidth: .infinity, minHeight: theme.theme.cornerRadius, maxHeight: theme.theme.cornerRadius, alignment: .top)
-                .clipped()
-                .id("\(comment.id)-top-decoration")
-                .listRowInsets(EdgeInsets(top: 0, leading: horPad, bottom: 0, trailing: horPad))
-              
-              CommentLink(highlightID: ignoreSpecificComment ? nil : highlightID, post: post, subreddit: subreddit, postFullname: postFullname, parentElement: .post(comments), comment: comment)
-              //                .equatable()
-              
-              Spacer()
-                .frame(maxWidth: .infinity, minHeight: theme.theme.cornerRadius * 2, maxHeight: theme.theme.cornerRadius * 2, alignment: .top)
-                .background(CommentBG(cornerRadius: theme.theme.cornerRadius, pos: .bottom).fill(theme.theme.bg.cs(cs).color()))
-                .frame(maxWidth: .infinity, minHeight: theme.theme.cornerRadius, maxHeight: theme.theme.cornerRadius, alignment: .bottom)
-                .clipped()
-                .id("\(comment.id)-bot-decoration")
-                .listRowInsets(EdgeInsets(top: 0, leading: horPad, bottom: 0, trailing: horPad))
-              
-              Spacer()
-                .frame(maxWidth: .infinity, minHeight: theme.spacing / 2, maxHeight: theme.spacing / 2)
-                .id("\(comment.id)-bot-spacer")
-              
-              if commentsData.count - 1 != i {
-                NiceDivider(divider: theme.divider)
-                  .id("\(comment.id)-bot-divider")
-              }
-              
-            }
-            .listRowBackground(Color.clear)
-            .listRowInsets(EdgeInsets(top: 0, leading: horPad, bottom: 0, trailing: horPad))
-          }
+      let postFullname = post.data?.name ?? ""
+      Group {
+        ForEach(Array(commentsData.enumerated()), id: \.element.id) { i, comment in
           Section {
+            
             Spacer()
-              .frame(height: 1)
-              .listRowBackground(Color.clear)
-              .onChange(of: update) { _ in
-                Task(priority: .background) {
-                  await asyncFetch(true)
-                }
-              }
-              .onChange(of: ignoreSpecificComment) { val in
-                Task(priority: .background) {
-                  await asyncFetch(post.data == nil, val)
-                  globalLoader.dismiss()
-                }
-                if val {
-                  withAnimation(spring) {
-                    proxy.scrollTo("post-content", anchor: .bottom)
-                  }
-                }
-              }
-              .id("on-change-spacer")
+              .frame(maxWidth: .infinity, minHeight: theme.spacing / 2, maxHeight: theme.spacing / 2)
+              .id("\(comment.id)-top-spacer")
+            
+            Spacer()
+              .frame(maxWidth: .infinity, minHeight: theme.theme.cornerRadius * 2, maxHeight: theme.theme.cornerRadius * 2, alignment: .top)
+              .background(CommentBG(cornerRadius: theme.theme.cornerRadius, pos: .top).fill(theme.theme.bg.cs(cs).color()))
+              .frame(maxWidth: .infinity, minHeight: theme.theme.cornerRadius, maxHeight: theme.theme.cornerRadius, alignment: .top)
+              .clipped()
+              .id("\(comment.id)-top-decoration")
+              .listRowInsets(EdgeInsets(top: 0, leading: horPad, bottom: 0, trailing: horPad))
+            
+            CommentLink(highlightID: ignoreSpecificComment ? nil : highlightID, post: post, subreddit: subreddit, postFullname: postFullname, parentElement: .post(comments), comment: comment)
+            //                .equatable()
+            
+            Spacer()
+              .frame(maxWidth: .infinity, minHeight: theme.theme.cornerRadius * 2, maxHeight: theme.theme.cornerRadius * 2, alignment: .top)
+              .background(CommentBG(cornerRadius: theme.theme.cornerRadius, pos: .bottom).fill(theme.theme.bg.cs(cs).color()))
+              .frame(maxWidth: .infinity, minHeight: theme.theme.cornerRadius, maxHeight: theme.theme.cornerRadius, alignment: .bottom)
+              .clipped()
+              .id("\(comment.id)-bot-decoration")
+              .listRowInsets(EdgeInsets(top: 0, leading: horPad, bottom: 0, trailing: horPad))
+            
+            Spacer()
+              .frame(maxWidth: .infinity, minHeight: theme.spacing / 2, maxHeight: theme.spacing / 2)
+              .id("\(comment.id)-bot-spacer")
+            
+            if commentsData.count - 1 != i {
+              NiceDivider(divider: theme.divider)
+                .id("\(comment.id)-bot-divider")
+            }
+            
           }
           .listRowBackground(Color.clear)
-          .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
+          .listRowInsets(EdgeInsets(top: 0, leading: horPad, bottom: 0, trailing: horPad))
         }
-      } else {
+        Section {
+          Spacer()
+            .frame(height: 1)
+            .listRowBackground(Color.clear)
+            .onChange(of: update) { _ in
+              Task(priority: .background) {
+                await asyncFetch(true)
+              }
+            }
+            .onChange(of: ignoreSpecificComment) { val in
+              Task(priority: .background) {
+                await asyncFetch(post.data == nil, val)
+                globalLoader.dismiss()
+              }
+              if val {
+                withAnimation(spring) {
+                  proxy.scrollTo("post-content", anchor: .bottom)
+                }
+              }
+            }
+            .id("on-change-spacer")
+        }
+        .listRowBackground(Color.clear)
+        .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
+      }
         if loading {
           ProgressView()
             .progressViewStyle(.circular)
@@ -126,32 +133,17 @@ struct PostReplies: View {
               if comments.data.count == 0 || post.data == nil {
                 Task(priority: .background) {
                   await asyncFetch(post.data == nil)
-                  //                      var specificID: String? = nil
-                  if var specificID = highlightID {
-                    specificID = specificID.hasPrefix("t1_") ? String(specificID.dropFirst(3)) : specificID
-                    doThisAfter(0.1) {
-                      withAnimation(spring) {
-                        proxy.scrollTo("\(specificID)-body", anchor: .center)
-                      }
-                    }
-                  }
                 }
               }
             }
             .id("loading-comments")
-        } else {
+        } else if commentsData.count == 0 {
           Text("No comments around...")
             .frame(maxWidth: .infinity, minHeight: 300)
             .opacity(0.25)
             .listRowBackground(Color.clear)
-            .onChange(of: update) { _ in
-              Task(priority: .background) {
-                await asyncFetch(true)
-              }
-            }
             .id("no-comments-placeholder")
         }
-      }
     }
   }
 }

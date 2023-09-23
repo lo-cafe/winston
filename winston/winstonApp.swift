@@ -33,9 +33,10 @@ struct AppContent: View {
   @State private var isAuthenticating = false
   @State private var lockBlur = UserDefaults.standard.bool(forKey: "useAuth") ? 50 : 0 // Set initial startup blur
 
-  var selectedTheme: WinstonTheme { themesPresets.first { $0.id == selectedThemeID } ?? defaultTheme }
+  var selectedThemeRaw: WinstonTheme? { themesPresets.first { $0.id == selectedThemeID } }
   var body: some View {
       ZStack {
+          let selectedTheme = selectedThemeRaw ?? defaultTheme
           Tabber(theme: selectedTheme, cs: cs)
               .environment(\.useTheme, selectedTheme)
               .environmentObject(redditAPI)

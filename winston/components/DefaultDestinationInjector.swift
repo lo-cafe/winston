@@ -12,6 +12,9 @@ struct DefaultDestinationInjector<Content: View>: View {
   var content: () -> Content
   var body: some View {
     content()
+      .navigationDestination(for: URL.self) { url in
+        SafariWebView(url: url).ignoresSafeArea()
+      }
       .navigationDestination(for: PostViewPayload.self) { postPayload in
         PostView(post: postPayload.post, selfAttr: postPayload.postSelfAttr, subreddit: postPayload.sub, highlightID: postPayload.highlightID)
           .equatable()
@@ -48,6 +51,15 @@ struct DefaultDestinationInjector<Content: View>: View {
         UserView(user: user)
           .environmentObject(routerProxy)
       }
+      .environmentObject(routerProxy)
+  }
+}
+
+struct RouterProxyInjector<Content: View>: View {
+  @StateObject var routerProxy: RouterProxy
+  var content: (RouterProxy) -> Content
+  var body: some View {
+    content(routerProxy)
       .environmentObject(routerProxy)
   }
 }

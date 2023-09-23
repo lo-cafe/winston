@@ -13,46 +13,49 @@ import Zip
 struct ThemesPanel: View {
   @Default(.themesPresets) private var themesPresets
   @State private var isUnzipping = false
+  @EnvironmentObject private var routerProxy: RouterProxy
+  @Environment(\.useTheme) private var theme
   var body: some View {
     List {
       
-      ForEach(themesPresets) { theme in
-        Group {
-          if theme.id == "default" {
-            ThemeNavLink(theme: theme)
-              .deleteDisabled(true)
-          } else {
-            NavigationLink(value: theme) {
+      Section {
+        ThemeNavLink(theme: defaultTheme)
+          .themedListRowBG(enablePadding: true)
+          .deleteDisabled(true)
+        ForEach(themesPresets) { theme in
+          if theme.id != "default" {
+            WNavigationLink(value: theme) {
               ThemeNavLink(theme: theme)
             }
           }
         }
+        .onDelete { index in
+          withAnimation { themesPresets.remove(atOffsets: index) }
+        }
       }
-      .onDelete { index in
-        withAnimation { themesPresets.remove(atOffsets: index) }
-      }
+      .themedListDividers()
       
       Section {
-        Button("Unzip Theme") {
-          isUnzipping = true
-        }
-        .fileImporter(isPresented: $isUnzipping,
-                      allowedContentTypes: [UTType.zip],
-                      allowsMultipleSelection: false) { res in
-          do {
-            switch res {
-            case .success(let file):
-              unzipTheme(at: file[0])
-            case .failure(let error):
-              print(error.localizedDescription)
+        WSListButton("Import theme", icon: "doc.zipper") { isUnzipping = true }
+          .fileImporter(isPresented: $isUnzipping,
+                        allowedContentTypes: [UTType.zip],
+                        allowsMultipleSelection: false) { res in
+            do {
+              switch res {
+              case .success(let file):
+                unzipTheme(at: file[0])
+              case .failure(let error):
+                print(error.localizedDescription)
+              }
+            } catch {
+              print("Failed to import file with error: \(error.localizedDescription)")
             }
-          } catch {
-            print("Failed to import file with error: \(error.localizedDescription)")
           }
-        }
       }
+      .themedListDividers()
       
     }
+    .themedListBG(theme.lists.bg)
     .overlay(
       themesPresets.count > 1
       ? nil
@@ -78,6 +81,7 @@ struct ThemesPanel: View {
     }
     .navigationDestination(for: WinstonTheme.self) { theme in
       ThemeEditPanel(themeEditedInstance: ThemeEditedInstance(theme))
+        .environmentObject(routerProxy)
     }
   }
   
@@ -154,7 +158,9 @@ struct ThemeNavLink: View {
         if themesPresets.first(where: { $0.id == selectedThemeID })?.general != theme.general { restartAlert = true  }
         selectedThemeID = theme.id
       }))
+      .highPriorityGesture(TapGesture())
     }
+    .padding(.vertical, 2)
     .contextMenu {
       Button {
         withAnimation { themesPresets.append(theme.duplicate()) }

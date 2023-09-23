@@ -41,14 +41,14 @@ struct PostView: View, Equatable {
       update.toggle()
     }
     if let result = await post.refreshPost(commentID: ignoreSpecificComment ? nil : highlightID, sort: sort, after: nil, subreddit: subreddit.data?.display_name ?? subreddit.id, full: full), let newComments = result.0 {
-      Task {
+      Task(priority: .background) {
         await redditAPI.updateAvatarURLCacheFromComments(comments: newComments)
       }
     }
   }
   
-  func updateComments() {
-    Task { await asyncFetch(true) }
+  func updatePost() {
+    Task(priority: .background) { await asyncFetch(true) }
   }
   
   var body: some View {
@@ -113,9 +113,12 @@ struct PostView: View, Equatable {
       .navigationBarTitle("\(post.data?.num_comments ?? 0) comments", displayMode: .inline)
       .toolbar { Toolbar(hideElements: hideElements, subreddit: subreddit, routerProxy: routerProxy, sort: $sort) }
       .onChange(of: sort) { val in
-        updateComments()
+        updatePost()
       }
       .onAppear {
+        if post.data.isNil {
+          updatePost()
+        }
         Task(priority: .background) {
           doThisAfter(0.5) {
             hideElements = false

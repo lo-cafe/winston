@@ -23,10 +23,6 @@ struct Badge: View, Equatable {
   var created: Double
   var avatarURL: String?
   var theme: BadgeTheme
-  //  var avatarSize: CGFloat = 30
-  //  var nameSize: CGFloat = 13
-  //  var labelSize: CGFloat = 12
-  //  var extraInfo: [String:String] = [:]
   var extraInfo: [BadgeExtraInfo] = []
   @EnvironmentObject private var routerProxy: RouterProxy
   @EnvironmentObject private var redditAPI: RedditAPI

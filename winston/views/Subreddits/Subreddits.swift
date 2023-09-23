@@ -90,7 +90,7 @@ struct Subreddits: View, Equatable {
           if searchText != "" {
             Section("Found subs") {
               ForEach(Array(subreddits.filter { ($0.display_name ?? "").lowercased().contains(searchText.lowercased()) }), id: \.self.uuid) { cachedSub in
-                SubItem(sub: Subreddit(data: SubredditData(entity: cachedSub), api: redditAPI), cachedSub: cachedSub)
+                SubItem(routerProxy: routerProxy, sub: Subreddit(data: SubredditData(entity: cachedSub), api: redditAPI), cachedSub: cachedSub)
                   .equatable()
               }
             }
@@ -101,7 +101,7 @@ struct Subreddits: View, Equatable {
                 ForEach(favs.sorted(by: { x, y in
                   (x.display_name?.lowercased() ?? "a") < (y.display_name?.lowercased() ?? "a")
                 }), id: \.self) { cachedSub in
-                  SubItem(sub: Subreddit(data: SubredditData(entity: cachedSub), api: redditAPI), cachedSub: cachedSub)
+                  SubItem(routerProxy: routerProxy, sub: Subreddit(data: SubredditData(entity: cachedSub), api: redditAPI), cachedSub: cachedSub)
                     .equatable()
                     .id("\(cachedSub.uuid ?? "")-fav")
                 }
@@ -115,7 +115,7 @@ struct Subreddits: View, Equatable {
                 ForEach(subreddits.filter({ $0.user_is_subscriber }).sorted(by: { x, y in
                   (x.display_name?.lowercased() ?? "a") < (y.display_name?.lowercased() ?? "a")
                 })) { cachedSub in
-                  SubItem(sub: Subreddit(data: SubredditData(entity: cachedSub), api: redditAPI), cachedSub: cachedSub)
+                  SubItem(routerProxy: routerProxy, sub: Subreddit(data: SubredditData(entity: cachedSub), api: redditAPI), cachedSub: cachedSub)
                     .equatable()
                 }
               }
@@ -128,7 +128,7 @@ struct Subreddits: View, Equatable {
                     ForEach(arr.sorted(by: { x, y in
                       (x.display_name?.lowercased() ?? "a") < (y.display_name?.lowercased() ?? "a")
                     }), id: \.self.uuid) { cachedSub in
-                      SubItem(sub: Subreddit(data: SubredditData(entity: cachedSub), api: redditAPI), cachedSub: cachedSub)
+                      SubItem(routerProxy: routerProxy, sub: Subreddit(data: SubredditData(entity: cachedSub), api: redditAPI), cachedSub: cachedSub)
                         .equatable()
                     }
                     .onDelete(perform: { i in
@@ -144,11 +144,11 @@ struct Subreddits: View, Equatable {
             
           }
         }
-        .listRowSeparatorTint(selectedTheme.lists.dividersColors.cs(cs).color())
-//        .listRowBackground(Rectangle().fill(selectedTheme.lists.foreground.blurry ? AnyShapeStyle(.bar) : AnyShapeStyle(selectedTheme.lists.foreground.color.cs(cs).color())).overlay(!selectedTheme.lists.foreground.blurry ? nil : Rectangle().fill(selectedTheme.lists.foreground.color.cs(cs).color())))
+        .themedListDividers()
       }
+      .environmentObject(routerProxy)
       .themedListBG(selectedTheme.lists.bg)
-      .scrollContentBackground(.hidden)
+      .scrollIndicators(.hidden)
       .listStyle(.sidebar)
       .scrollDismissesKeyboard(.immediately)
       .loader(!loaded && subreddits.count == 0)

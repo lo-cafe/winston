@@ -23,11 +23,11 @@ struct MultiLink: View {
         }
       }
     } label: {
-      VStack {
+      VStack(spacing: 10) {
         if let imgLink = multi.icon_url, let imgURL = URL(string: imgLink) {
           URLImage(url: imgURL)
             .scaledToFill()
-            .frame(width: 75, height: 75)
+            .frame(width: 72, height: 72)
             .mask(Circle())
         }
         Text(multi.display_name)

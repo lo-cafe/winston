@@ -12,14 +12,14 @@ struct LabeledSlider: View {
   @Binding var value: CGFloat
   var range: ClosedRange<CGFloat>
   var body: some View {
-    VStack(spacing: 8) {
+    VStack(spacing: 10) {
       HStack {
         Text(label)
         Spacer()
         Text(Int(value).description)
           .opacity(0.5)
       }
-      .padding(.vertical, 8)
+//      .padding(.vertical, 8)
       HStack {
         Text(Int(range.lowerBound).description)
           .fontSize(15)

@@ -37,16 +37,8 @@ struct Inbox: View {
     NavigationStack(path: $router.path) {
       DefaultDestinationInjector(routerProxy: RouterProxy(router)) {
         List {
-          Group {
-            if loading {
-              ProgressView()
-                .frame(maxWidth: .infinity, minHeight: 500)
-                .id("loading")
-            } else {
-              ForEach(messages.data, id: \.self.id) { message in
-                MessageLink(message: message)
-              }
-            }
+          ForEach(messages.data, id: \.self.id) { message in
+            MessageLink(message: message)
           }
           .listRowSeparator(.hidden)
           .listRowBackground(Color.clear)
@@ -56,6 +48,7 @@ struct Inbox: View {
         .scrollContentBackground(.hidden)
         .onChange(of: reset) { _ in router.path.removeLast(router.path.count) }
       }
+      .loader(loading)
       .onAppear {
         Task(priority: .background) {
           await fetch()

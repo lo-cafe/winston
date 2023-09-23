@@ -11,6 +11,7 @@ struct FilteredSubredditsSettings: View {
   @Default(.filteredSubreddits) private var filteredSubreddits
   @State private var newSubreddit = ""
   @State private var addSubredditAlert = false
+  @Environment(\.useTheme) private var theme
 
   private func removeSubreddit(at index: Int) {
     var tempSubreddits = filteredSubreddits
@@ -21,21 +22,26 @@ struct FilteredSubredditsSettings: View {
   var body: some View {
     Group {
       List {
-        ForEach(Array(filteredSubreddits.enumerated()), id: \.element) { index, subreddit in
-          Text(subreddit)
-            .swipeActions {
-              Button(action: {
-                withAnimation {
-                  removeSubreddit(at: index)
+        Section {
+          ForEach(Array(filteredSubreddits.enumerated()), id: \.element) { index, subreddit in
+            Text(subreddit)
+              .swipeActions {
+                Button(action: {
+                  withAnimation {
+                    removeSubreddit(at: index)
+                  }
+                  
+                }) {
+                  Image(systemName: "hand.raised.slash.fill")
                 }
-
-              }) {
-                Image(systemName: "hand.raised.slash.fill")
+                .tint(Color.green)
               }
-              .tint(Color.green)
-            }
+            .themedListRowBG(enablePadding: true)
+          }
         }
+        .themedListDividers()
       }
+      .themedListBG(theme.lists.bg)
       .navigationTitle("Filtered Subreddits")
       .navigationBarItems(trailing:
         HStack {

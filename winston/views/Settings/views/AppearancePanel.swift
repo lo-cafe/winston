@@ -27,15 +27,21 @@ struct AppearancePanel: View {
   @Default(.showSelfPostThumbnails) var showSelfPostThumbnails
   @Default(.disableAlphabetLettersSectionsInSubsList) var disableAlphabetLettersSectionsInSubsList
   
+  @Environment(\.useTheme) private var theme
+  
   var body: some View {
     List {
       Section("General") {
-        Toggle("Show Username in Tab Bar", isOn: $showUsernameInTabBar)
-        Toggle("Disable subs list letter sections", isOn: $disableAlphabetLettersSectionsInSubsList)
+        Group {
+          Toggle("Show Username in Tab Bar", isOn: $showUsernameInTabBar)
+          Toggle("Disable subs list letter sections", isOn: $disableAlphabetLettersSectionsInSubsList)
+        }
+        .themedListRowBG(enablePadding: true)
       }
+      .themedListDividers()
       
       Section {
-        NavigationLink(value: SettingsPages.themes) {
+        WNavigationLink(value: SettingsPages.themes) {
           Label("Themes", systemImage: "paintbrush.fill")
         }
       } footer: {
@@ -43,14 +49,19 @@ struct AppearancePanel: View {
       }
       
       Section("Posts") {
+        Group {
         Toggle("Show Upvote Ratio", isOn: $showUpvoteRatio)
         Toggle("Show Voting Buttons", isOn: $showVotes)
         Toggle("Show Self Text", isOn: $showSelfText)
         Toggle("Show Subreddit at Top", isOn: $showSubsAtTop)
         Toggle("Show Title at Top", isOn: $showTitleAtTop)
+        }
+        .themedListRowBG(enablePadding: true)
       }
+      .themedListDividers()
       
       Section("Compact Posts"){
+        Group {
         Toggle("Compact Mode", isOn: $compactMode)
         Toggle("Show Self Post Thumbnails", isOn: $showSelfPostThumbnails)
         Picker("Thumbnail Position", selection: Binding(get: {
@@ -84,16 +95,21 @@ struct AppearancePanel: View {
           Text("Left").tag("Left")
           Text("Right").tag("Right")
         }
+        }
+        .themedListRowBG(enablePadding: true)
       }
+      .themedListDividers()
       
       Section("Comments") {
         Toggle("Colored Usernames", isOn: $coloredCommentNames)
-        
+          .themedListRowBG(enablePadding: true)
       }
+      .themedListDividers()
       //      .alert(isPresented: $compThumbnailSize){
       //        Alert(title: "Please refresh your Home Feed.")
       //      }
     }
+    .themedListBG(theme.lists.bg)
     .navigationTitle("Appearance")
     .navigationBarTitleDisplayMode(.inline)
   }

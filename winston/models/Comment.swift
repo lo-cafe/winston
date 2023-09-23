@@ -39,7 +39,8 @@ extension Comment {
     }
     self.kind = kind
     if let body = self.data?.body {
-      let newWinstonBodyAttr = stringToAttr(body, fontSize: Defaults[.commentLinkBodySize])
+      let theme = Defaults[.themesPresets].first(where: { $0.id == Defaults[.selectedThemeID] }) ?? defaultTheme
+      let newWinstonBodyAttr = stringToAttr(body, fontSize: theme.comments.theme.bodyText.size)
       let encoder = JSONEncoder()
       if let jsonData = try? encoder.encode(newWinstonBodyAttr) {
         let json = String(decoding: jsonData, as: UTF8.self)

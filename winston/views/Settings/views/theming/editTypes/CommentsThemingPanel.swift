@@ -38,18 +38,24 @@ struct CommentsGeneralSettings: View {
         }
       }
       
+      FakeSection("Comment body font") {
+        FontSelector(theme: $theme.comments.theme.bodyText, defaultVal: defaultTheme.comments.theme.bodyText)
+      }
+      
+      FakeSection("Indentation lines") {
+        LabeledSlider(label: "Corner curvature", value: $theme.comments.theme.indentCurve, range: 3...32)
+          .resetter($theme.comments.theme.indentCurve, defaultTheme.comments.theme.indentCurve)
+        
+        SchemesColorPicker(theme: $theme.comments.theme.indentColor, defaultVal: defaultTheme.comments.theme.indentColor)
+      }
+      
       FakeSection("Background") {
         SchemesColorPicker(theme: $theme.comments.theme.bg, defaultVal: defaultTheme.comments.theme.bg)
         LabeledSlider(label: "Corner radius", value: $theme.comments.theme.cornerRadius, range: 0...48)
           .resetter($theme.comments.theme.cornerRadius, defaultTheme.comments.theme.cornerRadius)
       }
       
-      FakeSection("Indentation") {
-        LabeledSlider(label: "Indicator curve", value: $theme.comments.theme.indentCurve, range: 3...32)
-          .resetter($theme.comments.theme.indentCurve, defaultTheme.comments.theme.indentCurve)
-      }
-      
-      FakeSection("Divider") {
+      FakeSection("Comments divider") {
         LineThemeEditor(theme: $theme.comments.divider, defaultVal: defaultTheme.comments.divider)
       }
     }

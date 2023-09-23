@@ -13,13 +13,13 @@ struct CommonListsThemingPanel: View {
     ScrollView {
       VStack(alignment: .leading, spacing: 32) {
         
-        FakeSection("Background") {
+        FakeSection("Background", footer: "The screen's background, not the list rows.") {
           ThemeBGPicker(bg: $theme.lists.bg, defaultVal: defaultTheme.lists.bg)
         }
         
-//        FakeSection("Foreground color") {
-//          ThemeForegroundEdit(theme: $theme.lists.foreground, defaultVal: defaultTheme.lists.foreground)
-//        }
+        FakeSection("Foreground color", footer: "The list rows background.") {
+          ThemeForegroundEdit(theme: $theme.lists.foreground, defaultVal: defaultTheme.lists.foreground)
+        }
 
         FakeSection("Divider") {
           SchemesColorPicker(theme: $theme.lists.dividersColors, defaultVal: defaultTheme.lists.dividersColors)
@@ -27,7 +27,6 @@ struct CommonListsThemingPanel: View {
       }
       .padding(.vertical, 32)
     }
-    .scrollContentBackground(.hidden)
     .themedListBG(theme.lists.bg)
     .navigationTitle("General")
     .navigationBarTitleDisplayMode(.inline)

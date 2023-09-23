@@ -117,8 +117,6 @@ func createZip(images: [String], theme: WinstonTheme) throws -> URL {
     try fileManager.removeItem(at: zipURL)
   }
   
-  print(fileManager.fileExists(atPath: imgURLs[0].path()))
-  
   let zipFilePath = try Zip.quickZipFiles(imgURLs + [jsonURL], fileName: zipName)
   // replace with your ZipArchive class and its usage
   // make sure theme.json and images are added to the zip file

@@ -29,15 +29,12 @@ struct MessageLink: View {
           Text((data.body ?? "").md()).lineLimit(2).fontSize(15).opacity(0.75)
         }
       }
-      .allowsHitTesting(false)
-      .padding(.horizontal, preferenceShowPostsCards ? 16 : 0)
-      .padding(.vertical, preferenceShowPostsCards ? 12 : 0)
+      .padding(.horizontal, 16)
+      .padding(.vertical, 12)
       .frame(maxWidth: .infinity, alignment: .topLeading)
-      .if(preferenceShowPostsCards) { view in
-        view
-          .background(RR(20, Color.listBG).allowsHitTesting(false))
-          .mask(RR(20, .black))
-      }
+      .themedListRowBG()
+      .mask(RR(20, .black))
+      .allowsHitTesting(false)
       .compositingGroup()
       .opacity(!(data.new ?? false) ? 0.65 : 1)
       .swipyActions(pressing: $pressed, onTap: {
