@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftUI
+import Combine
 
 class RouterIsRoot: ObservableObject {
   @Published var isRoot = true
@@ -33,4 +34,8 @@ class Router: ObservableObject {
 class RouterProxy: ObservableObject {
   var router: Router
   init(_ router: Router) { self.router = router }
+  
+  private let _objectWillChange = PassthroughSubject<Void, Never>()
+  
+  var objectWillChange: AnyPublisher<Void, Never> { _objectWillChange.eraseToAnyPublisher() }
 }

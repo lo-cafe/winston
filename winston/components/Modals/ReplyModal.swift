@@ -103,7 +103,7 @@ struct ReplyModal<Content: View>: View {
   let content: (() -> Content)?
   
   @ObservedObject private var globalLoader = TempGlobalState.shared.globalLoader
-  @EnvironmentObject private var redditAPI: RedditAPI
+  
   @State private var alertExit = false
   @StateObject private var textWrapper: TextFieldObserver
   @Environment(\.dismiss) private var dismiss
@@ -132,7 +132,7 @@ struct ReplyModal<Content: View>: View {
         VStack(spacing: 12) {
           
           VStack(alignment: .leading) {
-            if let me = redditAPI.me?.data {
+            if let me = RedditAPI.shared.me?.data {
               Badge(author: me.name, fullname: me.name, created: Date().timeIntervalSince1970, avatarURL: me.icon_img ?? me.snoovatar_img, theme: selectedTheme.comments.theme.badge)
                 .equatable()
             }
@@ -207,7 +207,7 @@ struct ReplyModal<Content: View>: View {
       }
       .onAppear {
         Task(priority: .background) {
-          await redditAPI.fetchMe()
+          await RedditAPI.shared.fetchMe()
         }
         if let draftEntity = drafts.first(where: { draft in draft.thingID == thingFullname }) {
           if let draftText = draftEntity.replyText {

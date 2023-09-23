@@ -10,7 +10,7 @@ import SwiftUI
 import Defaults
 
 
-struct SwipeUI<T: GenericRedditEntityDataType>: ViewModifier {
+struct SwipeUI<T: GenericRedditEntityDataType, B: Hashable>: ViewModifier {
   private enum TriggeredAction: Int {
     case leftFirst = 1
     case leftSecond = 2
@@ -33,7 +33,7 @@ struct SwipeUI<T: GenericRedditEntityDataType>: ViewModifier {
   var controlledIsSource = true
   var onTapAction: (() -> Void)?
   var actionsSet: SwipeActionsSet
-  @ObservedObject var entity: GenericRedditEntity<T>
+  @ObservedObject var entity: GenericRedditEntity<T, B>
   //  var leftActionIcon: String
   //  var rightActionIcon: String
   //  var secondActionIcon: String
@@ -218,13 +218,13 @@ struct SwipeUI<T: GenericRedditEntityDataType>: ViewModifier {
 }
 
 extension View {
-  func swipyUI<T: GenericRedditEntityDataType>(
+  func swipyUI<T: GenericRedditEntityDataType, B: Hashable>(
     offsetYAction: CGFloat = 0,
     controlledDragAmount: Binding<CGFloat>? = nil,
     controlledIsSource: Bool = true,
     onTap: (() -> Void)? = nil,
     actionsSet: SwipeActionsSet,
-    entity: GenericRedditEntity<T>,
+    entity: GenericRedditEntity<T, B>,
     disabled: Bool = false
   ) -> some View {
     self.modifier(SwipeUI(

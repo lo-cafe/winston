@@ -11,7 +11,7 @@ import Defaults
 import SwiftUI
 
 
-typealias Subreddit = GenericRedditEntity<SubredditData>
+typealias Subreddit = GenericRedditEntity<SubredditData, AnyHashable>
 
 extension Subreddit {
   static var prefix = "t5"
@@ -53,7 +53,7 @@ extension Subreddit {
           try? context.save()
         
         Task {
-          let result = await redditAPI.favorite(!favoritedStatus, subName: name)
+          let result = await RedditAPI.shared.favorite(!favoritedStatus, subName: name)
           if !result {
             entity.user_has_favorited = favoritedStatus
             try? context.save()
@@ -87,7 +87,7 @@ extension Subreddit {
         }
       }
       Task {
-        let result = await redditAPI.subscribe(!foundSub.isNil ? .unsub : .sub, subFullname: data.name)
+        let result = await RedditAPI.shared.subscribe(!foundSub.isNil ? .unsub : .sub, subFullname: data.name)
         context.performAndWait {
           if result {
             if !optimistic {
@@ -114,7 +114,7 @@ extension Subreddit {
   }
   
   func getFlairs() async -> [Flair]? {
-    if let data = (await redditAPI.getFlairs(data?.display_name ?? id)) {
+    if let data = (await RedditAPI.shared.getFlairs(data?.display_name ?? id)) {
       await MainActor.run {
         withAnimation {
           self.data?.winstonFlairs = data
@@ -125,7 +125,7 @@ extension Subreddit {
   }
   
   func refreshSubreddit() async {
-    if let data = (await redditAPI.fetchSub(data?.display_name ?? id))?.data {
+    if let data = (await RedditAPI.shared.fetchSub(data?.display_name ?? id))?.data {
       await MainActor.run {
         withAnimation {
           self.data = data
@@ -135,15 +135,15 @@ extension Subreddit {
   }
   
   func fetchRules() async -> RedditAPI.FetchSubRulesResponse? {
-    if let data = await redditAPI.fetchSubRules(data?.display_name ?? id) {
+    if let data = await RedditAPI.shared.fetchSubRules(data?.display_name ?? id) {
       return data
     }
     return nil
   }
   
   func fetchPosts(sort: SubListingSortOption = .best, after: String? = nil, searchText: String? = nil) async -> ([Post]?, String?)? {
-    if let response = await redditAPI.fetchSubPosts(data?.url ?? (id == "home" ? "" : id), sort: sort, after: after, searchText: searchText), let data = response.0 {
-      return (Post.initMultiple(datas: data.compactMap { $0.data }, api: redditAPI), response.1)
+    if let response = await RedditAPI.shared.fetchSubPosts(data?.url ?? (id == "home" ? "" : id), sort: sort, after: after, searchText: searchText), let data = response.0 {
+      return (Post.initMultiple(datas: data.compactMap { $0.data }, api: RedditAPI.shared), response.1)
     }
     return nil
   }

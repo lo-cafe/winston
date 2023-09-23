@@ -18,7 +18,7 @@ struct PostReplies: View {
   var proxy: ScrollViewProxy
   @Environment(\.useTheme) private var selectedTheme
   @Environment(\.colorScheme) private var cs
-  @EnvironmentObject private var redditAPI: RedditAPI
+  
   @StateObject private var comments = ObservableArray<Comment>()
   @ObservedObject private var globalLoader = TempGlobalState.shared.globalLoader
   @State private var loading = true
@@ -26,7 +26,7 @@ struct PostReplies: View {
   func asyncFetch(_ full: Bool, _ altIgnoreSpecificComment: Bool? = nil) async {
     if let result = await post.refreshPost(commentID: (altIgnoreSpecificComment ?? ignoreSpecificComment) ? nil : highlightID, sort: sort, after: nil, subreddit: subreddit.data?.display_name ?? subreddit.id, full: full), let newComments = result.0 {
       Task(priority: .background) {
-        await redditAPI.updateAvatarURLCacheFromComments(comments: newComments)
+        await RedditAPI.shared.updateAvatarURLCacheFromComments(comments: newComments)
       }
       newComments.forEach { $0.parentWinston = comments }
       await MainActor.run {

@@ -17,7 +17,7 @@ func updatePostsInBox(_ redditAPI: RedditAPI, force: Bool = false) async {
     }
     return post.fullname
   }
-  if let posts = await redditAPI.fetchPosts(postFullnames: postsInBoxNames) {
+  if let posts = await RedditAPI.shared.fetchPosts(postFullnames: postsInBoxNames) {
     var postsDict: [String:PostData] = [:]
     posts.forEach { data in
       postsDict[data.name] = data

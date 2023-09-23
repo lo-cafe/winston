@@ -8,7 +8,7 @@
 import Foundation
 import Defaults
 
-typealias Multi = GenericRedditEntity<MultiData>
+typealias Multi = GenericRedditEntity<MultiData, AnyHashable>
 
 extension Multi {
   static var prefix = "LabeledMulti"
@@ -21,7 +21,7 @@ extension Multi {
   }
   
   func fetchData() async -> Bool? {
-//    if let data = await redditAPI.fetchMultiInfo(id) {
+//    if let data = await RedditAPI.shared.fetchMultiInfo(id) {
 //      
 //    }
     return nil
@@ -29,8 +29,8 @@ extension Multi {
   
   func fetchPosts(sort: SubListingSortOption = .best, after: String? = nil) async -> ([Post]?, String?)? {
     if let data = data {
-      if let response = await redditAPI.fetchMultiPosts(path: data.path, sort: sort, after: after), let data = response.0 {
-        return (Post.initMultiple(datas: data.compactMap { $0.data }, api: redditAPI), response.1)
+      if let response = await RedditAPI.shared.fetchMultiPosts(path: data.path, sort: sort, after: after), let data = response.0 {
+        return (Post.initMultiple(datas: data.compactMap { $0.data }, api: RedditAPI.shared), response.1)
       }
     }
     return nil
@@ -38,7 +38,7 @@ extension Multi {
   
   func delete() async -> Bool? {
     if let data = data {
-      return await redditAPI.deleteMulti(data.path)
+      return await RedditAPI.shared.deleteMulti(data.path)
     }
     return nil
   }

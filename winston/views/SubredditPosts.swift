@@ -19,13 +19,13 @@ struct SubredditPosts: View {
   @Default(.filteredSubreddits) private var filteredSubreddits
   @ObservedObject var subreddit: Subreddit
   @State private var loading = true
-  @State private var posts: [Post] = []
+  @StateObject private var posts = NonObservableArray<Post>()
   @State private var loadedPosts: Set<String> = []
   @State private var lastPostAfter: String?
   @State private var searchText: String = ""
   @State private var sort: SubListingSortOption = Defaults[.preferredSort]
   @State private var newPost = false
-  @EnvironmentObject private var redditAPI: RedditAPI
+  
   @EnvironmentObject private var routerProxy: RouterProxy
   @Environment(\.useTheme) private var selectedTheme
   @Environment(\.colorScheme) private var cs
@@ -34,26 +34,28 @@ struct SubredditPosts: View {
     if (subreddit.data == nil || force) && !feedsAndSuch.contains(subreddit.id) {
       await subreddit.refreshSubreddit()
     }
-    if posts.count > 0 && lastPostAfter == nil && !force {
+    if posts.data.count > 0 && lastPostAfter == nil && !force {
       return
     }
     if let result = await subreddit.fetchPosts(sort: sort, after: loadMore ? lastPostAfter : nil, searchText: searchText), let newPosts = result.0 {
       withAnimation {
-        let newPostsFiltered = newPosts.filter { !loadedPosts.contains($0.id) && !filteredSubreddits.contains($0.data?.subreddit ?? "") }
+//        let newPostsFiltered = newPosts.filter { !loadedPosts.contains($0.id) && !filteredSubreddits.contains($0.data?.subreddit ?? "") }
         
         if loadMore {
-          posts.append(contentsOf: newPostsFiltered)
+//          posts.data.append(contentsOf: newPostsFiltered)
+          posts.data.append(contentsOf: newPosts)
         } else {
-          posts = newPostsFiltered
+//          posts.data = newPostsFiltered
+          posts.data = newPosts
         }
         
-        newPostsFiltered.forEach { loadedPosts.insert($0.id) }
+//        newPostsFiltered.forEach { loadedPosts.insert($0.id) }
           
         loading = false
         lastPostAfter = result.1
       }
       Task(priority: .background) {
-        await redditAPI.updateAvatarURLCacheFromPosts(posts: newPosts)
+        await RedditAPI.shared.updateAvatarURLCacheFromPosts(posts: newPosts)
       }
     }
   }
@@ -66,7 +68,7 @@ struct SubredditPosts: View {
   
   func clearAndLoadData(withSearchText searchText: String? = nil) {
     withAnimation {
-      posts.removeAll()
+      posts.data.removeAll()
       loadedPosts.removeAll()
     }
     
@@ -97,14 +99,14 @@ struct SubredditPosts: View {
       
       
       Section {
-        if posts.count == 0 { Color.clear }
+        if posts.data.count == 0 { Color.clear }
         
-        ForEach(Array(posts.enumerated()), id: \.self.element.id) { i, post in
+        ForEach(Array(posts.data.enumerated()), id: \.self.element.id) { i, post in
           
           PostLink(post: post, sub: subreddit)
-            .equatable()
+//            .equatable()
             .onAppear {
-              if(Int(Double(posts.count) * 0.75) == i) {
+              if(Int(Double(posts.data.count) * 0.75) == i) {
                 if !searchText.isEmpty {
                   fetch(loadMore: true, searchText: searchText)
                 } else {
@@ -113,9 +115,9 @@ struct SubredditPosts: View {
               }
             }
             .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
-            .animation(.default, value: posts)
+            .animation(.default, value: posts.data)
           
-          if selectedTheme.postLinks.divider.style != .no && i != (posts.count - 1) {
+          if selectedTheme.postLinks.divider.style != .no && i != (posts.data.count - 1) {
             NiceDivider(divider: selectedTheme.postLinks.divider)
               .id("\(post.id)-divider")
               .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
@@ -125,7 +127,7 @@ struct SubredditPosts: View {
         if !lastPostAfter.isNil {
           ProgressView()
             .progressViewStyle(.circular)
-            .frame(maxWidth: .infinity, minHeight: posts.count > 0 ? 100 : UIScreen.screenHeight - 200 )
+            .frame(maxWidth: .infinity, minHeight: posts.data.count > 0 ? 100 : UIScreen.screenHeight - 200 )
             .id("post-loading")
         }
       }
@@ -137,7 +139,7 @@ struct SubredditPosts: View {
     .scrollIndicators(.never)
     .listStyle(.plain)
     .environment(\.defaultMinListRowHeight, 1)
-    .loader(loading && posts.count == 0)
+    .loader(loading && posts.data.count == 0)
     .overlay(
       feedsAndSuch.contains(subreddit.id)
       ? nil
@@ -217,7 +219,7 @@ struct SubredditPosts: View {
         .animation(nil, value: sort)
     )
     .onAppear {
-      if posts.count == 0 {
+      if posts.data.count == 0 {
         doThisAfter(0) {
           fetch()
         }

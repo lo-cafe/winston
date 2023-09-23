@@ -50,7 +50,7 @@ struct Search: View {
   @State private var loading = false
   @State private var hideSpinner = false
   @StateObject var searchQuery = DebouncedText(delay: 0.25)
-  @EnvironmentObject private var redditAPI: RedditAPI
+  
   @State private var dummyAllSub: Subreddit? = nil
   @State private var searchViewLoaded: Bool = false
   
@@ -65,7 +65,7 @@ struct Search: View {
     case .subreddit:
       resultsSubs.data.removeAll()
       Task(priority: .background) {
-        if let subs = await redditAPI.searchSubreddits(searchQuery.text)?.map({ Subreddit(data: $0, api: redditAPI) }) {
+        if let subs = await RedditAPI.shared.searchSubreddits(searchQuery.text)?.map({ Subreddit(data: $0, api: RedditAPI.shared) }) {
           await MainActor.run {
             withAnimation {
               resultsSubs.data = subs
@@ -79,7 +79,7 @@ struct Search: View {
     case .user:
       resultsUsers.data.removeAll()
       Task(priority: .background) {
-        if let users = await redditAPI.searchUsers(searchQuery.text)?.map({ User(data: $0, api: redditAPI) }) {
+        if let users = await RedditAPI.shared.searchUsers(searchQuery.text)?.map({ User(data: $0, api: RedditAPI.shared) }) {
           await MainActor.run {
             withAnimation {
               resultsUsers.data = users
@@ -171,7 +171,7 @@ struct Search: View {
       .navigationTitle("Search")
       .onAppear() {
         if !searchViewLoaded {
-          dummyAllSub = Subreddit(id: "all", api: redditAPI)
+          dummyAllSub = Subreddit(id: "all", api: RedditAPI.shared)
           searchViewLoaded = true
         }
       }

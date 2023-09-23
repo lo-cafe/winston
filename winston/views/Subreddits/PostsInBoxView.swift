@@ -10,7 +10,7 @@ import Defaults
 import Combine
 
 struct PostsInBoxView: View {
-  @EnvironmentObject private var redditAPI: RedditAPI
+  
   @Default(.postsInBox) private var postsInBox
   
   var body: some View {
@@ -25,7 +25,7 @@ struct PostsInBoxView: View {
           }
         }
         .id("quickPosts")
-        .onAppear { Task(priority: .background) { await updatePostsInBox(redditAPI) } }
+        .onAppear { Task(priority: .background) { await updatePostsInBox(RedditAPI.shared) } }
         .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
       }
     }

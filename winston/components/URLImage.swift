@@ -47,6 +47,7 @@ struct URLImage: View, Equatable {
             .frame(maxWidth: 50, maxHeight: 50)
         }
       }
+      .onDisappear(.cancel)
       .processors(processors)
     }
   }

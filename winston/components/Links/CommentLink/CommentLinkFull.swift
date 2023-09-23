@@ -42,9 +42,6 @@ struct CommentLinkFull: View {
           HStack {
             Image(systemName: "plus.message.fill")
             Text(loadMoreLoading ? "Just a sec..." : "View full conversation")
-              .onAppear { if let selfBody = post.data?.selftext {
-                decodePostToCache(post: post)
-              } }
           }
           .allowsHitTesting(false)
           .padding(.vertical, 12)

@@ -23,7 +23,7 @@ struct MultiPostsView: View {
   @State private var searchText: String = ""
   @State private var sort: SubListingSortOption = Defaults[.preferredSort]
   @State private var newPost = false
-  @EnvironmentObject private var redditAPI: RedditAPI
+  
   @EnvironmentObject private var routerProxy: RouterProxy
   @Environment(\.useTheme) private var selectedTheme
   
@@ -45,7 +45,7 @@ struct MultiPostsView: View {
         lastPostAfter = result.1
       }
       Task(priority: .background) {
-        await redditAPI.updateAvatarURLCacheFromPosts(posts: newPosts)
+        await RedditAPI.shared.updateAvatarURLCacheFromPosts(posts: newPosts)
       }
     }
   }
@@ -61,11 +61,14 @@ struct MultiPostsView: View {
       Section {
         ForEach(Array(posts.enumerated()), id: \.self.element.id) { i, post in
           
-          PostLinkNoSub(showSub: true, post: post)
-            .equatable()
-            .onAppear { if(Int(Double(posts.count) * 0.75) == i) { fetch(loadMore: true) } }
-            .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
-            .animation(.default, value: posts)
+          if let sub = post.winstonData?.winstonRepostSubreddit {
+            PostLink(post: post, sub: sub, showSub: true, secondary: true).equatable()
+          }
+//          PostLinkNoSub(showSub: true, post: post)
+//            .equatable()
+//            .onAppear { if(Int(Double(posts.count) * 0.75) == i) { fetch(loadMore: true) } }
+//            .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
+//            .animation(.default, value: posts)
           
           if selectedTheme.postLinks.divider.style != .no && i != (posts.count - 1) {
             NiceDivider(divider: selectedTheme.postLinks.divider)

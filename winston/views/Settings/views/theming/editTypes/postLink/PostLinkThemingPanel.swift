@@ -20,7 +20,7 @@ struct PostLinkThemingPanel: View {
   @ObservedObject var tempGlobalState = TempGlobalState.shared
   @Environment(\.colorScheme) private var cs
   @StateObject private var routerProxy = RouterProxy(Router(id: "PostLinkThemingPanelRouter"))
-  @EnvironmentObject private var redditAPI: RedditAPI
+  
   
   var body: some View {
     
@@ -47,7 +47,7 @@ struct PostLinkThemingPanel: View {
     } preview: {
       
       VStack {
-        PostLink(disableOuterVSpacing: true, post: Post(data: previewPostSampleData, api: redditAPI), sub: Subreddit(id: postSampleData.subreddit, api: redditAPI))
+        PostLink(disableOuterVSpacing: true, post: Post(data: previewPostSampleData, api: RedditAPI.shared), sub: Subreddit(id: postSampleData.subreddit, api: RedditAPI.shared))
           .equatable()
           .environment(\.useTheme, theme)
           .environmentObject(routerProxy)

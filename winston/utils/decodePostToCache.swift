@@ -13,13 +13,6 @@ func decodePostToCache(id: String, str: String?) {
   }
 }
 
-func decodePostToCache(post: Post) {
-  if let data = post.data {
-    doIt(id: post.id, str: (data.winstonSelftextAttrEncoded ?? ""))
-  }
-}
-
-
 private func doIt(id: String, str: String) {
     Caches.postsAttrStr.addKeyValue(key: id) {
       let decoder = JSONDecoder()

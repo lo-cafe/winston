@@ -7,7 +7,7 @@
 
 import Foundation
 
-typealias User = GenericRedditEntity<UserData>
+typealias User = GenericRedditEntity<UserData, AnyHashable>
 
 extension User {
   static var prefix = "t2"
@@ -20,7 +20,7 @@ extension User {
   }
   
   func refetchOverview(_ after: String? = nil) async -> [Either<PostData, CommentData>]? {
-    if let name = data?.name, let overviewData = await redditAPI.fetchUserOverview(name, after) {
+    if let name = data?.name, let overviewData = await RedditAPI.shared.fetchUserOverview(name, after) {
         await MainActor.run {
           self.loading = false
         }
@@ -35,7 +35,7 @@ extension User {
       self.loading = true
     }
     let userName = data?.name ?? id
-    if let data = (await redditAPI.fetchUser(userName)) {
+    if let data = (await RedditAPI.shared.fetchUser(userName)) {
       await MainActor.run {
         self.data = data
       }

@@ -12,7 +12,7 @@ import Defaults
 
 struct Badge: View, Equatable {
   static func == (lhs: Badge, rhs: Badge) -> Bool {
-    lhs.extraInfo == rhs.extraInfo && lhs.theme == rhs.theme && lhs.avatarURL == rhs.avatarURL
+    lhs.extraInfo == rhs.extraInfo && lhs.theme == rhs.theme && lhs.avatarURL == rhs.avatarURL && lhs.saved == rhs.saved
   }
   
   var saved = false
@@ -25,7 +25,7 @@ struct Badge: View, Equatable {
   var theme: BadgeTheme
   var extraInfo: [BadgeExtraInfo] = []
   @EnvironmentObject private var routerProxy: RouterProxy
-  @EnvironmentObject private var redditAPI: RedditAPI
+  
   @Environment(\.colorScheme) private var cs
   
   let flagY: CGFloat = 16
@@ -70,7 +70,7 @@ struct Badge: View, Equatable {
             )
             .scaleEffect(1)
             .onTapGesture {
-              routerProxy.router.path.append(User(id: author, api: redditAPI))
+              routerProxy.router.path.append(User(id: author, api: RedditAPI.shared))
             }
         }
       }
@@ -79,7 +79,7 @@ struct Badge: View, Equatable {
         
         Text(author).font(.system(size: theme.authorText.size, weight: theme.authorText.weight.t)).foregroundColor(author == "[deleted]" ? .red : usernameColor ?? theme.authorText.color.cs(cs).color())
           .onTapGesture {
-            routerProxy.router.path.append(User(id: author, api: redditAPI))
+            routerProxy.router.path.append(User(id: author, api: RedditAPI.shared))
           }
         
         HStack(alignment: .center, spacing: 6) {

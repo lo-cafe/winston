@@ -21,7 +21,6 @@ struct ShortPostLink: View {
           .fontSize(18, .semibold)
         Text((data.selftext).md()).lineLimit(2)
           .fontSize(15).opacity(0.75)
-          .onAppear { decodePostToCache(post: post) }
         HStack {
           if let fullname = data.author_fullname {
             Badge(author: data.author, fullname: fullname, created: data.created, theme: selectedTheme.postLinks.theme.badge, extraInfo: [PresetBadgeExtraInfo().commentsExtraInfo(data: data), PresetBadgeExtraInfo().upvotesExtraInfo(data: data)])

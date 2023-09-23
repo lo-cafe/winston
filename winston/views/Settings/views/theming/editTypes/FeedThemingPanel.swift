@@ -10,7 +10,7 @@ import SwiftUI
 struct FeedThemingPanel: View {
   @Binding var theme: WinstonTheme
   @StateObject private var routerProxy = RouterProxy(Router(id: "FeedThemingPanel"))
-  @EnvironmentObject private var redditAPI: RedditAPI
+  
   var body: some View {
     ScrollWithPreview(handlerBGOnly: false, theme: theme.postLinks.bg) {
       VStack(spacing: 32) {
@@ -30,7 +30,7 @@ struct FeedThemingPanel: View {
     } preview: {
       ScrollView(showsIndicators: false) {
         VStack(spacing: theme.postLinks.spacing) {
-          PostLink(post: Post(data: postSampleData, api: redditAPI), sub: Subreddit(id: postSampleData.subreddit, api: redditAPI))
+          PostLink(post: Post(data: postSampleData, api: RedditAPI.shared), sub: Subreddit(id: postSampleData.subreddit, api: RedditAPI.shared))
             .equatable()
             .environment(\.useTheme, theme)
             .environmentObject(routerProxy)
@@ -38,7 +38,7 @@ struct FeedThemingPanel: View {
           
           NiceDivider(divider: theme.postLinks.divider)
           
-          PostLink(post: Post(data: postSampleData, api: redditAPI), sub: Subreddit(id: postSampleData.subreddit, api: redditAPI))
+          PostLink(post: Post(data: postSampleData, api: RedditAPI.shared), sub: Subreddit(id: postSampleData.subreddit, api: RedditAPI.shared))
             .equatable()
             .environment(\.useTheme, theme)
             .environmentObject(routerProxy)

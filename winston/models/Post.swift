@@ -10,21 +10,25 @@ import Defaults
 import SwiftUI
 import CoreData
 
-typealias Post = GenericRedditEntity<PostData>
+typealias Post = GenericRedditEntity<PostData, PostWinstonData>
 
 extension Post {
   static var prefix = "t3"
   convenience init(data: T, api: RedditAPI) {
     self.init(data: data, api: api, typePrefix: "\(Post.prefix)_")
-    
+    self.winstonData = PostWinstonData()
+    self.winstonData?.winstonPermaURL = URL(string: "https://reddit.com\(data.permalink.escape.urlEncoded)")
+    let extractedMedia = mediaExtractor(data)
+    self.winstonData?.winstonExtractedMedia = extractedMedia
+    if case .repost(let repost) = extractedMedia, let subreddit = repost.data?.subreddit {
+      self.winstonData?.winstonRepostSubreddit = Subreddit(id: subreddit, api: RedditAPI.shared)
+      print(data.title, self.winstonData?.winstonRepostSubreddit)
+    }
     if let body = self.data?.selftext {
-      let theme = Defaults[.themesPresets].first(where: { $0.id == Defaults[.selectedThemeID] }) ?? defaultTheme
-      let newWinstonBodyAttr = stringToAttr(body, fontSize: theme.posts.bodyText.size)
-      let encoder = JSONEncoder()
-      if let jsonData = try? encoder.encode(newWinstonBodyAttr) {
-        let json = String(decoding: jsonData, as: UTF8.self)
-        self.data?.winstonSelftextAttrEncoded = json
-      }
+      Caches.postsAttrStr.addKeyValue(key: data.id, data: {
+        let theme = Defaults[.themesPresets].first(where: { $0.id == Defaults[.selectedThemeID] }) ?? defaultTheme
+        return stringToAttr(body, fontSize: theme.posts.bodyText.size)
+      })
     }
   }
   
@@ -108,7 +112,7 @@ extension Post {
   
   func reply(_ text: String, updateComments: (() -> ())? = nil) async -> Bool {
     if let fullname = data?.name {
-      let result = await redditAPI.newReply(text, fullname) ?? false
+      let result = await RedditAPI.shared.newReply(text, fullname) ?? false
       if result {
         if let updateComments = updateComments {
           await MainActor.run {
@@ -126,7 +130,7 @@ extension Post {
         //            id: UUID().uuidString,
         //            archived: false,
         //            count: 0,
-        //            author: redditAPI.me?.data?.name ?? "",
+        //            author: RedditAPI.shared.me?.data?.name ?? "",
         //            created_utc: nil,
         //            send_replies: nil,
         //            parent_id: id,
@@ -165,7 +169,7 @@ extension Post {
   }
   
   func refreshPost(commentID: String? = nil, sort: CommentSortOption = .confidence, after: String? = nil, subreddit: String? = nil, full: Bool = true) async -> ([Comment]?, String?)? {
-    if let subreddit = data?.subreddit ?? subreddit, let response = await redditAPI.fetchPost(subreddit: subreddit, postID: id, commentID: commentID, sort: sort) {
+    if let subreddit = data?.subreddit ?? subreddit, let response = await RedditAPI.shared.fetchPost(subreddit: subreddit, postID: id, commentID: commentID, sort: sort) {
       if let post = response[0] {
         switch post {
         case .first(let actualData):
@@ -187,7 +191,7 @@ extension Post {
           if let data = actualData.data {
             if let dataArr = data.children?.compactMap({ $0 }) {
               return (
-                Comment.initMultiple(datas: dataArr, api: redditAPI),
+                Comment.initMultiple(datas: dataArr, api: RedditAPI.shared),
                 data.after
               )
             }
@@ -207,7 +211,7 @@ extension Post {
           self.data?.saved = !prev
         }
       }
-      let success = await redditAPI.save(!prev, id: data.name)
+      let success = await RedditAPI.shared.save(!prev, id: data.name)
       if !(success ?? false) {
         await MainActor.run {
           withAnimation {
@@ -230,7 +234,7 @@ extension Post {
       data?.likes = newAction.boolVersion()
       data?.ups = oldUps + (action.boolVersion() == oldLikes ? oldLikes == nil ? 0 : -action.rawValue : action.rawValue * (oldLikes == nil ? 1 : 2))
     }
-    let result = await redditAPI.vote(newAction, id: "\(typePrefix ?? "")\(id)")
+    let result = await RedditAPI.shared.vote(newAction, id: "\(typePrefix ?? "")\(id)")
     if result == nil || !result! {
       await MainActor.run {
         data?.likes = oldLikes
@@ -248,15 +252,20 @@ extension Post {
       }
     }
     if let name = data?.name {
-      await redditAPI.hidePost(hide, fullnames: [name])
+      await RedditAPI.shared.hidePost(hide, fullnames: [name])
     }
   }
 }
 
-struct PostData: GenericRedditEntityDataType, Defaults.Serializable {
+struct PostWinstonData: Hashable {
+  var winstonPermaURL: URL? = nil
+  var winstonExtractedMedia: MediaExtractedType? = nil
+  var winstonRepostSubreddit: Subreddit?
+}
+
+struct PostData: GenericRedditEntityDataType {
   let subreddit: String
   let selftext: String
-  var winstonSelftextAttrEncoded: String? = nil
   var author_fullname: String? = nil
   var saved: Bool
   let gilded: Int

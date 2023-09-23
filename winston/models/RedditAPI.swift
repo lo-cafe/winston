@@ -23,19 +23,20 @@ class AvatarCache: ObservableObject {
   private init() {}
   
   private let _objectWillChange = PassthroughSubject<Void, Never>()
-  var data: [String:String] = ["t2_winston_sample":"https://winston.cafe/square-icon.jpg"]
+  
+  var data: [String:URL] = ["t2_winston_sample":URL(string: "https://winston.cafe/square-icon.jpg")!]
   
   var objectWillChange: AnyPublisher<Void, Never> { _objectWillChange.eraseToAnyPublisher() }
   
-  subscript(key: String) -> String? {
+  subscript(key: String) -> URL? {
     get { data[key] }
     set {
       data[key] = newValue
       _objectWillChange.send()
     }
   }
-  
-  func merge(_ dict: [String:String]) {
+
+  func merge(_ dict: [String:URL]) {
     data.merge(dict) { (_, new) in new }
     _objectWillChange.send()
   }
@@ -43,6 +44,7 @@ class AvatarCache: ObservableObject {
 
 
 class RedditAPI: ObservableObject {
+  static let shared = RedditAPI()
   static let winstonAPIBase = "https://winston.lo.cafe/api"
   static let redditApiURLBase = "https://oauth.reddit.com"
   static let redditWWWApiURLBase = "https://www.reddit.com"

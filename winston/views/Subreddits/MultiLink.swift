@@ -11,14 +11,14 @@ import Popovers
 struct MultiLink: View {
   var multi: MultiData
   var routerProxy: RouterProxy
-  @EnvironmentObject private var redditAPI: RedditAPI
+  
   
   var body: some View {
     Menu {
       if let subs = multi.subreddits {
         ForEach(subs) { sub in
           if let data = sub.data {
-            SubItemButton(sub: Subreddit(data: data, api: redditAPI))
+            SubItemButton(sub: Subreddit(data: data, api: RedditAPI.shared))
           }
         }
       }
@@ -37,7 +37,7 @@ struct MultiLink: View {
       .multilineTextAlignment(.center)
       .contentShape(Rectangle())
     } primaryAction: {
-      routerProxy.router.path.append(MultiViewType.posts(Multi(data: multi, api: redditAPI)))
+      routerProxy.router.path.append(MultiViewType.posts(Multi(data: multi, api: RedditAPI.shared)))
     }
   }
 }

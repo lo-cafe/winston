@@ -40,7 +40,7 @@ struct MediaPresenter: View, Equatable {
   
   var showURLInstead = false
   let media: MediaExtractedType
-  let post: Post
+  @ObservedObject var post: Post
   let compact: Bool
   let contentWidth: CGFloat
   
@@ -49,6 +49,7 @@ struct MediaPresenter: View, Equatable {
     case .image(let imgMediaExtracted):
       if !showURLInstead {
         ImageMediaPost(compact: compact, post: post, images: [imgMediaExtracted], contentWidth: contentWidth)
+          .equatable()
       }
     case .video(let videoMediaExtracted):
       if !showURLInstead {
@@ -57,6 +58,8 @@ struct MediaPresenter: View, Equatable {
     case .gallery(let imgs):
       if !showURLInstead {
         ImageMediaPost(compact: compact, post: post, images: imgs, contentWidth: contentWidth)
+          .equatable()
+        //          .onAppear { print(post.data?.title)}
       }
     case .youtube(let videoID, let size):
       if !showURLInstead {
@@ -69,16 +72,16 @@ struct MediaPresenter: View, Equatable {
       } else {
         OnlyURL(url: url)
       }
-    case .repost(let post):
+    case .repost(let repost):
       if !showURLInstead {
         if compact {
-          if let postData = post.data, let url = URL(string: "https://reddit.com/r/\(postData.subreddit)/comments/\(post.id)") {
+          if let postData = repost.data, let url = URL(string: "https://reddit.com/r/\(postData.subreddit)/comments/\(repost.id)") {
             PreviewLink(url: url, compact: compact)
           }
-        } else {
-          PostLinkNoSub(post: post, secondary: true)
+        } else if let sub = post.winstonData?.winstonRepostSubreddit {
+          PostLink(post: repost, sub: sub, showSub: true, secondary: true)
         }
-      } else if let postData = post.data, let url = URL(string: "https://reddit.com/r/\(postData.subreddit)/comments/\(post.id)") {
+      } else if let postData = repost.data, let url = URL(string: "https://reddit.com/r/\(postData.subreddit)/comments/\(repost.id)") {
         OnlyURL(url: url)
       }
     case .post(let id, let subreddit):
@@ -131,33 +134,4 @@ struct MediaPresenter: View, Equatable {
       }
     }
   }
-}
-
-extension MediaExtractedType: Equatable {
-    static func ==(lhs: MediaExtractedType, rhs: MediaExtractedType) -> Bool {
-        switch (lhs, rhs) {
-        case let (.image(a), .image(b)):
-            return a == b
-        case let (.video(a), .video(b)):
-            return a == b
-        case let (.gallery(a), .gallery(b)):
-            return a == b
-        case let (.youtube(videoID: a, size: b), .youtube(videoID: c, size: d)):
-            return a == c && b == d
-        case let (.link(a), .link(b)):
-            return a == b
-        case let (.repost(a), .repost(b)):
-            return a == b
-        case let (.post(id: a, subreddit: b), .post(id: c, subreddit: d)):
-            return a == c && b == d
-        case let (.comment(id: a, postID: b, subreddit: c), .comment(id: d, postID: e, subreddit: f)):
-            return a == d && b == e && c == f
-        case let (.subreddit(a), .subreddit(b)):
-            return a == b
-        case let (.user(a), .user(b)):
-            return a == b
-        default:
-            return false
-        }
-    }
 }

@@ -23,7 +23,7 @@ struct Subreddits: View, Equatable {
   var loaded: Bool
   @StateObject var routerProxy: RouterProxy
   @Environment(\.managedObjectContext) private var context
-  @EnvironmentObject private var redditAPI: RedditAPI
+  
   @FetchRequest(sortDescriptors: [NSSortDescriptor(key: "name", ascending: true)], animation: .default) var subreddits: FetchedResults<CachedSub>
   @FetchRequest(sortDescriptors: [NSSortDescriptor(key: "name", ascending: true)], animation: .default) var multis: FetchedResults<CachedMulti>
   @State private var searchText: String = ""
@@ -47,14 +47,14 @@ struct Subreddits: View, Equatable {
         if searchText == "" {
           VStack(spacing: 12) {
             HStack(spacing: 12) {
-              ListBigBtn(icon: "house.circle.fill", iconColor: .blue, label: "Home", destination: Subreddit(id: "home", api: redditAPI))
+              ListBigBtn(icon: "house.circle.fill", iconColor: .blue, label: "Home", destination: Subreddit(id: "home", api: RedditAPI.shared))
               
-              ListBigBtn(icon: "chart.line.uptrend.xyaxis.circle.fill", iconColor: .red, label: "Popular", destination: Subreddit(id: "popular", api: redditAPI))
+              ListBigBtn(icon: "chart.line.uptrend.xyaxis.circle.fill", iconColor: .red, label: "Popular", destination: Subreddit(id: "popular", api: RedditAPI.shared))
             }
             HStack(spacing: 12) {
-              ListBigBtn(icon: "signpost.right.and.left.circle.fill", iconColor: .orange, label: "All", destination: Subreddit(id: "all", api: redditAPI))
+              ListBigBtn(icon: "signpost.right.and.left.circle.fill", iconColor: .orange, label: "All", destination: Subreddit(id: "all", api: RedditAPI.shared))
               
-              ListBigBtn(icon: "bookmark.circle.fill", iconColor: .green, label: "Saved", destination: Subreddit(id: "saved", api: redditAPI))
+              ListBigBtn(icon: "bookmark.circle.fill", iconColor: .green, label: "Saved", destination: Subreddit(id: "saved", api: RedditAPI.shared))
                 .opacity(0.5).allowsHitTesting(false)
             }
           }
@@ -90,7 +90,7 @@ struct Subreddits: View, Equatable {
           if searchText != "" {
             Section("Found subs") {
               ForEach(Array(subreddits.filter { ($0.display_name ?? "").lowercased().contains(searchText.lowercased()) }), id: \.self.uuid) { cachedSub in
-                SubItem(routerProxy: routerProxy, sub: Subreddit(data: SubredditData(entity: cachedSub), api: redditAPI), cachedSub: cachedSub)
+                SubItem(routerProxy: routerProxy, sub: Subreddit(data: SubredditData(entity: cachedSub), api: RedditAPI.shared), cachedSub: cachedSub)
                   .equatable()
               }
             }
@@ -101,7 +101,7 @@ struct Subreddits: View, Equatable {
                 ForEach(favs.sorted(by: { x, y in
                   (x.display_name?.lowercased() ?? "a") < (y.display_name?.lowercased() ?? "a")
                 }), id: \.self) { cachedSub in
-                  SubItem(routerProxy: routerProxy, sub: Subreddit(data: SubredditData(entity: cachedSub), api: redditAPI), cachedSub: cachedSub)
+                  SubItem(routerProxy: routerProxy, sub: Subreddit(data: SubredditData(entity: cachedSub), api: RedditAPI.shared), cachedSub: cachedSub)
                     .equatable()
                     .id("\(cachedSub.uuid ?? "")-fav")
                 }
@@ -115,7 +115,7 @@ struct Subreddits: View, Equatable {
                 ForEach(subreddits.filter({ $0.user_is_subscriber }).sorted(by: { x, y in
                   (x.display_name?.lowercased() ?? "a") < (y.display_name?.lowercased() ?? "a")
                 })) { cachedSub in
-                  SubItem(routerProxy: routerProxy, sub: Subreddit(data: SubredditData(entity: cachedSub), api: redditAPI), cachedSub: cachedSub)
+                  SubItem(routerProxy: routerProxy, sub: Subreddit(data: SubredditData(entity: cachedSub), api: RedditAPI.shared), cachedSub: cachedSub)
                     .equatable()
                 }
               }
@@ -128,7 +128,7 @@ struct Subreddits: View, Equatable {
                     ForEach(arr.sorted(by: { x, y in
                       (x.display_name?.lowercased() ?? "a") < (y.display_name?.lowercased() ?? "a")
                     }), id: \.self.uuid) { cachedSub in
-                      SubItem(routerProxy: routerProxy, sub: Subreddit(data: SubredditData(entity: cachedSub), api: redditAPI), cachedSub: cachedSub)
+                      SubItem(routerProxy: routerProxy, sub: Subreddit(data: SubredditData(entity: cachedSub), api: RedditAPI.shared), cachedSub: cachedSub)
                         .equatable()
                     }
                     .onDelete(perform: { i in
@@ -164,12 +164,12 @@ struct Subreddits: View, Equatable {
       )
       .refreshable {
         Task(priority: .background) {
-          await updatePostsInBox(redditAPI, force: true)
+          await updatePostsInBox(RedditAPI.shared, force: true)
         }
         Task(priority: .background) {
-          _ = await redditAPI.fetchMyMultis()
+          _ = await RedditAPI.shared.fetchMyMultis()
         }
-        _ = await redditAPI.fetchSubs()
+        _ = await RedditAPI.shared.fetchSubs()
       }
       .navigationTitle("Subs")
     }

@@ -13,14 +13,17 @@ import Nuke
 private var safe = getSafeArea().top + getSafeArea().bottom
 
 
-struct ImageMediaPost: View {
+struct ImageMediaPost: View, Equatable {
+  static func == (lhs: ImageMediaPost, rhs: ImageMediaPost) -> Bool {
+    lhs.compact == rhs.compact && lhs.contentWidth == rhs.contentWidth && lhs.images == rhs.images
+  }
+  
   var compact = false
   var post: Post
   var images: [MediaExtracted]
   var contentWidth: CGFloat
   @State var fullscreen = false
   @State var fullscreenIndex = 0
-  @Namespace var presentationNamespace
   @Default(.maxPostLinkImageHeightPercentage) var maxPostLinkImageHeightPercentage
   
   var body: some View {
@@ -35,8 +38,12 @@ struct ImageMediaPost: View {
         let propHeight = (contentWidth * sourceHeight) / sourceWidth
         let finalHeight = maxPostLinkImageHeightPercentage != 110 ? Double(min(maxHeight, propHeight)) : Double(propHeight)
         
-        GalleryThumb(ns: presentationNamespace, width: compact ? scaledCompactModeThumbSize() : contentWidth, height: compact ? scaledCompactModeThumbSize() : sourceHeight > 0 ? finalHeight : nil, url: img.url)
+        GalleryThumb(width: compact ? scaledCompactModeThumbSize() : contentWidth, height: compact ? scaledCompactModeThumbSize() : sourceHeight > 0 ? finalHeight : nil, url: img.url)
+          .equatable()
           .onTapGesture { withAnimation(spring) { fullscreen.toggle() } }
+          .onAppear {
+//            print(post.data?.title)
+          }
         
       } else if images.count > 1 {
         
@@ -44,7 +51,8 @@ struct ImageMediaPost: View {
         let height = width
         VStack(spacing: 8) {
           HStack(spacing: 8) {
-            GalleryThumb(ns: presentationNamespace, width: compact ? scaledCompactModeThumbSize() : width, height: compact ? scaledCompactModeThumbSize() : height, url: images[0].url)
+            GalleryThumb(width: compact ? scaledCompactModeThumbSize() : width, height: compact ? scaledCompactModeThumbSize() : height, url: images[0].url)
+              .equatable()
               .onTapGesture { withAnimation(spring) {
                 fullscreenIndex = 0
                 doThisAfter(0) { fullscreen.toggle() }
@@ -59,7 +67,8 @@ struct ImageMediaPost: View {
                   .allowsHitTesting(false)
               )
             if !compact {
-              GalleryThumb(ns: presentationNamespace, width: width, height: height, url: images[1].url)
+              GalleryThumb(width: width, height: height, url: images[1].url)
+                .equatable()
                 .onTapGesture { withAnimation(spring) {
                   fullscreenIndex = 1
                   doThisAfter(0) { fullscreen.toggle() }
@@ -70,13 +79,15 @@ struct ImageMediaPost: View {
           
           if images.count > 2 && !compact {
             HStack(spacing: 8) {
-              GalleryThumb(ns: presentationNamespace, width: images.count == 3 ? contentWidth : width, height: height, url: images[2].url)
+              GalleryThumb(width: images.count == 3 ? contentWidth : width, height: height, url: images[2].url)
+                .equatable()
                 .onTapGesture { withAnimation(spring) {
                   fullscreenIndex = 2
                   doThisAfter(0) { fullscreen.toggle() }
                 } }
               if images.count == 4 {
-                GalleryThumb(ns: presentationNamespace, width: width, height: height, url: images[3].url)
+                GalleryThumb(width: width, height: height, url: images[3].url)
+                  .equatable()
                   .onTapGesture { withAnimation(spring) {
                     fullscreenIndex = 3
                     doThisAfter(0) { fullscreen.toggle() }
@@ -100,9 +111,9 @@ struct ImageMediaPost: View {
       }
     }
     .frame(maxWidth: compact ? nil : .infinity)
-    .fullScreenCover(isPresented: $fullscreen, content: {
-      LightBoxImage(post: post, i: fullscreenIndex, imagesArr: images, namespace: presentationNamespace)
-    })
+//    .fullScreenCover(isPresented: $fullscreen, content: {
+//      LightBoxImage(post: post, i: fullscreenIndex, imagesArr: images)
+//    })
   }
 }
 

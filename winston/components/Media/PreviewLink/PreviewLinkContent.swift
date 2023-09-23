@@ -68,7 +68,7 @@ final class PreviewViewModel: ObservableObject {
   
   @Published var image: String?
   @Published var title: String?
-  @Published var url: String?
+  @Published var url: URL?
   @Published var description: String?
   @Published var loading = true
   
@@ -97,7 +97,7 @@ final class PreviewViewModel: ObservableObject {
             image = og[.image]
             title = og[.title]
             description = og[.description]
-            url = og[.url]
+            url = URL(string: og[.url] ?? "")
             loading = false
           }
         }
@@ -136,7 +136,7 @@ struct PreviewLinkContent: View {
               .truncationMode(.tail)
               .fixedSize(horizontal: false, vertical: true)
             
-            Text(viewModel.url == nil || viewModel.url?.isEmpty == true ? url.absoluteString : viewModel.url!)
+            Text(viewModel.url == nil ? url.absoluteString : viewModel.url?.absoluteString)
               .fontSize(13)
               .opacity(0.5)
               .lineLimit(1)
@@ -158,7 +158,7 @@ struct PreviewLinkContent: View {
       
       Group {
         if let image = viewModel.image, let imageURL = URL(string: image) {
-          URLImage(url: imageURL)
+          URLImage(url: imageURL, processors: [.resize(width:  compact ? scaledCompactModeThumbSize() : 76)])
             .scaledToFill()
         } else {
           if viewModel.loading {
@@ -181,7 +181,7 @@ struct PreviewLinkContent: View {
     .background(compact ? nil : RR(16, Color.primary.opacity(0.05)))
     .contextMenu {
       Button {
-        UIPasteboard.general.string = viewModel.url ?? url.absoluteString
+        UIPasteboard.general.string = viewModel.url?.absoluteString ?? url.absoluteString
       } label: {
         Label("Copy URL", systemImage: "link")
       }

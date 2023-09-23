@@ -63,7 +63,10 @@ extension RedditAPI {
   
   func updateAvatarURL(names: [String]) async {
     if let data = await self.fetchUsers(names) {
-      let newDict = data.mapValues { val in val.profile_img ?? "" }
+      let newDict = data.compactMapValues { val in
+        if let urlStr = val.profile_img, let url = URL(string: String(urlStr.split(separator: "?")[0])) { return url }
+        return nil
+      }
       await MainActor.run { [newDict] in
         withAnimation {
           AvatarCache.shared.merge(newDict)

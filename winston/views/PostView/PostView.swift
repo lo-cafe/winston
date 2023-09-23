@@ -34,7 +34,7 @@ struct PostView: View, Equatable {
   @State private var hideElements = true
   @State private var sort: CommentSortOption = Defaults[.preferredCommentSort]
   //  @State private var sort: CommentSortOption = .confidence
-  @EnvironmentObject private var redditAPI: RedditAPI
+  
   @EnvironmentObject private var routerProxy: RouterProxy
   @State var update = false
   
@@ -44,7 +44,7 @@ struct PostView: View, Equatable {
     }
     if let result = await post.refreshPost(commentID: ignoreSpecificComment ? nil : highlightID, sort: sort, after: nil, subreddit: subreddit.data?.display_name ?? subreddit.id, full: full), let newComments = result.0 {
       Task(priority: .background) {
-        await redditAPI.updateAvatarURLCacheFromComments(comments: newComments)
+        await RedditAPI.shared.updateAvatarURLCacheFromComments(comments: newComments)
       }
     }
   }

@@ -59,7 +59,7 @@ struct PostContent: View, Equatable {
       VStack(spacing: 0) {
         VStack(spacing: selectedTheme.posts.spacing) {
           
-          if let extractedMedia = mediaExtractor(post) {
+          if let extractedMedia = post.winstonData?.winstonExtractedMedia {
             MediaPresenter(media: extractedMedia, post: post, compact: false, contentWidth: contentWidth)
               .id("media-post-open")
           }

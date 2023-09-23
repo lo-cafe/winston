@@ -12,7 +12,7 @@ struct SubredditsStack: View {
   var reset: Bool
   @StateObject var router: Router
   @Default(.preferenceDefaultFeed) private var preferenceDefaultFeed // handle default feed selection routing
-  @EnvironmentObject private var redditAPI: RedditAPI
+  
   @State private var loaded = false
   var body: some View {
     NavigationStack(path: $router.path) {
@@ -24,12 +24,12 @@ struct SubredditsStack: View {
         if !loaded {
           // MARK: Route to default feed
           if preferenceDefaultFeed != "subList" && router.path.count == 0 { // we are in subList, can ignore
-            let tempSubreddit = Subreddit(id: preferenceDefaultFeed, api: redditAPI)
+            let tempSubreddit = Subreddit(id: preferenceDefaultFeed, api: RedditAPI.shared)
             router.path.append(SubViewType.posts(tempSubreddit))
           }
           
-          _ = await redditAPI.fetchSubs()
-          _ = await redditAPI.fetchMyMultis()
+          _ = await RedditAPI.shared.fetchSubs()
+          _ = await RedditAPI.shared.fetchMyMultis()
           withAnimation {
             loaded = true
           }

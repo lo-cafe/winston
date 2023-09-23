@@ -46,6 +46,7 @@ struct SubredditBaseIcon: View, Equatable {
             .frame(maxWidth: 50, maxHeight: 50)
         }
       }
+      .processors([.resize(width: size)])
 //      .pipeline(SubredditBaseIcon.pipeline)
       .scaledToFill()
       .frame(width: size, height: size)

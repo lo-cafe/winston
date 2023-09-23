@@ -34,6 +34,7 @@ struct PreviewYTLink: View, Equatable {
     let actualHeight = (contentWidth * CGFloat(size.height)) / CGFloat(size.width)
     if let player = playersCache.cache[videoID]?.data {
       PreviewYTLinkPlayer(player: player, videoID: videoID, size: size, contentWidth: contentWidth)
+//        .equatable()
     } else {
       ProgressView()
         .frame(width: contentWidth, height: actualHeight)
@@ -41,10 +42,10 @@ struct PreviewYTLink: View, Equatable {
   }
 }
 
-struct PreviewYTLinkPlayer: View, Equatable {
-  static func == (lhs: PreviewYTLinkPlayer, rhs: PreviewYTLinkPlayer) -> Bool {
-    lhs.videoID == rhs.videoID
-  }
+struct PreviewYTLinkPlayer: View {
+//  static func == (lhs: PreviewYTLinkPlayer, rhs: PreviewYTLinkPlayer) -> Bool {
+//    lhs.videoID == rhs.videoID
+//  }
   
   @StateObject var player: YouTubePlayer
   var videoID: String

@@ -12,7 +12,7 @@ import Defaults
 struct PostInBoxLink: View {
   @EnvironmentObject private var routerProxy: RouterProxy
   @Default(.postsInBox) private var postsInBox
-  @EnvironmentObject private var redditAPI: RedditAPI
+  
   var post: PostInBox
   @State private var dragging = false
   @State private var deleting = false
@@ -108,7 +108,7 @@ struct PostInBoxLink: View {
         .scaleEffect(deleting ? 1 : 0.85)
     )
     .onTapGesture {
-      routerProxy.router.path.append(PostViewPayload(post: Post(id: post.id, api: redditAPI), postSelfAttr: nil, sub: Subreddit(id: post.subredditName, api: redditAPI)))
+      routerProxy.router.path.append(PostViewPayload(post: Post(id: post.id, api: RedditAPI.shared), postSelfAttr: nil, sub: Subreddit(id: post.subredditName, api: RedditAPI.shared)))
     }
     .gesture(
       LongPressGesture(minimumDuration: 0.5, maximumDistance: 10)
