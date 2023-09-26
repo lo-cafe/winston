@@ -12,25 +12,41 @@ struct ThemeStore: View {
   @EnvironmentObject var themeStore: ThemeStoreAPI
   @State var themes: [ThemeData] = []
   @State private var isRefreshing = false // Track the refreshing state
-  
+  @State private var isPresentingUploadSheet = false
   var body: some View {
-    VStack {
-      if themes.isEmpty {
-        VStack {
-          HStack {
-            ProgressView()
+    NavigationView{
+      VStack {
+        if themes.isEmpty {
+          VStack {
+            HStack {
+              ProgressView()
+            }
           }
-        }
-      } else {
-        List {
-          ForEach(themes, id: \.self) { theme in
-            NavigationLink(destination: ThemeStoreDetailsView(theme: theme), label: {
-              OnlineThemeItem(theme: theme)
-            })
+        } else {
+          List {
+            ForEach(themes, id: \.self) { theme in
+              NavigationLink(destination: ThemeStoreDetailsView(theme: theme), label: {
+                OnlineThemeItem(theme: theme)
+              })
+            }
           }
         }
       }
+    }.sheet(isPresented: $isPresentingUploadSheet){
+      ThemeStoreUploadSheet()
     }
+    .toolbar{
+      ToolbarItem(placement: .primaryAction){
+        Button{
+          isPresentingUploadSheet.toggle()
+        } label: {
+          Label("Upload Theme", systemImage: "arrow.up.to.line")
+            .labelStyle(.iconOnly)
+        }
+      }
+    }
+    .navigationTitle("Theme Store")
+    .navigationBarTitleDisplayMode(.inline)
     .onAppear {
       Task {
         await fetchThemes()
@@ -124,6 +140,7 @@ struct OnlineThemeItem: View {
             } label: {
               Label("Download", systemImage: "arrow.down.to.line")
                 .labelStyle(.iconOnly)
+                .foregroundColor(.blue)
               
             }
           }
