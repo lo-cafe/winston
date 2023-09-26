@@ -52,7 +52,7 @@ struct ThemeStoreDetailsView: View {
       }
       .padding()
     }
-    .navigationTitle("Theme")
+    .navigationTitle(theme.theme_name ?? "Theme")
     .navigationBarTitleDisplayMode(.inline)
   }
 }

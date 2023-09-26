@@ -19,40 +19,7 @@ class ThemeStoreAPI: ObservableObject {
   }
 }
 
-extension ThemeStoreAPI {
-  func fetchAllThemes() async -> [ThemeData]? {
-    if let headers = self.getRequestHeaders() {
-      let response = await AF.request(
-        "\(ThemeStoreAPI.baseURL)/themes",
-        method: .get,
-        headers: headers
-      )
-        .serializingDecodable([ThemeData].self).response
-      switch response.result {
-      case .success(let data):
-        return data
-      case .failure(let error):
-        Oops.shared.sendError(error)
-        print(error)
-        return nil
-      }
-    } else {
-      return nil
-    }
-  }
-  
-  
-  
-  struct FetchInboxPayload: Codable {
-    var mark = "true"
-    var count = 0
-    var after = ""
-    var before = ""
-    var limit = 25
-    var show = "all"
-    var sr_detail = 1
-  }
-}
+
 
 struct ThemeData: Codable, Hashable {
   var filename: String?

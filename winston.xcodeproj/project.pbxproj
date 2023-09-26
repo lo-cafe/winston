@@ -13,6 +13,10 @@
 		652011FC2AC2C7BE005DD899 /* ThemeStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 652011FB2AC2C7BE005DD899 /* ThemeStore.swift */; };
 		652011FE2AC2D4F9005DD899 /* ThemeStoreDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 652011FD2AC2D4F9005DD899 /* ThemeStoreDetailsView.swift */; };
 		652012002AC309FA005DD899 /* downloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 652011FF2AC309FA005DD899 /* downloader.swift */; };
+		652012022AC31E7C005DD899 /* ThemeStoreUploadSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 652012012AC31E7C005DD899 /* ThemeStoreUploadSheet.swift */; };
+		652012042AC322A3005DD899 /* fetchAllThemes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 652012032AC322A3005DD899 /* fetchAllThemes.swift */; };
+		652012062AC322BC005DD899 /* fetchThemeStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 652012052AC322BC005DD899 /* fetchThemeStatus.swift */; };
+		652012082AC327C7005DD899 /* uploadTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 652012072AC327C7005DD899 /* uploadTheme.swift */; };
 		653E2DA52A8E278800833556 /* GeneralPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 653E2DA42A8E278800833556 /* GeneralPanel.swift */; };
 		6543D8892A8D10B900A1FFF9 /* scaleEffectButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6543D8882A8D10B900A1FFF9 /* scaleEffectButtonStyle.swift */; };
 		6593CC432A88C9E8003CA58D /* AccessibilityPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6593CC422A88C9E8003CA58D /* AccessibilityPanel.swift */; };
@@ -376,6 +380,10 @@
 		652011FB2AC2C7BE005DD899 /* ThemeStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeStore.swift; sourceTree = "<group>"; };
 		652011FD2AC2D4F9005DD899 /* ThemeStoreDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeStoreDetailsView.swift; sourceTree = "<group>"; };
 		652011FF2AC309FA005DD899 /* downloader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = downloader.swift; sourceTree = "<group>"; };
+		652012012AC31E7C005DD899 /* ThemeStoreUploadSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeStoreUploadSheet.swift; sourceTree = "<group>"; };
+		652012032AC322A3005DD899 /* fetchAllThemes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = fetchAllThemes.swift; sourceTree = "<group>"; };
+		652012052AC322BC005DD899 /* fetchThemeStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = fetchThemeStatus.swift; sourceTree = "<group>"; };
+		652012072AC327C7005DD899 /* uploadTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = uploadTheme.swift; sourceTree = "<group>"; };
 		653E2DA42A8E278800833556 /* GeneralPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneralPanel.swift; sourceTree = "<group>"; };
 		6543D8882A8D10B900A1FFF9 /* scaleEffectButtonStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = scaleEffectButtonStyle.swift; sourceTree = "<group>"; };
 		6593CC422A88C9E8003CA58D /* AccessibilityPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessibilityPanel.swift; sourceTree = "<group>"; };
@@ -735,6 +743,9 @@
 			isa = PBXGroup;
 			children = (
 				652011F92AC2C46C005DD899 /* themeStore.swift */,
+				652012032AC322A3005DD899 /* fetchAllThemes.swift */,
+				652012052AC322BC005DD899 /* fetchThemeStatus.swift */,
+				652012072AC327C7005DD899 /* uploadTheme.swift */,
 			);
 			path = ThemeStore;
 			sourceTree = "<group>";
@@ -1401,6 +1412,7 @@
 				ECC2C7B12AAB48D1000E196C /* ThemesPanel.swift */,
 				652011FB2AC2C7BE005DD899 /* ThemeStore.swift */,
 				652011FD2AC2D4F9005DD899 /* ThemeStoreDetailsView.swift */,
+				652012012AC31E7C005DD899 /* ThemeStoreUploadSheet.swift */,
 			);
 			path = theming;
 			sourceTree = "<group>";
@@ -1634,6 +1646,8 @@
 				EC63735D2A791E47000A03A3 /* Onboarding7Ending.swift in Sources */,
 				ECC68D412A799CDD005BC7B4 /* SelectableText.swift in Sources */,
 				ECDD515C2A73A90700FD9498 /* PreviewLink.swift in Sources */,
+				652012062AC322BC005DD899 /* fetchThemeStatus.swift in Sources */,
+				652012022AC31E7C005DD899 /* ThemeStoreUploadSheet.swift in Sources */,
 				EC5EDA712A4DA94A00140A08 /* SwipeActionsOld.swift in Sources */,
 				EC3AC9F02AB39BE50078EC78 /* FeedThemingPanel.swift in Sources */,
 				ECF0B7E92A543795002B9FAD /* fetchUsers.swift in Sources */,
@@ -1716,6 +1730,7 @@
 				ECF5B3072AC83AE600355589 /* getAppIcon.swift in Sources */,
 				ECA30A3B2A6329CC00BB19D1 /* colors.swift in Sources */,
 				EC6373612A792B44000A03A3 /* KeyboardAware.swift in Sources */,
+				652012042AC322A3005DD899 /* fetchAllThemes.swift in Sources */,
 				EC3AC9E52AAD1F260078EC78 /* TextsSettings.swift in Sources */,
 				EC593AF22A47AD97002D6454 /* Subreddits.swift in Sources */,
 				EC8F34932A6F497700EB8249 /* submitPost.swift in Sources */,
@@ -1754,6 +1769,7 @@
 				EC0854482A4D6E8C00E88389 /* getInitialSize.swift in Sources */,
 				EC5EDA752A4E937700140A08 /* GenericRedditEntity.swift in Sources */,
 				EC91C8562AB9838D00F2AD30 /* CommonListsThemingPanel.swift in Sources */,
+				652012082AC327C7005DD899 /* uploadTheme.swift in Sources */,
 				EC3188162A92A46100CB3738 /* updateMulti.swift in Sources */,
 				EC08540E2A4BD26600E88389 /* ObservedScrollView.swift in Sources */,
 				652011FC2AC2C7BE005DD899 /* ThemeStore.swift in Sources */,
@@ -2053,7 +2069,7 @@
 				CODE_SIGN_ENTITLEMENTS = winston/winston.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = Z2NNLU4F7U;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = winston/Info.plist;
@@ -2092,7 +2108,7 @@
 				CODE_SIGN_ENTITLEMENTS = winston/winston.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = Z2NNLU4F7U;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = winston/Info.plist;
@@ -2124,7 +2140,7 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = Z2NNLU4F7U;
+				DEVELOPMENT_TEAM = "";
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "winston-everywhere/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "Winston Everywhere";
@@ -2154,7 +2170,7 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = Z2NNLU4F7U;
+				DEVELOPMENT_TEAM = "";
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "winston-everywhere/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "Winston Everywhere";
