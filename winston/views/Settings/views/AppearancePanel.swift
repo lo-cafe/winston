@@ -47,6 +47,11 @@ struct AppearancePanel: View {
         WNavigationLink(value: SettingsPages.appIcon) {
           Label("App icon", systemImage: "appclip")
         }
+        WNavigationLink(value: SettingsPages.themeStore){
+          Label("Theme Store", systemImage: "house")
+        }
+      } footer: {
+        Text("This is a special menu because in Winston you can change 90% of what you see. Enjoy the theming system!")
       }
       .themedListDividers()
       
