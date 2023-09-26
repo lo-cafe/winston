@@ -84,35 +84,37 @@ struct ThemesPanel: View {
         .environmentObject(routerProxy)
     }
   }
-  
-  func unzipTheme(at fileURL: URL) {
-    do {
-      let gotAccess = fileURL.startAccessingSecurityScopedResource()
-      if !gotAccess { return }
-      
-      let unzipDirectory = try Zip.quickUnzipFile(fileURL)
-      fileURL.stopAccessingSecurityScopedResource()
-      let fileManager = FileManager.default
-      let themeJsonURL = unzipDirectory.appendingPathComponent("theme.json")
-      let themeData = try Data(contentsOf: themeJsonURL)
-      let theme = try JSONDecoder().decode(WinstonTheme.self, from: themeData)
-      
-      let urls = try fileManager.contentsOfDirectory(at: unzipDirectory, includingPropertiesForKeys: nil)
-      let destinationURL = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first!
-      for url in urls {
-        if url.lastPathComponent != "theme.json" {
-          let destinationFileURL = destinationURL.appendingPathComponent(url.lastPathComponent)
-          try? fileManager.removeItem(at: destinationFileURL)
-          try fileManager.moveItem(at: url, to: destinationFileURL)
-        }
+}
+
+func unzipTheme(at fileURL: URL) {
+  @Default(.themesPresets) var themesPresets
+  do {
+    let gotAccess = fileURL.startAccessingSecurityScopedResource()
+    if !gotAccess { return }
+    
+    let unzipDirectory = try Zip.quickUnzipFile(fileURL)
+    fileURL.stopAccessingSecurityScopedResource()
+    let fileManager = FileManager.default
+    let themeJsonURL = unzipDirectory.appendingPathComponent("theme.json")
+    let themeData = try Data(contentsOf: themeJsonURL)
+    
+    let theme = try JSONDecoder().decode(WinstonTheme.self, from: themeData)
+    
+    let urls = try fileManager.contentsOfDirectory(at: unzipDirectory, includingPropertiesForKeys: nil)
+    let destinationURL = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first!
+    for url in urls {
+      if url.lastPathComponent != "theme.json" {
+        let destinationFileURL = destinationURL.appendingPathComponent(url.lastPathComponent)
+        try? fileManager.removeItem(at: destinationFileURL)
+        try fileManager.moveItem(at: url, to: destinationFileURL)
       }
-      
-      DispatchQueue.main.async {
-        themesPresets.append(theme)
-      }
-    } catch {
-      print("Failed to unzip file with error: \(error.localizedDescription)")
     }
+    
+    DispatchQueue.main.async {
+      themesPresets.append(theme)
+    }
+  } catch {
+    print("Failed to unzip file with error: \(error.localizedDescription)")
   }
 }
 

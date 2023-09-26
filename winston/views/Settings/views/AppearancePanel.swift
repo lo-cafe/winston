@@ -44,6 +44,9 @@ struct AppearancePanel: View {
         WNavigationLink(value: SettingsPages.themes) {
           Label("Themes", systemImage: "paintbrush.fill")
         }
+        WNavigationLink(value: SettingsPages.themeStore){
+          Label("Theme Store", systemImage: "house")
+        }
       } footer: {
         Text("This is a special menu because in Winston you can change 90% of what you see. Enjoy the theming system!")
       }

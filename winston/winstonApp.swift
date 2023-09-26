@@ -24,6 +24,7 @@ struct winstonApp: App {
 
 struct AppContent: View {
   @StateObject private var redditAPI = RedditAPI()
+  @StateObject private var themeStore = ThemeStoreAPI()
   @Default(.themesPresets) private var themesPresets
   @Default(.selectedThemeID) private var selectedThemeID
   @Environment(\.colorScheme) private var cs
@@ -38,6 +39,7 @@ struct AppContent: View {
       }
       .environment(\.useTheme, selectedTheme)
       .environmentObject(redditAPI)
+      .environmentObject(themeStore)
     //        .alertToastRoot()
     //        .tint(selectedTheme.general.accentColor.cs(cs).color())
   }
