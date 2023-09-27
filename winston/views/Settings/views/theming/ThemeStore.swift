@@ -13,42 +13,75 @@ struct ThemeStore: View {
   @State var themes: [ThemeData] = []
   @State private var isRefreshing = false // Track the refreshing state
   @State private var isPresentingUploadSheet = false
+  @State private var eligibility: Bool = false
+  @Default(.themestoreID) var themestoreID
   var body: some View {
     NavigationView{
       VStack {
-        if themes.isEmpty {
-          VStack {
-            HStack {
-              ProgressView()
+        if eligibility {
+          if themes.isEmpty {
+            VStack {
+              HStack {
+                ProgressView()
+              }
+            }
+          } else {
+            List {
+              ForEach(themes, id: \.self) { theme in
+                NavigationLink(destination: ThemeStoreDetailsView(theme: theme), label: {
+                  OnlineThemeItem(theme: theme)
+                })
+              }
             }
           }
         } else {
-          List {
-            ForEach(themes, id: \.self) { theme in
-              NavigationLink(destination: ThemeStoreDetailsView(theme: theme), label: {
-                OnlineThemeItem(theme: theme)
-              })
+          HStack{
+            VStack{
+              Image(systemName: "lock")
+                .opacity(0.7)
+                .font(.system(size: 50))
+                .padding()
+              Text("Behold, the Theme Store awaits, its secrets hidden behind a mystical lock. To discover its treasures, an exclusive key exists in a realm known to those who seek it. A hint of wisdom: whispers of this key may be found among the stars...")
+                .multilineTextAlignment(.leading)
+                .opacity(0.7)
+              
+              Button {
+                UIPasteboard.general.string = themestoreID
+              } label: {
+                Label(themestoreID, systemImage: "clipboard")
+              }
+              .buttonStyle(BorderedButtonStyle())
+              .foregroundColor(.primary)
+              
             }
           }
+          .padding()
         }
       }
     }.sheet(isPresented: $isPresentingUploadSheet){
       ThemeStoreUploadSheet()
     }
     .toolbar{
-      ToolbarItem(placement: .primaryAction){
-        Button{
-          isPresentingUploadSheet.toggle()
-        } label: {
-          Label("Upload Theme", systemImage: "arrow.up.to.line")
-            .labelStyle(.iconOnly)
+      if eligibility {
+        ToolbarItem(placement: .primaryAction){
+          Button{
+            isPresentingUploadSheet.toggle()
+          } label: {
+            Label("Upload Theme", systemImage: "arrow.up.to.line")
+              .labelStyle(.iconOnly)
+          }
         }
       }
+      
     }
     .navigationTitle("Theme Store")
     .navigationBarTitleDisplayMode(.inline)
     .onAppear {
+      if themestoreID == "" {
+        themestoreID = generateShortUniqueID()
+      }
       Task {
+        eligibility = await themeStore.getEligibilits(id: themestoreID) ?? false
         await fetchThemes()
       }
     }
@@ -122,18 +155,18 @@ struct OnlineThemeItem: View {
               print(url)
               let fileManager = FileManager.default
               if fileManager.fileExists(atPath: url.absoluteString) {
-                  do {
-                      try fileManager.removeItem(at: url)
-                  } catch {
-                      print("Failed to delete existing file: \(error)")
-                  }
+                do {
+                  try fileManager.removeItem(at: url)
+                } catch {
+                  print("Failed to delete existing file: \(error)")
+                }
               }
               
               FileDownloader.loadFileAsync(url: url) { (path, error) in
                 if let path{
                   let fileURL =  URL(string: "file://" + path)!
                   unzipTheme(at: fileURL)
-
+                  
                 }
                 downloading = false
               }
