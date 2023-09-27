@@ -78,7 +78,7 @@ struct LocalUploadThemeItem: View {
               uploadErrorMessage = uploadresponse?.message ?? ""
               uploadError.toggle()
             } else {
-              upload_state = "pending"
+              upload_state = "waiting for approval"
             }
             
           }
