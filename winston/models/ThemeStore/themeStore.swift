@@ -31,6 +31,7 @@ struct ThemeData: Codable, Hashable {
   var attachment_url: String?
   var color: ThemeColor?
   var icon: String?
+  var thumbnails_urls: [String]?
 }
 
 //{

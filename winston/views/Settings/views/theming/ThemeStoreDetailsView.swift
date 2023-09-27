@@ -9,11 +9,7 @@ import SwiftUI
 
 struct ThemeStoreDetailsView: View {
   let theme: ThemeData
-  let images = [
-    "https://i.imgur.com/oW6bFmL.png",
-    "https://i.imgur.com/RpE0hMO.png",
-    "https://i.imgur.com/0TX8U5x.png"
-  ]
+  
   @State private var selectedImageIndex = 0 // Track the selected image index
   var body: some View {
     NavigationView{
@@ -26,9 +22,8 @@ struct ThemeStoreDetailsView: View {
           Spacer()
         }
         TabView(selection: $selectedImageIndex) { // Use selection binding to track the selected index
-            ForEach(images.indices, id: \.self) { index in
-                URLImage(url: URL(string: images[index])!)
-                    .tag(index) // Use the index as the tag to identify each view
+          ForEach(theme.thumbnails_urls ?? [], id: \.self) { url in
+                URLImage(url: URL(string: url)!)
                     .scaledToFit()
                     .clipShape(RoundedRectangle(cornerSize: CGSize(width: 10, height: 10)))
             }
