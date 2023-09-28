@@ -101,6 +101,3 @@ struct LocalUploadThemeItem: View {
   }
 }
 
-#Preview {
-  ThemeStoreUploadSheet()
-}
