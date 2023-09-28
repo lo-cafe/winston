@@ -9,6 +9,7 @@ import SwiftUI
 
 struct AboutPanel: View {
   let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String
+  let build = Bundle.main.infoDictionary?["CFBundleVersion"] as? String
   @Environment(\.openURL) private var openURL
   @Environment(\.useTheme) private var theme
   var body: some View {
@@ -24,7 +25,7 @@ struct AboutPanel: View {
               Text("Winston")
                 .fontSize(20, .bold)
               HStack{
-                Text("Beta v" + (appVersion ?? "-1")) 
+                Text("Beta v" + (appVersion ?? "-1") + " Build \(build ?? "-1")")
               }
             }
           }

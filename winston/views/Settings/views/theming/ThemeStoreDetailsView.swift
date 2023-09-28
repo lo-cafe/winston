@@ -23,9 +23,11 @@ struct ThemeStoreDetailsView: View {
         }
         TabView(selection: $selectedImageIndex) { // Use selection binding to track the selected index
           ForEach(theme.thumbnails_urls ?? [], id: \.self) { url in
-                URLImage(url: URL(string: url)!)
-                    .scaledToFit()
-                    .clipShape(RoundedRectangle(cornerSize: CGSize(width: 10, height: 10)))
+            if let img = URL(string: url) {
+              URLImage(url: img)
+                  .scaledToFit()
+                  .clipShape(RoundedRectangle(cornerSize: CGSize(width: 10, height: 10)))
+            }
             }
         }
         .tabViewStyle(PageTabViewStyle()) // Set the tab view style to page style
