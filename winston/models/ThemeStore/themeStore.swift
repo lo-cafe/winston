@@ -8,7 +8,8 @@
 import Foundation
 import Alamofire
 class ThemeStoreAPI: ObservableObject {
-  static let baseURL = "http://localhost:3000"
+  static let baseURL = "https://preview.webhook.metisbot.xyz"
+  //static let baseURL = "http://localhost:3000"
   static let bearerToken = "2cYk@dXT!ZjXagF_-h6x"
   
   func getRequestHeaders(includeAuth: Bool = true) -> HTTPHeaders? {
