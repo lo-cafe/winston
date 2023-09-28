@@ -98,9 +98,6 @@ struct ThemeStore: View {
   }
 }
 
-#Preview {
-  ThemeStore()
-}
 
 struct OnlineThemeItem: View {
   var theme: ThemeData
@@ -187,6 +184,3 @@ struct OnlineThemeItem: View {
   
 }
 
-#Preview {
-  ThemeStore()
-}
