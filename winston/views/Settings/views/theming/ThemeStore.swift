@@ -102,6 +102,7 @@ struct ThemeStore: View {
 struct OnlineThemeItem: View {
   var theme: ThemeData
   @Default(.themesPresets) private var themesPresets
+  @EnvironmentObject var themeStore: ThemeStoreAPI
   @State var downloading: Bool = false
   @Environment(\.openURL) private var openURL
   // Computed property to check if themesPresets contains the current theme
@@ -129,55 +130,43 @@ struct OnlineThemeItem: View {
       }
       Spacer()
       
-      if let attachment = theme.attachment_url, let urlWithoutQuery = attachment.split(separator: "?").first {
-        
-        
-        if isThemeInPresets{
-          Button {
-            //Delete the Theme
-            themesPresets = themesPresets.filter { $0.id != theme.file_id}
-          } label: {
-            Label("Delete", systemImage: "trash")
-              .labelStyle(.iconOnly)
-              .foregroundColor(.red)
-          }
+      if isThemeInPresets{
+        Button {
+          //Delete the Theme
+          themesPresets = themesPresets.filter { $0.id != theme.file_id}
+        } label: {
+          Label("Delete", systemImage: "trash")
+            .labelStyle(.iconOnly)
+            .foregroundColor(.red)
+        }
+      } else {
+        if downloading {
+          ProgressView()
         } else {
-          if downloading {
-            ProgressView()
-          } else {
-            Button{
-              //Implement adding this to saved themes
-              downloading = true
-              let url = URL(string: String(urlWithoutQuery))!
-              print(url)
-              let fileManager = FileManager.default
-              if fileManager.fileExists(atPath: url.absoluteString) {
-                do {
-                  try fileManager.removeItem(at: url)
-                } catch {
-                  print("Failed to delete existing file: \(error)")
-                }
+          Button{
+            //Implement adding this to saved themes
+            downloading = true
+            Task {
+              if let theme_id = theme.file_name {
+                themeStore.getDownloadedFilePath(filename: theme_id, completion: { path in
+                  if let path{
+                    unzipTheme(at: path)
+                  }
+                  downloading = false
+                })
               }
-              
-              FileDownloader.loadFileAsync(url: url) { (path, error) in
-                if let path{
-                  let fileURL =  URL(string: "file://" + path)!
-                  unzipTheme(at: fileURL)
-                  
-                }
-                downloading = false
-              }
-            } label: {
-              Label("Download", systemImage: "arrow.down.to.line")
-                .labelStyle(.iconOnly)
-                .foregroundColor(.blue)
-              
             }
+          } label: {
+            Label("Download", systemImage: "arrow.down.to.line")
+              .labelStyle(.iconOnly)
+              .foregroundColor(.blue)
+            
           }
-          
         }
         
       }
+      
+      
     }
     
   }
