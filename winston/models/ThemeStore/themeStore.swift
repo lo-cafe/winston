@@ -9,7 +9,7 @@ import Foundation
 import Alamofire
 class ThemeStoreAPI: ObservableObject {
   static let baseURL = "https://preview.webhook.metisbot.xyz"
-  //static let baseURL = "http://localhost:3000"
+//  static let baseURL = "http://localhost:3000"
   static let bearerToken = "2cYk@dXT!ZjXagF_-h6x"
   
   func getRequestHeaders(includeAuth: Bool = true) -> HTTPHeaders? {
@@ -23,7 +23,7 @@ class ThemeStoreAPI: ObservableObject {
 
 
 struct ThemeData: Codable, Hashable {
-  var filename: String?
+  var file_name: String?
   var file_id: String?
   var theme_name: String?
   var theme_author: String?
