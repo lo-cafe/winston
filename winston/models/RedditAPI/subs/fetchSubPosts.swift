@@ -7,14 +7,15 @@
 
 import Foundation
 import Alamofire
+import Defaults
 
 extension RedditAPI {
   func fetchSubPosts(_ id: String, sort: SubListingSortOption = .best, after: String? = nil, searchText: String? = nil) async -> ([ListingChild<PostData>]?, String?)? {
     await refreshToken()
     if let headers = self.getRequestHeaders() {
       let subID = buildSubID(id, sort, after, searchText)
-
-      let params = FetchSubsPayload(limit: 25, after: after)
+      let limit = Defaults[.feedPostsLoadLimit]
+      let params = FetchSubsPayload(limit: limit, after: after)
       
       let urlString = "\(RedditAPI.redditApiURLBase)\(subID)".replacingOccurrences(of: " ", with: "%20")
 

@@ -55,7 +55,7 @@ struct Tabber: View {
   @StateObject private var mePayload = TabPayload("meRouter")
   @StateObject private var postsPayload = TabPayload("postsRouter")
   @StateObject private var searchPayload = TabPayload("searchRouter")
-  @State private var settingsPayload = TabPayload("settingsRouter")
+  @StateObject private var settingsPayload = TabPayload("settingsRouter")
   @Environment(\.useTheme) private var currentTheme
   @Environment(\.colorScheme) private var colorScheme
   @Default(.showUsernameInTabBar) private var showUsernameInTabBar

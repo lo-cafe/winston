@@ -31,7 +31,7 @@ struct UserView: View {
         }
       }
       
-      await user.redditAPI.updateAvatarURLCacheFromOverview(subjects: data)
+      await user.redditAPI.updateAvatarURLCacheFromOverview(subjects: data, avatarSize: selectedTheme.postLinks.theme.badge.avatar.size)
       
       if let lastItem = data.last {
         lastItemId = getItemId(for: lastItem)
@@ -143,7 +143,8 @@ struct UserView: View {
                   .padding(.horizontal, 12)
                   .padding(.top, 12)
                   .padding(.bottom, 10)
-                  .background(RR(20, Color.listBG))
+                  .themedListRowBG()
+                  .mask(RR(20, Color.black))
                 }
               }
               .onAppear { if lastActivities.count > 0 && (Int(Double(lastActivities.count) * 0.75) == i) { loadNextData() }}

@@ -6,18 +6,36 @@
 //
 
 import Foundation
+import SwiftUI
+import NukeUI
+import YouTubePlayerKit
 
-struct MediaExtracted: Codable, Hashable, Equatable, Identifiable {
+struct MediaExtracted: Hashable, Equatable, Identifiable {
   let url: URL
   let size: CGSize
   var id: String { self.url.absoluteString }
 }
 
-enum MediaExtractedType: Codable, Hashable, Equatable {
+struct YTMediaExtracted: Equatable, Identifiable {
+  static func == (lhs: YTMediaExtracted, rhs: YTMediaExtracted) -> Bool {
+    lhs.id == rhs.id
+  }
+  
+  let videoID: String
+  let size: CGSize
+  let thumbnailURL: URL
+  let thumbnailRequest: ImageRequest
+  let player: YouTubePlayer
+  let author: String
+  let authorURL: URL
+  var id: String { self.videoID }
+}
+
+enum MediaExtractedType: Hashable, Equatable {
   case image(MediaExtracted)
   case video(MediaExtracted)
   case gallery([MediaExtracted])
-  case youtube(videoID: String, size: CGSize)
+  case youtube(String, CGSize)
   case link(URL)
   case repost(Post)
   case post(id: String, subreddit: String)
@@ -27,7 +45,7 @@ enum MediaExtractedType: Codable, Hashable, Equatable {
 }
 
 // ORDER MATTERS!
-func mediaExtractor(_ data: PostData) -> MediaExtractedType? {
+func mediaExtractor(contentWidth: Double = UIScreen.screenWidth, _ data: PostData) -> MediaExtractedType? {
   guard !data.is_self else { return nil }
   
   if let is_gallery = data.is_gallery, is_gallery, let galleryData = data.gallery_data?.items, let metadata = data.media_metadata {
@@ -49,13 +67,19 @@ func mediaExtractor(_ data: PostData) -> MediaExtractedType? {
     return .video(MediaExtracted(url: videoURL, size: CGSize(width: CGFloat(width), height: CGFloat(height))))
   }
   
-  if data.media?.type == "youtube.com", let oembed = data.media?.oembed, let html = oembed.html, let ytID = extractYoutubeIdFromOEmbed(html), let width = oembed.width, let height = oembed.height {
-    return .youtube(videoID: ytID, size: CGSize(width: CGFloat(width), height: CGFloat(height)))
+  if data.media?.type == "youtube.com", let oembed = data.media?.oembed, let html = oembed.html, let ytID = extractYoutubeIdFromOEmbed(html), let width = oembed.width, let height = oembed.height, let author_name = oembed.author_name, let author_url = oembed.author_url, let authorURL = URL(string: author_url), let thumb = oembed.thumbnail_url, let thumbURL = URL(string: thumb) {
+    let thumbReq = ImageRequest(url: thumbURL, processors: [.resize(width: getPostContentWidth(contentWidth: contentWidth))], priority: .normal)
+    Post.prefetcher.startPrefetching(with: [thumbReq])
+    let size = CGSize(width: CGFloat(width), height: CGFloat(height))
+    let newExtracted = YTMediaExtracted(videoID: ytID, size: size, thumbnailURL: thumbURL, thumbnailRequest: thumbReq, player: YouTubePlayer(source: .video(id: ytID)), author: author_name, authorURL: authorURL)
+    Caches.ytPlayers.addKeyValue(key: ytID, data: { newExtracted } )
+    return .youtube(ytID, size)
   }
   
   
   if let postEmbed = data.crosspost_parent_list?.first {
-    return .repost(Post(data: postEmbed, api: RedditAPI.shared))
+//    return .repost(Post(data: postEmbed, api: RedditAPI.shared, fetchSub: true, contentWidth: getPostContentWidth(contentWidth: contentWidth, secondary: true) ))
+    return .repost(Post(data: postEmbed, api: RedditAPI.shared, fetchSub: true, contentWidth: contentWidth, secondary: true ))
   }
   
   if IMAGES_FORMATS.contains(where: { data.url.hasSuffix($0) }), let url = rootURL(data.url) {

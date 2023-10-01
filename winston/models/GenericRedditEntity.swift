@@ -15,8 +15,11 @@ protocol GenericRedditEntityDataType: Codable, Hashable, Identifiable {
 
 class GenericRedditEntity<T: GenericRedditEntityDataType, B: Hashable>: Identifiable, Hashable, ObservableObject, Codable,  _DefaultsSerializable {
   func hash(into hasher: inout Hasher) {
-    hasher.combine(data)
-    hasher.combine(childrenWinston.data)
+//    hasher.combine(data)
+//    hasher.combine(childrenWinston.data)
+    hasher.combine(id)
+    hasher.combine(typePrefix)
+//    hasher.combine(data)
   }
   
   static func placeholder() -> GenericRedditEntity<T, B> {
@@ -24,30 +27,38 @@ class GenericRedditEntity<T: GenericRedditEntityDataType, B: Hashable>: Identifi
   }
   
   static func == (lhs: GenericRedditEntity<T, B>, rhs: GenericRedditEntity<T, B>) -> Bool {
-    return lhs.id == rhs.id && lhs.kind == rhs.kind && lhs.data == rhs.data && lhs.data?.id == rhs.data?.id
+    return lhs.id == rhs.id && lhs.kind == rhs.kind && lhs.data?.id == rhs.data?.id
   }
   
   @Published var data: T? {
     didSet {
-      if let newID = data?.id {
-        self.id =  kind == "more" ? "\(newID)-more" : newID
+      if let newID = data?.id, id != newID {
+        self.id =  newID
       }
     }
   }
   
   @Published var winstonData: B? = nil
-  @Published var id: String
+  @Published var _id: String
+  var id: String {
+    get {
+      return self._id + self.kind
+    }
+    set {
+      self._id = newValue
+    }
+  }
   @Published var loading = false
   @Published var typePrefix: String?
   var kind: String?
   
   enum CodingKeys: CodingKey {
-    case id, loading, typePrefix, kind, data, childrenWinstonData
+    case _id, loading, typePrefix, kind, data, childrenWinstonData
   }
 
   required init(from decoder: Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
-    id = try container.decode(String.self, forKey: .id)
+    _id = try container.decode(String.self, forKey: ._id)
     loading = try container.decode(Bool.self, forKey: .loading)
     typePrefix = try container.decodeIfPresent(String.self, forKey: .typePrefix)
     kind = try container.decodeIfPresent(String.self, forKey: .kind)
@@ -57,7 +68,7 @@ class GenericRedditEntity<T: GenericRedditEntityDataType, B: Hashable>: Identifi
   
   func encode(to encoder: Encoder) throws {
     var container = encoder.container(keyedBy: CodingKeys.self)
-    try container.encode(id, forKey: .id)
+    try container.encode(_id, forKey: ._id)
     try container.encode(loading, forKey: .loading)
     try container.encode(typePrefix, forKey: .typePrefix)
     try container.encode(kind, forKey: .kind)
@@ -70,7 +81,7 @@ class GenericRedditEntity<T: GenericRedditEntityDataType, B: Hashable>: Identifi
   var parentWinston: ObservableArray<GenericRedditEntity<T, B>>?
   
   required init(id: String, api: RedditAPI, typePrefix: String?) {
-    self.id = kind == "more" ? "\(id)-more" : id
+    self._id = id
     self.redditAPI = api
     self.typePrefix = typePrefix
     anyCancellable = childrenWinston.objectWillChange.sink { [weak self] (_) in
@@ -80,7 +91,7 @@ class GenericRedditEntity<T: GenericRedditEntityDataType, B: Hashable>: Identifi
 
   required init(data: T, api: RedditAPI, typePrefix: String?) {
     self.data = data
-    self.id = data.id
+    self._id = data.id
     self.redditAPI = api
     self.typePrefix = typePrefix
     anyCancellable = childrenWinston.objectWillChange.sink { [weak self] (_) in
@@ -91,7 +102,7 @@ class GenericRedditEntity<T: GenericRedditEntityDataType, B: Hashable>: Identifi
   init(data: T, api: RedditAPI, typePrefix: String?, kind: String? = nil) {
     self.data = data
     self.kind = kind
-    self.id = kind == "more" ? "\(data.id)-more" : data.id
+    self._id = data.id
     self.redditAPI = api
     self.typePrefix = typePrefix
     anyCancellable = childrenWinston.objectWillChange.sink { [weak self] (_) in

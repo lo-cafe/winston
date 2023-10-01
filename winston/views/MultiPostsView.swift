@@ -8,7 +8,6 @@
 import SwiftUI
 import Defaults
 import SwiftUIIntrospect
-import WaterfallGrid
 
 enum MultiViewType: Hashable {
   case posts(Multi)
@@ -18,7 +17,7 @@ enum MultiViewType: Hashable {
 struct MultiPostsView: View {
   @ObservedObject var multi: Multi
   @State private var loading = true
-  @State private var posts: [Post] = []
+  @StateObject private var posts = NonObservableArray<Post>()
   @State private var lastPostAfter: String?
   @State private var searchText: String = ""
   @State private var sort: SubListingSortOption = Defaults[.preferredSort]
@@ -26,71 +25,49 @@ struct MultiPostsView: View {
   
   @EnvironmentObject private var routerProxy: RouterProxy
   @Environment(\.useTheme) private var selectedTheme
+  @Environment(\.contentWidth) private var contentWidth
   
   func asyncFetch(force: Bool = false, loadMore: Bool = false) async {
     //    if (multi.data == nil || force) {
     //      await multi.refreshSubreddit()
     //    }
-    if posts.count > 0 && lastPostAfter == nil && !force {
+    if posts.data.count > 0 && lastPostAfter == nil && !force {
       return
     }
-    if let result = await multi.fetchPosts(sort: sort, after: loadMore ? lastPostAfter : nil), let newPosts = result.0 {
+    if let result = await multi.fetchPosts(sort: sort, after: loadMore ? lastPostAfter : nil, contentWidth: contentWidth), let newPosts = result.0 {
       withAnimation {
         if loadMore {
-          posts.append(contentsOf: newPosts)
+          posts.data.append(contentsOf: newPosts)
         } else {
-          posts = newPosts
+          posts.data = newPosts
         }
         loading = false
         lastPostAfter = result.1
       }
       Task(priority: .background) {
-        await RedditAPI.shared.updateAvatarURLCacheFromPosts(posts: newPosts)
+        await RedditAPI.shared.updateAvatarURLCacheFromPosts(posts: newPosts, avatarSize: selectedTheme.postLinks.theme.badge.avatar.size)
       }
     }
   }
   
-  func fetch(loadMore: Bool = false) {
+  func fetch(loadMore: Bool = false, _ searchText: String? = nil) {
     Task(priority: .background) {
       await asyncFetch(loadMore: loadMore)
     }
   }
   
   var body: some View {
-    List {
-      Section {
-        ForEach(Array(posts.enumerated()), id: \.self.element.id) { i, post in
-          
-          if let sub = post.winstonData?.winstonRepostSubreddit {
-            PostLink(post: post, sub: sub, showSub: true, secondary: true).equatable()
-          }
-//          PostLinkNoSub(showSub: true, post: post)
-//            .equatable()
-//            .onAppear { if(Int(Double(posts.count) * 0.75) == i) { fetch(loadMore: true) } }
-//            .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
-//            .animation(.default, value: posts)
-          
-          if selectedTheme.postLinks.divider.style != .no && i != (posts.count - 1) {
-            NiceDivider(divider: selectedTheme.postLinks.divider)
-              .id("\(post.id)-divider")
-              .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
-          }
-          
-        }
-        if !lastPostAfter.isNil {
-          ProgressView()
-            .progressViewStyle(.circular)
-            .frame(maxWidth: .infinity, minHeight: UIScreen.screenHeight - 200 )
-            .id("post-loading")
-        }
+    Group {
+      if IPAD {
+        SubredditPostsIPAD(posts: posts.data, searchText: searchText, fetch: fetch, selectedTheme: selectedTheme)
+      } else {
+        SubredditPostsIOS(lastPostAfter: lastPostAfter, posts: posts.data, searchText: searchText, fetch: fetch, selectedTheme: selectedTheme)
       }
-      .listRowSeparator(.hidden)
-      .listRowBackground(Color.clear)
     }
     .themedListBG(selectedTheme.postLinks.bg)
     .listStyle(.plain)
     .environment(\.defaultMinListRowHeight, 1)
-    .loader(loading && posts.count == 0)
+    .loader(loading && posts.data.count == 0)
     .navigationBarItems(
       trailing:
         HStack {
@@ -103,17 +80,15 @@ struct MultiPostsView: View {
                   Text(opt.rawVal.value.capitalized)
                   Spacer()
                   Image(systemName: opt.rawVal.icon)
-                    .foregroundColor(.blue)
+                    .foregroundColor(Color.accentColor)
                     .fontSize(17, .bold)
                 }
               }
             }
           } label: {
-            Button { } label: {
-              Image(systemName: sort.rawVal.icon)
-                .foregroundColor(.blue)
-                .fontSize(17, .bold)
-            }
+            Image(systemName: sort.rawVal.icon)
+              .foregroundColor(Color.accentColor)
+              .fontSize(17, .bold)
           }
           
           if let imgLink = multi.data?.icon_url, let imgURL = URL(string: imgLink) {
@@ -130,7 +105,7 @@ struct MultiPostsView: View {
         .animation(nil, value: sort)
     )
     .onAppear {
-      if posts.count == 0 {
+      if posts.data.count == 0 {
         doThisAfter(0) {
           fetch()
         }
@@ -139,7 +114,7 @@ struct MultiPostsView: View {
     .onChange(of: sort) { val in
       withAnimation {
         loading = true
-        posts.removeAll()
+        posts.data.removeAll()
       }
       fetch()
       Defaults[.preferredSort] = sort

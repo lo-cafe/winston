@@ -14,115 +14,37 @@ import YouTubePlayerKit
 import Defaults
 import Combine
 
-class PreviewLinkCache: ObservableObject {
-  struct CacheItem {
-    let model: PreviewViewModel
-    let date: Date
-  }
-  
-  static var shared = PreviewLinkCache()
-  @Published var cache: [String: CacheItem] = [:]
-  let cacheLimit = 50
-  
-  func addKeyValue(key: String, url: URL) {
-    if !cache[key].isNil { return }
-    Task(priority: .background) {
-      // Create a new CacheItem with the current date
-      let item = CacheItem(model: PreviewViewModel(url), date: Date())
-      let oldestKey = cache.count > cacheLimit ? cache.min { a, b in a.value.date < b.value.date }?.key : nil
-      
-      // Add the item to the cache
-      await MainActor.run {
-        withAnimation {
-          cache[key] = item
-          if let oldestKey = oldestKey { cache.removeValue(forKey: oldestKey) }
-        }
-      }
-    }
-  }
-  
-  private let _objectWillChange = PassthroughSubject<Void, Never>()
-  
-  var objectWillChange: AnyPublisher<Void, Never> { _objectWillChange.eraseToAnyPublisher() }
-  
-  subscript(key: String) -> CacheItem? {
-    get { cache[key] }
-    set {
-      cache[key] = newValue
-      _objectWillChange.send()
-    }
-  }
-  
-  func merge(_ dict: [String:CacheItem]) {
-    cache.merge(dict) { (_, new) in new }
-    _objectWillChange.send()
-  }
-}
-
-//class PreviewLinkCache: ObservableObject {
-//  static var shared = PreviewLinkCache()
-//  @Published var cache: [String:PreviewViewModel] = [:]
-//}
-
-final class PreviewViewModel: ObservableObject {
-  
-  @Published var image: String?
-  @Published var title: String?
-  @Published var url: URL?
-  @Published var description: String?
-  @Published var loading = true
-  
-  var previewURL: URL? {
-    didSet {
-      if !previewURL.isNil { fetchMetadata() }
-    }
-  }
-  
-  init() {}
-  
-  init(_ url: URL) {
-    self.previewURL = url
-    fetchMetadata()
-  }
-  
-  private func fetchMetadata() {
-    guard let previewURL else { return }
-    Task(priority: .background) {
-      var headers = [String: String]()
-      headers["User-Agent"] = "facebookexternalhit/1.1"
-      headers["charset"] = "UTF-8"
-      if let og = try? await OpenGraph.fetch(url: previewURL, headers: headers) {
-        await MainActor.run {
-          withAnimation {
-            image = og[.image]
-            title = og[.title]
-            description = og[.description]
-            url = URL(string: og[.url] ?? "")
-            loading = false
-          }
-        }
-      } else {
-        await MainActor.run {
-          withAnimation {
-            loading = false
-          }
-        }
-      }
-    }
-  }
-}
-
-
-
 struct PreviewLinkContent: View {
   var compact: Bool
-  @StateObject var viewModel: PreviewViewModel
+  @ObservedObject var viewModel: PreviewModel
   var url: URL
   static let height: CGFloat = 88
   @Environment(\.openURL) private var openURL
   @EnvironmentObject private var routerProxy: RouterProxy
   @ObservedObject private var tempGlobalState = TempGlobalState.shared
   @Default(.openLinksInSafari) private var openLinksInSafari
+  var body: some View {
+    PreviewLinkContentRaw(compact: compact, image: viewModel.image, title: viewModel.title, description: viewModel.description, loading: viewModel.loading, url: url, openURL: openURL, routerProxy: routerProxy, globalURL: $tempGlobalState.inAppBrowserURL, openLinksInSafari: openLinksInSafari)
+  }
+}
+
+
+struct PreviewLinkContentRaw: View, Equatable {
+  static func == (lhs: PreviewLinkContentRaw, rhs: PreviewLinkContentRaw) -> Bool {
+    lhs.image == rhs.image && lhs.title == rhs.title && lhs.compact == rhs.compact && lhs.description == rhs.description && lhs.loading == rhs.loading && lhs.url == rhs.url && lhs.openLinksInSafari == rhs.openLinksInSafari
+  }
+  
+  static let height: CGFloat = 88
+  var compact: Bool
+  var image: String?
+  var title: String?
+  var description: String?
+  var loading: Bool
+  var url: URL
+  var openURL: OpenURLAction
+  var routerProxy: RouterProxy
+  @Binding var globalURL: URL?
+  var openLinksInSafari: Bool
   
   var body: some View {
     HStack(spacing: 16) {
@@ -130,13 +52,13 @@ struct PreviewLinkContent: View {
       if !compact {
         VStack(alignment: .leading, spacing: 2) {
           VStack(alignment: .leading, spacing: 0) {
-            Text(viewModel.title?.escape ?? "No title detected")
+            Text(title?.escape ?? "No title detected")
               .fontSize(17, .medium)
               .lineLimit(1)
               .truncationMode(.tail)
               .fixedSize(horizontal: false, vertical: true)
             
-            Text(viewModel.url == nil ? url.absoluteString : viewModel.url?.absoluteString)
+            Text(url.absoluteString)
               .fontSize(13)
               .opacity(0.5)
               .lineLimit(1)
@@ -144,7 +66,7 @@ struct PreviewLinkContent: View {
           }
           .frame(maxWidth: .infinity, alignment: .leading)
           
-          Text(viewModel.description?.escape ?? "No description detected")
+          Text(description?.escape ?? "No description detected")
             .fontSize(14)
             .lineLimit(2)
             .opacity(0.75)
@@ -157,11 +79,11 @@ struct PreviewLinkContent: View {
       }
       
       Group {
-        if let image = viewModel.image, let imageURL = URL(string: image) {
+        if let image = image, let imageURL = URL(string: image) {
           URLImage(url: imageURL, processors: [.resize(width:  compact ? scaledCompactModeThumbSize() : 76)])
             .scaledToFill()
         } else {
-          if viewModel.loading {
+          if loading {
             ProgressView()
           } else {
             Image(systemName: "link")
@@ -181,7 +103,7 @@ struct PreviewLinkContent: View {
     .background(compact ? nil : RR(16, Color.primary.opacity(0.05)))
     .contextMenu {
       Button {
-        UIPasteboard.general.string = viewModel.url?.absoluteString ?? url.absoluteString
+        UIPasteboard.general.string = url.absoluteString
       } label: {
         Label("Copy URL", systemImage: "link")
       }
@@ -191,7 +113,7 @@ struct PreviewLinkContent: View {
         if openLinksInSafari {
           openURL(newURL)
         } else {
-          tempGlobalState.inAppBrowserURL = newURL
+          globalURL = newURL
         }
       }
     })

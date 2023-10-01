@@ -160,12 +160,12 @@ extension Comment {
     }
   }
   
-  func loadChildren(parent: CommentParentElement, postFullname: String) async {
+  func loadChildren(parent: CommentParentElement, postFullname: String, avatarSize: Double) async {
     if let kind = kind, kind == "more", let data = data, let count = data.count, let parent_id = data.parent_id, let childrenIDS = data.children {
       var actualID = id
-      if actualID.hasSuffix("-more") {
-        actualID.removeLast(5)
-      }
+//      if actualID.hasSuffix("-more") {
+//        actualID.removeLast(5)
+//      }
       
       let childrensLimit = 25
       
@@ -186,7 +186,7 @@ extension Comment {
         let loadedComments: [Comment] = nestComments(children, parentID: parentID, api: RedditAPI.shared)
 
         Task(priority: .background) { [loadedComments] in
-          await RedditAPI.shared.updateAvatarURLCacheFromComments(comments: loadedComments)
+          await RedditAPI.shared.updateAvatarURLCacheFromComments(comments: loadedComments, avatarSize: avatarSize)
         }
         await MainActor.run { [loadedComments] in
           switch parent {
@@ -201,8 +201,7 @@ extension Comment {
                     self.data?.count! -= children.count
                   }
                 }
-                let final = loadedComments.dropFirst()
-                comment.childrenWinston.data.insert(contentsOf: final, at: index)
+                comment.childrenWinston.data.insert(contentsOf: loadedComments, at: index)
               }
             }
           case .post(let postArr):

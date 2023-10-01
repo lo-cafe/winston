@@ -8,22 +8,47 @@
 import Foundation
 import Defaults
 import SwiftUI
+import Nuke
 import CoreData
+import YouTubePlayerKit
 
 typealias Post = GenericRedditEntity<PostData, PostWinstonData>
 
 extension Post {
+  static var prefetcher = ImagePrefetcher(pipeline: ImagePipeline.shared, destination: .memoryCache, maxConcurrentRequestCount: 5)
   static var prefix = "t3"
-  convenience init(data: T, api: RedditAPI) {
+  
+  convenience init(data: T, api: RedditAPI, fetchSub: Bool = false, contentWidth: Double = UIScreen.screenWidth, secondary: Bool = false, imgPriority: ImageRequest.Priority = .low) {
     self.init(data: data, api: api, typePrefix: "\(Post.prefix)_")
     self.winstonData = PostWinstonData()
-    self.winstonData?.winstonPermaURL = URL(string: "https://reddit.com\(data.permalink.escape.urlEncoded)")
-    let extractedMedia = mediaExtractor(data)
-    self.winstonData?.winstonExtractedMedia = extractedMedia
-    if case .repost(let repost) = extractedMedia, let subreddit = repost.data?.subreddit {
-      self.winstonData?.winstonRepostSubreddit = Subreddit(id: subreddit, api: RedditAPI.shared)
-      print(data.title, self.winstonData?.winstonRepostSubreddit)
+    self.winstonData?.permaURL = URL(string: "https://reddit.com\(data.permalink.escape.urlEncoded)")
+    let extractedMedia = mediaExtractor(contentWidth: contentWidth, data)
+    self.winstonData?.extractedMedia = extractedMedia
+    self.winstonData?.postDimensions = getPostDimensions(post: self, columnWidth: contentWidth, secondary: secondary)
+    if fetchSub {
+      self.winstonData?.subreddit = Subreddit(id: data.subreddit, api: RedditAPI.shared)
     }
+    let compact = Defaults[.compactMode]
+    switch extractedMedia {
+    case .image(let url):
+      let processors: [ImageProcessing] = contentWidth == 0 ? [] : [.resize(width: compact ? scaledCompactModeThumbSize() : contentWidth)]
+      self.winstonData?.mediaImageRequest = [ImageRequest(url: url.url, processors: processors)]
+    case .gallery(let imgs):
+      let halfWidthProcessor: [ImageProcessing] = contentWidth == 0 ? [] : [.resize(width: compact ? scaledCompactModeThumbSize() : ((contentWidth - 8) / 2))]
+      let fullWidthProcessor: [ImageProcessing] = contentWidth == 0 ? [] : [.resize(width: compact ? scaledCompactModeThumbSize() : contentWidth)]
+        var requests: [ImageRequest] = []
+        requests.append(ImageRequest(url: imgs[0].url, processors: halfWidthProcessor))
+        requests.append(ImageRequest(url: imgs[1].url, processors: halfWidthProcessor))
+      if imgs.count >= 3 { requests.append(ImageRequest(url: imgs[2].url, processors: imgs.count > 3 ? halfWidthProcessor : fullWidthProcessor)) }
+        requests += imgs.dropFirst(3).map { ImageRequest(url: $0.url, priority: .low) }
+        self.winstonData?.mediaImageRequest = requests
+    case .link(let url):
+      Caches.postsPreviewModels.addKeyValue(key: url.absoluteString, data: { PreviewModel(url) })
+      break
+    default:
+      break
+    }
+
     if let body = self.data?.selftext {
       Caches.postsAttrStr.addKeyValue(key: data.id, data: {
         let theme = Defaults[.themesPresets].first(where: { $0.id == Defaults[.selectedThemeID] }) ?? defaultTheme
@@ -36,27 +61,39 @@ extension Post {
     self.init(id: id, api: api, typePrefix: "\(Post.prefix)_")
   }
   
-  static func initMultiple(datas: [T], api: RedditAPI) -> [Post] {
+  static func initMultiple(datas: [T], api: RedditAPI, fetchSubs: Bool = false, contentWidth: CGFloat = 0) -> [Post] {
     let context = PersistenceController.shared.container.newBackgroundContext()
     let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "SeenPost")
       
     if let results = (context.performAndWait { try? context.fetch(fetchRequest) as? [SeenPost] }) {
-      return datas.map { data in
+      let posts = Array(datas.enumerated()).map { i, data in
         return context.performAndWait {
           let isSeen = results.contains(where: { $0.postID == data.id })
-          let newPost = Post.init(data: data, api: api)
+          let priorityIMap: [Int:ImageRequest.Priority] = [
+            4: .veryHigh,
+            9: .high,
+            14: .normal,
+            19: .low
+          ]
+          let priority = i > 19 ? .veryLow : priorityIMap[priorityIMap.keys.first { $0 > i } ?? 19]!
+          let newPost = Post.init(data: data, api: api, fetchSub: fetchSubs, contentWidth: contentWidth, imgPriority: i > 7 ? .veryLow : priority)
           newPost.data?.winstonSeen = isSeen
           return newPost
         }
       }
+      
+      let imgRequests = posts.reduce(into: []) { prev, curr in
+        prev = prev + (curr.winstonData?.mediaImageRequest ?? [])
+      }
+      Post.prefetcher.startPrefetching(with: imgRequests)
+      return posts
     }
     return []
   }
   
   func toggleSeen(_ seen: Bool? = nil, optimistic: Bool = false) async -> Void {
     let context = PersistenceController.shared.container.viewContext
-    
-    if self.data?.winstonSeen == seen { return }
+    if (self.data?.winstonSeen ?? false) == seen { return }
     if optimistic {
       let prev = self.data?.winstonSeen ?? false
       let new = seen == nil ? !prev : seen
@@ -257,10 +294,21 @@ extension Post {
   }
 }
 
-struct PostWinstonData: Hashable {
-  var winstonPermaURL: URL? = nil
-  var winstonExtractedMedia: MediaExtractedType? = nil
-  var winstonRepostSubreddit: Subreddit?
+class PostWinstonData: Hashable {
+  static func == (lhs: PostWinstonData, rhs: PostWinstonData) -> Bool { lhs.postDimensions == rhs.postDimensions }
+  
+  var permaURL: URL? = nil
+  var extractedMedia: MediaExtractedType? = nil
+  var subreddit: Subreddit?
+  var mediaImageRequest: [ImageRequest] = []
+  var postDimensions: PostDimensions?
+  
+  func hash(into hasher: inout Hasher) {
+    hasher.combine(permaURL)
+    hasher.combine(extractedMedia)
+    hasher.combine(subreddit)
+    hasher.combine(postDimensions)
+  }
 }
 
 struct PostData: GenericRedditEntityDataType {

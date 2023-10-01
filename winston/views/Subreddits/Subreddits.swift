@@ -8,6 +8,7 @@
 import SwiftUI
 import Defaults
 import Combine
+import SwiftDate
 
 let alphabetLetters = Array("ABCDEFGHIJKLMNOPQRSTUVWXYZ").map { String($0) }
 
@@ -15,11 +16,17 @@ class SubsDictContainer: ObservableObject {
   @Published var data: [String: [Subreddit]] = [:]
 }
 
+enum FirstSelectable: Equatable, Hashable {
+  case sub(Subreddit)
+  case multi(Multi)
+  case post(PostViewPayload)
+}
 
 struct Subreddits: View, Equatable {
   static func == (lhs: Subreddits, rhs: Subreddits) -> Bool {
     return lhs.loaded == rhs.loaded
   }
+  @Binding var selectedSub: FirstSelectable?
   var loaded: Bool
   @StateObject var routerProxy: RouterProxy
   @Environment(\.managedObjectContext) private var context
@@ -43,18 +50,18 @@ struct Subreddits: View, Equatable {
   
   var body: some View {
     ScrollViewReader { proxy in
-      List {
+      List(selection: $selectedSub) {
         if searchText == "" {
           VStack(spacing: 12) {
             HStack(spacing: 12) {
-              ListBigBtn(icon: "house.circle.fill", iconColor: .blue, label: "Home", destination: Subreddit(id: "home", api: RedditAPI.shared))
-              
-              ListBigBtn(icon: "chart.line.uptrend.xyaxis.circle.fill", iconColor: .red, label: "Popular", destination: Subreddit(id: "popular", api: RedditAPI.shared))
+              ListBigBtn(selectedSub: $selectedSub, icon: "house.circle.fill", iconColor: .blue, label: "Home", destination: Subreddit(id: "home", api: RedditAPI.shared))
+
+              ListBigBtn(selectedSub: $selectedSub, icon: "chart.line.uptrend.xyaxis.circle.fill", iconColor: .red, label: "Popular", destination: Subreddit(id: "popular", api: RedditAPI.shared))
             }
             HStack(spacing: 12) {
-              ListBigBtn(icon: "signpost.right.and.left.circle.fill", iconColor: .orange, label: "All", destination: Subreddit(id: "all", api: RedditAPI.shared))
+              ListBigBtn(selectedSub: $selectedSub, icon: "signpost.right.and.left.circle.fill", iconColor: .orange, label: "All", destination: Subreddit(id: "all", api: RedditAPI.shared))
               
-              ListBigBtn(icon: "bookmark.circle.fill", iconColor: .green, label: "Saved", destination: Subreddit(id: "saved", api: RedditAPI.shared))
+              ListBigBtn(selectedSub: $selectedSub, icon: "bookmark.circle.fill", iconColor: .green, label: "Saved", destination: Subreddit(id: "saved", api: RedditAPI.shared))
                 .opacity(0.5).allowsHitTesting(false)
             }
           }
@@ -65,7 +72,7 @@ struct Subreddits: View, Equatable {
           .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
           
           
-          PostsInBoxView()
+          PostsInBoxView(selectedSub: $selectedSub)
             .scrollIndicators(.hidden)
             .listRowInsets(EdgeInsets(top: 0, leading: 16, bottom: 0, trailing: 16))
             .listRowBackground(Color.clear)
@@ -75,7 +82,7 @@ struct Subreddits: View, Equatable {
               ScrollView(.horizontal) {
                 HStack(spacing: 16) {
                   ForEach(multis) { multi in
-                    MultiLink(multi: MultiData(entity: multi), routerProxy: routerProxy)
+                    MultiLink(selectedSub: $selectedSub, multi: Multi(data: MultiData(entity: multi), api: RedditAPI.shared))
                   }
                 }
                 .padding(.horizontal, 16)
@@ -89,8 +96,9 @@ struct Subreddits: View, Equatable {
         Group {
           if searchText != "" {
             Section("Found subs") {
-              ForEach(Array(subreddits.filter { ($0.display_name ?? "").lowercased().contains(searchText.lowercased()) }), id: \.self.uuid) { cachedSub in
-                SubItem(routerProxy: routerProxy, sub: Subreddit(data: SubredditData(entity: cachedSub), api: RedditAPI.shared), cachedSub: cachedSub)
+              let foundSubs = Array(Array(subreddits.filter { ($0.display_name ?? "").lowercased().contains(searchText.lowercased()) }).enumerated())
+              ForEach(foundSubs, id: \.self.element.uuid) { i, cachedSub in
+                SubItem(forcedMaskType: CommentBGSide.getFromArray(count: foundSubs.count, i: i), selectedSub: $selectedSub, sub: Subreddit(data: SubredditData(entity: cachedSub), api: RedditAPI.shared), cachedSub: cachedSub)
                   .equatable()
               }
             }
@@ -98,10 +106,9 @@ struct Subreddits: View, Equatable {
             let favs = subreddits.filter { $0.user_has_favorited && $0.user_is_subscriber }
             if favs.count > 0 {
               Section("Favorites") {
-                ForEach(favs.sorted(by: { x, y in
-                  (x.display_name?.lowercased() ?? "a") < (y.display_name?.lowercased() ?? "a")
-                }), id: \.self) { cachedSub in
-                  SubItem(routerProxy: routerProxy, sub: Subreddit(data: SubredditData(entity: cachedSub), api: RedditAPI.shared), cachedSub: cachedSub)
+                let favs = Array(favs.sorted(by: { x, y in (x.display_name?.lowercased() ?? "a") < (y.display_name?.lowercased() ?? "a") }).enumerated())
+                ForEach(favs, id: \.self.element) { i, cachedSub in
+                  SubItem(forcedMaskType: CommentBGSide.getFromArray(count: favs.count, i: i), selectedSub: $selectedSub, sub: Subreddit(data: SubredditData(entity: cachedSub), api: RedditAPI.shared), cachedSub: cachedSub)
                     .equatable()
                     .id("\(cachedSub.uuid ?? "")-fav")
                 }
@@ -112,10 +119,9 @@ struct Subreddits: View, Equatable {
             if disableAlphabetLettersSectionsInSubsList {
               
               Section("Subs") {
-                ForEach(subreddits.filter({ $0.user_is_subscriber }).sorted(by: { x, y in
-                  (x.display_name?.lowercased() ?? "a") < (y.display_name?.lowercased() ?? "a")
-                })) { cachedSub in
-                  SubItem(routerProxy: routerProxy, sub: Subreddit(data: SubredditData(entity: cachedSub), api: RedditAPI.shared), cachedSub: cachedSub)
+                let subs = Array(subreddits.filter({ $0.user_is_subscriber }).sorted(by: { x, y in (x.display_name?.lowercased() ?? "a") < (y.display_name?.lowercased() ?? "a") }).enumerated())
+                ForEach(subs, id: \.self.element) { i, cachedSub in
+                  SubItem(forcedMaskType: CommentBGSide.getFromArray(count: subs.count, i: i), selectedSub: $selectedSub, sub: Subreddit(data: SubredditData(entity: cachedSub), api: RedditAPI.shared), cachedSub: cachedSub)
                     .equatable()
                 }
               }
@@ -125,10 +131,11 @@ struct Subreddits: View, Equatable {
               ForEach(sections.keys.sorted(), id: \.self) { letter in
                 Section(header: Text(letter)) {
                   if let arr = sections[letter] {
-                    ForEach(arr.sorted(by: { x, y in
+                    let subs = Array(arr.sorted(by: { x, y in
                       (x.display_name?.lowercased() ?? "a") < (y.display_name?.lowercased() ?? "a")
-                    }), id: \.self.uuid) { cachedSub in
-                      SubItem(routerProxy: routerProxy, sub: Subreddit(data: SubredditData(entity: cachedSub), api: RedditAPI.shared), cachedSub: cachedSub)
+                    }).enumerated())
+                    ForEach(subs, id: \.self.element.uuid) { i, cachedSub in
+                      SubItem(forcedMaskType: CommentBGSide.getFromArray(count: subs.count, i: i), selectedSub: $selectedSub, sub: Subreddit(data: SubredditData(entity: cachedSub), api: RedditAPI.shared), cachedSub: cachedSub)
                         .equatable()
                     }
                     .onDelete(perform: { i in
@@ -162,6 +169,7 @@ struct Subreddits: View, Equatable {
         AlphabetJumper(letters: sections.keys.sorted(), proxy: proxy)
         , alignment: .trailing
       )
+
       .refreshable {
         Task(priority: .background) {
           await updatePostsInBox(RedditAPI.shared, force: true)
@@ -178,16 +186,18 @@ struct Subreddits: View, Equatable {
   func deleteFromFavorites(at offsets: IndexSet) {
     for i in offsets {
       Task(priority: .background) {
-        favoritesArr[i].subscribeToggle(optimistic: true)
+        Subreddit(data: SubredditData(entity: subreddits.filter { $0.user_has_favorited && $0.user_is_subscriber }.sorted(by: { x, y in (x.display_name?.lowercased() ?? "a") < (y.display_name?.lowercased() ?? "a") })[i]), api: RedditAPI.shared).subscribeToggle(optimistic: true)
       }
     }
   }
   
   func deleteFromList(at offsets: IndexSet, letter: String) {
     for i in offsets {
-      if let sub = subsDict.data[letter]?[i] {
+      if let sub = sections[letter]?.sorted(by: { x, y in
+        (x.display_name?.lowercased() ?? "a") < (y.display_name?.lowercased() ?? "a")
+      })[i] {
         Task(priority: .background) {
-          sub.subscribeToggle(optimistic: true)
+          Subreddit(data: SubredditData(entity: sub), api: RedditAPI.shared).subscribeToggle(optimistic: true)
         }
       }
     }

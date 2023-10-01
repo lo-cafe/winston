@@ -31,11 +31,10 @@ class Router: ObservableObject {
   }
 }
 
-class RouterProxy: ObservableObject {
+class RouterProxy: ObservableObject, Equatable {
+  static func == (lhs: RouterProxy, rhs: RouterProxy) -> Bool { true }
+  
   var router: Router
-  init(_ router: Router) { self.router = router }
-  
-  private let _objectWillChange = PassthroughSubject<Void, Never>()
-  
-  var objectWillChange: AnyPublisher<Void, Never> { _objectWillChange.eraseToAnyPublisher() }
+  var lol: String
+  init(_ router: Router) { self.router = router; lol = UUID().uuidString }
 }

@@ -24,6 +24,7 @@ struct BehaviorPanel: View {
   @Default(.loopVideos) private var loopVideos
   @Default(.lightboxViewsPost) private var lightboxViewsPost
   @Default(.openLinksInSafari) private var openLinksInSafari
+  @Default(.feedPostsLoadLimit) private var feedPostsLoadLimit
   
   @Environment(\.useTheme) private var theme
   
@@ -34,7 +35,7 @@ struct BehaviorPanel: View {
         Group {
           Toggle("Open links in safari", isOn: $openLinksInSafari)
           Toggle("Open Youtube Videos Externally", isOn: $openYoutubeApp)
-          
+                    
           Picker("Default Launch Feed", selection: $preferenceDefaultFeed) {
             Text("Home").tag("home")
             Text("Popular").tag("popular")
@@ -50,6 +51,12 @@ struct BehaviorPanel: View {
         WSNavigationLink(SettingsPages.filteredSubreddits, "Filtered Subreddits")
       }
       .themedListDividers()
+      
+      Section {
+        LabeledSlider(label: "Loading limit", value: Binding(get: { CGFloat(feedPostsLoadLimit) }, set: { val in feedPostsLoadLimit = Int(val) }), range: 15...100)
+      } footer: {
+        Text("Sets how many posts to load per chunk (loads more on scroll)")
+      }
       
       Section {
         Toggle("Navigation everywhere", isOn: $enableSwipeAnywhere)

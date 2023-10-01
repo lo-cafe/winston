@@ -11,7 +11,7 @@ import Defaults
 private let SPACING = 24.0
 
 struct LightBoxImage: View {
-  @ObservedObject var post: Post
+  var post: Post
   var i: Int
   var imagesArr: [MediaExtracted]
   @Environment(\.dismiss) private var dismiss
@@ -44,8 +44,8 @@ struct LightBoxImage: View {
   var body: some View {
     let interpolate = interpolatorBuilder([0, 100], value: abs(drag.height))
     HStack(spacing: SPACING) {
-      ForEach(Array(imagesArr.enumerated()), id: \.element.id) { i, img in
-        let selected = i == activeIndex
+      ForEach(Array(imagesArr.enumerated()), id: \.element.id) { index, img in
+        let selected = index == activeIndex
         LightBoxElementView(el: img, onTap: toggleOverlay, isPinching: $isPinching)
           .allowsHitTesting(selected)
           .scaleEffect(!selected ? 1 : interpolate([1, 0.9], true))
@@ -166,9 +166,11 @@ struct LightBoxImage: View {
       if lightboxViewsPost { Task(priority: .background) { await post.toggleSeen(true) } }
       xPos = -CGFloat(i) * (UIScreen.screenWidth + SPACING)
       activeIndex = i
-      withAnimation(.easeOut) {
-        appearContent = true
-        appearBlack = true
+      doThisAfter(0) {
+        withAnimation(.easeOut) {
+          appearContent = true
+          appearBlack = true
+        }
       }
     }
     .transition(.opacity)

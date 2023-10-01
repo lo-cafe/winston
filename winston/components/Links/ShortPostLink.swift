@@ -23,7 +23,7 @@ struct ShortPostLink: View {
           .fontSize(15).opacity(0.75)
         HStack {
           if let fullname = data.author_fullname {
-            Badge(author: data.author, fullname: fullname, created: data.created, theme: selectedTheme.postLinks.theme.badge, extraInfo: [PresetBadgeExtraInfo().commentsExtraInfo(data: data), PresetBadgeExtraInfo().upvotesExtraInfo(data: data)])
+            Badge(post: post, theme: selectedTheme.postLinks.theme.badge, extraInfo: [PresetBadgeExtraInfo().commentsExtraInfo(data: data), PresetBadgeExtraInfo().upvotesExtraInfo(data: data)])
               .equatable()
           }
           Spacer()
@@ -36,7 +36,8 @@ struct ShortPostLink: View {
       .padding(.horizontal, noHPad ? 0 : 16)
       .padding(.vertical, 14)
       .frame(maxWidth: .infinity, alignment: .leading)
-      .background(RR(20, noHPad ? Color.clear : Color.listBG))
+      .themedListRowBG()
+      .mask(RR(20, Color.black))
       .onTapGesture {
         routerProxy.router.path.append(PostViewPayload(post: post, postSelfAttr: nil, sub: Subreddit(id: data.subreddit, api: post.redditAPI)))
       }

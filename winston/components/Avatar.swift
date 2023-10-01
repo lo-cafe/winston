@@ -6,6 +6,8 @@
 //
 
 import SwiftUI
+import NukeUI
+import Nuke
 
 struct Avatar: View {
   var url:  String?
@@ -13,11 +15,30 @@ struct Avatar: View {
   var fullname: String?
   var theme: AvatarTheme?
   var avatarSize: CGFloat?
-  @ObservedObject private var avatarCache = AvatarCache.shared
+  @ObservedObject private var avatarCache = Caches.avatars
   
-  var avatarURL: URL? {
-    return avatarCache[fullname ?? userID] ?? URL(string: String(url?.split(separator: "?")[0] ?? ""))
+  var body: some View {
+    let id = fullname ?? userID
+    let avatarRequest = avatarCache.cache[id]
+    let avatarSize = avatarSize ?? theme?.size ?? 0
+//    let newURL = avatarRequest.isNil ? URL(string: String(url?.split(separator: "?")[0] ?? "")) : nil
+    AvatarRaw(avatarImgRequest: avatarRequest?.data, userID: userID, fullname: fullname, theme: theme, avatarSize: avatarSize)
+//      .equatable()
+//      .task { if avatarRequest.isNil, let url = url { RedditAPI.shared.addImgReqToAvatarCache(id, url, avatarSize: avatarSize) } }
   }
+}
+
+struct AvatarRaw: View, Equatable {
+  static func == (lhs: AvatarRaw, rhs: AvatarRaw) -> Bool {
+    lhs.avatarImgRequest?.url == rhs.avatarImgRequest?.url
+  }
+  
+  var avatarImgRequest: ImageRequest?
+  var userID: String
+  var fullname: String? = nil
+  var theme: AvatarTheme?
+  var avatarSize: CGFloat?
+  
   var body: some View {
     let avatarSize = avatarSize ?? theme?.size ?? 0
     let cornerRadius = (theme?.cornerRadius ?? (avatarSize / 2))
@@ -30,9 +51,10 @@ struct Avatar: View {
               .frame(width: avatarSize, height: avatarSize)
           )
       } else {
-        if let avatarURL = avatarURL {
-          AvatarRaw(url: avatarURL, userID: userID, fullname: fullname, theme: theme, avatarSize: avatarSize)
-            .equatable()
+        if let avatarImgRequest = avatarImgRequest, let url = avatarImgRequest.url {
+          URLImage(url: url, imgRequest: avatarImgRequest, processors: [.resize(width: avatarSize)])
+//            .equatable()
+            .scaledToFill()
         } else {
           Text(userID.prefix(1).uppercased())
             .fontSize(avatarSize / 2)
@@ -45,25 +67,5 @@ struct Avatar: View {
     }
     .frame(width: avatarSize, height: avatarSize)
     .mask(RR(cornerRadius, .black))
-  }
-}
-
-struct AvatarRaw: View, Equatable {
-  static func == (lhs: AvatarRaw, rhs: AvatarRaw) -> Bool {
-    lhs.url == rhs.url && lhs.avatarSize == rhs.avatarSize && lhs.userID == rhs.userID && lhs.fullname == rhs.fullname
-  }
-  
-  var url: URL
-  var userID: String
-  var fullname: String? = nil
-  var theme: AvatarTheme?
-  var avatarSize: CGFloat?
-  
-  var body: some View {
-    let avatarSize = avatarSize ?? theme?.size ?? 0
-    let cornerRadius = (theme?.cornerRadius ?? (avatarSize / 2))
-    URLImage(url: url, processors: [.resize(width: avatarSize)])
-      .equatable()
-      .scaledToFill()
   }
 }

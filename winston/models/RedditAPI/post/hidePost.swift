@@ -38,7 +38,6 @@ extension RedditAPI {
           let result = await dataTask.result
           switch result {
           case .success:
-//            print("foi")
             //          return true
             break
           case .failure:

@@ -73,7 +73,7 @@ struct ReplyModalComment: View {
 }
 
 struct ReplyModalPost: View {
-  @ObservedObject var post: Post
+  var post: Post
   var updateComments: (()->())?
   
   func action(_ endLoading: (@escaping (Bool) -> ()), text: String) {
@@ -115,6 +115,7 @@ struct ReplyModal<Content: View>: View {
   @Environment(\.useTheme) private var selectedTheme
   @FetchRequest(sortDescriptors: []) var drafts: FetchedResults<ReplyDraft>
   @Environment(\.colorScheme) private var cs
+  @EnvironmentObject private var routerProxy: RouterProxy
   
   init(title: String = "Replying", loadingLabel: String = "Commenting...", submitBtnLabel: String = "Send", thingFullname: String, action: @escaping (@escaping (Bool) -> Void, String) -> Void, text: String? = nil, content: (() -> Content)?) {
     self.title = title
@@ -133,7 +134,7 @@ struct ReplyModal<Content: View>: View {
           
           VStack(alignment: .leading) {
             if let me = RedditAPI.shared.me?.data {
-              Badge(author: me.name, fullname: me.name, created: Date().timeIntervalSince1970, avatarURL: me.icon_img ?? me.snoovatar_img, theme: selectedTheme.comments.theme.badge)
+              BadgeView(author: me.name, fullname: me.name, created: Date().timeIntervalSince1970, avatarURL: me.icon_img ?? me.snoovatar_img, theme: selectedTheme.comments.theme.badge, routerProxy: routerProxy, cs: cs)
                 .equatable()
             }
             MDEditor(text: $textWrapper.replyText)

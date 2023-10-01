@@ -17,6 +17,7 @@ struct URLImage: View, Equatable {
   }
   
   let url: URL
+  var imgRequest: ImageRequest? = nil
   var pipeline: ImagePipeline? = nil
   var processors: [ImageProcessing]? = nil
   
@@ -33,22 +34,51 @@ struct URLImage: View, Equatable {
         }
       }
     } else {
-      LazyImage(url: url, transaction: Transaction(animation: .default)) { state in
-        if let image = state.image {
-          image.resizable()
-        } else if state.error != nil {
-          Color.red.opacity(0.1)
-            .overlay(Image(systemName: "xmark.circle.fill").foregroundColor(.red))
-        } else {
-          Image(.loader)
-            .resizable()
-            .scaledToFill()
-            .mask(Circle())
-            .frame(maxWidth: 50, maxHeight: 50)
+      if let imgRequest = imgRequest {
+        LazyImage(request: imgRequest) { state in
+          if let image = state.image {
+            image.resizable()
+          } else if state.error != nil {
+            Color.red.opacity(0.1)
+              .overlay(Image(systemName: "xmark.circle.fill").foregroundColor(.red))
+          } else {
+            Image(.loader)
+              .resizable()
+              .scaledToFill()
+              .mask(Circle())
+              .frame(maxWidth: 50, maxHeight: 50)
+          }
         }
+        .onDisappear(.cancel)
+        .pipeline(ImagePipeline.shared)
+//        .id("\(imgRequest.url?.absoluteString ?? "")-nuke")
+      } else {
+        LazyImage(url: url) { state in
+          if let image = state.image {
+            image.resizable()
+          } else if state.error != nil {
+            Color.red.opacity(0.1)
+              .overlay(Image(systemName: "xmark.circle.fill").foregroundColor(.red))
+          } else {
+            Image(.loader)
+              .resizable()
+              .scaledToFill()
+              .mask(Circle())
+              .frame(maxWidth: 50, maxHeight: 50)
+          }
+        }
+        .onDisappear(.cancel)
+        .processors(processors)
+        .pipeline(ImagePipeline.shared)
       }
-      .onDisappear(.cancel)
-      .processors(processors)
+      
     }
   }
 }
+
+
+//extension ImageRequest: Equatable {
+//  public static func == (lhs: Nuke.ImageRequest, rhs: Nuke.ImageRequest) -> Bool {
+//    lhs.url == rhs.url
+//  }
+//}

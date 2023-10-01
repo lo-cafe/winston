@@ -25,7 +25,7 @@ struct LightBoxOverlay: View {
               .allowsHitTesting(false)
           }
           if let data = post.data, let fullname = data.author_fullname {
-            Badge(author: data.author, fullname: fullname, created: data.created, theme: selectedTheme.postLinks.theme.badge)
+            Badge(post: post, theme: selectedTheme.postLinks.theme.badge)
               .equatable()
               .id("post-badge")
               .listRowInsets(EdgeInsets(top: 6, leading: 8, bottom: 8, trailing: 8))

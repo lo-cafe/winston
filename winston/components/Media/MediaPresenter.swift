@@ -10,6 +10,7 @@ import YouTubePlayerKit
 import Defaults
 
 struct OnlyURL: View {
+  static let height: Double = 22
   @Default(.postLinkTitleSize) var postLinkTitleSize
   var url: URL
   @Environment(\.openURL) private var openURL
@@ -20,10 +21,10 @@ struct OnlyURL: View {
     }
     .padding(.horizontal, 6)
     .padding(.vertical, 2)
-    .background(Capsule(style: .continuous).fill(.blue))
-    .fontSize(postLinkTitleSize - 2, .medium)
+    .frame(maxHeight: OnlyURL.height)
+    .background(Capsule(style: .continuous).fill(Color.accentColor.opacity(0.2)))
+    .fontSize(15, .medium)
     .lineLimit(1)
-    .fixedSize(horizontal: false, vertical: true)
     .foregroundColor(.white)
     .highPriorityGesture(TapGesture().onEnded {
       if let newURL = URL(string: url.absoluteString.replacingOccurrences(of: "https://reddit.com/", with: "winstonapp://")) {
@@ -38,33 +39,37 @@ struct MediaPresenter: View, Equatable {
     lhs.media == rhs.media && lhs.contentWidth == rhs.contentWidth && lhs.compact == rhs.compact
   }
   
+  var blurPostLinkNSFW: Bool
   var showURLInstead = false
   let media: MediaExtractedType
-  @ObservedObject var post: Post
+  var post: Post
   let compact: Bool
   let contentWidth: CGFloat
+  let routerProxy: RouterProxy
   
   var body: some View {
+    let over18 = post.data?.over_18 ?? false
     switch media {
     case .image(let imgMediaExtracted):
       if !showURLInstead {
         ImageMediaPost(compact: compact, post: post, images: [imgMediaExtracted], contentWidth: contentWidth)
-          .equatable()
+          .nsfw(over18 && blurPostLinkNSFW)
       }
     case .video(let videoMediaExtracted):
       if !showURLInstead {
         VideoPlayerPost(post: post, compact: compact, overrideWidth: contentWidth, url: videoMediaExtracted.url, size: CGSize(width: videoMediaExtracted.size.width, height: videoMediaExtracted.size.height))
+          .nsfw(over18 && blurPostLinkNSFW)
+        
       }
     case .gallery(let imgs):
       if !showURLInstead {
         ImageMediaPost(compact: compact, post: post, images: imgs, contentWidth: contentWidth)
-          .equatable()
-        //          .onAppear { print(post.data?.title)}
+          .nsfw(over18 && blurPostLinkNSFW)
       }
     case .youtube(let videoID, let size):
       if !showURLInstead {
-        PreviewYTLink(videoID: videoID, size: size, contentWidth: contentWidth)
-          .equatable()
+        YTMediaPost(compact: compact, videoID: videoID, size: size, contentWidth: contentWidth)
+//          .equatable()
       }
     case .link(let url):
       if !showURLInstead {
@@ -78,7 +83,7 @@ struct MediaPresenter: View, Equatable {
           if let postData = repost.data, let url = URL(string: "https://reddit.com/r/\(postData.subreddit)/comments/\(repost.id)") {
             PreviewLink(url: url, compact: compact)
           }
-        } else if let sub = post.winstonData?.winstonRepostSubreddit {
+        } else if let sub = repost.winstonData?.subreddit {
           PostLink(post: repost, sub: sub, showSub: true, secondary: true)
         }
       } else if let postData = repost.data, let url = URL(string: "https://reddit.com/r/\(postData.subreddit)/comments/\(repost.id)") {
@@ -91,7 +96,7 @@ struct MediaPresenter: View, Equatable {
             PreviewLink(url: url, compact: compact)
           }
         } else {
-          PreviewRedditLinkContent(thing: .post(id: id, subreddit: subreddit))
+          RedditMediaPost(thing: .post(id: id, subreddit: subreddit))
         }
       } else if let url = URL(string: "https://reddit.com/r/\(subreddit)/comments/\(id)") {
         OnlyURL(url: url)
@@ -103,7 +108,7 @@ struct MediaPresenter: View, Equatable {
             PreviewLink(url: url, compact: compact)
           }
         } else {
-          PreviewRedditLinkContent(thing: .comment(id: id, postID: postID, subreddit: subreddit))
+          RedditMediaPost(thing: .comment(id: id, postID: postID, subreddit: subreddit))
         }
       } else if let url = URL(string: "https://reddit.com/r/\(subreddit)/comments/\(postID)/comment/\(id)") {
         OnlyURL(url: url)
@@ -115,7 +120,7 @@ struct MediaPresenter: View, Equatable {
             PreviewLink(url: url, compact: compact)
           }
         } else {
-          PreviewRedditLinkContent(thing: .subreddit(name: name))
+          RedditMediaPost(thing: .subreddit(name: name))
         }
       } else if let url = URL(string: "https://reddit.com/r/\(name)") {
         OnlyURL(url: url)
@@ -127,7 +132,7 @@ struct MediaPresenter: View, Equatable {
             PreviewLink(url: url, compact: compact)
           }
         } else {
-          PreviewRedditLinkContent(thing: .user(username: username))
+          RedditMediaPost(thing: .user(username: username))
         }
       } else if let url = URL(string: "https://reddit.com/u/\(username)") {
         OnlyURL(url: url)

@@ -9,17 +9,22 @@ import Foundation
 import Combine
 import SwiftUI
 
-
-class BaseCache<T: Any>: ObservableObject {
-  struct CacheItem {
-    let data: T
-    let createdAt: Date
+struct CacheItem<T>: Identifiable, Equatable {
+  static func == (lhs: CacheItem<T>, rhs: CacheItem<T>) -> Bool {
+    lhs.id == rhs.id
   }
   
-  @Published var cache: [String: CacheItem] = [:]
+  let id = UUID()
+  let data: T
+  let createdAt: Date
+}
+
+
+class BaseCache<T: Any>: ObservableObject {
+  @Published var cache: [String: CacheItem<T>] = [:]
   let cacheLimit: Int
   
-  init(cacheLimit: Int = 50, cache: [String:CacheItem] = [:]) {
+  init(cacheLimit: Int = 50, cache: [String:CacheItem<T>] = [:]) {
     self.cacheLimit = cacheLimit
     self.cache = cache
   }
@@ -42,18 +47,22 @@ class BaseCache<T: Any>: ObservableObject {
     }
   }
   
+  func merge(_ dict: [String:T]) async {
+      let newDict = dict.mapValues { CacheItem(data: $0, createdAt: Date()) }
+      await MainActor.run { [newDict] in
+        withAnimation {
+          cache.merge(newDict) { (_, new) in new }
+        }
+      }
+  }
+  
 }
 
 class BaseObservableCache<T: ObservableObject>: ObservableObject {
-  struct CacheItem {
-    let data: T
-    let createdAt: Date
-  }
-  
-  @Published var cache: [String: CacheItem] = [:]
+  @Published var cache: [String: CacheItem<T>] = [:]
   let cacheLimit: Int
   
-  init(cacheLimit: Int = 50, cache: [String:CacheItem] = [:]) {
+  init(cacheLimit: Int = 50, cache: [String:CacheItem<T>] = [:]) {
     self.cacheLimit = cacheLimit
     self.cache = cache
   }

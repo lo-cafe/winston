@@ -21,7 +21,7 @@ struct MessageLink: View {
       HStack(alignment: .top) {
         Image(systemName: data.type == "post_reply" ? "message.circle.fill" : "arrowshape.turn.up.left.circle.fill")
           .fontSize(24, .bold)
-          .foregroundColor(data.type == "post_reply" ? .blue : .green)
+          .foregroundColor(data.type == "post_reply" ? Color.accentColor : .green)
         VStack(alignment: .leading, spacing: 2) {
           Text("**u/\(author)** \(data.type == "post_reply" ? "commented on your post" : "replied to your comment") in **r/\(subreddit)**")
           //            CommentLink(lineLimit: 2, showReplies: false, comment: comment)

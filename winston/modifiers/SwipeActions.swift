@@ -9,16 +9,16 @@ import Foundation
 import SwiftUI
 import Defaults
 
+enum TriggeredAction: Int {
+  case leftFirst = 1
+  case leftSecond = 2
+  case rightFirst = 3
+  case rightSecond = 4
+  case none = 0
+}
+
 
 struct SwipeUI<T: GenericRedditEntityDataType, B: Hashable>: ViewModifier {
-  private enum TriggeredAction: Int {
-    case leftFirst = 1
-    case leftSecond = 2
-    case rightFirst = 3
-    case rightSecond = 4
-    case none = 0
-  }
-  
   @Default(.enableSwipeAnywhere) private var enableSwipeAnywhere
   @State private var pressing: Bool = false
   @State private var dragAmount: CGFloat = 0
@@ -33,13 +33,7 @@ struct SwipeUI<T: GenericRedditEntityDataType, B: Hashable>: ViewModifier {
   var controlledIsSource = true
   var onTapAction: (() -> Void)?
   var actionsSet: SwipeActionsSet
-  @ObservedObject var entity: GenericRedditEntity<T, B>
-  //  var leftActionIcon: String
-  //  var rightActionIcon: String
-  //  var secondActionIcon: String
-  //  var leftActionHandler: (()->())?
-  //  var rightActionHandler: (()->())?
-  //  var secondActionHandler: (()->())?
+  var entity: GenericRedditEntity<T, B>
   var disabled: Bool = false
   
   private let firstActionThreshold: CGFloat = 75
@@ -95,25 +89,21 @@ struct SwipeUI<T: GenericRedditEntityDataType, B: Hashable>: ViewModifier {
         ? nil
         : HStack {
           
-          if let infoRight = infoRight() {
-            let active = infoRight.3 ? actionsSet.rightSecond.active(entity) : actionsSet.rightFirst.active(entity)
-            MasterButton(icon: active ? infoRight.0.active : infoRight.0.normal, color: Color.hex(active ? infoRight.2.active : infoRight.2.normal), textColor: Color.hex(active ? infoRight.1.active : infoRight.1.normal), proportional: .circle) {}
-              .scaleEffect(triggeredAction == .rightSecond ? 1.1 : triggeredAction == .rightFirst ? 1 : max(0.001, offsetXInterpolate([-0.9, 0.85], false)))
-              .opacity(max(0, offsetXInterpolate([-0.9, 1], false)))
-              .frame(width: actualOffsetX < 0 ? 10 : abs(actualOffsetX))
-              .offset(x: -8)
-          }
+          SwipeUIBtn(info: infoRight(), secondActiveFunc: actionsSet.rightSecond.active, firstActiveFunc: actionsSet.rightFirst.active, entity: entity)
+//            .equatable()
+            .scaleEffect(triggeredAction == .rightSecond ? 1.1 : triggeredAction == .rightFirst ? 1 : max(0.001, offsetXInterpolate([-0.9, 0.85], false)))
+            .opacity(max(0, offsetXInterpolate([-0.9, 1], false)))
+            .frame(width: actualOffsetX < 0 ? 10 : abs(actualOffsetX))
+            .offset(x: -8)
           
           Spacer()
           
-          if let infoLeft = infoLeft() {
-            let active = infoLeft.3 ? actionsSet.leftSecond.active(entity) : actionsSet.leftFirst.active(entity)
-            MasterButton(icon: active ? infoLeft.0.active : infoLeft.0.normal, color: Color.hex(active ? infoLeft.2.active : infoLeft.2.normal), textColor: Color.hex(active ? infoLeft.1.active : infoLeft.1.normal), proportional: .circle) {}
-              .scaleEffect(triggeredAction == .leftSecond ? 1.1 : triggeredAction == .leftFirst ? 1 : max(0.001, offsetXNegativeInterpolate([-0.9, 0.85], false)))
-              .opacity(max(0, offsetXNegativeInterpolate([-0.9, 1], false)))
-              .frame(width: actualOffsetX > 0 ? 10 : abs(actualOffsetX))
-              .offset(x: 8)
-          }
+          SwipeUIBtn(info: infoLeft(), secondActiveFunc: actionsSet.leftSecond.active, firstActiveFunc: actionsSet.leftFirst.active, entity: entity)
+//            .equatable()
+            .scaleEffect(triggeredAction == .leftSecond ? 1.1 : triggeredAction == .leftFirst ? 1 : max(0.001, offsetXNegativeInterpolate([-0.9, 0.85], false)))
+            .opacity(max(0, offsetXNegativeInterpolate([-0.9, 1], false)))
+            .frame(width: actualOffsetX > 0 ? 10 : abs(actualOffsetX))
+            .offset(x: 8)
         }
           .frame(maxWidth: .infinity, maxHeight: .infinity)
           .offset(y: offsetYAction)
@@ -214,6 +204,24 @@ struct SwipeUI<T: GenericRedditEntityDataType, B: Hashable>: ViewModifier {
         }
       }
     //      .simultaneousGesture(DragGesture())
+  }
+}
+
+struct SwipeUIBtn<T: GenericRedditEntityDataType, B: Hashable>: View, Equatable {
+  static func == (lhs: SwipeUIBtn<T, B>, rhs: SwipeUIBtn<T, B>) -> Bool {
+    lhs.info?.0 == rhs.info?.0 && lhs.info?.1 == rhs.info?.1 && lhs.info?.2 == rhs.info?.2 && lhs.info?.3 == rhs.info?.3
+  }
+  
+  var info: (SwipeActionItem, SwipeActionItem, SwipeActionItem, Bool)?
+  var secondActiveFunc: (GenericRedditEntity<T, B>) -> Bool
+  var firstActiveFunc: (GenericRedditEntity<T, B>) -> Bool
+  @ObservedObject var entity: GenericRedditEntity<T, B>
+
+  var body: some View {
+    if let info = info {
+      let active = info.3 ? secondActiveFunc(entity) : firstActiveFunc(entity)
+      MasterButton(softDisabled: true, icon: active ? info.0.active : info.0.normal, color: Color.hex(active ? info.2.active : info.2.normal), textColor: Color.hex(active ? info.1.active : info.1.normal), proportional: .circle) {}
+    }
   }
 }
 

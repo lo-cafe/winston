@@ -22,7 +22,7 @@ struct PostView: View, Equatable {
     lhs.post.id == rhs.post.id && lhs.subreddit.id == rhs.subreddit.id
   }
   
-  var post: Post
+  @ObservedObject var post: Post
   @ObservedObject private var cachesPostsAttrStr = Caches.postsAttrStr
   var selfAttr: AttributedString? = nil
   var subreddit: Subreddit
@@ -44,7 +44,7 @@ struct PostView: View, Equatable {
     }
     if let result = await post.refreshPost(commentID: ignoreSpecificComment ? nil : highlightID, sort: sort, after: nil, subreddit: subreddit.data?.display_name ?? subreddit.id, full: full), let newComments = result.0 {
       Task(priority: .background) {
-        await RedditAPI.shared.updateAvatarURLCacheFromComments(comments: newComments)
+        await RedditAPI.shared.updateAvatarURLCacheFromComments(comments: newComments, avatarSize: selectedTheme.comments.theme.badge.avatar.size)
       }
     }
   }
@@ -88,6 +88,7 @@ struct PostView: View, Equatable {
                 }
               }
             }
+            .listRowBackground(Color.primary.opacity(0.1))
           }
           
           Section {
@@ -106,6 +107,7 @@ struct PostView: View, Equatable {
       .environment(\.defaultMinListRowHeight, 1)
       .listStyle(.plain)
       .refreshable {
+        withAnimation { update.toggle() }
         await asyncFetch(true)
       }
       .overlay(
@@ -152,7 +154,7 @@ private struct Toolbar: View {
                 Text(opt.rawVal.value.capitalized)
                 Spacer()
                 Image(systemName: opt.rawVal.icon)
-                  .foregroundColor(.blue)
+                  .foregroundColor(Color.accentColor)
                   .fontSize(17, .bold)
               }
             }
@@ -160,7 +162,7 @@ private struct Toolbar: View {
         }
       } label: {
         Image(systemName: sort.rawVal.icon)
-          .foregroundColor(.blue)
+          .foregroundColor(Color.accentColor)
           .fontSize(17, .bold)
       }
       

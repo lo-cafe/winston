@@ -50,7 +50,7 @@ extension Subreddit {
       
       if let entity = entity, let context = entity.managedObjectContext {
         entity.user_has_favorited = !favoritedStatus
-          try? context.save()
+        try? context.save()
         
         Task {
           let result = await RedditAPI.shared.favorite(!favoritedStatus, subName: name)
@@ -69,44 +69,43 @@ extension Subreddit {
     let context = PersistenceController.shared.container.viewContext
     
     if let data = data {
-      let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "CachedSub")
-      guard let results = (context.performAndWait { return try? context.fetch(fetchRequest) as? [CachedSub] }) else { return }
-      
-      let foundSub = context.performAndWait { results.first(where: { $0.name == self.data?.name }) }
-      //      let likedButNotSubbed = Defaults[.likedButNotSubbed]
-      if optimistic {
+      func doToggle() {
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "CachedSub")
+        guard let results = (context.performAndWait { return try? context.fetch(fetchRequest) as? [CachedSub] }) else { return }
+        let foundSub = context.performAndWait { results.first(where: { $0.name == self.data?.name }) }
+        
+        withAnimation {
+          self.data?.user_is_subscriber?.toggle()
+        }
         if let foundSub = foundSub { // when unsubscribe
           context.delete(foundSub)
-        } else {
+        } else if let newData = self.data {
           context.performAndWait {
-            _ = CachedSub(data: data, context: context)
+            _ = CachedSub(data: newData, context: context)
           }
-        }
-        context.performAndWait {
-          try? context.save()
         }
       }
-      Task {
-        let result = await RedditAPI.shared.subscribe(!foundSub.isNil ? .unsub : .sub, subFullname: data.name)
+      
+      //      let likedButNotSubbed = Defaults[.likedButNotSubbed]
+      if optimistic {
+        doToggle()
         context.performAndWait {
-          if result {
-            if !optimistic {
-              if let foundSub = foundSub {
-                context.delete(foundSub)
-              } else {
-                _ = CachedSub(data: data, context: context)
-              }
-            }
-          } else {
-            if optimistic {
-              if let foundSub = foundSub {
-                context.delete(foundSub)
-              } else {
-                _ = CachedSub(data: data, context: context)
-              }
+          withAnimation {
+            try? context.save()
+          }
+        }
+      }
+      Task(priority: .background) {
+        let result = await RedditAPI.shared.subscribe((self.data?.user_is_subscriber ?? false) ? (optimistic ? .sub : .unsub) : (optimistic ? .unsub : .sub), subFullname: data.name)
+        context.performAndWait {
+          if (result && !optimistic) || (!result && optimistic) {
+            doToggle()
+          }
+          context.performAndWait {
+            withAnimation {
+              try? context.save()
             }
           }
-          try? context.save()
           cb?()
         }
       }
@@ -141,9 +140,9 @@ extension Subreddit {
     return nil
   }
   
-  func fetchPosts(sort: SubListingSortOption = .best, after: String? = nil, searchText: String? = nil) async -> ([Post]?, String?)? {
+  func fetchPosts(sort: SubListingSortOption = .best, after: String? = nil, searchText: String? = nil, contentWidth: CGFloat = UIScreen.screenWidth) async -> ([Post]?, String?)? {
     if let response = await RedditAPI.shared.fetchSubPosts(data?.url ?? (id == "home" ? "" : id), sort: sort, after: after, searchText: searchText), let data = response.0 {
-      return (Post.initMultiple(datas: data.compactMap { $0.data }, api: RedditAPI.shared), response.1)
+      return (Post.initMultiple(datas: data.compactMap { $0.data }, api: RedditAPI.shared, contentWidth: contentWidth), response.1)
     }
     return nil
   }
@@ -249,7 +248,7 @@ struct SubredditData: Codable, GenericRedditEntityDataType, Defaults.Serializabl
   //  let user_sr_theme_enabled: Bool?
   //  let link_flair_enabled: Bool?
   //  let disable_contributor_requests: Bool?
-    let subreddit_type: String?
+  let subreddit_type: String?
   //  let suggested_comment_sort: String?
   //  let over18: Bool?
   //  let header_title: String?
@@ -487,27 +486,27 @@ enum SubListingSortOption: Codable, Identifiable, Defaults.Serializable, Hashabl
     
     var icon: String {
       switch self {
-        case .hour: return "clock"
-        case .day: return "sun.max"
-        case .week: return "clock.arrow.2.circlepath"
-        case .month: return "calendar"
-        case .year: return "globe.americas.fill"
-        case .all: return "arrow.up.circle.badge.clock"
+      case .hour: return "clock"
+      case .day: return "sun.max"
+      case .week: return "clock.arrow.2.circlepath"
+      case .month: return "calendar"
+      case .year: return "globe.americas.fill"
+      case .all: return "arrow.up.circle.badge.clock"
       }
     }
   }
   
   var rawVal: SubListingSort {
     switch self {
-      case .best: return SubListingSort(icon: "trophy", value: "best")
-      case .hot: return SubListingSort(icon: "flame", value: "hot")
-      case .new: return SubListingSort(icon: "newspaper", value: "new")
-      case .top(let subOption):
-        if subOption == .all {
-          return SubListingSort(icon: subOption.icon, value: "top")
-        } else {
-          return SubListingSort(icon: subOption.icon, value: "top/\(subOption.rawValue)")
-        }
+    case .best: return SubListingSort(icon: "trophy", value: "best")
+    case .hot: return SubListingSort(icon: "flame", value: "hot")
+    case .new: return SubListingSort(icon: "newspaper", value: "new")
+    case .top(let subOption):
+      if subOption == .all {
+        return SubListingSort(icon: subOption.icon, value: "top")
+      } else {
+        return SubListingSort(icon: subOption.icon, value: "top/\(subOption.rawValue)")
+      }
     }
   }
 }

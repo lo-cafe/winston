@@ -59,8 +59,8 @@ struct PostContent: View, Equatable {
       VStack(spacing: 0) {
         VStack(spacing: selectedTheme.posts.spacing) {
           
-          if let extractedMedia = post.winstonData?.winstonExtractedMedia {
-            MediaPresenter(media: extractedMedia, post: post, compact: false, contentWidth: contentWidth)
+          if let extractedMedia = post.winstonData?.extractedMedia {
+            MediaPresenter(blurPostLinkNSFW: blurPostNSFW, media: extractedMedia, post: post, compact: false, contentWidth: contentWidth, routerProxy: routerProxy)
               .id("media-post-open")
           }
           
@@ -109,43 +109,17 @@ struct PostContent: View, Equatable {
       .id("post-content")
       .listRowInsets(EdgeInsets(top: postsTheme.spacing / 2, leading: postsTheme.padding.horizontal, bottom: postsTheme.spacing / 2, trailing: postsTheme.spacing / 2))
       
-      if let fullname = data.author_fullname {
-        Badge(author: data.author, fullname: fullname, created: data.created, theme: postsTheme.badge)
-          .equatable()
+        Badge(post: post, theme: postsTheme.badge)
+//          .equatable()
           .id("post-badge")
           .listRowInsets(EdgeInsets(top: postsTheme.spacing / 2, leading: postsTheme.padding.horizontal, bottom: postsTheme.spacing * 0.75, trailing: postsTheme.padding.horizontal))
-      }
       
       
       SubsNStuffLine(showSub: true, feedsAndSuch: feedsAndSuch, post: post, sub: sub, routerProxy: routerProxy, over18: over18)
-        .equatable()
         .id("post-flair-divider")
         .listRowInsets(EdgeInsets(top: 0, leading: postsTheme.padding.horizontal, bottom: postsTheme.commentsDistance / 2, trailing: postsTheme.padding.horizontal))
-      
-      HStack(spacing: 0) {
-        if let link_flair_text = data.link_flair_text {
-          Rectangle()
-            .fill(.primary.opacity(0.1))
-            .frame(maxWidth: .infinity, maxHeight: 1)
-          
-          Text(link_flair_text)
-            .fontSize(13)
-            .padding(.horizontal, 6)
-            .padding(.vertical, 2)
-            .background(Capsule(style: .continuous).fill(.secondary.opacity(0.25)))
-            .foregroundColor(.primary.opacity(0.5))
-            .fixedSize()
-        }
-        Rectangle()
-          .fill(.primary.opacity(0.1))
-          .frame(maxWidth: .infinity, maxHeight: 1)
-      }
-      .padding(.horizontal, 2)
-      .id("post-flair-divider")
-      .listRowInsets(EdgeInsets(top: 0, leading: 8, bottom: 8, trailing: 8))
     }
     .frame(maxWidth: .infinity, alignment: .leading)
-    //      .foregroundColor(.primary)
     .multilineTextAlignment(.leading)
   }
 }

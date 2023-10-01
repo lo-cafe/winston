@@ -9,7 +9,7 @@ import Foundation
 import Defaults
 import SwiftUI
 
-struct SwipeActionItem: Codable, Defaults.Serializable {
+struct SwipeActionItem: Codable, Hashable, Defaults.Serializable {
   var normal: String
   var active: String
   

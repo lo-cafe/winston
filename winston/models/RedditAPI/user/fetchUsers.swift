@@ -8,6 +8,8 @@
 import Foundation
 import Alamofire
 import SwiftUI
+import NukeUI
+import Defaults
 
 extension RedditAPI {
   func fetchUsers(_ ids: [String]) async -> MultipleUsersDictionary? {
@@ -34,7 +36,7 @@ extension RedditAPI {
     }
   }
   
-  func updateAvatarURLCacheFromOverview(subjects: [Either<PostData, CommentData>]) async {
+  func updateAvatarURLCacheFromOverview(subjects: [Either<PostData, CommentData>], avatarSize: Double) async {
     var namesArr: [String] = []
     subjects.forEach { subject in
       switch subject {
@@ -48,30 +50,43 @@ extension RedditAPI {
         }
       }
     }
-    await updateAvatarURL(names: namesArr)
+    await updateAvatarURL(names: namesArr, avatarSize: avatarSize)
   }
   
-  func updateAvatarURLCacheFromComments(comments: [Comment]) async {
+  func updateAvatarURLCacheFromComments(comments: [Comment], avatarSize: Double) async {
     let namesArr = getNamesFromComments(comments)
-    await updateAvatarURL(names: namesArr)
+    await updateAvatarURL(names: namesArr, avatarSize: avatarSize)
   }
   
-  func updateAvatarURLCacheFromPosts(posts: [Post]) async {
+  func updateAvatarURLCacheFromPosts(posts: [Post], avatarSize: Double) async {
     let namesArr = posts.compactMap { $0.data?.author_fullname }
-    await updateAvatarURL(names: namesArr)
+    await updateAvatarURL(names: namesArr, avatarSize: avatarSize)
   }
   
-  func updateAvatarURL(names: [String]) async {
+  func updateAvatarURL(names: [String], avatarSize: Double) async {
     if let data = await self.fetchUsers(names) {
+//      let avatarSize = Defaults[]
+      var reqs: [ImageRequest] = []
       let newDict = data.compactMapValues { val in
-        if let urlStr = val.profile_img, let url = URL(string: String(urlStr.split(separator: "?")[0])) { return url }
+        if let urlStr = val.profile_img, let url = URL(string: String(urlStr.split(separator: "?")[0])) {
+          let req = ImageRequest(url: url, processors: [.resize(width: avatarSize)], priority: .veryHigh)
+          reqs.append(req)
+          return req
+        }
         return nil
       }
-      await MainActor.run { [newDict] in
-        withAnimation {
-          AvatarCache.shared.merge(newDict)
-        }
-      }
+      Post.prefetcher.startPrefetching(with: reqs)
+      
+      await Caches.avatars.merge(newDict)
+    }
+  }
+  
+  func addImgReqToAvatarCache(_ author: String, _ url: String, avatarSize: Double) {
+    let url = URL(string: String(url.split(separator: "?")[0]))
+    let req = ImageRequest(url: url, processors: [.resize(width: avatarSize)], priority: .veryHigh)
+    Post.prefetcher.startPrefetching(with: [req])
+    withAnimation {
+      Caches.avatars.addKeyValue(key: author, data: { req })
     }
   }
   

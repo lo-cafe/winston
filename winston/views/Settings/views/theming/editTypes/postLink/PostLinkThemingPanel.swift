@@ -15,7 +15,8 @@ private enum Category: String, CaseIterable {
 struct PostLinkThemingPanel: View {
   @Binding var theme: WinstonTheme
   @State private var selectedCategory = "card"
-  @State private var previewPostSampleData = postSampleData
+  @StateObject private var previewPostSample = Post(data: postSampleData, api: RedditAPI.shared)
+  @StateObject private var previewPostSubSample = Subreddit(id: postSampleData.subreddit, api: RedditAPI.shared)
   @Default(.themesPresets) private var themesPresets
   @ObservedObject var tempGlobalState = TempGlobalState.shared
   @Environment(\.colorScheme) private var cs
@@ -47,7 +48,7 @@ struct PostLinkThemingPanel: View {
     } preview: {
       
       VStack {
-        PostLink(disableOuterVSpacing: true, post: Post(data: previewPostSampleData, api: RedditAPI.shared), sub: Subreddit(id: postSampleData.subreddit, api: RedditAPI.shared))
+        PostLink(disableOuterVSpacing: true, post: previewPostSample, sub: previewPostSubSample)
           .equatable()
           .environment(\.useTheme, theme)
           .environmentObject(routerProxy)
@@ -58,16 +59,16 @@ struct PostLinkThemingPanel: View {
       FakeSection("Options") {
         HStack {
           Toggle("Seen", isOn: Binding(get: {
-            previewPostSampleData.winstonSeen ?? false
+            previewPostSample.data?.winstonSeen ?? false
           }, set: { val in
-            previewPostSampleData.winstonSeen = val
+            previewPostSample.data?.winstonSeen = val
           }))
           .onTapGesture {}
           VDivider()
           Toggle("Sticky", isOn: Binding(get: {
-            previewPostSampleData.stickied ?? false
+            previewPostSample.data?.stickied ?? false
           }, set: { val in
-            previewPostSampleData.stickied = val
+            previewPostSample.data?.stickied = val
           }))
           .onTapGesture {}
         }

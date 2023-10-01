@@ -21,7 +21,7 @@ struct SearchOption: View {
     Text(searchType.rawValue)
       .padding(.horizontal, 16)
       .padding(.vertical, 12)
-      .background(Capsule(style: .continuous).fill(active ? .blue : .secondary.opacity(0.1)))
+      .background(Capsule(style: .continuous).fill(active ? Color.accentColor : .secondary.opacity(0.15)))
       .foregroundColor(active ? .white : .primary)
       .overlay(RoundedRectangle(cornerRadius: 12, style: .continuous).stroke((active ? Color.white : .primary).opacity(0.01), lineWidth: 1))
       .contentShape(Capsule())
@@ -135,7 +135,7 @@ struct Search: View {
                 if let dummyAllSub = dummyAllSub {
                   ForEach(resultPosts.data) { post in
                     PostLink(post: post, sub: dummyAllSub)
-                      .equatable()
+//                      .equatable()
                       .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
                       .animation(.default, value: resultPosts.data)
                   }

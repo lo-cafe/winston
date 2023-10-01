@@ -46,7 +46,15 @@ private struct CurrentThemeKey: EnvironmentKey {
   static let defaultValue = defaultTheme
 }
 
+private struct ContentWidthKey: EnvironmentKey {
+  static let defaultValue = UIScreen.screenWidth
+}
+
 extension EnvironmentValues {
+  var contentWidth: Double {
+    get { self[ContentWidthKey.self] }
+    set { self[ContentWidthKey.self] = newValue }
+  }
   var useTheme: WinstonTheme {
     get { self[CurrentThemeKey.self] }
     set { self[CurrentThemeKey.self] = newValue }

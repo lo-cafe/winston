@@ -313,10 +313,10 @@ struct PinchToZoom: ViewModifier {
   @Binding var scale: CGFloat
   @Binding var anchor: UnitPoint
   @Binding var offset: CGSize
-
+  
   func body(content: Content) -> some View {
     content
-      .frame(width: UIScreen.screenWidth, height:  (UIScreen.screenWidth * size.height) / size.width)
+      .frame(width: IPAD ? (UIScreen.screenHeight * size.width) / size.height : UIScreen.screenWidth, height: IPAD ? UIScreen.screenHeight : (UIScreen.screenWidth * size.height) / size.width)
       .scaleEffect(scale, anchor: anchor)
       .offset(offset)
       .frame(width: UIScreen.screenWidth, height: UIScreen.screenHeight, alignment: .center)

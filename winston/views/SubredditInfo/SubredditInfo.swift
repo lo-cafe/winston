@@ -29,6 +29,7 @@ struct SubredditInfo: View {
   @State private var myPostsLoaded = false
   @State private var addedToFavs = false
   @Default(.likedButNotSubbed) var likedButNotSubbed
+  @Environment(\.useTheme) private var theme
   var body: some View {
     let isliked = likedButNotSubbed.contains(subreddit)
     List {
@@ -98,6 +99,7 @@ struct SubredditInfo: View {
       }
       .listRowSeparator(.hidden)
     }
+    .themedListBG(theme.lists.bg)
     .navigationBarTitleDisplayMode(.inline)
   }
 }
