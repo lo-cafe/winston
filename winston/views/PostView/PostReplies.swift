@@ -10,7 +10,7 @@ import Defaults
 
 struct PostReplies: View {
   var update: Bool
-  @ObservedObject var post: Post
+  var post: Post
   @ObservedObject var subreddit: Subreddit
   var ignoreSpecificComment: Bool
   var highlightID: String?
@@ -18,7 +18,7 @@ struct PostReplies: View {
   var proxy: ScrollViewProxy
   @Environment(\.useTheme) private var selectedTheme
   @Environment(\.colorScheme) private var cs
-  @EnvironmentObject private var redditAPI: RedditAPI
+  
   @StateObject private var comments = ObservableArray<Comment>()
   @ObservedObject private var globalLoader = TempGlobalState.shared.globalLoader
   @State private var loading = true
@@ -26,7 +26,7 @@ struct PostReplies: View {
   func asyncFetch(_ full: Bool, _ altIgnoreSpecificComment: Bool? = nil) async {
     if let result = await post.refreshPost(commentID: (altIgnoreSpecificComment ?? ignoreSpecificComment) ? nil : highlightID, sort: sort, after: nil, subreddit: subreddit.data?.display_name ?? subreddit.id, full: full), let newComments = result.0 {
       Task(priority: .background) {
-        await redditAPI.updateAvatarURLCacheFromComments(comments: newComments)
+        await RedditAPI.shared.updateAvatarURLCacheFromComments(comments: newComments, avatarSize: selectedTheme.comments.theme.badge.avatar.size)
       }
       newComments.forEach { $0.parentWinston = comments }
       await MainActor.run {
@@ -124,26 +124,26 @@ struct PostReplies: View {
         .listRowBackground(Color.clear)
         .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
       }
-        if loading {
-          ProgressView()
-            .progressViewStyle(.circular)
-            .frame(maxWidth: .infinity, minHeight: 100 )
-            .listRowBackground(Color.clear)
-            .onAppear {
-              if comments.data.count == 0 || post.data == nil {
-                Task(priority: .background) {
-                  await asyncFetch(post.data == nil)
-                }
+      if loading {
+        ProgressView()
+          .progressViewStyle(.circular)
+          .frame(maxWidth: .infinity, minHeight: 100 )
+          .listRowBackground(Color.clear)
+          .onAppear {
+            if comments.data.count == 0 || post.data == nil {
+              Task(priority: .background) {
+                await asyncFetch(post.data == nil)
               }
             }
-            .id("loading-comments")
-        } else if commentsData.count == 0 {
-          Text("No comments around...")
-            .frame(maxWidth: .infinity, minHeight: 300)
-            .opacity(0.25)
-            .listRowBackground(Color.clear)
-            .id("no-comments-placeholder")
-        }
+          }
+          .id("loading-comments")
+      } else if commentsData.count == 0 {
+        Text("No comments around...")
+          .frame(maxWidth: .infinity, minHeight: 300)
+          .opacity(0.25)
+          .listRowBackground(Color.clear)
+          .id("no-comments-placeholder")
+      }
     }
   }
 }

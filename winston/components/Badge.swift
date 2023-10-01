@@ -9,27 +9,30 @@ import Foundation
 import SwiftUI
 import Defaults
 
-
-struct Badge: View, Equatable {
-  static func == (lhs: Badge, rhs: Badge) -> Bool {
-    lhs.extraInfo == rhs.extraInfo && lhs.theme == rhs.theme && lhs.avatarURL == rhs.avatarURL
+struct BadgeView: View, Equatable {
+  static let authorStatsSpacing: Double = 2
+  static func == (lhs: BadgeView, rhs: BadgeView) -> Bool {
+    lhs.extraInfo == rhs.extraInfo && lhs.theme == rhs.theme && lhs.avatarURL == rhs.avatarURL && lhs.saved == rhs.saved
   }
   
   var saved = false
   var usernameColor: Color?
-  //  var showAvatar = true
   var author: String
   var fullname: String? = nil
   var created: Double
   var avatarURL: String?
   var theme: BadgeTheme
   var extraInfo: [BadgeExtraInfo] = []
-  @EnvironmentObject private var routerProxy: RouterProxy
-  @EnvironmentObject private var redditAPI: RedditAPI
-  @Environment(\.colorScheme) private var cs
+  var routerProxy: RouterProxy
+  var cs: ColorScheme
   
   let flagY: CGFloat = 16
   let delay: CGFloat = 0.4
+  
+  nonisolated func openUser() {
+    routerProxy.router.path.append(User(id: author, api: RedditAPI.shared))
+  }
+  
   var body: some View {
     let showAvatar = theme.avatar.visible
     
@@ -69,18 +72,14 @@ struct Badge: View, Equatable {
                 .animation(.interpolatingSpring(stiffness: 150, damping: 12).delay(delay), value: saved)
             )
             .scaleEffect(1)
-            .onTapGesture {
-              routerProxy.router.path.append(User(id: author, api: redditAPI))
-            }
+            .onTapGesture(perform: openUser)
         }
       }
       
-      VStack(alignment: .leading, spacing: 2) {
+      VStack(alignment: .leading, spacing: BadgeView.authorStatsSpacing) {
         
         Text(author).font(.system(size: theme.authorText.size, weight: theme.authorText.weight.t)).foregroundColor(author == "[deleted]" ? .red : usernameColor ?? theme.authorText.color.cs(cs).color())
-          .onTapGesture {
-            routerProxy.router.path.append(User(id: author, api: redditAPI))
-          }
+          .onTapGesture(perform: openUser)
         
         HStack(alignment: .center, spacing: 6) {
           ForEach(extraInfo, id: \.self){ elem in
@@ -103,6 +102,48 @@ struct Badge: View, Equatable {
     }
     .scaleEffect(1)
     .animation(showAvatar ? nil : spring.delay(delay), value: saved)
+  }
+}
+
+
+struct Badge: View, Equatable {
+  static func == (lhs: Badge, rhs: Badge) -> Bool {
+    lhs.extraInfo == rhs.extraInfo && lhs.theme == rhs.theme && lhs.avatarURL == rhs.avatarURL
+  }
+  
+  @ObservedObject var post: Post
+  var usernameColor: Color?
+  var avatarURL: String?
+  var theme: BadgeTheme
+  var extraInfo: [BadgeExtraInfo] = []
+  @EnvironmentObject private var routerProxy: RouterProxy
+  @Environment(\.colorScheme) private var cs: ColorScheme
+
+  
+  var body: some View {
+    if let data = post.data {
+      BadgeView(saved: data.saved, usernameColor: usernameColor, author: data.author, fullname: data.author_fullname, created: data.created, avatarURL: avatarURL, theme: theme, extraInfo: extraInfo, routerProxy: routerProxy, cs: cs)
+    }
+  }
+}
+
+struct BadgeComment: View, Equatable {
+  static func == (lhs: BadgeComment, rhs: BadgeComment) -> Bool {
+    lhs.extraInfo == rhs.extraInfo && lhs.theme == rhs.theme && lhs.avatarURL == rhs.avatarURL
+  }
+  
+  @ObservedObject var comment: Comment
+  var usernameColor: Color?
+  var avatarURL: String?
+  var theme: BadgeTheme
+  var extraInfo: [BadgeExtraInfo] = []
+  @EnvironmentObject private var routerProxy: RouterProxy
+  @Environment(\.colorScheme) private var cs: ColorScheme
+  
+  var body: some View {
+    if let data = comment.data, let author = data.author, let created = data.created {
+      BadgeView(saved: data.saved ?? false, usernameColor: usernameColor, author: author, fullname: data.author_fullname, created: created, avatarURL: avatarURL, theme: theme, extraInfo: extraInfo, routerProxy: routerProxy, cs: cs)
+    }
   }
 }
 

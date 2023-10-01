@@ -9,7 +9,7 @@ import Foundation
 import Defaults
 import SwiftUI
 
-struct SwipeActionItem: Codable, Defaults.Serializable {
+struct SwipeActionItem: Codable, Hashable, Defaults.Serializable {
   var normal: String
   var active: String
   
@@ -66,15 +66,15 @@ struct AnySwipeAction: Codable, Defaults.Serializable, Identifiable, Hashable {
   init<T: SwipeAction>(_ base: T) where T: Codable {
     self.base = Base(base)
     self.actionClosure = { entity in
-      guard let entity = entity as? GenericRedditEntity<T.EntityType> else { return }
+      guard let entity = entity as? GenericRedditEntity<T.EntityType, T.EntityWinstonDataType> else { return }
       await base.action(entity)
     }
     self.activeClosure = { entity in
-      guard let entity = entity as? GenericRedditEntity<T.EntityType> else { return false }
+      guard let entity = entity as? GenericRedditEntity<T.EntityType, T.EntityWinstonDataType> else { return false }
       return base.active(entity)
     }
     self.enabledClosure = { entity in
-      guard let entity = entity as? GenericRedditEntity<T.EntityType> else { return false }
+      guard let entity = entity as? GenericRedditEntity<T.EntityType, T.EntityWinstonDataType> else { return false }
       return base.enabled(entity)
     }
   }
@@ -141,9 +141,10 @@ protocol SwipeAction: Codable, Identifiable, Defaults.Serializable {
   var color: SwipeActionItem { get }
   var bgColor: SwipeActionItem { get }
   associatedtype EntityType: GenericRedditEntityDataType
-  func action(_ entity: GenericRedditEntity<EntityType>) async
-  func active(_ entity: GenericRedditEntity<EntityType>) -> Bool
-  func enabled(_ entity: GenericRedditEntity<EntityType>) -> Bool
+  associatedtype EntityWinstonDataType: Hashable
+  func action(_ entity: GenericRedditEntity<EntityType, EntityWinstonDataType>) async
+  func active(_ entity: GenericRedditEntity<EntityType, EntityWinstonDataType>) -> Bool
+  func enabled(_ entity: GenericRedditEntity<EntityType, EntityWinstonDataType>) -> Bool
 }
 
 struct UpvotePostAction: SwipeAction {
@@ -224,7 +225,6 @@ struct FilterSubredditAction: SwipeAction {
     }
   }
   func active(_ entity: Post) -> Bool {
-    print(Defaults[.filteredSubreddits])
     if let subreddit = entity.data?.subreddit {
       return Defaults[.filteredSubreddits].contains(subreddit)
     }

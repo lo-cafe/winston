@@ -23,6 +23,15 @@ enum CommentBGSide {
   case middle
   case bottom
   case single
+  
+  static func getFromArray(count: Int, i: Int) -> Self {
+    if !IPAD { return .middle }
+    let finalIndex = count - 1
+    if count == 1 { return .single }
+    if i == 0 { return .top }
+    if i == finalIndex { return .bottom }
+    return .middle
+  }
 }
 
 struct CommentBG: Shape {

@@ -186,7 +186,7 @@ struct FlairPicker: View {
 
 struct NewPostModal: View {
   var subreddit: Subreddit
-  @EnvironmentObject var redditAPI: RedditAPI
+  
   @StateObject var postData = NewPostData(delay: 0.5, initialText: "Post creation isn't supported yet. There's no submit button.")
   @State var alertExit = false
   @Environment(\.dismiss) var dismiss

@@ -68,7 +68,7 @@ class SharedVideo: ObservableObject {
 }
 
 struct VideoPlayerPost: View {
-  @ObservedObject var post: Post
+  var post: Post
   var compact = false
   var overrideWidth: CGFloat?
   var url: URL
@@ -101,7 +101,7 @@ struct VideoPlayerPost: View {
   
   var body: some View {
     let contentWidth = overrideWidth ?? rawContentWidth
-    let maxHeight: CGFloat = (maxPostLinkImageHeightPercentage / 100) * (UIScreen.screenHeight - safe)
+    let maxHeight: CGFloat = (maxPostLinkImageHeightPercentage / 100) * (UIScreen.screenHeight)
     let sourceWidth = size.width
     let sourceHeight = size.height
     let propHeight = (contentWidth * sourceHeight) / sourceWidth
@@ -112,24 +112,24 @@ struct VideoPlayerPost: View {
         Group {
           if let sharedVideo = sharedVideo {
             VideoPlayer(player: sharedVideo.player)
-              .aspectRatio(contentMode: .fill)
+              .scaledToFill()
           } else {
             ProgressView()
           }
         }
-          .frame(width: compact ? scaledCompactModeThumbSize() : contentWidth, height: compact ? scaledCompactModeThumbSize() : CGFloat(finalHeight))
-          .allowsHitTesting(false)
-          .mask(RR(12, Color.black))
-          .overlay(
-            Color.clear
-              .contentShape(Rectangle())
-              .onTapGesture {
-                if lightboxViewsPost { Task(priority: .background) { await post.toggleSeen(true) } }
-                withAnimation {
-                  fullscreen = true
-                }
+        .frame(width: compact ? scaledCompactModeThumbSize() : contentWidth, height: compact ? scaledCompactModeThumbSize() : CGFloat(finalHeight))
+        .allowsHitTesting(false)
+        .mask(RR(12, Color.black))
+        .overlay(
+          Color.clear
+            .contentShape(Rectangle())
+            .onTapGesture {
+              if lightboxViewsPost { Task(priority: .background) { await post.toggleSeen(true) } }
+              withAnimation {
+                fullscreen = true
               }
-          )
+            }
+        )
       } else {
         Color.clear
           .frame(width: compact ? scaledCompactModeThumbSize() : contentWidth, height: compact ? scaledCompactModeThumbSize() : CGFloat(finalHeight))

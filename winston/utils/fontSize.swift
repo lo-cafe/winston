@@ -22,7 +22,6 @@ import SwiftUI
 
 extension View {
   func fontSize(_ size: CGFloat, _ weight: Font.Weight = .regular, design: Font.Design = .default) -> some View {
-//        self.font(Font(UIFont.systemFont(ofSize: size, weight: weight)))
     self.font(.system(size: size, weight: weight, design: design))
     }
 }

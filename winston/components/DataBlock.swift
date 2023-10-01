@@ -15,7 +15,7 @@ struct DataBlock: View {
     VStack(spacing: 4) {
       Image(systemName: icon)
         .fontSize(20, .semibold)
-        .foregroundColor(.blue)
+        .foregroundColor(Color.accentColor)
       VStack(spacing: 0) {
         Text(label)
           .fontSize(14)
@@ -26,6 +26,7 @@ struct DataBlock: View {
     }
     .padding(.all, 8)
     .frame(maxWidth: .infinity, maxHeight: .infinity)
-    .background(RR(20, Color.listBG))
+    .themedListRowBG()
+    .mask(RR(20, Color.black))
   }
 }

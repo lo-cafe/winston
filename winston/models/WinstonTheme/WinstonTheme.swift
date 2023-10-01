@@ -9,7 +9,7 @@ import Foundation
 import SwiftUI
 import Defaults
 
-struct WinstonTheme: Codable, Identifiable, Hashable, Defaults.Serializable {
+struct WinstonTheme: Codable, Identifiable, Hashable, Equatable, Defaults.Serializable {
   var metadata = WinstonThemeMeta()
   var id: String = UUID().uuidString
   var postLinks: SubPostsListTheme
@@ -62,6 +62,25 @@ enum CodableFontWeight: Codable, Hashable, CaseIterable {
 //      return .black
     }
   }
+  
+  var ut: UIFont.Weight {
+    switch self {
+    case .light:
+      return .light
+    case .regular:
+      return .regular
+    case .medium:
+      return .medium
+    case .semibold:
+      return .semibold
+    case .bold:
+      return .bold
+//    case .heavy:
+//      return .heavy
+//    case .black:
+//      return .black
+    }
+  }
 }
 
 struct ThemeText: Codable, Hashable {
@@ -93,6 +112,8 @@ enum ThemeObjLayoutType: String, Codable, Hashable {
 struct ThemePadding: Codable, Hashable {
   var horizontal: CGFloat
   var vertical: CGFloat
+  
+  func toSize() -> CGSize { CGSize(width: horizontal, height: vertical) }
 }
 
 struct ThemeColor: Codable, Hashable {

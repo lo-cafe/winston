@@ -76,7 +76,7 @@ struct CommentLinkMore: View {
             loadMoreLoading = true
           }
           Task(priority: .background) {
-            await comment.loadChildren(parent: parentElement, postFullname: postFullname)
+            await comment.loadChildren(parent: parentElement, postFullname: postFullname, avatarSize: selectedTheme.comments.theme.badge.avatar.size)
             await MainActor.run {
               doThisAfter(0.5) {
                 withAnimation(spring) {

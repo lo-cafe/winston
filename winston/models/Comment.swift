@@ -10,7 +10,7 @@ import Defaults
 import SwiftUI
 import CoreData
 
-typealias Comment = GenericRedditEntity<CommentData>
+typealias Comment = GenericRedditEntity<CommentData, AnyHashable>
 
 enum RandomErr: Error {
   case oops
@@ -32,7 +32,7 @@ enum CommentParentElement {
 
 extension Comment {
   static var prefix = "t1"
-  convenience init(data: T, api: RedditAPI, kind: String? = nil, parent: ObservableArray<GenericRedditEntity<T>>? = nil) {
+  convenience init(data: T, api: RedditAPI, kind: String? = nil, parent: ObservableArray<GenericRedditEntity<T, B>>? = nil) {
     self.init(data: data, api: api, typePrefix: "\(Comment.prefix)_")
     if let parent = parent {
       self.parentWinston = parent
@@ -54,7 +54,7 @@ extension Comment {
       case.second(let listing):
         self.childrenWinston.data = listing.data?.children?.compactMap { x in
           if let innerData = x.data {
-            let newComment = Comment(data: innerData, api: redditAPI, kind: x.kind, parent: self.childrenWinston)
+            let newComment = Comment(data: innerData, api: RedditAPI.shared, kind: x.kind, parent: self.childrenWinston)
             return newComment
           }
           return nil
@@ -107,7 +107,7 @@ extension Comment {
     }
   }
   
-  static func initMultiple(datas: [ListingChild<T>], api: RedditAPI, parent: ObservableArray<GenericRedditEntity<T>>? = nil) -> [Comment] {
+  static func initMultiple(datas: [ListingChild<T>], api: RedditAPI, parent: ObservableArray<GenericRedditEntity<T, B>>? = nil) -> [Comment] {
     let context = PersistenceController.shared.container.viewContext
     let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "CollapsedComment")
     if let results = (context.performAndWait { try? context.fetch(fetchRequest) as? [CollapsedComment] }) {
@@ -160,16 +160,16 @@ extension Comment {
     }
   }
   
-  func loadChildren(parent: CommentParentElement, postFullname: String) async {
+  func loadChildren(parent: CommentParentElement, postFullname: String, avatarSize: Double) async {
     if let kind = kind, kind == "more", let data = data, let count = data.count, let parent_id = data.parent_id, let childrenIDS = data.children {
       var actualID = id
-      if actualID.hasSuffix("-more") {
-        actualID.removeLast(5)
-      }
+//      if actualID.hasSuffix("-more") {
+//        actualID.removeLast(5)
+//      }
       
       let childrensLimit = 25
       
-      if let children = await redditAPI.fetchMoreReplies(comments: count > 0 ? Array(childrenIDS.prefix(childrensLimit)) : [String(parent_id.dropFirst(3))], moreID: actualID, postFullname: postFullname, dropFirst: count == 0) {
+      if let children = await RedditAPI.shared.fetchMoreReplies(comments: count > 0 ? Array(childrenIDS.prefix(childrensLimit)) : [String(parent_id.dropFirst(3))], moreID: actualID, postFullname: postFullname, dropFirst: count == 0) {
                 
         let parentID = data.parent_id ?? ""
 //        switch parent {
@@ -183,10 +183,10 @@ extension Comment {
 //          }
 //        }
         
-        let loadedComments: [Comment] = nestComments(children, parentID: parentID, api: redditAPI)
+        let loadedComments: [Comment] = nestComments(children, parentID: parentID, api: RedditAPI.shared)
 
         Task(priority: .background) { [loadedComments] in
-          await redditAPI.updateAvatarURLCacheFromComments(comments: loadedComments)
+          await RedditAPI.shared.updateAvatarURLCacheFromComments(comments: loadedComments, avatarSize: avatarSize)
         }
         await MainActor.run { [loadedComments] in
           switch parent {
@@ -196,14 +196,12 @@ extension Comment {
                 if (self.data?.children?.count ?? 0) <= 25 {
                   comment.childrenWinston.data.remove(at: index)
                 } else {
-                  print("momaq")
                   self.data?.children?.removeFirst(childrensLimit)
                   if let _ = self.data?.count {
                     self.data?.count! -= children.count
                   }
                 }
-                let final = loadedComments.dropFirst()
-                comment.childrenWinston.data.insert(contentsOf: final, at: index)
+                comment.childrenWinston.data.insert(contentsOf: loadedComments, at: index)
               }
             }
           case .post(let postArr):
@@ -228,7 +226,7 @@ extension Comment {
   
   func reply(_ text: String) async -> Bool {
     if let fullname = data?.name {
-      let result = await redditAPI.newReply(text, fullname) ?? false
+      let result = await RedditAPI.shared.newReply(text, fullname) ?? false
       if result, let data = data {
         var newComment = CommentData(id: UUID().uuidString)
         newComment.subreddit_id = data.subreddit_id
@@ -237,7 +235,7 @@ extension Comment {
         newComment.saved = false
         newComment.archived = false
         newComment.count = 0
-        newComment.author = redditAPI.me?.data?.name ?? ""
+        newComment.author = RedditAPI.shared.me?.data?.name ?? ""
         newComment.created_utc = nil
         newComment.send_replies = nil
         newComment.parent_id = id
@@ -283,7 +281,7 @@ extension Comment {
           self.data?.saved = !prev
         }
       }
-      let success = await redditAPI.save(!prev, id: fullname)
+      let success = await RedditAPI.shared.save(!prev, id: fullname)
       if !(success ?? false) {
         await MainActor.run {
           withAnimation {
@@ -308,7 +306,7 @@ extension Comment {
         data?.ups = oldUps + (action.boolVersion() == oldLikes ? oldLikes == nil ? 0 : -action.rawValue : action.rawValue * (oldLikes == nil ? 1 : 2))
       }
     }
-    let result = await redditAPI.vote(newAction, id: "\(typePrefix ?? "")\(id)")
+    let result = await RedditAPI.shared.vote(newAction, id: "\(typePrefix ?? "")\(id)")
     if result == nil || !result! {
       await MainActor.run { [oldLikes] in
         withAnimation {
@@ -328,7 +326,7 @@ extension Comment {
       //          self.data?.body = newBody
       //        }
       //      }
-      let result = await redditAPI.edit(fullname: name, newText: newBody)
+      let result = await RedditAPI.shared.edit(fullname: name, newText: newBody)
       if (result ?? false) {
         await MainActor.run {
           withAnimation {
@@ -350,7 +348,7 @@ extension Comment {
   
   func del() async -> Bool? {
     if let name = data?.name {
-      let result = await redditAPI.delete(fullname: name)
+      let result = await RedditAPI.shared.delete(fullname: name)
       if (result ?? false) {
         if let parentWinston = self.parentWinston {
           let newParent = parentWinston.data.filter { $0.id != id }
