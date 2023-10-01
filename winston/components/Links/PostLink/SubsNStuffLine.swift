@@ -21,7 +21,7 @@ struct SubsNStuffLine: View, Equatable {
   var over18: Bool
   
   var body: some View {
-    if (showSub || feedsAndSuch.contains(sub.id)) || over18 || post.data?.link_flair_text != nil {
+//    if (showSub || feedsAndSuch.contains(sub.id)) || over18 || post.data?.link_flair_text != nil {
       HStack(spacing: 0) {
         
         if showSub || feedsAndSuch.contains(sub.id) {
@@ -51,6 +51,6 @@ struct SubsNStuffLine: View, Equatable {
       }
       .padding(.horizontal, 2)
       .frame(height: SubsNStuffLine.height)
-    }
+//    }
   }
 }
