@@ -23,7 +23,7 @@ enum WinstonAppIcon: String, CaseIterable, Identifiable {
   var description: String {
     switch self {
     case .standard: return "Classic winston icon"
-    case .explode: return "One of Winstin's heroic moments."
+    case .explode: return "One of Winston's heroic moments."
     case .peak: return "Really, anyone?"
     case .side: return "Wow, look at him!"
     case .simpleEyesBlack: return "Why not right?"
