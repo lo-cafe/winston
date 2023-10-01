@@ -14,7 +14,7 @@ struct Onboarding6Auth: View {
   var appID: String
   @State private var loading = false
   @State private var error = false
-  @EnvironmentObject private var redditAPI: RedditAPI
+  
   @Environment(\.openURL) private var openURL
   var body: some View {
       VStack(spacing: 16) {
@@ -34,11 +34,11 @@ struct Onboarding6Auth: View {
           })
           MasterButton(icon: "flag.checkered", label: "Authorize API key", colorHoverEffect: .animated, textSize: 18, height: 48, fullWidth: true, cornerRadius: 16, action: {
             withAnimation {
-              redditAPI.loggedUser.apiAppID = appID.trimmingCharacters(in: .whitespaces)
-              redditAPI.loggedUser.apiAppSecret = appSecret.trimmingCharacters(in: .whitespaces)
+              RedditAPI.shared.loggedUser.apiAppID = appID.trimmingCharacters(in: .whitespaces)
+              RedditAPI.shared.loggedUser.apiAppSecret = appSecret.trimmingCharacters(in: .whitespaces)
               loading = true
             }
-            openURL(redditAPI.getAuthorizationCodeURL(appID))
+            openURL(RedditAPI.shared.getAuthorizationCodeURL(appID))
           })
         }
         .padding(.top, 32)
@@ -65,7 +65,7 @@ struct Onboarding6Auth: View {
           .frame(maxWidth: .infinity, maxHeight: .infinity)
       )
       .onOpenURL { url in
-        redditAPI.monitorAuthCallback(url) { success in
+        RedditAPI.shared.monitorAuthCallback(url) { success in
           if success {
             nextStep()
           } else {

@@ -37,7 +37,7 @@ struct WListButton<Content: View>: View {
             .foregroundColor(.primary)
         }
       }
-      .themedListRowBG(enablePadding: true)
+      .themedListRowBG(enablePadding: true, active: active)
       .contentShape(Rectangle())
     }
     .buttonStyle(WNavLinkButtonStyle(active: active))
@@ -66,6 +66,11 @@ struct WSListButton: View {
       action()
     } label: {
       if let icon = icon {
+//        HStack {
+//          Image(systemName: icon)
+//            .foregroundStyle(Color.blue)
+//          Text(label)
+//        }
         Label(label, systemImage: icon)
       } else {
         Text(label)
@@ -127,6 +132,6 @@ struct WNavLinkButtonStyle: ButtonStyle {
   var active = false
   func makeBody(configuration: Self.Configuration) -> some View {
     configuration.label
-      .overlay(Rectangle().fill(.primary.opacity(configuration.isPressed || active ? 0.15 : 0)))
+      .overlay(Rectangle().fill(.primary.opacity(configuration.isPressed || (!IPAD && active) ? 0.1 : 0)).animation(.default.speed(2), value: active))
   }
 }

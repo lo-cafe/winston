@@ -122,7 +122,7 @@ struct ChangeAuthAPIKey: View {
   @State var appSecret: String = ""
   @State var step = 1
   @State var loadingCallback = false
-  @EnvironmentObject var redditAPI: RedditAPI
+  
   
   var body: some View {
     ScrollView {
@@ -235,9 +235,9 @@ struct ChangeAuthAPIKey: View {
                 }
                 MasterButton(label: "Grant access", height: 44, fullWidth: true) {
                   dismissKeyboard()
-                  redditAPI.loggedUser.apiAppID = appID.trimmingCharacters(in: .whitespaces)
-                  redditAPI.loggedUser.apiAppSecret = appSecret.trimmingCharacters(in: .whitespaces)
-                  openURL(redditAPI.getAuthorizationCodeURL(appID))
+                  RedditAPI.shared.loggedUser.apiAppID = appID.trimmingCharacters(in: .whitespaces)
+                  RedditAPI.shared.loggedUser.apiAppSecret = appSecret.trimmingCharacters(in: .whitespaces)
+                  openURL(RedditAPI.shared.getAuthorizationCodeURL(appID))
                 }
               }
             }
@@ -257,7 +257,7 @@ struct ChangeAuthAPIKey: View {
             withAnimation(spring) {
               loadingCallback = true
             }
-            redditAPI.monitorAuthCallback(url) { success in
+            RedditAPI.shared.monitorAuthCallback(url) { success in
               withAnimation(spring) {
                 loadingCallback = false
                 if success {

@@ -10,7 +10,8 @@ import SwiftUI
 struct Me: View {
   var reset: Bool
   @StateObject var router: Router
-  @EnvironmentObject private var redditAPI: RedditAPI
+  @ObservedObject var redditAPI = RedditAPI.shared
+  
   @State private var loading = true
   var body: some View {
     NavigationStack(path: $router.path) {
@@ -25,7 +26,7 @@ struct Me: View {
               .frame(maxWidth: .infinity, minHeight: UIScreen.screenHeight - 200 )
               .onAppear {
                 Task(priority: .background) {
-                  await redditAPI.fetchMe(force: true)
+                  await RedditAPI.shared.fetchMe(force: true)
                 }
               }
           }

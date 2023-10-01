@@ -9,19 +9,12 @@ import Foundation
 import SwiftUI
 import YouTubePlayerKit
 
-
 struct PreviewLink: View {
   var url: URL
   var compact = false
-  @ObservedObject private var sharedCache = PreviewLinkCache.shared
-  
-  init(url: URL, compact: Bool = false) {
-    self.url = url
-    self.compact = compact
-    sharedCache.addKeyValue(key: url.absoluteString, url: url)
-  }
+  @ObservedObject private var cache = Caches.postsPreviewModels
   
   var body: some View {
-    PreviewLinkContent(compact: compact, viewModel: sharedCache[url.absoluteString]?.model ?? PreviewViewModel(url), url: url)
+    PreviewLinkContent(compact: compact, viewModel: cache.cache[url.absoluteString]?.data ?? PreviewModel(url), url: url)
   }
 }

@@ -29,7 +29,7 @@ enum UnseenType: Codable, Hashable {
   }
 }
 
-struct SubPostsListTheme: Codable, Hashable {
+struct SubPostsListTheme: Codable, Equatable, Hashable {
   var theme: PostLinkTheme
   var spacing: CGFloat
   var divider: LineTheme

@@ -9,6 +9,7 @@ import SwiftUI
 import Defaults
 import AVFoundation
 import AlertToast
+
 struct PostViewPayload: Hashable {
   let post: Post
   var postSelfAttr: AttributedString? = nil
@@ -21,7 +22,8 @@ struct PostView: View, Equatable {
     lhs.post.id == rhs.post.id && lhs.subreddit.id == rhs.subreddit.id
   }
   
-  var post: Post
+  @ObservedObject var post: Post
+  @ObservedObject private var cachesPostsAttrStr = Caches.postsAttrStr
   var selfAttr: AttributedString? = nil
   var subreddit: Subreddit
   var highlightID: String?
@@ -32,7 +34,7 @@ struct PostView: View, Equatable {
   @State private var hideElements = true
   @State private var sort: CommentSortOption = Defaults[.preferredCommentSort]
   //  @State private var sort: CommentSortOption = .confidence
-  @EnvironmentObject private var redditAPI: RedditAPI
+  
   @EnvironmentObject private var routerProxy: RouterProxy
   @State var update = false
   
@@ -42,7 +44,7 @@ struct PostView: View, Equatable {
     }
     if let result = await post.refreshPost(commentID: ignoreSpecificComment ? nil : highlightID, sort: sort, after: nil, subreddit: subreddit.data?.display_name ?? subreddit.id, full: full), let newComments = result.0 {
       Task(priority: .background) {
-        await redditAPI.updateAvatarURLCacheFromComments(comments: newComments)
+        await RedditAPI.shared.updateAvatarURLCacheFromComments(comments: newComments, avatarSize: selectedTheme.comments.theme.badge.avatar.size)
       }
     }
   }
@@ -57,7 +59,7 @@ struct PostView: View, Equatable {
       List {
         Group {
           Section {
-            PostContent(post: post, selfAttr: selfAttr, sub: subreddit, forceCollapse: forceCollapse)
+            PostContent(post: post, selfAttr: cachesPostsAttrStr.cache[post.id]?.data ?? selfAttr, sub: subreddit, forceCollapse: forceCollapse)
             //              .equatable()
             
             Text("Comments")
@@ -86,6 +88,7 @@ struct PostView: View, Equatable {
                 }
               }
             }
+            .listRowBackground(Color.primary.opacity(0.1))
           }
           
           Section {
@@ -104,6 +107,7 @@ struct PostView: View, Equatable {
       .environment(\.defaultMinListRowHeight, 1)
       .listStyle(.plain)
       .refreshable {
+        withAnimation { update.toggle() }
         await asyncFetch(true)
       }
       .overlay(
@@ -150,7 +154,7 @@ private struct Toolbar: View {
                 Text(opt.rawVal.value.capitalized)
                 Spacer()
                 Image(systemName: opt.rawVal.icon)
-                  .foregroundColor(.blue)
+                  .foregroundColor(Color.accentColor)
                   .fontSize(17, .bold)
               }
             }
@@ -158,7 +162,7 @@ private struct Toolbar: View {
         }
       } label: {
         Image(systemName: sort.rawVal.icon)
-          .foregroundColor(.blue)
+          .foregroundColor(Color.accentColor)
           .fontSize(17, .bold)
       }
       

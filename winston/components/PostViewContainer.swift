@@ -18,7 +18,7 @@ struct PostViewContainer: View {
   @StateObject var sub: Subreddit
   var highlightID: String?
     var body: some View {
-      PostView(post: post, subreddit: sub, highlightID: highlightID).equatable()
+      PostView(post: post, subreddit: sub, highlightID: highlightID)
     }
   
 }
