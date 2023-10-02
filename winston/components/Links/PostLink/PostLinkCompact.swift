@@ -69,7 +69,10 @@ struct PostLinkCompact: View {
         .zIndex(1)
         .frame(maxWidth: .infinity, alignment: .topLeading)
         
-        SubsNStuffLine(showSub: showSub, feedsAndSuch: feedsAndSuch, post: post, sub: sub, routerProxy: routerProxy, over18: over18)
+        if !showSubsAtTop {
+          SubsNStuffLine(showSub: showSub, feedsAndSuch: feedsAndSuch, post: post, sub: sub, routerProxy: routerProxy, over18: over18)
+        }
+        
       }
     }
   }

@@ -25,7 +25,7 @@ struct WinstonTheme: Codable, Identifiable, Hashable, Equatable, Defaults.Serial
   func duplicate() -> WinstonTheme {
     var copy = self
     copy.id = UUID().uuidString
-    copy.metadata.name = randomWord().capitalized
+    if copy.metadata.name == "Default" { copy.metadata.name = randomWord().capitalized }
     return copy
   }
   
