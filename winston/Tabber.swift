@@ -167,7 +167,7 @@ struct Tabber: View {
         }
       
     }
-    .replyModalPresenter()
+    .replyModalPresenter(routerProxy: RouterProxy(payload[activeTab]!.router))
     .overlay(
       GeometryReader { geo in
         GlobalLoaderView()

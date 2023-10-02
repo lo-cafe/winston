@@ -1,12 +1,4 @@
-BIG UPDATE! So probably big bugs as well.
---------- IF YOU'RE HAVING CRASHES, TRY REINTALLING THE APP ---------
-I've done too much and I'm exausted, so here's a short list of the zillion changes I made
-
-- Early preview of iPad version (still buggy yet)
-- Performance improvements, many of them (I hope so)
-- Themes app integration improved
-- Added change icon option
-- Added chunk loading option
-- Fixed many bugs, too many to count
-
-And a zillion other things.
+- Fixed crash when replying
+- Fixed crash when importing new themes
+- Fixed crash when long pressing on comment
+-

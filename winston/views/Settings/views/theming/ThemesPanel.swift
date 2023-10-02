@@ -111,7 +111,7 @@ struct ThemesPanel: View {
         themesPresets.append(theme)
       }
     } catch {
-      print("Failed to unzip file with error: \(error.localizedDescription)")
+      print("Failed to unzip file with error: \(error)")
     }
   }
 }

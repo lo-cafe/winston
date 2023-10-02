@@ -23,8 +23,7 @@ struct CommentLinkFull: View {
   var body: some View {
     let curveColor = selectedTheme.comments.theme.indentColor.cs(cs).color()
     let cardedCommentsInnerHPadding = selectedTheme.comments.theme.innerPadding.horizontal
-    let preferenceShowCommentsCards = selectedTheme.comments.theme.type == .card
-    let horPad = preferenceShowCommentsCards ? cardedCommentsInnerHPadding : 0
+    let horPad = cardedCommentsInnerHPadding
     if let data = comment.data {
       HStack {
         if data.depth != 0 && indentLines != 0 {

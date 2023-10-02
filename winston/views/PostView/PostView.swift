@@ -54,7 +54,7 @@ struct PostView: View, Equatable {
   }
   
   var body: some View {
-    let commentsHPad = selectedTheme.comments.theme.type == .card ? selectedTheme.comments.theme.outerHPadding : selectedTheme.comments.theme.innerPadding.horizontal
+    let commentsHPad = selectedTheme.comments.theme.outerHPadding > 0 ? selectedTheme.comments.theme.outerHPadding : selectedTheme.comments.theme.innerPadding.horizontal
     ScrollViewReader { proxy in
       List {
         Group {
