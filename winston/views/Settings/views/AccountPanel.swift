@@ -10,7 +10,7 @@ import Defaults
 
 struct AccountPanel: View {
   @Default(.redditAPIUserAgent) var redditAPIUserAgent
-  @EnvironmentObject var redditAPI: RedditAPI
+  
   @State private var isPresentingConfirm: Bool = false
   
   @Environment(\.useTheme) private var theme
@@ -30,14 +30,14 @@ struct AccountPanel: View {
         }
         .themedListRowBG(enablePadding: true)
         
-        if let accessToken = redditAPI.loggedUser.accessToken {
+        if let accessToken = RedditAPI.shared.loggedUser.accessToken {
           WSListButton("Copy Current Access Token", icon: "clipboard") {
             UIPasteboard.general.string = accessToken
           }
           
           WSListButton("Refresh Access Token", icon: "arrow.clockwise") {
             Task(priority: .background) {
-              await redditAPI.refreshToken(true)
+              await RedditAPI.shared.refreshToken(true)
             }
           }
         }
@@ -61,12 +61,12 @@ struct AccountPanel: View {
         .confirmationDialog("Are you sure you wanna logoff?", isPresented: $isPresentingConfirm, actions: {
           Button("Reset winston", role: .destructive) {
             resetApp()
-            redditAPI.loggedUser.accessToken = nil
-            redditAPI.loggedUser.refreshToken = nil
-            redditAPI.loggedUser.expiration = nil
-            redditAPI.loggedUser.lastRefresh = nil
-            redditAPI.loggedUser.apiAppID = nil
-            redditAPI.loggedUser.apiAppSecret = nil
+            RedditAPI.shared.loggedUser.accessToken = nil
+            RedditAPI.shared.loggedUser.refreshToken = nil
+            RedditAPI.shared.loggedUser.expiration = nil
+            RedditAPI.shared.loggedUser.lastRefresh = nil
+            RedditAPI.shared.loggedUser.apiAppID = nil
+            RedditAPI.shared.loggedUser.apiAppSecret = nil
           }
         }, message: { Text("This will clear everything in the app (your Reddit account is safe).") })
       }

@@ -32,7 +32,8 @@ struct SubredditBaseIcon: View, Equatable {
   
   var body: some View {
     if let icon = iconURLStr, !icon.isEmpty, let iconURL = URL(string: icon) {
-      LazyImage(url: iconURL, transaction: Transaction(animation: .default)) { state in
+//      LazyImage(url: iconURL, transaction: Transaction(animation: .default)) { state in
+      LazyImage(url: iconURL) { state in
         if let image = state.image {
           image.resizable()
         } else if state.error != nil {
@@ -46,6 +47,7 @@ struct SubredditBaseIcon: View, Equatable {
             .frame(maxWidth: 50, maxHeight: 50)
         }
       }
+      .processors([.resize(width: size)])
 //      .pipeline(SubredditBaseIcon.pipeline)
       .scaledToFill()
       .frame(width: size, height: size)
@@ -61,14 +63,17 @@ struct SubredditBaseIcon: View, Equatable {
   }
 }
 
-struct SubredditIcon: View {
+struct SubredditIcon: View, Equatable {
+  static func == (lhs: SubredditIcon, rhs: SubredditIcon) -> Bool {
+    lhs.data.community_icon == rhs.data.community_icon && lhs.data.icon_img == rhs.data.icon_img && lhs.data.display_name == rhs.data.display_name && lhs.data.id == rhs.data.id && lhs.data.primary_color == rhs.data.primary_color && lhs.data.key_color == rhs.data.key_color
+  }
   var data: SubredditData
   var size: CGFloat = 30
   var body: some View {
     let communityIcon = data.community_icon?.split(separator: "?") ?? []
     let icon = data.icon_img == "" || data.icon_img == nil ? communityIcon.count > 0 ? String(communityIcon[0]) : "" : data.icon_img
     SubredditBaseIcon(name: data.display_name ?? data.id, iconURLStr: icon == "" ? nil : icon, id: data.id, size: size, color: firstNonEmptyString(data.key_color, data.primary_color, "#828282") ?? "")
-      .equatable()
+//      .equatable()
   }
 }
 

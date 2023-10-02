@@ -20,11 +20,9 @@ extension RedditAPI {
   func hidePost(_ hide: Bool, fullnames: [String]) async -> () {
     HideDebouncer.shared.names += fullnames
     if !HideDebouncer.shared.workItem.isNil { return }
-    print("kmkm")
     HideDebouncer.shared.workItem = DispatchWorkItem {
       HideDebouncer.shared.workItem = nil
       let names = HideDebouncer.shared.names
-      print("kmkm", names)
       HideDebouncer.shared.names.removeAll()
       Task(priority: .background) {
         await self.refreshToken()
@@ -40,7 +38,6 @@ extension RedditAPI {
           let result = await dataTask.result
           switch result {
           case .success:
-//            print("foi")
             //          return true
             break
           case .failure:

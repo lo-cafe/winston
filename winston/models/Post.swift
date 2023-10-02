@@ -8,23 +8,52 @@
 import Foundation
 import Defaults
 import SwiftUI
+import Nuke
 import CoreData
+import YouTubePlayerKit
 
-typealias Post = GenericRedditEntity<PostData>
+typealias Post = GenericRedditEntity<PostData, PostWinstonData>
 
 extension Post {
+  static var prefetcher = ImagePrefetcher(pipeline: ImagePipeline.shared, destination: .memoryCache, maxConcurrentRequestCount: 5)
   static var prefix = "t3"
-  convenience init(data: T, api: RedditAPI) {
+  
+  convenience init(data: T, api: RedditAPI, fetchSub: Bool = false, contentWidth: Double = UIScreen.screenWidth, secondary: Bool = false, imgPriority: ImageRequest.Priority = .low) {
     self.init(data: data, api: api, typePrefix: "\(Post.prefix)_")
-    
+    self.winstonData = PostWinstonData()
+    self.winstonData?.permaURL = URL(string: "https://reddit.com\(data.permalink.escape.urlEncoded)")
+    let extractedMedia = mediaExtractor(contentWidth: contentWidth, data)
+    self.winstonData?.extractedMedia = extractedMedia
+    self.winstonData?.postDimensions = getPostDimensions(post: self, columnWidth: contentWidth, secondary: secondary)
+    if fetchSub {
+      self.winstonData?.subreddit = Subreddit(id: data.subreddit, api: RedditAPI.shared)
+    }
+    let compact = Defaults[.compactMode]
+    switch extractedMedia {
+    case .image(let url):
+      let processors: [ImageProcessing] = contentWidth == 0 ? [] : [.resize(width: compact ? scaledCompactModeThumbSize() : contentWidth)]
+      self.winstonData?.mediaImageRequest = [ImageRequest(url: url.url, processors: processors)]
+    case .gallery(let imgs):
+      let halfWidthProcessor: [ImageProcessing] = contentWidth == 0 ? [] : [.resize(width: compact ? scaledCompactModeThumbSize() : ((contentWidth - 8) / 2))]
+      let fullWidthProcessor: [ImageProcessing] = contentWidth == 0 ? [] : [.resize(width: compact ? scaledCompactModeThumbSize() : contentWidth)]
+        var requests: [ImageRequest] = []
+        requests.append(ImageRequest(url: imgs[0].url, processors: halfWidthProcessor))
+        requests.append(ImageRequest(url: imgs[1].url, processors: halfWidthProcessor))
+      if imgs.count >= 3 { requests.append(ImageRequest(url: imgs[2].url, processors: imgs.count > 3 ? halfWidthProcessor : fullWidthProcessor)) }
+        requests += imgs.dropFirst(3).map { ImageRequest(url: $0.url, priority: .low) }
+        self.winstonData?.mediaImageRequest = requests
+    case .link(let url):
+      Caches.postsPreviewModels.addKeyValue(key: url.absoluteString, data: { PreviewModel(url) })
+      break
+    default:
+      break
+    }
+
     if let body = self.data?.selftext {
-      let theme = Defaults[.themesPresets].first(where: { $0.id == Defaults[.selectedThemeID] }) ?? defaultTheme
-      let newWinstonBodyAttr = stringToAttr(body, fontSize: theme.posts.bodyText.size)
-      let encoder = JSONEncoder()
-      if let jsonData = try? encoder.encode(newWinstonBodyAttr) {
-        let json = String(decoding: jsonData, as: UTF8.self)
-        self.data?.winstonSelftextAttrEncoded = json
-      }
+      Caches.postsAttrStr.addKeyValue(key: data.id, data: {
+        let theme = Defaults[.themesPresets].first(where: { $0.id == Defaults[.selectedThemeID] }) ?? defaultTheme
+        return stringToAttr(body, fontSize: theme.posts.bodyText.size)
+      })
     }
   }
   
@@ -32,27 +61,39 @@ extension Post {
     self.init(id: id, api: api, typePrefix: "\(Post.prefix)_")
   }
   
-  static func initMultiple(datas: [T], api: RedditAPI) -> [Post] {
+  static func initMultiple(datas: [T], api: RedditAPI, fetchSubs: Bool = false, contentWidth: CGFloat = 0) -> [Post] {
     let context = PersistenceController.shared.container.newBackgroundContext()
     let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "SeenPost")
       
     if let results = (context.performAndWait { try? context.fetch(fetchRequest) as? [SeenPost] }) {
-      return datas.map { data in
+      let posts = Array(datas.enumerated()).map { i, data in
         return context.performAndWait {
           let isSeen = results.contains(where: { $0.postID == data.id })
-          let newPost = Post.init(data: data, api: api)
+          let priorityIMap: [Int:ImageRequest.Priority] = [
+            4: .veryHigh,
+            9: .high,
+            14: .normal,
+            19: .low
+          ]
+          let priority = i > 19 ? .veryLow : priorityIMap[priorityIMap.keys.first { $0 > i } ?? 19]!
+          let newPost = Post.init(data: data, api: api, fetchSub: fetchSubs, contentWidth: contentWidth, imgPriority: i > 7 ? .veryLow : priority)
           newPost.data?.winstonSeen = isSeen
           return newPost
         }
       }
+      
+      let imgRequests = posts.reduce(into: []) { prev, curr in
+        prev = prev + (curr.winstonData?.mediaImageRequest ?? [])
+      }
+      Post.prefetcher.startPrefetching(with: imgRequests)
+      return posts
     }
     return []
   }
   
   func toggleSeen(_ seen: Bool? = nil, optimistic: Bool = false) async -> Void {
     let context = PersistenceController.shared.container.viewContext
-    
-    if self.data?.winstonSeen == seen { return }
+    if (self.data?.winstonSeen ?? false) == seen { return }
     if optimistic {
       let prev = self.data?.winstonSeen ?? false
       let new = seen == nil ? !prev : seen
@@ -108,7 +149,7 @@ extension Post {
   
   func reply(_ text: String, updateComments: (() -> ())? = nil) async -> Bool {
     if let fullname = data?.name {
-      let result = await redditAPI.newReply(text, fullname) ?? false
+      let result = await RedditAPI.shared.newReply(text, fullname) ?? false
       if result {
         if let updateComments = updateComments {
           await MainActor.run {
@@ -126,7 +167,7 @@ extension Post {
         //            id: UUID().uuidString,
         //            archived: false,
         //            count: 0,
-        //            author: redditAPI.me?.data?.name ?? "",
+        //            author: RedditAPI.shared.me?.data?.name ?? "",
         //            created_utc: nil,
         //            send_replies: nil,
         //            parent_id: id,
@@ -165,7 +206,7 @@ extension Post {
   }
   
   func refreshPost(commentID: String? = nil, sort: CommentSortOption = .confidence, after: String? = nil, subreddit: String? = nil, full: Bool = true) async -> ([Comment]?, String?)? {
-    if let subreddit = data?.subreddit ?? subreddit, let response = await redditAPI.fetchPost(subreddit: subreddit, postID: id, commentID: commentID, sort: sort) {
+    if let subreddit = data?.subreddit ?? subreddit, let response = await RedditAPI.shared.fetchPost(subreddit: subreddit, postID: id, commentID: commentID, sort: sort) {
       if let post = response[0] {
         switch post {
         case .first(let actualData):
@@ -187,7 +228,7 @@ extension Post {
           if let data = actualData.data {
             if let dataArr = data.children?.compactMap({ $0 }) {
               return (
-                Comment.initMultiple(datas: dataArr, api: redditAPI),
+                Comment.initMultiple(datas: dataArr, api: RedditAPI.shared),
                 data.after
               )
             }
@@ -207,7 +248,7 @@ extension Post {
           self.data?.saved = !prev
         }
       }
-      let success = await redditAPI.save(!prev, id: data.name)
+      let success = await RedditAPI.shared.save(!prev, id: data.name)
       if !(success ?? false) {
         await MainActor.run {
           withAnimation {
@@ -230,7 +271,7 @@ extension Post {
       data?.likes = newAction.boolVersion()
       data?.ups = oldUps + (action.boolVersion() == oldLikes ? oldLikes == nil ? 0 : -action.rawValue : action.rawValue * (oldLikes == nil ? 1 : 2))
     }
-    let result = await redditAPI.vote(newAction, id: "\(typePrefix ?? "")\(id)")
+    let result = await RedditAPI.shared.vote(newAction, id: "\(typePrefix ?? "")\(id)")
     if result == nil || !result! {
       await MainActor.run {
         data?.likes = oldLikes
@@ -248,15 +289,31 @@ extension Post {
       }
     }
     if let name = data?.name {
-      await redditAPI.hidePost(hide, fullnames: [name])
+      await RedditAPI.shared.hidePost(hide, fullnames: [name])
     }
   }
 }
 
-struct PostData: GenericRedditEntityDataType, Defaults.Serializable {
+class PostWinstonData: Hashable {
+  static func == (lhs: PostWinstonData, rhs: PostWinstonData) -> Bool { lhs.postDimensions == rhs.postDimensions }
+  
+  var permaURL: URL? = nil
+  var extractedMedia: MediaExtractedType? = nil
+  var subreddit: Subreddit?
+  var mediaImageRequest: [ImageRequest] = []
+  var postDimensions: PostDimensions?
+  
+  func hash(into hasher: inout Hasher) {
+    hasher.combine(permaURL)
+    hasher.combine(extractedMedia)
+    hasher.combine(subreddit)
+    hasher.combine(postDimensions)
+  }
+}
+
+struct PostData: GenericRedditEntityDataType {
   let subreddit: String
   let selftext: String
-  var winstonSelftextAttrEncoded: String? = nil
   var author_fullname: String? = nil
   var saved: Bool
   let gilded: Int

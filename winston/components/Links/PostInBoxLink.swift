@@ -11,29 +11,31 @@ import Defaults
 
 struct PostInBoxLink: View {
   @EnvironmentObject private var routerProxy: RouterProxy
+  @Binding var selectedSub: FirstSelectable?
   @Default(.postsInBox) private var postsInBox
-  @EnvironmentObject private var redditAPI: RedditAPI
-  var post: PostInBox
+  
+  var postInBox: PostInBox
+  @StateObject var post: Post
+  @StateObject var sub: Subreddit
   @State private var dragging = false
   @State private var deleting = false
   @State private var offsetY: CGFloat?
-  @StateObject var attrStrLoader = AttributedStringLoader()
   var body: some View {
     //    Button {
     //      openPost(post)
     //    } label: {
     VStack(alignment: .leading, spacing: 4) {
       HStack {
-        SubredditBaseIcon(name: post.subredditName, iconURLStr: post.subredditIconURL, id: post.id, size: 20, color: post.subColor)
-          .equatable()
-        Text(post.subredditName)
+        SubredditBaseIcon(name: postInBox.subredditName, iconURLStr: postInBox.subredditIconURL, id: postInBox.id, size: 20, color: postInBox.subColor)
+//          .equatable()
+        Text(postInBox.subredditName)
           .fontSize(13,.medium)
       }
-      Text(post.title.escape)
+      Text(postInBox.title.escape)
         .lineLimit(2)
         .fontSize(16, .semibold)
         .fixedSize(horizontal: false, vertical: true)
-        .onAppear { if let selfBody = post.body { attrStrLoader.load(str: selfBody) } }
+        .onAppear { if let selfBody = postInBox.body { decodePostToCache(id: postInBox.id, str: selfBody) } }
       
       Spacer()
         .frame(maxHeight: .infinity)
@@ -44,16 +46,15 @@ struct PostInBoxLink: View {
         HStack(alignment: .center, spacing: 6) {
           HStack(alignment: .center, spacing: 2) {
             Image(systemName: "message.fill")
-            Text(formatBigNumber(post.commentsCount ?? 0))
+            Text(formatBigNumber(postInBox.commentsCount ?? 0))
               .contentTransition(.numericText())
           }
           
-          if let createdAt = post.createdAt {
+          if let createdAt = postInBox.createdAt {
             HStack(alignment: .center, spacing: 2) {
               Image(systemName: "hourglass.bottomhalf.filled")
               Text(timeSince(Int(createdAt)))
-                .transition(.asymmetric(insertion: .offset(y: 16), removal: .offset(y: -16)).combined(with: .opacity))
-                .id(createdAt)
+                .contentTransition(.numericText())
             }
           }
         }
@@ -67,11 +68,11 @@ struct PostInBoxLink: View {
           Image(systemName: "arrow.up")
             .foregroundColor(.orange)
           
-          Text(formatBigNumber(post.score ?? 0))
-            .foregroundColor((post.score ?? 0) > 0 ? .orange : post.score == 0 ? .gray : .blue)
+          Text(formatBigNumber(postInBox.score ?? 0))
+            .foregroundColor((postInBox.score ?? 0) > 0 ? .orange : postInBox.score == 0 ? .gray : .blue)
             .fontSize(13, .semibold)
             .transition(.asymmetric(insertion: .offset(y: 16), removal: .offset(y: -16)).combined(with: .opacity))
-            .id(post.score)
+//            .id(post.score)
           
           Image(systemName: "arrow.down")
             .foregroundColor(.gray)
@@ -87,16 +88,16 @@ struct PostInBoxLink: View {
     .padding(.vertical, 11)
     .frame(width: (UIScreen.screenWidth / 1.75), height: 120, alignment: .topLeading)
     .background(
-      post.img != nil && post.img != ""
+      postInBox.img != nil && postInBox.img != ""
       
-      ? URLImage(url: URL(string: post.img!)!)
+      ? URLImage(url: URL(string: postInBox.img!)!)
         .scaledToFill()
         .opacity(0.15)
         .frame(width: (UIScreen.screenWidth / 1.75), height: 120)
         .clipped()
       : nil
     )
-    .background(RR(20, Color.listBG))
+    .themedListRowBG()
     .mask(RR(20, Color.listBG))
     .offset(y: offsetY ?? 0)
     .scaleEffect(dragging ? 0.975 : 1)
@@ -109,7 +110,7 @@ struct PostInBoxLink: View {
         .scaleEffect(deleting ? 1 : 0.85)
     )
     .onTapGesture {
-      routerProxy.router.path.append(PostViewPayload(post: Post(id: post.id, api: redditAPI), postSelfAttr: attrStrLoader.data, sub: Subreddit(id: post.subredditName, api: redditAPI)))
+      selectedSub = .post(PostViewPayload(post: post, postSelfAttr: nil, sub: sub))
     }
     .gesture(
       LongPressGesture(minimumDuration: 0.5, maximumDistance: 10)
@@ -166,14 +167,17 @@ struct PostInBoxLink: View {
               if predictedEnd > 300 || (endPos > 70 && predictedEnd > 0) { endingY = 300 }
               if predictedEnd < -300 || (endPos < 70 && predictedEnd < 0) { endingY = -300 }
             }
+            
+            let newPostsInBox = postsInBox.filter({ x in
+              x.id != post.id
+            })
+            
             withAnimation(spring) {
               deleting = false
               dragging = false
               offsetY = endingY
               if endingY != 0 {
-                postsInBox = postsInBox.filter({ x in
-                  x.id != post.id
-                })
+                postsInBox = newPostsInBox
               }
             }
           }

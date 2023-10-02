@@ -10,7 +10,7 @@ import Defaults
 //import SceneKit
 
 enum SettingsPages {
-  case behavior, appearance, account, about, commentSwipe, postSwipe, accessibility, faq, general, postFontSettings, themes, filteredSubreddits
+  case behavior, appearance, account, about, commentSwipe, postSwipe, accessibility, faq, general, postFontSettings, themes, filteredSubreddits, appIcon
 }
 
 struct Settings: View {
@@ -67,7 +67,7 @@ struct Settings: View {
                   Image("jar")
                     .resizable()
                     .scaledToFit()
-                    .frame(width: 28, height: 20)
+                    .frame(width: 28, height: 32)
                     .padding(.trailing, 9)
                     .foregroundStyle(Color.accentColor)
                   Text("Tip jar")
@@ -108,6 +108,8 @@ struct Settings: View {
               FAQPanel()
             case .themes:
               ThemesPanel()
+            case .appIcon:
+              AppIconSetting()
             }
           }
           .environmentObject(router)

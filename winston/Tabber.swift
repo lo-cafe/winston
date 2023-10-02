@@ -47,7 +47,7 @@ struct Tabber: View {
   @ObservedObject var tempGlobalState = TempGlobalState.shared
   @ObservedObject var errorAlert = Oops.shared
   @State var activeTab = TabIdentifier.posts
-  @EnvironmentObject var redditAPI: RedditAPI
+  
   @State var credModalOpen = false
 
 //  @State var tabBarHeight: CGFloat?
@@ -55,7 +55,7 @@ struct Tabber: View {
   @StateObject private var mePayload = TabPayload("meRouter")
   @StateObject private var postsPayload = TabPayload("postsRouter")
   @StateObject private var searchPayload = TabPayload("searchRouter")
-  @State private var settingsPayload = TabPayload("settingsRouter")
+  @StateObject private var settingsPayload = TabPayload("settingsRouter")
   @Environment(\.useTheme) private var currentTheme
   @Environment(\.colorScheme) private var colorScheme
   @Default(.showUsernameInTabBar) private var showUsernameInTabBar
@@ -134,7 +134,7 @@ struct Tabber: View {
         .tabItem {
           VStack {
             Image(systemName: "person.fill")
-            if showUsernameInTabBar, let me = redditAPI.me, let data = me.data {
+            if showUsernameInTabBar, let me = RedditAPI.shared.me, let data = me.data {
               Text(data.name)
             } else {
               Text("Me")
@@ -215,14 +215,14 @@ struct Tabber: View {
         Defaults[.multis] = []
         Defaults[.subreddits] = []
       }
-      Task(priority: .background) { await updatePostsInBox(redditAPI) }
-      if redditAPI.loggedUser.apiAppID == nil || redditAPI.loggedUser.apiAppSecret == nil {
+      Task(priority: .background) { await updatePostsInBox(RedditAPI.shared) }
+      if RedditAPI.shared.loggedUser.apiAppID == nil || RedditAPI.shared.loggedUser.apiAppSecret == nil {
         withAnimation(spring) {
           credModalOpen = true
         }
-      } else if redditAPI.loggedUser.accessToken != nil && redditAPI.loggedUser.refreshToken != nil {
+      } else if RedditAPI.shared.loggedUser.accessToken != nil && RedditAPI.shared.loggedUser.refreshToken != nil {
         Task(priority: .background) {
-          await redditAPI.fetchMe(force: true)
+          await RedditAPI.shared.fetchMe(force: true)
         }
       }
     }
@@ -232,7 +232,7 @@ struct Tabber: View {
 //    .onChange(of: currentTheme.general.navPanelBG, perform: { val in
 //      Tabber.updateTabAndNavBar(tabTheme: currentTheme.general.tabBarBG, navTheme: val, colorScheme)
 //    })
-    .onChange(of: redditAPI.loggedUser) { user in
+    .onChange(of: RedditAPI.shared.loggedUser) { user in
       if user.apiAppID == nil || user.apiAppSecret == nil {
         withAnimation(spring) {
           credModalOpen = true

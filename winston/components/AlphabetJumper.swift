@@ -56,6 +56,6 @@ struct AlphabetJumper: View {
     )
     .frame(height: UIScreen.screenHeight, alignment: .trailing)
     .ignoresSafeArea()
-    .foregroundColor(.blue)
+    .foregroundStyle(Color.accentColor)
   }
 }

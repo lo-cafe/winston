@@ -87,8 +87,7 @@ struct CommentLinkContent: View {
           }
           HStack(spacing: 8) {
             if let author = data.author, let created = data.created {
-              Badge(usernameColor: (post?.data?.author ?? "") == author ? Color.green : nil, author: author, fullname: data.author_fullname, created: created, avatarURL: avatarsURL?[data.author_fullname!], theme: theme.theme.badge)
-                .equatable()
+              BadgeComment(comment: comment, usernameColor: (post?.data?.author ?? "") == author ? Color.green : nil, avatarURL: avatarsURL?[data.author_fullname!], theme: theme.theme.badge)
             }
             
             Spacer()
@@ -169,7 +168,7 @@ struct CommentLinkContent: View {
         .padding(.horizontal, horPad)
         .frame(height: max((theme.theme.badge.authorText.size + theme.theme.badge.statsText.size + 2), theme.theme.badge.avatar.size) + (data.depth != 0 ? theme.theme.innerPadding.vertical + theme.theme.repliesSpacing : 0), alignment: .leading)
         .mask(Color.listBG)
-        .background(Color.blue.opacity(highlight ? 0.2 : 0))
+        .background(Color.accentColor.opacity(highlight ? 0.2 : 0))
         .background(showReplies ? theme.theme.bg.cs(cs).color() : .clear)
         .onAppear {
           let newCommentSwipeActions = Defaults[.commentSwipeActions]
@@ -263,7 +262,7 @@ struct CommentLinkContent: View {
 //          .padding(.horizontal, preferenceShowCommentsCards ? 13 : 0)
           .padding(.horizontal, horPad)
           .mask(Color.black.padding(.top, -(data.depth != 0 ? 42 : 30)).padding(.bottom, -8))
-          .background(Color.blue.opacity(highlight ? 0.2 : 0))
+          .background(Color.accentColor.opacity(highlight ? 0.2 : 0))
           .background(showReplies ? theme.theme.bg.cs(cs).color() : .clear)
           .contextMenu {
             if !selectable && forcedBodySize == nil {

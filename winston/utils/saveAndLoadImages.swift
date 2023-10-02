@@ -34,7 +34,7 @@ func saveImage(image: UIImage) -> String? {
   if FileManager.default.fileExists(atPath: fileURL.path) {
     do {
       try FileManager.default.removeItem(atPath: fileURL.path)
-      print("Removed old image")
+//      print("Removed old image")
     } catch let removeError {
       print("couldn't remove file at path", removeError)
     }
