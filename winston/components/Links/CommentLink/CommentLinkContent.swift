@@ -118,6 +118,7 @@ struct CommentLinkContent: View {
               HStack(alignment: .center, spacing: 4) {
                 Image(systemName: "arrow.up")
                   .foregroundColor(data.likes != nil && data.likes! ? .orange : .gray)
+                  .contentShape(Rectangle())
                   .onTapGesture {
                       Task { _ = await comment.vote(action: .up) }
                   }
@@ -132,6 +133,7 @@ struct CommentLinkContent: View {
 
                 Image(systemName: "arrow.down")
                   .foregroundColor(data.likes != nil && !data.likes! ? .blue : .gray)
+                  .contentShape(Rectangle())
                   .onTapGesture {
                       Task { _ = await comment.vote(action: .down) }
                   }
