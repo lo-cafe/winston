@@ -32,13 +32,12 @@ struct LiveTextInteraction: UIViewRepresentable {
     Task {
       let configuration = ImageAnalyzer.Configuration([.text, .machineReadableCode, .visualLookUp])
       do {
-        let analysis = try await analyzer.analyze(imageView.image!, configuration: configuration)
-        interaction.preferredInteractionTypes = .automatic
-        interaction.isSupplementaryInterfaceHidden = false
-        interaction.analysis = analysis;
-          
-      } catch {
-        print(error)
+        let analysis = try? await analyzer.analyze(imageView.image!, configuration: configuration)
+          if let analysis {
+            interaction.preferredInteractionTypes = .automatic
+            interaction.isSupplementaryInterfaceHidden = false
+            interaction.analysis = analysis;
+          }
       }
       
     }
@@ -59,8 +58,6 @@ struct ZoomableLiveTextInteraction: UIViewRepresentable {
       return imageView
     }
     imageView.image = image
-    imageView.addInteraction(interaction)
-    imageView.clipsToBounds = true // Clip to bounds to ensure the image doesn't overflow
     imageView.addInteraction(interaction)
     return imageView
   }
@@ -89,4 +86,3 @@ class LiveTextImageView: UIImageView {
   }
   
 }
-
