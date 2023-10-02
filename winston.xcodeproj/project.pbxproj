@@ -17,6 +17,7 @@
 		659FDEA82A87798300103414 /* VoteButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 659FDEA72A87798300103414 /* VoteButton.swift */; };
 		65AA535D2A8BB27900275299 /* FAQPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65AA535C2A8BB27900275299 /* FAQPanel.swift */; };
 		65D265412ABEC6FF009E01F9 /* urlCleaner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65D265402ABEC6FF009E01F9 /* urlCleaner.swift */; };
+		EC051C472ACAF2DC00E9D9ED /* themeFileIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = EC051C462ACAF2DC00E9D9ED /* themeFileIcon.png */; };
 		EC082F252A65FB4300BA2727 /* MeasureOnce.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC082F242A65FB4300BA2727 /* MeasureOnce.swift */; };
 		EC082F272A66132600BA2727 /* CommentLinkMore.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC082F262A66132600BA2727 /* CommentLinkMore.swift */; };
 		EC082F292A66134C00BA2727 /* CommentLinkFull.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC082F282A66134C00BA2727 /* CommentLinkFull.swift */; };
@@ -191,12 +192,12 @@
 		EC91C8542AB9601000F2AD30 /* TabBarOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC91C8532AB9601000F2AD30 /* TabBarOverlay.swift */; };
 		EC91C8562AB9838D00F2AD30 /* CommonListsThemingPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC91C8552AB9838D00F2AD30 /* CommonListsThemingPanel.swift */; };
 		EC91C8582AB9884F00F2AD30 /* GeneralTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC91C8572AB9884F00F2AD30 /* GeneralTheme.swift */; };
-		EC91C85A2AB98D8F00F2AD30 /* defaultFlatTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC91C8592AB98D8F00F2AD30 /* defaultFlatTheme.swift */; };
 		EC91C85C2AB99E5600F2AD30 /* FilteredSubredditsSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC91C85B2AB99E5600F2AD30 /* FilteredSubredditsSettings.swift */; };
 		EC9269E82A514AA6003F33B1 /* DownAttributedString.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC9269E72A514AA6003F33B1 /* DownAttributedString.swift */; };
 		EC9269F22A51A732003F33B1 /* HighlightedTextEditor in Frameworks */ = {isa = PBXBuildFile; productRef = EC9269F12A51A732003F33B1 /* HighlightedTextEditor */; };
 		EC9269F72A52B02E003F33B1 /* Shrinkable.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC9269F62A52B02E003F33B1 /* Shrinkable.swift */; };
 		EC92FBDE2A589BE200391D1D /* SquircleUIKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC92FBDD2A589BE200391D1D /* SquircleUIKit.swift */; };
+		EC97F0282ACB006A001814A6 /* importTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC97F0272ACB006A001814A6 /* importTheme.swift */; };
 		EC9BB1BB2A89E98D0070CD97 /* hidePost.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC9BB1BA2A89E98D0070CD97 /* hidePost.swift */; };
 		EC9BB1BD2A8ACD300070CD97 /* AlphabetJumper.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC9BB1BC2A8ACD300070CD97 /* AlphabetJumper.swift */; };
 		EC9BB1C02A8B05AA0070CD97 /* Nuke in Frameworks */ = {isa = PBXBuildFile; productRef = EC9BB1BF2A8B05AA0070CD97 /* Nuke */; };
@@ -376,6 +377,8 @@
 		659FDEA72A87798300103414 /* VoteButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoteButton.swift; sourceTree = "<group>"; };
 		65AA535C2A8BB27900275299 /* FAQPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FAQPanel.swift; sourceTree = "<group>"; };
 		65D265402ABEC6FF009E01F9 /* urlCleaner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = urlCleaner.swift; sourceTree = "<group>"; };
+		EC051C2A2ACAEFC500E9D9ED /* QuickLookThumbnailing.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuickLookThumbnailing.framework; path = System/Library/Frameworks/QuickLookThumbnailing.framework; sourceTree = SDKROOT; };
+		EC051C462ACAF2DC00E9D9ED /* themeFileIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = themeFileIcon.png; sourceTree = "<group>"; };
 		EC082F242A65FB4300BA2727 /* MeasureOnce.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeasureOnce.swift; sourceTree = "<group>"; };
 		EC082F262A66132600BA2727 /* CommentLinkMore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentLinkMore.swift; sourceTree = "<group>"; };
 		EC082F282A66134C00BA2727 /* CommentLinkFull.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentLinkFull.swift; sourceTree = "<group>"; };
@@ -542,11 +545,11 @@
 		EC91C8532AB9601000F2AD30 /* TabBarOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarOverlay.swift; sourceTree = "<group>"; };
 		EC91C8552AB9838D00F2AD30 /* CommonListsThemingPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommonListsThemingPanel.swift; sourceTree = "<group>"; };
 		EC91C8572AB9884F00F2AD30 /* GeneralTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneralTheme.swift; sourceTree = "<group>"; };
-		EC91C8592AB98D8F00F2AD30 /* defaultFlatTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = defaultFlatTheme.swift; sourceTree = "<group>"; };
 		EC91C85B2AB99E5600F2AD30 /* FilteredSubredditsSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilteredSubredditsSettings.swift; sourceTree = "<group>"; };
 		EC9269E72A514AA6003F33B1 /* DownAttributedString.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownAttributedString.swift; sourceTree = "<group>"; };
 		EC9269F62A52B02E003F33B1 /* Shrinkable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shrinkable.swift; sourceTree = "<group>"; };
 		EC92FBDD2A589BE200391D1D /* SquircleUIKit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SquircleUIKit.swift; sourceTree = "<group>"; };
+		EC97F0272ACB006A001814A6 /* importTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = importTheme.swift; sourceTree = "<group>"; };
 		EC9BB1BA2A89E98D0070CD97 /* hidePost.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = hidePost.swift; sourceTree = "<group>"; };
 		EC9BB1BC2A8ACD300070CD97 /* AlphabetJumper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlphabetJumper.swift; sourceTree = "<group>"; };
 		EC9EAEC32A4AAB470074D06B /* fromHex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = fromHex.swift; sourceTree = "<group>"; };
@@ -723,6 +726,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		EC051C292ACAEFC500E9D9ED /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				EC051C2A2ACAEFC500E9D9ED /* QuickLookThumbnailing.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		EC08541C2A4BFEF100E88389 /* RedditAPI */ = {
 			isa = PBXGroup;
 			children = (
@@ -940,6 +951,7 @@
 				ECAA8B662A75261000D9D636 /* winston-everywhere */,
 				EC6CBE342A7D6E760089EAA0 /* LICENSE.md */,
 				EC6CBE322A7D6BF80089EAA0 /* README.md */,
+				EC051C292ACAEFC500E9D9ED /* Frameworks */,
 				EC593AD52A4673B2002D6454 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -956,6 +968,7 @@
 		EC593AD62A4673B2002D6454 /* winston */ = {
 			isa = PBXGroup;
 			children = (
+				EC7078F52ACAD93800A83240 /* assets */,
 				EC8B814C2AC96506000DC827 /* extensions */,
 				ECC10C752A4A8746009124BE /* components */,
 				EC2D275A2A4FBEF7006444D6 /* modifiers */,
@@ -1024,7 +1037,6 @@
 				ECD2A3762A69C26900EDD02D /* consts.swift */,
 				EC8F34982A6F7DDB00EB8249 /* winstonMDEditorPreset.swift */,
 				ECE08B7F2AA9F9BA00F84DC9 /* defaultTheme.swift */,
-				EC91C8592AB98D8F00F2AD30 /* defaultFlatTheme.swift */,
 			);
 			path = globals;
 			sourceTree = "<group>";
@@ -1055,6 +1067,14 @@
 				EC6495A52A999C4A00B1852C /* CachedMulti+CoreDataProperties.swift */,
 			);
 			path = managed;
+			sourceTree = "<group>";
+		};
+		EC7078F52ACAD93800A83240 /* assets */ = {
+			isa = PBXGroup;
+			children = (
+				EC051C462ACAF2DC00E9D9ED /* themeFileIcon.png */,
+			);
+			path = assets;
 			sourceTree = "<group>";
 		};
 		EC8B814C2AC96506000DC827 /* extensions */ = {
@@ -1278,6 +1298,7 @@
 				ECF314E42ABC187400DFDDBA /* hashableCGSize.swift */,
 				ECF5B3062AC83AE600355589 /* getAppIcon.swift */,
 				EC75D7422AC96D0200594250 /* getEnabledTheme.swift */,
+				EC97F0272ACB006A001814A6 /* importTheme.swift */,
 			);
 			path = utils;
 			sourceTree = "<group>";
@@ -1498,7 +1519,7 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 1430;
+				LastSwiftUpdateCheck = 1500;
 				LastUpgradeCheck = 1500;
 				TargetAttributes = {
 					EC593AD32A4673B2002D6454 = {
@@ -1558,6 +1579,7 @@
 				EC593ADC2A4673B3002D6454 /* Assets.xcassets in Resources */,
 				EC6CBE332A7D6BF80089EAA0 /* README.md in Resources */,
 				ECA30A172A5FA08500BB19D1 /* WhatToTest.en-US.txt in Resources */,
+				EC051C472ACAF2DC00E9D9ED /* themeFileIcon.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1786,6 +1808,7 @@
 				650ACAFC2A87A36900A7C600 /* calcVotes.swift in Sources */,
 				ECC2C7B42AAB4A64000E196C /* ThemeEditPanel.swift in Sources */,
 				ECF064EB2A7F2AC50088C2C0 /* Router.swift in Sources */,
+				EC97F0282ACB006A001814A6 /* importTheme.swift in Sources */,
 				ECE2859B2A5010E2009CF9DD /* DataBlock.swift in Sources */,
 				EC75D7432AC96D0200594250 /* getEnabledTheme.swift in Sources */,
 				ECF974432AA170D300C3BC75 /* TipJar.swift in Sources */,
@@ -1835,7 +1858,6 @@
 				ECEFC2672A5DE60C0003C6C4 /* UserLink.swift in Sources */,
 				ECC68D492A7A9136005BC7B4 /* WDivider.swift in Sources */,
 				EC6373572A791A2D000A03A3 /* Onboarding5GettingSecret.swift in Sources */,
-				EC91C85A2AB98D8F00F2AD30 /* defaultFlatTheme.swift in Sources */,
 				ECF1478F2AB620A400572352 /* CommentSample.swift in Sources */,
 				ECE08B682AA9E62900F84DC9 /* AvatarTheme.swift in Sources */,
 				EC08541B2A4BFEB300E88389 /* User.swift in Sources */,
@@ -1905,6 +1927,9 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				"ASSETCATALOG_COMPILER_ALTERNATE_APPICON_NAMES[sdk=*]" = "iconExplode iconPeak iconSimpleFaceBlack iconSimpleFaceBlue iconSimpleEyesBlack iconSimpleEyesBlue iconSide";
+				ASSETCATALOG_COMPILER_APPICON_NAME = iconStandard;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
@@ -1966,6 +1991,9 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				"ASSETCATALOG_COMPILER_ALTERNATE_APPICON_NAMES[sdk=*]" = "iconExplode iconPeak iconSimpleFaceBlack iconSimpleFaceBlue iconSimpleEyesBlack iconSimpleEyesBlue iconSide";
+				ASSETCATALOG_COMPILER_APPICON_NAME = iconStandard;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
@@ -2035,6 +2063,7 @@
 				INFOPLIST_FILE = winston/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Winston;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
+				INFOPLIST_KEY_LSSupportsOpeningDocumentsInPlace = YES;
 				INFOPLIST_KEY_NSDocumentsFolderUsageDescription = "Winston needs access to your documents to save/import themes.";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Winston needs access to your library to be able to download images.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -2074,6 +2103,7 @@
 				INFOPLIST_FILE = winston/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Winston;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
+				INFOPLIST_KEY_LSSupportsOpeningDocumentsInPlace = YES;
 				INFOPLIST_KEY_NSDocumentsFolderUsageDescription = "Winston needs access to your documents to save/import themes.";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Winston needs access to your library to be able to download images.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
