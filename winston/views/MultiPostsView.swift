@@ -59,9 +59,9 @@ struct MultiPostsView: View {
   var body: some View {
     Group {
       if IPAD {
-        SubredditPostsIPAD(posts: posts.data, searchText: searchText, fetch: fetch, selectedTheme: selectedTheme)
+        SubredditPostsIPAD(showSub: true, posts: posts.data, searchText: searchText, fetch: fetch, selectedTheme: selectedTheme)
       } else {
-        SubredditPostsIOS(lastPostAfter: lastPostAfter, posts: posts.data, searchText: searchText, fetch: fetch, selectedTheme: selectedTheme)
+        SubredditPostsIOS(showSub: true, lastPostAfter: lastPostAfter, posts: posts.data, searchText: searchText, fetch: fetch, selectedTheme: selectedTheme)
       }
     }
     .themedListBG(selectedTheme.postLinks.bg)
