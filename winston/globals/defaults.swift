@@ -126,7 +126,6 @@ extension Defaults.Keys {
   static let selectedThemeID = Key<String>("selectedThemeID", default: "default")
   static let feedPostsLoadLimit = Key<Int>("feedPostsLoadLimit", default: 35)
   static let themestoreID = Key<String>("themestoreID", default: "")
-  static let themestoreID = Key<String>("themestoreID", default: "")
 }
 
 extension UIScreen {

@@ -110,6 +110,8 @@ struct Settings: View {
               ThemesPanel()
             case .themeStore:
               ThemeStore()
+            case .appIcon:
+              AppIconSetting()
             }
           }
           .environmentObject(router)
