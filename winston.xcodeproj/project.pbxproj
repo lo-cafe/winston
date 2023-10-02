@@ -1033,6 +1033,7 @@
 			children = (
 				ECBD8E292ABBC6CF00C74E87 /* caches */,
 				652011F82AC2C45D005DD899 /* ThemeStore */,
+				652011F82AC2C45D005DD899 /* ThemeStore */,
 				ECE08B5C2AA9C93E00F84DC9 /* WinstonTheme */,
 				EC08541C2A4BFEF100E88389 /* RedditAPI */,
 				ECDBA8C22A4A820800FB42DB /* Post.swift */,
@@ -1312,6 +1313,7 @@
 				ECF314E42ABC187400DFDDBA /* hashableCGSize.swift */,
 				ECF5B3062AC83AE600355589 /* getAppIcon.swift */,
 				EC75D7422AC96D0200594250 /* getEnabledTheme.swift */,
+				652011FF2AC309FA005DD899 /* downloader.swift */,
 				652011FF2AC309FA005DD899 /* downloader.swift */,
 			);
 			path = utils;

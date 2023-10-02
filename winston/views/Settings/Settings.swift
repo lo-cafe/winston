@@ -108,6 +108,8 @@ struct Settings: View {
               FAQPanel()
             case .themes:
               ThemesPanel()
+            case .themeStore:
+              ThemeStore()
             }
           }
           .environmentObject(router)
