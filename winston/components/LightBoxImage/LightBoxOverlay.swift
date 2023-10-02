@@ -31,7 +31,7 @@ struct LightBoxOverlay: View {
             .allowsHitTesting(false)
         }
         
-        Badge(post: post,usernameColor: .primary, theme: selectedTheme.postLinks.theme.badge, peripheralTextColorOverride: .primary)
+        Badge(post: post,usernameColor: .primary, theme: selectedTheme.postLinks.theme.badge)
           .equatable()
           .foregroundColor(.primary)
           .id("post-badge")
