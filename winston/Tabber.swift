@@ -219,6 +219,7 @@ struct Tabber: View {
       if showTestersCelebrationModal {
         showTipJarModal = false
       }
+      Defaults[.themesPresets] = Defaults[.themesPresets].filter { $0.id != "default" }
       if Defaults[.multis].count != 0 || Defaults[.subreddits].count != 0 {
         Defaults[.multis] = []
         Defaults[.subreddits] = []

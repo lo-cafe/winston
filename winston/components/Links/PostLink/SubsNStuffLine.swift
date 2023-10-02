@@ -25,9 +25,6 @@ struct SubsNStuffLine: View, Equatable {
       HStack(spacing: 0) {
         
         if showSub || feedsAndSuch.contains(sub.id) {
-//          if !over18 && post.data?.link_flair_text == nil {
-//            WDivider()
-//          }
           FlairTag(data: sub.data, text: "r/\(sub.data?.display_name ?? post.data?.subreddit ?? "Error")", color: .blue)
             .highPriorityGesture(TapGesture() .onEnded {
               routerProxy.router.path.append(SubViewType.posts(Subreddit(id: post.data?.subreddit ?? "", api: post.redditAPI)))
@@ -40,13 +37,14 @@ struct SubsNStuffLine: View, Equatable {
         }
         
         if let link_flair_text = post.data?.link_flair_text {
-          WDivider()
+          if over18 {
+            WDivider()
+          }
           FlairTag(text: link_flair_text)
             .allowsHitTesting(false)
-        }
-        
-        if !showSub && !feedsAndSuch.contains(sub.id) && !over18 {
-          WDivider()
+          if !over18 && (!showSub && !feedsAndSuch.contains(sub.id)) {
+            WDivider()
+          }
         }
       }
       .padding(.horizontal, 2)
