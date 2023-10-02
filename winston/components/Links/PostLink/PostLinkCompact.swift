@@ -43,7 +43,7 @@ struct PostLinkCompact: View {
             MediaPresenter(blurPostLinkNSFW: blurPostLinkNSFW, media: extractedMedia, post: post, compact: true, contentWidth: contentWidth, routerProxy: routerProxy)
           }
           
-          VStack(alignment: .leading, spacing: 0) {
+          VStack(alignment: .leading, spacing: theme.theme.verticalElementsSpacing) {
             VStack(alignment: .leading, spacing: theme.theme.verticalElementsSpacing / 2) {
               PostLinkTitle(label: data.title.escape, theme: theme.theme.titleText, cs: cs)
 
@@ -51,9 +51,7 @@ struct PostLinkCompact: View {
                 MediaPresenter(blurPostLinkNSFW: blurPostLinkNSFW, showURLInstead: true, media: extractedMedia, post: post, compact: true, contentWidth: contentWidth, routerProxy: routerProxy)
               }
             }
-            
-            Spacer().frame(minHeight: theme.theme.verticalElementsSpacing, maxHeight: .infinity)
-            
+                        
             Badge(post: post, theme: theme.theme.badge, extraInfo: [PresetBadgeExtraInfo().commentsExtraInfo(data:data), PresetBadgeExtraInfo().upvotesExtraInfo(data: data)])
           }
           .frame(maxWidth: .infinity, alignment: .topLeading)
@@ -71,7 +69,10 @@ struct PostLinkCompact: View {
         .zIndex(1)
         .frame(maxWidth: .infinity, alignment: .topLeading)
         
-        SubsNStuffLine(showSub: showSub, feedsAndSuch: feedsAndSuch, post: post, sub: sub, routerProxy: routerProxy, over18: over18)
+        if !showSubsAtTop {
+          SubsNStuffLine(showSub: showSub, feedsAndSuch: feedsAndSuch, post: post, sub: sub, routerProxy: routerProxy, over18: over18)
+        }
+        
       }
     }
   }

@@ -49,6 +49,7 @@ struct Tabber: View {
   @State var activeTab = TabIdentifier.posts
   
   @State var credModalOpen = false
+  @State var importedThemeAlert = false
 
 //  @State var tabBarHeight: CGFloat?
   @StateObject private var inboxPayload = TabPayload("inboxRouter")
@@ -167,7 +168,7 @@ struct Tabber: View {
         }
       
     }
-    .replyModalPresenter()
+    .replyModalPresenter(routerProxy: RouterProxy(payload[activeTab]!.router))
     .overlay(
       GeometryReader { geo in
         GlobalLoaderView()
@@ -207,6 +208,13 @@ struct Tabber: View {
     } message: {
       Text("Something went wrong, but winston's is a fast cat, got the bug in his fangs and brought it to you. What do you wanna do?")
     }
+    .alert("Success!", isPresented: $importedThemeAlert) {
+      Button("Nice!", role: .cancel) {
+        importedThemeAlert = false
+      }
+    } message: {
+      Text("The theme was imported successfully. Enable it in \"Themes\" section in the Settings tab.")
+    }
     .onAppear {
       if showTestersCelebrationModal {
         showTipJarModal = false
@@ -240,6 +248,15 @@ struct Tabber: View {
       }
     }
     .onOpenURL { url in
+      if url.absoluteString.hasSuffix(".winston") || url.absoluteString.hasSuffix(".zip") {
+        TempGlobalState.shared.globalLoader.enable("Importing...")
+        let result = importTheme(at: url)
+        TempGlobalState.shared.globalLoader.dismiss()
+        if result {
+          importedThemeAlert = true
+        }
+        return
+      }
       let parsed = parseRedditURL(url.absoluteString)
       withAnimation {
         switch parsed {

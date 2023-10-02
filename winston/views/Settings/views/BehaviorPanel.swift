@@ -54,9 +54,11 @@ struct BehaviorPanel: View {
       
       Section {
         LabeledSlider(label: "Loading limit", value: Binding(get: { CGFloat(feedPostsLoadLimit) }, set: { val in feedPostsLoadLimit = Int(val) }), range: 15...100)
+          .themedListRowBG(enablePadding: true)
       } footer: {
         Text("Sets how many posts to load per chunk (loads more on scroll)")
       }
+      .themedListDividers()
       
       Section {
         Toggle("Navigation everywhere", isOn: $enableSwipeAnywhere)

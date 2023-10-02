@@ -54,8 +54,7 @@ struct PostReplies: View {
   
   var body: some View {
     let theme = selectedTheme.comments
-    let preferenceShowCommentsCards = theme.theme.type == .card
-    let horPad = preferenceShowCommentsCards ? theme.theme.outerHPadding : theme.theme.innerPadding.horizontal
+    let horPad = theme.theme.outerHPadding
     Group {
       let commentsData = comments.data
       let postFullname = post.data?.name ?? ""
