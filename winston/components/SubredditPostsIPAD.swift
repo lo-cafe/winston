@@ -14,6 +14,7 @@ struct SubredditPostsIPAD: View, Equatable {
     lhs.posts.count == rhs.posts.count && lhs.subreddit?.id == rhs.subreddit?.id && lhs.searchText == rhs.searchText && lhs.selectedTheme == rhs.selectedTheme
   }
   
+  var showSub = false
   var subreddit: Subreddit?
   var posts: [Post]
   var searchText: String
@@ -33,7 +34,7 @@ struct SubredditPostsIPAD: View, Equatable {
           contentForData: { post, i in
             Group {
               if let sub = subreddit ?? post.winstonData?.subreddit {
-                PostLink(post: post, sub: sub)
+                PostLink(post: post, sub: sub, showSub: showSub)
                   .equatable()
                   .onAppear {
                     if(posts.count - 15 == i) {

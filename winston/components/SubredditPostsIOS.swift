@@ -12,6 +12,7 @@ struct SubredditPostsIOS: View, Equatable {
     lhs.posts.count == rhs.posts.count && lhs.subreddit?.id == rhs.subreddit?.id && lhs.searchText == rhs.searchText && lhs.selectedTheme == rhs.selectedTheme && lhs.lastPostAfter == rhs.lastPostAfter
   }
   
+  var showSub = false
   var lastPostAfter: String?
   var subreddit: Subreddit?
   var posts: [Post]
@@ -28,7 +29,7 @@ struct SubredditPostsIOS: View, Equatable {
         ForEach(Array(posts.enumerated()), id: \.self.element.id) { i, post in
           
           if let sub = subreddit ?? post.winstonData?.subreddit {
-            PostLink(post: post, sub: sub)
+            PostLink(post: post, sub: sub, showSub: showSub)
               .equatable()
               .onAppear {
                 if(posts.count - 7 == i) {

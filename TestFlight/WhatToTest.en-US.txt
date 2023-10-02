@@ -5,3 +5,5 @@
 - Now exported themes have ".winston" extension (zip will continue to work though)
 - Sharing zip to winston is now allowed
 - ".winston" open in one tap into winston and imports it
+- Fixed subs not showing up in multis
+- Fixed centered tags in post links
