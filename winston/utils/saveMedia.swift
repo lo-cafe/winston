@@ -8,6 +8,7 @@
 import Foundation
 import Photos
 import UIKit
+import Nuke
 
 enum MediaType {
     case image
@@ -39,4 +40,14 @@ func saveMedia(_ urlString: String, _ mediaType: MediaType, _ completion: ((Bool
             print("Unknown error occurred")
         }
     }
+}
+
+func downloadAndSaveImage(url: URL) async throws -> Data? {
+  let image = try? await ImagePipeline.shared.image(for: url)
+  if (image != nil){
+    let data = image!.jpegData(compressionQuality: 1.0)
+    return data
+  }
+  
+  return nil
 }
