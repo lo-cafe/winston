@@ -116,6 +116,7 @@ struct ReplyModal<Content: View>: View {
   @FetchRequest(sortDescriptors: []) var drafts: FetchedResults<ReplyDraft>
   @Environment(\.colorScheme) private var cs
   @EnvironmentObject private var routerProxy: RouterProxy
+  @ObservedObject var redditAPI = RedditAPI.shared
   
   init(title: String = "Replying", loadingLabel: String = "Commenting...", submitBtnLabel: String = "Send", thingFullname: String, action: @escaping (@escaping (Bool) -> Void, String) -> Void, text: String? = nil, content: (() -> Content)?) {
     self.title = title
@@ -133,8 +134,8 @@ struct ReplyModal<Content: View>: View {
         VStack(spacing: 12) {
           
           VStack(alignment: .leading) {
-            if let me = RedditAPI.shared.me?.data {
-              BadgeView(author: me.name, fullname: me.name, created: Date().timeIntervalSince1970, avatarURL: me.icon_img ?? me.snoovatar_img, theme: selectedTheme.comments.theme.badge, routerProxy: routerProxy, cs: cs)
+            if let me = redditAPI.me?.data {
+              BadgeView(author: me.name, fullname: "t2_\(me.id)", created: Date().timeIntervalSince1970, avatarURL: me.icon_img ?? me.snoovatar_img, theme: selectedTheme.comments.theme.badge, routerProxy: routerProxy, cs: cs)
                 .equatable()
             }
             MDEditor(text: $textWrapper.replyText)

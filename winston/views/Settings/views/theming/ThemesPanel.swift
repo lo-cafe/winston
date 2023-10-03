@@ -43,7 +43,7 @@ struct ThemesPanel: View {
             do {
               switch res {
               case .success(let file):
-                unzipTheme(at: file[0])
+                importTheme(at: file[0])
               case .failure(let error):
                 print(error.localizedDescription)
               }
@@ -84,38 +84,8 @@ struct ThemesPanel: View {
         .environmentObject(routerProxy)
     }
   }
-}
-
-func unzipTheme(at fileURL: URL) {
-  @Default(.themesPresets) var themesPresets
-  do {
-    let gotAccess = fileURL.startAccessingSecurityScopedResource()
-    if !gotAccess { return }
-    
-    let unzipDirectory = try Zip.quickUnzipFile(fileURL)
-    fileURL.stopAccessingSecurityScopedResource()
-    let fileManager = FileManager.default
-    let themeJsonURL = unzipDirectory.appendingPathComponent("theme.json")
-    let themeData = try Data(contentsOf: themeJsonURL)
-    
-    let theme = try JSONDecoder().decode(WinstonTheme.self, from: themeData)
-    
-    let urls = try fileManager.contentsOfDirectory(at: unzipDirectory, includingPropertiesForKeys: nil)
-    let destinationURL = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first!
-    for url in urls {
-      if url.lastPathComponent != "theme.json" {
-        let destinationFileURL = destinationURL.appendingPathComponent(url.lastPathComponent)
-        try? fileManager.removeItem(at: destinationFileURL)
-        try fileManager.moveItem(at: url, to: destinationFileURL)
-      }
-    }
-    
-    DispatchQueue.main.async {
-      themesPresets.append(theme)
-    }
-  } catch {
-    print("Failed to unzip file with error: \(error.localizedDescription)")
-  }
+  
+  
 }
 
 struct ThemeNavLink: View {
@@ -127,6 +97,28 @@ struct ThemeNavLink: View {
   @State private var isMoving = false
   @State private var zipUrl: URL? = nil
   var theme: WinstonTheme
+  
+  
+  func zipFiles() {
+    var imgNames: [String] = []
+    if case .img(let schemesStr) = theme.postLinks.bg {
+      imgNames.append(schemesStr.light)
+      imgNames.append(schemesStr.dark)
+    }
+    if case .img(let schemesStr) = theme.posts.bg {
+      imgNames.append(schemesStr.light)
+      imgNames.append(schemesStr.dark)
+    }
+    if case .img(let schemesStr) = theme.lists.bg {
+      imgNames.append(schemesStr.light)
+      imgNames.append(schemesStr.dark)
+    }
+    createZipFile(with: imgNames, theme: theme.duplicate()) { url in
+      self.zipUrl = url
+      self.isMoving = true
+    }
+  }
+  
   var body: some View {
     let isDefault = theme.id == "default"
     HStack(spacing: 8) {
@@ -148,10 +140,10 @@ struct ThemeNavLink: View {
         Text(theme.metadata.name)
           .fontSize(16, .semibold)
           .fixedSize(horizontal: true, vertical: false)
-        Text("Created by \(theme.metadata.author)")
+        Text("by \(theme.metadata.author)")
           .fontSize(14, .medium)
           .opacity(0.75)
-          .fixedSize(horizontal: true, vertical: false)
+          .fixedSize(horizontal: false, vertical: true)
       }
       
       Spacer()
@@ -169,25 +161,8 @@ struct ThemeNavLink: View {
       } label: {
         Label("Duplicate", systemImage: "plus.square.on.square")
       }
-      Button {
-        var imgNames: [String] = []
-        if case .img(let schemesStr) = theme.postLinks.bg {
-          imgNames.append(schemesStr.light)
-          imgNames.append(schemesStr.dark)
-        }
-        if case .img(let schemesStr) = theme.posts.bg {
-          imgNames.append(schemesStr.light)
-          imgNames.append(schemesStr.dark)
-        }
-        if case .img(let schemesStr) = theme.lists.bg {
-          imgNames.append(schemesStr.light)
-          imgNames.append(schemesStr.dark)
-        }
-        createZipFile(with: imgNames, theme: theme.duplicate()) { url in
-          self.zipUrl = url
-          self.isMoving = true
-        }
-      } label: {
+
+      Button(action: zipFiles) {
         Label("Export", systemImage: "doc.zipper")
       }
     }

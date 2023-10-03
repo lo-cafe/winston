@@ -31,10 +31,13 @@ class Router: ObservableObject {
   }
 }
 
-class RouterProxy: ObservableObject, Equatable {
-  static func == (lhs: RouterProxy, rhs: RouterProxy) -> Bool { true }
+class RouterProxy: ObservableObject, Equatable, Identifiable {
+  static func == (lhs: RouterProxy, rhs: RouterProxy) -> Bool { lhs.id == rhs.id }
   
+  var id: String {
+    self.router.id
+  }
   var router: Router
   var lol: String
-  init(_ router: Router) { self.router = router; lol = UUID().uuidString }
+  init(_ router: Router) {self.router = router; lol = UUID().uuidString }
 }

@@ -23,14 +23,14 @@ struct BadgeView: View, Equatable {
   var avatarURL: String?
   var theme: BadgeTheme
   var extraInfo: [BadgeExtraInfo] = []
-  var routerProxy: RouterProxy
+  var routerProxy: RouterProxy?
   var cs: ColorScheme
   
   let flagY: CGFloat = 16
   let delay: CGFloat = 0.4
   
   nonisolated func openUser() {
-    routerProxy.router.path.append(User(id: author, api: RedditAPI.shared))
+    routerProxy?.router.path.append(User(id: author, api: RedditAPI.shared))
   }
   
   var body: some View {
