@@ -12,10 +12,6 @@ import SwiftDate
 
 let alphabetLetters = Array("ABCDEFGHIJKLMNOPQRSTUVWXYZ").map { String($0) }
 
-class SubsDictContainer: ObservableObject {
-  @Published var data: [String: [Subreddit]] = [:]
-}
-
 enum FirstSelectable: Equatable, Hashable {
   case sub(Subreddit)
   case multi(Multi)
@@ -34,7 +30,6 @@ struct Subreddits: View, Equatable {
   @FetchRequest(sortDescriptors: [NSSortDescriptor(key: "name", ascending: true)], animation: .default) var subreddits: FetchedResults<CachedSub>
   @FetchRequest(sortDescriptors: [NSSortDescriptor(key: "name", ascending: true)], animation: .default) var multis: FetchedResults<CachedMulti>
   @State private var searchText: String = ""
-  @StateObject private var subsDict = SubsDictContainer()
   @State private var favoritesArr: [Subreddit] = []
   
   @Default(.likedButNotSubbed) var likedButNotSubbed // subreddits that a user likes but is not subscribed to so they wont be in subsDict

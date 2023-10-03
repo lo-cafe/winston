@@ -50,7 +50,6 @@ struct URLImage: View, Equatable {
           }
         }
         .onDisappear(.cancel)
-        .pipeline(ImagePipeline.shared)
 //        .id("\(imgRequest.url?.absoluteString ?? "")-nuke")
       } else {
         LazyImage(url: url) { state in
@@ -69,7 +68,6 @@ struct URLImage: View, Equatable {
         }
         .onDisappear(.cancel)
         .processors(processors)
-        .pipeline(ImagePipeline.shared)
       }
       
     }
