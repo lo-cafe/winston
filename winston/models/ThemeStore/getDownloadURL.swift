@@ -12,7 +12,7 @@ extension ThemeStoreAPI {
     func getDownloadedFilePath(filename: String, completion: @escaping (URL?) -> Void) {
         if let headers = self.getRequestHeaders() {
           let destination: DownloadRequest.Destination = { _, _ in
-               let tempDirectoryURL = FileManager.default.temporaryDirectory
+               let tempDirectoryURL = URL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true)
                let fileURL = tempDirectoryURL.appendingPathComponent(filename)
                return (fileURL, [.removePreviousFile, .createIntermediateDirectories])
            }

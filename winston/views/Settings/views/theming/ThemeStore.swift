@@ -7,6 +7,7 @@
 
 import SwiftUI
 import Defaults
+import FileProvider
 
 struct ThemeStore: View {
   @EnvironmentObject var themeStore: ThemeStoreAPI
@@ -105,6 +106,7 @@ struct OnlineThemeItem: View {
   @EnvironmentObject var themeStore: ThemeStoreAPI
   @State var downloading: Bool = false
   @Environment(\.openURL) private var openURL
+  @State var showingImportError: Bool = false
   // Computed property to check if themesPresets contains the current theme
   private var isThemeInPresets: Bool {
     themesPresets.contains { $0.id == theme.file_id }
@@ -131,36 +133,45 @@ struct OnlineThemeItem: View {
       Spacer()
       
       if isThemeInPresets{
-        Button {
-          //Delete the Theme
-          themesPresets = themesPresets.filter { $0.id != theme.file_id}
-        } label: {
+        Button {} label: {
           Label("Delete", systemImage: "trash")
             .labelStyle(.iconOnly)
             .foregroundColor(.red)
-        }
+        }.highPriorityGesture(
+          TapGesture()
+            .onEnded{
+              //Delete the Theme
+              themesPresets = themesPresets.filter { $0.id != theme.file_id}
+            }
+        )
       } else {
         if downloading {
           ProgressView()
         } else {
-          Button{
-            //Implement adding this to saved themes
-            downloading = true
-            Task {
-              if let theme_id = theme.file_name {
-                themeStore.getDownloadedFilePath(filename: theme_id, completion: { path in
-                  if let path{
-                    unzipTheme(at: path)
-                  }
-                  downloading = false
-                })
-              }
-            }
-          } label: {
+          Button{} label: { //Is this really the solution for it working inside a NavigationLink??
             Label("Download", systemImage: "arrow.down.to.line")
               .labelStyle(.iconOnly)
               .foregroundColor(.blue)
             
+          }
+          .highPriorityGesture(
+            TapGesture()
+              .onEnded{
+                downloading = true
+                Task {
+                  if let theme_id = theme.file_name {
+                    themeStore.getDownloadedFilePath(filename: theme_id, completion: { path in
+                      if let path{
+                        showingImportError = !importTheme(at: path)
+                      }
+                      downloading = false
+                    })
+                  }
+                }
+              }
+          )
+          .alert(isPresented: $showingImportError){
+            Alert(title: Text("There was an error importing this theme"))
           }
         }
         
