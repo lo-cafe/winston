@@ -16,67 +16,75 @@ struct ThemeStore: View {
   @State private var isPresentingUploadSheet = false
   @State private var eligibility: Bool = false
   @Default(.themestoreID) var themestoreID
+  @StateObject var searchQuery = DebouncedText(delay: 0.35)
   var body: some View {
-    NavigationView{
-      VStack {
-        if eligibility {
-          if themes.isEmpty {
-            VStack {
-              HStack {
-                ProgressView()
+    HStack{
+      if eligibility {
+          List {
+            ForEach(themes, id: \.self) { theme in
+              NavigationLink(destination: ThemeStoreDetailsView(theme: theme), label: {
+                OnlineThemeItem(theme: theme)
+              })
+            }
+          }
+          .toolbar{
+            if eligibility {
+              ToolbarItem(placement: .primaryAction){
+                Button{
+                  isPresentingUploadSheet.toggle()
+                } label: {
+                  Label("Upload Theme", systemImage: "arrow.up.to.line")
+                    .labelStyle(.iconOnly)
+                }
               }
             }
-          } else {
-            List {
-              ForEach(themes, id: \.self) { theme in
-                NavigationLink(destination: ThemeStoreDetailsView(theme: theme), label: {
-                  OnlineThemeItem(theme: theme)
-                })
+            
+          }
+          .searchable(text: $searchQuery.text)
+          .onChange(of: searchQuery.debounced) { val in
+            Task{
+              if val == "" {
+                await fetchThemes()
+              } else {
+                themes = await themeStore.fetchThemesByName(name: val) ?? []
               }
             }
           }
-        } else {
-          HStack{
-            VStack{
-              Image(systemName: "lock")
-                .opacity(0.7)
-                .font(.system(size: 50))
-                .padding()
-              Text("Behold, the Theme Store awaits, its secrets hidden behind a mystical lock. To discover its treasures, an exclusive key exists in a realm known to those who seek it. A hint of wisdom: whispers of this key may be found among the stars...")
-                .multilineTextAlignment(.leading)
-                .opacity(0.7)
-              
-              Button {
-                UIPasteboard.general.string = themestoreID
-              } label: {
-                Label(themestoreID, systemImage: "clipboard")
-              }
-              .buttonStyle(BorderedButtonStyle())
-              .foregroundColor(.primary)
-              
-            }
+          .refreshable { // Add pull-to-refresh
+            await fetchThemes()
           }
-          .padding()
+          .navigationTitle("Theme Store")
+          .navigationBarTitleDisplayMode(.large)
+          
+        
+      } else {
+        HStack{
+          VStack{
+            Image(systemName: "lock")
+              .opacity(0.7)
+              .font(.system(size: 50))
+              .padding()
+            Text("Behold, the Theme Store awaits, its secrets hidden behind a mystical lock. To discover its treasures, an exclusive key exists in a realm known to those who seek it. A hint of wisdom: whispers of this key may be found among the stars...")
+              .multilineTextAlignment(.leading)
+              .opacity(0.7)
+            
+            Button {
+              UIPasteboard.general.string = themestoreID
+            } label: {
+              Label(themestoreID, systemImage: "clipboard")
+            }
+            .buttonStyle(BorderedButtonStyle())
+            .foregroundColor(.primary)
+            
+          }
         }
+        .padding()
       }
-    }.sheet(isPresented: $isPresentingUploadSheet){
+    }
+    
+    .sheet(isPresented: $isPresentingUploadSheet){
       ThemeStoreUploadSheet()
     }
-    .toolbar{
-      if eligibility {
-        ToolbarItem(placement: .primaryAction){
-          Button{
-            isPresentingUploadSheet.toggle()
-          } label: {
-            Label("Upload Theme", systemImage: "arrow.up.to.line")
-              .labelStyle(.iconOnly)
-          }
-        }
-      }
-      
-    }
-    .navigationTitle("Theme Store")
-    .navigationBarTitleDisplayMode(.inline)
     .onAppear {
       if themestoreID == "" {
         themestoreID = generateShortUniqueID()
@@ -86,9 +94,7 @@ struct ThemeStore: View {
         await fetchThemes()
       }
     }
-    .refreshable { // Add pull-to-refresh
-      await fetchThemes()
-    }
+    
   }
   
   private func fetchThemes() async {
@@ -102,15 +108,8 @@ struct ThemeStore: View {
 
 struct OnlineThemeItem: View {
   var theme: ThemeData
-  @Default(.themesPresets) private var themesPresets
-  @EnvironmentObject var themeStore: ThemeStoreAPI
-  @State var downloading: Bool = false
   @Environment(\.openURL) private var openURL
-  @State var showingImportError: Bool = false
-  // Computed property to check if themesPresets contains the current theme
-  private var isThemeInPresets: Bool {
-    themesPresets.contains { $0.id == theme.file_id }
-  }
+  
   
   var body: some View {
     HStack(spacing: 8){
@@ -124,59 +123,19 @@ struct OnlineThemeItem: View {
       VStack(alignment: .leading, spacing: 0) {
         Text(theme.theme_name)
           .fontSize(16, .semibold)
-          .fixedSize(horizontal: true, vertical: false)
-        Text("Created by \(theme.theme_author ?? "")")
+          .frame(maxWidth: 200)
+          .lineLimit(1)
+          .fixedSize(horizontal: true, vertical: true)
+        Text("\(theme.theme_author ?? "")")
           .fontSize(14, .medium)
           .opacity(0.75)
-          .fixedSize(horizontal: true, vertical: false)
+          .frame(maxWidth: 200)
+          .lineLimit(1)
+          .fixedSize(horizontal: true, vertical: true)
       }
       Spacer()
       
-      if isThemeInPresets{
-        Button {} label: {
-          Label("Delete", systemImage: "trash")
-            .labelStyle(.iconOnly)
-            .foregroundColor(.red)
-        }.highPriorityGesture(
-          TapGesture()
-            .onEnded{
-              //Delete the Theme
-              themesPresets = themesPresets.filter { $0.id != theme.file_id}
-            }
-        )
-      } else {
-        if downloading {
-          ProgressView()
-        } else {
-          Button{} label: { //Is this really the solution for it working inside a NavigationLink??
-            Label("Download", systemImage: "arrow.down.to.line")
-              .labelStyle(.iconOnly)
-              .foregroundColor(.blue)
-            
-          }
-          .highPriorityGesture(
-            TapGesture()
-              .onEnded{
-                downloading = true
-                Task {
-                  if let theme_id = theme.file_name {
-                    themeStore.getDownloadedFilePath(filename: theme_id, completion: { path in
-                      if let path{
-                        showingImportError = !importTheme(at: path)
-                      }
-                      downloading = false
-                    })
-                  }
-                }
-              }
-          )
-          .alert(isPresented: $showingImportError){
-            Alert(title: Text("There was an error importing this theme"))
-          }
-        }
-        
-      }
-      
+      ThemeItemDownloadButton(theme: theme)
       
     }
     
@@ -184,3 +143,70 @@ struct OnlineThemeItem: View {
   
 }
 
+struct ThemeItemDownloadButton: View {
+  var theme: ThemeData
+  @State var downloading: Bool = false
+  @State var showingImportError: Bool = false
+  @Default(.themesPresets) private var themesPresets
+  @EnvironmentObject var themeStore: ThemeStoreAPI
+  // Computed property to check if themesPresets contains the current theme
+  private var isThemeInPresets: Bool {
+    themesPresets.contains { $0.id == theme.file_id }
+  }
+  var body: some View {
+    if isThemeInPresets{
+      Button {
+        //Delete the Theme
+        themesPresets = themesPresets.filter { $0.id != theme.file_id}
+      } label: {
+        Label("Delete", systemImage: "trash")
+          .labelStyle(.iconOnly)
+          .foregroundColor(.red)
+      }.highPriorityGesture(
+        TapGesture()
+          .onEnded{
+            //Delete the Theme
+            themesPresets = themesPresets.filter { $0.id != theme.file_id}
+          }
+      )
+    } else {
+      if downloading {
+        ProgressView()
+      } else {
+        Button{
+          downloadTheme()
+        } label: {
+          Label("Download", systemImage: "arrow.down.to.line")
+            .labelStyle(.iconOnly)
+            .foregroundColor(.blue)
+          
+        }
+        .highPriorityGesture( //Is this really the solution for it working inside a NavigationLink??
+          TapGesture()
+            .onEnded{
+              downloadTheme()
+            }
+        )
+        .alert(isPresented: $showingImportError){
+          Alert(title: Text("There was an error importing this theme"))
+        }
+      }
+      
+    }
+  }
+  
+  func downloadTheme(){
+    downloading = true
+    Task {
+      if let theme_id = theme.file_name {
+        themeStore.getDownloadedFilePath(filename: theme_id, completion: { path in
+          if let path{
+            print(path)
+            showingImportError = !importTheme(at: path)
+          }
+          downloading = false
+        })
+      }
+    }
+  }
+}

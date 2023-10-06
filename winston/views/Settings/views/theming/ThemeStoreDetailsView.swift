@@ -9,47 +9,77 @@ import SwiftUI
 
 struct ThemeStoreDetailsView: View {
   let theme: ThemeData
-  
   @State private var selectedImageIndex = 0 // Track the selected image index
+  @EnvironmentObject var themeStore: ThemeStoreAPI
+  @StateObject var viewModel = AppDetailViewObject()
   var body: some View {
-    NavigationView{
-      VStack{
+    FittingScrollView{
+      VStack(spacing: 0){
         OnlineThemeItem(theme: theme)
+          .padding()
         Divider()
-        HStack{
-          Text("Preview")
-            .font(.headline)
-          Spacer()
-        }
-        TabView(selection: $selectedImageIndex) { // Use selection binding to track the selected index
-          ForEach(theme.thumbnails_urls ?? [], id: \.self) { url in
-            if let img = URL(string: url) {
-              URLImage(url: img)
-                  .scaledToFit()
-                  .clipShape(RoundedRectangle(cornerSize: CGSize(width: 10, height: 10)))
-            }
-            }
-        }
-        .tabViewStyle(PageTabViewStyle()) // Set the tab view style to page style
-        .frame(maxHeight: .infinity) // Adjust the height as need
-        .accentColor(.blue) // Set the accent color to blue or any other color that's visible on white
-
+          .padding(.horizontal)
+        AppDetailScreenshots(screenshots: viewModel.previews)
+          .padding()
+        
         Divider()
-        HStack{
-          Text("Description")
-            .font(.headline)
-          Spacer()
-        }
-        Text(theme.theme_description == "" ? "Oh no! Looks like someone was lazy with the description :(" : theme.theme_description)
-          .padding(.bottom, 10)
-        Spacer()
-        Text(theme.file_id)
-          .font(.caption)
-          .opacity(0.5)
+          .padding(.horizontal)
+        
+        AppDetailDescription(text: theme.theme_description ?? "Uh oh! Someone was lazy and didn't add a description :(")
+          .padding()
+        
+        Divider()
+          .padding(.horizontal)
+        
+        AppDetailInfoFullView(
+          author: theme.theme_author, themeId: theme.file_id, themeName: theme.theme_name
+        )
+        .padding()
+        
       }
-      .padding()
+    } onOffsetChange: {
+      viewModel.scrollOffset = $0
     }
-    .navigationTitle(theme.theme_name ?? "Theme")
+    .toolbar{
+      if viewModel.hasScrolledPastNavigationBar {
+        ToolbarItem(placement: .principal){
+          Group {
+            Image(systemName: theme.icon ?? "xmark")
+              .fontSize(12)
+              .foregroundColor(.white)
+          }
+          .frame(width: 32, height: 32)
+          .background(RR(8, theme.color?.color() ?? .blue))
+        }
+        
+        ToolbarItem(placement: .navigationBarTrailing){
+          ThemeItemDownloadButton(theme: theme)
+        }
+      }
+    }
+    .animation(.default, value: viewModel.hasScrolledPastNavigationBar)
+    .toolbarBackground(.visible, for: .tabBar)
     .navigationBarTitleDisplayMode(.inline)
+    .onAppear{
+      Task{
+        let urls = await themeStore.getPreviewImages(id: theme.file_id ?? "")
+        viewModel.previews = urls?.previews ?? []
+        viewModel.accent = Color(theme.color?.hex ?? "#0000FF")
+      }
+    }
   }
+}
+
+extension ThemeStoreDetailsView {
+  @MainActor class AppDetailViewObject: ObservableObject {
+    @Published var accent: Color = .blue
+    @Published var hasScrolledPastNavigationBar: Bool = false
+    @Published var previews: [String] = []
+    @Published var scrollOffset: CGFloat = .zero {
+      didSet {
+        hasScrolledPastNavigationBar = scrollOffset < -60
+      }
+    }
+  }
+  
 }
