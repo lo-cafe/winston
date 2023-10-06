@@ -34,19 +34,19 @@ struct ThemeStore: View {
           .themedListDividers()
         }
         .themedListBG(theme.lists.bg)
-        .toolbar{
-          if eligibility {
-            ToolbarItem(placement: .primaryAction){
-              Button{
-                isPresentingUploadSheet.toggle()
-              } label: {
-                Label("Upload Theme", systemImage: "arrow.up.to.line")
-                  .labelStyle(.iconOnly)
-              }
-            }
-          }
-          
-        }
+//        .toolbar{
+//          if eligibility {
+//            ToolbarItem(placement: .primaryAction){
+//              Button{
+//                isPresentingUploadSheet.toggle()
+//              } label: {
+//                Label("Upload Theme", systemImage: "arrow.up.to.line")
+//                  .labelStyle(.iconOnly)
+//              }
+//            }
+//          }
+//          
+//        }
         .searchable(text: $searchQuery.text)
         .onChange(of: searchQuery.debounced) { val in
           Task{
