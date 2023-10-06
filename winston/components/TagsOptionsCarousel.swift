@@ -28,7 +28,7 @@ private struct Option<T: Hashable>: View {
     .padding(.vertical, 8)
     .padding(.horizontal, 12)
     .foregroundColor(option.active || selected == option.value ? .white : .primary)
-    .background(Capsule(style: .continuous).fill(option.active || selected == option.value ? .blue : .primary.opacity(0.1)))
+    .background(Capsule(style: .continuous).fill(option.active || selected == option.value ? Color.accentColor : .primary.opacity(0.1)))
     .onTapGesture(perform: select)
     .animation(.default, value: selected)
   }

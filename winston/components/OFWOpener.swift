@@ -14,7 +14,7 @@ class OpenFromWeb: ObservableObject {
 
 struct OFWOpener: View {
   @ObservedObject var router: Router
-  @EnvironmentObject private var redditAPI: RedditAPI
+  
   @ObservedObject private var OFW = OpenFromWeb.shared
   
   var body: some View {
@@ -28,11 +28,11 @@ struct OFWOpener: View {
         if let link = link {
           switch link {
           case .post(let id, let subreddit):
-            router.path.append(PostViewPayload(post: Post(id: id, api: redditAPI), sub: Subreddit(id: subreddit, api: redditAPI)))
+            router.path.append(PostViewPayload(post: Post(id: id, api: RedditAPI.shared), sub: Subreddit(id: subreddit, api: RedditAPI.shared)))
           case .subreddit(let name):
-            router.path.append(SubredditPostsContainerPayload(sub: Subreddit(id: name, api: redditAPI)))
+            router.path.append(SubredditPostsContainerPayload(sub: Subreddit(id: name, api: RedditAPI.shared)))
           case .user(let username):
-            router.path.append(User(id: username, api: redditAPI))
+            router.path.append(User(id: username, api: RedditAPI.shared))
           default:
             break
           }

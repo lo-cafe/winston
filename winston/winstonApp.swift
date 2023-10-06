@@ -23,7 +23,7 @@ struct winstonApp: App {
 }
 
 struct AppContent: View {
-  @StateObject private var redditAPI = RedditAPI()
+  @ObservedObject private var redditAPI = RedditAPI.shared
   @Default(.themesPresets) private var themesPresets
   @Default(.selectedThemeID) private var selectedThemeID
   @Environment(\.colorScheme) private var cs
@@ -42,7 +42,6 @@ struct AppContent: View {
         if selectedThemeRaw.isNil { selectedThemeID = "default" }
       }
       .environment(\.useTheme, selectedTheme)
-      .environmentObject(redditAPI)
       .onChange(of: scenePhase) { newPhase in
         let useAuth = UserDefaults.standard.bool(forKey: "useAuth") // Get fresh value
           
@@ -69,7 +68,15 @@ private struct CurrentThemeKey: EnvironmentKey {
   static let defaultValue = defaultTheme
 }
 
+private struct ContentWidthKey: EnvironmentKey {
+  static let defaultValue = UIScreen.screenWidth
+}
+
 extension EnvironmentValues {
+  var contentWidth: Double {
+    get { self[ContentWidthKey.self] }
+    set { self[ContentWidthKey.self] = newValue }
+  }
   var useTheme: WinstonTheme {
     get { self[CurrentThemeKey.self] }
     set { self[CurrentThemeKey.self] = newValue }

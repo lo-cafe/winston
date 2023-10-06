@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftUI
+import Combine
 
 class RouterIsRoot: ObservableObject {
   @Published var isRoot = true
@@ -30,7 +31,13 @@ class Router: ObservableObject {
   }
 }
 
-class RouterProxy: ObservableObject {
+class RouterProxy: ObservableObject, Equatable, Identifiable {
+  static func == (lhs: RouterProxy, rhs: RouterProxy) -> Bool { lhs.id == rhs.id }
+  
+  var id: String {
+    self.router.id
+  }
   var router: Router
-  init(_ router: Router) { self.router = router }
+  var lol: String
+  init(_ router: Router) {self.router = router; lol = UUID().uuidString }
 }

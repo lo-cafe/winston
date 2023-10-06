@@ -44,9 +44,11 @@ struct AppearancePanel: View {
         WNavigationLink(value: SettingsPages.themes) {
           Label("Themes", systemImage: "paintbrush.fill")
         }
-      } footer: {
-        Text("This is a special menu because in Winston you can change 90% of what you see. Enjoy the theming system!")
+        WNavigationLink(value: SettingsPages.appIcon) {
+          Label("App icon", systemImage: "appclip")
+        }
       }
+      .themedListDividers()
       
       Section("Posts") {
         Group {
@@ -142,7 +144,7 @@ enum ThumbnailSizeModifier:  Codable, CaseIterable, Identifiable, Defaults.Seria
     case .medium:
       return 1.0
     case .large:
-      return 1.5
+      return 1.25
     }
   }
 }

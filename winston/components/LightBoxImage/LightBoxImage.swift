@@ -11,13 +11,13 @@ import Defaults
 private let SPACING = 24.0
 
 struct LightBoxImage: View {
-  @ObservedObject var post: Post
+  var post: Post
   var i: Int
   var imagesArr: [MediaExtracted]
-  var namespace: Namespace.ID
   @Environment(\.dismiss) private var dismiss
   @State private var appearBlack = false
   @State private var appearContent = false
+  @State private var dragOffset: CGSize?
   @State private var drag: CGSize = .zero
   @State private var xPos: CGFloat = 0
   @State private var dragAxis: Axis?
@@ -44,8 +44,8 @@ struct LightBoxImage: View {
   var body: some View {
     let interpolate = interpolatorBuilder([0, 100], value: abs(drag.height))
     HStack(spacing: SPACING) {
-      ForEach(Array(imagesArr.enumerated()), id: \.element.id) { i, img in
-        let selected = i == activeIndex
+      ForEach(Array(imagesArr.enumerated()), id: \.element.id) { index, img in
+        let selected = index == activeIndex
         LightBoxElementView(el: img, onTap: toggleOverlay, isPinching: $isPinching)
           .allowsHitTesting(selected)
           .scaleEffect(!selected ? 1 : interpolate([1, 0.9], true))
@@ -61,7 +61,9 @@ struct LightBoxImage: View {
       ? nil
       : DragGesture(minimumDistance: 20)
         .onChanged { val in
-          if dragAxis == nil {
+          
+          if dragAxis.isNil || dragOffset.isNil {
+            dragOffset = val.translation
             if abs(val.predictedEndTranslation.width) > abs(val.predictedEndTranslation.height) {
               dragAxis = .horizontal
             } else if abs(val.predictedEndTranslation.width) < abs(val.predictedEndTranslation.height) {
@@ -69,7 +71,7 @@ struct LightBoxImage: View {
             }
           }
           
-          if dragAxis != nil {
+          if let dragAxis = dragAxis, let dragOffset = dragOffset {
             var transaction = Transaction()
             transaction.isContinuous = true
             transaction.animation = .interpolatingSpring(stiffness: 1000, damping: 100, initialVelocity: 0)
@@ -79,15 +81,16 @@ struct LightBoxImage: View {
               endPos.height = 0
             }
             withTransaction(transaction) {
-              drag = endPos
+              drag = endPos - dragOffset
             }
           }
         }
         .onEnded { val in
           if dragAxis == .horizontal {
-            let predictedEnd = val.predictedEndTranslation.width
+            let predictedEnd = val.predictedEndTranslation.width - (dragOffset?.width ?? 0)
             drag = .zero
-            xPos += val.translation.width
+            xPos += val.translation.width - (dragOffset?.width ?? 0)
+            dragOffset = nil
             let newActiveIndex = min(imagesArr.count - 1, max(0, activeIndex + (predictedEnd < -(UIScreen.screenWidth / 2) ? 1 : predictedEnd > UIScreen.screenWidth / 2 ? -1 : 0)))
             let finalXPos = -(CGFloat(newActiveIndex) * (UIScreen.screenWidth + (SPACING)))
             let distance = abs(finalXPos - xPos)
@@ -163,9 +166,11 @@ struct LightBoxImage: View {
       if lightboxViewsPost { Task(priority: .background) { await post.toggleSeen(true) } }
       xPos = -CGFloat(i) * (UIScreen.screenWidth + SPACING)
       activeIndex = i
-      withAnimation(.easeOut) {
-        appearContent = true
-        appearBlack = true
+      doThisAfter(0) {
+        withAnimation(.easeOut) {
+          appearContent = true
+          appearBlack = true
+        }
       }
     }
     .transition(.opacity)

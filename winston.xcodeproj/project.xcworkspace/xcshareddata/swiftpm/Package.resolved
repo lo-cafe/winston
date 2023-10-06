@@ -19,6 +19,15 @@
       }
     },
     {
+      "identity" : "chtcollectionviewwaterfalllayout",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/chiahsien/CHTCollectionViewWaterfallLayout.git",
+      "state" : {
+        "revision" : "1fe42247efc8aea1ad03332d2b44f2d7fb1644bc",
+        "version" : "0.9.10"
+      }
+    },
+    {
       "identity" : "confettiswiftui",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/simibac/ConfettiSwiftUI.git",
@@ -169,15 +178,6 @@
       "state" : {
         "revision" : "34f118e2a4712e3ceef05481b9f15ab1e890bc37",
         "version" : "1.5.0"
-      }
-    },
-    {
-      "identity" : "waterfallgrid",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/paololeonardi/WaterfallGrid.git",
-      "state" : {
-        "revision" : "944aa82832ed5a9eaaf50862cdd53e3c10ab55eb",
-        "version" : "1.0.1"
       }
     },
     {

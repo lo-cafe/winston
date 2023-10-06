@@ -10,13 +10,25 @@ import UIKit
 import SwiftUI
 import AVKit
 import AVFoundation
+import Nuke
 
 class AppDelegate: NSObject, UIApplicationDelegate {
   func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
     try? AVAudioSession.sharedInstance().setCategory(.playback, mode: .default, options: [.mixWithOthers])
     return true
   }
-//  func applicationDidFinishLaunching(_ application: UIApplication) {
-//
-//  }
+  func applicationDidFinishLaunching(_ application: UIApplication) {
+    let defaultPipeline = ImagePipeline { config in
+      config.dataCache = try? DataCache(name: "lo.cafe.winston.datacache")
+      let dataLoader: DataLoader = {
+        let config = URLSessionConfiguration.default
+        config.urlCache = nil
+        return DataLoader(configuration: config)
+      }()
+      config.dataLoader = dataLoader
+      config.dataCachePolicy = .storeAll
+      config.isUsingPrepareForDisplay = true
+    }
+    ImagePipeline.shared = defaultPipeline
+  }
 }

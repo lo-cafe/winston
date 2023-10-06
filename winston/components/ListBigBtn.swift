@@ -9,6 +9,7 @@ import SwiftUI
 
 struct ListBigBtn: View {
   @EnvironmentObject private var routerProxy: RouterProxy
+  @Binding var selectedSub: FirstSelectable?
   var icon: String
   var iconColor: Color
   var label: String
@@ -16,7 +17,7 @@ struct ListBigBtn: View {
   @Environment(\.useTheme) private var theme
   var body: some View {
     Button {
-      routerProxy.router.path.append(SubViewType.posts(destination))
+      selectedSub = .sub(destination) 
     } label: {
       VStack(alignment: .leading, spacing: 8) {
         Image(systemName: icon)
@@ -29,10 +30,10 @@ struct ListBigBtn: View {
       .frame(maxWidth: .infinity, alignment: .leading)
       .foregroundColor(.primary)
       .themedListRowBG()
-      .mask(RR(10, .black))
       .contentShape(RoundedRectangle(cornerRadius: 13))
       //    .onChange(of: reset) { _ in active = false }
     }
     .buttonStyle(WNavLinkButtonStyle())
+    .mask(RR(10, .black))
   }
 }

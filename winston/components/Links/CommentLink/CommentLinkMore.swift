@@ -21,9 +21,8 @@ struct CommentLinkMore: View {
   
   var body: some View {
     let curveColor = selectedTheme.comments.theme.indentColor.cs(cs).color()
-    let preferenceShowCommentsCards = selectedTheme.comments.theme.type == .card
     let cardedCommentsInnerHPadding = selectedTheme.comments.theme.innerPadding.horizontal
-    let horPad = preferenceShowCommentsCards ? cardedCommentsInnerHPadding : 0
+    let horPad = cardedCommentsInnerHPadding
     if let data = comment.data, let count = data.count, let parentElement = parentElement, count > 0 {
       HStack(spacing: 0) {
         if data.depth != 0 && indentLines != 0 {
@@ -76,7 +75,7 @@ struct CommentLinkMore: View {
             loadMoreLoading = true
           }
           Task(priority: .background) {
-            await comment.loadChildren(parent: parentElement, postFullname: postFullname)
+            await comment.loadChildren(parent: parentElement, postFullname: postFullname, avatarSize: selectedTheme.comments.theme.badge.avatar.size)
             await MainActor.run {
               doThisAfter(0.5) {
                 withAnimation(spring) {

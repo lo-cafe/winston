@@ -47,15 +47,16 @@ struct Tabber: View {
   @ObservedObject var tempGlobalState = TempGlobalState.shared
   @ObservedObject var errorAlert = Oops.shared
   @State var activeTab = TabIdentifier.posts
-  @EnvironmentObject var redditAPI: RedditAPI
+  
   @State var credModalOpen = false
+  @State var importedThemeAlert = false
 
 //  @State var tabBarHeight: CGFloat?
   @StateObject private var inboxPayload = TabPayload("inboxRouter")
   @StateObject private var mePayload = TabPayload("meRouter")
   @StateObject private var postsPayload = TabPayload("postsRouter")
   @StateObject private var searchPayload = TabPayload("searchRouter")
-  @State private var settingsPayload = TabPayload("settingsRouter")
+  @StateObject private var settingsPayload = TabPayload("settingsRouter")
   @Environment(\.useTheme) private var currentTheme
   @Environment(\.colorScheme) private var colorScheme
   @Default(.showUsernameInTabBar) private var showUsernameInTabBar
@@ -134,7 +135,7 @@ struct Tabber: View {
         .tabItem {
           VStack {
             Image(systemName: "person.fill")
-            if showUsernameInTabBar, let me = redditAPI.me, let data = me.data {
+            if showUsernameInTabBar, let me = RedditAPI.shared.me, let data = me.data {
               Text(data.name)
             } else {
               Text("Me")
@@ -167,7 +168,7 @@ struct Tabber: View {
         }
       
     }
-    .replyModalPresenter()
+    .replyModalPresenter(routerProxy: RouterProxy(payload[activeTab]!.router))
     .overlay(
       GeometryReader { geo in
         GlobalLoaderView()
@@ -207,22 +208,30 @@ struct Tabber: View {
     } message: {
       Text("Something went wrong, but winston's is a fast cat, got the bug in his fangs and brought it to you. What do you wanna do?")
     }
+    .alert("Success!", isPresented: $importedThemeAlert) {
+      Button("Nice!", role: .cancel) {
+        importedThemeAlert = false
+      }
+    } message: {
+      Text("The theme was imported successfully. Enable it in \"Themes\" section in the Settings tab.")
+    }
     .onAppear {
       if showTestersCelebrationModal {
         showTipJarModal = false
       }
+      Defaults[.themesPresets] = Defaults[.themesPresets].filter { $0.id != "default" }
       if Defaults[.multis].count != 0 || Defaults[.subreddits].count != 0 {
         Defaults[.multis] = []
         Defaults[.subreddits] = []
       }
-      Task(priority: .background) { await updatePostsInBox(redditAPI) }
-      if redditAPI.loggedUser.apiAppID == nil || redditAPI.loggedUser.apiAppSecret == nil {
+      Task(priority: .background) { await updatePostsInBox(RedditAPI.shared) }
+      if RedditAPI.shared.loggedUser.apiAppID == nil || RedditAPI.shared.loggedUser.apiAppSecret == nil {
         withAnimation(spring) {
           credModalOpen = true
         }
-      } else if redditAPI.loggedUser.accessToken != nil && redditAPI.loggedUser.refreshToken != nil {
+      } else if RedditAPI.shared.loggedUser.accessToken != nil && RedditAPI.shared.loggedUser.refreshToken != nil {
         Task(priority: .background) {
-          await redditAPI.fetchMe(force: true)
+          await RedditAPI.shared.fetchMe(force: true)
         }
       }
     }
@@ -232,7 +241,7 @@ struct Tabber: View {
 //    .onChange(of: currentTheme.general.navPanelBG, perform: { val in
 //      Tabber.updateTabAndNavBar(tabTheme: currentTheme.general.tabBarBG, navTheme: val, colorScheme)
 //    })
-    .onChange(of: redditAPI.loggedUser) { user in
+    .onChange(of: RedditAPI.shared.loggedUser) { user in
       if user.apiAppID == nil || user.apiAppSecret == nil {
         withAnimation(spring) {
           credModalOpen = true
@@ -240,6 +249,15 @@ struct Tabber: View {
       }
     }
     .onOpenURL { url in
+      if url.absoluteString.hasSuffix(".winston") || url.absoluteString.hasSuffix(".zip") {
+        TempGlobalState.shared.globalLoader.enable("Importing...")
+        let result = importTheme(at: url)
+        TempGlobalState.shared.globalLoader.dismiss()
+        if result {
+          importedThemeAlert = true
+        }
+        return
+      }
       let parsed = parseRedditURL(url.absoluteString)
       withAnimation {
         switch parsed {

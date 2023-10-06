@@ -8,7 +8,7 @@
 import Foundation
 import SwiftUI
 
-typealias Message = GenericRedditEntity<MessageData>
+typealias Message = GenericRedditEntity<MessageData, AnyHashable>
 
 extension Message {
   convenience init(data: T, api: RedditAPI) {
@@ -26,7 +26,7 @@ extension Message {
           data?.new = !old
         }
       }
-      let result = old ? ((await redditAPI.readMessage(fullname)) ?? false) : ((await redditAPI.unreadMessage(fullname)) ?? false)
+      let result = old ? ((await RedditAPI.shared.readMessage(fullname)) ?? false) : ((await RedditAPI.shared.unreadMessage(fullname)) ?? false)
       if !result {
         await MainActor.run {
           withAnimation {

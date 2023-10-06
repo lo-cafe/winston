@@ -6,6 +6,35 @@
 	<array>
 		<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 	</array>
+	<key>CFBundleDocumentTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>winston</string>
+			</array>
+			<key>CFBundleTypeIconFile</key>
+			<string>themeFileIcon</string>
+			<key>CFBundleTypeName</key>
+			<string>Winston theme file</string>
+			<key>LSHandlerRank</key>
+			<string>Owner</string>
+			<key>LSItemContentTypes</key>
+			<array>
+				<string>lo.cafe.winston.theme-file</string>
+			</array>
+		</dict>
+		<dict>
+			<key>CFBundleTypeName</key>
+			<string>Winston theme zip file</string>
+			<key>LSHandlerRank</key>
+			<string>Default</string>
+			<key>LSItemContentTypes</key>
+			<array>
+				<string>public.zip-archive</string>
+			</array>
+		</dict>
+	</array>
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
@@ -34,6 +63,32 @@
 		<string>fetch</string>
 		<string>processing</string>
 		<string>remote-notification</string>
+	</array>
+	<key>UTExportedTypeDeclarations</key>
+	<array>
+		<dict>
+			<key>UTTypeConformsTo</key>
+			<array>
+				<string>public.zip-archive</string>
+				<string>public.data</string>
+				<string>public.content</string>
+			</array>
+			<key>UTTypeDescription</key>
+			<string>Winston theme file</string>
+			<key>UTTypeIconFiles</key>
+			<array>
+				<string>themeFileIcon</string>
+			</array>
+			<key>UTTypeIdentifier</key>
+			<string>lo.cafe.winston.theme-file</string>
+			<key>UTTypeTagSpecification</key>
+			<dict>
+				<key>public.filename-extension</key>
+				<array>
+					<string>winston</string>
+				</array>
+			</dict>
+		</dict>
 	</array>
 	<key>NSFaceIDUsageDescription</key>
 	<string>Uses FaceID to lock and unlock Winston</string>

@@ -9,12 +9,12 @@ import SwiftUI
 import Defaults
 
 struct SubItemButton: View {
-  @StateObject var sub: Subreddit
-  @EnvironmentObject private var routerProxy: RouterProxy
+  @Binding var selectedSub: FirstSelectable?
+  var sub: Subreddit
   var body: some View {
     if let data = sub.data {
       Button {
-        routerProxy.router.path.append(SubViewType.posts(sub))
+        selectedSub = .sub(sub)
       } label: {
         HStack {
           Text(data.display_name ?? "")
@@ -26,57 +26,45 @@ struct SubItemButton: View {
 }
 
 struct SubItem: View, Equatable {
-  var routerProxy: RouterProxy
   static func == (lhs: SubItem, rhs: SubItem) -> Bool {
-    lhs.sub.id == rhs.sub.id && lhs.sub.data == rhs.sub.data
+    return lhs.forcedMaskType == rhs.forcedMaskType
   }
   
-  
-  @ObservedObject var sub: Subreddit
+  var forcedMaskType: CommentBGSide = .middle
+  @Binding var selectedSub: FirstSelectable?
+  @StateObject var sub: Subreddit
   var cachedSub: CachedSub? = nil
-  @Default(.likedButNotSubbed) var likedButNotSubbed
+  @Default(.likedButNotSubbed) private var likedButNotSubbed
   
   func favoriteToggle() {
-      if likedButNotSubbed.contains(sub) {
-        _ = sub.localFavoriteToggle()
-      } else {
-        sub.favoriteToggle(entity: cachedSub)
-      }
+    if likedButNotSubbed.contains(sub) {
+      _ = sub.localFavoriteToggle()
+    } else {
+      sub.favoriteToggle(entity: cachedSub)
+    }
   }
   
   var body: some View {
     if let data = sub.data {
       let favorite = data.user_has_favorited ?? false
       let localFav = likedButNotSubbed.contains(sub)
-      
-      WNavigationLink(SubViewType.posts(sub)) {
+      let isActive = selectedSub == .sub(sub) 
+      WListButton(showArrow: !IPAD, active: isActive) {
+        selectedSub = .sub(sub)
+      } label: {
         HStack {
           SubredditIcon(data: data)
           Text(data.display_name ?? "")
+            .foregroundStyle(isActive ? .white : .primary)
           
           Spacer()
           
           Image(systemName: "star.fill")
-            .foregroundColor((favorite || localFav) ? .blue : .gray.opacity(0.3))
+            .foregroundColor((favorite || localFav) ? Color.accentColor : .gray.opacity(0.3))
             .highPriorityGesture( TapGesture().onEnded(favoriteToggle) )
         }
       }
-//      Button {
-//        routerProxy.router.path.append(SubViewType.posts(sub))
-//      } label: {
-//        HStack {
-//          SubredditIcon(data: data)
-//          Text(data.display_name ?? "")
-//          
-//          Spacer()
-//          
-//          Image(systemName: "star.fill")
-//            .foregroundColor((favorite || localFav) ? .blue : .gray.opacity(0.3))
-//            .highPriorityGesture( TapGesture().onEnded(favoriteToggle) )
-//        }
-//        .contentShape(Rectangle())
-//      }
-//      .buttonStyle(.plain)
+      .mask(CommentBG(cornerRadius: 10, pos: forcedMaskType).fill(.black))
       
     } else {
       Text("Error")

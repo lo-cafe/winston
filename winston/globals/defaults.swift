@@ -125,6 +125,7 @@ extension Defaults.Keys {
   static let disableAlphabetLettersSectionsInSubsList = Key<Bool>("disableAlphabetLettersSectionsInSubsList", default: false)
   static let themesPresets = Key<[WinstonTheme]>("themesPresets", default: [])
   static let selectedThemeID = Key<String>("selectedThemeID", default: "default")
+  static let feedPostsLoadLimit = Key<Int>("feedPostsLoadLimit", default: 35)
 }
 
 extension UIScreen {

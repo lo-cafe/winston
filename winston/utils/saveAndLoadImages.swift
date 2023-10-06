@@ -34,7 +34,7 @@ func saveImage(image: UIImage) -> String? {
   if FileManager.default.fileExists(atPath: fileURL.path) {
     do {
       try FileManager.default.removeItem(atPath: fileURL.path)
-      print("Removed old image")
+//      print("Removed old image")
     } catch let removeError {
       print("couldn't remove file at path", removeError)
     }
@@ -110,16 +110,23 @@ func createZip(images: [String], theme: WinstonTheme) throws -> URL {
   let jsonData = try JSONEncoder().encode(theme)
   try jsonData.write(to: jsonURL)
   
-  let zipName = "\(theme.metadata.name) Theme - Winston"
+  let zipName = UUID().uuidString
   let zipURL = documentDirectory.appendingPathComponent("\(zipName).zip")
   
   if fileManager.fileExists(atPath: zipURL.path()) {
     try fileManager.removeItem(at: zipURL)
   }
+
+  try Zip.zipFiles(paths: imgURLs + [jsonURL], zipFilePath: zipURL, password: nil, progress: nil)
   
-  let zipFilePath = try Zip.quickZipFiles(imgURLs + [jsonURL], fileName: zipName)
-  // replace with your ZipArchive class and its usage
-  // make sure theme.json and images are added to the zip file
+  let winstonFileName = "\(theme.metadata.name)-Theme"
+  let winstonFileNameURL = documentDirectory.appendingPathComponent("\(winstonFileName).winston")
   
-  return zipFilePath
+  if fileManager.fileExists(atPath: winstonFileNameURL.path()) {
+    try fileManager.removeItem(at: winstonFileNameURL)
+  }
+  
+  try fileManager.moveItem(at: zipURL, to: winstonFileNameURL)
+  
+  return winstonFileNameURL
 }

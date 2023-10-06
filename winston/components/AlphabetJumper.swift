@@ -10,16 +10,15 @@ import SwiftUI
 struct AlphabetJumper: View {
   var letters: [String]
   var proxy: ScrollViewProxy
-  @State private var scrollLetter = ""
+  @GestureState private var scrollLetter = ""
   @State private var haptic = UIImpactFeedbackGenerator(style: .rigid)
   
   func goToLetter(_ letter: String, _ disableState: Bool = false) {
-    if letter != scrollLetter {
-      if !disableState {
-        withAnimation(spring) {
-          scrollLetter = letter
-        }
-      }
+
+  }
+  
+  func scrollTo(_ letter: String) {
+    if !letter.isEmpty {
       proxy.scrollTo(letter, anchor: .center)
       haptic.prepare()
       haptic.impactOccurred()
@@ -37,6 +36,7 @@ struct AlphabetJumper: View {
           .highPriorityGesture(TapGesture().onEnded { goToLetter(letter, true) })
       }
     }
+    .animation(spring, value: scrollLetter.isEmpty)
     .fontSize(11, .semibold)
     .frame(width: 16, alignment: .trailing)
 //    .background(Color(uiColor: UIColor.systemGroupedBackground))
@@ -44,18 +44,21 @@ struct AlphabetJumper: View {
     .contentShape(Rectangle())
     .highPriorityGesture(
       DragGesture(minimumDistance: 0)
-        .onChanged { val in
+        .updating($scrollLetter) { val, state, trans in
           let stepI = Int(val.location.y / 15.3)
           if stepI >= letters.count || stepI < 0 { return }
           if letters.count - 1 >= stepI {
             let newLetter = letters[stepI]
-            goToLetter(newLetter)
+            if newLetter != state {
+              trans.animation = spring
+              state = newLetter
+            }
           }
         }
-        .onEnded({ _ in withAnimation(spring) { scrollLetter = "" } })
     )
+    .onChange(of: scrollLetter, perform: scrollTo)
     .frame(height: UIScreen.screenHeight, alignment: .trailing)
     .ignoresSafeArea()
-    .foregroundColor(.blue)
+    .foregroundStyle(Color.accentColor)
   }
 }

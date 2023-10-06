@@ -13,7 +13,7 @@ struct Inbox: View {
   @StateObject var router: Router
   @StateObject var messages = ObservableArray<Message>()
   @State var loading = false
-  @EnvironmentObject var redditAPI: RedditAPI
+  
   @Environment(\.useTheme) private var selectedTheme
   
   func fetch(_ loadMore: Bool = false, _ force: Bool = false) async {
@@ -23,11 +23,11 @@ struct Inbox: View {
         loading = true
       }
     }
-    if let newItems = await redditAPI.fetchInbox() {
+    if let newItems = await RedditAPI.shared.fetchInbox() {
       await MainActor.run {
         withAnimation {
           loading = false
-          messages.data = newItems.map { Message(data: $0, api: redditAPI) }
+          messages.data = newItems.map { Message(data: $0, api: RedditAPI.shared) }
         }
       }
     }

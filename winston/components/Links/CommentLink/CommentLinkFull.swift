@@ -17,15 +17,13 @@ struct CommentLinkFull: View {
   var indentLines: Int?
   @State private var loadMoreLoading = false
   @State private var id = UUID().uuidString
-  @StateObject private var attrStrLoader = AttributedStringLoader()
   @Environment(\.useTheme) private var selectedTheme
   @Environment(\.colorScheme) private var cs
   
   var body: some View {
     let curveColor = selectedTheme.comments.theme.indentColor.cs(cs).color()
     let cardedCommentsInnerHPadding = selectedTheme.comments.theme.innerPadding.horizontal
-    let preferenceShowCommentsCards = selectedTheme.comments.theme.type == .card
-    let horPad = preferenceShowCommentsCards ? cardedCommentsInnerHPadding : 0
+    let horPad = cardedCommentsInnerHPadding
     if let data = comment.data {
       HStack {
         if data.depth != 0 && indentLines != 0 {
@@ -43,7 +41,6 @@ struct CommentLinkFull: View {
           HStack {
             Image(systemName: "plus.message.fill")
             Text(loadMoreLoading ? "Just a sec..." : "View full conversation")
-              .onAppear { if let selfBody = post.data?.selftext { attrStrLoader.load(str: selfBody) } }
           }
           .allowsHitTesting(false)
           .padding(.vertical, 12)
@@ -56,7 +53,7 @@ struct CommentLinkFull: View {
       .background(curveColor)
       .contentShape(Rectangle())
       .onTapGesture {
-        routerProxy.router.path.append(PostViewPayload(post: post, postSelfAttr: attrStrLoader.data, sub: subreddit))
+        routerProxy.router.path.append(PostViewPayload(post: post, postSelfAttr: nil, sub: subreddit))
       }
       .allowsHitTesting(!loadMoreLoading)
       .opacity(loadMoreLoading ? 0.5 : 1)

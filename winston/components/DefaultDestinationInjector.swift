@@ -9,7 +9,7 @@ import SwiftUI
 
 struct DefaultDestinationInjector<Content: View>: View {
   @StateObject var routerProxy: RouterProxy
-  var content: () -> Content
+  @ViewBuilder var content: () -> Content
   var body: some View {
     content()
       .navigationDestination(for: URL.self) { url in

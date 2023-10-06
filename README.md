@@ -19,6 +19,9 @@ or
 
 ## Links
 
+Check Winston's sites (https://winston.cafe and https://winston.lo.cafe) repository:
+https://github.com/Kinark/winston-site
+
 Join our super awesome Discord server (1500+ members, very active and fun!):
 https://discord.gg/Jw3Syb3nrz 
 

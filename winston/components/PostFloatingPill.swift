@@ -12,7 +12,7 @@ import AlertToast
 struct PostFloatingPill: View {
   @Default(.postsInBox) var postsInBox
   @Default(.showUpvoteRatio) var showUpvoteRatio
-  @ObservedObject var post: Post
+  var post: Post
   @ObservedObject var subreddit: Subreddit
   @State var showReplyModal = false
   var updateComments: (()->())?
@@ -83,7 +83,7 @@ struct PostFloatingPill: View {
           
           HStack(alignment: .center, spacing: 8) {
   
-            VotesCluster(data: data, likeRatio: showUpvoteRatio ? data.upvote_ratio : nil, post: post)
+            VotesCluster(likeRatio: showUpvoteRatio ? data.upvote_ratio : nil, post: post)
             
           }
           
@@ -92,7 +92,7 @@ struct PostFloatingPill: View {
       }
     }
     .fontSize(20, .semibold)
-    .foregroundColor(.blue)
+    .foregroundColor(Color.accentColor)
     .padding(.trailing, 14)
 
     .floating()

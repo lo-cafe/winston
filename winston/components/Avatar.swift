@@ -7,24 +7,37 @@
 
 import SwiftUI
 import NukeUI
+import Nuke
 
 struct Avatar: View {
-//  static func == (lhs: Avatar, rhs: Avatar) -> Bool {
-//    AvatarCache.shared.data[fullname ?? userID] == AvatarCache.shared.data[fullname ?? userID]
-//  }
+  var url:  String?
+  let userID: String
+  var fullname: String?
+  var theme: AvatarTheme?
+  var avatarSize: CGFloat?
+  @ObservedObject private var avatarCache = Caches.avatars
   
-  var url: String?
+  var body: some View {
+    let id = fullname ?? userID
+    let avatarRequest = avatarCache.cache[id]
+    let avatarSize = avatarSize ?? theme?.size ?? 0
+//    let newURL = avatarRequest.isNil ? URL(string: String(url?.split(separator: "?")[0] ?? "")) : nil
+    AvatarRaw(avatarImgRequest: avatarRequest?.data, userID: userID, fullname: fullname, theme: theme, avatarSize: avatarSize)
+//      .equatable()
+//      .task { if avatarRequest.isNil, let url = url { RedditAPI.shared.addImgReqToAvatarCache(id, url, avatarSize: avatarSize) } }
+  }
+}
+
+struct AvatarRaw: View, Equatable {
+  static func == (lhs: AvatarRaw, rhs: AvatarRaw) -> Bool {
+    lhs.avatarImgRequest?.url == rhs.avatarImgRequest?.url
+  }
+  
+  var avatarImgRequest: ImageRequest?
   var userID: String
   var fullname: String? = nil
   var theme: AvatarTheme?
   var avatarSize: CGFloat?
-  @EnvironmentObject private var redditAPI: RedditAPI
-  @ObservedObject private var avatarCache = AvatarCache.shared
-  
-  var avatarURL: String? {
-    let raw = url ?? avatarCache[fullname ?? userID]
-    return raw == nil || raw == "" ? nil : String(raw?.split(separator: "?")[0] ?? "")
-  }
   
   var body: some View {
     let avatarSize = avatarSize ?? theme?.size ?? 0
@@ -38,9 +51,9 @@ struct Avatar: View {
               .frame(width: avatarSize, height: avatarSize)
           )
       } else {
-        if let avatarURL = avatarURL, avatarURL != "", let avatarURLURL = URL(string: avatarURL) {
-          //          EmptyView()
-          URLImage(url: avatarURLURL)
+        if let avatarImgRequest = avatarImgRequest, let url = avatarImgRequest.url {
+          URLImage(url: url, imgRequest: avatarImgRequest, processors: [.resize(width: avatarSize)])
+//            .equatable()
             .scaledToFill()
         } else {
           Text(userID.prefix(1).uppercased())
@@ -56,9 +69,3 @@ struct Avatar: View {
     .mask(RR(cornerRadius, .black))
   }
 }
-//
-//struct Avatar_Previews: PreviewProvider {
-//    static var previews: some View {
-//        Avatar()
-//    }
-//}

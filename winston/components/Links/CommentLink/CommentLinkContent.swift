@@ -61,14 +61,14 @@ struct CommentLinkContent: View {
   
   @Environment(\.useTheme) private var selectedTheme
   @Environment(\.colorScheme) private var cs
+  @EnvironmentObject private var routerProxy: RouterProxy
   
   @State var commentViewLoaded = false
   
   var body: some View {
     let theme = selectedTheme.comments
-    let preferenceShowCommentsCards = theme.theme.type == .card
     let selectable = (comment.data?.winstonSelecting ?? false)
-    let horPad = preferenceShowCommentsCards ? theme.theme.innerPadding.horizontal : 0
+    let horPad = theme.theme.innerPadding.horizontal
     if let data = comment.data {
       let collapsed = data.collapsed ?? false
       Group {
@@ -86,9 +86,8 @@ struct CommentLinkContent: View {
             }
           }
           HStack(spacing: 8) {
-            if let author = data.author, let created = data.created {
-              Badge(usernameColor: (post?.data?.author ?? "") == author ? Color.green : nil, author: author, fullname: data.author_fullname, created: created, avatarURL: avatarsURL?[data.author_fullname!], theme: theme.theme.badge)
-                .equatable()
+            if let author = data.author {
+              BadgeComment(comment: comment, usernameColor: (post?.data?.author ?? "") == author ? Color.green : nil, avatarURL: avatarsURL?[data.author_fullname!], theme: theme.theme.badge)
             }
             
             Spacer()
@@ -168,8 +167,8 @@ struct CommentLinkContent: View {
         }
         .padding(.horizontal, horPad)
         .frame(height: max((theme.theme.badge.authorText.size + theme.theme.badge.statsText.size + 2), theme.theme.badge.avatar.size) + (data.depth != 0 ? theme.theme.innerPadding.vertical + theme.theme.repliesSpacing : 0), alignment: .leading)
-        .mask(Color.listBG)
-        .background(Color.blue.opacity(highlight ? 0.2 : 0))
+        .mask(Color.black)
+        .background(Color.accentColor.opacity(highlight ? 0.2 : 0))
         .background(showReplies ? theme.theme.bg.cs(cs).color() : .clear)
         .onAppear {
           let newCommentSwipeActions = Defaults[.commentSwipeActions]
@@ -260,42 +259,38 @@ struct CommentLinkContent: View {
           .introspect(.listCell, on: .iOS(.v16, .v17)) { cell in
             cell.layer.masksToBounds = false
           }
-//          .padding(.horizontal, preferenceShowCommentsCards ? 13 : 0)
           .padding(.horizontal, horPad)
           .mask(Color.black.padding(.top, -(data.depth != 0 ? 42 : 30)).padding(.bottom, -8))
-          .background(Color.blue.opacity(highlight ? 0.2 : 0))
+          .background(Color.accentColor.opacity(highlight ? 0.2 : 0))
           .background(showReplies ? theme.theme.bg.cs(cs).color() : .clear)
-          .contextMenu {
-            if !selectable && forcedBodySize == nil {
-              ForEach(allCommentSwipeActions) { action in
-                let active = action.active(comment)
-                if action.enabled(comment) {
-                  Button {
-                    Task(priority: .background) {
-                      await action.action(comment)
-                    }
-                  } label: {
-                    Label(active ? "Undo \(action.label.lowercased())" : action.label, systemImage: active ? action.icon.active : action.icon.normal)
-                      .foregroundColor(action.bgColor.normal == "353439" ? action.color.normal == "FFFFFF" ? Color.blue : Color.hex(action.color.normal) : Color.hex(action.bgColor.normal))
-                  }
-                }
-              }
-
-              if let permalink = data.permalink, let permaURL = URL(string: "https://reddit.com\(permalink.escape.urlEncoded)") {
-                ShareLink(item: permaURL) { Label("Share", systemImage: "square.and.arrow.up") }
-              }
-              
-            }
-          } preview: {
-            CommentLinkContentPreview(sizer: sizer, forcedBodySize: sizer.size, showReplies: showReplies, arrowKinds: arrowKinds, indentLines: indentLines, lineLimit: lineLimit, post: post, comment: comment, avatarsURL: avatarsURL)
-              .id("\(data.id)-preview")
-          }
-          
-//          .sheet(isPresented: $showReplyModal) {
-//            ReplyModalComment(comment: comment)
-//          }
           .id("\(data.id)-body\(forcedBodySize == nil ? "" : "-preview")")
         }
+      }
+      .contextMenu {
+        if !selectable && forcedBodySize == nil {
+          ForEach(allCommentSwipeActions) { action in
+            let active = action.active(comment)
+            if action.enabled(comment) {
+              Button {
+                Task(priority: .background) {
+                  await action.action(comment)
+                }
+              } label: {
+                Label(active ? "Undo \(action.label.lowercased())" : action.label, systemImage: active ? action.icon.active : action.icon.normal)
+                  .foregroundColor(action.bgColor.normal == "353439" ? action.color.normal == "FFFFFF" ? Color.blue : Color.hex(action.color.normal) : Color.hex(action.bgColor.normal))
+              }
+            }
+          }
+
+          if let permalink = data.permalink, let permaURL = URL(string: "https://reddit.com\(permalink.escape.urlEncoded)") {
+            ShareLink(item: permaURL) { Label("Share", systemImage: "square.and.arrow.up") }
+          }
+          
+        }
+      } preview: {
+        CommentLinkContentPreview(sizer: sizer, forcedBodySize: sizer.size, showReplies: showReplies, arrowKinds: arrowKinds, indentLines: indentLines, lineLimit: lineLimit, post: post, comment: comment, avatarsURL: avatarsURL)
+          .environmentObject(routerProxy)
+          .id("\(data.id)-preview")
       }
     } else {
       Text("oops")
