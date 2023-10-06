@@ -14,48 +14,55 @@ struct ThemeStore: View {
   @State var themes: [ThemeData] = []
   @State private var isRefreshing = false // Track the refreshing state
   @State private var isPresentingUploadSheet = false
-  @State private var eligibility: Bool = false
+  @Default(.themeStoreEligibility) var eligibility
   @Default(.themestoreID) var themestoreID
   @StateObject var searchQuery = DebouncedText(delay: 0.35)
+  @Environment(\.useTheme) private var theme
   var body: some View {
     HStack{
       if eligibility {
-          List {
+        List {
+          Section{
             ForEach(themes, id: \.self) { theme in
-              NavigationLink(destination: ThemeStoreDetailsView(theme: theme), label: {
+              NavigationLink(destination: ThemeStoreDetailsView(themeData: theme), label: {
                 OnlineThemeItem(theme: theme)
               })
+              .themedListRowBG(enablePadding: true)
+
             }
           }
-          .toolbar{
-            if eligibility {
-              ToolbarItem(placement: .primaryAction){
-                Button{
-                  isPresentingUploadSheet.toggle()
-                } label: {
-                  Label("Upload Theme", systemImage: "arrow.up.to.line")
-                    .labelStyle(.iconOnly)
-                }
-              }
-            }
-            
-          }
-          .searchable(text: $searchQuery.text)
-          .onChange(of: searchQuery.debounced) { val in
-            Task{
-              if val == "" {
-                await fetchThemes()
-              } else {
-                themes = await themeStore.fetchThemesByName(name: val) ?? []
+          .themedListDividers()
+        }
+        .themedListBG(theme.lists.bg)
+        .toolbar{
+          if eligibility {
+            ToolbarItem(placement: .primaryAction){
+              Button{
+                isPresentingUploadSheet.toggle()
+              } label: {
+                Label("Upload Theme", systemImage: "arrow.up.to.line")
+                  .labelStyle(.iconOnly)
               }
             }
           }
-          .refreshable { // Add pull-to-refresh
-            await fetchThemes()
-          }
-          .navigationTitle("Theme Store")
-          .navigationBarTitleDisplayMode(.large)
           
+        }
+        .searchable(text: $searchQuery.text)
+        .onChange(of: searchQuery.debounced) { val in
+          Task{
+            if val == "" {
+              await fetchThemes()
+            } else {
+              themes = await themeStore.fetchThemesByName(name: val) ?? []
+            }
+          }
+        }
+        .refreshable { // Add pull-to-refresh
+          await fetchThemes()
+        }
+        .navigationTitle("Theme Store")
+        .navigationBarTitleDisplayMode(.large)
+        
         
       } else {
         HStack{
@@ -108,6 +115,7 @@ struct ThemeStore: View {
 
 struct OnlineThemeItem: View {
   var theme: ThemeData
+  var accentColor: Color = .blue
   @Environment(\.openURL) private var openURL
   
   
@@ -136,7 +144,7 @@ struct OnlineThemeItem: View {
       Spacer()
       
       ThemeItemDownloadButton(theme: theme)
-      
+        .accentColor(accentColor)
     }
     
   }
@@ -149,6 +157,7 @@ struct ThemeItemDownloadButton: View {
   @State var showingImportError: Bool = false
   @Default(.themesPresets) private var themesPresets
   @EnvironmentObject var themeStore: ThemeStoreAPI
+  @Environment(\.useTheme) private var themeTheme
   // Computed property to check if themesPresets contains the current theme
   private var isThemeInPresets: Bool {
     themesPresets.contains { $0.id == theme.file_id }
@@ -178,7 +187,6 @@ struct ThemeItemDownloadButton: View {
         } label: {
           Label("Download", systemImage: "arrow.down.to.line")
             .labelStyle(.iconOnly)
-            .foregroundColor(.blue)
           
         }
         .highPriorityGesture( //Is this really the solution for it working inside a NavigationLink??
@@ -193,6 +201,7 @@ struct ThemeItemDownloadButton: View {
       }
       
     }
+    
   }
   
   func downloadTheme(){

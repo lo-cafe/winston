@@ -26,7 +26,7 @@ struct AppearancePanel: View {
   @Default(.voteButtonPositionRight) var voteButtonPositionRight
   @Default(.showSelfPostThumbnails) var showSelfPostThumbnails
   @Default(.disableAlphabetLettersSectionsInSubsList) var disableAlphabetLettersSectionsInSubsList
-  
+  @Default(.themeStoreTint) var themeStoreTint
   @Environment(\.useTheme) private var theme
   
   var body: some View {
@@ -35,6 +35,7 @@ struct AppearancePanel: View {
         Group {
           Toggle("Show Username in Tab Bar", isOn: $showUsernameInTabBar)
           Toggle("Disable subs list letter sections", isOn: $disableAlphabetLettersSectionsInSubsList)
+          Toggle("Theme Store Tint", isOn: $themeStoreTint)
         }
         .themedListRowBG(enablePadding: true)
       }
