@@ -40,7 +40,7 @@ struct CommentsSectionTheme: Codable, Hashable {
 
 struct CommentTheme: Codable, Hashable {
   enum CodingKeys: String, CodingKey {
-    case innerPadding, outerHPadding, repliesSpacing, indentCurve, indentColor, cornerRadius, badge, bodyText, bodyAuthorSpacing, bg
+    case innerPadding, outerHPadding, repliesSpacing, indentCurve, indentColor, cornerRadius, badge, bodyText, bodyAuthorSpacing, bg, loadMoreInnerPadding, loadMoreOuterTopPadding, loadMoreText, loadMoreBackground
   }
   
   var innerPadding: ThemePadding
@@ -53,8 +53,13 @@ struct CommentTheme: Codable, Hashable {
   var bodyText: ThemeText
   var bodyAuthorSpacing: CGFloat
   var bg: ColorSchemes<ThemeColor>
+    
+  var loadMoreInnerPadding: ThemePadding
+  var loadMoreOuterTopPadding: CGFloat
+  var loadMoreText : ThemeText
+  var loadMoreBackground : ColorSchemes<ThemeColor>
   
-  init(innerPadding: ThemePadding, outerHPadding: CGFloat, repliesSpacing: CGFloat, indentCurve: CGFloat, indentColor: ColorSchemes<ThemeColor>, cornerRadius: CGFloat, badge: BadgeTheme, bodyText: ThemeText, bodyAuthorSpacing: CGFloat, bg: ColorSchemes<ThemeColor>) {
+  init(innerPadding: ThemePadding, outerHPadding: CGFloat, repliesSpacing: CGFloat, indentCurve: CGFloat, indentColor: ColorSchemes<ThemeColor>, cornerRadius: CGFloat, badge: BadgeTheme, bodyText: ThemeText, bodyAuthorSpacing: CGFloat, bg: ColorSchemes<ThemeColor>, loadMoreInnerPadding: ThemePadding, loadMoreOuterTopPadding: CGFloat, loadMoreText : ThemeText, loadMoreBackground : ColorSchemes<ThemeColor>) {
     self.innerPadding = innerPadding
     self.outerHPadding = outerHPadding
     self.repliesSpacing = repliesSpacing
@@ -65,6 +70,11 @@ struct CommentTheme: Codable, Hashable {
     self.bodyText = bodyText
     self.bodyAuthorSpacing = bodyAuthorSpacing
     self.bg = bg
+    self.loadMoreInnerPadding = loadMoreInnerPadding
+    self.loadMoreOuterTopPadding = loadMoreOuterTopPadding
+    self.loadMoreText = loadMoreText
+    self.loadMoreBackground = loadMoreBackground
+    
   }
   
   func encode(to encoder: Encoder) throws {
@@ -79,6 +89,10 @@ struct CommentTheme: Codable, Hashable {
     try container.encodeIfPresent(bodyText, forKey: .bodyText)
     try container.encodeIfPresent(bodyAuthorSpacing, forKey: .bodyAuthorSpacing)
     try container.encodeIfPresent(bg, forKey: .bg)
+    try container.encodeIfPresent(loadMoreInnerPadding, forKey: .loadMoreInnerPadding)
+    try container.encodeIfPresent(loadMoreOuterTopPadding, forKey: .loadMoreOuterTopPadding)
+    try container.encodeIfPresent(loadMoreText, forKey: .loadMoreText)
+    try container.encodeIfPresent(loadMoreBackground, forKey: .loadMoreBackground)
   }
   
   init(from decoder: Decoder) throws {
@@ -94,5 +108,9 @@ struct CommentTheme: Codable, Hashable {
     self.bodyText = try container.decodeIfPresent(ThemeText.self, forKey: .bodyText) ?? t.bodyText
     self.bodyAuthorSpacing = try container.decodeIfPresent(CGFloat.self, forKey: .bodyAuthorSpacing) ?? t.bodyAuthorSpacing
     self.bg = try container.decodeIfPresent(ColorSchemes<ThemeColor>.self, forKey: .bg) ?? t.bg
+    self.loadMoreInnerPadding = try container.decodeIfPresent(ThemePadding.self, forKey: .loadMoreInnerPadding) ?? t.loadMoreInnerPadding
+    self.loadMoreOuterTopPadding = try container.decodeIfPresent(CGFloat.self, forKey: .loadMoreOuterTopPadding) ?? t.loadMoreOuterTopPadding
+    self.loadMoreText = try container.decodeIfPresent(ThemeText.self, forKey: .loadMoreText) ?? t.loadMoreText
+    self.loadMoreBackground = try container.decodeIfPresent(ColorSchemes<ThemeColor>.self, forKey: .loadMoreBackground) ?? t.loadMoreBackground
   }
 }

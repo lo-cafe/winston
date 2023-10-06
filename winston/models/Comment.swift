@@ -80,6 +80,7 @@ extension Comment {
       commentData.parent_id = message.parent_id
       commentData.score = nil
       commentData.author_fullname = message.author_fullname
+      commentData.author_flair_text = message.author_flair_text
       commentData.approved_by = nil
       commentData.mod_note = nil
       commentData.collapsed = false
@@ -433,7 +434,7 @@ struct CommentData: GenericRedditEntityDataType {
   //  let locked: Bool?
   //  let report_reasons: String?
   var created: Double?
-  //  let author_flair_text: String?
+  var author_flair_text: String?
   //  let treatment_tags: [String]?
   var link_id: String?
   var link_title: String?

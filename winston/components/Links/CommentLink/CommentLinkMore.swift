@@ -31,7 +31,8 @@ struct CommentLinkMore: View {
             ForEach(shapes, id: \.self) { i in
               if arrowKinds.indices.contains(i - 1) {
                 let actualArrowKind = arrowKinds[i - 1]
-                Arrows(kind: actualArrowKind)
+                Arrows(kind: actualArrowKind, offset: selectedTheme.comments.theme.loadMoreOuterTopPadding)
+
               }
             }
           }
@@ -56,14 +57,15 @@ struct CommentLinkMore: View {
             }
           }
         }
-        .padding(.vertical, 8)
-        .padding(.horizontal, 12)
+        .padding(.vertical, selectedTheme.comments.theme.loadMoreInnerPadding.vertical)
+        .padding(.horizontal, selectedTheme.comments.theme.loadMoreInnerPadding.horizontal)
         .opacity(loadMoreLoading ? 0.5 : 1)
-        .background(Capsule(style: .continuous).fill(curveColor))
-        .padding(.vertical, 4)
+        .background(Capsule(style: .continuous).fill(selectedTheme.comments.theme.loadMoreBackground.cs(cs).color()))
         .compositingGroup()
-        .fontSize(selectedTheme.comments.theme.bodyText.size, .medium)
-        .foregroundColor(.accentColor)
+        .fontSize(selectedTheme.comments.theme.loadMoreText.size, selectedTheme.comments.theme.loadMoreText.weight.t)
+        .foregroundColor(selectedTheme.comments.theme.loadMoreText.color.cs(cs).color())
+        .padding(.top, selectedTheme.comments.theme.loadMoreOuterTopPadding)
+        .padding(.bottom, 2)
       }
       .padding(.horizontal, horPad)
       .frame(maxWidth: .infinity, alignment: .leading)

@@ -18,6 +18,7 @@ struct BadgeView: View, Equatable {
   var saved = false
   var usernameColor: Color?
   var author: String
+  var flair: String?
   var fullname: String? = nil
   var created: Double
   var avatarURL: String?
@@ -78,8 +79,21 @@ struct BadgeView: View, Equatable {
       
       VStack(alignment: .leading, spacing: BadgeView.authorStatsSpacing) {
         
-        Text(author).font(.system(size: theme.authorText.size, weight: theme.authorText.weight.t)).foregroundColor(author == "[deleted]" ? .red : usernameColor ?? theme.authorText.color.cs(cs).color())
-          .onTapGesture(perform: openUser)
+        HStack(alignment: .center, spacing: 6) {
+          Text(author).font(.system(size: theme.authorText.size, weight: theme.authorText.weight.t)).foregroundColor(author == "[deleted]" ? .red : usernameColor ?? theme.authorText.color.cs(cs).color())
+              .onTapGesture(perform: openUser)
+          
+          if let f = flair?.trimmingCharacters(in: .whitespacesAndNewlines) {
+            if !f.isEmpty {
+              let colonIndex = f.lastIndex(of: ":")
+              let flairWithoutEmoji = String(f[(f.contains(":") ? f.index(colonIndex!, offsetBy: min(2, max(0, f.count - f.distance(from: f.startIndex, to: colonIndex!)))) : f.startIndex)...])
+              if !flairWithoutEmoji.isEmpty {
+                // TODO Load flair emojis via GET /api/v1/{subreddit}/emojis/{emoji_name}
+                Text(flairWithoutEmoji).font(.system(size: theme.flairText.size, weight: theme.flairText.weight.t)).lineLimit(1).foregroundColor(theme.flairText.color.cs(cs).color()).padding(EdgeInsets(top: 0, leading: 6, bottom: 0, trailing: 6)).background(theme.flairBackground.cs(cs).color()).clipShape(Capsule())
+              }
+            }
+          }
+        }
         
         HStack(alignment: .center, spacing: 6) {
           ForEach(extraInfo, id: \.self){ elem in
@@ -122,7 +136,7 @@ struct Badge: View, Equatable {
   
   var body: some View {
     if let data = post.data {
-      BadgeView(saved: data.saved, usernameColor: usernameColor, author: data.author, fullname: data.author_fullname, created: data.created, avatarURL: avatarURL, theme: theme, extraInfo: extraInfo, routerProxy: routerProxy, cs: cs)
+      BadgeView(saved: data.saved, usernameColor: usernameColor, author: data.author, flair: data.author_flair_text, fullname: data.author_fullname, created: data.created, avatarURL: avatarURL, theme: theme, extraInfo: extraInfo, routerProxy: routerProxy, cs: cs)
     }
   }
 }
@@ -142,7 +156,7 @@ struct BadgeComment: View, Equatable {
   
   var body: some View {
     if let data = comment.data, let author = data.author, let created = data.created {
-      BadgeView(saved: data.saved ?? false, usernameColor: usernameColor, author: author, fullname: data.author_fullname, created: created, avatarURL: avatarURL, theme: theme, extraInfo: extraInfo, routerProxy: routerProxy, cs: cs)
+      BadgeView(saved: data.saved ?? false, usernameColor: usernameColor, author: author, flair: data.author_flair_text, fullname: data.author_fullname, created: created, avatarURL: avatarURL, theme: theme, extraInfo: extraInfo, routerProxy: routerProxy, cs: cs)
     }
   }
 }
