@@ -11,11 +11,15 @@ import WebKit
 
 struct GeneralPanel: View {
   @Default(.likedButNotSubbed) var likedButNotSubbed
+  @Default(.syncKeyChainAndSettings) var syncKeyChainAndSettings
   @State private var totalCacheSize: String = ""
   @Environment(\.useTheme) private var theme
   
   var body: some View {
     List{
+      Section("General"){
+        Toggle("Sync API Key and Settings", isOn: $syncKeyChainAndSettings)
+      }
       Section("Advanced") {
         
         WListButton {

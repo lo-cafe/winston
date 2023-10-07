@@ -18,7 +18,7 @@ func resetApp() {
 }
 
 func resetCredentials() {
-  let credentialsKeychain = Keychain(service: "lo.cafe.winston.reddit-credentials")
+  let credentialsKeychain = Keychain(service: "lo.cafe.winston.reddit-credentials").synchronizable(Defaults[.syncKeyChainAndSettings])
   
   credentialsKeychain["apiAppID"] = nil
   credentialsKeychain["apiAppSecret"] = nil

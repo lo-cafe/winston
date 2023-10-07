@@ -192,7 +192,7 @@ class RedditAPI: ObservableObject {
       lhs.hashValue == rhs.hashValue
     }
     
-    let credentialsKeychain = Keychain(service: "lo.cafe.winston.reddit-credentials")
+    let credentialsKeychain = Keychain(service: "lo.cafe.winston.reddit-credentials").synchronizable(Defaults[.syncKeyChainAndSettings])
     
     func hash(into hasher: inout Hasher) {
       hasher.combine(modhash)
