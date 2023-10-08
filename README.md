@@ -2,7 +2,7 @@
 
 ![Discord](https://img.shields.io/discord/1094807340903039048)
 ![License](https://img.shields.io/github/license/lo-cafe/winston)
-[![Platform](http://img.shields.io/badge/platform-ios-blue.svg)](https://developer.apple.com/iphone/index.action)
+[![Platform](http://img.shields.io/badge/platform-iOS/iPadOS/macOS-blue.svg)](https://developer.apple.com/iphone/index.action)
 ![Release](https://img.shields.io/github/downloads/lo-cafe/winston/total)
 ![GitHub issues](https://img.shields.io/github/issues-raw/lo-cafe/winston)
 
