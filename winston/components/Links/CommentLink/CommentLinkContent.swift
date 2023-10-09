@@ -118,17 +118,25 @@ struct CommentLinkContent: View {
               HStack(alignment: .center, spacing: 4) {
                 Image(systemName: "arrow.up")
                   .foregroundColor(data.likes != nil && data.likes! ? .orange : .gray)
-
+                  .contentShape(Rectangle())
+                  .onTapGesture {
+                      Task { _ = await comment.vote(action: .up) }
+                  }
+                  
                 let downup = Int(ups)
                 Text(formatBigNumber(downup))
                   .foregroundColor(data.likes != nil ? (data.likes! ? .orange : .blue) : .gray)
                   .contentTransition(.numericText())
-                  
+
                 //                  .foregroundColor(downup == 0 ? .gray : downup > 0 ? .orange : .blue)
                   .fontSize(14, .semibold)
 
                 Image(systemName: "arrow.down")
                   .foregroundColor(data.likes != nil && !data.likes! ? .blue : .gray)
+                  .contentShape(Rectangle())
+                  .onTapGesture {
+                      Task { _ = await comment.vote(action: .down) }
+                  }
               }
               .fontSize(14, .medium)
               .padding(.horizontal, 6)
@@ -166,7 +174,7 @@ struct CommentLinkContent: View {
           cell.layer.masksToBounds = false
         }
         .padding(.horizontal, horPad)
-        .frame(height: max((theme.theme.badge.authorText.size + theme.theme.badge.statsText.size + 2), theme.theme.badge.avatar.size) + (data.depth != 0 ? theme.theme.innerPadding.vertical + theme.theme.repliesSpacing : 0), alignment: .leading)
+        .frame(height: max((max(theme.theme.badge.authorText.size, theme.theme.badge.flairText.size + 4) + theme.theme.badge.statsText.size + 2), theme.theme.badge.avatar.size) + (data.depth != 0 ? theme.theme.innerPadding.vertical + theme.theme.repliesSpacing : 0), alignment: .leading)
         .mask(Color.black)
         .background(Color.accentColor.opacity(highlight ? 0.2 : 0))
         .background(showReplies ? theme.theme.bg.cs(cs).color() : .clear)

@@ -74,7 +74,7 @@ struct PostReplies: View {
               .id("\(comment.id)-top-decoration")
               .listRowInsets(EdgeInsets(top: 0, leading: horPad, bottom: 0, trailing: horPad))
             
-            CommentLink(highlightID: ignoreSpecificComment ? nil : highlightID, post: post, subreddit: subreddit, postFullname: postFullname, parentElement: .post(comments), comment: comment)
+              CommentLink(highlightID: ignoreSpecificComment ? nil : highlightID, post: post, subreddit: subreddit, postFullname: postFullname, parentElement: .post(comments), comment: comment)
             //                .equatable()
             
             Spacer()
