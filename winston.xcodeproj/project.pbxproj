@@ -21,6 +21,7 @@
 		65CDA3662ACB0F3A0001EC44 /* LiveTextInteraction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65CDA3652ACB0F3A0001EC44 /* LiveTextInteraction.swift */; };
 		65D265412ABEC6FF009E01F9 /* urlCleaner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65D265402ABEC6FF009E01F9 /* urlCleaner.swift */; };
 		EC051C472ACAF2DC00E9D9ED /* themeFileIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = EC051C462ACAF2DC00E9D9ED /* themeFileIcon.png */; };
+		ABC2180F2ABA528D00F0DABA /* Biometrics.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABC2180E2ABA528D00F0DABA /* Biometrics.swift */; };
 		EC082F252A65FB4300BA2727 /* MeasureOnce.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC082F242A65FB4300BA2727 /* MeasureOnce.swift */; };
 		EC082F272A66132600BA2727 /* CommentLinkMore.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC082F262A66132600BA2727 /* CommentLinkMore.swift */; };
 		EC082F292A66134C00BA2727 /* CommentLinkFull.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC082F282A66134C00BA2727 /* CommentLinkFull.swift */; };
@@ -385,6 +386,7 @@
 		65D265402ABEC6FF009E01F9 /* urlCleaner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = urlCleaner.swift; sourceTree = "<group>"; };
 		EC051C2A2ACAEFC500E9D9ED /* QuickLookThumbnailing.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuickLookThumbnailing.framework; path = System/Library/Frameworks/QuickLookThumbnailing.framework; sourceTree = SDKROOT; };
 		EC051C462ACAF2DC00E9D9ED /* themeFileIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = themeFileIcon.png; sourceTree = "<group>"; };
+		ABC2180E2ABA528D00F0DABA /* Biometrics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Biometrics.swift; sourceTree = "<group>"; };
 		EC082F242A65FB4300BA2727 /* MeasureOnce.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeasureOnce.swift; sourceTree = "<group>"; };
 		EC082F262A66132600BA2727 /* CommentLinkMore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentLinkMore.swift; sourceTree = "<group>"; };
 		EC082F282A66134C00BA2727 /* CommentLinkFull.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentLinkFull.swift; sourceTree = "<group>"; };
@@ -988,6 +990,7 @@
 				EC593AED2A4796C1002D6454 /* winston.entitlements */,
 				EC593AEF2A47ACB0002D6454 /* Tabber.swift */,
 				ECAEFF612A77AF8E0052FCD3 /* AppDelegate.swift */,
+				ABC2180E2ABA528D00F0DABA /* Biometrics.swift */,
 				EC593AD72A4673B2002D6454 /* winstonApp.swift */,
 				EC593AE02A4673B3002D6454 /* Persistence.swift */,
 			);
@@ -1708,6 +1711,7 @@
 				659FDEA82A87798300103414 /* VoteButton.swift in Sources */,
 				ECDD51642A74C03C00FD9498 /* sendErrorEmail.swift in Sources */,
 				EC0854172A4BF45C00E88389 /* Comment.swift in Sources */,
+				ABC2180F2ABA528D00F0DABA /* Biometrics.swift in Sources */,
 				EC8F34A32A6FCB3500EB8249 /* timeSince.swift in Sources */,
 				EC8B77A22AB4D5F000875C98 /* LineThemeEditor.swift in Sources */,
 				EC3AC9CF2AACB2A30078EC78 /* LabeledSlider.swift in Sources */,

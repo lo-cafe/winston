@@ -13,6 +13,7 @@ struct BehaviorPanel: View {
   @Default(.maxPostLinkImageHeightPercentage) var maxPostLinkImageHeightPercentage
   @Default(.openYoutubeApp) var openYoutubeApp
   @Default(.preferenceDefaultFeed) var preferenceDefaultFeed
+  @Default(.useAuth) var useAuth
   @Default(.preferredSort) var preferredSort
   @Default(.preferredCommentSort) var preferredCommentSort
   @Default(.blurPostLinkNSFW) var blurPostLinkNSFW
@@ -35,8 +36,11 @@ struct BehaviorPanel: View {
       
       Section("General") {
         Group {
-          Toggle("Open links in safari", isOn: $openLinksInSafari)
-          Toggle("Open Youtube Videos Externally", isOn: $openYoutubeApp)
+          Toggle("Open links in Safari", isOn: $openLinksInSafari)
+          Toggle("Open Youtube Videos Externally", isOn: $openYoutubeApp)            
+          let auth_type = Biometrics().biometricType()
+          Toggle("Lock Winston With \(auth_type)", isOn: $useAuth)
+
           VStack{
             Toggle("Live Text Analyzer", isOn: $doLiveText)
               .disabled(!imageAnalyzerSupport)
@@ -62,14 +66,12 @@ struct BehaviorPanel: View {
             Text("Home").tag("home")
             Text("Popular").tag("popular")
             Text("All").tag("all")
-            
             Text("Subscription List").tag("subList")
           }
           .pickerStyle(DefaultPickerStyle())
         }
         .themedListRowBG(enablePadding: true)
-        
-        
+
         WSNavigationLink(SettingsPages.filteredSubreddits, "Filtered Subreddits")
       }
       .themedListDividers()
