@@ -125,6 +125,7 @@ extension Defaults.Keys {
   static let themesPresets = Key<[WinstonTheme]>("themesPresets", default: [])
   static let selectedThemeID = Key<String>("selectedThemeID", default: "default")
   static let feedPostsLoadLimit = Key<Int>("feedPostsLoadLimit", default: 35)
+  static let doLiveText = Key<Bool>("doLiveText", default: true)
 }
 
 extension UIScreen {
