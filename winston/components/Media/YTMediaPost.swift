@@ -53,7 +53,7 @@ struct YTMediaPostPlayer: View, Equatable {
     Group {
       if !showPlayer {
         ZStack {
-          URLImage(url: ytMediaExtracted.thumbnailURL, imgRequest: ytMediaExtracted.thumbnailRequest)
+          URLImage(url: ytMediaExtracted.thumbnailURL, doLiveText: false, imgRequest: ytMediaExtracted.thumbnailRequest)
             .scaledToFill()
           Image(systemName: "play.circle.fill").fontSize(compact ? 22 : 32)
         }
