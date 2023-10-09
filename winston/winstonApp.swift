@@ -24,6 +24,7 @@ struct winstonApp: App {
 
 struct AppContent: View {
   @ObservedObject private var redditAPI = RedditAPI.shared
+  @StateObject private var themeStore = ThemeStoreAPI()
   @Default(.themesPresets) private var themesPresets
   @Default(.selectedThemeID) private var selectedThemeID
   @Environment(\.colorScheme) private var cs
@@ -42,6 +43,9 @@ struct AppContent: View {
         if selectedThemeRaw.isNil { selectedThemeID = "default" }
       }
       .environment(\.useTheme, selectedTheme)
+      .environmentObject(themeStore)
+    //        .alertToastRoot()
+    //        .tint(selectedTheme.general.accentColor.cs(cs).color())
       .onChange(of: scenePhase) { newPhase in
         let useAuth = UserDefaults.standard.bool(forKey: "useAuth") // Get fresh value
           
