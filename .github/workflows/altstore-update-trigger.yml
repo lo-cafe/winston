@@ -1,0 +1,17 @@
+name: Trigger Release Action
+
+on:
+  release:
+    types:
+      - published
+jobs:
+  trigger:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Trigger Action in Second Repository
+      run: |
+        curl -X POST -H "Authorization: Bearer ${{ secrets.ACCESS_TOKEN }}" \
+          -H "Content-Type: application/json" \
+          -d '{"event_type": "trigger-action"}' \
+          https://api.github.com/repos/lo-cafe/winston-altstore/dispatches
