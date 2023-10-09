@@ -15,6 +15,7 @@ struct BehaviorPanel: View {
   @Default(.preferenceDefaultFeed) var preferenceDefaultFeed
   @Default(.useAuth) var useAuth
   @Default(.preferredSort) var preferredSort
+  @Default(.preferredSearchSort) var preferredSearchSort
   @Default(.preferredCommentSort) var preferredCommentSort
   @Default(.blurPostLinkNSFW) var blurPostLinkNSFW
   @Default(.blurPostNSFW) var blurPostNSFW
@@ -27,7 +28,10 @@ struct BehaviorPanel: View {
   @Default(.lightboxViewsPost) private var lightboxViewsPost
   @Default(.openLinksInSafari) private var openLinksInSafari
   @Default(.feedPostsLoadLimit) private var feedPostsLoadLimit
+  @Default(.perSubredditSort) private var perSubredditSort
+  @Default(.perPostSort) private var perPostSort
   @Default(.doLiveText) var doLiveText
+
   
   @Environment(\.useTheme) private var theme
   @State private var imageAnalyzerSupport: Bool = true
@@ -102,6 +106,8 @@ struct BehaviorPanel: View {
           Toggle("Hide read posts", isOn: $hideReadPosts)
           Toggle("Blur NSFW in opened posts", isOn: $blurPostNSFW)
           Toggle("Blur NSFW in posts links", isOn: $blurPostLinkNSFW)
+          Toggle("Save sort per subreddit", isOn: $perSubredditSort)
+          Toggle("Save comment sort per post", isOn: $perPostSort)
           Menu {
             ForEach(SubListingSortOption.allCases) { opt in
               if case .top(_) = opt {
@@ -138,6 +144,47 @@ struct BehaviorPanel: View {
                 Text("Default post sorting")
                 Spacer()
                 Image(systemName: preferredSort.rawVal.icon)
+              }
+              .foregroundColor(.primary)
+            }
+          }
+            
+          Menu {
+            ForEach(SubListingSortOption.allCases) { opt in
+              if case .top(_) = opt {
+                Menu {
+                  ForEach(SubListingSortOption.TopListingSortOption.allCases, id: \.self) { topOpt in
+                    Button {
+                      preferredSearchSort = .top(topOpt)
+                    } label: {
+                      HStack {
+                        Text(topOpt.rawValue.capitalized)
+                        Spacer()
+                        Image(systemName: topOpt.icon)
+                      }
+                    }
+                  }
+                } label: {
+                  Label(opt.rawVal.value.capitalized, systemImage: opt.rawVal.icon)
+                }
+              } else {
+                Button {
+                  preferredSearchSort = opt
+                } label: {
+                  HStack {
+                    Text(opt.rawVal.value.capitalized)
+                    Spacer()
+                    Image(systemName: opt.rawVal.icon)
+                  }
+                }
+              }
+            }
+          } label: {
+            Button { } label: {
+              HStack {
+                Text("Default search sorting")
+                Spacer()
+                Image(systemName: preferredSearchSort.rawVal.icon)
               }
               .foregroundColor(.primary)
             }

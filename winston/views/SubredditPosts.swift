@@ -27,13 +27,18 @@ struct SubredditPosts: View, Equatable {
   @State private var loadedPosts: Set<String> = []
   @State private var lastPostAfter: String?
   @State private var searchText: String = ""
-  @State private var sort: SubListingSortOption = Defaults[.preferredSort]
+  @State private var sort: SubListingSortOption
   @State private var newPost = false
   
   @EnvironmentObject private var routerProxy: RouterProxy
   @Environment(\.useTheme) private var selectedTheme
   @Environment(\.colorScheme) private var cs
   @Environment(\.contentWidth) private var contentWidth
+  
+  init(subreddit: Subreddit) {
+    self.subreddit = subreddit;
+    _sort = State(initialValue: Defaults[.perSubredditSort] ? (Defaults[.subredditSorts][subreddit.id] ?? Defaults[.preferredSort]) : Defaults[.preferredSort]);
+  }
   
   func asyncFetch(force: Bool = false, loadMore: Bool = false, searchText: String? = nil) async {
     if (subreddit.data == nil || force) && !feedsAndSuch.contains(subreddit.id) {
@@ -160,6 +165,7 @@ struct SubredditPostsNavBtns: View, Equatable {
               ForEach(SubListingSortOption.TopListingSortOption.allCases, id: \.self) { topOpt in
                 Button {
                   sort = .top(topOpt)
+                  Defaults[.subredditSorts][subreddit.id] = .top(topOpt)
                 } label: {
                   HStack {
                     Text(topOpt.rawValue.capitalized)
@@ -178,6 +184,7 @@ struct SubredditPostsNavBtns: View, Equatable {
           } else {
             Button {
               sort = opt
+              Defaults[.subredditSorts][subreddit.id] = opt
             } label: {
               HStack {
                 Text(opt.rawVal.value.capitalized)

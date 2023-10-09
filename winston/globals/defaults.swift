@@ -49,6 +49,7 @@ extension Defaults.Keys {
   static let postsInBox = Key<[PostInBox]>("postsInBox-v2", default: [])
   static let likedButNotSubbed = Key<[Subreddit]>("likedButNotSubbed", default: [])
   static let preferredSort = Key<SubListingSortOption>("preferredSort", default: .best)
+  static let preferredSearchSort = Key<SubListingSortOption>("preferredSearchSort", default: .best)
   static let blurPostLinkNSFW = Key<Bool>("blurPostLinkNSFW", default: true)
   static let blurPostNSFW = Key<Bool>("blurPostNSFW", default: false)
   static let collapseAutoModerator = Key<Bool>("collapseAutoModerator", default: false)
@@ -126,6 +127,12 @@ extension Defaults.Keys {
   static let themesPresets = Key<[WinstonTheme]>("themesPresets", default: [])
   static let selectedThemeID = Key<String>("selectedThemeID", default: "default")
   static let feedPostsLoadLimit = Key<Int>("feedPostsLoadLimit", default: 35)
+    
+  static let perSubredditSort = Key<Bool>("perSubredditSort", default: true)
+  static let subredditSorts = Key<Dictionary<String, SubListingSortOption>>("subredditSorts", default: [String: SubListingSortOption]())
+    
+  static let perPostSort = Key<Bool>("perPostSort", default: true)
+  static let postSorts = Key<Dictionary<String, CommentSortOption>>("postSorts", default: [String: CommentSortOption]())
   static let doLiveText = Key<Bool>("doLiveText", default: true)
 }
 
