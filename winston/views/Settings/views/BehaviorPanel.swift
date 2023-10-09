@@ -7,6 +7,7 @@
 
 import SwiftUI
 import Defaults
+import VisionKit
 
 struct BehaviorPanel: View {
   @Default(.maxPostLinkImageHeightPercentage) var maxPostLinkImageHeightPercentage
@@ -26,20 +27,41 @@ struct BehaviorPanel: View {
   @Default(.lightboxViewsPost) private var lightboxViewsPost
   @Default(.openLinksInSafari) private var openLinksInSafari
   @Default(.feedPostsLoadLimit) private var feedPostsLoadLimit
+  @Default(.doLiveText) var doLiveText
   
   @Environment(\.useTheme) private var theme
-  
+  @State private var imageAnalyzerSupport: Bool = true
   var body: some View {
     List {
       
       Section("General") {
         Group {
           Toggle("Open links in Safari", isOn: $openLinksInSafari)
-          Toggle("Open Youtube Videos Externally", isOn: $openYoutubeApp)
-                    
+          Toggle("Open Youtube Videos Externally", isOn: $openYoutubeApp)            
           let auth_type = Biometrics().biometricType()
           Toggle("Lock Winston With \(auth_type)", isOn: $useAuth)
 
+          VStack{
+            Toggle("Live Text Analyzer", isOn: $doLiveText)
+              .disabled(!imageAnalyzerSupport)
+              .onAppear{
+                imageAnalyzerSupport = ImageAnalyzer.isSupported
+                if !ImageAnalyzer.isSupported {
+                  doLiveText = false
+                }
+              }
+            
+            
+            if !imageAnalyzerSupport{
+              HStack{
+                Text("Your iPhone does not support Live Text :(")
+                  .fontSize(12)
+                  .opacity(0.5)
+                Spacer()
+              }
+              
+            }
+          }
           Picker("Default Launch Feed", selection: $preferenceDefaultFeed) {
             Text("Home").tag("home")
             Text("Popular").tag("popular")

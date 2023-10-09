@@ -58,7 +58,7 @@ struct PreviewLinkContentRaw: View, Equatable {
               .truncationMode(.tail)
               .fixedSize(horizontal: false, vertical: true)
             
-            Text(url.absoluteString)
+            Text(cleanURL(url: url))
               .fontSize(13)
               .opacity(0.5)
               .lineLimit(1)

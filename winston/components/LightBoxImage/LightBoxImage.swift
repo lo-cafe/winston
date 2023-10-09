@@ -14,6 +14,7 @@ struct LightBoxImage: View {
   var post: Post
   var i: Int
   var imagesArr: [MediaExtracted]
+  @State var doLiveText: Bool
   @Environment(\.dismiss) private var dismiss
   @State private var appearBlack = false
   @State private var appearContent = false
@@ -28,7 +29,7 @@ struct LightBoxImage: View {
   @Default(.lightboxViewsPost) private var lightboxViewsPost
   
   @State private var isPinching: Bool = false
-  @State private var scale: CGFloat = 1.0
+  @State private var isZoomed: Bool = false
   
   private enum Axis {
     case horizontal
@@ -46,7 +47,7 @@ struct LightBoxImage: View {
     HStack(spacing: SPACING) {
       ForEach(Array(imagesArr.enumerated()), id: \.element.id) { index, img in
         let selected = index == activeIndex
-        LightBoxElementView(el: img, onTap: toggleOverlay, isPinching: $isPinching)
+        LightBoxElementView(el: img, onTap: toggleOverlay, doLiveText: doLiveText, isPinching: $isPinching, isZoomed: $isZoomed)
           .allowsHitTesting(selected)
           .scaleEffect(!selected ? 1 : interpolate([1, 0.9], true))
           .blur(radius: selected && loading ? 24 : 0)
@@ -57,7 +58,7 @@ struct LightBoxImage: View {
     .offset(x: xPos + (dragAxis == .horizontal ? drag.width : 0))
     .frame(maxWidth: UIScreen.screenWidth, maxHeight: UIScreen.screenHeight, alignment: .leading)
     .highPriorityGesture(
-      scale > 1
+      isZoomed
       ? nil
       : DragGesture(minimumDistance: 20)
         .onChanged { val in
