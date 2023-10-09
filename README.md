@@ -13,7 +13,7 @@ Step into Winston's embracing world! Winston is an elegant, open-source, native 
 
 
 <a href="https://testflight.apple.com/join/3UF8bAUN"><img src="https://i.imgur.com/eqvz14P.png" width="200"></a>
-<a href="altstore://source/?url=https://raw.githubusercontent.com/lo-cafe/winston-altstore/main/apps.json"><img src="https://i.imgur.com/46qhEAv.png" width="200"></a>
+<a href="https://www.shorturl.at/dAL15"><img src="https://i.imgur.com/46qhEAv.png" width="200"></a>
 
 
 ## 🛠️ How to Install
