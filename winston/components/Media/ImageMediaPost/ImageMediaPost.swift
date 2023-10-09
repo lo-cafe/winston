@@ -89,7 +89,7 @@ struct ImageMediaPost: View, Equatable {
     }
     .frame(maxWidth: compact ? nil : .infinity)
     .fullScreenCover(item: $fullscreenIndex) { i in
-      LightBoxImage(post: post, i: i, imagesArr: images)
+      LightBoxImage(post: post, i: i, imagesArr: images, doLiveText: Defaults[.doLiveText])
     }
   }
 }

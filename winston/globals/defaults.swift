@@ -94,6 +94,7 @@ extension Defaults.Keys {
   static let showUsernameInTabBar = Key<Bool>("showUsernameInTabBar", default: false)
   static let openYoutubeApp = Key<Bool>("openYoutubeApp", default: true)
   static let preferenceDefaultFeed = Key<String>("preferenceDefaultFeed", default: "subList")
+  static let useAuth = Key<Bool>("useAuth", default: false)
   static let showHomeFeed = Key<Bool>("showHomeFeed", default: true)
   static let showPopularFeed = Key<Bool>("showPopularFeed", default: true)
   static let showAllFeed = Key<Bool>("showAllFeed", default: true)
@@ -132,6 +133,7 @@ extension Defaults.Keys {
     
   static let perPostSort = Key<Bool>("perPostSort", default: true)
   static let postSorts = Key<Dictionary<String, CommentSortOption>>("postSorts", default: [String: CommentSortOption]())
+  static let doLiveText = Key<Bool>("doLiveText", default: true)
 }
 
 extension UIScreen {

@@ -7,11 +7,13 @@
 
 import SwiftUI
 import Defaults
+import VisionKit
 
 struct BehaviorPanel: View {
   @Default(.maxPostLinkImageHeightPercentage) var maxPostLinkImageHeightPercentage
   @Default(.openYoutubeApp) var openYoutubeApp
   @Default(.preferenceDefaultFeed) var preferenceDefaultFeed
+  @Default(.useAuth) var useAuth
   @Default(.preferredSort) var preferredSort
   @Default(.preferredSearchSort) var preferredSearchSort
   @Default(.preferredCommentSort) var preferredCommentSort
@@ -28,29 +30,52 @@ struct BehaviorPanel: View {
   @Default(.feedPostsLoadLimit) private var feedPostsLoadLimit
   @Default(.perSubredditSort) private var perSubredditSort
   @Default(.perPostSort) private var perPostSort
+  @Default(.doLiveText) var doLiveText
+
   
   @Environment(\.useTheme) private var theme
-  
+  @State private var imageAnalyzerSupport: Bool = true
   var body: some View {
     List {
       
       Section("General") {
         Group {
-          Toggle("Open links in safari", isOn: $openLinksInSafari)
-          Toggle("Open Youtube Videos Externally", isOn: $openYoutubeApp)
-                    
+          Toggle("Open links in Safari", isOn: $openLinksInSafari)
+          Toggle("Open Youtube Videos Externally", isOn: $openYoutubeApp)            
+          let auth_type = Biometrics().biometricType()
+          Toggle("Lock Winston With \(auth_type)", isOn: $useAuth)
+
+          VStack{
+            Toggle("Live Text Analyzer", isOn: $doLiveText)
+              .disabled(!imageAnalyzerSupport)
+              .onAppear{
+                imageAnalyzerSupport = ImageAnalyzer.isSupported
+                if !ImageAnalyzer.isSupported {
+                  doLiveText = false
+                }
+              }
+            
+            
+            if !imageAnalyzerSupport{
+              HStack{
+                Text("Your iPhone does not support Live Text :(")
+                  .fontSize(12)
+                  .opacity(0.5)
+                Spacer()
+              }
+              
+            }
+          }
           Picker("Default Launch Feed", selection: $preferenceDefaultFeed) {
             Text("Home").tag("home")
             Text("Popular").tag("popular")
             Text("All").tag("all")
-            
             Text("Subscription List").tag("subList")
           }
           .pickerStyle(DefaultPickerStyle())
         }
         .themedListRowBG(enablePadding: true)
-        
-        
+
         WSNavigationLink(SettingsPages.filteredSubreddits, "Filtered Subreddits")
       }
       .themedListDividers()

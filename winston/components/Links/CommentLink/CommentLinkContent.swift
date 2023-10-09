@@ -118,17 +118,25 @@ struct CommentLinkContent: View {
               HStack(alignment: .center, spacing: 4) {
                 Image(systemName: "arrow.up")
                   .foregroundColor(data.likes != nil && data.likes! ? .orange : .gray)
-
+                  .contentShape(Rectangle())
+                  .onTapGesture {
+                      Task { _ = await comment.vote(action: .up) }
+                  }
+                  
                 let downup = Int(ups)
                 Text(formatBigNumber(downup))
                   .foregroundColor(data.likes != nil ? (data.likes! ? .orange : .blue) : .gray)
                   .contentTransition(.numericText())
-                  
+
                 //                  .foregroundColor(downup == 0 ? .gray : downup > 0 ? .orange : .blue)
                   .fontSize(14, .semibold)
 
                 Image(systemName: "arrow.down")
                   .foregroundColor(data.likes != nil && !data.likes! ? .blue : .gray)
+                  .contentShape(Rectangle())
+                  .onTapGesture {
+                      Task { _ = await comment.vote(action: .down) }
+                  }
               }
               .fontSize(14, .medium)
               .padding(.horizontal, 6)
