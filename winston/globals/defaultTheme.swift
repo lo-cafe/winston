@@ -78,7 +78,8 @@ let defaultTheme = WinstonTheme(
       loadMoreInnerPadding: .init(horizontal: 10, vertical: 6),
       loadMoreOuterTopPadding: 12,
       loadMoreText: .init(size: 15, color: .init(light: .init(hex: "0B84FE"), dark: .init(hex: "0B84FE")), weight: .semibold),
-      loadMoreBackground: defaultThemeDividerColor
+      loadMoreBackground: defaultThemeDividerColor,
+      unseenDot : .init(light: .init(hex: "0B84FE"), dark: .init(hex: "0B84FE"))
     ),
     spacing: 12,
     divider: .init(style: .no, thickness: 1, color: defaultThemeDividerColor)

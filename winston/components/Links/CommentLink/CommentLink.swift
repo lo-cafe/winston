@@ -77,6 +77,7 @@ struct CommentLink: View, Equatable {
   var avatarsURL: [String:String]? = nil
   var postFullname: String?
   var showReplies = true
+  var seenComments: String?
   
   var parentElement: CommentParentElement? = nil
   @ObservedObject var comment: Comment
@@ -93,10 +94,11 @@ struct CommentLink: View, Equatable {
                 CommentLinkFull(post: post, subreddit: subreddit, arrowKinds: arrowKinds, comment: comment, indentLines: indentLines)
               }
             } else {
-              CommentLinkMore(arrowKinds: arrowKinds, comment: comment, postFullname: postFullname, parentElement: parentElement, indentLines: indentLines)
+              CommentLinkMore(arrowKinds: arrowKinds, comment: comment, post: post, postFullname: postFullname, parentElement: parentElement, indentLines: indentLines)
             }
           } else {
-            CommentLinkContent(highlightID: highlightID, showReplies: showReplies, arrowKinds: arrowKinds, indentLines: indentLines, lineLimit: lineLimit, post: post, comment: comment, avatarsURL: avatarsURL)
+            CommentLinkContent(highlightID: highlightID, seenComments: seenComments, showReplies: showReplies, arrowKinds: arrowKinds, indentLines: indentLines, lineLimit: lineLimit, post: post, comment: comment, avatarsURL: avatarsURL)
+            
           }
         }
         
@@ -104,7 +106,7 @@ struct CommentLink: View, Equatable {
           ForEach(Array(comment.childrenWinston.data.enumerated()), id: \.element.id) { index, commentChild in
             let childrenCount = comment.childrenWinston.data.count
             if let _ = commentChild.data {
-              CommentLink(post: post, arrowKinds: arrowKinds.map { $0.child } + [(childrenCount - 1 == index ? ArrowKind.curve : ArrowKind.straightCurve)], postFullname: postFullname, parentElement: .comment(comment), comment: commentChild)
+              CommentLink(post: post, arrowKinds: arrowKinds.map { $0.child } + [(childrenCount - 1 == index ? ArrowKind.curve : ArrowKind.straightCurve)], postFullname: postFullname, seenComments: seenComments, parentElement: .comment(comment), comment: commentChild)
 //                .equatable()
             }
           }
