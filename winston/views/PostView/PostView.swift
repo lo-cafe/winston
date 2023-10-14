@@ -37,6 +37,38 @@ struct PostView: View, Equatable {
   
   @EnvironmentObject private var routerProxy: RouterProxy
   @State var update = false
+    
+  init(post: Post, subreddit: Subreddit) {
+    self.post = post
+    self.subreddit = subreddit
+    
+    _sort = State(initialValue: Defaults[.perPostSort] ? (Defaults[.postSorts][post.id] ?? Defaults[.preferredCommentSort]) : Defaults[.preferredCommentSort]);
+  }
+  
+  init(post: Post, subreddit: Subreddit, forceCollapse: Bool) {
+    self.post = post
+    self.subreddit = subreddit
+    self.forceCollapse = forceCollapse
+    
+    _sort = State(initialValue: Defaults[.perPostSort] ? (Defaults[.postSorts][post.id] ?? Defaults[.preferredCommentSort]) : Defaults[.preferredCommentSort]);
+  }
+  
+  init(post: Post, subreddit: Subreddit, highlightID: String?) {
+    self.post = post
+    self.subreddit = subreddit
+    self.highlightID = highlightID
+    
+    _sort = State(initialValue: Defaults[.perPostSort] ? (Defaults[.postSorts][post.id] ?? Defaults[.preferredCommentSort]) : Defaults[.preferredCommentSort]);
+  }
+  
+  init(post: Post, selfAttr: AttributedString?, subreddit: Subreddit, highlightID: String?) {
+    self.post = post
+    self.selfAttr = selfAttr
+    self.subreddit = subreddit
+    self.highlightID = highlightID
+    
+    _sort = State(initialValue: Defaults[.perPostSort] ? (Defaults[.postSorts][post.id] ?? Defaults[.preferredCommentSort]) : Defaults[.preferredCommentSort]);
+  }
   
   func asyncFetch(_ full: Bool = true) async {
     if full {
@@ -115,7 +147,7 @@ struct PostView: View, Equatable {
         , alignment: .bottomTrailing
       )
       .navigationBarTitle("\(post.data?.num_comments ?? 0) comments", displayMode: .inline)
-      .toolbar { Toolbar(hideElements: hideElements, subreddit: subreddit, routerProxy: routerProxy, sort: $sort) }
+      .toolbar { Toolbar(hideElements: hideElements, subreddit: subreddit, post: post, routerProxy: routerProxy, sort: $sort) }
       .onChange(of: sort) { val in
         updatePost()
       }
@@ -140,6 +172,7 @@ struct PostView: View, Equatable {
 private struct Toolbar: View {
   var hideElements: Bool
   var subreddit: Subreddit
+  var post: Post
   var routerProxy: RouterProxy
   @Binding var sort: CommentSortOption
   var body: some View {
@@ -149,6 +182,7 @@ private struct Toolbar: View {
           ForEach(CommentSortOption.allCases) { opt in
             Button {
               sort = opt
+              Defaults[.postSorts][post.id] = opt
             } label: {
               HStack {
                 Text(opt.rawVal.value.capitalized)

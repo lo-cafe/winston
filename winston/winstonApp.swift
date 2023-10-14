@@ -24,10 +24,16 @@ struct winstonApp: App {
 
 struct AppContent: View {
   @ObservedObject private var redditAPI = RedditAPI.shared
+  @StateObject private var themeStore = ThemeStoreAPI()
   @Default(.themesPresets) private var themesPresets
   @Default(.selectedThemeID) private var selectedThemeID
   @Environment(\.colorScheme) private var cs
+  @Environment(\.scenePhase) var scenePhase
   
+  let biometrics = Biometrics()
+  @State private var isAuthenticating = false
+  @State private var lockBlur = UserDefaults.standard.bool(forKey: "useAuth") ? 50 : 0 // Set initial startup blur
+
   var selectedThemeRaw: WinstonTheme? { themesPresets.first { $0.id == selectedThemeID } }
   var body: some View {
     let selectedTheme = selectedThemeRaw ?? defaultTheme
@@ -37,8 +43,28 @@ struct AppContent: View {
         if selectedThemeRaw.isNil { selectedThemeID = "default" }
       }
       .environment(\.useTheme, selectedTheme)
+      .environmentObject(themeStore)
     //        .alertToastRoot()
     //        .tint(selectedTheme.general.accentColor.cs(cs).color())
+      .onChange(of: scenePhase) { newPhase in
+        let useAuth = UserDefaults.standard.bool(forKey: "useAuth") // Get fresh value
+          
+        if (useAuth && !isAuthenticating) {
+          if (newPhase == .active && lockBlur == 50){
+            // Not authing, active and blur visible = Need to auth
+            isAuthenticating = true
+            biometrics.authenticateUser { success in
+              if success {
+                lockBlur = 0
+              }
+            }
+            isAuthenticating = false
+          }
+          else if (newPhase != .active) {
+            lockBlur = 50
+          }
+        }
+      }.blur(radius: CGFloat(lockBlur)) // Set lockscreen blur
   }
 }
 

@@ -80,7 +80,7 @@ struct PostLinkView: View, Equatable {
       .compositingGroup()
       .contentShape(Rectangle())
       .swipyUI(onTap: openPost, actionsSet: postSwipeActions, entity: post)
-      .opacity(fadeReadPosts && seen ? 0.6 : 1)
+      .opacity(fadeReadPosts && seen ? theme.theme.unseenFadeOpacity : 1)
       .contextMenu(menuItems: { PostLinkContext(post: post) }, preview: { PostLinkContextPreview(post: post, sub: sub, routerProxy: routerProxy).id("\(post.id)-preview-navigation-stack") })
       .foregroundColor(.primary)
       .multilineTextAlignment(.leading)

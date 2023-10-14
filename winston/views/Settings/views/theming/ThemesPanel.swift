@@ -182,14 +182,14 @@ struct ThemeNavLink: View {
       Text("This theme changes a few settings that requires an app restart to take effect.")
     }
   }
-  
-  func createZipFile(with imgNames: [String], theme: WinstonTheme, completion: @escaping(_ url: URL?) -> Void) {
-    do {
-      let zipURL = try createZip(images: imgNames, theme: theme)
-      completion(zipURL)
-    } catch {
-      print("Failed to create zip file with error \(error.localizedDescription)")
-      completion(nil)
-    }
+}
+
+func createZipFile(with imgNames: [String], theme: WinstonTheme, completion: @escaping(_ url: URL?) -> Void) {
+  do {
+    let zipURL = try createZip(images: imgNames, theme: theme)
+    completion(zipURL)
+  } catch {
+    print("Failed to create zip file with error \(error.localizedDescription)")
+    completion(nil)
   }
 }

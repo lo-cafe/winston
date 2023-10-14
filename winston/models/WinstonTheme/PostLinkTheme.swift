@@ -64,7 +64,7 @@ struct SubPostsListTheme: Codable, Equatable, Hashable {
 
 struct PostLinkTheme: Codable, Hashable {
   enum CodingKeys: String, CodingKey {
-    case   cornerRadius, mediaCornerRadius, innerPadding, outerHPadding, stickyPostBorderColor, titleText, bodyText, badge, verticalElementsSpacing, bg, unseenType
+    case   cornerRadius, mediaCornerRadius, innerPadding, outerHPadding, stickyPostBorderColor, titleText, bodyText, badge, verticalElementsSpacing, bg, unseenType, unseenFadeOpacity
   }
   
   var cornerRadius: CGFloat
@@ -78,8 +78,9 @@ struct PostLinkTheme: Codable, Hashable {
   var verticalElementsSpacing: CGFloat
   var bg: ThemeForegroundBG
   var unseenType: UnseenType
+  var unseenFadeOpacity: CGFloat
   
-  init(cornerRadius: CGFloat, mediaCornerRadius: CGFloat, innerPadding: ThemePadding, outerHPadding: CGFloat, stickyPostBorderColor: LineTheme, titleText: ThemeText, bodyText: ThemeText, badge: BadgeTheme, verticalElementsSpacing: CGFloat, bg: ThemeForegroundBG, unseenType: UnseenType) {
+  init(cornerRadius: CGFloat, mediaCornerRadius: CGFloat, innerPadding: ThemePadding, outerHPadding: CGFloat, stickyPostBorderColor: LineTheme, titleText: ThemeText, bodyText: ThemeText, badge: BadgeTheme, verticalElementsSpacing: CGFloat, bg: ThemeForegroundBG, unseenType: UnseenType, unseenFadeOpacity: CGFloat) {
     self.cornerRadius = cornerRadius
     self.mediaCornerRadius = mediaCornerRadius
     self.innerPadding = innerPadding
@@ -91,6 +92,7 @@ struct PostLinkTheme: Codable, Hashable {
     self.verticalElementsSpacing = verticalElementsSpacing
     self.bg = bg
     self.unseenType = unseenType
+    self.unseenFadeOpacity = unseenFadeOpacity
   }
   
   func encode(to encoder: Encoder) throws {
@@ -106,6 +108,7 @@ struct PostLinkTheme: Codable, Hashable {
     try container.encodeIfPresent(verticalElementsSpacing, forKey: .verticalElementsSpacing)
     try container.encodeIfPresent(bg, forKey: .bg)
     try container.encodeIfPresent(unseenType, forKey: .unseenType)
+    try container.encodeIfPresent(unseenFadeOpacity, forKey: .unseenFadeOpacity)
   }
   
   init(from decoder: Decoder) throws {
@@ -122,5 +125,6 @@ struct PostLinkTheme: Codable, Hashable {
     self.verticalElementsSpacing = try container.decodeIfPresent(CGFloat.self, forKey: .verticalElementsSpacing) ?? t.verticalElementsSpacing
     self.bg = try container.decodeIfPresent(ThemeForegroundBG.self, forKey: .bg) ?? t.bg
     self.unseenType = try container.decodeIfPresent(UnseenType.self, forKey: .unseenType) ?? t.unseenType
+    self.unseenFadeOpacity = try container.decodeIfPresent(CGFloat.self, forKey: .unseenFadeOpacity) ?? t.unseenFadeOpacity
   }
 }
