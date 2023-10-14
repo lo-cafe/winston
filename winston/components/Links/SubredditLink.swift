@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Defaults
 
 struct SubredditLinkContainer: View {
   var noHPad = false
@@ -24,7 +25,8 @@ struct SubredditLink: View {
       if let data = sub.data {
         HStack(spacing: 12) {
           SubredditIcon(data: data, size: 64)
-          
+            .nsfw(Defaults[.blurPostLinkNSFW] ? data.over18 ?? false : false, smallIcon: true)
+
           VStack(alignment: .leading) {
             Text("r/\(data.display_name ?? "?")")
               .fontSize(18, .semibold)

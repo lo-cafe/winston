@@ -77,7 +77,7 @@ struct BehaviorPanel: View {
           Toggle("Read on scroll", isOn: $readPostOnScroll)
           Toggle("Hide read posts", isOn: $hideReadPosts)
           Toggle("Blur NSFW in opened posts", isOn: $blurPostNSFW)
-          Toggle("Blur NSFW in posts links", isOn: $blurPostLinkNSFW)
+          Toggle("Blur NSFW", isOn: $blurPostLinkNSFW)
           Menu {
             ForEach(SubListingSortOption.allCases) { opt in
               if case .top(_) = opt {
