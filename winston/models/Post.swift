@@ -22,31 +22,14 @@ extension Post {
     self.init(data: data, api: api, typePrefix: "\(Post.prefix)_")
     self.winstonData = PostWinstonData()
     self.winstonData?.permaURL = URL(string: "https://reddit.com\(data.permalink.escape.urlEncoded)")
-    let extractedMedia = mediaExtractor(contentWidth: contentWidth, data)
-    self.winstonData?.extractedMedia = extractedMedia
-    self.winstonData?.postDimensions = getPostDimensions(post: self, columnWidth: contentWidth, secondary: secondary)
+    
     if fetchSub {
       self.winstonData?.subreddit = Subreddit(id: data.subreddit, api: RedditAPI.shared)
     }
-    let compact = Defaults[.compactMode]
-    switch extractedMedia {
-    case .image(let url):
-      let processors: [ImageProcessing] = contentWidth == 0 ? [] : [.resize(width: compact ? scaledCompactModeThumbSize() : contentWidth)]
-      self.winstonData?.mediaImageRequest = [ImageRequest(url: url.url, processors: processors)]
-    case .gallery(let imgs):
-      let halfWidthProcessor: [ImageProcessing] = contentWidth == 0 ? [] : [.resize(width: compact ? scaledCompactModeThumbSize() : ((contentWidth - 8) / 2))]
-      let fullWidthProcessor: [ImageProcessing] = contentWidth == 0 ? [] : [.resize(width: compact ? scaledCompactModeThumbSize() : contentWidth)]
-        var requests: [ImageRequest] = []
-        requests.append(ImageRequest(url: imgs[0].url, processors: halfWidthProcessor))
-        requests.append(ImageRequest(url: imgs[1].url, processors: halfWidthProcessor))
-      if imgs.count >= 3 { requests.append(ImageRequest(url: imgs[2].url, processors: imgs.count > 3 ? halfWidthProcessor : fullWidthProcessor)) }
-        requests += imgs.dropFirst(3).map { ImageRequest(url: $0.url, priority: .low) }
-        self.winstonData?.mediaImageRequest = requests
-    case .link(let url):
-      Caches.postsPreviewModels.addKeyValue(key: url.absoluteString, data: { PreviewModel(url) })
-      break
-    default:
-      break
+    
+    Task (priority: .high) {
+      await self.initMedia(data: data, contentWidth: contentWidth, secondary: secondary)
+      self.winstonData?.loaded = true
     }
 
     if let body = self.data?.selftext {
@@ -54,6 +37,44 @@ extension Post {
         let theme = Defaults[.themesPresets].first(where: { $0.id == Defaults[.selectedThemeID] }) ?? defaultTheme
         return stringToAttr(body, fontSize: theme.posts.bodyText.size)
       })
+    }
+  }
+  
+  func waitForMediaToLoad() async {
+    while ((self.winstonData?.loaded ?? false) != true) {
+      continue;
+    }
+    
+    return
+  }
+  
+  func initMedia(data: T,  contentWidth: Double, secondary: Bool) async {
+    let extractedMedia = await mediaExtractor(contentWidth: contentWidth, data)
+    
+    DispatchQueue.main.async {
+      self.winstonData?.extractedMedia = extractedMedia
+      self.winstonData?.postDimensions = getPostDimensions(post: self, columnWidth: contentWidth, secondary: secondary)
+      
+      let compact = Defaults[.compactMode]
+      switch extractedMedia {
+      case .image(let url):
+        let processors: [ImageProcessing] = contentWidth == 0 ? [] : [.resize(width: compact ? scaledCompactModeThumbSize() : contentWidth)]
+        self.winstonData?.mediaImageRequest = [ImageRequest(url: url.url, processors: processors)]
+      case .gallery(let imgs):
+        let halfWidthProcessor: [ImageProcessing] = contentWidth == 0 ? [] : [.resize(width: compact ? scaledCompactModeThumbSize() : ((contentWidth - 8) / 2))]
+        let fullWidthProcessor: [ImageProcessing] = contentWidth == 0 ? [] : [.resize(width: compact ? scaledCompactModeThumbSize() : contentWidth)]
+        var requests: [ImageRequest] = []
+        requests.append(ImageRequest(url: imgs[0].url, processors: halfWidthProcessor))
+        requests.append(ImageRequest(url: imgs[1].url, processors: halfWidthProcessor))
+        if imgs.count >= 3 { requests.append(ImageRequest(url: imgs[2].url, processors: imgs.count > 3 ? halfWidthProcessor : fullWidthProcessor)) }
+        requests += imgs.dropFirst(3).map { ImageRequest(url: $0.url, priority: .low) }
+        self.winstonData?.mediaImageRequest = requests
+      case .link(let url):
+        Caches.postsPreviewModels.addKeyValue(key: url.absoluteString, data: { PreviewModel(url) })
+        break
+      default:
+        break
+      }
     }
   }
   
@@ -78,6 +99,13 @@ extension Post {
           let priority = i > 19 ? .veryLow : priorityIMap[priorityIMap.keys.first { $0 > i } ?? 19]!
           let newPost = Post.init(data: data, api: api, fetchSub: fetchSubs, contentWidth: contentWidth, imgPriority: i > 7 ? .veryLow : priority)
           newPost.data?.winstonSeen = isSeen
+          
+          if (isSeen) {
+            let foundPost = results.first(where: { $0.postID == data.id })
+            newPost.data?.winstonSeenCommentCount = Int(foundPost?.numComments ?? 0)
+            newPost.data?.winstonSeenComments = foundPost?.seenComments
+          }
+          
           return newPost
         }
       }
@@ -85,6 +113,7 @@ extension Post {
       let imgRequests = posts.reduce(into: []) { prev, curr in
         prev = prev + (curr.winstonData?.mediaImageRequest ?? [])
       }
+      
       Post.prefetcher.startPrefetching(with: imgRequests)
       return posts
     }
@@ -107,7 +136,6 @@ extension Post {
     if let results = (await context.perform(schedule: .enqueued) { try? context.fetch(fetchRequest) as? [SeenPost] }) {
       await context.perform(schedule: .enqueued) {
         let foundPost = results.first(where: { obj in obj.postID == self.id })
-        
         
         if let foundPost = foundPost {
           if seen == nil || seen == false {
@@ -147,6 +175,119 @@ extension Post {
     Defaults[.filteredSubreddits] = filteredSubreddits
   }
   
+  func saveCommentCount(numComments: Int) async -> Void {
+    let context = PersistenceController.shared.container.viewContext
+
+    let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "SeenPost")
+    if let results = (await context.perform(schedule: .enqueued) { try? context.fetch(fetchRequest) as? [SeenPost] }) {
+      await context.perform(schedule: .enqueued) {
+        let foundPost = results.first(where: { obj in obj.postID == self.id })
+        
+        if let seenPost = foundPost {
+          seenPost.numComments = Int32(numComments)
+          try? context.save()
+          
+          DispatchQueue.main.async {
+            withAnimation {
+              self.data?.winstonSeenCommentCount = numComments
+            }
+          }
+        }
+      }
+    }
+  }
+  
+  func saveSeenComments(comments: ListingData<CommentData>?) async -> Void {
+    let context = PersistenceController.shared.container.viewContext
+    let newComments = self.getCommentIds(comments: comments)
+
+    let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "SeenPost")
+    if let results = (await context.perform(schedule: .enqueued) { try? context.fetch(fetchRequest) as? [SeenPost] }) {
+      await context.perform(schedule: .enqueued) {
+        let foundPost = results.first(where: { obj in obj.postID == self.id })
+        
+        if let seenPost = foundPost {
+          var seenComments = seenPost.seenComments ?? ""
+          newComments.forEach { id in
+            if (!seenComments.contains(id)) {
+              seenComments += "\(seenComments.isEmpty ? "" : ",")\(id)"
+            }
+          }
+          
+          let finalSeen = seenComments
+          seenPost.seenComments = finalSeen
+          try? context.save()
+          
+          DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+            withAnimation {
+              self.data?.winstonSeenComments = finalSeen
+            }
+          }
+        }
+      }
+    }
+  }
+  
+  func saveMoreComments(comments: [Comment]) async -> Void {
+    let context = PersistenceController.shared.container.viewContext
+
+    let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "SeenPost")
+    if let results = (await context.perform(schedule: .enqueued) { try? context.fetch(fetchRequest) as? [SeenPost] }) {
+      await context.perform(schedule: .enqueued) {
+        let foundPost = results.first(where: { obj in obj.postID == self.id })
+        
+        if let seenPost = foundPost {
+          var seenComments = seenPost.seenComments ?? ""
+          let newComments: [String] = comments.map { $0.data?.id ?? "" }
+          
+          newComments.forEach { id in
+            if (!seenComments.contains(id)) {
+              seenComments += "\(seenComments.isEmpty ? "" : ",")\(id)"
+            }
+          }
+          
+          let finalSeen = seenComments
+          seenPost.seenComments = finalSeen
+          try? context.save()
+          
+          DispatchQueue.main.async {
+            withAnimation {
+              self.data?.winstonSeenComments = finalSeen
+            }
+          }
+        }
+      }
+    }
+  }
+  
+  
+  func getCommentIds(comments: ListingData<CommentData>?) -> Array<String> {
+    var ids = Array<String>()
+    
+    if let children = comments?.children {
+      for i in 0...children.count - 1 {
+        let child = children[i]
+        
+        if (child.kind == "more") { continue }
+        
+        if let commentId = child.data?.id {
+          ids.append(commentId)
+        }
+        
+        if let replies = child.data?.replies  {
+          switch replies {
+          case .first(_):
+            break
+          case .second(let actualData):
+            ids += getCommentIds(comments: actualData.data)
+          }
+        }
+      }
+    }
+    
+    return ids
+  }
+
   func reply(_ text: String, updateComments: (() -> ())? = nil) async -> Bool {
     if let fullname = data?.name {
       let result = await RedditAPI.shared.newReply(text, fullname) ?? false
@@ -210,6 +351,10 @@ extension Post {
       if let post = response[0] {
         switch post {
         case .first(let actualData):
+          if let numComments = actualData.data?.children?[0].data?.num_comments {
+            await saveCommentCount(numComments: numComments)
+          }
+          
           if full {
             await MainActor.run {
               let newData = actualData.data?.children?[0].data
@@ -226,11 +371,11 @@ extension Post {
           return nil
         case .second(let actualData):
           if let data = actualData.data {
+            await saveSeenComments(comments: data)
+
             if let dataArr = data.children?.compactMap({ $0 }) {
-              return (
-                Comment.initMultiple(datas: dataArr, api: RedditAPI.shared),
-                data.after
-              )
+              let comments = Comment.initMultiple(datas: dataArr, api: RedditAPI.shared);
+              return ( comments, data.after )
             }
             return nil
           }
@@ -302,6 +447,7 @@ class PostWinstonData: Hashable {
   var subreddit: Subreddit?
   var mediaImageRequest: [ImageRequest] = []
   var postDimensions: PostDimensions?
+  var loaded = false
   
   func hash(into hasher: inout Hasher) {
     hasher.combine(permaURL)
@@ -410,6 +556,8 @@ struct PostData: GenericRedditEntityDataType {
   var preview: Preview? = nil
   var winstonSeen: Bool? = nil
   var winstonHidden: Bool? = nil
+  var winstonSeenCommentCount: Int? = nil
+  var winstonSeenComments: String? = nil
 }
 
 struct GalleryData: Codable, Hashable {

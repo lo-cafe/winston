@@ -285,7 +285,6 @@ public struct Markdownosaur: MarkupVisitor {
       quoteAttributes[.listDepth] = blockQuote.quoteDepth
 
       let quoteAttributedString = visit(child).mutableCopy() as! NSMutableAttributedString
-      quoteAttributedString.insert(NSAttributedString(string: "\t", attributes: quoteAttributes), at: 0)
 
       quoteAttributedString.addAttribute(.foregroundColor, value: UIColor.systemGray)
 
