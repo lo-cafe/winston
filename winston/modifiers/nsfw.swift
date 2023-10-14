@@ -5,11 +5,11 @@
 //  Created by Igor Marcossi on 02/08/23.
 //
 
-import Foundation
 import SwiftUI
 
 struct NSFWMod: ViewModifier {
   var isIt: Bool
+  var smallIcon: Bool = false
   @State private var unblur = false
   func body(content: Content) -> some View {
     let blur = !unblur && isIt
@@ -17,6 +17,7 @@ struct NSFWMod: ViewModifier {
       .frame(minHeight: isIt ? 75 : 0)
       .opacity(blur ? 0.75 : 1)
       .blur(radius: blur ? 30 : 0)
+      .mask(content)
       .overlay(
         !blur
         ? nil
@@ -27,18 +28,18 @@ struct NSFWMod: ViewModifier {
             .padding(.vertical, 3)
             .background(.red, in: Capsule(style: .continuous))
             .foregroundColor(.white)
-          Text("Tap to unblur")
+          smallIcon ? nil :  Text("Tap to unblur")
         }
       )
-      .allowsHitTesting(!blur)
+      .allowsHitTesting(smallIcon ? false : !blur)
       .contentShape(Rectangle())
-      .highPriorityGesture(blur ? TapGesture().onEnded { withAnimation { unblur = true } } : nil )
+      .highPriorityGesture(smallIcon ? nil : blur ? TapGesture().onEnded { withAnimation { unblur = true } } : nil )
   }
 }
 
 extension View {
-  func nsfw(_ isIt: Bool) -> some View {
+  func nsfw(_ isIt: Bool,smallIcon: Bool = false) -> some View {
     self
-      .modifier(NSFWMod(isIt: isIt))
+      .modifier(NSFWMod(isIt: isIt, smallIcon: smallIcon))
   }
 }

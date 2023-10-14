@@ -188,7 +188,7 @@ struct SubredditData: Codable, GenericRedditEntityDataType, Defaults.Serializabl
   var banner_background_image: String? = nil
   var original_content_tag_enabled: Bool? = nil
   var community_reviewed: Bool? = nil
-  var over_18: Bool? = nil
+  var over18: Bool? = nil
   var submit_text: String? = nil
   var description_html: String? = nil
   var spoilers_enabled: Bool? = nil
@@ -260,7 +260,7 @@ struct SubredditData: Codable, GenericRedditEntityDataType, Defaults.Serializabl
   
   
   enum CodingKeys: String, CodingKey {
-    case user_flair_background_color, submit_text_html, restrict_posting, user_is_banned, free_form_reports, wiki_enabled, user_is_muted, user_can_flair_in_sr, display_name, header_img, title, allow_galleries, icon_size, primary_color, active_user_count, icon_img, display_name_prefixed, accounts_active, public_traffic, subscribers, name, quarantine, hide_ads, prediction_leaderboard_entry_type, emojis_enabled, advertiser_category, public_description, comment_score_hide_mins, allow_predictions, user_has_favorited, user_flair_template_id, community_icon, banner_background_image, original_content_tag_enabled, community_reviewed, submit_text, description_html, spoilers_enabled, allow_talks, is_enrolled_in_new_modmail, key_color, can_assign_user_flair, created, show_media_preview, user_is_subscriber, allow_videogifs, should_archive_posts, user_flair_type, allow_polls, public_description_html, allow_videos, banner_img, user_flair_text, banner_background_color, show_media, id, user_is_moderator, description, is_chat_post_feature_enabled, submit_link_label, user_flair_text_color, restrict_commenting, user_flair_css_class, allow_images, url, created_utc, user_is_contributor, winstonFlairs, subreddit_type
+    case user_flair_background_color, submit_text_html, restrict_posting, user_is_banned, free_form_reports, wiki_enabled, user_is_muted, user_can_flair_in_sr, display_name, header_img, title, allow_galleries, icon_size, primary_color, active_user_count, icon_img, display_name_prefixed, accounts_active, public_traffic, subscribers, name, quarantine, hide_ads, prediction_leaderboard_entry_type, emojis_enabled, advertiser_category, public_description, comment_score_hide_mins, allow_predictions, user_has_favorited, user_flair_template_id, community_icon, banner_background_image, original_content_tag_enabled, community_reviewed, submit_text, description_html, spoilers_enabled, allow_talks, is_enrolled_in_new_modmail, key_color, can_assign_user_flair, created, show_media_preview, user_is_subscriber, allow_videogifs, should_archive_posts, user_flair_type, allow_polls, public_description_html, allow_videos, banner_img, user_flair_text, banner_background_color, show_media, id, user_is_moderator, description, is_chat_post_feature_enabled, submit_link_label, user_flair_text_color, restrict_commenting, user_flair_css_class, allow_images, url, created_utc, user_is_contributor, winstonFlairs, subreddit_type, over18
   }
   
   
@@ -298,7 +298,7 @@ struct SubredditData: Codable, GenericRedditEntityDataType, Defaults.Serializabl
     self.banner_background_image = nil
     self.original_content_tag_enabled = nil
     self.community_reviewed = nil
-    self.over_18 = nil
+    self.over18 = nil
     self.submit_text = nil
     self.description_html = nil
     self.spoilers_enabled = nil
@@ -335,12 +335,11 @@ struct SubredditData: Codable, GenericRedditEntityDataType, Defaults.Serializabl
     self.title = nil
     
     
-    
     let x = entity
     self.allow_galleries = x.allow_galleries
     self.allow_images = x.allow_images
     self.allow_videos = x.allow_videos
-    self.over_18 = x.over_18
+    self.over18 = x.over18
     self.restrict_commenting = x.restrict_commenting
     self.user_has_favorited = x.user_has_favorited
     self.user_is_banned = x.user_is_banned
@@ -451,6 +450,7 @@ struct SubredditData: Codable, GenericRedditEntityDataType, Defaults.Serializabl
     self.created_utc = try container.decodeIfPresent(Double.self, forKey: .created_utc)
     self.user_is_contributor = try container.decodeIfPresent(Bool.self, forKey: .user_is_contributor)
     self.winstonFlairs = try container.decodeIfPresent([Flair].self, forKey: .winstonFlairs)
+    self.over18 = try container.decodeIfPresent(Bool.self, forKey: .over18)
   }
 }
 

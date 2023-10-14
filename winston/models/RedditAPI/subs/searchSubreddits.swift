@@ -21,6 +21,7 @@ extension RedditAPI {
         encoder: URLEncodedFormParameterEncoder(destination: .queryString),
         headers: headers
       )
+
         .serializingDecodable(Listing<SubredditData>.self).result
       switch response {
       case .success(let data):
@@ -46,3 +47,4 @@ extension RedditAPI {
     var sort = "relevance"
   }
 }
+

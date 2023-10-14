@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="22222" systemVersion="23A344" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithCloudKit="YES" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="22222" systemVersion="23B5067a" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithCloudKit="YES" userDefinedModelVersionIdentifier="">
     <entity name="CachedMulti" representedClassName="CachedMulti" syncable="YES">
         <attribute name="display_name" optional="YES" attributeType="String"/>
         <attribute name="icon_url" optional="YES" attributeType="String"/>
@@ -28,7 +28,7 @@
         <attribute name="icon_img" optional="YES" attributeType="String"/>
         <attribute name="key_color" optional="YES" attributeType="String"/>
         <attribute name="name" optional="YES" attributeType="String"/>
-        <attribute name="over_18" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="over18" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="primary_color" optional="YES" attributeType="String"/>
         <attribute name="restrict_commenting" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="subscribers" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
