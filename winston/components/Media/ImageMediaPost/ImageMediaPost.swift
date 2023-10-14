@@ -17,7 +17,7 @@ struct ImageMediaPost: View, Equatable {
   }
     
   var compact = false
-  var post: Post
+  @ObservedObject var post: Post
   var images: [MediaExtracted]
   var contentWidth: CGFloat
   @State var fullscreen = false
