@@ -38,8 +38,8 @@
 		65CDA3642ACB0F140001EC44 /* ShareSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65CDA3632ACB0F140001EC44 /* ShareSheet.swift */; };
 		65CDA3662ACB0F3A0001EC44 /* LiveTextInteraction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65CDA3652ACB0F3A0001EC44 /* LiveTextInteraction.swift */; };
 		65D265412ABEC6FF009E01F9 /* urlCleaner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65D265402ABEC6FF009E01F9 /* urlCleaner.swift */; };
-		EC051C472ACAF2DC00E9D9ED /* themeFileIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = EC051C462ACAF2DC00E9D9ED /* themeFileIcon.png */; };
 		ABC2180F2ABA528D00F0DABA /* Biometrics.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABC2180E2ABA528D00F0DABA /* Biometrics.swift */; };
+		EC051C472ACAF2DC00E9D9ED /* themeFileIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = EC051C462ACAF2DC00E9D9ED /* themeFileIcon.png */; };
 		EC082F252A65FB4300BA2727 /* MeasureOnce.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC082F242A65FB4300BA2727 /* MeasureOnce.swift */; };
 		EC082F272A66132600BA2727 /* CommentLinkMore.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC082F262A66132600BA2727 /* CommentLinkMore.swift */; };
 		EC082F292A66134C00BA2727 /* CommentLinkFull.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC082F282A66134C00BA2727 /* CommentLinkFull.swift */; };
@@ -420,9 +420,9 @@
 		65CDA3632ACB0F140001EC44 /* ShareSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareSheet.swift; sourceTree = "<group>"; };
 		65CDA3652ACB0F3A0001EC44 /* LiveTextInteraction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveTextInteraction.swift; sourceTree = "<group>"; };
 		65D265402ABEC6FF009E01F9 /* urlCleaner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = urlCleaner.swift; sourceTree = "<group>"; };
+		ABC2180E2ABA528D00F0DABA /* Biometrics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Biometrics.swift; sourceTree = "<group>"; };
 		EC051C2A2ACAEFC500E9D9ED /* QuickLookThumbnailing.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuickLookThumbnailing.framework; path = System/Library/Frameworks/QuickLookThumbnailing.framework; sourceTree = SDKROOT; };
 		EC051C462ACAF2DC00E9D9ED /* themeFileIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = themeFileIcon.png; sourceTree = "<group>"; };
-		ABC2180E2ABA528D00F0DABA /* Biometrics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Biometrics.swift; sourceTree = "<group>"; };
 		EC082F242A65FB4300BA2727 /* MeasureOnce.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeasureOnce.swift; sourceTree = "<group>"; };
 		EC082F262A66132600BA2727 /* CommentLinkMore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentLinkMore.swift; sourceTree = "<group>"; };
 		EC082F282A66134C00BA2727 /* CommentLinkFull.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentLinkFull.swift; sourceTree = "<group>"; };
@@ -2161,6 +2161,7 @@
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
 				INFOPLIST_KEY_LSSupportsOpeningDocumentsInPlace = YES;
 				INFOPLIST_KEY_NSDocumentsFolderUsageDescription = "Winston needs access to your documents to save/import themes.";
+				INFOPLIST_KEY_NSFaceIDUsageDescription = "Uses FaceID to lock and unlock Winston";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Winston needs access to your library to be able to download images.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -2201,6 +2202,7 @@
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
 				INFOPLIST_KEY_LSSupportsOpeningDocumentsInPlace = YES;
 				INFOPLIST_KEY_NSDocumentsFolderUsageDescription = "Winston needs access to your documents to save/import themes.";
+				INFOPLIST_KEY_NSFaceIDUsageDescription = "Uses FaceID to lock and unlock Winston";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Winston needs access to your library to be able to download images.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
