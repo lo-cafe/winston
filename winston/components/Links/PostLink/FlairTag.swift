@@ -6,15 +6,26 @@
 //
 
 import SwiftUI
+import Defaults
 
 struct FlairTag: View {
   static let height: Double = 20
+  var id: String?
   var data: SubredditData?
   var text: String
   var color: Color = .secondary
   var body: some View {
     HStack(spacing: 4) {
-      if let data = data { SubredditIcon(data: data, size: 16) }
+      if let data = data {
+        SubredditIcon(data: data, size: 16)
+      } else if let savedIcon = Defaults[.subredditIcons][id ?? ""] {
+        if let iconImg = savedIcon["icon_img"], iconImg!.count > 0 {
+          SubredditIcon(iconImg: iconImg, size: 16)
+        } else if let communityIcon = savedIcon["community_icon"], communityIcon!.count > 0 {
+          SubredditIcon(communityIcon: communityIcon, size: 16)
+        }
+      }
+      
       Text(text)
         .padding(.vertical, 2)
     }

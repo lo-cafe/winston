@@ -25,7 +25,8 @@ struct SubsNStuffLine: View, Equatable {
       HStack(spacing: 0) {
         
         if showSub || feedsAndSuch.contains(sub.id) {
-          FlairTag(data: sub.data, text: "r/\(sub.data?.display_name ?? post.data?.subreddit ?? "Error")", color: .blue)
+          let subId = sub.data?.display_name ?? post.data?.subreddit ?? "Error"
+          FlairTag(id: subId, data: sub.data, text: "r/\(subId)", color: .blue)
             .highPriorityGesture(TapGesture() .onEnded {
               routerProxy.router.path.append(SubViewType.posts(Subreddit(id: post.data?.subreddit ?? "", api: post.redditAPI)))
             })

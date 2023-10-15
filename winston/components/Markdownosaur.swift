@@ -269,24 +269,9 @@ public struct Markdownosaur: MarkupVisitor {
     let result = NSMutableAttributedString()
 
     for child in blockQuote.children {
-      var quoteAttributes: [NSAttributedString.Key: Any] = [:]
-
-      let quoteParagraphStyle = NSMutableParagraphStyle()
-
-      let baseLeftMargin: CGFloat = 15.0
-      let leftMarginOffset = baseLeftMargin + (20.0 * CGFloat(blockQuote.quoteDepth))
-
-      quoteParagraphStyle.tabStops = [NSTextTab(textAlignment: .left, location: leftMarginOffset)]
-
-      quoteParagraphStyle.headIndent = leftMarginOffset
-
-      quoteAttributes[.paragraphStyle] = quoteParagraphStyle
-      quoteAttributes[.font] = UIFont.systemFont(ofSize: baseFontSize, weight: .regular)
-      quoteAttributes[.listDepth] = blockQuote.quoteDepth
-
       let quoteAttributedString = visit(child).mutableCopy() as! NSMutableAttributedString
-
       quoteAttributedString.addAttribute(.foregroundColor, value: UIColor.systemGray)
+      quoteAttributedString.addAttribute(.font, value: UIFont.systemFont(ofSize: baseFontSize, weight: .regular))
 
       result.append(quoteAttributedString)
     }

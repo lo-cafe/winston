@@ -142,10 +142,7 @@ struct PostView: View, Equatable {
         withAnimation { update.toggle() }
         await asyncFetch(true)
       }
-      .overlay(
-        PostFloatingPill(post: post, subreddit: subreddit)
-        , alignment: .bottomTrailing
-      )
+      .overlay(PostFloatingPill(post: post, subreddit: subreddit), alignment: .bottomTrailing)
       .navigationBarTitle("\(post.data?.num_comments ?? 0) comments", displayMode: .inline)
       .toolbar { Toolbar(hideElements: hideElements, subreddit: subreddit, post: post, routerProxy: routerProxy, sort: $sort) }
       .onChange(of: sort) { val in

@@ -48,7 +48,7 @@ enum MediaExtractedType: Hashable, Equatable {
 // ORDER MATTERS!
 func mediaExtractor(contentWidth: Double = UIScreen.screenWidth, _ data: PostData) async -> MediaExtractedType? {
   guard !data.is_self else { return nil }
-  
+    
   if let is_gallery = data.is_gallery, is_gallery, let galleryData = data.gallery_data?.items, let metadata = data.media_metadata {
     let galleryArr = galleryData.compactMap { item in
       let id = item.media_id

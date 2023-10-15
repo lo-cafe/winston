@@ -65,14 +65,22 @@ struct SubredditBaseIcon: View, Equatable {
 
 struct SubredditIcon: View, Equatable {
   static func == (lhs: SubredditIcon, rhs: SubredditIcon) -> Bool {
-    lhs.data.community_icon == rhs.data.community_icon && lhs.data.icon_img == rhs.data.icon_img && lhs.data.display_name == rhs.data.display_name && lhs.data.id == rhs.data.id && lhs.data.primary_color == rhs.data.primary_color && lhs.data.key_color == rhs.data.key_color
+    lhs.data?.community_icon == rhs.data?.community_icon && lhs.data?.icon_img == rhs.data?.icon_img && lhs.data?.display_name == rhs.data?.display_name && lhs.data?.id == rhs.data?.id && lhs.data?.primary_color == rhs.data?.primary_color && lhs.data?.key_color == rhs.data?.key_color && lhs.iconImg == rhs.iconImg && lhs.communityIcon == rhs.communityIcon
   }
-  var data: SubredditData
+  
+  var iconImg : String?
+  var communityIcon : String?
+  var data: SubredditData?
   var size: CGFloat = 30
   var body: some View {
-    let communityIcon = data.community_icon?.split(separator: "?") ?? []
-    let icon = data.icon_img == "" || data.icon_img == nil ? communityIcon.count > 0 ? String(communityIcon[0]) : "" : data.icon_img
-    SubredditBaseIcon(name: data.display_name ?? data.id, iconURLStr: icon == "" ? nil : icon, id: data.id, size: size, color: firstNonEmptyString(data.key_color, data.primary_color, "#828282") ?? "")
+    let id = data?.id ?? iconImg ?? communityIcon ?? ""
+    
+    let iconImg = data?.icon_img ?? iconImg
+    let commIcon = data?.community_icon ?? communityIcon
+    
+    let communityIcon = commIcon?.split(separator: "?") ?? []
+    let icon = iconImg == "" || iconImg == nil ? communityIcon.count > 0 ? String(communityIcon[0]) : "" : iconImg
+    SubredditBaseIcon(name: data?.display_name ?? id, iconURLStr: icon == "" ? nil : icon, id:id, size: size, color: firstNonEmptyString(data?.key_color, data?.primary_color, "#828282") ?? "")
 //      .equatable()
   }
 }

@@ -107,7 +107,6 @@ struct BehaviorPanel: View {
           Toggle("Blur NSFW in opened posts", isOn: $blurPostNSFW)
           Toggle("Blur NSFW", isOn: $blurPostLinkNSFW)
           Toggle("Save sort per subreddit", isOn: $perSubredditSort)
-          Toggle("Save comment sort per post", isOn: $perPostSort)
           Menu {
             ForEach(SubListingSortOption.allCases) { opt in
               if case .top(_) = opt {
@@ -215,6 +214,8 @@ struct BehaviorPanel: View {
           }
           
           Toggle("Collapse AutoModerator comments", isOn: $collapseAutoModerator)
+          Toggle("Save comment sort per post", isOn: $perPostSort)
+
         }
         .themedListRowBG(enablePadding: true)
       }

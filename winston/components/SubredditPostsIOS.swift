@@ -27,7 +27,6 @@ struct SubredditPostsIOS: View, Equatable {
       
       Section {
         ForEach(Array(posts.enumerated()), id: \.self.element.id) { i, post in
-          
           if let sub = subreddit ?? post.winstonData?.subreddit {
             PostLink(post: post, sub: sub, showSub: showSub)
               .equatable()

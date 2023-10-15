@@ -100,7 +100,7 @@ struct PostContent: View, Equatable {
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .contentShape(Rectangle())
             .onTapGesture { withAnimation(spring) { collapsed.toggle() } }
-            .foregroundColor(.blue)
+            .foregroundColor(.accentColor)
             .allowsHitTesting(isCollapsed)
             .opacity(isCollapsed ? 1 : 0)
           , alignment: .bottom

@@ -38,6 +38,24 @@ extension Post {
         return stringToAttr(body, fontSize: theme.posts.bodyText.size)
       })
     }
+    
+    if let sub = self.data?.subreddit, Defaults[.subredditIcons][sub] == nil {
+      // Save empty value to prevent multiple fetches on the same subreddit icon
+      Defaults[.subredditIcons][id] = [:]
+      
+      Task {
+        // Asynchronously fetch icon
+        if let data = (await RedditAPI.shared.fetchSub(sub))?.data  {
+          if (data.community_icon != nil && data.community_icon!.count > 0) || (data.icon_img != nil && data.icon_img!.count > 0),
+             let displayName = data.display_name {
+            Defaults[.subredditIcons][displayName] = [ "community_icon" : data.community_icon, "icon_img" : data.icon_img ]
+          }
+        }
+      }
+    } else {
+      let sub = self.data?.subreddit ?? "NULL"
+    }
+    
   }
   
   func waitForMediaToLoad() async {
@@ -80,6 +98,17 @@ extension Post {
   
   convenience init(id: String, api: RedditAPI) {
     self.init(id: id, api: api, typePrefix: "\(Post.prefix)_")
+    
+    let context = PersistenceController.shared.container.newBackgroundContext()
+    let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "SeenPost")
+    fetchRequest.predicate = NSPredicate(format: "postID == %@", id)
+    if let seenPost = (context.performAndWait { (try? context.fetch(fetchRequest) as? [SeenPost])?.first }) {
+      context.performAndWait {
+        self.data?.winstonSeen = true
+        self.data?.winstonSeenCommentCount = Int(seenPost.numComments)
+        self.data?.winstonSeenComments = seenPost.seenComments
+      }
+    }
   }
   
   static func initMultiple(datas: [T], api: RedditAPI, fetchSubs: Bool = false, contentWidth: CGFloat = 0) -> [Post] {
