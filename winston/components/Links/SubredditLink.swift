@@ -29,18 +29,21 @@ struct SubredditLink: View {
           .nsfw(Defaults[.blurPostLinkNSFW] ? data.over18 ?? false : false, smallIcon: true)
         
         VStack(alignment: .leading) {
-          Text("r/\(data.display_name ?? "?")")
-            .fontSize(18, .semibold)
+          HStack{
+            Text("r/\(data.display_name ?? "?")")
+              .fontSize(18, .semibold)
+            Spacer()
+            SubscribeButton(subreddit: sub, isSmall: true)
+              .frame(height: 24) // Adjust the height as needed
+
+          }
           Text("\(formatBigNumber(data.subscribers ?? 0)) subscribers")
             .fontSize(14).opacity(0.5)
           Text((data.public_description).md()).lineLimit(2)
             .fontSize(15).opacity(0.75)
         }
+
         
-        Spacer()
-        (data.user_is_subscriber ?? false ? Label("Subscribe", systemImage:"checkmark" ) : nil)
-          .labelStyle(.iconOnly)
-          .foregroundColor(.accentColor)
       }
       .padding(.horizontal, noHPad ? 0 : 16)
       .padding(.vertical, 14)

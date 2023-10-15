@@ -30,11 +30,9 @@ struct winstonApp: App {
         switch name {
         case "saved":
           print("saved is selected")
-          //quickActionSettings.quickAction = .details(name: name)
         case "search":
           print("search is selected")
             activeTab = .search // Set the active tab to "Search"
-          //set active tab to search
         default:
           print("default " + name)
         }
