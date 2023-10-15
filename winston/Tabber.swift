@@ -46,8 +46,8 @@ class TabPayload: ObservableObject {
 struct Tabber: View {
   @ObservedObject var tempGlobalState = TempGlobalState.shared
   @ObservedObject var errorAlert = Oops.shared
-  @State var activeTab = TabIdentifier.posts
-  
+  @State var activeTab: TabIdentifier
+
   @State var credModalOpen = false
   @State var importedThemeAlert = false
 
@@ -79,7 +79,8 @@ struct Tabber: View {
     }
   }
   
-  init(theme: WinstonTheme, cs: ColorScheme) {
+  init(theme: WinstonTheme, cs: ColorScheme, activeTab: TabIdentifier) {
+    _activeTab = State(initialValue: activeTab) // Initialize activeTab
     Tabber.updateTabAndNavBar(tabTheme: theme.general.tabBarBG, navTheme: theme.general.navPanelBG, cs)
   }
   

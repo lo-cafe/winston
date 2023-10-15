@@ -474,6 +474,7 @@ enum SubListingSortOption: Codable, Identifiable, Defaults.Serializable, Hashabl
   case best
   case hot
   case new
+  case controversial
   case top(TopListingSortOption)
   
   enum TopListingSortOption: String, Codable, CaseIterable, Hashable {
@@ -483,6 +484,7 @@ enum SubListingSortOption: Codable, Identifiable, Defaults.Serializable, Hashabl
     case month
     case year
     case all
+  
     
     var icon: String {
       switch self {
@@ -499,6 +501,7 @@ enum SubListingSortOption: Codable, Identifiable, Defaults.Serializable, Hashabl
   var rawVal: SubListingSort {
     switch self {
     case .best: return SubListingSort(icon: "trophy", value: "best")
+    case .controversial: return SubListingSort(icon: "figure.fencing", value: "controversial")
     case .hot: return SubListingSort(icon: "flame", value: "hot")
     case .new: return SubListingSort(icon: "newspaper", value: "new")
     case .top(let subOption):
@@ -513,6 +516,6 @@ enum SubListingSortOption: Codable, Identifiable, Defaults.Serializable, Hashabl
 
 extension SubListingSortOption: CaseIterable {
   static var allCases: [SubListingSortOption] {
-    return [.best, .hot, .new, .top(.all)]
+    return [.best, .hot, .new, .controversial, .top(.all)]
   }
 }
