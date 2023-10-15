@@ -39,6 +39,7 @@ class MyDefaults {
 struct CommentLinkContent: View {
   var highlightID: String?
 //  @Default(.commentSwipeActions) private var commentSwipeActions
+  var seenComments: String?
   var forcedBodySize: CGSize?
   var showReplies = true
   var arrowKinds: [ArrowKind]
@@ -65,10 +66,11 @@ struct CommentLinkContent: View {
   
   @State var commentViewLoaded = false
   
-  var body: some View {
+  var body: some View {    
     let theme = selectedTheme.comments
     let selectable = (comment.data?.winstonSelecting ?? false)
     let horPad = theme.theme.innerPadding.horizontal
+    
     if let data = comment.data {
       let collapsed = data.collapsed ?? false
       Group {
@@ -86,9 +88,8 @@ struct CommentLinkContent: View {
             }
           }
           HStack(spacing: 8) {
-            if let author = data.author {
-              BadgeComment(comment: comment, usernameColor: (post?.data?.author ?? "") == author ? Color.green : nil, avatarURL: avatarsURL?[data.author_fullname!], theme: theme.theme.badge)
-            }
+            let unseen = seenComments != nil && !seenComments!.contains(data.id)
+            BadgeComment(comment: comment, unseen: unseen, usernameColor: (post?.data?.author ?? "") == data.author ? Color.green : nil, avatarURL: avatarsURL?[data.author_fullname!], theme: theme.theme.badge, commentTheme: theme.theme)
             
             Spacer()
 

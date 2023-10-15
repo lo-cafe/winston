@@ -67,6 +67,8 @@
         <attribute name="timestamp" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
     </entity>
     <entity name="SeenPost" representedClassName="SeenPost" syncable="YES" codeGenerationType="class">
+        <attribute name="numComments" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="postID" optional="YES" attributeType="String"/>
+        <attribute name="seenComments" optional="YES" attributeType="String"/>
     </entity>
 </model>
