@@ -10,29 +10,30 @@ import NukeUI
 import Nuke
 
 struct Avatar: View {
+  var saved = false
   var url:  String?
   let userID: String
   var fullname: String?
   var theme: AvatarTheme?
   var avatarSize: CGFloat?
-  @ObservedObject private var avatarCache = Caches.avatars
+  var avatarRequest: ImageRequest?
+//  @ObservedObject var avatarCache: BaseCache<ImageRequest>
   
   var body: some View {
-    let id = fullname ?? userID
-    let avatarRequest = avatarCache.cache[id]
     let avatarSize = avatarSize ?? theme?.size ?? 0
-//    let newURL = avatarRequest.isNil ? URL(string: String(url?.split(separator: "?")[0] ?? "")) : nil
-    AvatarRaw(avatarImgRequest: avatarRequest?.data, userID: userID, fullname: fullname, theme: theme, avatarSize: avatarSize)
-//      .equatable()
-//      .task { if avatarRequest.isNil, let url = url { RedditAPI.shared.addImgReqToAvatarCache(id, url, avatarSize: avatarSize) } }
+    
+      //    let newURL = avatarRequest.isNil ? URL(string: String(url?.split(separator: "?")[0] ?? "")) : nil
+      AvatarRaw(saved: saved, avatarImgRequest: avatarRequest, userID: userID, fullname: fullname, theme: theme, avatarSize: avatarSize)
+//          .equatable()
+    //      .task { if avatarRequest.isNil, let url = url { RedditAPI.shared.addImgReqToAvatarCache(id, url, avatarSize: avatarSize) } }
   }
 }
 
-struct AvatarRaw: View, Equatable {
-  static func == (lhs: AvatarRaw, rhs: AvatarRaw) -> Bool {
-    lhs.avatarImgRequest?.url == rhs.avatarImgRequest?.url
-  }
-  
+struct AvatarRaw: View {
+//  static func == (lhs: AvatarRaw, rhs: AvatarRaw) -> Bool {
+//    lhs.saved == rhs.saved && lhs.avatarImgRequest?.url == rhs.avatarImgRequest?.url && lhs.theme == rhs.theme && rhs.avatarSize == lhs.avatarSize
+//  }
+  var saved: Bool
   var avatarImgRequest: ImageRequest?
   var userID: String
   var fullname: String? = nil
@@ -53,7 +54,7 @@ struct AvatarRaw: View, Equatable {
       } else {
         if let avatarImgRequest = avatarImgRequest, let url = avatarImgRequest.url {
           URLImage(url: url, imgRequest: avatarImgRequest, processors: [.resize(width: avatarSize)])
-//            .equatable()
+            .equatable()
             .scaledToFill()
         } else {
           Text(userID.prefix(1).uppercased())
@@ -66,6 +67,39 @@ struct AvatarRaw: View, Equatable {
       }
     }
     .frame(width: avatarSize, height: avatarSize)
-    .mask(RR(cornerRadius, .black))
+    .mask(RR(cornerRadius, .black).equatable())
+    .background(SavedFlag(saved: saved).equatable())
+  }
+}
+
+
+struct SavedFlag: View, Equatable {
+  private let flagY: CGFloat = 16
+  static func == (lhs: SavedFlag, rhs: SavedFlag) -> Bool {
+    lhs.saved == rhs.saved
+  }
+  var saved: Bool
+  var body: some View {
+    ZStack {
+      Image(systemName: "bookmark.fill")
+        .foregroundColor(.green)
+        .offset(y: saved ? flagY : 0)
+      
+      Circle()
+        .fill(.gray)
+        .performantShadow(cornerRadius: 15, color: .black, opacity: 0.15, radius: 4, offsetY: 4, size: CGSize(width: 30, height: 30))
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .mask(
+          Image(systemName: "bookmark.fill")
+            .foregroundColor(.black)
+            .offset(y: saved ? flagY : 0)
+        )
+      
+      Circle()
+        .fill(.gray)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+    .compositingGroup()
+    .animation(.interpolatingSpring(stiffness: 150, damping: 12).delay(0.4), value: saved)
   }
 }

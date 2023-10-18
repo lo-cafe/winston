@@ -59,10 +59,11 @@ struct PostContent: View, Equatable {
       VStack(spacing: 0) {
         VStack(spacing: selectedTheme.posts.spacing) {
           
-          if let extractedMedia = post.winstonData?.extractedMedia {
-            MediaPresenter(blurPostLinkNSFW: blurPostNSFW, media: extractedMedia, post: post, compact: false, contentWidth: contentWidth, routerProxy: routerProxy)
-              .id("media-post-open")
-          }
+//          if let extractedMedia = post.winstonData?.extractedMedia {
+//            MediaPresenter(postDimensions: post., postTitle: <#T##String#>, badgeKit: <#T##BadgeKit#>, markAsSeen: <#T##(() async -> ())?##(() async -> ())?##() async -> ()#>, cornerRadius: <#T##Double#>, blurPostLinkNSFW: <#T##Bool#>, media: <#T##MediaExtractedType#>, post: <#T##Post#>, compact: <#T##Bool#>, contentWidth: <#T##CGFloat#>, routerProxy: RouterProxy)
+//            MediaPresenter(cornerRadius: selectedTheme.postLinks.theme.mediaCornerRadius, blurPostLinkNSFW: blurPostNSFW, media: extractedMedia, post: post, compact: false, contentWidth: contentWidth, routerProxy: routerProxy)
+//              .id("media-post-open")
+//          }
           
           if data.selftext != "" {
             VStack {
@@ -109,15 +110,14 @@ struct PostContent: View, Equatable {
       .id("post-content")
       .listRowInsets(EdgeInsets(top: postsTheme.spacing / 2, leading: postsTheme.padding.horizontal, bottom: postsTheme.spacing / 2, trailing: postsTheme.spacing / 2))
       
-        Badge(post: post, theme: postsTheme.badge)
-//          .equatable()
-          .id("post-badge")
-          .listRowInsets(EdgeInsets(top: postsTheme.spacing / 2, leading: postsTheme.padding.horizontal, bottom: postsTheme.spacing * 0.75, trailing: postsTheme.padding.horizontal))
+//      Badge(cs: cs, routerProxy: routerProxy, post: post, theme: postsTheme.badge)
+//        .id("post-badge")
+//        .listRowInsets(EdgeInsets(top: postsTheme.spacing / 2, leading: postsTheme.padding.horizontal, bottom: postsTheme.spacing * 0.75, trailing: postsTheme.padding.horizontal))
       
       
-      SubsNStuffLine(showSub: true, feedsAndSuch: feedsAndSuch, post: post, sub: sub, routerProxy: routerProxy, over18: over18)
-        .id("post-flair-divider")
-        .listRowInsets(EdgeInsets(top: 0, leading: postsTheme.padding.horizontal, bottom: postsTheme.commentsDistance / 2, trailing: postsTheme.padding.horizontal))
+//      SubsNStuffLine(showSub: true, feedsAndSuch: feedsAndSuch, post: post, sub: sub, routerProxy: routerProxy, over18: over18)
+//        .id("post-flair-divider")
+//        .listRowInsets(EdgeInsets(top: 0, leading: postsTheme.padding.horizontal, bottom: postsTheme.commentsDistance / 2, trailing: postsTheme.padding.horizontal))
     }
     .frame(maxWidth: .infinity, alignment: .leading)
     .multilineTextAlignment(.leading)

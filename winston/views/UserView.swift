@@ -20,6 +20,7 @@ struct UserView: View {
   @State private var loadingOverview = true
   @State private var lastItemId: String? = nil
   @Environment(\.useTheme) private var selectedTheme
+  @EnvironmentObject private var routerProxy: RouterProxy
   
   func refresh() async {
     await user.refetchUser()
@@ -132,7 +133,7 @@ struct UserView: View {
               VStack(spacing: 0) {
                 switch item {
                 case .first(let post):
-                  PostLink(post: Post(data: post, api: user.redditAPI), sub: Subreddit(id: post.subreddit, api: user.redditAPI), showSub: true)
+                  PostLink(post: Post(data: post, api: user.redditAPI), sub: Subreddit(id: post.subreddit, api: user.redditAPI), showSub: true, routerProxy: routerProxy)
                 case .second(let comment):
                   VStack {
                     ShortCommentPostLink(comment: Comment(data: comment, api: user.redditAPI))

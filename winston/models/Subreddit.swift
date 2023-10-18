@@ -46,17 +46,23 @@ extension Subreddit {
   }
   
   func favoriteToggle(entity: CachedSub? = nil) {
-    if let favoritedStatus = data?.user_has_favorited, let name = data?.display_name {
-      
-      if let entity = entity, let context = entity.managedObjectContext {
+    if let entity = entity, let name = data?.display_name {
+      let favoritedStatus = entity.user_has_favorited
+      if let context = entity.managedObjectContext {
         entity.user_has_favorited = !favoritedStatus
-        try? context.save()
+        withAnimation {
+          self.data?.user_has_favorited = !favoritedStatus
+          try? context.save()
+        }
         
         Task {
           let result = await RedditAPI.shared.favorite(!favoritedStatus, subName: name)
           if !result {
             entity.user_has_favorited = favoritedStatus
-            try? context.save()
+            withAnimation {
+              self.data?.user_has_favorited = favoritedStatus
+              try? context.save()
+            }
           }
         }
       }
@@ -257,6 +263,16 @@ struct SubredditData: Codable, GenericRedditEntityDataType, Defaults.Serializabl
   //  let banner_size: [Int]?
   //  let mobile_banner_image: String?
   //  let allow_predictions_tournament: Bool?
+  
+  var subredditIconKit: SubredditIconKit {
+    let communityIconArr = community_icon?.split(separator: "?") ?? []
+    let iconRaw = icon_img == "" || icon_img == nil ? communityIconArr.count > 0 ? String(communityIconArr[0]) : "" : icon_img
+    let name = display_name ?? ""
+    let iconURLStr = iconRaw == "" ? nil : iconRaw
+    let color = firstNonEmptyString(key_color, primary_color, "#828282") ?? ""
+    
+    return SubredditIconKit(url: iconURLStr, initialLetter: String((name).prefix(1)).uppercased(), color: String((firstNonEmptyString(color, "#828282") ?? "").dropFirst(1)))
+  }
   
   
   enum CodingKeys: String, CodingKey {

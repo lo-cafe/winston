@@ -22,6 +22,9 @@ func getPostContentWidth(contentWidth: Double = UIScreen.screenWidth, secondary:
 }
 
 struct PostDimensions: Hashable, Equatable {
+  static var zero: PostDimensions {
+    PostDimensions(contentWidth: 0, titleSize: .zero, dividerSize: .zero, badgeSize: .zero, spacingHeight: 0)
+  }
   let contentWidth: Double
   let titleSize: CGSize
   var bodySize: CGSize? = nil
@@ -34,7 +37,6 @@ struct PostDimensions: Hashable, Equatable {
   var theme: PostLinkTheme
   var compact: Bool
   var size: CGSize {
-    
     let compactVSpacing = self.spacingHeight / 2
     let tagHeight = urlTagHeight.isNil ? 0 : (compactVSpacing / 2) + (self.urlTagHeight ?? 0)
     let compactHeight = max(self.titleSize.height + compactVSpacing + self.badgeSize.height + tagHeight, (mediaSize?.height ?? 0)) + dividerSize.height + compactVSpacing
@@ -59,7 +61,7 @@ struct PostDimensions: Hashable, Equatable {
   }
 }
 
-func getPostDimensions(post: Post, columnWidth: Double = UIScreen.screenWidth, secondary: Bool = false, theme: WinstonTheme? = nil) -> PostDimensions? {
+func getPostDimensions(post: Post, columnWidth: Double = UIScreen.screenWidth, secondary: Bool = false, theme: WinstonTheme? = nil) -> PostDimensions {
   if let data = post.data {
     let selectedTheme = theme ?? getEnabledTheme()
     let compact = Defaults[.compactMode]
@@ -88,8 +90,8 @@ func getPostDimensions(post: Post, columnWidth: Double = UIScreen.screenWidth, s
     if let extractedMedia = extractedMedia {
       if compact { ACC_mediaSize = compactMediaSize } else {
         func defaultMediaSize(_ size: CGSize) -> CGSize {
-          let sourceHeight = size.height == 0 ? post.winstonData?.postDimensions?.mediaSize?.height ?? 0 : size.height
-          let sourceWidth = size.width == 0 ? post.winstonData?.postDimensions?.mediaSize?.width ?? 0 : size.width
+          let sourceHeight = size.height == 0 ? post.winstonData?.postDimensions.mediaSize?.height ?? 0 : size.height
+          let sourceWidth = size.width == 0 ? post.winstonData?.postDimensions.mediaSize?.width ?? 0 : size.width
           let propHeight = (contentWidth * sourceHeight) / sourceWidth
           let finalHeight = maxDefaultHeight != 110 ? Double(min(maxHeight, propHeight)) : Double(propHeight)
           return CGSize(width: contentWidth, height: finalHeight)
@@ -140,7 +142,23 @@ func getPostDimensions(post: Post, columnWidth: Double = UIScreen.screenWidth, s
     let compactTitleWidth = postGeneralSpacing + VotesCluster.verticalWidth + (extractedMedia.isNil ? 0 : postGeneralSpacing + compactMediaSize.width)
     let titleContentWidth = contentWidth - (compact ? compactTitleWidth : 0)
     
-    ACC_titleHeight = round(NSString(string: title).boundingRect(with: CGSize(width: titleContentWidth, height: .infinity), options: [.usesLineFragmentOrigin], attributes: [.font: UIFont.systemFont(ofSize: theme.titleText.size, weight: theme.titleText.weight.ut)], context: nil).height)
+    var appendStr = ""
+    let titleAttr = NSMutableAttributedString(string: title, attributes: [.font: UIFont.systemFont(ofSize: theme.titleText.size, weight: theme.titleText.weight.ut)])
+    let titleAttrBlankSpace = NSAttributedString(string: " ", attributes: [.font: UIFont.systemFont(ofSize: theme.titleText.size, weight: theme.titleText.weight.ut)])
+    if data.over_18 ?? false {
+      titleAttr.append(titleAttrBlankSpace)
+      appendStr += "NSFW"
+    }
+    if let flair = data.link_flair_text, !flair.isEmpty {
+      titleAttr.append(titleAttrBlankSpace)
+      appendStr += flair
+    }
+    let append = NSMutableAttributedString(string: appendStr, attributes: [.font: UIFont.systemFont(ofSize: ((theme.titleText.size - 1) * 100) / 120, weight: theme.titleText.weight.ut)])
+    if !appendStr.isEmpty {
+      titleAttr.append(append)
+      titleAttr.append(titleAttrBlankSpace)
+    }
+    ACC_titleHeight = round(titleAttr.boundingRect(with: CGSize(width: titleContentWidth, height: .infinity), options: [.usesLineFragmentOrigin], context: nil).height)
     
     if !body.isEmpty && !compact {
       ACC_bodyHeight = round(NSString(string: body).boundingRect(with: CGSize(width: contentWidth, height: (theme.bodyText.size * 1.2) * 3), options: [.usesLineFragmentOrigin, .truncatesLastVisibleLine], attributes: [.font: UIFont.systemFont(ofSize: theme.bodyText.size, weight: theme.bodyText.weight.ut)], context: nil).height)
@@ -177,7 +195,7 @@ func getPostDimensions(post: Post, columnWidth: Double = UIScreen.screenWidth, s
     let dimensions = PostDimensions(
       contentWidth: contentWidth,
       theme: theme,
-      titleSize: CGSize(width: titleContentWidth, height: ACC_titleHeight),
+      titleSize: CGSize(width: titleContentWidth, height: ACC_titleHeight + 1),
       bodySize: !theresSelftext || compact ? nil : CGSize(width: contentWidth, height: ACC_bodyHeight),
       urlTagHeight: urlTagHeight,
       mediaSize: !theresMedia ? nil : compact ? compactMediaSize : CGSize(width: contentWidth, height: ACC_mediaSize.height),
@@ -188,5 +206,5 @@ func getPostDimensions(post: Post, columnWidth: Double = UIScreen.screenWidth, s
 
     return dimensions
   }
-  return nil
+  return .zero
 }

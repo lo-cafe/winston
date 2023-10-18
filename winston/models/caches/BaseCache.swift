@@ -33,11 +33,9 @@ class BaseCache<T: Any>: ObservableObject {
     if !cache[key].isNil { return }
     Task(priority: .background) {
       let itemData = data()
-      // Create a new CacheItem with the current date
       let item = CacheItem(data: itemData, createdAt: Date())
       let oldestKey = cache.count > cacheLimit ? cache.min { a, b in a.value.createdAt < b.value.createdAt }?.key : nil
       
-      // Add the item to the cache
       await MainActor.run {
         withAnimation {
           cache[key] = item
@@ -48,14 +46,17 @@ class BaseCache<T: Any>: ObservableObject {
   }
   
   func merge(_ dict: [String:T]) async {
-      let newDict = dict.mapValues { CacheItem(data: $0, createdAt: Date()) }
-      await MainActor.run { [newDict] in
-        withAnimation {
+    let newDict = dict.mapValues { CacheItem(data: $0, createdAt: Date()) }
+    await MainActor.run {
+      withAnimation {
           cache.merge(newDict) { (_, new) in new }
-        }
       }
+      while cache.count > cacheLimit {
+        guard let oldestKey = cache.min(by: { a, b in a.value.createdAt < b.value.createdAt })?.key else { return }
+        cache.removeValue(forKey: oldestKey)
+      }
+    }
   }
-  
 }
 
 class BaseObservableCache<T: ObservableObject>: ObservableObject {

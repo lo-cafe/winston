@@ -15,7 +15,7 @@ let POSTLINK_INNER_H_PAD: CGFloat = 16
 
 struct PostLinkView: View, Equatable {
   static func == (lhs: PostLinkView, rhs: PostLinkView) -> Bool {
-    lhs.size == rhs.size && lhs.seen == rhs.seen && lhs.stickied == rhs.stickied && lhs.post == rhs.post && lhs.contentWidth == rhs.contentWidth && lhs.selectedTheme == rhs.selectedTheme
+    return lhs.post == rhs.post && lhs.size == rhs.size && lhs.seen == rhs.seen && lhs.stickied == rhs.stickied && lhs.contentWidth == rhs.contentWidth && lhs.selectedTheme == rhs.selectedTheme && lhs.cs == rhs.cs
   }
   
   var size: CGSize
@@ -27,6 +27,7 @@ struct PostLinkView: View, Equatable {
   var showSub = false
   var secondary = false
   var routerProxy: RouterProxy
+  var openPost: () -> ()
   var contentWidth: CGFloat
   
   var blurPostLinkNSFW: Bool
@@ -49,9 +50,6 @@ struct PostLinkView: View, Equatable {
   var selectedTheme: WinstonTheme
   var cs: ColorScheme
   
-  nonisolated func openPost() {
-    routerProxy.router.path.append(PostViewPayload(post: post, postSelfAttr: nil, sub: feedsAndSuch.contains(sub.id) ? sub : sub))
-  }
   
   var body: some View {
     if let data = post.data {
@@ -61,30 +59,28 @@ struct PostLinkView: View, Equatable {
       let over18 = data.over_18 ?? false
       
       VStack(alignment: .leading, spacing: theme.theme.verticalElementsSpacing) {
-        if compactMode {
-          PostLinkCompact(post: post, theme: theme, sub: sub, showSub: showSub, routerProxy: routerProxy, contentWidth: contentWidth, blurPostLinkNSFW: blurPostLinkNSFW, showVotes: showVotes, thumbnailPositionRight: thumbnailPositionRight, voteButtonPositionRight: voteButtonPositionRight, showUpvoteRatio: showUpvoteRatio, showSubsAtTop: showSubsAtTop, over18: over18, cs: cs)
-            .id(post.id)
-        } else {
-          PostLinkNormal(post: post, theme: theme, sub: sub, showSub: showSub, routerProxy: routerProxy, contentWidth: contentWidth, blurPostLinkNSFW: blurPostLinkNSFW, showVotes: showVotes, showUpvoteRatio: showUpvoteRatio, showSubsAtTop: showSubsAtTop, showSelfText: showSelfText, showTitleAtTop: showTitleAtTop, over18: over18, cs: cs)
-            .id(post.id)
-        }
+//        if compactMode {
+//          PostLinkCompact(post: post, theme: theme, sub: sub, showSub: showSub, routerProxy: routerProxy, contentWidth: contentWidth, blurPostLinkNSFW: blurPostLinkNSFW, showVotes: showVotes, thumbnailPositionRight: thumbnailPositionRight, voteButtonPositionRight: voteButtonPositionRight, showUpvoteRatio: showUpvoteRatio, showSubsAtTop: showSubsAtTop, over18: over18, cs: cs)
+//        } else {
+//          PostLinkNormal(post: post, theme: theme, sub: sub, showSub: showSub, routerProxy: routerProxy, contentWidth: contentWidth, blurPostLinkNSFW: blurPostLinkNSFW, showVotes: showVotes, showUpvoteRatio: showUpvoteRatio, showSubsAtTop: showSubsAtTop, showSelfText: showSelfText, showTitleAtTop: showTitleAtTop, over18: over18, cs: cs)
+//        }
       }
-      .padding(.horizontal, theme.theme.innerPadding.horizontal)
-      .padding(.vertical, theme.theme.innerPadding.vertical)
+      .padding(EdgeInsets(top: theme.theme.innerPadding.vertical, leading: theme.theme.innerPadding.horizontal, bottom: theme.theme.innerPadding.vertical, trailing: theme.theme.innerPadding.horizontal))
       .frame(width: size.width, height: size.height, alignment: .top)
       .fixedSize()
-      .background(PostLinkBG(theme: theme, stickied: data.stickied, secondary: secondary, cs: cs))
-      .mask(RR(theme.theme.cornerRadius, Color.black))
-      .overlay(PostLinkGlowDot(unseenType: theme.theme.unseenType, seen: seen, cs: cs), alignment: .topTrailing)
+      .background(PostLinkBG(theme: theme, stickied: data.stickied, secondary: secondary, cs: cs).equatable())
+      .mask(RR(theme.theme.cornerRadius, Color.black).equatable())
+      .overlay(PostLinkGlowDot(unseenType: theme.theme.unseenType, seen: seen, cs: cs).equatable(), alignment: .topTrailing)
       .scaleEffect(1)
-      .compositingGroup()
       .contentShape(Rectangle())
-      .swipyUI(onTap: openPost, actionsSet: postSwipeActions, entity: post)
+      .gesture(TapGesture().onEnded(openPost))
+//      .swipyRev(size: size, actionsSet: postSwipeActions, entity: post)
+//      .swipyRev(size: size, actionsSet: postSwipeActions)
+      .compositingGroup()
       .opacity(fadeReadPosts && seen ? 0.6 : 1)
-      .contextMenu(menuItems: { PostLinkContext(post: post) }, preview: { PostLinkContextPreview(post: post, sub: sub, routerProxy: routerProxy).id("\(post.id)-preview-navigation-stack") })
-      .foregroundColor(.primary)
+      .contextMenu(menuItems: { PostLinkContext(post: post) }, preview: { PostLinkContextPreview(post: post, sub: sub, routerProxy: routerProxy) })
+      .foregroundStyle(.primary)
       .multilineTextAlignment(.leading)
-      .zIndex(1)
       .onDisappear {
         Task(priority: .background) {
           if readPostOnScroll {
@@ -95,14 +91,16 @@ struct PostLinkView: View, Equatable {
           }
         }
       }
-//      .background(GeometryReader { geo in Color.clear.onAppear { print(data.title, "post", post.winstonData?.postDimensions?.size, geo.size) } })
     } else {
       Text("Oops something went wrong")
     }
   }
 }
 
-struct PostLinkGlowDot: View {
+struct PostLinkGlowDot: View, Equatable {
+  static func == (lhs: PostLinkGlowDot, rhs: PostLinkGlowDot) -> Bool {
+    return lhs.unseenType == rhs.unseenType && lhs.seen == rhs.seen && lhs.cs == rhs.cs
+  }
   let unseenType: UnseenType
   let seen: Bool
   let cs: ColorScheme
@@ -123,14 +121,18 @@ struct PostLinkGlowDot: View {
         EmptyView()
       }
     }
-      .padding(.all, 11)
-      .scaleEffect(seen ? 0.1 : 1)
-      .opacity(seen ? 0 : 1)
-      .allowsHitTesting(false)
+    .padding(.all, 11)
+    .scaleEffect(seen ? 0.1 : 1)
+    .opacity(seen ? 0 : 1)
+    .allowsHitTesting(false)
   }
 }
 
-struct PostLinkBG: View {
+struct PostLinkBG: View, Equatable {
+  static func == (lhs: PostLinkBG, rhs: PostLinkBG) -> Bool {
+    return lhs.theme == rhs.theme && lhs.stickied == rhs.stickied && lhs.cs == rhs.cs
+  }
+  
   let theme: SubPostsListTheme
   let stickied: Bool?
   let secondary: Bool
@@ -159,7 +161,7 @@ struct PostLinkBG: View {
 
 struct PostLink: View, Equatable {
   static func == (lhs: PostLink, rhs: PostLink) -> Bool {
-    return lhs.post.data == rhs.post.data && lhs.sub.data == rhs.sub.data
+    return lhs.post == rhs.post && lhs.sub == rhs.sub
   }
   
   var disableOuterVSpacing = false
@@ -167,7 +169,7 @@ struct PostLink: View, Equatable {
   var sub: Subreddit
   var showSub = false
   var secondary = false
-  @EnvironmentObject private var routerProxy: RouterProxy
+  var routerProxy: RouterProxy
   @Environment(\.useTheme) private var selectedTheme
   @Environment(\.contentWidth) private var contentWidth
   
@@ -190,39 +192,125 @@ struct PostLink: View, Equatable {
   
   @Environment(\.colorScheme) private var cs
   
+  
+  @State private var isOpen = false
+  
+  
+  func openPost() {
+    withAnimation(.default.speed(2)) { isOpen = true }
+    routerProxy.router.path.append(PostViewPayload(post: post, postSelfAttr: nil, sub: feedsAndSuch.contains(sub.id) ? sub : sub))
+  }
+  
   var body: some View {
     let seen = (post.data?.winstonSeen ?? false)
     let stickied = (post.data?.stickied ?? false)
-      PostLinkView(
-        size: CGSize(width: post.winstonData?.postDimensions?.size.width ?? 0, height: post.winstonData?.postDimensions?.size.height ?? 0),
-        stickied: stickied,
-        seen: seen,
-        disableOuterVSpacing: disableOuterVSpacing,
-        post: post,
-        sub: sub,
-        showSub: showSub,
-        secondary: secondary,
-        routerProxy: routerProxy,
-        contentWidth: getPostDimensions(post: post, secondary: secondary, theme: selectedTheme)?.titleSize.width ?? 0,
-        blurPostLinkNSFW: blurPostLinkNSFW,
-        postSwipeActions: postSwipeActions,
-        compactMode: compactMode,
-        showVotes: showVotes,
-        showSelfText: showSelfText,
-        thumbnailPositionRight: thumbnailPositionRight,
-        voteButtonPositionRight: voteButtonPositionRight,
-        readPostOnScroll: readPostOnScroll,
-        hideReadPosts: hideReadPosts,
-        showUpvoteRatio: showUpvoteRatio,
-        showSubsAtTop: showSubsAtTop,
-        showTitleAtTop: showTitleAtTop,
-        selectedTheme: selectedTheme,
-        cs: cs
-      )
-      .onChange(of: selectedTheme) { x in
-        post.winstonData?.postDimensions = getPostDimensions(post: post, theme: x)
-      }
-//      .equatable()
+    PostLinkView(
+      size: CGSize(width: post.winstonData?.postDimensions.size.width ?? 0, height: post.winstonData?.postDimensions.size.height ?? 0),
+      stickied: stickied,
+      seen: seen,
+      disableOuterVSpacing: disableOuterVSpacing,
+      post: post,
+      sub: sub,
+      showSub: showSub,
+      secondary: secondary,
+      routerProxy: routerProxy,
+      openPost: openPost,
+      contentWidth: getPostDimensions(post: post, secondary: secondary, theme: selectedTheme).titleSize.width,
+      blurPostLinkNSFW: blurPostLinkNSFW,
+      postSwipeActions: postSwipeActions,
+      compactMode: compactMode,
+      showVotes: showVotes,
+      showSelfText: showSelfText,
+      thumbnailPositionRight: thumbnailPositionRight,
+      voteButtonPositionRight: voteButtonPositionRight,
+      readPostOnScroll: readPostOnScroll,
+      hideReadPosts: hideReadPosts,
+      showUpvoteRatio: showUpvoteRatio,
+      showSubsAtTop: showSubsAtTop,
+      showTitleAtTop: showTitleAtTop,
+      selectedTheme: selectedTheme,
+      cs: cs
+    )
+    .brightness(isOpen ? 0.075 : 0)
+    .onAppear { withAnimation(.default.speed(1.5)) { if isOpen { isOpen = false } } }
+    .onChange(of: selectedTheme) { x in
+      post.winstonData?.postDimensions = getPostDimensions(post: post, theme: x)
+    }
+  }
+}
+
+
+struct PostLinkRaw: View {
+  
+  var disableOuterVSpacing = false
+  @ObservedObject var post: Post
+  var sub: Subreddit
+  var showSub = false
+  var secondary = false
+  var routerProxy: RouterProxy
+  var selectedTheme: WinstonTheme
+  var contentWidth: Double
+  
+  var blurPostLinkNSFW: Bool
+  
+  var postSwipeActions: SwipeActionsSet
+  var compactMode: Bool
+  var showVotes: Bool
+  var showSelfText: Bool
+  var thumbnailPositionRight: Bool
+  var voteButtonPositionRight: Bool
+  
+  var readPostOnScroll: Bool
+  var hideReadPosts: Bool
+  
+  var showUpvoteRatio: Bool
+  
+  var showSubsAtTop: Bool
+  var showTitleAtTop: Bool
+  
+  var cs: ColorScheme
+  @State private var isOpen = false
+  
+  func openPost() {
+    withAnimation(nil) { isOpen = true }
+    routerProxy.router.path.append(PostViewPayload(post: post, postSelfAttr: nil, sub: feedsAndSuch.contains(sub.id) ? sub : sub))
+  }
+  
+  var body: some View {
+    let seen = (post.data?.winstonSeen ?? false)
+    let stickied = (post.data?.stickied ?? false)
+    PostLinkView(
+      size: CGSize(width: post.winstonData?.postDimensions.size.width ?? 0, height: post.winstonData?.postDimensions.size.height ?? 0),
+      stickied: stickied,
+      seen: seen,
+      disableOuterVSpacing: disableOuterVSpacing,
+      post: post,
+      sub: sub,
+      showSub: showSub,
+      secondary: secondary,
+      routerProxy: routerProxy,
+      openPost: openPost,
+      contentWidth: getPostDimensions(post: post, secondary: secondary, theme: selectedTheme).titleSize.width,
+      blurPostLinkNSFW: blurPostLinkNSFW,
+      postSwipeActions: postSwipeActions,
+      compactMode: compactMode,
+      showVotes: showVotes,
+      showSelfText: showSelfText,
+      thumbnailPositionRight: thumbnailPositionRight,
+      voteButtonPositionRight: voteButtonPositionRight,
+      readPostOnScroll: readPostOnScroll,
+      hideReadPosts: hideReadPosts,
+      showUpvoteRatio: showUpvoteRatio,
+      showSubsAtTop: showSubsAtTop,
+      showTitleAtTop: showTitleAtTop,
+      selectedTheme: selectedTheme,
+      cs: cs
+    )
+    .brightness(isOpen ? 0.075 : 0)
+    .onAppear { withAnimation(.default.speed(1.5)) { if isOpen { isOpen = false } } }
+    .onChange(of: selectedTheme) { x in
+      post.winstonData?.postDimensions = getPostDimensions(post: post, theme: x)
+    }
   }
 }
 

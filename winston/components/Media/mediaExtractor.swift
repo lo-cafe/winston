@@ -11,6 +11,10 @@ import NukeUI
 import YouTubePlayerKit
 
 struct MediaExtracted: Hashable, Equatable, Identifiable {
+  static func == (lhs: MediaExtracted, rhs: MediaExtracted) -> Bool {
+    lhs.id == rhs.id
+  }
+  
   let url: URL
   let size: CGSize
   var id: String { self.url.absoluteString }

@@ -10,23 +10,28 @@ import Defaults
 import NukeUI
 import Nuke
 
-struct ImageMediaPost: View, Equatable {
+struct ImageMediaPost: View {
   static let gallerySpacing: CGFloat = 8
-  static func == (lhs: ImageMediaPost, rhs: ImageMediaPost) -> Bool {
-    return lhs.images == rhs.images && lhs.compact == rhs.compact && lhs.contentWidth == rhs.contentWidth
-  }
+//  static func == (lhs: ImageMediaPost, rhs: ImageMediaPost) -> Bool {
+//    return lhs.images == rhs.images && lhs.compact == rhs.compact && lhs.contentWidth == rhs.contentWidth
+//  }
     
+  @Binding var postDimensions: PostDimensions
+  let postTitle: String
+  let badgeKit: BadgeKit
+  let markAsSeen: (() async -> ())?
+  var cornerRadius: Double
   var compact = false
-  var post: Post
+  let mediaImageRequest: [ImageRequest] = []
   var images: [MediaExtracted]
   var contentWidth: CGFloat
-  @State var fullscreen = false
+//  @State var fullscreen = false
   @State var fullscreenIndex: Int?
   @Default(.maxPostLinkImageHeightPercentage) var maxPostLinkImageHeightPercentage
   
   var body: some View {
+//    let maxPostLinkImageHeightPercentage = 100.0
     let maxHeight: CGFloat = (maxPostLinkImageHeightPercentage / 100) * (UIScreen.screenHeight)
-    let requests = post.winstonData?.mediaImageRequest ?? []
     VStack {
       if images.count == 1 || compact {
         let img = images[0]
@@ -36,8 +41,8 @@ struct ImageMediaPost: View, Equatable {
         let propHeight = (contentWidth * sourceHeight) / sourceWidth
         let finalHeight = maxPostLinkImageHeightPercentage != 110 ? Double(min(maxHeight, propHeight)) : Double(propHeight)
         
-        GalleryThumb(width: compact ? scaledCompactModeThumbSize() : contentWidth, height: compact ? scaledCompactModeThumbSize() : sourceHeight > 0 ? finalHeight : nil, url: img.url, imgRequest: requests.count > 0 ? requests[0] : nil)
-          .background(sourceHeight > 0 || compact ? nil : GeometryReader { geo in Color.clear.onAppear { post.winstonData?.postDimensions?.mediaSize = geo.size }.onChange(of: geo.size) { post.winstonData?.postDimensions?.mediaSize = $0 } })
+        GalleryThumb(cornerRadius: cornerRadius, width: compact ? scaledCompactModeThumbSize() : contentWidth, height: compact ? scaledCompactModeThumbSize() : sourceHeight > 0 ? finalHeight : nil, url: img.url, imgRequest: mediaImageRequest.count > 0 ? mediaImageRequest[0] : nil)
+          .background(sourceHeight > 0 || compact ? nil : GeometryReader { geo in Color.clear.onAppear { postDimensions.mediaSize = geo.size }.onChange(of: geo.size) { postDimensions.mediaSize = $0 } })
           .onTapGesture { withAnimation(spring) { fullscreenIndex = 0 } }
           .overlay(
             !compact || images.count <= 1
@@ -57,20 +62,20 @@ struct ImageMediaPost: View, Equatable {
         let height = width
         VStack(spacing: ImageMediaPost.gallerySpacing) {
           HStack(spacing: ImageMediaPost.gallerySpacing) {
-            GalleryThumb(width: compact ? scaledCompactModeThumbSize() : width, height: compact ? scaledCompactModeThumbSize() : height, url: images[0].url, imgRequest: requests.count > 0 ? requests[0] : nil)
+            GalleryThumb(cornerRadius: cornerRadius, width: compact ? scaledCompactModeThumbSize() : width, height: compact ? scaledCompactModeThumbSize() : height, url: images[0].url, imgRequest: mediaImageRequest.count > 0 ? mediaImageRequest[0] : nil)
               .onTapGesture { withAnimation(spring) { fullscreenIndex = 0 } }
 
-              GalleryThumb(width: width, height: height, url: images[1].url, imgRequest: requests.count > 1 ? requests[1] : nil)
+            GalleryThumb(cornerRadius: cornerRadius, width: width, height: height, url: images[1].url, imgRequest: mediaImageRequest.count > 1 ? mediaImageRequest[1] : nil)
                 .onTapGesture { withAnimation(spring) { fullscreenIndex = 1 } }
           }
           
           
           if images.count > 2 {
             HStack(spacing: ImageMediaPost.gallerySpacing) {
-              GalleryThumb(width: images.count == 3 ? contentWidth : width, height: height, url: images[2].url, imgRequest: requests.count > 2 ? requests[2] : nil)
+              GalleryThumb(cornerRadius: cornerRadius, width: images.count == 3 ? contentWidth : width, height: height, url: images[2].url, imgRequest: mediaImageRequest.count > 2 ? mediaImageRequest[2] : nil)
                 .onTapGesture { withAnimation(spring) { fullscreenIndex = 2 } }
               if images.count == 4 {
-                GalleryThumb(width: width, height: height, url: images[3].url, imgRequest: requests.count > 3 ? requests[3] : nil)
+                GalleryThumb(cornerRadius: cornerRadius, width: width, height: height, url: images[3].url, imgRequest: mediaImageRequest.count > 3 ? mediaImageRequest[3] : nil)
                   .onTapGesture { withAnimation(spring) { fullscreenIndex = 3 } }
               } else if images.count > 4 {
                 Text("\(images.count - 3)+")
@@ -89,7 +94,7 @@ struct ImageMediaPost: View, Equatable {
     }
     .frame(maxWidth: compact ? nil : .infinity)
     .fullScreenCover(item: $fullscreenIndex) { i in
-      LightBoxImage(post: post, i: i, imagesArr: images)
+      LightBoxImage(postTitle: postTitle, badgeKit: badgeKit, markAsSeen: markAsSeen, i: i, imagesArr: images)
     }
   }
 }

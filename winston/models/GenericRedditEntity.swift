@@ -8,12 +8,13 @@
 import Foundation
 import Combine
 import Defaults
+import IGListKit
 
 protocol GenericRedditEntityDataType: Codable, Hashable, Identifiable {
   var id: String { get }
 }
 
-class GenericRedditEntity<T: GenericRedditEntityDataType, B: Hashable>: Identifiable, Hashable, ObservableObject, Codable,  _DefaultsSerializable {
+class GenericRedditEntity<T: GenericRedditEntityDataType, B: Hashable>: IGListAdapter, Identifiable, Hashable, ObservableObject, Codable,  _DefaultsSerializable {
   func hash(into hasher: inout Hasher) {
 //    hasher.combine(data)
 //    hasher.combine(childrenWinston.data)

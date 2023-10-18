@@ -48,10 +48,9 @@ struct PostLinkThemingPanel: View {
     } preview: {
       
       VStack {
-        PostLink(disableOuterVSpacing: true, post: previewPostSample, sub: previewPostSubSample)
+        PostLink(disableOuterVSpacing: true, post: previewPostSample, sub: previewPostSubSample, routerProxy: routerProxy)
           .equatable()
           .environment(\.useTheme, theme)
-          .environmentObject(routerProxy)
           .allowsHitTesting(false)
       }
       .fixedSize(horizontal: false, vertical: true)

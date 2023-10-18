@@ -167,7 +167,7 @@ private struct Toolbar: View {
       }
       
       if let data = subreddit.data, !feedsAndSuch.contains(subreddit.id) {
-        SubredditIcon(data: data)
+        SubredditIcon(subredditIconKit: data.subredditIconKit)
           .onTapGesture { routerProxy.router.path.append(SubViewType.info(subreddit)) }
       }
     }

@@ -136,7 +136,7 @@ struct ReplyModal<Content: View>: View {
           VStack(alignment: .leading) {
             if let me = redditAPI.me?.data {
               BadgeView(author: me.name, fullname: "t2_\(me.id)", created: Date().timeIntervalSince1970, avatarURL: me.icon_img ?? me.snoovatar_img, theme: selectedTheme.comments.theme.badge, routerProxy: routerProxy, cs: cs)
-                .equatable()
+//                .equatable()
             }
             MDEditor(text: $textWrapper.replyText)
           }

@@ -26,7 +26,10 @@ struct PostInBoxLink: View {
     //    } label: {
     VStack(alignment: .leading, spacing: 4) {
       HStack {
-        SubredditBaseIcon(name: postInBox.subredditName, iconURLStr: postInBox.subredditIconURL, id: postInBox.id, size: 20, color: postInBox.subColor)
+        if let subredditIconKit = sub.data?.subredditIconKit {
+          SubredditIcon(subredditIconKit: subredditIconKit, size: 20)
+        }
+//        SubredditBaseIcon(name: postInBox.subredditName, iconURLStr: postInBox.subredditIconURL, id: postInBox.id, size: 20, color: postInBox.subColor)
 //          .equatable()
         Text(postInBox.subredditName)
           .fontSize(13,.medium)

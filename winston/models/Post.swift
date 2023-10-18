@@ -11,6 +11,7 @@ import SwiftUI
 import Nuke
 import CoreData
 import YouTubePlayerKit
+import SubviewAttachingTextView
 
 typealias Post = GenericRedditEntity<PostData, PostWinstonData>
 
@@ -36,23 +37,24 @@ extension Post {
     case .gallery(let imgs):
       let halfWidthProcessor: [ImageProcessing] = contentWidth == 0 ? [] : [.resize(width: compact ? scaledCompactModeThumbSize() : ((contentWidth - 8) / 2))]
       let fullWidthProcessor: [ImageProcessing] = contentWidth == 0 ? [] : [.resize(width: compact ? scaledCompactModeThumbSize() : contentWidth)]
-        var requests: [ImageRequest] = []
-        requests.append(ImageRequest(url: imgs[0].url, processors: halfWidthProcessor))
-        requests.append(ImageRequest(url: imgs[1].url, processors: halfWidthProcessor))
+      var requests: [ImageRequest] = []
+      requests.append(ImageRequest(url: imgs[0].url, processors: halfWidthProcessor))
+      requests.append(ImageRequest(url: imgs[1].url, processors: halfWidthProcessor))
       if imgs.count >= 3 { requests.append(ImageRequest(url: imgs[2].url, processors: imgs.count > 3 ? halfWidthProcessor : fullWidthProcessor)) }
-        requests += imgs.dropFirst(3).map { ImageRequest(url: $0.url, priority: .low) }
-        self.winstonData?.mediaImageRequest = requests
+      requests += imgs.dropFirst(3).map { ImageRequest(url: $0.url, priority: .low) }
+      self.winstonData?.mediaImageRequest = requests
     case .link(let url):
       Caches.postsPreviewModels.addKeyValue(key: url.absoluteString, data: { PreviewModel(url) })
       break
     default:
       break
     }
-
+    
     if let body = self.data?.selftext {
       Caches.postsAttrStr.addKeyValue(key: data.id, data: {
         let theme = Defaults[.themesPresets].first(where: { $0.id == Defaults[.selectedThemeID] }) ?? defaultTheme
-        return stringToAttr(body, fontSize: theme.posts.bodyText.size)
+        var attr = stringToAttr(body, fontSize: theme.posts.bodyText.size)
+        return attr
       })
     }
   }
@@ -64,7 +66,7 @@ extension Post {
   static func initMultiple(datas: [T], api: RedditAPI, fetchSubs: Bool = false, contentWidth: CGFloat = 0) -> [Post] {
     let context = PersistenceController.shared.container.newBackgroundContext()
     let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "SeenPost")
-      
+    
     if let results = (context.performAndWait { try? context.fetch(fetchRequest) as? [SeenPost] }) {
       let posts = Array(datas.enumerated()).map { i, data in
         return context.performAndWait {
@@ -262,7 +264,7 @@ extension Post {
     return false
   }
   
-  func vote(action: RedditAPI.VoteAction) async -> Bool? {
+  func vote(_ action: RedditAPI.VoteAction) async -> Bool? {
     let oldLikes = data?.likes
     let oldUps = data?.ups ?? 0
     var newAction = action
@@ -294,14 +296,15 @@ extension Post {
   }
 }
 
-class PostWinstonData: Hashable {
+class PostWinstonData: Hashable, ObservableObject {
   static func == (lhs: PostWinstonData, rhs: PostWinstonData) -> Bool { lhs.postDimensions == rhs.postDimensions }
   
   var permaURL: URL? = nil
   var extractedMedia: MediaExtractedType? = nil
   var subreddit: Subreddit?
   var mediaImageRequest: [ImageRequest] = []
-  var postDimensions: PostDimensions?
+  @Published var postDimensions: PostDimensions = .zero
+  var titleAttr: NSAttributedString?
   
   func hash(into hasher: inout Hasher) {
     hasher.combine(permaURL)
@@ -410,6 +413,20 @@ struct PostData: GenericRedditEntityDataType {
   var preview: Preview? = nil
   var winstonSeen: Bool? = nil
   var winstonHidden: Bool? = nil
+  
+  var badgeKit: BadgeKit {
+    BadgeKit(
+      numComments: num_comments,
+      ups: ups,
+      saved: saved,
+      author: author,
+      authorFullname: author_fullname ?? "",
+      created: created
+    )
+  }
+  
+  var votesKit: VotesKit { VotesKit(ups: ups, ratio: upvote_ratio, likes: likes) }
+  
 }
 
 struct GalleryData: Codable, Hashable {

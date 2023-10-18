@@ -13,30 +13,29 @@ import Defaults
 struct winstonApp: App {
   @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
   let persistenceController = PersistenceController.shared
+  
+  @Default(.themesPresets) private var themesPresets
+  @Default(.selectedThemeID) private var selectedThemeID
 
+  var selectedTheme: WinstonTheme { themesPresets.first { $0.id == selectedThemeID } ?? defaultTheme }
+  
   var body: some Scene {
     WindowGroup {
-      AppContent()
+      AppContent(selectedTheme: selectedTheme)
+        .onAppear { themesPresets = themesPresets.filter { $0.id != "default" } }
         .environment(\.managedObjectContext, persistenceController.container.viewContext)
+        .environment(\.useTheme, selectedTheme)
     }
   }
 }
 
 struct AppContent: View {
   @ObservedObject private var redditAPI = RedditAPI.shared
-  @Default(.themesPresets) private var themesPresets
-  @Default(.selectedThemeID) private var selectedThemeID
+  var selectedTheme: WinstonTheme
   @Environment(\.colorScheme) private var cs
   
-  var selectedThemeRaw: WinstonTheme? { themesPresets.first { $0.id == selectedThemeID } }
   var body: some View {
-    let selectedTheme = selectedThemeRaw ?? defaultTheme
     Tabber(theme: selectedTheme, cs: cs)
-      .onAppear {
-        themesPresets = themesPresets.filter { $0.id != "default" }
-        if selectedThemeRaw.isNil { selectedThemeID = "default" }
-      }
-      .environment(\.useTheme, selectedTheme)
     //        .alertToastRoot()
     //        .tint(selectedTheme.general.accentColor.cs(cs).color())
   }

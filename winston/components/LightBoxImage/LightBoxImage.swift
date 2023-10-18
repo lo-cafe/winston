@@ -11,7 +11,9 @@ import Defaults
 private let SPACING = 24.0
 
 struct LightBoxImage: View {
-  var post: Post
+  let postTitle: String
+  let badgeKit: BadgeKit
+  let markAsSeen: (() async -> ())?
   var i: Int
   var imagesArr: [MediaExtracted]
   @Environment(\.dismiss) private var dismiss
@@ -119,7 +121,7 @@ struct LightBoxImage: View {
           }
         }
     )
-    .overlay(LightBoxOverlay(post: post, opacity: !showOverlay || isPinching ? 0 : interpolate([1, 0], false), imagesArr: imagesArr, activeIndex: activeIndex, loading: $loading, done: $done))
+    .overlay(LightBoxOverlay(postTitle: postTitle, badgeKit: badgeKit, opacity: !showOverlay || isPinching ? 0 : interpolate([1, 0], false), imagesArr: imagesArr, activeIndex: activeIndex, loading: $loading, done: $done))
     .background(
       !appearBlack
       ? nil
@@ -163,7 +165,7 @@ struct LightBoxImage: View {
       }
     }
     .onAppear {
-      if lightboxViewsPost { Task(priority: .background) { await post.toggleSeen(true) } }
+      if lightboxViewsPost { Task(priority: .background) { await markAsSeen?() } }
       xPos = -CGFloat(i) * (UIScreen.screenWidth + SPACING)
       activeIndex = i
       doThisAfter(0) {

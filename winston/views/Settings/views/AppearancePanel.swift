@@ -26,6 +26,7 @@ struct AppearancePanel: View {
   @Default(.voteButtonPositionRight) var voteButtonPositionRight
   @Default(.showSelfPostThumbnails) var showSelfPostThumbnails
   @Default(.disableAlphabetLettersSectionsInSubsList) var disableAlphabetLettersSectionsInSubsList
+  @Default(.preferInlineTags) var preferInlineTags
   
   @Environment(\.useTheme) private var theme
   
@@ -57,6 +58,7 @@ struct AppearancePanel: View {
         Toggle("Show Self Text", isOn: $showSelfText)
         Toggle("Show Subreddit at Top", isOn: $showSubsAtTop)
         Toggle("Show Title at Top", isOn: $showTitleAtTop)
+        Toggle("Prefer inline tags", isOn: $preferInlineTags)
         }
         .themedListRowBG(enablePadding: true)
       }

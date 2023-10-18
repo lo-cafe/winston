@@ -55,6 +55,7 @@ struct Search: View {
   @State private var searchViewLoaded: Bool = false
   
   @Environment(\.useTheme) private var theme
+  @EnvironmentObject private var routerProxy: RouterProxy
   
   func fetch() {
     if searchQuery.text == "" { return }
@@ -134,8 +135,8 @@ struct Search: View {
               case .post:
                 if let dummyAllSub = dummyAllSub {
                   ForEach(resultPosts.data) { post in
-                    PostLink(post: post, sub: dummyAllSub)
-//                      .equatable()
+                    PostLink(post: post, sub: dummyAllSub, routerProxy: routerProxy)
+                      .equatable()
                       .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
                       .animation(.default, value: resultPosts.data)
                   }

@@ -83,7 +83,7 @@ struct PostFloatingPill: View {
           
           HStack(alignment: .center, spacing: 8) {
   
-            VotesCluster(likeRatio: showUpvoteRatio ? data.upvote_ratio : nil, post: post)
+//            VotesCluster(likeRatio: showUpvoteRatio ? data.upvote_ratio : nil, post: post)
             
           }
           

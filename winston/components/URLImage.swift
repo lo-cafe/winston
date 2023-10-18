@@ -13,7 +13,7 @@ import Giffy
 
 struct URLImage: View, Equatable {
   static func == (lhs: URLImage, rhs: URLImage) -> Bool {
-    return lhs.url == rhs.url
+    lhs.url == rhs.url
   }
   
   let url: URL
@@ -36,18 +36,17 @@ struct URLImage: View, Equatable {
     } else {
       if let imgRequest = imgRequest {
         LazyImage(request: imgRequest) { state in
-          if let image = state.image {
-            image.resizable()
-          } else if state.error != nil {
-            Color.red.opacity(0.1)
-              .overlay(Image(systemName: "xmark.circle.fill").foregroundColor(.red))
-          } else {
-            Image(.loader)
-              .resizable()
-              .scaledToFill()
-              .mask(Circle())
-              .frame(maxWidth: 50, maxHeight: 50)
+          if case .success(let response) = state.result {
+            Image(uiImage: response.image).resizable()
           }
+//          if let image = state.image {
+//            image
+//          } else if state.error != nil {
+//            Color.red.opacity(0.1)
+//              .overlay(Image(systemName: "xmark.circle.fill").foregroundColor(.red))
+//          } else {
+//            URLImageLoader(size: 50).equatable()
+//          }
         }
         .onDisappear(.cancel)
 //        .id("\(imgRequest.url?.absoluteString ?? "")-nuke")
@@ -59,11 +58,7 @@ struct URLImage: View, Equatable {
             Color.red.opacity(0.1)
               .overlay(Image(systemName: "xmark.circle.fill").foregroundColor(.red))
           } else {
-            Image(.loader)
-              .resizable()
-              .scaledToFill()
-              .mask(Circle())
-              .frame(maxWidth: 50, maxHeight: 50)
+            URLImageLoader(size: 50).equatable()
           }
         }
         .onDisappear(.cancel)
@@ -75,8 +70,30 @@ struct URLImage: View, Equatable {
 }
 
 
+struct URLImageLoader: View, Equatable {
+  static func == (lhs: URLImageLoader, rhs: URLImageLoader) -> Bool {
+    lhs.size == rhs.size
+  }
+  
+  let size: Double
+  
+  var body: some View {
+    Image(.loader)
+      .resizable()
+      .scaledToFill()
+      .mask(Circle())
+      .frame(maxWidth: size, maxHeight: size)
+  }
+}
+
 //extension ImageRequest: Equatable {
 //  public static func == (lhs: Nuke.ImageRequest, rhs: Nuke.ImageRequest) -> Bool {
-//    lhs.url == rhs.url
+//    lhs.imageId == rhs.imageId
+//  }
+//}
+
+//extension FetchImage: Equatable {
+//  public static func == (lhs: FetchImage, rhs: FetchImage) -> Bool {
+//    lhs.id == rhs.id
 //  }
 //}

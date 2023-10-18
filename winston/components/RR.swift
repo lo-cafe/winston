@@ -8,7 +8,11 @@
 
 import SwiftUI
 
-struct FilledRoundedRectangle: View {
+struct FilledRoundedRectangle: View, Equatable {
+  static func == (lhs: FilledRoundedRectangle, rhs: FilledRoundedRectangle) -> Bool {
+    lhs.cornerRadius == rhs.cornerRadius
+  }
+  
     let cornerRadius: CGFloat
     let fill: any ShapeStyle
     

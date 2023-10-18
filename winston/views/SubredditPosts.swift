@@ -17,7 +17,7 @@ enum SubViewType: Hashable {
 
 struct SubredditPosts: View, Equatable {
   static func == (lhs: SubredditPosts, rhs: SubredditPosts) -> Bool {
-    lhs.subreddit.id == rhs.subreddit.id
+    lhs.subreddit == rhs.subreddit
   }
   
   @ObservedObject var subreddit: Subreddit
@@ -46,6 +46,7 @@ struct SubredditPosts: View, Equatable {
       loading = true
     }
     if let result = await subreddit.fetchPosts(sort: sort, after: loadMore ? lastPostAfter : nil, searchText: searchText, contentWidth: contentWidth), let newPosts = result.0 {
+      await RedditAPI.shared.updateAvatarURLCacheFromPosts(posts: newPosts, avatarSize: selectedTheme.postLinks.theme.badge.avatar.size)
       withAnimation {
         //        let newPostsFiltered = newPosts.filter { !loadedPosts.contains($0.id) && !filteredSubreddits.contains($0.data?.subreddit ?? "") }
         
@@ -61,9 +62,6 @@ struct SubredditPosts: View, Equatable {
         
         loading = false
         lastPostAfter = result.1
-      }
-      Task(priority: .background) {
-        await RedditAPI.shared.updateAvatarURLCacheFromPosts(posts: newPosts, avatarSize: selectedTheme.postLinks.theme.badge.avatar.size)
       }
     }
   }
@@ -115,9 +113,9 @@ struct SubredditPosts: View, Equatable {
         .padding(.all, 12)
       , alignment: .bottomTrailing
     )
-    .sheet(isPresented: $newPost, content: {
-      NewPostModal(subreddit: subreddit)
-    })
+//    .sheet(isPresented: $newPost, content: {
+//      NewPostModal(subreddit: subreddit)
+//    })
     .navigationBarItems(trailing: SubredditPostsNavBtns(sort: $sort, subreddit: subreddit, routerProxy: routerProxy))
     .searchable(text: $searchText, prompt: "Search r/\(subreddit.data?.display_name ?? subreddit.id)")
     .onSubmit(of: .search) {
@@ -199,7 +197,7 @@ struct SubredditPostsNavBtns: View, Equatable {
         Button {
           routerProxy.router.path.append(SubViewType.info(subreddit))
         } label: {
-          SubredditIcon(data: data)
+          SubredditIcon(subredditIconKit: data.subredditIconKit)
         }
       }
     }

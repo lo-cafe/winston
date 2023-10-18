@@ -27,7 +27,8 @@ class AppDelegate: NSObject, UIApplicationDelegate {
       }()
       config.dataLoader = dataLoader
       config.dataCachePolicy = .storeAll
-      config.isUsingPrepareForDisplay = true
+      config.isUsingPrepareForDisplay = false
+//      config.isRateLimiterEnabled = false
     }
     ImagePipeline.shared = defaultPipeline
   }

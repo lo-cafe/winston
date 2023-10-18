@@ -23,7 +23,7 @@ struct SubredditLink: View {
     var body: some View {
       if let data = sub.data {
         HStack(spacing: 12) {
-          SubredditIcon(data: data, size: 64)
+          SubredditIcon(subredditIconKit: data.subredditIconKit, size: 64)
           
           VStack(alignment: .leading) {
             Text("r/\(data.display_name ?? "?")")

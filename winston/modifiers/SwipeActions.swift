@@ -37,7 +37,7 @@ struct SwipeUI<T: GenericRedditEntityDataType, B: Hashable>: ViewModifier {
   var disabled: Bool = false
   
   private let firstActionThreshold: CGFloat = 75
-  private let secondActionThreshold: CGFloat = 175
+  private let secondActionThreshold: CGFloat = 150
   
   func infoRight() -> (SwipeActionItem, SwipeActionItem, SwipeActionItem, Bool)? {
     let rightFirstNil = actionsSet.rightFirst.id == "none"
@@ -89,21 +89,21 @@ struct SwipeUI<T: GenericRedditEntityDataType, B: Hashable>: ViewModifier {
         ? nil
         : HStack {
           
-          SwipeUIBtn(info: infoRight(), secondActiveFunc: actionsSet.rightSecond.active, firstActiveFunc: actionsSet.rightFirst.active, entity: entity)
-//            .equatable()
-            .scaleEffect(triggeredAction == .rightSecond ? 1.1 : triggeredAction == .rightFirst ? 1 : max(0.001, offsetXInterpolate([-0.9, 0.85], false)))
-            .opacity(max(0, offsetXInterpolate([-0.9, 1], false)))
-            .frame(width: actualOffsetX < 0 ? 10 : abs(actualOffsetX))
-            .offset(x: -8)
-          
-          Spacer()
-          
-          SwipeUIBtn(info: infoLeft(), secondActiveFunc: actionsSet.leftSecond.active, firstActiveFunc: actionsSet.leftFirst.active, entity: entity)
-//            .equatable()
-            .scaleEffect(triggeredAction == .leftSecond ? 1.1 : triggeredAction == .leftFirst ? 1 : max(0.001, offsetXNegativeInterpolate([-0.9, 0.85], false)))
-            .opacity(max(0, offsetXNegativeInterpolate([-0.9, 1], false)))
-            .frame(width: actualOffsetX > 0 ? 10 : abs(actualOffsetX))
-            .offset(x: 8)
+//          SwipeUIBtn(info: infoRight(), secondActiveFunc: actionsSet.rightSecond.active, firstActiveFunc: actionsSet.rightFirst.active, entity: entity)
+//          //            .equatable()
+//            .scaleEffect(triggeredAction == .rightSecond ? 1.1 : triggeredAction == .rightFirst ? 1 : max(0.001, offsetXInterpolate([-0.9, 0.85], false)))
+//            .opacity(max(0, offsetXInterpolate([-0.9, 1], false)))
+//            .frame(width: actualOffsetX < 0 ? 10 : abs(actualOffsetX))
+//            .offset(x: -8)
+//          
+//          Spacer()
+//          
+//          SwipeUIBtn(info: infoLeft(), secondActiveFunc: actionsSet.leftSecond.active, firstActiveFunc: actionsSet.leftFirst.active, entity: entity)
+//          //            .equatable()
+//            .scaleEffect(triggeredAction == .leftSecond ? 1.1 : triggeredAction == .leftFirst ? 1 : max(0.001, offsetXNegativeInterpolate([-0.9, 0.85], false)))
+//            .opacity(max(0, offsetXNegativeInterpolate([-0.9, 1], false)))
+//            .frame(width: actualOffsetX > 0 ? 10 : abs(actualOffsetX))
+//            .offset(x: 8)
         }
           .frame(maxWidth: .infinity, maxHeight: .infinity)
           .offset(y: offsetYAction)
@@ -115,7 +115,7 @@ struct SwipeUI<T: GenericRedditEntityDataType, B: Hashable>: ViewModifier {
       .gesture(
         enableSwipeAnywhere
         ? nil
-        : DragGesture(minimumDistance: 0, coordinateSpace: .local)
+        : DragGesture(minimumDistance: 0, coordinateSpace: .global)
           .onChanged { val in
             let x = val.translation.width
             if offset == nil && x != 0 {
@@ -207,20 +207,37 @@ struct SwipeUI<T: GenericRedditEntityDataType, B: Hashable>: ViewModifier {
   }
 }
 
-struct SwipeUIBtn<T: GenericRedditEntityDataType, B: Hashable>: View, Equatable {
-  static func == (lhs: SwipeUIBtn<T, B>, rhs: SwipeUIBtn<T, B>) -> Bool {
-    lhs.info?.0 == rhs.info?.0 && lhs.info?.1 == rhs.info?.1 && lhs.info?.2 == rhs.info?.2 && lhs.info?.3 == rhs.info?.3
-  }
+struct SwipeUIBtn<T: GenericRedditEntityDataType, B: Hashable>: View {
+//struct SwipeUIBtn: View {
+//  static func == (lhs: SwipeUIBtn<T, B>, rhs: SwipeUIBtn<T, B>) -> Bool {
+//    lhs.entity == rhs.entity && lhs.info?.0 == rhs.info?.0 && lhs.info?.1 == rhs.info?.1 && lhs.info?.2 == rhs.info?.2 && lhs.info?.3 == rhs.info?.3
+//  }
   
   var info: (SwipeActionItem, SwipeActionItem, SwipeActionItem, Bool)?
   var secondActiveFunc: (GenericRedditEntity<T, B>) -> Bool
   var firstActiveFunc: (GenericRedditEntity<T, B>) -> Bool
-  @ObservedObject var entity: GenericRedditEntity<T, B>
-
+  var entity: GenericRedditEntity<T, B>
+  
   var body: some View {
     if let info = info {
       let active = info.3 ? secondActiveFunc(entity) : firstActiveFunc(entity)
-      MasterButton(softDisabled: true, icon: active ? info.0.active : info.0.normal, color: Color.hex(active ? info.2.active : info.2.normal), textColor: Color.hex(active ? info.1.active : info.1.normal), proportional: .circle) {}
+      Image(systemName: active ? info.0.active : info.0.normal)
+//      Image(systemName: "square.and.arrow.up.circle.fill")
+        .ifIOS17({ img in
+          if #available(iOS 17, *) {
+            img.contentTransition(.symbolEffect)
+          } else {
+            img
+              .transition(.scaleAndBlur)
+              .id(active ? info.0.active : info.0.normal)
+          }
+        })
+        .frame(36)
+        .background(Circle().fill(Color.hex(active ? info.2.active : info.2.normal)))
+        .foregroundStyle(Color.hex(active ? info.1.active : info.1.normal))
+        .allowsHitTesting(false)
+        .compositingGroup()
+        .fontSize(16, .semibold)
     }
   }
 }

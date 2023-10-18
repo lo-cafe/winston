@@ -21,20 +21,21 @@ struct SubredditPostsIPAD: View, Equatable {
   var fetch: (Bool, String?) -> ()
   var selectedTheme: WinstonTheme
   @Environment(\.contentWidth) var contentWidth
+  @EnvironmentObject private var routerProxy: RouterProxy
   
   var body: some View {
         Waterfall(
           collection: posts,
           scrollDirection: .vertical,
           contentSize: .custom({ collectionView, layout, post in
-            post.winstonData?.postDimensions?.size ?? CGSize(width: 300, height: 300)
+            post.winstonData?.postDimensions.size ?? CGSize(width: 300, height: 300)
           }),
 //          itemSpacing: .init(mainAxisSpacing: selectedTheme.postLinks.spacing, crossAxisSpacing: selectedTheme.postLinks.spacing),
 //          itemSpacing: .init(mainAxisSpacing: 0, crossAxisSpacing: 0),
           contentForData: { post, i in
             Group {
               if let sub = subreddit ?? post.winstonData?.subreddit {
-                PostLink(post: post, sub: sub, showSub: showSub)
+                PostLink(post: post, sub: sub, showSub: showSub, routerProxy: routerProxy)
                   .equatable()
                   .onAppear {
                     if(posts.count - 15 == i) {

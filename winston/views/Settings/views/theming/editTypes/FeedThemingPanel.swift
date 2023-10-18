@@ -32,18 +32,16 @@ struct FeedThemingPanel: View {
     } preview: {
       ScrollView(showsIndicators: false) {
         VStack(spacing: theme.postLinks.spacing) {
-          PostLink(disableOuterVSpacing: true, post: previewPostSample, sub: previewPostSubSample)
+          PostLink(disableOuterVSpacing: true, post: previewPostSample, sub: previewPostSubSample, routerProxy: routerProxy)
             .equatable()
             .environment(\.useTheme, theme)
-            .environmentObject(routerProxy)
             .allowsHitTesting(false)
           
           NiceDivider(divider: theme.postLinks.divider)
           
-          PostLink(disableOuterVSpacing: true, post: previewPostSample, sub: previewPostSubSample)
+          PostLink(disableOuterVSpacing: true, post: previewPostSample, sub: previewPostSubSample, routerProxy: routerProxy)
             .equatable()
             .environment(\.useTheme, theme)
-            .environmentObject(routerProxy)
             .allowsHitTesting(false)
         }
       }

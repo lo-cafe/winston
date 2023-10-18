@@ -34,37 +34,39 @@ struct OnlyURL: View {
   }
 }
 
-struct MediaPresenter: View, Equatable {
-  static func == (lhs: MediaPresenter, rhs: MediaPresenter) -> Bool {
-    lhs.media == rhs.media && lhs.contentWidth == rhs.contentWidth && lhs.compact == rhs.compact
-  }
+struct MediaPresenter: View {
   
+  @Binding var postDimensions: PostDimensions
+  var controller: UIViewController?
+  let postTitle: String
+  let badgeKit: BadgeKit
+  let markAsSeen: (() async -> ())?
+  var cornerRadius: Double
   var blurPostLinkNSFW: Bool
   var showURLInstead = false
   let media: MediaExtractedType
-  var post: Post
+  var over18 = false
   let compact: Bool
   let contentWidth: CGFloat
   let routerProxy: RouterProxy
   
   var body: some View {
-    let over18 = post.data?.over_18 ?? false
     switch media {
     case .image(let imgMediaExtracted):
       if !showURLInstead {
-        ImageMediaPost(compact: compact, post: post, images: [imgMediaExtracted], contentWidth: contentWidth)
-          .nsfw(over18 && blurPostLinkNSFW)
+        ImageMediaPost(postDimensions: $postDimensions, postTitle: postTitle, badgeKit: badgeKit, markAsSeen: markAsSeen, cornerRadius: cornerRadius, compact: compact, images: [imgMediaExtracted], contentWidth: contentWidth)
+//          .nsfw(over18 && blurPostLinkNSFW)
       }
     case .video(let videoMediaExtracted):
       if !showURLInstead {
-        VideoPlayerPost(post: post, compact: compact, overrideWidth: contentWidth, url: videoMediaExtracted.url, size: CGSize(width: videoMediaExtracted.size.width, height: videoMediaExtracted.size.height))
-          .nsfw(over18 && blurPostLinkNSFW)
+        VideoPlayerPost(controller: controller, markAsSeen: markAsSeen, compact: compact, overrideWidth: contentWidth, url: videoMediaExtracted.url, size: CGSize(width: videoMediaExtracted.size.width, height: videoMediaExtracted.size.height))
+//          .nsfw(over18 && blurPostLinkNSFW)
         
       }
     case .gallery(let imgs):
       if !showURLInstead {
-        ImageMediaPost(compact: compact, post: post, images: imgs, contentWidth: contentWidth)
-          .nsfw(over18 && blurPostLinkNSFW)
+        ImageMediaPost(postDimensions: $postDimensions, postTitle: postTitle, badgeKit: badgeKit, markAsSeen: markAsSeen, cornerRadius: cornerRadius, compact: compact, images: imgs, contentWidth: contentWidth)
+//          .nsfw(over18 && blurPostLinkNSFW)
       }
     case .youtube(let videoID, let size):
       if !showURLInstead {
@@ -84,7 +86,7 @@ struct MediaPresenter: View, Equatable {
             PreviewLink(url: url, compact: compact)
           }
         } else if let sub = repost.winstonData?.subreddit {
-          PostLink(post: repost, sub: sub, showSub: true, secondary: true)
+          PostLink(post: repost, sub: sub, showSub: true, secondary: true, routerProxy: routerProxy)
         }
       } else if let postData = repost.data, let url = URL(string: "https://reddit.com/r/\(postData.subreddit)/comments/\(repost.id)") {
         OnlyURL(url: url)
