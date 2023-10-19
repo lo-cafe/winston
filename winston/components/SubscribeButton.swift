@@ -36,7 +36,9 @@ struct SubscribeButton: View {
                   Image(systemName: "checkmark.circle.fill")
                 }
               } else {
-                Text("Sub")
+                if isSmall {
+                  Text("Sub")
+                }
               }
             }
             let label = subscribed ? "Subscribed" : "Not subscribed"
