@@ -12,7 +12,7 @@ Step into Winston's embracing world! Winston is an elegant, open-source, native 
 > ⚠️ We're hard at work! Both Winston and this README are works in progress. Watch this space for updates!
 
 
-<a href="https://testflight.apple.com/join/3UF8bAUN"><img src="https://i.imgur.com/eqvz14P.png" width="200"></a>
+<a href="https://testflight.apple.com/join/3UF8bAUN"><img src="https://i.imgur.com/A5Kpowu.png" width="200"></a>
 <a href="https://www.shorturl.at/dAL15"><img src="https://i.imgur.com/46qhEAv.png" width="200"></a>
 
 
