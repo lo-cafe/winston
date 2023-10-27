@@ -1,4 +1,4 @@
-![Winston Logo](https://i.imgur.com/axc6Rq3.png)
+![Winston Logo](http://images.lo.cafe/library/axc6Rq3.png)
 
 ![Discord](https://img.shields.io/discord/1094807340903039048)
 ![License](https://img.shields.io/github/license/lo-cafe/winston)
@@ -12,8 +12,8 @@ Step into Winston's embracing world! Winston is an elegant, open-source, native 
 > ⚠️ We're hard at work! Both Winston and this README are works in progress. Watch this space for updates!
 
 
-<a href="https://testflight.apple.com/join/3UF8bAUN"><img src="https://i.imgur.com/A5Kpowu.png" width="200"></a>
-<a href="https://www.shorturl.at/dAL15"><img src="https://i.imgur.com/46qhEAv.png" width="200"></a>
+<a href="https://testflight.apple.com/join/3UF8bAUN"><img src="http://images.lo.cafe/library/A5Kpowu.png" width="200"></a>
+<a href="https://www.shorturl.at/dAL15"><img src="http://images.lo.cafe/library/46qhEAv.png" width="200"></a>
 
 
 ## 🛠️ How to Install
