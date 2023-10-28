@@ -19,8 +19,8 @@ struct FlairTag: View {
       Text(text)
         .padding(.vertical, 2)
     }
-    .fontSize(13, subredditIconKit.isNil ? .regular : .semibold)
-    .padding(.leading, subredditIconKit.isNil ? 9 : 0)
+    .fontSize(13, subredditIconKit == nil ? .regular : .semibold)
+    .padding(.leading, subredditIconKit == nil ? 9 : 0)
     .padding(.trailing, 9)
     .background(Capsule(style: .continuous).fill(color.opacity(0.2)))
     .foregroundColor(.primary.opacity(0.5))

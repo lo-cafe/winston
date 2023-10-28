@@ -22,17 +22,17 @@ struct Avatar: View {
   var body: some View {
     let avatarSize = avatarSize ?? theme?.size ?? 0
     
-      //    let newURL = avatarRequest.isNil ? URL(string: String(url?.split(separator: "?")[0] ?? "")) : nil
+      //    let newURL = avatarRequest == nil ? URL(string: String(url?.split(separator: "?")[0] ?? "")) : nil
       AvatarRaw(saved: saved, avatarImgRequest: avatarRequest, userID: userID, fullname: fullname, theme: theme, avatarSize: avatarSize)
 //          .equatable()
-    //      .task { if avatarRequest.isNil, let url = url { RedditAPI.shared.addImgReqToAvatarCache(id, url, avatarSize: avatarSize) } }
+    //      .task { if avatarRequest == nil, let url = url { RedditAPI.shared.addImgReqToAvatarCache(id, url, avatarSize: avatarSize) } }
   }
 }
 
-struct AvatarRaw: View {
-//  static func == (lhs: AvatarRaw, rhs: AvatarRaw) -> Bool {
-//    lhs.saved == rhs.saved && lhs.avatarImgRequest?.url == rhs.avatarImgRequest?.url && lhs.theme == rhs.theme && rhs.avatarSize == lhs.avatarSize
-//  }
+struct AvatarRaw: View, Equatable {
+  static func == (lhs: AvatarRaw, rhs: AvatarRaw) -> Bool {
+    lhs.saved == rhs.saved && lhs.avatarImgRequest?.url == rhs.avatarImgRequest?.url && lhs.theme == rhs.theme && rhs.avatarSize == lhs.avatarSize
+  }
   var saved: Bool
   var avatarImgRequest: ImageRequest?
   var userID: String
@@ -52,10 +52,8 @@ struct AvatarRaw: View {
               .frame(width: avatarSize, height: avatarSize)
           )
       } else {
-        if let avatarImgRequest = avatarImgRequest, let url = avatarImgRequest.url {
-          URLImage(url: url, imgRequest: avatarImgRequest, processors: [.resize(width: avatarSize)])
-            .equatable()
-            .scaledToFill()
+        if let avatarImgRequest = avatarImgRequest {
+          ThumbReqImage(imgRequest: avatarImgRequest)
         } else {
           Text(userID.prefix(1).uppercased())
             .fontSize(avatarSize / 2)
@@ -87,7 +85,7 @@ struct SavedFlag: View, Equatable {
       
       Circle()
         .fill(.gray)
-        .performantShadow(cornerRadius: 15, color: .black, opacity: 0.15, radius: 4, offsetY: 4, size: CGSize(width: 30, height: 30))
+//        .performantShadow(cornerRadius: 15, color: .black, opacity: 0.15, radius: 4, offsetY: 4, size: CGSize(width: 30, height: 30))
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .mask(
           Image(systemName: "bookmark.fill")

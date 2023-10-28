@@ -166,7 +166,7 @@ struct PostInBoxLink: View {
             var endingY: CGFloat = 0
             let endPos = dragVal?.translation.height ?? 0
             let predictedEnd = dragVal?.predictedEndTranslation.height ?? 0
-            if !dragVal.isNil {
+            if dragVal != nil {
               if predictedEnd > 300 || (endPos > 70 && predictedEnd > 0) { endingY = 300 }
               if predictedEnd < -300 || (endPos < 70 && predictedEnd < 0) { endingY = -300 }
             }

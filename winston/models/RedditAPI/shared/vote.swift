@@ -15,7 +15,7 @@ extension RedditAPI {
     if let headers = self.getRequestHeaders() {
       let params = VotePayload(dir: action.rawValue, id: id)
       let dataTask = AF.request(
-        "\(RedditAPI.redditApiURLBase)/api/vote",
+        "\(RedditAPI.redditApiURLBase)/api/vote?redditWebClient=2x&app=desktop2x-client-production&raw_json=1&gilding_detail=1",
         method: .post,
         parameters: params,
         encoder: URLEncodedFormParameterEncoder(destination: .httpBody),
@@ -37,8 +37,8 @@ extension RedditAPI {
   struct VotePayload: Codable {
     let dir: Int
     let id: String
-    var rank = 2
-    //    let uh: String
+//    var rank = 1
+    var api_type = "json"
   }
   
   enum VoteAction: Int, Codable {

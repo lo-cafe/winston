@@ -101,10 +101,10 @@ CellContent : View
     //    uiViewController.layout.scrollDirection = self.scrollDirection
     //    self.rawCustomize?(uiViewController.collectionView)
     if context.coordinator.oldCollectionsCount != collections[0].count {
-//      let registration = UICollectionView.CellRegistration<UICollectionViewListCell, Data> { cell, indexPath, item in
-//        cell.contentConfiguration = createHostingConfiguration(controller: uiViewController, for: item, indexPath: indexPath, total: self.collections[0].count)
-//      }
-//      context.coordinator.registration = registration
+      //      let registration = UICollectionView.CellRegistration<UICollectionViewListCell, Data> { cell, indexPath, item in
+      //        cell.contentConfiguration = createHostingConfiguration(controller: uiViewController, for: item, indexPath: indexPath, total: self.collections[0].count)
+      //      }
+      //      context.coordinator.registration = registration
       context.coordinator.oldCollectionsCount = collections[0].count
       uiViewController.collectionView.reloadData()
     }
@@ -156,6 +156,10 @@ extension CollectionView {
       collectionView.dataSource = coordinator
       collectionView.delegate = coordinator
       collectionView.contentInset = UIEdgeInsets(top: inset.top, left: inset.leading, bottom: inset.bottom, right: inset.trailing)
+      collectionView.register(
+              CharacterCollectionViewCell.self,
+              forCellWithReuseIdentifier: CharacterCollectionViewCell.description()
+          )
       self.collectionView = collectionView
       super.init(nibName: nil, bundle: nil)
     }
@@ -202,9 +206,16 @@ extension CollectionView {
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
       let item = self.view.collections[indexPath.section][indexPath.item]
-//      UIHostingConfiguration(content: { contentForData(item, controller, indexPath.item, total) })
-//      collectionView.dequeueReusableCell(withReuseIdentifier: item.id, for: <#T##IndexPath#>)
-      return collectionView.dequeueConfiguredReusableCell(using: registration, for: indexPath, item: item)
+      //      collectionView.dequeueReusableCell(withReuseIdentifier: item.id, for: <#T##IndexPath#>)
+      guard let cell = collectionView.dequeueReusableCell(
+               withReuseIdentifier: CharacterCollectionViewCell.description(),
+               for: indexPath
+           ) as? CharacterCollectionViewCell else {
+               return UICollectionViewCell()
+           }
+      cell.contentConfiguration = UIHostingConfiguration(content: { self.view.contentForData(item, self.viewController!, indexPath.item, self.view.collections[0].count) })
+      return cell
+//      return collectionView.dequeueConfiguredReusableCell(using: registration, for: indexPath, item: item)
       //      return collectionView.dequeueConfiguredReusableSupplementary(using: registration, for: indexPath)
     }
     

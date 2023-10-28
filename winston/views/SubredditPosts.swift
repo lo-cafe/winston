@@ -144,7 +144,7 @@ struct SubredditPosts: View, Equatable {
 
 struct SubredditPostsNavBtns: View, Equatable {
   static func == (lhs: SubredditPostsNavBtns, rhs: SubredditPostsNavBtns) -> Bool {
-    lhs.sort == rhs.sort && lhs.subreddit.data.isNil == rhs.subreddit.data.isNil
+    lhs.sort == rhs.sort && (lhs.subreddit.data == nil) == (rhs.subreddit.data == nil)
   }
   @Binding var sort: SubListingSortOption
   @ObservedObject var subreddit: Subreddit

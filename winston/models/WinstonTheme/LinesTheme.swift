@@ -7,11 +7,11 @@
 
 import Foundation
 
-enum LineTypeTheme: Codable, Hashable, CaseIterable {
+enum LineTypeTheme: Codable, Hashable, CaseIterable, Equatable {
   case line, fancy, no
 }
 
-struct LineTheme: Codable, Hashable {
+struct LineTheme: Codable, Hashable, Equatable {
   enum CodingKeys: String, CodingKey {
     case style, thickness, color
   }

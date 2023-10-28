@@ -7,20 +7,24 @@
 
 import SwiftUI
 
-struct SubsNStuffLine: View {
+struct SubsNStuffLine: View, Equatable {
+  static func == (lhs: SubsNStuffLine, rhs: SubsNStuffLine) -> Bool {
+    true
+  }
+  
 //  static let height = FlairTag.height + 4
   static let height: CGFloat = 1
   
-  var showSub: Bool
-  var feedsAndSuch: [String]
-  var subredditIconKit: SubredditIconKit
-  var sub: Subreddit
+  var showSub: Bool?
+  var feedsAndSuch: [String]?
+  var subredditIconKit: SubredditIconKit?
+  var sub: Subreddit?
   var flair: String?
-  var routerProxy: RouterProxy
-  var over18: Bool
+  var routerProxy: RouterProxy?
+  var over18: Bool?
   
   var body: some View {
-    let subName = sub.data?.name ?? ""
+//    let subName = sub.data?.name ?? ""
     //    if (showSub || feedsAndSuch.contains(sub.id)) || over18 || post.data?.link_flair_text != nil {
     HStack(spacing: 0) {
       WDivider()

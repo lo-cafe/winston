@@ -8,27 +8,14 @@
 import SwiftUI
 
 @available(iOS 17.0, *)
-struct VoteButton: View {
-  var active: Bool
-  var color: Color
-  var voteAction: () -> ()
-  var image: String
-  
-  var body: some View {
-    VoteButtonRaw(active: active, color: color, image: image)
-      .equatable()
-      .onTapGesture(perform: voteAction)
-  }
-}
-
-@available(iOS 17.0, *)
-struct VoteButtonRaw: View, Equatable {
-  static func == (lhs: VoteButtonRaw, rhs: VoteButtonRaw) -> Bool {
+struct VoteButton: View, Equatable {
+  static func == (lhs: VoteButton, rhs: VoteButton) -> Bool {
     return lhs.active == rhs.active
   }
   
   var active: Bool
   var color: Color
+//  var voteAction: () -> ()
   var image: String
   
   var body: some View {
@@ -53,10 +40,6 @@ struct VoteButtonFallback: View, Equatable {
   @State private var animate = true
   
   func action() {
-    let medium = UIImpactFeedbackGenerator(style: .medium)
-    medium.prepare()
-    medium.impactOccurred()
-    //      try? haptics.fire(intensity:  0.45, sharpness: 0.65)
     animate = false
     withAnimation(.spring(response: 0.3, dampingFraction: 0.5)){
       animate = true

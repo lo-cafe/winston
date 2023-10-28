@@ -55,6 +55,15 @@
       }
     },
     {
+      "identity" : "differencekit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/ra1028/DifferenceKit.git",
+      "state" : {
+        "revision" : "073b9671ce2b9b5b96398611427a1f929927e428",
+        "version" : "1.3.0"
+      }
+    },
+    {
       "identity" : "flanimatedimage",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Flipboard/FLAnimatedImage.git",
@@ -79,15 +88,6 @@
       "state" : {
         "revision" : "759d7b4bd2c10d0bbe93bc62d68572a3702049e3",
         "version" : "2.1.2"
-      }
-    },
-    {
-      "identity" : "iglistkit",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/Instagram/IGListKit.git",
-      "state" : {
-        "revision" : "36da20119ca70c0a8b46ef0acc93b3bcb5a9ea69",
-        "version" : "4.0.0"
       }
     },
     {
@@ -127,21 +127,21 @@
       }
     },
     {
+      "identity" : "sectionkit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/traderepublic/SectionKit",
+      "state" : {
+        "revision" : "734fa3253dacfee175b2cf70cc76cdb2ae588f79",
+        "version" : "2.0.1"
+      }
+    },
+    {
       "identity" : "skeletonui",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/CSolanaM/SkeletonUI.git",
       "state" : {
         "revision" : "e3cf87cb96a10562bc660c9d48418a395d8385ed",
         "version" : "1.0.11"
-      }
-    },
-    {
-      "identity" : "subviewattachingtextview",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/vlas-voloshin/SubviewAttachingTextView.git",
-      "state" : {
-        "revision" : "6025828b6c05fbf5529616a70c702f7425899fe5",
-        "version" : "1.5.1"
       }
     },
     {

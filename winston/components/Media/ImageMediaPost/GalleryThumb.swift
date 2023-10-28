@@ -9,7 +9,10 @@ import SwiftUI
 import Defaults
 import Nuke
 
-struct GalleryThumb: View {
+struct GalleryThumb: View, Equatable {
+  static func == (lhs: GalleryThumb, rhs: GalleryThumb) -> Bool {
+    lhs.url == rhs.url
+  }
   
   var cornerRadius: Double
   var width: CGFloat
@@ -20,15 +23,14 @@ struct GalleryThumb: View {
 //  @Environment(\.useTheme) private var selectedTheme
   
   var body: some View {
-    URLImage(url: url, imgRequest: imgRequest, processors: [.resize(width: width)])
-//      .equatable()
+    URLImage(url: url, imgRequest: imgRequest, processors: [.resize(width: width)], size: CGSize(width: width, height: height ?? 0))
       .scaledToFill()
       .zIndex(1)
-      .allowsHitTesting(false)
-      .fixedSize(horizontal: false, vertical: height.isNil)
+      .fixedSize(horizontal: false, vertical: height == nil)
       .frame(width: width, height: height)
       .clipped()
       .mask(RR(cornerRadius, Color.black).equatable())
+      .allowsHitTesting(false)
       .contentShape(Rectangle())
   }
 }

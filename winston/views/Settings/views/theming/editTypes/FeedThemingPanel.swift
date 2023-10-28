@@ -6,12 +6,31 @@
 //
 
 import SwiftUI
+import Defaults
 
 struct FeedThemingPanel: View {
   @Binding var theme: WinstonTheme
   @StateObject private var routerProxy = RouterProxy(Router(id: "FeedThemingPanel"))
   @StateObject private var previewPostSample = Post(data: postSampleData, api: RedditAPI.shared)
   @StateObject private var previewPostSubSample = Subreddit(id: postSampleData.subreddit, api: RedditAPI.shared)
+  
+  @Default(.blurPostLinkNSFW) private var blurPostLinkNSFW
+  @Default(.postSwipeActions) private var postSwipeActions
+  @Default(.compactMode) private var compactMode
+  @Default(.showVotes) private var showVotes
+  @Default(.showSelfText) private var showSelfText
+  @Default(.thumbnailPositionRight) private var thumbnailPositionRight
+  @Default(.voteButtonPositionRight) private var voteButtonPositionRight
+  @Default(.readPostOnScroll) private var readPostOnScroll
+  @Default(.hideReadPosts) private var hideReadPosts
+  @Default(.showUpvoteRatio) private var showUpvoteRatio
+  @Default(.showSubsAtTop) private var showSubsAtTop
+  @Default(.showTitleAtTop) private var showTitleAtTop
+  
+  @ObservedObject var avatarCache = Caches.avatars
+  @Environment(\.contentWidth) private var contentWidth
+  @Environment(\.colorScheme) private var cs
+  
   
   var body: some View {
     ScrollWithPreview(handlerBGOnly: false, theme: theme.postLinks.bg) {
@@ -32,17 +51,67 @@ struct FeedThemingPanel: View {
     } preview: {
       ScrollView(showsIndicators: false) {
         VStack(spacing: theme.postLinks.spacing) {
-          PostLink(disableOuterVSpacing: true, post: previewPostSample, sub: previewPostSubSample, routerProxy: routerProxy)
+          if let winstonData = previewPostSample.winstonData {
+            PostLink(
+              post: previewPostSample,
+              controller: nil,
+              avatarRequest: avatarCache.cache["t2_winston_sample"]?.data,
+              theme: theme.postLinks,
+              sub: previewPostSubSample,
+              showSub: true,
+              secondary: true,
+              routerProxy: routerProxy,
+              contentWidth: contentWidth,
+              blurPostLinkNSFW: blurPostLinkNSFW,
+              postSwipeActions: postSwipeActions,
+              showVotes: showVotes,
+              showSelfText: showSelfText,
+              readPostOnScroll: readPostOnScroll,
+              hideReadPosts: hideReadPosts,
+              showUpvoteRatio: showUpvoteRatio,
+              showSubsAtTop: showSubsAtTop,
+              showTitleAtTop: showTitleAtTop,
+              compact: false,
+              thumbnailPositionRight: nil,
+              voteButtonPositionRight: nil,
+              cs: cs
+            )
             .equatable()
             .environment(\.useTheme, theme)
             .allowsHitTesting(false)
+          }
           
           NiceDivider(divider: theme.postLinks.divider)
           
-          PostLink(disableOuterVSpacing: true, post: previewPostSample, sub: previewPostSubSample, routerProxy: routerProxy)
+          if let winstonData = previewPostSample.winstonData {
+            PostLink(
+              post: previewPostSample,
+              controller: nil,
+              avatarRequest: avatarCache.cache["t2_winston_sample"]?.data,
+              theme: theme.postLinks,
+              sub: previewPostSubSample,
+              showSub: true,
+              secondary: true,
+              routerProxy: routerProxy,
+              contentWidth: contentWidth,
+              blurPostLinkNSFW: blurPostLinkNSFW,
+              postSwipeActions: postSwipeActions,
+              showVotes: showVotes,
+              showSelfText: showSelfText,
+              readPostOnScroll: readPostOnScroll,
+              hideReadPosts: hideReadPosts,
+              showUpvoteRatio: showUpvoteRatio,
+              showSubsAtTop: showSubsAtTop,
+              showTitleAtTop: showTitleAtTop,
+              compact: false,
+              thumbnailPositionRight: nil,
+              voteButtonPositionRight: nil,
+              cs: cs
+            )
             .equatable()
             .environment(\.useTheme, theme)
             .allowsHitTesting(false)
+          }
         }
       }
       .highPriorityGesture(DragGesture())

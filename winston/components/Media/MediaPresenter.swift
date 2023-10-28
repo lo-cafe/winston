@@ -8,6 +8,7 @@
 import SwiftUI
 import YouTubePlayerKit
 import Defaults
+import NukeUI
 
 struct OnlyURL: View {
   static let height: Double = 22
@@ -34,10 +35,15 @@ struct OnlyURL: View {
   }
 }
 
-struct MediaPresenter: View {
+struct MediaPresenter: View, Equatable {
+  static func == (lhs: MediaPresenter, rhs: MediaPresenter) -> Bool {
+    lhs.media == rhs.media && lhs.compact == rhs.compact && lhs.contentWidth == rhs.contentWidth && lhs.badgeKit == rhs.badgeKit && lhs.cachedVideo == rhs.cachedVideo
+  }
   
   @Binding var postDimensions: PostDimensions
-  var controller: UIViewController?
+  weak var controller: UIViewController?
+  var cachedVideo: SharedVideo?
+  var imgRequests: [ImageRequest]?
   let postTitle: String
   let badgeKit: BadgeKit
   let markAsSeen: (() async -> ())?
@@ -48,24 +54,26 @@ struct MediaPresenter: View {
   var over18 = false
   let compact: Bool
   let contentWidth: CGFloat
-  let routerProxy: RouterProxy
+  weak var routerProxy: RouterProxy?
   
   var body: some View {
     switch media {
     case .image(let imgMediaExtracted):
       if !showURLInstead {
-        ImageMediaPost(postDimensions: $postDimensions, postTitle: postTitle, badgeKit: badgeKit, markAsSeen: markAsSeen, cornerRadius: cornerRadius, compact: compact, images: [imgMediaExtracted], contentWidth: contentWidth)
-//          .nsfw(over18 && blurPostLinkNSFW)
+        ImageMediaPost(postDimensions: $postDimensions, controller: controller, postTitle: postTitle, badgeKit: badgeKit, markAsSeen: markAsSeen, cornerRadius: cornerRadius, compact: compact, mediaImageRequest: imgRequests ?? [], images: [imgMediaExtracted], contentWidth: contentWidth)
+//          .drawingGroup()
+//                  .nsfw(over18 && blurPostLinkNSFW)
       }
     case .video(let videoMediaExtracted):
       if !showURLInstead {
-        VideoPlayerPost(controller: controller, markAsSeen: markAsSeen, compact: compact, overrideWidth: contentWidth, url: videoMediaExtracted.url, size: CGSize(width: videoMediaExtracted.size.width, height: videoMediaExtracted.size.height))
+        VideoPlayerPost(controller: controller, cachedVideo: cachedVideo, markAsSeen: markAsSeen, compact: compact, overrideWidth: contentWidth, url: videoMediaExtracted.url, size: CGSize(width: videoMediaExtracted.size.width, height: videoMediaExtracted.size.height))
 //          .nsfw(over18 && blurPostLinkNSFW)
         
       }
     case .gallery(let imgs):
       if !showURLInstead {
-        ImageMediaPost(postDimensions: $postDimensions, postTitle: postTitle, badgeKit: badgeKit, markAsSeen: markAsSeen, cornerRadius: cornerRadius, compact: compact, images: imgs, contentWidth: contentWidth)
+        ImageMediaPost(postDimensions: $postDimensions, controller: controller, postTitle: postTitle, badgeKit: badgeKit, markAsSeen: markAsSeen, cornerRadius: cornerRadius, compact: compact, mediaImageRequest: imgRequests ?? [], images: imgs, contentWidth: contentWidth)
+//          .drawingGroup()
 //          .nsfw(over18 && blurPostLinkNSFW)
       }
     case .youtube(let videoID, let size):
@@ -77,18 +85,6 @@ struct MediaPresenter: View {
       if !showURLInstead {
         PreviewLink(url: url, compact: compact)
       } else {
-        OnlyURL(url: url)
-      }
-    case .repost(let repost):
-      if !showURLInstead {
-        if compact {
-          if let postData = repost.data, let url = URL(string: "https://reddit.com/r/\(postData.subreddit)/comments/\(repost.id)") {
-            PreviewLink(url: url, compact: compact)
-          }
-        } else if let sub = repost.winstonData?.subreddit {
-          PostLink(post: repost, sub: sub, showSub: true, secondary: true, routerProxy: routerProxy)
-        }
-      } else if let postData = repost.data, let url = URL(string: "https://reddit.com/r/\(postData.subreddit)/comments/\(repost.id)") {
         OnlyURL(url: url)
       }
     case .post(let id, let subreddit):
@@ -139,6 +135,8 @@ struct MediaPresenter: View {
       } else if let url = URL(string: "https://reddit.com/u/\(username)") {
         OnlyURL(url: url)
       }
+    default:
+      EmptyView()
     }
   }
 }

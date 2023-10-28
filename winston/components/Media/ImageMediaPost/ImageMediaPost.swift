@@ -10,19 +10,20 @@ import Defaults
 import NukeUI
 import Nuke
 
-struct ImageMediaPost: View {
+struct ImageMediaPost: View, Equatable {
   static let gallerySpacing: CGFloat = 8
-//  static func == (lhs: ImageMediaPost, rhs: ImageMediaPost) -> Bool {
-//    return lhs.images == rhs.images && lhs.compact == rhs.compact && lhs.contentWidth == rhs.contentWidth
-//  }
+  static func == (lhs: ImageMediaPost, rhs: ImageMediaPost) -> Bool {
+    return lhs.postTitle == rhs.postTitle && lhs.compact == rhs.compact && lhs.contentWidth == rhs.contentWidth
+  }
     
   @Binding var postDimensions: PostDimensions
+  weak var controller: UIViewController?
   let postTitle: String
   let badgeKit: BadgeKit
   let markAsSeen: (() async -> ())?
   var cornerRadius: Double
   var compact = false
-  let mediaImageRequest: [ImageRequest] = []
+  var mediaImageRequest: [ImageRequest] = []
   var images: [MediaExtracted]
   var contentWidth: CGFloat
 //  @State var fullscreen = false
@@ -42,6 +43,7 @@ struct ImageMediaPost: View {
         let finalHeight = maxPostLinkImageHeightPercentage != 110 ? Double(min(maxHeight, propHeight)) : Double(propHeight)
         
         GalleryThumb(cornerRadius: cornerRadius, width: compact ? scaledCompactModeThumbSize() : contentWidth, height: compact ? scaledCompactModeThumbSize() : sourceHeight > 0 ? finalHeight : nil, url: img.url, imgRequest: mediaImageRequest.count > 0 ? mediaImageRequest[0] : nil)
+//          .equatable()
           .background(sourceHeight > 0 || compact ? nil : GeometryReader { geo in Color.clear.onAppear { postDimensions.mediaSize = geo.size }.onChange(of: geo.size) { postDimensions.mediaSize = $0 } })
           .onTapGesture { withAnimation(spring) { fullscreenIndex = 0 } }
           .overlay(
@@ -63,9 +65,11 @@ struct ImageMediaPost: View {
         VStack(spacing: ImageMediaPost.gallerySpacing) {
           HStack(spacing: ImageMediaPost.gallerySpacing) {
             GalleryThumb(cornerRadius: cornerRadius, width: compact ? scaledCompactModeThumbSize() : width, height: compact ? scaledCompactModeThumbSize() : height, url: images[0].url, imgRequest: mediaImageRequest.count > 0 ? mediaImageRequest[0] : nil)
+              .equatable()
               .onTapGesture { withAnimation(spring) { fullscreenIndex = 0 } }
 
             GalleryThumb(cornerRadius: cornerRadius, width: width, height: height, url: images[1].url, imgRequest: mediaImageRequest.count > 1 ? mediaImageRequest[1] : nil)
+              .equatable()
                 .onTapGesture { withAnimation(spring) { fullscreenIndex = 1 } }
           }
           
@@ -73,9 +77,11 @@ struct ImageMediaPost: View {
           if images.count > 2 {
             HStack(spacing: ImageMediaPost.gallerySpacing) {
               GalleryThumb(cornerRadius: cornerRadius, width: images.count == 3 ? contentWidth : width, height: height, url: images[2].url, imgRequest: mediaImageRequest.count > 2 ? mediaImageRequest[2] : nil)
+                .equatable()
                 .onTapGesture { withAnimation(spring) { fullscreenIndex = 2 } }
               if images.count == 4 {
                 GalleryThumb(cornerRadius: cornerRadius, width: width, height: height, url: images[3].url, imgRequest: mediaImageRequest.count > 3 ? mediaImageRequest[3] : nil)
+                  .equatable()
                   .onTapGesture { withAnimation(spring) { fullscreenIndex = 3 } }
               } else if images.count > 4 {
                 Text("\(images.count - 3)+")
@@ -93,6 +99,13 @@ struct ImageMediaPost: View {
       }
     }
     .frame(maxWidth: compact ? nil : .infinity)
+//    .customPresenter(parentController: controller, isPresented: Binding(get: {
+//      fullscreenIndex != nil
+//    }, set: { val in
+//      if !val { fullscreenIndex = nil }
+//    }), content: {
+//      LightBoxImage(postTitle: postTitle, badgeKit: badgeKit, markAsSeen: markAsSeen, i: fullscreenIndex ?? 0, imagesArr: images)
+//    })
     .fullScreenCover(item: $fullscreenIndex) { i in
       LightBoxImage(postTitle: postTitle, badgeKit: badgeKit, markAsSeen: markAsSeen, i: i, imagesArr: images)
     }

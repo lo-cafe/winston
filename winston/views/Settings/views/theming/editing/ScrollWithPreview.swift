@@ -41,7 +41,7 @@ struct ScrollWithPreview<Content: View, Preview: View>: View {
             CarouselTagElement(label: "Blur", icon: { Image(systemName: "circle.dotted") }, value: PreviewBG.blur),
             CarouselTagElement(label: "Opaque", icon: { Image(systemName: "circle.fill") }, value: PreviewBG.opaque),
           ]
-          TagsOptions($previewBG, options: opts + (theme.isNil ? [] : [
+          TagsOptions($previewBG, options: opts + (theme == nil ? [] : [
             CarouselTagElement(label: "Theme", icon: {
               Circle().fill(.clear).themedListBG(theme!).frame(width: 16, height: 16).mask(Circle().fill(.black))
             }, value: PreviewBG.theme)
@@ -51,7 +51,7 @@ struct ScrollWithPreview<Content: View, Preview: View>: View {
         .padding(.top, 12)
         .padding(.bottom, 12)
         .padding(.top, handlerHeight)
-        .themedListBG(theme ?? defaultThemeBG, disable: theme.isNil || previewBG != .theme)
+        .themedListBG(theme ?? defaultThemeBG, disable: theme == nil || previewBG != .theme)
         .background(
           previewBG != .blur
           ? nil

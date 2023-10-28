@@ -33,7 +33,7 @@ struct SubtleSheetModifier<T: View>: ViewModifier {
   
   func body(content: Content) -> some View {
     let dragOffset = dragOffsetRaw ?? 0
-    let isDragging = !initialDragOffset.isNil
+    let isDragging = initialDragOffset != nil
     let disabled = abs(sheetContentSize.height - forcedOffset) < 2
     let interpolate = interpolatorBuilder([handlerDashWidth, 0], value: abs(sheetContentSize.height - forcedOffset))
     let dragGesture = DragGesture(minimumDistance: 0)
@@ -130,7 +130,7 @@ struct SubtleSheetModifier<T: View>: ViewModifier {
           .opacity(disappear ? 0 : 1)
           .offset(y: disappear ? handlerHeight : 0)
           .onAppear { doThisAfter(0.3) { withAnimation(spring) { disappear = false } } }
-          .onChange(of: dragOffsetRaw.isNil) { newValue in if newValue { initialDragOffset = nil } }
+          .onChange(of: dragOffsetRaw == nil) { newValue in if newValue { initialDragOffset = nil } }
         , alignment: .bottom
       )
   }

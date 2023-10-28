@@ -45,8 +45,8 @@ struct MD: View {
 //  @State private var attributedString: AttributedString?
 //
 //  var body: some View {
-//    Text(attributedString.isNil ? AttributedString(stringLiteral: str) : attributedString!)
-//      .opacity(attributedString.isNil ? 0 : 1)
+//    Text(attributedString == nil ? AttributedString(stringLiteral: str) : attributedString!)
+//      .opacity(attributedString == nil ? 0 : 1)
 //      .onAppear {
 //        Task(priority: .background) {
 //          let document = Document(parsing: str)

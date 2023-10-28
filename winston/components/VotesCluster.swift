@@ -8,18 +8,19 @@
 import SwiftUI
 import Defaults
 
-struct VotesKit {
+struct VotesKit: Equatable, Identifiable {
   let ups: Int
   let ratio: Double
   let likes: Bool?
+  let id: String
 }
 
 /// A cluster consisting of the upvote, downvote button and the amount of upvotes with an optional upvote ratio
-struct VotesCluster: View {
+struct VotesCluster: View, Equatable {
   static let verticalWidth: Double = 24
-  //  static func == (lhs: VotesCluster, rhs: VotesCluster) -> Bool {
-  //    lhs.vertical == rhs.vertical && lhs.post == rhs.post && lhs.likeRatio == rhs.likeRatio
-  //  }
+    static func == (lhs: VotesCluster, rhs: VotesCluster) -> Bool {
+      lhs.votesKit == rhs.votesKit
+    }
   
 //  var likeRatio: CGFloat? //if the upvote ratio is nil it will be hidden
   var votesKit: VotesKit
@@ -54,14 +55,18 @@ struct VotesCluster: View {
   var body: some View {
       //    let votes = calculateUpAndDownVotes(upvoteRatio: votesKit.ratio, score: votesKit.ups)
       if vertical {
-        VotesClusterVertical(likes: votesKit.likes, ups: votesKit.ups, upvote: upvote, downvote: downvote)
+        VotesClusterVertical(id: votesKit.id, likes: votesKit.likes, upvote: upvote, downvote: downvote)
       } else {
         VotesClusterHorizontal(likes: votesKit.likes, ups: votesKit.ups, upvote_ratio: votesKit.ratio, showUpvoteRatio: true, upvote: upvote, downvote: downvote)
       }
   }
 }
 
-struct VotesClusterHorizontal: View {
+struct VotesClusterHorizontal: View, Equatable {
+  static func == (lhs: VotesClusterHorizontal, rhs: VotesClusterHorizontal) -> Bool {
+    lhs.likes == rhs.likes && lhs.ups == rhs.ups && lhs.upvote_ratio == rhs.upvote_ratio && lhs.showUpvoteRatio == rhs.showUpvoteRatio
+  }
+  
   let likes: Bool?
   let ups: Int
   let upvote_ratio: Double
@@ -71,7 +76,7 @@ struct VotesClusterHorizontal: View {
   var body: some View {
     HStack(spacing: showUpvoteRatio ? 4 : 8) {
       if #available(iOS 17, *) {
-        VoteButton(active: (likes ?? false), color: .orange, voteAction: upvote,image: "arrow.up")
+        VoteButton(active: (likes ?? false), color: .orange, image: "arrow.up").equatable().onTapGesture(perform: upvote)
       } else {
         VoteButtonFallback(color: (likes ?? false) ? .orange : .gray, voteAction: upvote, image: "arrow.up")
       }
@@ -80,29 +85,34 @@ struct VotesClusterHorizontal: View {
         .allowsHitTesting(false)
       
       if #available(iOS 17, *) {
-        VoteButton(active: !(likes ?? true), color: .blue, voteAction: downvote ,image: "arrow.down")
+        VoteButton(active: !(likes ?? true), color: .blue ,image: "arrow.down").equatable().onTapGesture(perform: downvote)
       } else {
         VoteButtonFallback(color: !(likes ?? true) ? .blue : .gray, voteAction: downvote, image: "arrow.down")
       }
     }
+    .drawingGroup()
   }
 }
 
-struct VotesClusterVertical: View {
+struct VotesClusterVertical: View, Equatable {
+  static func == (lhs: VotesClusterVertical, rhs: VotesClusterVertical) -> Bool {
+    lhs.likes == rhs.likes && lhs.id == rhs.id
+  }
+  
+  var id: String
   let likes: Bool?
-  let ups: Int
   let upvote: () -> ()
   let downvote: () -> ()
   var body: some View {
-    VStack(spacing: 2) {
+    VStack(spacing: 12) {
       if #available(iOS 17, *) {
-        VoteButton(active: (likes ?? false), color: .orange, voteAction: upvote,image: "arrow.up")
+        VoteButton(active: (likes ?? false), color: .orange, image: "arrow.up").equatable().onTapGesture(perform: upvote)
       } else {
         VoteButtonFallback(color: (likes ?? false) ? .orange : .gray, voteAction: upvote, image: "arrow.up")
       }
       
       if #available(iOS 17, *) {
-        VoteButton(active: !(likes ?? true), color: .blue, voteAction: downvote ,image: "arrow.down")
+        VoteButton(active: !(likes ?? true), color: .blue, image: "arrow.down").equatable().onTapGesture(perform: downvote)
       } else {
         VoteButtonFallback(color: !(likes ?? true) ? .blue : .gray, voteAction: downvote, image: "arrow.down")
       }
@@ -113,7 +123,7 @@ struct VotesClusterVertical: View {
   }
 }
 
-struct VotesClusterInfo: View {
+struct VotesClusterInfo: View, Equatable {
   var ups: Int
   var likes: Bool?
   var likeRatio: CGFloat?

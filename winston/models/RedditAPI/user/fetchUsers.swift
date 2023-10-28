@@ -9,6 +9,7 @@ import Foundation
 import Alamofire
 import SwiftUI
 import NukeUI
+import Nuke
 import Defaults
 
 extension RedditAPI {
@@ -36,16 +37,16 @@ extension RedditAPI {
     }
   }
   
-  func updateAvatarURLCacheFromOverview(subjects: [Either<PostData, CommentData>], avatarSize: Double) async {
+  func updateAvatarURLCacheFromOverview(subjects: [Either<Post, Comment>], avatarSize: Double) async {
     var namesArr: [String] = []
     subjects.forEach { subject in
       switch subject {
       case .first(let post):
-        if let fullname = post.author_fullname {
+        if let data = post.data, let fullname = data.author_fullname {
           namesArr.append(fullname)
         }
       case .second(let comment):
-        if let fullname = comment.author_fullname {
+        if let data = comment.data, let fullname = data.author_fullname {
           namesArr.append(fullname)
         }
       }
@@ -69,7 +70,10 @@ extension RedditAPI {
       var reqs: [ImageRequest] = []
       let newDict = data.compactMapValues { val in
         if let urlStr = val.profile_img, let url = URL(string: String(urlStr.split(separator: "?")[0])) {
-          let req = ImageRequest(url: url, processors: [.resize(width: avatarSize)], priority: .veryHigh)
+//          let userInfoKey = ImageRequest.UserInfoKey()
+//          ImageProcessing
+          let thumbOpt = ImageRequest.ThumbnailOptions(size: .init(width: avatarSize, height: avatarSize), unit: .points, contentMode: .aspectFill)
+          let req = ImageRequest(url: url, priority: .veryHigh, userInfo: [.thumbnailKey: thumbOpt])
           reqs.append(req)
           return req
         }

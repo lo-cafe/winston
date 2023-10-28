@@ -35,7 +35,7 @@ struct PostContent: View, Equatable {
     let over18 = data.over_18 ?? false
     Group {
       
-      if post.data.isNil {
+      if post.data == nil {
         VStack {
           ProgressView()
             .progressViewStyle(.circular)
@@ -67,7 +67,7 @@ struct PostContent: View, Equatable {
           
           if data.selftext != "" {
             VStack {
-              MD(selfAttr.isNil ? .str(data.selftext) : .attr(selfAttr!), fontSize: postsTheme.bodyText.size)
+              MD(selfAttr == nil ? .str(data.selftext) : .attr(selfAttr!), fontSize: postsTheme.bodyText.size)
                 .foregroundColor(postsTheme.bodyText.color.cs(cs).color())
                 .frame(maxWidth: .infinity, alignment: .leading)
             }

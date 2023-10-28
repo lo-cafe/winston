@@ -8,62 +8,112 @@
 import SwiftUI
 import Defaults
 import Markdown
+import NukeUI
 
 
 
 let POSTLINK_INNER_H_PAD: CGFloat = 16
 
-struct PostLinkView: View, Equatable {
-  static func == (lhs: PostLinkView, rhs: PostLinkView) -> Bool {
-    return lhs.post == rhs.post && lhs.size == rhs.size && lhs.seen == rhs.seen && lhs.stickied == rhs.stickied && lhs.contentWidth == rhs.contentWidth && lhs.selectedTheme == rhs.selectedTheme && lhs.cs == rhs.cs
+struct PostLink: View, Equatable {
+  static func == (lhs: PostLink, rhs: PostLink) -> Bool {
+    return lhs.post == rhs.post && lhs.theme == rhs.theme && lhs.cs == rhs.cs && lhs.contentWidth == rhs.contentWidth
   }
   
-  var size: CGSize
-  var stickied: Bool
-  var seen = false
-  var disableOuterVSpacing = false
-  var post: Post
-  var sub: Subreddit
+//  var disableOuterVSpacing = false
+  weak var post: Post?
+  weak var controller: UIViewController?
+  var avatarRequest: ImageRequest?
+  var cachedVideo: SharedVideo?
+  var repostAvatarRequest: ImageRequest?
+  var theme: SubPostsListTheme
+  weak var sub: Subreddit?
   var showSub = false
   var secondary = false
-  var routerProxy: RouterProxy
-  var openPost: () -> ()
-  var contentWidth: CGFloat
-  
-  var blurPostLinkNSFW: Bool
-  
+  weak var routerProxy: RouterProxy?
+  let contentWidth: CGFloat
+  let blurPostLinkNSFW: Bool
   var postSwipeActions: SwipeActionsSet
-  var compactMode: Bool
-  var showVotes: Bool
-  var showSelfText: Bool
-  var thumbnailPositionRight: Bool
-  var voteButtonPositionRight: Bool
-  
+  let showVotes: Bool
+  let showSelfText: Bool
   var readPostOnScroll: Bool
   var hideReadPosts: Bool
-  
-  var showUpvoteRatio: Bool
-  
-  var showSubsAtTop: Bool
-  var showTitleAtTop: Bool
-  
-  var selectedTheme: WinstonTheme
+  let showUpvoteRatio: Bool
+  let showSubsAtTop: Bool
+  let showTitleAtTop: Bool
+  let compact: Bool
+  let thumbnailPositionRight: Bool?
+  let voteButtonPositionRight: Bool?
   var cs: ColorScheme
   
+  @State private var isOpen = false
+  
+  func openPost() {
+    if let post = post, let sub = sub, let routerProxy = routerProxy {
+      withAnimation(nil) { isOpen = true }
+      routerProxy.router.path.append(PostViewPayload(post: post, postSelfAttr: nil, sub: feedsAndSuch.contains(sub.id) ? sub : sub))
+    }
+  }
   
   var body: some View {
-    if let data = post.data {
-      let theme = selectedTheme.postLinks
+    if let post = post, let winstonData = post.winstonData, let sub = sub, let data = post.data {
+      let seen = (post.data?.winstonSeen ?? false)
+      let size = CGSize(width: winstonData.postDimensions.size.width, height: winstonData.postDimensions.size.height)
       let fadeReadPosts = theme.theme.unseenType == .fade
       
-      let over18 = data.over_18 ?? false
-      
       VStack(alignment: .leading, spacing: theme.theme.verticalElementsSpacing) {
-//        if compactMode {
-//          PostLinkCompact(post: post, theme: theme, sub: sub, showSub: showSub, routerProxy: routerProxy, contentWidth: contentWidth, blurPostLinkNSFW: blurPostLinkNSFW, showVotes: showVotes, thumbnailPositionRight: thumbnailPositionRight, voteButtonPositionRight: voteButtonPositionRight, showUpvoteRatio: showUpvoteRatio, showSubsAtTop: showSubsAtTop, over18: over18, cs: cs)
-//        } else {
-//          PostLinkNormal(post: post, theme: theme, sub: sub, showSub: showSub, routerProxy: routerProxy, contentWidth: contentWidth, blurPostLinkNSFW: blurPostLinkNSFW, showVotes: showVotes, showUpvoteRatio: showUpvoteRatio, showSubsAtTop: showSubsAtTop, showSelfText: showSelfText, showTitleAtTop: showTitleAtTop, over18: over18, cs: cs)
-//        }
+        if compact {
+          PostLinkCompact(
+            post: post,
+            winstonData: winstonData,
+            controller: controller,
+            //                controller: nil,
+            avatarRequest: avatarRequest,
+            cachedVideo: cachedVideo,
+            repostAvatarRequest: repostAvatarRequest,
+            theme: theme,
+            sub: sub,
+            showSub: showSub,
+            routerProxy: routerProxy,
+            contentWidth: contentWidth,
+            blurPostLinkNSFW: blurPostLinkNSFW,
+            postSwipeActions: postSwipeActions,
+            showVotes: showVotes,
+            showSelfText: showSelfText,
+            readPostOnScroll: readPostOnScroll,
+            hideReadPosts: hideReadPosts,
+            showUpvoteRatio: showUpvoteRatio,
+            showSubsAtTop: showSubsAtTop,
+            showTitleAtTop: showTitleAtTop,
+            thumbnailPositionRight: thumbnailPositionRight ?? true,
+            voteButtonPositionRight: voteButtonPositionRight ?? true,
+            cs: cs
+          )
+        } else {
+          PostLinkNormal(
+            post: post,
+            winstonData: winstonData,
+            controller: controller,
+            //                controller: nil,
+            avatarRequest: avatarRequest,
+            cachedVideo: cachedVideo,
+            repostAvatarRequest: repostAvatarRequest,
+            theme: theme,
+            sub: sub,
+            showSub: showSub,
+            routerProxy: routerProxy,
+            contentWidth: contentWidth,
+            blurPostLinkNSFW: blurPostLinkNSFW,
+            postSwipeActions: postSwipeActions,
+            showVotes: showVotes,
+            showSelfText: showSelfText,
+            readPostOnScroll: readPostOnScroll,
+            hideReadPosts: hideReadPosts,
+            showUpvoteRatio: showUpvoteRatio,
+            showSubsAtTop: showSubsAtTop,
+            showTitleAtTop: showTitleAtTop,
+            cs: cs
+          )
+        }
       }
       .padding(EdgeInsets(top: theme.theme.innerPadding.vertical, leading: theme.theme.innerPadding.horizontal, bottom: theme.theme.innerPadding.vertical, trailing: theme.theme.innerPadding.horizontal))
       .frame(width: size.width, height: size.height, alignment: .top)
@@ -74,9 +124,8 @@ struct PostLinkView: View, Equatable {
       .scaleEffect(1)
       .contentShape(Rectangle())
       .gesture(TapGesture().onEnded(openPost))
-//      .swipyRev(size: size, actionsSet: postSwipeActions, entity: post)
-//      .swipyRev(size: size, actionsSet: postSwipeActions)
       .compositingGroup()
+      .brightness(isOpen ? 0.075 : 0)
       .opacity(fadeReadPosts && seen ? 0.6 : 1)
       .contextMenu(menuItems: { PostLinkContext(post: post) }, preview: { PostLinkContextPreview(post: post, sub: sub, routerProxy: routerProxy) })
       .foregroundStyle(.primary)
@@ -91,8 +140,6 @@ struct PostLinkView: View, Equatable {
           }
         }
       }
-    } else {
-      Text("Oops something went wrong")
     }
   }
 }
@@ -156,161 +203,6 @@ struct PostLinkBG: View, Equatable {
       }
     }
     .allowsHitTesting(false)
-  }
-}
-
-struct PostLink: View, Equatable {
-  static func == (lhs: PostLink, rhs: PostLink) -> Bool {
-    return lhs.post == rhs.post && lhs.sub == rhs.sub
-  }
-  
-  var disableOuterVSpacing = false
-  @ObservedObject var post: Post
-  var sub: Subreddit
-  var showSub = false
-  var secondary = false
-  var routerProxy: RouterProxy
-  @Environment(\.useTheme) private var selectedTheme
-  @Environment(\.contentWidth) private var contentWidth
-  
-  @Default(.blurPostLinkNSFW) private var blurPostLinkNSFW
-  
-  @Default(.postSwipeActions) private var postSwipeActions
-  @Default(.compactMode) private var compactMode
-  @Default(.showVotes) private var showVotes
-  @Default(.showSelfText) private var showSelfText
-  @Default(.thumbnailPositionRight) private var thumbnailPositionRight
-  @Default(.voteButtonPositionRight) private var voteButtonPositionRight
-  
-  @Default(.readPostOnScroll) private var readPostOnScroll
-  @Default(.hideReadPosts) private var hideReadPosts
-  
-  @Default(.showUpvoteRatio) private var showUpvoteRatio
-  
-  @Default(.showSubsAtTop) private var showSubsAtTop
-  @Default(.showTitleAtTop) private var showTitleAtTop
-  
-  @Environment(\.colorScheme) private var cs
-  
-  
-  @State private var isOpen = false
-  
-  
-  func openPost() {
-    withAnimation(.default.speed(2)) { isOpen = true }
-    routerProxy.router.path.append(PostViewPayload(post: post, postSelfAttr: nil, sub: feedsAndSuch.contains(sub.id) ? sub : sub))
-  }
-  
-  var body: some View {
-    let seen = (post.data?.winstonSeen ?? false)
-    let stickied = (post.data?.stickied ?? false)
-    PostLinkView(
-      size: CGSize(width: post.winstonData?.postDimensions.size.width ?? 0, height: post.winstonData?.postDimensions.size.height ?? 0),
-      stickied: stickied,
-      seen: seen,
-      disableOuterVSpacing: disableOuterVSpacing,
-      post: post,
-      sub: sub,
-      showSub: showSub,
-      secondary: secondary,
-      routerProxy: routerProxy,
-      openPost: openPost,
-      contentWidth: getPostDimensions(post: post, secondary: secondary, theme: selectedTheme).titleSize.width,
-      blurPostLinkNSFW: blurPostLinkNSFW,
-      postSwipeActions: postSwipeActions,
-      compactMode: compactMode,
-      showVotes: showVotes,
-      showSelfText: showSelfText,
-      thumbnailPositionRight: thumbnailPositionRight,
-      voteButtonPositionRight: voteButtonPositionRight,
-      readPostOnScroll: readPostOnScroll,
-      hideReadPosts: hideReadPosts,
-      showUpvoteRatio: showUpvoteRatio,
-      showSubsAtTop: showSubsAtTop,
-      showTitleAtTop: showTitleAtTop,
-      selectedTheme: selectedTheme,
-      cs: cs
-    )
-    .brightness(isOpen ? 0.075 : 0)
-    .onAppear { withAnimation(.default.speed(1.5)) { if isOpen { isOpen = false } } }
-    .onChange(of: selectedTheme) { x in
-      post.winstonData?.postDimensions = getPostDimensions(post: post, theme: x)
-    }
-  }
-}
-
-
-struct PostLinkRaw: View {
-  
-  var disableOuterVSpacing = false
-  @ObservedObject var post: Post
-  var sub: Subreddit
-  var showSub = false
-  var secondary = false
-  var routerProxy: RouterProxy
-  var selectedTheme: WinstonTheme
-  var contentWidth: Double
-  
-  var blurPostLinkNSFW: Bool
-  
-  var postSwipeActions: SwipeActionsSet
-  var compactMode: Bool
-  var showVotes: Bool
-  var showSelfText: Bool
-  var thumbnailPositionRight: Bool
-  var voteButtonPositionRight: Bool
-  
-  var readPostOnScroll: Bool
-  var hideReadPosts: Bool
-  
-  var showUpvoteRatio: Bool
-  
-  var showSubsAtTop: Bool
-  var showTitleAtTop: Bool
-  
-  var cs: ColorScheme
-  @State private var isOpen = false
-  
-  func openPost() {
-    withAnimation(nil) { isOpen = true }
-    routerProxy.router.path.append(PostViewPayload(post: post, postSelfAttr: nil, sub: feedsAndSuch.contains(sub.id) ? sub : sub))
-  }
-  
-  var body: some View {
-    let seen = (post.data?.winstonSeen ?? false)
-    let stickied = (post.data?.stickied ?? false)
-    PostLinkView(
-      size: CGSize(width: post.winstonData?.postDimensions.size.width ?? 0, height: post.winstonData?.postDimensions.size.height ?? 0),
-      stickied: stickied,
-      seen: seen,
-      disableOuterVSpacing: disableOuterVSpacing,
-      post: post,
-      sub: sub,
-      showSub: showSub,
-      secondary: secondary,
-      routerProxy: routerProxy,
-      openPost: openPost,
-      contentWidth: getPostDimensions(post: post, secondary: secondary, theme: selectedTheme).titleSize.width,
-      blurPostLinkNSFW: blurPostLinkNSFW,
-      postSwipeActions: postSwipeActions,
-      compactMode: compactMode,
-      showVotes: showVotes,
-      showSelfText: showSelfText,
-      thumbnailPositionRight: thumbnailPositionRight,
-      voteButtonPositionRight: voteButtonPositionRight,
-      readPostOnScroll: readPostOnScroll,
-      hideReadPosts: hideReadPosts,
-      showUpvoteRatio: showUpvoteRatio,
-      showSubsAtTop: showSubsAtTop,
-      showTitleAtTop: showTitleAtTop,
-      selectedTheme: selectedTheme,
-      cs: cs
-    )
-    .brightness(isOpen ? 0.075 : 0)
-    .onAppear { withAnimation(.default.speed(1.5)) { if isOpen { isOpen = false } } }
-    .onChange(of: selectedTheme) { x in
-      post.winstonData?.postDimensions = getPostDimensions(post: post, theme: x)
-    }
   }
 }
 

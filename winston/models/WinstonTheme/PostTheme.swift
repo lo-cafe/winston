@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct PostTheme: Codable, Hashable {
+struct PostTheme: Codable, Hashable, Equatable {
   enum CodingKeys: String, CodingKey {
     case padding, spacing, badge, bg, commentsDistance, titleText, bodyText
   }

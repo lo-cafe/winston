@@ -30,7 +30,7 @@ struct PostDimensions: Hashable, Equatable {
   var bodySize: CGSize? = nil
   var urlTagHeight: Double? = nil
   var mediaSize: CGSize? = nil
-  var dividerSize: CGSize
+  var dividerSize: CGSize? = nil
   var badgeSize: CGSize
   var spacingHeight: Double
   var padding: CGSize { self.theme.innerPadding.toSize() }
@@ -38,16 +38,16 @@ struct PostDimensions: Hashable, Equatable {
   var compact: Bool
   var size: CGSize {
     let compactVSpacing = self.spacingHeight / 2
-    let tagHeight = urlTagHeight.isNil ? 0 : (compactVSpacing / 2) + (self.urlTagHeight ?? 0)
-    let compactHeight = max(self.titleSize.height + compactVSpacing + self.badgeSize.height + tagHeight, (mediaSize?.height ?? 0)) + dividerSize.height + compactVSpacing
-    let normalHeight = self.titleSize.height + (self.bodySize?.height ?? 0) + (self.mediaSize?.height ?? 0) + self.dividerSize.height + self.badgeSize.height + self.spacingHeight
+    let tagHeight = urlTagHeight == nil ? 0 : (compactVSpacing / 2) + (self.urlTagHeight ?? 0)
+    let compactHeight = max(self.titleSize.height + compactVSpacing + self.badgeSize.height + tagHeight, (mediaSize?.height ?? 0))
+    let normalHeight = self.titleSize.height + (self.bodySize?.height ?? 0) + (self.mediaSize?.height ?? 0) + (self.dividerSize?.height ?? 00) + self.badgeSize.height + self.spacingHeight
     return CGSize(
       width: self.contentWidth + (self.padding.width * 2),
       height: (self.compact ? compactHeight : normalHeight) + (self.padding.height * 2)
     )
   }
   
-  init(contentWidth: Double, compact: Bool? = nil, theme: PostLinkTheme? = nil, titleSize: CGSize, bodySize: CGSize? = nil, urlTagHeight: Double? = nil, mediaSize: CGSize? = nil, dividerSize: CGSize, badgeSize: CGSize, spacingHeight: Double) {
+  init(contentWidth: Double, compact: Bool? = nil, theme: PostLinkTheme? = nil, titleSize: CGSize, bodySize: CGSize? = nil, urlTagHeight: Double? = nil, mediaSize: CGSize? = nil, dividerSize: CGSize? = nil, badgeSize: CGSize, spacingHeight: Double) {
     self.contentWidth = contentWidth
     self.compact = compact ?? Defaults[.compactMode]
     self.theme = theme ?? getEnabledTheme().postLinks.theme
@@ -139,7 +139,7 @@ func getPostDimensions(post: Post, columnWidth: Double = UIScreen.screenWidth, s
     }
     
     
-    let compactTitleWidth = postGeneralSpacing + VotesCluster.verticalWidth + (extractedMedia.isNil ? 0 : postGeneralSpacing + compactMediaSize.width)
+    let compactTitleWidth = postGeneralSpacing + VotesCluster.verticalWidth + (extractedMedia == nil ? 0 : postGeneralSpacing + compactMediaSize.width)
     let titleContentWidth = contentWidth - (compact ? compactTitleWidth : 0)
     
     var appendStr = ""
@@ -182,7 +182,7 @@ func getPostDimensions(post: Post, columnWidth: Double = UIScreen.screenWidth, s
     
     let theresTitle = true
     let theresSelftext = !compact && !data.selftext.isEmpty
-    let theresMedia = !extractedMedia.isNil
+    let theresMedia = extractedMedia != nil
     let theresSubDivider = true
     let theresBadge = true
     let elements = [theresTitle, theresSelftext, !compact && theresMedia, theresSubDivider, theresBadge]
@@ -199,7 +199,7 @@ func getPostDimensions(post: Post, columnWidth: Double = UIScreen.screenWidth, s
       bodySize: !theresSelftext || compact ? nil : CGSize(width: contentWidth, height: ACC_bodyHeight),
       urlTagHeight: urlTagHeight,
       mediaSize: !theresMedia ? nil : compact ? compactMediaSize : CGSize(width: contentWidth, height: ACC_mediaSize.height),
-      dividerSize: CGSize(width: contentWidth, height: ACC_SubDividerHeight),
+      dividerSize: compact ? nil : CGSize(width: contentWidth, height: ACC_SubDividerHeight),
       badgeSize: CGSize(width: contentWidth, height: ACC_badgeHeight),
       spacingHeight: ACC_allSpacingsHeight
     )

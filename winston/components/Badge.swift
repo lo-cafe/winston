@@ -10,11 +10,11 @@ import SwiftUI
 import Defaults
 import NukeUI
 
-struct BadgeView: View {
+struct BadgeView: View, Equatable {
   static let authorStatsSpacing: Double = 2
-//  static func == (lhs: BadgeView, rhs: BadgeView) -> Bool {
-//    return lhs.extraInfo == rhs.extraInfo && lhs.theme == rhs.theme && lhs.avatarURL == rhs.avatarURL && lhs.saved == rhs.saved
-//  }
+  static func == (lhs: BadgeView, rhs: BadgeView) -> Bool {
+    return lhs.avatarURL == rhs.avatarURL && lhs.saved == rhs.saved && lhs.avatarRequest?.url == rhs.avatarRequest?.url
+  }
   
   var avatarRequest: ImageRequest?
   var saved = false
@@ -24,10 +24,10 @@ struct BadgeView: View {
   var created: Double
   var avatarURL: String?
   var theme: BadgeTheme
-  var extraInfo: [BadgeExtraInfo] = []
+  //  var extraInfo: [BadgeExtraInfo] = []
   var commentsCount: String?
   var votesCount: String?
-  var routerProxy: RouterProxy?
+  weak var routerProxy: RouterProxy?
   var cs: ColorScheme
   
   nonisolated func openUser() {
@@ -48,15 +48,16 @@ struct BadgeView: View {
       
       if showAvatar {
         AvatarRaw(saved: saved, avatarImgRequest: avatarRequest, userID: author, fullname: fullname, theme: theme.avatar)
-//        AvatarRaw(saved: saved, url: avatarURL, userID: author, fullname: fullname, theme: theme.avatar, avatarRequest: avatarRequest)
-            .highPriorityGesture(TapGesture().onEnded(openUser))
+          .equatable()
+        //          .drawingGroup()
+          .highPriorityGesture(TapGesture().onEnded(openUser))
       }
       
       VStack(alignment: .leading, spacing: BadgeView.authorStatsSpacing) {
-        
+        //
         Text(author).font(.system(size: theme.authorText.size, weight: theme.authorText.weight.t)).foregroundColor(author == "[deleted]" ? .red : usernameColor ?? theme.authorText.color.cs(cs).color())
           .onTapGesture(perform: openUser)
-
+        ////
         HStack(alignment: .center, spacing: 6) {
           
           if let commentsCount = commentsCount {
@@ -64,7 +65,6 @@ struct BadgeView: View {
               Image(systemName: "message.fill")
               Text(commentsCount)
             }
-            .foregroundStyle(defaultIconColor)
           }
           
           if let votesCount = votesCount {
@@ -72,18 +72,18 @@ struct BadgeView: View {
               Image(systemName: "arrow.up")
               Text(votesCount)
             }
-            .foregroundStyle(defaultIconColor)
           }
           
           HStack(alignment: .center, spacing: 2) {
             Image(systemName: "hourglass.bottomhalf.filled")
             Text(timeSince(Int(created)))
           }
-          .foregroundStyle(defaultIconColor)
           
         }
+        .foregroundStyle(defaultIconColor)
         .font(.system(size: theme.statsText.size, weight: theme.statsText.weight.t))
       }
+      //      .drawingGroup()
     }
     .scaleEffect(1)
     .animation(showAvatar ? nil : spring.delay(0.4), value: saved)
@@ -91,9 +91,6 @@ struct BadgeView: View {
 }
 
 struct Badge: View {
-//  static func == (lhs: Badge, rhs: Badge) -> Bool {
-//    lhs.theme == rhs.theme && lhs.avatarURL == rhs.avatarURL
-//  }
   
   var cs: ColorScheme
   var routerProxy: RouterProxy?
@@ -102,18 +99,18 @@ struct Badge: View {
   var usernameColor: Color?
   var avatarURL: String?
   var theme: BadgeTheme
-//  var extraInfo: [BadgeExtraInfo] = []
+  //  var extraInfo: [BadgeExtraInfo] = []
   
   
   var body: some View {
     if let data = post.data {
-      let extraInfo = showVotes ? [BadgeExtraInfo(systemImage: "message.fill", text: "\(formatBigNumber(data.num_comments))"), BadgeExtraInfo(systemImage: "arrow.up", text: "\(formatBigNumber(data.ups))")] : [BadgeExtraInfo(systemImage: "message.fill", text: "\(formatBigNumber(data.num_comments))")]
+      //      let extraInfo = showVotes ? [BadgeExtraInfo(systemImage: "message.fill", text: "\(formatBigNumber(data.num_comments))"), BadgeExtraInfo(systemImage: "arrow.up", text: "\(formatBigNumber(data.ups))")] : [BadgeExtraInfo(systemImage: "message.fill", text: "\(formatBigNumber(data.num_comments))")]
       BadgeView(saved: data.saved, usernameColor: usernameColor, author: data.author, fullname: data.author_fullname, created: data.created, avatarURL: avatarURL, theme: theme, commentsCount: formatBigNumber(data.num_comments), votesCount: !showVotes ? nil : formatBigNumber(data.ups), routerProxy: routerProxy, cs: cs)
     }
   }
 }
 
-struct BadgeKit {
+struct BadgeKit: Equatable {
   let numComments: Int
   let ups: Int
   let saved: Bool
@@ -122,10 +119,10 @@ struct BadgeKit {
   let created: Double
 }
 
-struct BadgeOpt: View {
-//  static func == (lhs: Badge, rhs: Badge) -> Bool {
-//    lhs.theme == rhs.theme && lhs.avatarURL == rhs.avatarURL
-//  }
+struct BadgeOpt: View, Equatable {
+  static func == (lhs: BadgeOpt, rhs: BadgeOpt) -> Bool {
+    return lhs.badgeKit == rhs.badgeKit && lhs.theme == rhs.theme && lhs.avatarRequest?.url == rhs.avatarRequest?.url && lhs.cs == rhs.cs
+  }
   
   var avatarRequest: ImageRequest?
   let badgeKit: BadgeKit
@@ -135,15 +132,11 @@ struct BadgeOpt: View {
   var usernameColor: Color?
   var avatarURL: String?
   var theme: BadgeTheme
-//  var extraInfo: [BadgeExtraInfo] = []
+  //  var extraInfo: [BadgeExtraInfo] = []
   
   
   var body: some View {
-//    if let data = post.data {
-      let extraInfo = showVotes ? [BadgeExtraInfo(systemImage: "message.fill", text: "\(formatBigNumber(badgeKit.numComments))"), BadgeExtraInfo(systemImage: "arrow.up", text: "\(formatBigNumber(badgeKit.ups))")] : [BadgeExtraInfo(systemImage: "message.fill", text: "\(formatBigNumber(badgeKit.numComments))")]
-//      BadgeView(saved: data.saved, usernameColor: usernameColor, author: data.author, fullname: data.author_fullname, created: data.created, avatarURL: avatarURL, theme: theme, extraInfo: extraInfo, routerProxy: routerProxy, cs: cs)
     BadgeView(avatarRequest: avatarRequest, saved: badgeKit.saved, usernameColor: usernameColor, author: badgeKit.author, fullname: badgeKit.authorFullname, created: badgeKit.created, avatarURL: avatarURL, theme: theme, commentsCount: formatBigNumber(badgeKit.numComments), votesCount: !showVotes ? nil : formatBigNumber(badgeKit.ups), routerProxy: routerProxy, cs: cs)
-//    }
   }
 }
 
@@ -162,19 +155,19 @@ struct BadgeComment: View, Equatable {
   
   var body: some View {
     if let data = comment.data, let author = data.author, let created = data.created {
-//      BadgeView(saved: data.saved ?? false, usernameColor: usernameColor, author: author, fullname: data.author_fullname, created: created, avatarURL: avatarURL, theme: theme, extraInfo: extraInfo, routerProxy: routerProxy, cs: cs)
+      //      BadgeView(saved: data.saved ?? false, usernameColor: usernameColor, author: author, fullname: data.author_fullname, created: created, avatarURL: avatarURL, theme: theme, extraInfo: extraInfo, routerProxy: routerProxy, cs: cs)
       BadgeView(saved: data.saved ?? false, usernameColor: usernameColor, author: author, fullname: data.author_fullname, created: created, avatarURL: avatarURL, theme: theme, routerProxy: routerProxy, cs: cs)
     }
   }
 }
 
 struct BadgeExtraInfo: Hashable, Equatable, Identifiable {
-    static func == (lhs: BadgeExtraInfo, rhs: BadgeExtraInfo) -> Bool {
-      lhs.id == rhs.id
-    }
+  static func == (lhs: BadgeExtraInfo, rhs: BadgeExtraInfo) -> Bool {
+    lhs.id == rhs.id
+  }
   var systemImage: String = ""
   var text: String
-//    var textColor: Color = Color.primary
+  //    var textColor: Color = Color.primary
   var iconColor: Color?
   var id: String {
     systemImage + text

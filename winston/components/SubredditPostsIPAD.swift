@@ -8,6 +8,7 @@
 import SwiftUI
 import Defaults
 import SwiftUIIntrospect
+import NukeUI
 
 struct SubredditPostsIPAD: View, Equatable {
   static func == (lhs: SubredditPostsIPAD, rhs: SubredditPostsIPAD) -> Bool {
@@ -23,6 +24,34 @@ struct SubredditPostsIPAD: View, Equatable {
   @Environment(\.contentWidth) var contentWidth
   @EnvironmentObject private var routerProxy: RouterProxy
   
+  @Default(.blurPostLinkNSFW) private var blurPostLinkNSFW
+  
+  @Default(.postSwipeActions) private var postSwipeActions
+  @Default(.compactMode) private var compactMode
+  @Default(.showVotes) private var showVotes
+  @Default(.showSelfText) private var showSelfText
+  @Default(.thumbnailPositionRight) private var thumbnailPositionRight
+  @Default(.voteButtonPositionRight) private var voteButtonPositionRight
+  
+  @Default(.readPostOnScroll) private var readPostOnScroll
+  @Default(.hideReadPosts) private var hideReadPosts
+  
+  @Default(.showUpvoteRatio) private var showUpvoteRatio
+  
+  @Default(.showSubsAtTop) private var showSubsAtTop
+  @Default(.showTitleAtTop) private var showTitleAtTop
+  
+  @ObservedObject var avatarCache = Caches.avatars
+  @ObservedObject private var videosCache = Caches.videos
+  @Environment(\.colorScheme) private var cs
+  
+  func getRepostAvatarRequest(_ post: Post?) -> ImageRequest? {
+    if let post = post, case .repost(let repost) = post.winstonData?.extractedMedia, let repostAuthorFullname = repost.data?.author_fullname {
+      return avatarCache.cache[repostAuthorFullname]?.data
+    }
+    return nil
+  }
+  
   var body: some View {
         Waterfall(
           collection: posts,
@@ -34,18 +63,35 @@ struct SubredditPostsIPAD: View, Equatable {
 //          itemSpacing: .init(mainAxisSpacing: 0, crossAxisSpacing: 0),
           contentForData: { post, i in
             Group {
-              if let sub = subreddit ?? post.winstonData?.subreddit {
-                PostLink(post: post, sub: sub, showSub: showSub, routerProxy: routerProxy)
-                  .equatable()
-                  .onAppear {
-                    if(posts.count - 15 == i) {
-                      if !searchText.isEmpty {
-                        fetch(true, searchText)
-                      } else {
-                        fetch(true, nil)
-                      }
-                    }
-                  }
+              if let sub = subreddit ?? post.winstonData?.subreddit, let postData = post.data, let winstonData = post.winstonData {
+                SwipeRevolution(size: winstonData.postDimensions.size, actionsSet: postSwipeActions, entity: post) { controller in
+                  PostLink(
+                    post: post,
+                    controller: controller,
+                    //                controller: nil,
+                    avatarRequest: avatarCache.cache[postData.author_fullname ?? ""]?.data,
+                    cachedVideo: videosCache.cache[post.id]?.data,
+                    repostAvatarRequest: getRepostAvatarRequest(post),
+                    theme: selectedTheme.postLinks,
+                    sub: sub,
+                    showSub: showSub,
+                    routerProxy: routerProxy,
+                    contentWidth: contentWidth,
+                    blurPostLinkNSFW: blurPostLinkNSFW,
+                    postSwipeActions: postSwipeActions,
+                    showVotes: showVotes,
+                    showSelfText: showSelfText,
+                    readPostOnScroll: readPostOnScroll,
+                    hideReadPosts: hideReadPosts,
+                    showUpvoteRatio: showUpvoteRatio,
+                    showSubsAtTop: showSubsAtTop,
+                    showTitleAtTop: showTitleAtTop,
+                    compact: compactMode,
+                    thumbnailPositionRight: thumbnailPositionRight,
+                    voteButtonPositionRight: voteButtonPositionRight,
+                    cs: cs
+                  )
+                }
               }
             }
           },

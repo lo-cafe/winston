@@ -6,6 +6,8 @@
 //
 
 import SwiftUI
+import NukeUI
+import Defaults
 
 enum SearchType: String {
   case subreddit = "Subreddit"
@@ -56,6 +58,30 @@ struct Search: View {
   
   @Environment(\.useTheme) private var theme
   @EnvironmentObject private var routerProxy: RouterProxy
+  
+  @Default(.blurPostLinkNSFW) private var blurPostLinkNSFW
+  @Default(.postSwipeActions) private var postSwipeActions
+  @Default(.compactMode) private var compactMode
+  @Default(.showVotes) private var showVotes
+  @Default(.showSelfText) private var showSelfText
+  @Default(.thumbnailPositionRight) private var thumbnailPositionRight
+  @Default(.voteButtonPositionRight) private var voteButtonPositionRight
+  @Default(.readPostOnScroll) private var readPostOnScroll
+  @Default(.hideReadPosts) private var hideReadPosts
+  @Default(.showUpvoteRatio) private var showUpvoteRatio
+  @Default(.showSubsAtTop) private var showSubsAtTop
+  @Default(.showTitleAtTop) private var showTitleAtTop
+  
+  @ObservedObject var avatarCache = Caches.avatars
+  @Environment(\.colorScheme) private var cs
+  @Environment(\.contentWidth) private var contentWidth
+  
+  func getRepostAvatarRequest(_ post: Post?) -> ImageRequest? {
+    if let post = post, case .repost(let repost) = post.winstonData?.extractedMedia, let repostAuthorFullname = repost.data?.author_fullname {
+      return avatarCache.cache[repostAuthorFullname]?.data
+    }
+    return nil
+  }
   
   func fetch() {
     if searchQuery.text == "" { return }
@@ -135,10 +161,37 @@ struct Search: View {
               case .post:
                 if let dummyAllSub = dummyAllSub {
                   ForEach(resultPosts.data) { post in
-                    PostLink(post: post, sub: dummyAllSub, routerProxy: routerProxy)
-                      .equatable()
+                    if let postData = post.data, let winstonData = post.winstonData {
+                      SwipeRevolution(size: winstonData.postDimensions.size, actionsSet: postSwipeActions, entity: post) { controller in
+                        PostLink(
+                          post: post,
+                          controller: controller,
+                          //                controller: nil,
+                          avatarRequest: avatarCache.cache[postData.author_fullname ?? ""]?.data,
+                          repostAvatarRequest: getRepostAvatarRequest(post),
+                          theme: theme.postLinks,
+                          sub: dummyAllSub,
+                          showSub: true,
+                          routerProxy: routerProxy,
+                          contentWidth: contentWidth,
+                          blurPostLinkNSFW: blurPostLinkNSFW,
+                          postSwipeActions: postSwipeActions,
+                          showVotes: showVotes,
+                          showSelfText: showSelfText,
+                          readPostOnScroll: readPostOnScroll,
+                          hideReadPosts: hideReadPosts,
+                          showUpvoteRatio: showUpvoteRatio,
+                          showSubsAtTop: showSubsAtTop,
+                          showTitleAtTop: showTitleAtTop,
+                          compact: compactMode,
+                          thumbnailPositionRight: thumbnailPositionRight,
+                          voteButtonPositionRight: voteButtonPositionRight,
+                          cs: cs
+                        )
+                      }
                       .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
                       .animation(.default, value: resultPosts.data)
+                    }
                   }
                 }
               }

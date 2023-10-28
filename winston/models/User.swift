@@ -19,14 +19,21 @@ extension User {
     self.init(id: id, api: api, typePrefix: "\(User.prefix)_")
   }
   
-  func refetchOverview(_ after: String? = nil) async -> [Either<PostData, CommentData>]? {
+  func refetchOverview(_ after: String? = nil) async -> [Either<Post, Comment>]? {
     if let name = data?.name, let overviewData = await RedditAPI.shared.fetchUserOverview(name, after) {
-        await MainActor.run {
-          self.loading = false
-        }
-        return overviewData
+      await MainActor.run {
+        self.loading = false
       }
-
+      
+      return overviewData.map {
+        switch $0 {
+        case .first(let postData):
+          return .first(Post(data: postData, api: RedditAPI.shared))
+        case .second(let commentData):
+          return .second(Comment(data: commentData, api: RedditAPI.shared))
+        }
+      }
+    }
     return nil
   }
   

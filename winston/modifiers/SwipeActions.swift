@@ -207,11 +207,11 @@ struct SwipeUI<T: GenericRedditEntityDataType, B: Hashable>: ViewModifier {
   }
 }
 
-struct SwipeUIBtn<T: GenericRedditEntityDataType, B: Hashable>: View {
+struct SwipeUIBtn<T: GenericRedditEntityDataType, B: Hashable>: View, Equatable {
 //struct SwipeUIBtn: View {
-//  static func == (lhs: SwipeUIBtn<T, B>, rhs: SwipeUIBtn<T, B>) -> Bool {
-//    lhs.entity == rhs.entity && lhs.info?.0 == rhs.info?.0 && lhs.info?.1 == rhs.info?.1 && lhs.info?.2 == rhs.info?.2 && lhs.info?.3 == rhs.info?.3
-//  }
+  static func == (lhs: SwipeUIBtn<T, B>, rhs: SwipeUIBtn<T, B>) -> Bool {
+    lhs.entity == rhs.entity && lhs.info?.0 == rhs.info?.0 && lhs.info?.1 == rhs.info?.1 && lhs.info?.2 == rhs.info?.2 && lhs.info?.3 == rhs.info?.3
+  }
   
   var info: (SwipeActionItem, SwipeActionItem, SwipeActionItem, Bool)?
   var secondActiveFunc: (GenericRedditEntity<T, B>) -> Bool

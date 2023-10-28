@@ -8,7 +8,10 @@
 import Foundation
 import SwiftUI
 
-struct GesturerHolder<Content: View>: UIViewRepresentable {
+struct GesturerHolder<Content: View>: UIViewControllerRepresentable, Equatable {
+  static func == (lhs: GesturerHolder<Content>, rhs: GesturerHolder<Content>) -> Bool {
+    lhs.id == rhs.id
+  }
   
   enum Directions: String, Equatable {
     case vertical
@@ -16,13 +19,14 @@ struct GesturerHolder<Content: View>: UIViewRepresentable {
     case both
   }
   
-  private let view = TappableUIView()
+//  private let view = UIView()
   private var startLocation: CGPoint? = nil
   private var scrolling = false
   private var dragOffset: CGFloat = 0
   private var dragOffsetX: CGFloat = 0
   private var dragOffsetY: CGFloat = 0
   
+  var id: String
   var size: CGSize
   var directions: Directions = .both
   var minimumDragDistance: CGFloat? = 0
@@ -32,9 +36,10 @@ struct GesturerHolder<Content: View>: UIViewRepresentable {
   var onDragChanged: ((@escaping () -> Void, CGPoint, CGPoint, CGPoint) -> Void)? = nil
   var onDragEnded: ((CGPoint, CGPoint) -> Void)? = nil
   var disabled: Bool?
-  var content: () -> Content
+  var content: (UIViewController?) -> Content
   
-  init(size: CGSize, directions: Directions, minimumDragDistance: CGFloat? = 0, onTap: (() -> Void)? = nil, onPress: ( (Bool) -> Void)? = nil, onPressCancel: ( () -> Void)? = nil, onDragChanged: ( (@escaping () -> Void, CGPoint, CGPoint, CGPoint) -> Void)? = nil, onDragEnded: ( (CGPoint, CGPoint) -> Void)? = nil, disabled: Bool? = nil, @ViewBuilder content: @escaping () -> Content) {
+  init(id: String, size: CGSize, directions: Directions, minimumDragDistance: CGFloat? = 0, onTap: (() -> Void)? = nil, onPress: ( (Bool) -> Void)? = nil, onPressCancel: ( () -> Void)? = nil, onDragChanged: ( (@escaping () -> Void, CGPoint, CGPoint, CGPoint) -> Void)? = nil, onDragEnded: ( (CGPoint, CGPoint) -> Void)? = nil, disabled: Bool? = nil, @ViewBuilder content: @escaping (UIViewController?) -> Content) {
+    self.id = id
     self.size = size
     self.directions = directions
     self.minimumDragDistance = minimumDragDistance
@@ -47,39 +52,41 @@ struct GesturerHolder<Content: View>: UIViewRepresentable {
     self.content = content
   }
   
-  func makeUIView(context: Context) -> UIView {
-    let view = UIHostingConfiguration(content: content).makeContentView()
-//    view.addSubview(subview)
-//    let view = UIView(frame: CGRect(origin: .zero, size: size))
-//    view.backgroundColor = .clear
-////    view.frame = CGRect(origin: .zero, size: size)
-//    
-//    let hostingController = context.coordinator.hostingController
-//    hostingController.view.frame = view.bounds
-//    hostingController.view.backgroundColor = .clear
-//    hostingController.view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-//
-//    view.addSubview(hostingController.view)
+  func makeUIViewController(context: Context) -> UIHostingController<Content> {
     
-    if (onTap != nil) {
-      addTapRecognizer(to: view, with: context)
+//    let controller = UIViewController()
+    let hostingController = UIHostingController(rootView: self.content(nil))
+    let contentView = self.content(hostingController)
+    hostingController.rootView = contentView
+//    controller.addChild(hostingController)
+//    controller.view.addSubview(hostingController.view)
+//    hostingController.view.bounds = CGRect(origin: .zero, size: size)
+//    hostingController.view.frame = hostingController.view.bounds
+//    hostingController.view.translatesAutoresizingMaskIntoConstraints = false
+    hostingController.view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+    context.coordinator.view = hostingController.view
+    
+      
+    if let view = hostingController.view {
+      if (onTap != nil) {
+        addTapRecognizer(to: view, with: context)
+      }
+      if (onPress != nil) {
+        addPressRecognizer(to: view, with: context)
+      }
+      if (onDragChanged != nil || onDragEnded != nil) {
+        addDragRecognizer(to: view, with: context)
+      }
     }
-    if (onPress != nil) {
-      addPressRecognizer(to: view, with: context)
-    }
-    if (onDragChanged != nil || onDragEnded != nil) {
-      addDragRecognizer(to: view, with: context)
-    }
-    return view
+    return hostingController
   }
   
-  func updateUIView(_ uiView: UIView, context: Context) {
-//    let newSize = CGRect(origin: .zero, size: size)
-//    if uiView.frame != newSize {
-//      print("moka", uiView.frame, newSize, uiView.frame == newSize)
-//      uiView.frame = newSize
-//    }
-//    context.coordinator.hostingController.rootView = self.content()
+  func updateUIViewController(_ hostingController: UIHostingController<Content>, context: Context) {
+//    let newContentView = self.content(hostingController)
+//    hostingController.rootView = newContentView
+//    hostingController.view.bounds = CGRect(origin: .zero, size: size)
+//    hostingController.view.frame = hostingController.view.bounds
+//    context.coordinator.view = hostingController.view
   }
   
   func makeCoordinator() -> Coordinator {
@@ -117,6 +124,7 @@ struct GesturerHolder<Content: View>: UIViewRepresentable {
 //    var hostingConfig: UIHostingConfiguration<Content, EmptyView>
     private var parent: GesturerHolder
     private var panning = false
+    var view: UIView? = nil
     
     init(parent: GesturerHolder) {
       self.parent = parent
@@ -146,13 +154,13 @@ struct GesturerHolder<Content: View>: UIViewRepresentable {
     }
     
     @objc fileprivate func handleDrag(_ sender: UIPanGestureRecognizer) {
-      let now = sender.translation(in: self.parent.view)
-      let velocity = sender.velocity(in: self.parent.view)
+      let now = sender.translation(in: self.view)
+      let velocity = sender.velocity(in: self.view)
       switch sender.state {
       case .began:
         panning = true
         //        self.parent.onPress?(false)
-        let location = sender.location(in: self.parent.view)
+        let location = sender.location(in: self.view)
         self.parent.startLocation = location
         if abs(now.x) > parent.minimumDragDistance! {
           parent.dragOffsetX = now.x > 0 ? -parent.minimumDragDistance! : parent.minimumDragDistance!

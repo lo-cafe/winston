@@ -10,7 +10,7 @@
 // Expect changes.
 
 import SwiftUI
-import IGListKit
+import SectionKit
 import UIKit
 import Defaults
 
@@ -55,16 +55,15 @@ struct WinstonCollectionView<CellContent: View, T: GenericRedditEntityDataType, 
     itemSpacing: ItemSpacing = ItemSpacing(mainAxisSpacing: 0, crossAxisSpacing: 0),
     sectionInset: EdgeInsets = .init(top: 0, leading: 0, bottom: 0, trailing: 0),
     rawCustomize: RawCustomize? = nil,
-    @ViewBuilder contentForData: @escaping ContentForData) where Collections == [Collection]
+    @ViewBuilder contentForData: @escaping ContentForData)
   {
-    self.init(
-      collections: [collection],
-      scrollDirection: scrollDirection,
-      contentSize: contentSize,
-      itemSpacing: itemSpacing,
-      sectionInset: sectionInset,
-      rawCustomize: rawCustomize,
-      contentForData: contentForData)
+    self.collection = collection
+    self.scrollDirection = scrollDirection
+    self.contentSize = contentSize
+    self.itemSpacing = itemSpacing
+    self.sectionInset = sectionInset
+    self.rawCustomize = rawCustomize
+    self.contentForData = contentForData
   }
   
   func makeCoordinator() -> Coordinator {
@@ -77,162 +76,112 @@ struct WinstonCollectionView<CellContent: View, T: GenericRedditEntityDataType, 
     viewController.collectionView.delegate = coordinator
     coordinator.view = self
     coordinator.collectionController = viewController
-    coordinator.configureDataSource()
-//    coordinator.snapshotForCurrentState()
-    //    coordinator.snap
-    //    self.rawCustomize?(viewController.collectionView)
+    viewController.collectionViewAdapter = ListCollectionViewAdapter(
+      collectionView: viewController.collectionView,
+      dataSource: context.coordinator, // no worries, we're going to add conformance to the protocol in a bit
+      viewController: viewController
+    )
+//    collectionView.register(
+//      CharacterCollectionViewCell.self,
+//      forCellWithReuseIdentifier: CharacterCollectionViewCell.description()
+//    )
     return viewController
   }
   
-  func updateUIViewController(_ uiViewController: CollectionViewController, context: Context) {
+  func updateUIViewController(_ viewController: CollectionViewController, context: Context) {
     context.coordinator.view = self
-    context.coordinator.snapshotForCurrentState()
-    //    context.coordinator.itemsDataSource = uiViewController.data
-    //    if context.coordinator.data.count != collections[0].count {
-    //      if collections.count > 0 {
-//    uiViewController.collectionView.reloadData()
-    //    }
+//    context.coordinator.
+    viewController.collectionViewAdapter.invalidateDataSource()
+    //    uiViewController.collectionView.
   }
 }
 
 extension WinstonCollectionView {
   
-  final class Coordinator : NSObject, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, IGListSectionController {
-    
+  final class Coordinator : NSObject, ListCollectionViewAdapterDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
     fileprivate var view: WinstonCollectionView
     fileprivate var collectionController: CollectionViewController?
-    
-    
-//    var registration: UICollectionView.CellRegistration<UICollectionViewListCell, Data>!
-//    fileprivate var itemsDataSource: UICollectionViewDiffableDataSource<GenericSection, Data.ID>!
     
     init(view: WinstonCollectionView) {
       self.view = view
     }
     
-//    func configureDataSource() {
-//      let itemCellRegistration = UICollectionView.CellRegistration<UICollectionViewListCell, Data> { cell, indexPath, item in
-//        let contentConfiguration = UIHostingConfiguration { self.view.contentForData(item, self.collectionController!, indexPath.item, self.view.collections[0].count) }
-//        cell.contentConfiguration = contentConfiguration
-//      }
-//
-//      itemsDataSource = UICollectionViewDiffableDataSource(collectionView: self.collectionController!.collectionView) {
-//        collectionView, indexPath, identifier -> UICollectionViewCell in
-//        let item = self.view.collections[0].first { $0.id == identifier}
-//        var cell = collectionView.dequeueConfiguredReusableCell(using: itemCellRegistration, for: indexPath, item: item)
-//        return cell
-//      }
-//    }
-    
-//    func snapshotForCurrentState() {
-//      let itemsIds: [Data.ID] = self.view.collections[0].map { $0.id }
-//
-//      var snapshot = NSDiffableDataSourceSnapshot<GenericSection, Data.ID>()
-//      snapshot.appendSections([.main])
-//      snapshot.appendItems(itemsIds, toSection: .main)
-//      itemsDataSource.applySnapshotUsingReloadData(snapshot)
-//    }
-    
-//    func numberOfSections(in collectionView: UICollectionView) -> Int {
-//      //      collectionView.gestureRecognizers?.forEach { (recognizer) in
-//      //        if let longPressRecognizer = recognizer as? UILongPressGestureRecognizer {
-//      //          longPressRecognizer.minimumPressDuration = 0
-//      //        }
-//      //      }
-//      return self.view.collections[0].count
-//    }
-    
-//    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-//      return self.view.collections[0].count
-//    }
-//
-//    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-//      switch self.view.contentSize {
-//      case .fixed(let size):
-//        return size
-//      case .variable(let sizeForData):
-//        let data = self.view.collections[indexPath.section][indexPath.item]
-//        return sizeForData(data)
-//      case .crossAxisFilled(let mainAxisLength):
-//        switch self.view.scrollDirection {
-//        case .horizontal:
-//          return CGSize(width: mainAxisLength, height: collectionView.bounds.height)
-//        case .vertical:
-//          fallthrough
-//        @unknown default:
-//          return CGSize(width: collectionView.bounds.width, height: mainAxisLength)
-//        }
-//      case .custom(let customSizeForData):
-//        let data = self.view.collections[indexPath.section][indexPath.item]
-//        return customSizeForData(collectionView, collectionViewLayout, data)
-//      }
-//    }
-    
-    func objects(for listAdapter: ListAdapter) -> [ListDiffable] {
-      // this can be anything!
-      return self.view.collection
+    private func createSectionModels() -> [FeedFirstSectionModel<T, B>] {
+      [FeedFirstSectionModel(items: view.collection)]
     }
-
-    func listAdapter(_ listAdapter: ListAdapter, sectionControllerFor object: Data) -> ListSectionController {
-      if object is String {
-        return LabelSectionController()
-      } else {
-        return NumberSectionController()
+    
+    func sections(for adapter: SectionKit.CollectionViewAdapter) -> [SectionKit.Section] {
+      createSectionModels().compactMap { model in
+        if let collectionController = self.collectionController {
+          let controler = DataSectionController(model: model, contentForData: self.view.contentForData, collectionController: collectionController)
+          return Section(
+            id: model.sectionId,
+            model: model,
+            controller: controler
+          )
+        }
+        return nil
       }
     }
-
-    func emptyView(for listAdapter: ListAdapter) -> UIView? {
-      return nil
-    }
     
-    override func sizeForItem(at index: Int) -> CGSize {
-      return CGSize(width: collectionContext!.containerSize.width, height: 55)
+    class DataSectionController: FoundationDiffingListSectionController<FeedFirstSectionModel<T, B>, Data> {
+      fileprivate var contentForData: ContentForData
+      fileprivate var collectionController: CollectionViewController
+      
+      init(model: FeedFirstSectionModel<T, B>, contentForData: @escaping ContentForData, collectionController: CollectionViewController) {
+        self.contentForData = contentForData
+        self.collectionController = collectionController
+        super.init(model: model)
+      }
+      
+      override func items(for model: FeedFirstSectionModel<T, B>) -> [Data] {
+        return model.items
+      }
+      
+      override func cellForItem(at indexPath: SectionIndexPath, in context: CollectionViewContext) -> UICollectionViewCell {
+        let cell = context.dequeueReusableCell(CharacterCollectionViewCell.self, for: indexPath)
+        let item = items[indexPath]
+        
+//        if cell.contentConfiguration == nil {
+          let contentConfiguration = UIHostingConfiguration { contentForData(item, collectionController, indexPath.indexInSectionController, items.count) }
+          cell.contentConfiguration = contentConfiguration
+//        }
+        return cell
+      }
+      
+      override func sizeForItem(at indexPath: SectionIndexPath, using layout: UICollectionViewLayout, in context: CollectionViewContext) -> CGSize {
+        if let post = items[indexPath] as? Post, let winstonData = post.winstonData {
+          return winstonData.postDimensions.size
+        }
+        return CGSize(width: context.containerSize.width, height: 300)
+      }
     }
-
-    override func cellForItem(at index: Int) -> UICollectionViewCell {
-      return collectionContext!.dequeueReusableCell(of: Data.self, for: self, at: index)
-    }
-    
-//    private func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSection section: Int) -> EdgeInsets {
-//      return self.view.sectionInset
-//    }
-//
-//    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
-//      return self.view.itemSpacing.mainAxisSpacing
-//    }
-//
-//    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
-//      return self.view.itemSpacing.crossAxisSpacing
-//    }
   }
+}
+struct FeedFirstSectionModel<T: GenericRedditEntityDataType, B: Hashable> {
+  let items: [GenericRedditEntity<T, B>]
+}
+
+enum FeedSectionId: Hashable {
+  case first
+}
+
+protocol FeedSection {
+  var sectionId: FeedSectionId { get }
+}
+
+extension FeedFirstSectionModel: FeedSection {
+  var sectionId: FeedSectionId { .first }
 }
 
 extension WinstonCollectionView {
   final class CollectionViewController : UIViewController {
     fileprivate let layout: UICollectionViewFlowLayout
     fileprivate let collectionView: UICollectionView
+    fileprivate var collectionViewAdapter: CollectionViewAdapter!
+    
     
     init(scrollDirection: ScrollDirection, inset: EdgeInsets, coordinator: Coordinator) {
-      //      let layout = UICollectionViewFlowLayout()
-      //      self.contentForData = contentForData
-      //      let layoutConfig = UICollectionLayoutListConfiguration(appearance: .plain)
-      //      let layout = UICollectionViewCompositionalLayout.list(using: layoutConfig)
-      //      layout.scrollDirection = scrollDirection
-      //      self.layout = layout
-      //
-      //      super.init(collectionViewLayout: layout)
-      ////      let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
-      //      self.collectionView.showsVerticalScrollIndicator = false
-      //      self.collectionView.backgroundColor = nil
-      //      self.collectionView.isPrefetchingEnabled = true
-      //      self.collectionView.dataSource = itemsDataSource
-      //      //      collectionView.dataSource = coordinator.itemsDataSource
-      //      self.collectionView.delegate = coordinator
-      //      self.collectionView.contentInset = UIEdgeInsets(top: inset.top, left: inset.leading, bottom: inset.bottom, right: inset.trailing)
-      ////      super.init(nibName: nil, bundle: nil)
-      
-      
-      
       let layout = UICollectionViewFlowLayout()
       layout.scrollDirection = scrollDirection
       self.layout = layout
@@ -243,13 +192,8 @@ extension WinstonCollectionView {
       collectionView.showsVerticalScrollIndicator = false
       collectionView.contentInset = UIEdgeInsets(top: inset.top, left: inset.leading, bottom: inset.bottom, right: inset.trailing)
       
-      let updater = ListAdapterUpdater()
-      let adapter = ListAdapter(updater: updater, viewController: coordinator)
-      adapter.collectionView = collectionView
-      adapter.dataSoure = coordinator
-//      adapter.data
-      
       self.collectionView = collectionView
+      
       super.init(nibName: nil, bundle: nil)
     }
     
@@ -261,4 +205,13 @@ extension WinstonCollectionView {
       self.view = self.collectionView
     }
   }
+}
+
+final class CharacterCollectionViewCell: UICollectionViewCell {
+
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        contentConfiguration = nil
+    }
+
 }

@@ -20,6 +20,7 @@ struct URLImage: View, Equatable {
   var imgRequest: ImageRequest? = nil
   var pipeline: ImagePipeline? = nil
   var processors: [ImageProcessing]? = nil
+  var size: CGSize?
   
   var body: some View {
     if url.absoluteString.hasSuffix(".gif") {
@@ -37,15 +38,11 @@ struct URLImage: View, Equatable {
       if let imgRequest = imgRequest {
         LazyImage(request: imgRequest) { state in
           if case .success(let response) = state.result {
-            Image(uiImage: response.image).resizable()
+            AltImage(image: response.image, size: size)
+//            Image(uiImage: response.image).resizable()
           }
 //          if let image = state.image {
-//            image
-//          } else if state.error != nil {
-//            Color.red.opacity(0.1)
-//              .overlay(Image(systemName: "xmark.circle.fill").foregroundColor(.red))
-//          } else {
-//            URLImageLoader(size: 50).equatable()
+//            image.resizable()
 //          }
         }
         .onDisappear(.cancel)
@@ -66,6 +63,34 @@ struct URLImage: View, Equatable {
       }
       
     }
+  }
+}
+
+struct ThumbReqImage: View, Equatable {
+  static func == (lhs: ThumbReqImage, rhs: ThumbReqImage) -> Bool {
+    lhs.imgRequest.url == rhs.imgRequest.url
+  }
+  
+  var imgRequest: ImageRequest
+  var size: CGSize?
+  
+  var body: some View {
+    LazyImage(request: imgRequest) { state in
+                if case .success(let response) = state.result {
+//                  Image(uiImage: response.image).resizable()
+                  AltImage(image: response.image, size: size)
+                }
+//      if let image = state.image {
+//        image.resizable().aspectRatio(contentMode: .fill)
+//      } else if state.error != nil {
+//        Color.red.opacity(0.1)
+//          .overlay(Image(systemName: "xmark.circle.fill").foregroundColor(.red))
+//      } else {
+//        URLImageLoader(size: 50).equatable()
+//      }
+    }
+    .onDisappear(.cancel)
+    //        .id("\(imgRequest.url?.absoluteString ?? "")-nuke")
   }
 }
 
