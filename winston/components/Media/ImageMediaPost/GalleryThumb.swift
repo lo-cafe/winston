@@ -26,7 +26,7 @@ struct GalleryThumb: View, Equatable {
       .scaledToFill()
       .zIndex(1)
       .allowsHitTesting(false)
-      .fixedSize(horizontal: false, vertical: height.isNil)
+      .fixedSize(horizontal: false, vertical: height == nil)
       .frame(width: width, height: height)
       .clipped()
       .mask(RR(selectedTheme.postLinks.theme.mediaCornerRadius, Color.black))

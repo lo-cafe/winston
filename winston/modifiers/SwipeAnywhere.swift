@@ -56,7 +56,7 @@ struct SwipeAnywhere: ViewModifier {
         ? nil
         : DragGesture()
           .updating($dragState) { val, state, trans in
-            if state.dragging.isNil { state.dragging = abs(val.translation.width) > abs(val.translation.height) }
+            if state.dragging == nil { state.dragging = abs(val.translation.width) > abs(val.translation.height) }
             guard let dragging = state.dragging, dragging else { return }
             let translation = val.translation
             trans.isContinuous = true
