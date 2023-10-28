@@ -30,7 +30,6 @@ If applicable, add screenshots or screen recordings to help explain your problem
 **Device (please complete the following information):**
  - Device: [e.g. iPhone 15]
  - OS: [e.g. iOS 17.0]
- - Build Number [e.g. 144]
 
 **Additional context**
 Add any other context about the problem here.

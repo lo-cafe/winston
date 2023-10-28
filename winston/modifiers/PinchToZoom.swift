@@ -56,7 +56,7 @@ class PinchZoomView: UIView, UIGestureRecognizerDelegate {
     panGesture = newPanGesture
     addGestureRecognizer(newPanGesture)
     
-    if !onTap.isNil {
+    if onTap != nil {
       let doubleTap = UIShortTapGestureRecognizer(target: self, action: #selector(doubleTap(gesture:)))
       doubleTap.numberOfTapsRequired = 2
       addGestureRecognizer(doubleTap)
