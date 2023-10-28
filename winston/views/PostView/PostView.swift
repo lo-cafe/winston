@@ -120,7 +120,7 @@ struct PostView: View, Equatable {
         updatePost()
       }
       .onAppear {
-        if post.data.isNil {
+        if post.data == nil {
           updatePost()
         }
         Task(priority: .background) {

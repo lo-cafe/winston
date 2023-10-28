@@ -30,7 +30,7 @@ class BaseCache<T: Any>: ObservableObject {
   }
   
   func addKeyValue(key: String, data: @escaping () -> T) {
-    if !cache[key].isNil { return }
+    if cache[key] != nil { return }
     Task(priority: .background) {
       let itemData = data()
       // Create a new CacheItem with the current date
@@ -68,7 +68,7 @@ class BaseObservableCache<T: ObservableObject>: ObservableObject {
   }
   
   func addKeyValue(key: String, data: @escaping () -> T) {
-    if !cache[key].isNil { return }
+    if cache[key] != nil { return }
     Task(priority: .background) {
       let itemData = data()
       // Create a new CacheItem with the current date

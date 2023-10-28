@@ -20,7 +20,7 @@ struct OFWOpener: View {
   var body: some View {
     EmptyView()
       .onChange(of: router.path) { _ in
-        if !OpenFromWeb.shared.data.isNil {
+        if OpenFromWeb.shared.data != nil {
           OpenFromWeb.shared.data = nil
         }
       }
