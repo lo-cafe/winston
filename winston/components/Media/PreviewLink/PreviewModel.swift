@@ -21,7 +21,7 @@ final class PreviewModel: ObservableObject {
   
   var previewURL: URL? {
     didSet {
-      if !previewURL.isNil { fetchMetadata() }
+      if previewURL != nil { fetchMetadata() }
     }
   }
   

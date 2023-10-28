@@ -63,7 +63,7 @@ struct LightBoxImage: View {
       : DragGesture(minimumDistance: 20)
         .onChanged { val in
           
-          if dragAxis.isNil || dragOffset.isNil {
+          if dragAxis == nil || dragOffset == nil {
             dragOffset = val.translation
             if abs(val.predictedEndTranslation.width) > abs(val.predictedEndTranslation.height) {
               dragAxis = .horizontal

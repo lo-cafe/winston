@@ -46,17 +46,23 @@ extension Subreddit {
   }
   
   func favoriteToggle(entity: CachedSub? = nil) {
-    if let favoritedStatus = data?.user_has_favorited, let name = data?.display_name {
-      
-      if let entity = entity, let context = entity.managedObjectContext {
+    if let entity = entity, let name = data?.display_name {
+      let favoritedStatus = entity.user_has_favorited
+      if let context = entity.managedObjectContext {
         entity.user_has_favorited = !favoritedStatus
-        try? context.save()
+        withAnimation {
+          self.data?.user_has_favorited = !favoritedStatus
+          try? context.save()
+        }
         
         Task {
           let result = await RedditAPI.shared.favorite(!favoritedStatus, subName: name)
           if !result {
             entity.user_has_favorited = favoritedStatus
-            try? context.save()
+            withAnimation {
+              self.data?.user_has_favorited = favoritedStatus
+              try? context.save()
+            }
           }
         }
       }
@@ -69,7 +75,7 @@ extension Subreddit {
     let context = PersistenceController.shared.container.viewContext
     
     if let data = data {
-      func doToggle() {
+      @Sendable func doToggle() {
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "CachedSub")
         guard let results = (context.performAndWait { return try? context.fetch(fetchRequest) as? [CachedSub] }) else { return }
         let foundSub = context.performAndWait { results.first(where: { $0.name == self.data?.name }) }
