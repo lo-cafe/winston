@@ -151,7 +151,7 @@ struct UserView: View {
             }
           }
           
-          if !lastItemId.isNil || loadingOverview {
+          if lastItemId != nil || loadingOverview {
             ProgressView()
               .progressViewStyle(.circular)
               .frame(maxWidth: .infinity, minHeight: 100 )
@@ -164,7 +164,7 @@ struct UserView: View {
         .transition(.opacity)
       }
     }
-    .loader(user.data.isNil)
+    .loader(user.data == nil)
     .themedListBG(selectedTheme.lists.bg)
     .scrollContentBackground(.hidden)
     .listStyle(.plain)

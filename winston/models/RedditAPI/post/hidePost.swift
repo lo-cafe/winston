@@ -19,7 +19,7 @@ private class HideDebouncer {
 extension RedditAPI {
   func hidePost(_ hide: Bool, fullnames: [String]) async -> () {
     HideDebouncer.shared.names += fullnames
-    if !HideDebouncer.shared.workItem.isNil { return }
+    if HideDebouncer.shared.workItem != nil { return }
     HideDebouncer.shared.workItem = DispatchWorkItem {
       HideDebouncer.shared.workItem = nil
       let names = HideDebouncer.shared.names

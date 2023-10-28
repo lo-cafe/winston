@@ -16,7 +16,7 @@ class SharedVideoCache: ObservableObject {
   let cacheLimit = 35
   
   func addKeyValue(key: String, url: URL, size: CGSize) {
-    if !cache[key].isNil { return }
+    if cache[key] != nil { return }
     Task(priority: .background) {
       // Create a new CacheItem with the current date
       let video = SharedVideo(url: url, size: size)
@@ -225,8 +225,8 @@ struct FullScreenVP: View {
         ? nil
         : DragGesture(minimumDistance: 10)
           .onChanged { val in
-            if cancelDrag.isNil { cancelDrag = abs(val.translation.width) > abs(val.translation.height) }
-            if cancelDrag.isNil || cancelDrag! { return }
+            if cancelDrag == nil { cancelDrag = abs(val.translation.width) > abs(val.translation.height) }
+            if cancelDrag == nil || cancelDrag! { return }
             var transaction = Transaction()
             transaction.isContinuous = true
             transaction.animation = .interpolatingSpring(stiffness: 1000, damping: 100, initialVelocity: 0)
@@ -239,7 +239,7 @@ struct FullScreenVP: View {
           .onEnded { val in
             let prevCancelDrag = cancelDrag
             cancelDrag = nil
-            if prevCancelDrag.isNil || prevCancelDrag! { return }
+            if prevCancelDrag == nil || prevCancelDrag! { return }
             let shouldClose = abs(val.translation.width) > 100 || abs(val.translation.height) > 100
             withAnimation(.interpolatingSpring(stiffness: 200, damping: 20, initialVelocity: 0)) {
               drag = .zero

@@ -53,7 +53,7 @@ class RedditAPI: ObservableObject {
   }
   
   func refreshToken(_ force: Bool = false, count: Int = 0) async -> Void {
-    if force || loggedUser.lastRefresh.isNil {
+    if force || loggedUser.lastRefresh == nil {
       await MainActor.run {
         loggedUser.lastRefresh = Date(seconds: Date().timeIntervalSince1970 - Double(loggedUser.expiration ?? 86400 * 10))
       }
