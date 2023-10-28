@@ -41,7 +41,7 @@ struct AppearancePanel: View {
       }
       .themedListDividers()
       
-      Section {
+      Section{
         WNavigationLink(value: SettingsPages.themes) {
           Label("Themes", systemImage: "paintbrush.fill")
         }
@@ -51,6 +51,8 @@ struct AppearancePanel: View {
         WNavigationLink(value: SettingsPages.themeStore){
           Label("Theme Store (alpha)", systemImage: "giftcard.fill")
         }
+      } header: {
+        Text("Themeing")
       } footer: {
         Text("This is a special menu because in Winston you can change 90% of what you see. Enjoy the theming system!")
       }

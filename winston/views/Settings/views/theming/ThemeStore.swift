@@ -14,92 +14,42 @@ struct ThemeStore: View {
   @State var themes: [ThemeData] = []
   @State private var isRefreshing = false // Track the refreshing state
   @State private var isPresentingUploadSheet = false
-  @Default(.themeStoreEligibility) var eligibility
-  @Default(.themestoreID) var themestoreID
   @StateObject var searchQuery = DebouncedText(delay: 0.35)
   @Environment(\.useTheme) private var theme
   var body: some View {
     HStack{
-      if eligibility {
-        List {
-          Section{
-            ForEach(themes, id: \.self) { theme in
-              NavigationLink(destination: ThemeStoreDetailsView(themeData: theme), label: {
-                OnlineThemeItem(theme: theme)
-              })
-              .themedListRowBG(enablePadding: true)
+      List {
+        Section{
+          ForEach(themes, id: \.self) { theme in
+            NavigationLink(destination: ThemeStoreDetailsView(themeData: theme), label: {
+              OnlineThemeItem(theme: theme)
+            })
+            .themedListRowBG(enablePadding: true)
 
-            }
-          }
-          .themedListDividers()
-        }
-        .themedListBG(theme.lists.bg)
-//        .toolbar{
-//          if eligibility {
-//            ToolbarItem(placement: .primaryAction){
-//              Button{
-//                isPresentingUploadSheet.toggle()
-//              } label: {
-//                Label("Upload Theme", systemImage: "arrow.up.to.line")
-//                  .labelStyle(.iconOnly)
-//              }
-//            }
-//          }
-//          
-//        }
-        .searchable(text: $searchQuery.text)
-        .onChange(of: searchQuery.debounced) { val in
-          Task{
-            if val == "" {
-              await fetchThemes()
-            } else {
-              themes = await themeStore.fetchThemesByName(name: val) ?? []
-            }
           }
         }
-        .refreshable { // Add pull-to-refresh
-          await fetchThemes()
-        }
-        .navigationTitle("Theme Store")
-        .navigationBarTitleDisplayMode(.large)
-        
-        
-      } else {
-        HStack{
-          VStack{
-            Image(systemName: "lock")
-              .opacity(0.7)
-              .font(.system(size: 50))
-              .padding()
-            Text("Behold, the Theme Store awaits, its secrets hidden behind a mystical lock. To discover its treasures, an exclusive key exists in a realm known to those who seek it. A hint of wisdom: whispers of this key may be found among the stars...")
-              .multilineTextAlignment(.leading)
-              .opacity(0.7)
-            
-            Button {
-              UIPasteboard.general.string = themestoreID
-            } label: {
-              Label(themestoreID, systemImage: "clipboard")
-            }
-            .buttonStyle(BorderedButtonStyle())
-            .foregroundColor(.primary)
-            
-          }
-        }
-        .padding()
+        .themedListDividers()
       }
+      .themedListBG(theme.lists.bg)
+      .searchable(text: $searchQuery.text)
+      .onChange(of: searchQuery.debounced) { val in
+        Task{
+          if val == "" {
+            await fetchThemes()
+          } else {
+            themes = await themeStore.fetchThemesByName(name: val) ?? []
+          }
+        }
+      }
+      .refreshable { // Add pull-to-refresh
+        await fetchThemes()
+      }
+      .navigationTitle("Theme Store")
+      .navigationBarTitleDisplayMode(.large)
     }
     
     .sheet(isPresented: $isPresentingUploadSheet){
       ThemeStoreUploadSheet()
-    }
-    .onAppear {
-      if themestoreID == "" {
-        themestoreID = generateShortUniqueID()
-      }
-      Task {
-        eligibility = await themeStore.getEligibilits(id: themestoreID) ?? false
-        await fetchThemes()
-      }
     }
     
   }
@@ -111,7 +61,6 @@ struct ThemeStore: View {
     
   }
 }
-
 
 struct OnlineThemeItem: View {
   var theme: ThemeData
