@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftUIX
 
 private let handlerWidth: CGFloat = 108
 private let handlerDashWidth: CGFloat = 56
@@ -166,19 +167,19 @@ struct SheetShape: InsettableShape {
     path.addLine(to: CGPoint(x: ((width + handlerWidth) / 2 - handlerRadius) - insetAmount, y: 0 + insetAmount))
     
     // top right corner of the handler
-    path.addArc(center: CGPoint(x: ((width + handlerWidth) / 2 - handlerRadius) - insetAmount, y: handlerRadius + insetAmount), radius: handlerRadius - insetAmount, startAngle: .radians(-1.5 * .pi), endAngle: .radians(0), clockwise: false)
+    path.addArc(center: CGPoint(x: ((width + handlerWidth) / 2 - handlerRadius) - insetAmount, y: handlerRadius + insetAmount), radius: handlerRadius - insetAmount, startAngle: .radians(-1.5 * CGFloat.pi), endAngle: .radians(0), clockwise: false)
     
     // right edge of the handler
     path.addLine(to: CGPoint(x: ((width + handlerWidth) / 2) - insetAmount, y: (handlerHeight - handlerRadius) + insetAmount))
     
     // bottom right corner of the handler
-    path.addArc(center: CGPoint(x: ((width + handlerWidth) / 2 + handlerRadius) + insetAmount, y: handlerHeight - handlerRadius + insetAmount), radius: handlerRadius + insetAmount, startAngle: .radians(.pi), endAngle: .radians(0.5 * .pi), clockwise: true)
+    path.addArc(center: CGPoint(x: ((width + handlerWidth) / 2 + handlerRadius) + insetAmount, y: handlerHeight - handlerRadius + insetAmount), radius: handlerRadius + insetAmount, startAngle: .radians(CGFloat.pi), endAngle: .radians(0.5 * CGFloat.pi), clockwise: true)
     
     // connection between the handler and the body on the right side
     path.addLine(to: CGPoint(x: width - bodyRadius - insetAmount, y: handlerHeight + insetAmount))
     
     // top right corner of the body
-    path.addArc(center: CGPoint(x: width - bodyRadius - insetAmount, y: handlerHeight + bodyRadius + insetAmount), radius: bodyRadius - insetAmount, startAngle: .radians(-0.5 * .pi), endAngle: .radians(0), clockwise: false)
+    path.addArc(center: CGPoint(x: width - bodyRadius - insetAmount, y: handlerHeight + bodyRadius + insetAmount), radius: bodyRadius - insetAmount, startAngle: .radians(-0.5 * CGFloat.pi), endAngle: .radians(0), clockwise: false)
     
     // right edge of the body
     path.addLine(to: CGPoint(x: width - insetAmount, y: height - insetAmount))
@@ -190,19 +191,19 @@ struct SheetShape: InsettableShape {
     path.addLine(to: CGPoint(x: 0, y: handlerHeight + bodyRadius + insetAmount))
     
     // top left corner of the body
-    path.addArc(center: CGPoint(x: bodyRadius + insetAmount, y: handlerHeight + bodyRadius + insetAmount), radius: bodyRadius - insetAmount, startAngle: .radians(.pi), endAngle: .radians(1.5 * .pi), clockwise: false)
+    path.addArc(center: CGPoint(x: bodyRadius + insetAmount, y: handlerHeight + bodyRadius + insetAmount), radius: bodyRadius - insetAmount, startAngle: .radians(CGFloat.pi), endAngle: .radians(1.5 * CGFloat.pi), clockwise: false)
     
     // connection between the handler and the body on the left side
     path.addLine(to: CGPoint(x: ((width - handlerWidth) / 2) + insetAmount, y: handlerHeight + insetAmount))
     
     // bottom left corner of the handler
-    path.addArc(center: CGPoint(x: ((width - handlerWidth) / 2 - handlerRadius) + insetAmount, y: (handlerHeight - handlerRadius) + insetAmount), radius: handlerRadius + insetAmount, startAngle: .radians(0.5 * .pi), endAngle: .radians(0), clockwise: true)
+    path.addArc(center: CGPoint(x: ((width - handlerWidth) / 2 - handlerRadius) + insetAmount, y: (handlerHeight - handlerRadius) + insetAmount), radius: handlerRadius + insetAmount, startAngle: .radians(0.5 * CGFloat.pi), endAngle: .radians(0), clockwise: true)
     
     // left edge of the handler
     path.addLine(to: CGPoint(x: ((width - handlerWidth) / 2) + insetAmount, y: handlerRadius + insetAmount))
     
     // top left corner of the handler
-    path.addArc(center: CGPoint(x: ((width - handlerWidth) / 2 + handlerRadius) + insetAmount, y: handlerRadius + insetAmount), radius:  handlerRadius - insetAmount, startAngle: .radians(.pi), endAngle: .radians(-0.5 * .pi), clockwise: false)
+    path.addArc(center: CGPoint(x: ((width - handlerWidth) / 2 + handlerRadius) + insetAmount, y: handlerRadius + insetAmount), radius:  handlerRadius - insetAmount, startAngle: .radians(CGFloat.pi), endAngle: .radians(-0.5 * CGFloat.pi), clockwise: false)
     
     return path
   }

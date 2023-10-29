@@ -65,11 +65,10 @@ struct PostLinkThemingPanel: View {
       VStack {
         if let winstonData = previewPostSample.winstonData {
           PostLink(
-            post: previewPostSample,
+            id: previewPostSample.id,
             controller: nil,
             avatarRequest: avatarCache.cache["t2_winston_sample"]?.data,
             theme: theme.postLinks,
-            sub: previewPostSubSample,
             showSub: true,
             secondary: true,
             routerProxy: routerProxy,
@@ -89,6 +88,9 @@ struct PostLinkThemingPanel: View {
             cs: cs
           )
           .equatable()
+          .environmentObject(previewPostSample)
+          .environmentObject(previewPostSubSample)
+          .environmentObject(winstonData)
           .environment(\.useTheme, theme)
           .allowsHitTesting(false)
         }

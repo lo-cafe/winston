@@ -14,7 +14,7 @@ protocol GenericRedditEntityDataType: Codable, Hashable, Identifiable {
   var id: String { get }
 }
 
-class GenericRedditEntity<T: GenericRedditEntityDataType, B: Hashable>: Identifiable, Hashable, ObservableObject, Codable,  _DefaultsSerializable {
+class GenericRedditEntity<T: GenericRedditEntityDataType, B: Hashable>: Identifiable, Hashable, ObservableObject, Observable, Codable,  _DefaultsSerializable {
   func hash(into hasher: inout Hasher) {
 //    hasher.combine(data)
 //    hasher.combine(childrenWinston.data)

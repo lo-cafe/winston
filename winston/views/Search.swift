@@ -162,15 +162,14 @@ struct Search: View {
                 if let dummyAllSub = dummyAllSub {
                   ForEach(resultPosts.data) { post in
                     if let postData = post.data, let winstonData = post.winstonData {
-                      SwipeRevolution(size: winstonData.postDimensions.size, actionsSet: postSwipeActions, entity: post) { controller in
+//                      SwipeRevolution(size: winstonData.postDimensions.size, actionsSet: postSwipeActions, entity: post) { controller in
                         PostLink(
-                          post: post,
-                          controller: controller,
+                          id: post.id,
+                          controller: nil,
                           //                controller: nil,
                           avatarRequest: avatarCache.cache[postData.author_fullname ?? ""]?.data,
                           repostAvatarRequest: getRepostAvatarRequest(post),
                           theme: theme.postLinks,
-                          sub: dummyAllSub,
                           showSub: true,
                           routerProxy: routerProxy,
                           contentWidth: contentWidth,
@@ -188,9 +187,13 @@ struct Search: View {
                           voteButtonPositionRight: voteButtonPositionRight,
                           cs: cs
                         )
-                      }
+                        .swipyRev(size: winstonData.postDimensions.size, actionsSet: postSwipeActions, entity: post)
+//                      }
                       .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
                       .animation(.default, value: resultPosts.data)
+                      .environmentObject(post)
+                      .environmentObject(dummyAllSub)
+                      .environmentObject(winstonData)
                     }
                   }
                 }

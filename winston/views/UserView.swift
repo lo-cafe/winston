@@ -158,15 +158,14 @@ struct UserView: View {
                 switch item {
                 case .first(let post):
                   if let postData = post.data, let winstonData = post.winstonData {
-                    SwipeRevolution(size: winstonData.postDimensions.size, actionsSet: postSwipeActions, entity: post) { controller in
+//                    SwipeRevolution(size: winstonData.postDimensions.size, actionsSet: postSwipeActions, entity: post) { controller in
                       PostLink(
-                        post: post,
-                        controller: controller,
+                        id: post.id,
+                        controller: nil,
                         //                controller: nil,
                         avatarRequest: avatarCache.cache[postData.author_fullname ?? ""]?.data,
                         repostAvatarRequest: getRepostAvatarRequest(post),
                         theme: selectedTheme.postLinks,
-                        sub: Subreddit(id: postData.subreddit, api: user.redditAPI),
                         showSub: true,
                         routerProxy: routerProxy,
                         contentWidth: contentWidth,
@@ -184,7 +183,11 @@ struct UserView: View {
                         voteButtonPositionRight: voteButtonPositionRight,
                         cs: cs
                       )
-                    }
+                      .swipyRev(size: winstonData.postDimensions.size, actionsSet: postSwipeActions, entity: post)
+//                    }
+                    .environmentObject(post)
+                    .environmentObject(Subreddit(id: postData.subreddit, api: user.redditAPI))
+                    .environmentObject(winstonData)
                   }
                 case .second(let comment):
                   VStack {

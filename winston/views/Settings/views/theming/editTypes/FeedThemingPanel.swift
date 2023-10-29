@@ -50,14 +50,42 @@ struct FeedThemingPanel: View {
       }
     } preview: {
       ScrollView(showsIndicators: false) {
-        VStack(spacing: theme.postLinks.spacing) {
-          if let winstonData = previewPostSample.winstonData {
+        if let winstonData = previewPostSample.winstonData {
+          VStack(spacing: theme.postLinks.spacing) {
             PostLink(
-              post: previewPostSample,
+              id: previewPostSample.id,
               controller: nil,
               avatarRequest: avatarCache.cache["t2_winston_sample"]?.data,
               theme: theme.postLinks,
-              sub: previewPostSubSample,
+              showSub: true,
+              secondary: true,
+              routerProxy: routerProxy,
+              contentWidth: contentWidth,
+              blurPostLinkNSFW: blurPostLinkNSFW,
+              postSwipeActions: postSwipeActions,
+              showVotes: showVotes,
+              showSelfText: showSelfText,
+              readPostOnScroll: readPostOnScroll,
+              hideReadPosts: hideReadPosts,
+              showUpvoteRatio: showUpvoteRatio,
+              showSubsAtTop: showSubsAtTop,
+              showTitleAtTop: showTitleAtTop,
+              compact: false,
+              thumbnailPositionRight: nil,
+              voteButtonPositionRight: nil,
+              cs: cs
+            )
+            .equatable()
+            .environment(\.useTheme, theme)
+            .allowsHitTesting(false)
+            
+            NiceDivider(divider: theme.postLinks.divider)
+            
+            PostLink(
+              id: previewPostSample.id,
+              controller: nil,
+              avatarRequest: avatarCache.cache["t2_winston_sample"]?.data,
+              theme: theme.postLinks,
               showSub: true,
               secondary: true,
               routerProxy: routerProxy,
@@ -80,44 +108,15 @@ struct FeedThemingPanel: View {
             .environment(\.useTheme, theme)
             .allowsHitTesting(false)
           }
-          
-          NiceDivider(divider: theme.postLinks.divider)
-          
-          if let winstonData = previewPostSample.winstonData {
-            PostLink(
-              post: previewPostSample,
-              controller: nil,
-              avatarRequest: avatarCache.cache["t2_winston_sample"]?.data,
-              theme: theme.postLinks,
-              sub: previewPostSubSample,
-              showSub: true,
-              secondary: true,
-              routerProxy: routerProxy,
-              contentWidth: contentWidth,
-              blurPostLinkNSFW: blurPostLinkNSFW,
-              postSwipeActions: postSwipeActions,
-              showVotes: showVotes,
-              showSelfText: showSelfText,
-              readPostOnScroll: readPostOnScroll,
-              hideReadPosts: hideReadPosts,
-              showUpvoteRatio: showUpvoteRatio,
-              showSubsAtTop: showSubsAtTop,
-              showTitleAtTop: showTitleAtTop,
-              compact: false,
-              thumbnailPositionRight: nil,
-              voteButtonPositionRight: nil,
-              cs: cs
-            )
-            .equatable()
-            .environment(\.useTheme, theme)
-            .allowsHitTesting(false)
-          }
+          .environmentObject(previewPostSample)
+          .environmentObject(previewPostSubSample)
+          .environmentObject(winstonData)
+          .highPriorityGesture(DragGesture())
+          .frame(height: (UIScreen.screenHeight - getSafeArea().top - getSafeArea().bottom) / 2, alignment: .top)
+          .clipped()
+          .mask(RR(20, .black).padding(.horizontal, theme.postLinks.theme.outerHPadding))
         }
       }
-      .highPriorityGesture(DragGesture())
-      .frame(height: (UIScreen.screenHeight - getSafeArea().top - getSafeArea().bottom) / 2, alignment: .top)
-      .clipped()
-      .mask(RR(20, .black).padding(.horizontal, theme.postLinks.theme.outerHPadding))
     }
     .scrollContentBackground(.hidden)
     .themedListBG(theme.lists.bg)

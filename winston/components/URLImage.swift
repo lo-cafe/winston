@@ -37,13 +37,13 @@ struct URLImage: View, Equatable {
     } else {
       if let imgRequest = imgRequest {
         LazyImage(request: imgRequest) { state in
-          if case .success(let response) = state.result {
-            AltImage(image: response.image, size: size)
-//            Image(uiImage: response.image).resizable()
-          }
-//          if let image = state.image {
-//            image.resizable()
+//          if case .success(let response) = state.result {
+//            AltImage(image: response.image, size: size)
+////            Image(uiImage: response.image).resizable()
 //          }
+          if let image = state.image {
+            image.resizable()
+          }
         }
         .onDisappear(.cancel)
 //        .id("\(imgRequest.url?.absoluteString ?? "")-nuke")
@@ -76,12 +76,13 @@ struct ThumbReqImage: View, Equatable {
   
   var body: some View {
     LazyImage(request: imgRequest) { state in
-                if case .success(let response) = state.result {
-//                  Image(uiImage: response.image).resizable()
-                  AltImage(image: response.image, size: size)
-                }
-//      if let image = state.image {
-//        image.resizable().aspectRatio(contentMode: .fill)
+//                if case .success(let response) = state.result {
+////                  Image(uiImage: response.image).resizable()
+//                  AltImage(image: response.image, size: size)
+//                }
+      if let image = state.image {
+        image.resizable().aspectRatio(contentMode: .fill)
+      }
 //      } else if state.error != nil {
 //        Color.red.opacity(0.1)
 //          .overlay(Image(systemName: "xmark.circle.fill").foregroundColor(.red))

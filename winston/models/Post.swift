@@ -48,10 +48,12 @@ extension Post {
       let halfWidthProcessor: [ImageProcessing] = contentWidth == 0 ? [] : [.resize(width: compact ? scaledCompactModeThumbSize() : ((contentWidth - 8) / 2))]
       let fullWidthProcessor: [ImageProcessing] = contentWidth == 0 ? [] : [.resize(width: compact ? scaledCompactModeThumbSize() : contentWidth)]
       var requests: [ImageRequest] = []
-      requests.append(ImageRequest(url: imgs[0].url, processors: halfWidthProcessor, userInfo: userInfo))
-      requests.append(ImageRequest(url: imgs[1].url, processors: halfWidthProcessor, userInfo: userInfo))
-      if imgs.count >= 3 { requests.append(ImageRequest(url: imgs[2].url, processors: imgs.count > 3 ? halfWidthProcessor : fullWidthProcessor, userInfo: userInfo)) }
-      requests += imgs.dropFirst(3).map { ImageRequest(url: $0.url, priority: .low) }
+      if imgs.count > 0 {
+        requests.append(ImageRequest(url: imgs[0].url, processors: halfWidthProcessor, userInfo: userInfo))
+        requests.append(ImageRequest(url: imgs[1].url, processors: halfWidthProcessor, userInfo: userInfo))
+        if imgs.count >= 3 { requests.append(ImageRequest(url: imgs[2].url, processors: imgs.count > 3 ? halfWidthProcessor : fullWidthProcessor, userInfo: userInfo)) }
+        requests += imgs.dropFirst(3).map { ImageRequest(url: $0.url, priority: .low) }
+      }
       self.winstonData?.mediaImageRequest = requests
     case .link(let url):
       Caches.postsPreviewModels.addKeyValue(key: url.absoluteString, data: { PreviewModel(url) })

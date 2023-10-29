@@ -14,19 +14,18 @@ import NukeUI
 
 let POSTLINK_INNER_H_PAD: CGFloat = 16
 
-struct PostLink: View, Equatable {
+struct PostLink: View, Equatable, Identifiable {
   static func == (lhs: PostLink, rhs: PostLink) -> Bool {
-    return lhs.post == rhs.post && lhs.theme == rhs.theme && lhs.cs == rhs.cs && lhs.contentWidth == rhs.contentWidth
+    return lhs.id == rhs.id
   }
   
-//  var disableOuterVSpacing = false
-  weak var post: Post?
+  //  var disableOuterVSpacing = false
+  var id: String
   weak var controller: UIViewController?
   var avatarRequest: ImageRequest?
   var cachedVideo: SharedVideo?
   var repostAvatarRequest: ImageRequest?
   var theme: SubPostsListTheme
-  weak var sub: Subreddit?
   var showSub = false
   var secondary = false
   weak var routerProxy: RouterProxy?
@@ -44,86 +43,79 @@ struct PostLink: View, Equatable {
   let thumbnailPositionRight: Bool?
   let voteButtonPositionRight: Bool?
   var cs: ColorScheme
-  
-  @State private var isOpen = false
-  
-  func openPost() {
-    if let post = post, let sub = sub, let routerProxy = routerProxy {
-      withAnimation(nil) { isOpen = true }
-      routerProxy.router.path.append(PostViewPayload(post: post, postSelfAttr: nil, sub: feedsAndSuch.contains(sub.id) ? sub : sub))
+    
+  var body: some View {
+    
+    Group {
+      if compact {
+        PostLinkCompact(
+          controller: controller,
+          //                controller: nil,
+          avatarRequest: avatarRequest,
+          cachedVideo: cachedVideo,
+          repostAvatarRequest: repostAvatarRequest,
+          theme: theme,
+          showSub: showSub,
+          secondary: secondary,
+          routerProxy: routerProxy,
+          contentWidth: contentWidth,
+          blurPostLinkNSFW: blurPostLinkNSFW,
+          postSwipeActions: postSwipeActions,
+          showVotes: showVotes,
+          showSelfText: showSelfText,
+          readPostOnScroll: readPostOnScroll,
+          hideReadPosts: hideReadPosts,
+          showUpvoteRatio: showUpvoteRatio,
+          showSubsAtTop: showSubsAtTop,
+          showTitleAtTop: showTitleAtTop,
+          thumbnailPositionRight: thumbnailPositionRight ?? true,
+          voteButtonPositionRight: voteButtonPositionRight ?? true,
+          cs: cs
+        )
+        .equatable()
+      } else {
+        PostLinkNormal(
+          controller: controller,
+          //                controller: nil,
+          avatarRequest: avatarRequest,
+          cachedVideo: cachedVideo,
+          repostAvatarRequest: repostAvatarRequest,
+          theme: theme,
+          showSub: showSub,
+          routerProxy: routerProxy,
+          contentWidth: contentWidth,
+          blurPostLinkNSFW: blurPostLinkNSFW,
+          postSwipeActions: postSwipeActions,
+          showVotes: showVotes,
+          showSelfText: showSelfText,
+          readPostOnScroll: readPostOnScroll,
+          hideReadPosts: hideReadPosts,
+          showUpvoteRatio: showUpvoteRatio,
+          showSubsAtTop: showSubsAtTop,
+          showTitleAtTop: showTitleAtTop,
+          cs: cs
+        )
+        .equatable()
+      }
     }
   }
-  
-  var body: some View {
-    if let post = post, let winstonData = post.winstonData, let sub = sub, let data = post.data {
-      let seen = (post.data?.winstonSeen ?? false)
-      let size = CGSize(width: winstonData.postDimensions.size.width, height: winstonData.postDimensions.size.height)
-      let fadeReadPosts = theme.theme.unseenType == .fade
-      
-      VStack(alignment: .leading, spacing: theme.theme.verticalElementsSpacing) {
-        if compact {
-          PostLinkCompact(
-            post: post,
-            winstonData: winstonData,
-            controller: controller,
-            //                controller: nil,
-            avatarRequest: avatarRequest,
-            cachedVideo: cachedVideo,
-            repostAvatarRequest: repostAvatarRequest,
-            theme: theme,
-            sub: sub,
-            showSub: showSub,
-            routerProxy: routerProxy,
-            contentWidth: contentWidth,
-            blurPostLinkNSFW: blurPostLinkNSFW,
-            postSwipeActions: postSwipeActions,
-            showVotes: showVotes,
-            showSelfText: showSelfText,
-            readPostOnScroll: readPostOnScroll,
-            hideReadPosts: hideReadPosts,
-            showUpvoteRatio: showUpvoteRatio,
-            showSubsAtTop: showSubsAtTop,
-            showTitleAtTop: showTitleAtTop,
-            thumbnailPositionRight: thumbnailPositionRight ?? true,
-            voteButtonPositionRight: voteButtonPositionRight ?? true,
-            cs: cs
-          )
-        } else {
-          PostLinkNormal(
-            post: post,
-            winstonData: winstonData,
-            controller: controller,
-            //                controller: nil,
-            avatarRequest: avatarRequest,
-            cachedVideo: cachedVideo,
-            repostAvatarRequest: repostAvatarRequest,
-            theme: theme,
-            sub: sub,
-            showSub: showSub,
-            routerProxy: routerProxy,
-            contentWidth: contentWidth,
-            blurPostLinkNSFW: blurPostLinkNSFW,
-            postSwipeActions: postSwipeActions,
-            showVotes: showVotes,
-            showSelfText: showSelfText,
-            readPostOnScroll: readPostOnScroll,
-            hideReadPosts: hideReadPosts,
-            showUpvoteRatio: showUpvoteRatio,
-            showSubsAtTop: showSubsAtTop,
-            showTitleAtTop: showTitleAtTop,
-            cs: cs
-          )
-        }
-      }
+}
+
+extension View {
+  func postLinkStyle(post: Post, sub: Subreddit, routerProxy: RouterProxy, theme: SubPostsListTheme, size: CGSize, secondary: Bool, isOpen: Bool, openPost: @escaping () -> (), readPostOnScroll: Bool, hideReadPosts: Bool, cs: ColorScheme) -> some View {
+    let seen = (post.data?.winstonSeen ?? false)
+//    let size = CGSize(width: winstonData.postDimensions.size.width, height: winstonData.postDimensions.size.height)
+    let fadeReadPosts = theme.theme.unseenType == .fade
+    return self
       .padding(EdgeInsets(top: theme.theme.innerPadding.vertical, leading: theme.theme.innerPadding.horizontal, bottom: theme.theme.innerPadding.vertical, trailing: theme.theme.innerPadding.horizontal))
       .frame(width: size.width, height: size.height, alignment: .top)
       .fixedSize()
-      .background(PostLinkBG(theme: theme, stickied: data.stickied, secondary: secondary, cs: cs).equatable())
+      .background(PostLinkBG(theme: theme, stickied: post.data?.stickied, secondary: secondary, cs: cs).equatable())
       .mask(RR(theme.theme.cornerRadius, Color.black).equatable())
       .overlay(PostLinkGlowDot(unseenType: theme.theme.unseenType, seen: seen, cs: cs).equatable(), alignment: .topTrailing)
       .scaleEffect(1)
       .contentShape(Rectangle())
-      .gesture(TapGesture().onEnded(openPost))
+//      .gesture(TapGesture().onEnded(openPost))
       .compositingGroup()
       .brightness(isOpen ? 0.075 : 0)
       .opacity(fadeReadPosts && seen ? 0.6 : 1)
@@ -140,9 +132,9 @@ struct PostLink: View, Equatable {
           }
         }
       }
-    }
   }
 }
+
 
 struct PostLinkGlowDot: View, Equatable {
   static func == (lhs: PostLinkGlowDot, rhs: PostLinkGlowDot) -> Bool {

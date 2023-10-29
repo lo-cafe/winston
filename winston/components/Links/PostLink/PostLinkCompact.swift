@@ -10,17 +10,18 @@ import NukeUI
 
 struct PostLinkCompact: View, Equatable {
   static func == (lhs: PostLinkCompact, rhs: PostLinkCompact) -> Bool {
-    return lhs.post == rhs.post && lhs.theme == rhs.theme && lhs.cs == rhs.cs && lhs.contentWidth == rhs.contentWidth
+    return lhs.theme == rhs.theme && lhs.cs == rhs.cs && lhs.contentWidth == rhs.contentWidth
   }
-  @ObservedObject var post: Post
-  @ObservedObject var winstonData: PostWinstonData
+  @EnvironmentObject var post: Post
+  @EnvironmentObject var winstonData: PostWinstonData
+  @EnvironmentObject var sub: Subreddit
   weak var controller: UIViewController?
   var avatarRequest: ImageRequest?
   var cachedVideo: SharedVideo?
   var repostAvatarRequest: ImageRequest?
   var theme: SubPostsListTheme
-  weak var sub: Subreddit?
   var showSub = false
+  var secondary: Bool
   weak var routerProxy: RouterProxy?
   let contentWidth: CGFloat
   let blurPostLinkNSFW: Bool
@@ -43,14 +44,25 @@ struct PostLinkCompact: View, Equatable {
   }
   
   func openPost() {
-    if let sub = sub, let routerProxy = routerProxy {
+    if let routerProxy = routerProxy {
       withAnimation(nil) { isOpen = true }
       routerProxy.router.path.append(PostViewPayload(post: post, postSelfAttr: nil, sub: feedsAndSuch.contains(sub.id) ? sub : sub))
     }
   }
   
+  func onDisappear() {
+    Task(priority: .background) {
+      if readPostOnScroll {
+        await post.toggleSeen(true, optimistic: true)
+      }
+      if hideReadPosts {
+        await post.hide(true)
+      }
+    }
+  }
+  
   var body: some View {
-    if let data = post.data {
+    if let routerProxy = routerProxy, let data = post.data {
       let over18 = data.over_18 ?? false
       VStack(alignment: .leading, spacing: theme.theme.verticalElementsSpacing) {
         HStack(alignment: .top, spacing: theme.theme.verticalElementsSpacing) {
@@ -81,7 +93,6 @@ struct PostLinkCompact: View, Equatable {
                   OnlyURL(url: url)
                 }
                 MediaPresenter(postDimensions: $winstonData.postDimensions, controller: controller, cachedVideo: cachedVideo, imgRequests: winstonData.mediaImageRequest, postTitle: data.title, badgeKit: data.badgeKit, markAsSeen: markAsRead, cornerRadius: theme.theme.mediaCornerRadius, blurPostLinkNSFW: blurPostLinkNSFW, showURLInstead: true, media: extractedMedia, over18: over18, compact: true, contentWidth: winstonData.postDimensions.mediaSize?.width ?? 0, routerProxy: routerProxy)
-                  .equatable()
               }
             }
                         
@@ -112,6 +123,9 @@ struct PostLinkCompact: View, Equatable {
         .frame(maxWidth: .infinity, alignment: .topLeading)
         
       }
+      .postLinkStyle(post: post, sub: sub, routerProxy: routerProxy, theme: theme, size: winstonData.postDimensions.size, secondary: secondary, isOpen: isOpen, openPost: openPost, readPostOnScroll: readPostOnScroll, hideReadPosts: hideReadPosts, cs: cs)
+      .swipyUI(onTap: openPost, actionsSet: postSwipeActions, entity: post)
+//      .swipyRev(size: winstonData.postDimensions.size, actionsSet: postSwipeActions, entity: post)
     }
   }
 }

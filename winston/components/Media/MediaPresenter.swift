@@ -60,21 +60,30 @@ struct MediaPresenter: View, Equatable {
     switch media {
     case .image(let imgMediaExtracted):
       if !showURLInstead {
-        ImageMediaPost(postDimensions: $postDimensions, controller: controller, postTitle: postTitle, badgeKit: badgeKit, markAsSeen: markAsSeen, cornerRadius: cornerRadius, compact: compact, mediaImageRequest: imgRequests ?? [], images: [imgMediaExtracted], contentWidth: contentWidth)
-//          .drawingGroup()
-//                  .nsfw(over18 && blurPostLinkNSFW)
+        Group {
+          if imgMediaExtracted.url.absoluteString.hasSuffix(".gif") {
+            ImageMediaPost(postDimensions: $postDimensions, controller: controller, postTitle: postTitle, badgeKit: badgeKit, markAsSeen: markAsSeen, cornerRadius: cornerRadius, compact: compact, mediaImageRequest: imgRequests ?? [], images: [imgMediaExtracted], contentWidth: contentWidth)
+              .nsfw(over18 && blurPostLinkNSFW)
+          } else {
+            ImageMediaPost(postDimensions: $postDimensions, controller: controller, postTitle: postTitle, badgeKit: badgeKit, markAsSeen: markAsSeen, cornerRadius: cornerRadius, compact: compact, mediaImageRequest: imgRequests ?? [], images: [imgMediaExtracted], contentWidth: contentWidth)
+              .nsfw(over18 && blurPostLinkNSFW)
+              .drawingGroup()
+            
+          }
+        }
+                  
       }
     case .video(let videoMediaExtracted):
       if !showURLInstead {
         VideoPlayerPost(controller: controller, cachedVideo: cachedVideo, markAsSeen: markAsSeen, compact: compact, overrideWidth: contentWidth, url: videoMediaExtracted.url, size: CGSize(width: videoMediaExtracted.size.width, height: videoMediaExtracted.size.height))
-//          .nsfw(over18 && blurPostLinkNSFW)
+          .nsfw(over18 && blurPostLinkNSFW)
         
       }
     case .gallery(let imgs):
       if !showURLInstead {
         ImageMediaPost(postDimensions: $postDimensions, controller: controller, postTitle: postTitle, badgeKit: badgeKit, markAsSeen: markAsSeen, cornerRadius: cornerRadius, compact: compact, mediaImageRequest: imgRequests ?? [], images: imgs, contentWidth: contentWidth)
-//          .drawingGroup()
-//          .nsfw(over18 && blurPostLinkNSFW)
+          .nsfw(over18 && blurPostLinkNSFW)
+          .drawingGroup()
       }
     case .youtube(let videoID, let size):
       if !showURLInstead {

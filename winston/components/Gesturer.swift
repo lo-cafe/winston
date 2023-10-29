@@ -7,11 +7,12 @@
 
 import Foundation
 import SwiftUI
+import SwiftUIX
 
-struct GesturerHolder<Content: View>: UIViewControllerRepresentable, Equatable {
-  static func == (lhs: GesturerHolder<Content>, rhs: GesturerHolder<Content>) -> Bool {
-    lhs.id == rhs.id
-  }
+struct GesturerHolder<Content: View>: UIViewRepresentable, Identifiable {
+//  static func == (lhs: GesturerHolder<Content>, rhs: GesturerHolder<Content>) -> Bool {
+//    lhs.id == rhs.id
+//  }
   
   enum Directions: String, Equatable {
     case vertical
@@ -36,9 +37,9 @@ struct GesturerHolder<Content: View>: UIViewControllerRepresentable, Equatable {
   var onDragChanged: ((@escaping () -> Void, CGPoint, CGPoint, CGPoint) -> Void)? = nil
   var onDragEnded: ((CGPoint, CGPoint) -> Void)? = nil
   var disabled: Bool?
-  var content: (UIViewController?) -> Content
+  var content: Content
   
-  init(id: String, size: CGSize, directions: Directions, minimumDragDistance: CGFloat? = 0, onTap: (() -> Void)? = nil, onPress: ( (Bool) -> Void)? = nil, onPressCancel: ( () -> Void)? = nil, onDragChanged: ( (@escaping () -> Void, CGPoint, CGPoint, CGPoint) -> Void)? = nil, onDragEnded: ( (CGPoint, CGPoint) -> Void)? = nil, disabled: Bool? = nil, @ViewBuilder content: @escaping (UIViewController?) -> Content) {
+  init(id: String, size: CGSize, directions: Directions, minimumDragDistance: CGFloat? = 0, onTap: (() -> Void)? = nil, onPress: ( (Bool) -> Void)? = nil, onPressCancel: ( () -> Void)? = nil, onDragChanged: ( (@escaping () -> Void, CGPoint, CGPoint, CGPoint) -> Void)? = nil, onDragEnded: ( (CGPoint, CGPoint) -> Void)? = nil, disabled: Bool? = nil, content: Content) {
     self.id = id
     self.size = size
     self.directions = directions
@@ -52,36 +53,34 @@ struct GesturerHolder<Content: View>: UIViewControllerRepresentable, Equatable {
     self.content = content
   }
   
-  func makeUIViewController(context: Context) -> UIHostingController<Content> {
+  func makeUIView(context: Context) -> UIHostingView<Content> {
     
-//    let controller = UIViewController()
-    let hostingController = UIHostingController(rootView: self.content(nil))
-    let contentView = self.content(hostingController)
-    hostingController.rootView = contentView
-//    controller.addChild(hostingController)
-//    controller.view.addSubview(hostingController.view)
-//    hostingController.view.bounds = CGRect(origin: .zero, size: size)
-//    hostingController.view.frame = hostingController.view.bounds
-//    hostingController.view.translatesAutoresizingMaskIntoConstraints = false
-    hostingController.view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-    context.coordinator.view = hostingController.view
+    let hostingView = UIHostingView(rootView: self.content)
+//    let hostingController = UIHostingController(rootView: self.content(nil))
+//    let contentView = self.content(hostingController)
+//    hostingController.rootView = contentView
+//    hostingController.view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+    hostingView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+//    context.coordinator.view = hostingController.view
+    context.coordinator.view = hostingView
     
       
-    if let view = hostingController.view {
+//    if let view = hostingController.view {
       if (onTap != nil) {
-        addTapRecognizer(to: view, with: context)
+        addTapRecognizer(to: hostingView, with: context)
       }
       if (onPress != nil) {
-        addPressRecognizer(to: view, with: context)
+        addPressRecognizer(to: hostingView, with: context)
       }
       if (onDragChanged != nil || onDragEnded != nil) {
-        addDragRecognizer(to: view, with: context)
+        addDragRecognizer(to: hostingView, with: context)
       }
-    }
-    return hostingController
+//    }
+//    return hostingController
+    return hostingView
   }
   
-  func updateUIViewController(_ hostingController: UIHostingController<Content>, context: Context) {
+  func updateUIView(_ hostingController: UIHostingView<Content>, context: Context) {
 //    let newContentView = self.content(hostingController)
 //    hostingController.rootView = newContentView
 //    hostingController.view.bounds = CGRect(origin: .zero, size: size)

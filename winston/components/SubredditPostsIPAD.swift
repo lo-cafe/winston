@@ -64,16 +64,15 @@ struct SubredditPostsIPAD: View, Equatable {
           contentForData: { post, i in
             Group {
               if let sub = subreddit ?? post.winstonData?.subreddit, let postData = post.data, let winstonData = post.winstonData {
-                SwipeRevolution(size: winstonData.postDimensions.size, actionsSet: postSwipeActions, entity: post) { controller in
+//                SwipeRevolution(size: winstonData.postDimensions.size, actionsSet: postSwipeActions, entity: post) { controller in
                   PostLink(
-                    post: post,
-                    controller: controller,
+                    id: post.id,
+                    controller: nil,
                     //                controller: nil,
                     avatarRequest: avatarCache.cache[postData.author_fullname ?? ""]?.data,
                     cachedVideo: videosCache.cache[post.id]?.data,
                     repostAvatarRequest: getRepostAvatarRequest(post),
                     theme: selectedTheme.postLinks,
-                    sub: sub,
                     showSub: showSub,
                     routerProxy: routerProxy,
                     contentWidth: contentWidth,
@@ -91,7 +90,11 @@ struct SubredditPostsIPAD: View, Equatable {
                     voteButtonPositionRight: voteButtonPositionRight,
                     cs: cs
                   )
-                }
+                  .swipyRev(size: winstonData.postDimensions.size, actionsSet: postSwipeActions, entity: post)
+                  .environmentObject(post)
+                  .environmentObject(sub)
+                  .environmentObject(winstonData)
+//                }
               }
             }
           },

@@ -162,6 +162,7 @@
 		EC6495A72A999C4A00B1852C /* CachedSub+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC6495A32A999C4A00B1852C /* CachedSub+CoreDataProperties.swift */; };
 		EC6495A82A999C4A00B1852C /* CachedMulti+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC6495A42A999C4A00B1852C /* CachedMulti+CoreDataClass.swift */; };
 		EC6495A92A999C4A00B1852C /* CachedMulti+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC6495A52A999C4A00B1852C /* CachedMulti+CoreDataProperties.swift */; };
+		EC6626DB2AEDF67400726094 /* SwiftUIX in Frameworks */ = {isa = PBXBuildFile; productRef = EC6626DA2AEDF67400726094 /* SwiftUIX */; };
 		EC6650EA2AB7E21E006B83A4 /* Zip in Frameworks */ = {isa = PBXBuildFile; productRef = EC6650E92AB7E21E006B83A4 /* Zip */; };
 		EC6CBE332A7D6BF80089EAA0 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = EC6CBE322A7D6BF80089EAA0 /* README.md */; };
 		EC6CBE352A7D6E760089EAA0 /* LICENSE.md in Sources */ = {isa = PBXBuildFile; fileRef = EC6CBE342A7D6E760089EAA0 /* LICENSE.md */; };
@@ -727,6 +728,7 @@
 				EC9BB1C02A8B05AA0070CD97 /* Nuke in Frameworks */,
 				EC2D72B32AC5335E002601E0 /* CHTCollectionViewWaterfallLayout in Frameworks */,
 				ECF217EB2AE07CD900664B75 /* SectionKit in Frameworks */,
+				EC6626DB2AEDF67400726094 /* SwiftUIX in Frameworks */,
 				ECDD515F2A748C5800FD9498 /* OpenGraph in Frameworks */,
 				EC6650EA2AB7E21E006B83A4 /* Zip in Frameworks */,
 				ECDD51622A748DF600FD9498 /* SkeletonUI in Frameworks */,
@@ -1531,6 +1533,7 @@
 				EC2D72B22AC5335E002601E0 /* CHTCollectionViewWaterfallLayout */,
 				ECF217E82AE07CD900664B75 /* DiffingSectionKit */,
 				ECF217EA2AE07CD900664B75 /* SectionKit */,
+				EC6626DA2AEDF67400726094 /* SwiftUIX */,
 			);
 			productName = winston;
 			productReference = EC593AD42A4673B2002D6454 /* winston.app */;
@@ -1601,6 +1604,7 @@
 				EC6650E82AB7E21E006B83A4 /* XCRemoteSwiftPackageReference "Zip" */,
 				EC2D72B12AC5335E002601E0 /* XCRemoteSwiftPackageReference "CHTCollectionViewWaterfallLayout" */,
 				ECF217E72AE07CD900664B75 /* XCRemoteSwiftPackageReference "SectionKit" */,
+				EC6626D92AEDF67400726094 /* XCRemoteSwiftPackageReference "SwiftUIX" */,
 			);
 			productRefGroup = EC593AD52A4673B2002D6454 /* Products */;
 			projectDirPath = "";
@@ -2338,6 +2342,14 @@
 				minimumVersion = 5.0.0;
 			};
 		};
+		EC6626D92AEDF67400726094 /* XCRemoteSwiftPackageReference "SwiftUIX" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SwiftUIX/SwiftUIX";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.1.7;
+			};
+		};
 		EC6650E82AB7E21E006B83A4 /* XCRemoteSwiftPackageReference "Zip" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/marmelroy/Zip.git";
@@ -2476,6 +2488,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = EC593B0A2A47B801002D6454 /* XCRemoteSwiftPackageReference "Alamofire" */;
 			productName = Alamofire;
+		};
+		EC6626DA2AEDF67400726094 /* SwiftUIX */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = EC6626D92AEDF67400726094 /* XCRemoteSwiftPackageReference "SwiftUIX" */;
+			productName = SwiftUIX;
 		};
 		EC6650E92AB7E21E006B83A4 /* Zip */ = {
 			isa = XCSwiftPackageProductDependency;

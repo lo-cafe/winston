@@ -60,21 +60,20 @@ struct SubredditPostsIOS: View, Equatable {
     let paddingV = selectedTheme.postLinks.spacing / 2
     List {
       Section {
-//            CollectionView(collection: posts, scrollDirection: .vertical, contentSize: .custom({ collectionView, layout, post in
-//              post.winstonData?.postDimensions.size ?? CGSize(width: 300, height: 300)
-//            }), itemSpacing: .init(mainAxisSpacing: selectedTheme.postLinks.spacing, crossAxisSpacing: 0)) { post, controller, i, total in
-        ForEach(Array(posts.enumerated()), id: \.self.element.id) { i, post in
+//        CollectionView(collection: posts, scrollDirection: .vertical, contentSize: .custom({ collectionView, layout, post in
+//          post.winstonData?.postDimensions.size ?? CGSize(width: 300, height: 300)
+//        }), itemSpacing: .init(mainAxisSpacing: selectedTheme.postLinks.spacing, crossAxisSpacing: 0)) { post, controller, i, total in
+         ForEach(Array(posts.enumerated()), id: \.self.element.id) { i, post in
           
           if let sub = subreddit ?? post.winstonData?.subreddit, let postData = post.data, let winstonData = post.winstonData {
-            SwipeRevolution(size: winstonData.postDimensions.size, actionsSet: postSwipeActions, entity: post) { controller in
+//             { controller in
               PostLink(
-                post: post,
+                id: post.id,
                 controller: nil,
                 avatarRequest: avatarCache.cache[postData.author_fullname ?? ""]?.data,
                 cachedVideo: videosCache.cache[post.id]?.data,
                 repostAvatarRequest: getRepostAvatarRequest(post),
                 theme: selectedTheme.postLinks,
-                sub: sub,
                 showSub: showSub,
                 routerProxy: routerProxy,
                 contentWidth: contentWidth,
@@ -92,11 +91,18 @@ struct SubredditPostsIOS: View, Equatable {
                 voteButtonPositionRight: voteButtonPositionRight,
                 cs: cs
               )
-            }
+//              .swipyUI(actionsSet: postSwipeActions, entity: post)
 //              .equatable()
+              .environmentObject(sub)
+              .environmentObject(post)
+              .environmentObject(winstonData)
+//              .swipyRev(size: winstonData.postDimensions.size, actionsSet: postSwipeActions, entity: post)
+//              .id("\(post.id)-post-link")
+//            }
+            //              .equatable()
             .onAppear {
-//              print("maos", i, total)
-//              if(total - 7 == i) {
+              //              print("maos", i, total)
+              //              if(total - 7 == i) {
               if(posts.count - 7 == i) {
                 if !searchText.isEmpty {
                   fetch(true, searchText)
@@ -131,7 +137,7 @@ struct SubredditPostsIOS: View, Equatable {
       }
       
     }
-//    .ignoresSafeArea()
+    //    .ignoresSafeArea()
     .themedListBG(selectedTheme.postLinks.bg)
     .scrollContentBackground(.hidden)
     .scrollIndicators(.never)

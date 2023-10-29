@@ -24,17 +24,17 @@ struct PostLinkNormalSelftext: View, Equatable {
 
 struct PostLinkNormal: View, Equatable {
   static func == (lhs: PostLinkNormal, rhs: PostLinkNormal) -> Bool {
-    return lhs.post == rhs.post && lhs.theme == rhs.theme && lhs.cs == rhs.cs && lhs.contentWidth == rhs.contentWidth
+    return lhs.theme == rhs.theme && lhs.cs == rhs.cs && lhs.contentWidth == rhs.contentWidth
   }
   
-  @ObservedObject var post: Post
-  @ObservedObject var winstonData: PostWinstonData
+  @EnvironmentObject var post: Post
+  @EnvironmentObject var winstonData: PostWinstonData
+  @EnvironmentObject var sub: Subreddit
   weak var controller: UIViewController?
   var avatarRequest: ImageRequest?
   var cachedVideo: SharedVideo?
   var repostAvatarRequest: ImageRequest?
   var theme: SubPostsListTheme
-  weak var sub: Subreddit?
   var showSub = false
   var secondary = false
   weak var routerProxy: RouterProxy?
@@ -57,14 +57,25 @@ struct PostLinkNormal: View, Equatable {
   }
   
   func openPost() {
-    if let sub = sub, let routerProxy = routerProxy {
+    if let routerProxy = routerProxy {
       withAnimation(nil) { isOpen = true }
       routerProxy.router.path.append(PostViewPayload(post: post, postSelfAttr: nil, sub: feedsAndSuch.contains(sub.id) ? sub : sub))
     }
   }
   
+  func onDisappear() {
+    Task(priority: .background) {
+      if readPostOnScroll {
+        await post.toggleSeen(true, optimistic: true)
+      }
+      if hideReadPosts {
+        await post.hide(true)
+      }
+    }
+  }
+  
   var body: some View {
-    if let data = post.data {
+    if let routerProxy = routerProxy, let data = post.data {
       let over18 = data.over_18 ?? false
       VStack(alignment: .leading, spacing: theme.theme.verticalElementsSpacing) {
         if showSubsAtTop {
@@ -78,13 +89,12 @@ struct PostLinkNormal: View, Equatable {
           
           if case .repost(let repost) = extractedMedia {
             if let repostSub = repost.winstonData?.subreddit, let repostWinstonData = repost.winstonData {
-                SwipeRevolution(size: repostWinstonData.postDimensions.size, actionsSet: postSwipeActions, entity: repost) { controller in
+//                SwipeRevolution(size: repostWinstonData.postDimensions.size, actionsSet: postSwipeActions, entity: repost) { controller in
                   PostLink(
-                    post: repost,
+                    id: repost.id,
                     controller: controller,
                     avatarRequest: repostAvatarRequest,
                     theme: theme,
-                    sub: repostSub,
                     showSub: true,
                     secondary: true,
                     routerProxy: routerProxy,
@@ -103,7 +113,11 @@ struct PostLinkNormal: View, Equatable {
                     voteButtonPositionRight: nil,
                     cs: cs
                   )
-                }
+//                }
+                  .swipyRev(size: winstonData.postDimensions.size, actionsSet: postSwipeActions, entity: post)
+                .environmentObject(repost)
+                .environmentObject(repostWinstonData)
+                .environmentObject(repostSub)
               }
           }
         }
@@ -132,6 +146,8 @@ struct PostLinkNormal: View, Equatable {
           
         }
       }
+      .postLinkStyle(post: post, sub: sub, routerProxy: routerProxy, theme: theme, size: winstonData.postDimensions.size, secondary: secondary, isOpen: isOpen, openPost: openPost, readPostOnScroll: readPostOnScroll, hideReadPosts: hideReadPosts, cs: cs)
+      .swipyUI(onTap: openPost, actionsSet: postSwipeActions, entity: post)
 
     }
   }

@@ -17,22 +17,29 @@ struct NSFWMod: ViewModifier {
       .frame(minHeight: isIt ? 75 : 0)
       .opacity(blur ? 0.75 : 1)
       .blur(radius: blur ? 30 : 0)
+      .allowsHitTesting(!blur)
       .overlay(
         !blur
         ? nil
-        : VStack {
-          Text("NSFW")
-            .fontSize(15, .medium)
-            .padding(.horizontal, 8)
-            .padding(.vertical, 3)
-            .background(.red, in: Capsule(style: .continuous))
-            .foregroundColor(.white)
-          Text("Tap to unblur")
-        }
+        : NSFWOverlay().equatable().highPriorityGesture(blur ? TapGesture().onEnded { withAnimation { unblur = true } } : nil )
       )
-      .allowsHitTesting(!blur)
-      .contentShape(Rectangle())
-      .highPriorityGesture(blur ? TapGesture().onEnded { withAnimation { unblur = true } } : nil )
+  }
+}
+
+struct NSFWOverlay: View, Equatable {
+  static func == (lhs: NSFWOverlay, rhs: NSFWOverlay) -> Bool { true }
+  var body: some View {
+    VStack {
+      Text("NSFW")
+        .fontSize(15, .medium)
+        .padding(.horizontal, 8)
+        .padding(.vertical, 3)
+        .background(.red, in: Capsule(style: .continuous))
+        .foregroundColor(.white)
+      Text("Tap to unblur")
+    }
+    .frame(maxWidth: .infinity, maxHeight: .infinity)
+    .contentShape(Rectangle())
   }
 }
 
