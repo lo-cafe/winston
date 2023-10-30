@@ -18,63 +18,69 @@ extension Post {
   static var prefetcher = ImagePrefetcher(pipeline: ImagePipeline.shared, destination: .memoryCache, maxConcurrentRequestCount: 10)
   static var prefix = "t3"
   
-  convenience init(data: T, api: RedditAPI, fetchSub: Bool = false, contentWidth: Double = UIScreen.screenWidth, secondary: Bool = false, imgPriority: ImageRequest.Priority = .low) {
-    let theme = Defaults[.themesPresets].first(where: { $0.id == Defaults[.selectedThemeID] }) ?? defaultTheme
+  convenience init(data: T, api: RedditAPI, fetchSub: Bool = false, contentWidth: Double = UIScreen.screenWidth, secondary: Bool = false, imgPriority: ImageRequest.Priority = .low, theme: WinstonTheme? = nil) {
+    let theme = theme ?? Defaults[.themesPresets].first(where: { $0.id == Defaults[.selectedThemeID] }) ?? defaultTheme
     self.init(data: data, api: api, typePrefix: "\(Post.prefix)_")
-    self.winstonData = PostWinstonData()
-    self.winstonData?.permaURL = URL(string: "https://reddit.com\(data.permalink.escape.urlEncoded)")
-    let extractedMedia = mediaExtractor(contentWidth: contentWidth, data)
-    self.winstonData?.extractedMedia = extractedMedia
-    self.winstonData?.postDimensions = getPostDimensions(post: self, columnWidth: contentWidth, secondary: secondary)
-    self.winstonData?.titleAttr = createTitleTagsAttrString(titleTheme: theme.postLinks.theme.titleText, postData: data)
-    if fetchSub {
-      self.winstonData?.subreddit = Subreddit(id: data.subreddit, api: RedditAPI.shared)
-    }
-    let compact = Defaults[.compactMode]
-    switch extractedMedia {
-    case .image(let url):
-      
-      let processors: [ImageProcessing] = contentWidth == 0 ? [] : [.resize(width: compact ? scaledCompactModeThumbSize() : contentWidth)]
-      var userInfo: [ImageRequest.UserInfoKey : Any] = [:]
-      if compact {
-        userInfo[.thumbnailKey] = ImageRequest.ThumbnailOptions(size: .init(width: scaledCompactModeThumbSize(), height: scaledCompactModeThumbSize()), unit: .points, contentMode: .aspectFill)
-      }
-      self.winstonData?.mediaImageRequest = [ImageRequest(url: url.url, processors: processors, userInfo: userInfo)]
-    case .gallery(let imgs):
-      var userInfo: [ImageRequest.UserInfoKey : Any] = [:]
-      if compact {
-        userInfo[.thumbnailKey] = ImageRequest.ThumbnailOptions(size: .init(width: scaledCompactModeThumbSize(), height: scaledCompactModeThumbSize()), unit: .points, contentMode: .aspectFill)
-      }
-      let halfWidthProcessor: [ImageProcessing] = contentWidth == 0 ? [] : [.resize(width: compact ? scaledCompactModeThumbSize() : ((contentWidth - 8) / 2))]
-      let fullWidthProcessor: [ImageProcessing] = contentWidth == 0 ? [] : [.resize(width: compact ? scaledCompactModeThumbSize() : contentWidth)]
-      var requests: [ImageRequest] = []
-      if imgs.count > 0 {
-        requests.append(ImageRequest(url: imgs[0].url, processors: halfWidthProcessor, userInfo: userInfo))
-        requests.append(ImageRequest(url: imgs[1].url, processors: halfWidthProcessor, userInfo: userInfo))
-        if imgs.count >= 3 { requests.append(ImageRequest(url: imgs[2].url, processors: imgs.count > 3 ? halfWidthProcessor : fullWidthProcessor, userInfo: userInfo)) }
-        requests += imgs.dropFirst(3).map { ImageRequest(url: $0.url, priority: .low) }
-      }
-      self.winstonData?.mediaImageRequest = requests
-    case .link(let url):
-      Caches.postsPreviewModels.addKeyValue(key: url.absoluteString, data: { PreviewModel(url) })
-    case .video(let mediaExtracted):
-      Caches.videos.addKeyValue(key: data.id) {
-        SharedVideo(url: mediaExtracted.url, size: mediaExtracted.size)
-      }
-    default:
-      break
-    }
-    
-    if let body = self.data?.selftext {
-      Caches.postsAttrStr.addKeyValue(key: data.id, data: {
-        let attr = stringToAttr(body, fontSize: theme.posts.bodyText.size)
-        return attr
-      })
-    }
+    setupWinstonData(data: data, contentWidth: contentWidth, secondary: secondary, theme: theme, fetchSub: fetchSub)
   }
   
   convenience init(id: String, api: RedditAPI) {
     self.init(id: id, api: api, typePrefix: "\(Post.prefix)_")
+  }
+  
+  func setupWinstonData(data: PostData? = nil, winstonData: PostWinstonData? = nil, contentWidth: Double = UIScreen.screenWidth, secondary: Bool = false, theme: WinstonTheme, fetchSub: Bool = false) {
+    if let data = data ?? self.data {
+      if self.winstonData == nil { self.winstonData = PostWinstonData() }
+      self.winstonData?.permaURL = URL(string: "https://reddit.com\(data.permalink.escape.urlEncoded)")
+      let extractedMedia = mediaExtractor(contentWidth: contentWidth, data, theme: theme)
+      self.winstonData?.extractedMedia = extractedMedia
+      self.winstonData?.postDimensions = getPostDimensions(post: self, winstonData: self.winstonData, columnWidth: contentWidth, secondary: secondary, rawTheme: theme)
+      self.winstonData?.titleAttr = createTitleTagsAttrString(titleTheme: theme.postLinks.theme.titleText, postData: data)
+      if fetchSub {
+        self.winstonData?.subreddit = Subreddit(id: data.subreddit, api: RedditAPI.shared)
+      }
+      let compact = Defaults[.compactMode]
+      switch extractedMedia {
+      case .image(let url):
+        
+        let processors: [ImageProcessing] = contentWidth == 0 ? [] : [.resize(width: compact ? scaledCompactModeThumbSize() : contentWidth)]
+        var userInfo: [ImageRequest.UserInfoKey : Any] = [:]
+        if compact {
+          userInfo[.thumbnailKey] = ImageRequest.ThumbnailOptions(size: .init(width: scaledCompactModeThumbSize(), height: scaledCompactModeThumbSize()), unit: .points, contentMode: .aspectFill)
+        }
+        self.winstonData?.mediaImageRequest = [ImageRequest(url: url.url, processors: processors, userInfo: userInfo)]
+      case .gallery(let imgs):
+        var userInfo: [ImageRequest.UserInfoKey : Any] = [:]
+        if compact {
+          userInfo[.thumbnailKey] = ImageRequest.ThumbnailOptions(size: .init(width: scaledCompactModeThumbSize(), height: scaledCompactModeThumbSize()), unit: .points, contentMode: .aspectFill)
+        }
+        let halfWidthProcessor: [ImageProcessing] = contentWidth == 0 ? [] : [.resize(width: compact ? scaledCompactModeThumbSize() : ((contentWidth - 8) / 2))]
+        let fullWidthProcessor: [ImageProcessing] = contentWidth == 0 ? [] : [.resize(width: compact ? scaledCompactModeThumbSize() : contentWidth)]
+        var requests: [ImageRequest] = []
+        if imgs.count > 0 {
+          requests.append(ImageRequest(url: imgs[0].url, processors: halfWidthProcessor, userInfo: userInfo))
+          requests.append(ImageRequest(url: imgs[1].url, processors: halfWidthProcessor, userInfo: userInfo))
+          if imgs.count >= 3 { requests.append(ImageRequest(url: imgs[2].url, processors: imgs.count > 3 ? halfWidthProcessor : fullWidthProcessor, userInfo: userInfo)) }
+          requests += imgs.dropFirst(3).map { ImageRequest(url: $0.url, priority: .low) }
+        }
+        self.winstonData?.mediaImageRequest = requests
+      case .link(let url):
+        Caches.postsPreviewModels.addKeyValue(key: url.absoluteString, data: { PreviewModel(url) })
+      case .video(let mediaExtracted):
+        Caches.videos.addKeyValue(key: data.id) {
+          SharedVideo(url: mediaExtracted.url, size: mediaExtracted.size)
+        }
+      default:
+        break
+      }
+      
+      if let body = self.data?.selftext {
+        Caches.postsAttrStr.addKeyValue(key: data.id, data: {
+          let attr = stringToAttr(body, fontSize: theme.posts.bodyText.size)
+          return attr
+        })
+      }
+    }
   }
   
   static func initMultiple(datas: [T], api: RedditAPI, fetchSubs: Bool = false, contentWidth: CGFloat = 0) -> [Post] {
@@ -325,9 +331,9 @@ class PostWinstonData: Hashable, ObservableObject {
   static func == (lhs: PostWinstonData, rhs: PostWinstonData) -> Bool { lhs.postDimensions == rhs.postDimensions }
   
   var permaURL: URL? = nil
-  var extractedMedia: MediaExtractedType? = nil
+  @Published var extractedMedia: MediaExtractedType? = nil
   var subreddit: Subreddit?
-  var mediaImageRequest: [ImageRequest] = []
+  @Published var mediaImageRequest: [ImageRequest] = []
   @Published var postDimensions: PostDimensions = .zero
   @Published var titleAttr: NSAttributedString?
   

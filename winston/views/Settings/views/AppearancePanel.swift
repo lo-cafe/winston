@@ -26,7 +26,7 @@ struct AppearancePanel: View {
   @Default(.voteButtonPositionRight) var voteButtonPositionRight
   @Default(.showSelfPostThumbnails) var showSelfPostThumbnails
   @Default(.disableAlphabetLettersSectionsInSubsList) var disableAlphabetLettersSectionsInSubsList
-  @Default(.preferInlineTags) var preferInlineTags
+//  @Default(.preferInlineTags) var preferInlineTags
   
   @Environment(\.useTheme) private var theme
   
@@ -58,7 +58,7 @@ struct AppearancePanel: View {
         Toggle("Show Self Text", isOn: $showSelfText)
         Toggle("Show Subreddit at Top", isOn: $showSubsAtTop)
         Toggle("Show Title at Top", isOn: $showTitleAtTop)
-        Toggle("Prefer inline tags", isOn: $preferInlineTags)
+//        Toggle("Prefer inline tags", isOn: $preferInlineTags)
         }
         .themedListRowBG(enablePadding: true)
       }
@@ -67,7 +67,7 @@ struct AppearancePanel: View {
       Section("Compact Posts"){
         Group {
         Toggle("Compact Mode", isOn: $compactMode)
-        Toggle("Show Self Post Thumbnails", isOn: $showSelfPostThumbnails)
+        Toggle("Show Thumbnail Placeholder", isOn: $showSelfPostThumbnails)
         Picker("Thumbnail Position", selection: Binding(get: {
           thumbnailPositionRight ? "Right" : "Left"
         }, set: {val, _ in

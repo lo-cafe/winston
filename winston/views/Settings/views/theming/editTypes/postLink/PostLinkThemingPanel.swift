@@ -34,6 +34,7 @@ struct PostLinkThemingPanel: View {
   @Default(.showUpvoteRatio) private var showUpvoteRatio
   @Default(.showSubsAtTop) private var showSubsAtTop
   @Default(.showTitleAtTop) private var showTitleAtTop
+  @Default(.showSelfPostThumbnails) private var showSelfPostThumbnails
   
   @ObservedObject var avatarCache = Caches.avatars
   @Environment(\.contentWidth) private var contentWidth
@@ -85,6 +86,7 @@ struct PostLinkThemingPanel: View {
             compact: false,
             thumbnailPositionRight: nil,
             voteButtonPositionRight: nil,
+            showSelfPostThumbnails: showSelfPostThumbnails,
             cs: cs
           )
           .equatable()
@@ -118,6 +120,7 @@ struct PostLinkThemingPanel: View {
       
       
     }
+    .onAppear { previewPostSample.setupWinstonData(winstonData: previewPostSample.winstonData, theme: theme) }
     .themedListBG(theme.lists.bg)
     .scrollContentBackground(.hidden)
     .listStyle(.plain)

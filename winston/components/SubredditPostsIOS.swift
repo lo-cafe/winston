@@ -11,7 +11,7 @@ import NukeUI
 
 struct SubredditPostsIOS: View, Equatable {
   static func == (lhs: SubredditPostsIOS, rhs: SubredditPostsIOS) -> Bool {
-    lhs.posts.count == rhs.posts.count && lhs.subreddit?.id == rhs.subreddit?.id && lhs.searchText == rhs.searchText && lhs.selectedTheme == rhs.selectedTheme && lhs.lastPostAfter == rhs.lastPostAfter
+    lhs.posts.count == rhs.posts.count && lhs.subreddit?.id == rhs.subreddit?.id && lhs.searchText == rhs.searchText && lhs.selectedTheme == rhs.selectedTheme && lhs.lastPostAfter == rhs.lastPostAfter && lhs.selectedTheme == rhs.selectedTheme
   }
   
   var showSub = false
@@ -42,6 +42,7 @@ struct SubredditPostsIOS: View, Equatable {
   
   @Default(.showSubsAtTop) private var showSubsAtTop
   @Default(.showTitleAtTop) private var showTitleAtTop
+  @Default(.showSelfPostThumbnails) private var showSelfPostThumbnails
   
   @Environment(\.colorScheme) private var cs
   
@@ -56,53 +57,44 @@ struct SubredditPostsIOS: View, Equatable {
   }
   
   var body: some View {
+    let isThereDivider = selectedTheme.postLinks.divider.style != .no
     let paddingH = selectedTheme.postLinks.theme.outerHPadding
-    let paddingV = selectedTheme.postLinks.spacing / 2
+    let paddingV = selectedTheme.postLinks.spacing / (isThereDivider ? 4 : 2)
     List {
       Section {
-//        CollectionView(collection: posts, scrollDirection: .vertical, contentSize: .custom({ collectionView, layout, post in
-//          post.winstonData?.postDimensions.size ?? CGSize(width: 300, height: 300)
-//        }), itemSpacing: .init(mainAxisSpacing: selectedTheme.postLinks.spacing, crossAxisSpacing: 0)) { post, controller, i, total in
-         ForEach(Array(posts.enumerated()), id: \.self.element.id) { i, post in
+
+        ForEach(Array(posts.enumerated()), id: \.self.element.id) { i, post in
           
           if let sub = subreddit ?? post.winstonData?.subreddit, let postData = post.data, let winstonData = post.winstonData {
-//             { controller in
-              PostLink(
-                id: post.id,
-                controller: nil,
-                avatarRequest: avatarCache.cache[postData.author_fullname ?? ""]?.data,
-                cachedVideo: videosCache.cache[post.id]?.data,
-                repostAvatarRequest: getRepostAvatarRequest(post),
-                theme: selectedTheme.postLinks,
-                showSub: showSub,
-                routerProxy: routerProxy,
-                contentWidth: contentWidth,
-                blurPostLinkNSFW: blurPostLinkNSFW,
-                postSwipeActions: postSwipeActions,
-                showVotes: showVotes,
-                showSelfText: showSelfText,
-                readPostOnScroll: readPostOnScroll,
-                hideReadPosts: hideReadPosts,
-                showUpvoteRatio: showUpvoteRatio,
-                showSubsAtTop: showSubsAtTop,
-                showTitleAtTop: showTitleAtTop,
-                compact: compactMode,
-                thumbnailPositionRight: thumbnailPositionRight,
-                voteButtonPositionRight: voteButtonPositionRight,
-                cs: cs
-              )
-//              .swipyUI(actionsSet: postSwipeActions, entity: post)
-//              .equatable()
-              .environmentObject(sub)
-              .environmentObject(post)
-              .environmentObject(winstonData)
-//              .swipyRev(size: winstonData.postDimensions.size, actionsSet: postSwipeActions, entity: post)
-//              .id("\(post.id)-post-link")
-//            }
-            //              .equatable()
+            PostLink(
+              id: post.id,
+              controller: nil,
+              avatarRequest: avatarCache.cache[postData.author_fullname ?? ""]?.data,
+              cachedVideo: videosCache.cache[post.id]?.data,
+              repostAvatarRequest: getRepostAvatarRequest(post),
+              theme: selectedTheme.postLinks,
+              showSub: showSub,
+              routerProxy: routerProxy,
+              contentWidth: contentWidth,
+              blurPostLinkNSFW: blurPostLinkNSFW,
+              postSwipeActions: postSwipeActions,
+              showVotes: showVotes,
+              showSelfText: showSelfText,
+              readPostOnScroll: readPostOnScroll,
+              hideReadPosts: hideReadPosts,
+              showUpvoteRatio: showUpvoteRatio,
+              showSubsAtTop: showSubsAtTop,
+              showTitleAtTop: showTitleAtTop,
+              compact: compactMode,
+              thumbnailPositionRight: thumbnailPositionRight,
+              voteButtonPositionRight: voteButtonPositionRight,
+              showSelfPostThumbnails: showSelfPostThumbnails,
+              cs: cs
+            )
+            .environmentObject(sub)
+            .environmentObject(post)
+            .environmentObject(winstonData)
             .onAppear {
-              //              print("maos", i, total)
-              //              if(total - 7 == i) {
               if(posts.count - 7 == i) {
                 if !searchText.isEmpty {
                   fetch(true, searchText)
@@ -117,6 +109,7 @@ struct SubredditPostsIOS: View, Equatable {
           if selectedTheme.postLinks.divider.style != .no && i != (posts.count - 1) {
             NiceDivider(divider: selectedTheme.postLinks.divider)
               .id("\(post.id)-divider")
+              .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
           }
           
         }
@@ -137,7 +130,6 @@ struct SubredditPostsIOS: View, Equatable {
       }
       
     }
-    //    .ignoresSafeArea()
     .themedListBG(selectedTheme.postLinks.bg)
     .scrollContentBackground(.hidden)
     .scrollIndicators(.never)

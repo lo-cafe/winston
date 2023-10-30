@@ -49,7 +49,7 @@ enum MediaExtractedType: Hashable, Equatable {
 }
 
 // ORDER MATTERS!
-func mediaExtractor(contentWidth: Double = UIScreen.screenWidth, _ data: PostData) -> MediaExtractedType? {
+func mediaExtractor(contentWidth: Double = UIScreen.screenWidth, _ data: PostData, theme: WinstonTheme? = nil) -> MediaExtractedType? {
   guard !data.is_self else { return nil }
   
   if let is_gallery = data.is_gallery, is_gallery, let galleryData = data.gallery_data?.items, let metadata = data.media_metadata {
@@ -72,7 +72,7 @@ func mediaExtractor(contentWidth: Double = UIScreen.screenWidth, _ data: PostDat
   }
   
   if data.media?.type == "youtube.com", let oembed = data.media?.oembed, let html = oembed.html, let ytID = extractYoutubeIdFromOEmbed(html), let width = oembed.width, let height = oembed.height, let author_name = oembed.author_name, let author_url = oembed.author_url, let authorURL = URL(string: author_url), let thumb = oembed.thumbnail_url, let thumbURL = URL(string: thumb) {
-    let thumbReq = ImageRequest(url: thumbURL, processors: [.resize(width: getPostContentWidth(contentWidth: contentWidth))], priority: .normal)
+    let thumbReq = ImageRequest(url: thumbURL, processors: [.resize(width: getPostContentWidth(contentWidth: contentWidth, theme: theme))], priority: .normal)
     Post.prefetcher.startPrefetching(with: [thumbReq])
     let size = CGSize(width: CGFloat(width), height: CGFloat(height))
     let newExtracted = YTMediaExtracted(videoID: ytID, size: size, thumbnailURL: thumbURL, thumbnailRequest: thumbReq, player: YouTubePlayer(source: .video(id: ytID)), author: author_name, authorURL: authorURL)
@@ -83,7 +83,7 @@ func mediaExtractor(contentWidth: Double = UIScreen.screenWidth, _ data: PostDat
   
   if let postEmbed = data.crosspost_parent_list?.first {
 //    return .repost(Post(data: postEmbed, api: RedditAPI.shared, fetchSub: true, contentWidth: getPostContentWidth(contentWidth: contentWidth, secondary: true) ))
-    return .repost(Post(data: postEmbed, api: RedditAPI.shared, fetchSub: true, contentWidth: contentWidth, secondary: true ))
+    return .repost(Post(data: postEmbed, api: RedditAPI.shared, fetchSub: true, contentWidth: contentWidth, secondary: true, theme: theme))
   }
   
   if IMAGES_FORMATS.contains(where: { data.url.hasSuffix($0) }), let url = rootURL(data.url) {

@@ -94,6 +94,7 @@ struct SubredditPosts: View, Equatable {
         SubredditPostsIOS(lastPostAfter: lastPostAfter, subreddit: subreddit, posts: posts.data, searchText: searchText, fetch: fetch, selectedTheme: selectedTheme)
       }
     }
+    .environment(\.defaultMinListRowHeight, 1)
     .loader(loading && posts.data.count == 0)
     .overlay(
       feedsAndSuch.contains(subreddit.id)

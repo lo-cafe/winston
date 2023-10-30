@@ -42,6 +42,7 @@ struct PostLink: View, Equatable, Identifiable {
   let compact: Bool
   let thumbnailPositionRight: Bool?
   let voteButtonPositionRight: Bool?
+  let showSelfPostThumbnails: Bool
   var cs: ColorScheme
     
   var body: some View {
@@ -70,6 +71,7 @@ struct PostLink: View, Equatable, Identifiable {
           showTitleAtTop: showTitleAtTop,
           thumbnailPositionRight: thumbnailPositionRight ?? true,
           voteButtonPositionRight: voteButtonPositionRight ?? true,
+          showSelfPostThumbnails: showSelfPostThumbnails,
           cs: cs
         )
         .equatable()

@@ -9,7 +9,7 @@ import SwiftUI
 
 struct PostLinkTitle: View, Equatable {
   static func == (lhs: PostLinkTitle, rhs: PostLinkTitle) -> Bool {
-    lhs.label == rhs.label && lhs.theme == rhs.theme && lhs.cs == rhs.cs
+    lhs.label == rhs.label && lhs.theme == rhs.theme && lhs.cs == rhs.cs && lhs.size == rhs.size
   }
   var attrString: NSAttributedString?
   var label: String

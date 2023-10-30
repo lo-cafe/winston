@@ -31,6 +31,7 @@ func createTitleTagsAttrString(titleTheme: ThemeText, postData: PostData) -> NSA
   
   if titleTagsImages.count > 0 { attrTitle.append(NSAttributedString(string: " ")) }
   
+  attrTitle.append(NSAttributedString(string: "\n\n\n\n\n\n\n"))
   return attrTitle
 }
 
@@ -73,32 +74,25 @@ func buildTitleWithTags(attrString: NSAttributedString, title: String, tags: [Pr
   let attr = attrString
   
 //  let text = UITextView(usingTextLayoutManager: false)
-  let text = UITextView(usingTextLayoutManager: false)
-//  let text = UITextView(frame: CGRect(x: 0, y: 0, width: size.width, height: size.height), textContainer: nil)
-//  let text = UITextView(frame: CGRect(x: 0, y: 0, width: size.width, height: size.height))
-  
-  text.layer.shouldRasterize = true
-  text.layer.rasterizationScale = UIScreen.main.scale
-  text.textContainer.maximumNumberOfLines = 0
-  text.textContainer.lineFragmentPadding = 0
-  text.textContainerInset = .zero
+  let text = UILabel()
+  text.frame = .init(x: 0, y: 0, width: size.width, height: size.height)
+
+//  text.layer.shouldRasterize = true
+//  text.layer.rasterizationScale = UIScreen.main.scale
   text.backgroundColor = .clear
-  text.isEditable = false
-  text.isSelectable = false
+  text.numberOfLines = 0
+  text.lineBreakMode = .byWordWrapping
   text.isUserInteractionEnabled = false
   text.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
-  text.isScrollEnabled = false
   text.translatesAutoresizingMaskIntoConstraints = false
-  text.layoutManager.allowsNonContiguousLayout = true
-  text.dataDetectorTypes = []
-  text.frame = .init(x: 0, y: 0, width: size.width, height: size.height)
   text.attributedText = attr
+  text.sizeToFit()
   return text
 }
 
 struct Prepend: UIViewRepresentable, Equatable {
   static func == (lhs: Prepend, rhs: Prepend) -> Bool {
-    lhs.title == rhs.title
+    lhs.title == rhs.title && lhs.size == rhs.size
   }
   
   var attrString: NSAttributedString
@@ -114,5 +108,7 @@ struct Prepend: UIViewRepresentable, Equatable {
     return view
   }
   
-  func updateUIView(_ uiView: UIView, context: Context) { }
+  func updateUIView(_ uiView: UIView, context: Context) {
+    if size != uiView.frame.size { uiView.frame.size = size }
+  }
 }

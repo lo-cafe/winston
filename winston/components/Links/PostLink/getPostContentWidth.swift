@@ -9,8 +9,8 @@ import Foundation
 import SwiftUI
 import Defaults
 
-func getPostContentWidth(contentWidth: Double = UIScreen.screenWidth, secondary: Bool = false) -> CGFloat {
-  let selectedTheme = Defaults[.themesPresets].first(where: { $0.id == Defaults[.selectedThemeID] }) ?? defaultTheme
+func getPostContentWidth(contentWidth: Double = UIScreen.screenWidth, secondary: Bool = false, theme: WinstonTheme? = nil) -> CGFloat {
+  let selectedTheme = theme ?? getEnabledTheme()
   let theme = selectedTheme.postLinks.theme
   var value: CGFloat = 0
   if IPAD {
@@ -61,13 +61,14 @@ struct PostDimensions: Hashable, Equatable {
   }
 }
 
-func getPostDimensions(post: Post, columnWidth: Double = UIScreen.screenWidth, secondary: Bool = false, theme: WinstonTheme? = nil) -> PostDimensions {
+func getPostDimensions(post: Post, winstonData: PostWinstonData? = nil, columnWidth: Double = UIScreen.screenWidth, secondary: Bool = false, rawTheme: WinstonTheme? = nil) -> PostDimensions {
   if let data = post.data {
-    let selectedTheme = theme ?? getEnabledTheme()
+    let selectedTheme = rawTheme ?? getEnabledTheme()
+    let showSelfPostThumbnails = Defaults[.showSelfPostThumbnails]
     let compact = Defaults[.compactMode]
     let maxDefaultHeight: CGFloat = Defaults[.maxPostLinkImageHeightPercentage]
     let maxHeight: CGFloat = (maxDefaultHeight / 100) * (UIScreen.screenHeight)
-    let extractedMedia = post.winstonData?.extractedMedia
+    let extractedMedia = winstonData?.extractedMedia
     let compactImgSize = scaledCompactModeThumbSize()
     let theme = selectedTheme.postLinks.theme
     let postGeneralSpacing = theme.verticalElementsSpacing
@@ -90,9 +91,9 @@ func getPostDimensions(post: Post, columnWidth: Double = UIScreen.screenWidth, s
     if let extractedMedia = extractedMedia {
       if compact { ACC_mediaSize = compactMediaSize } else {
         func defaultMediaSize(_ size: CGSize) -> CGSize {
-          let sourceHeight = size.height == 0 ? post.winstonData?.postDimensions.mediaSize?.height ?? 0 : size.height
-          let sourceWidth = size.width == 0 ? post.winstonData?.postDimensions.mediaSize?.width ?? 0 : size.width
-          let propHeight = (contentWidth * sourceHeight) / sourceWidth
+          let sourceHeight = size.height == 0 ? winstonData?.postDimensions.mediaSize?.height ?? 0 : size.height
+          let sourceWidth = size.width == 0 ? winstonData?.postDimensions.mediaSize?.width ?? 0 : size.width
+          let propHeight = (contentWidth * sourceHeight) / (sourceWidth == 0 ? 1 : sourceWidth)
           let finalHeight = maxDefaultHeight != 110 ? Double(min(maxHeight, propHeight)) : Double(propHeight)
           return CGSize(width: contentWidth, height: finalHeight)
         }
@@ -139,12 +140,13 @@ func getPostDimensions(post: Post, columnWidth: Double = UIScreen.screenWidth, s
     }
     
     
-    let compactTitleWidth = postGeneralSpacing + VotesCluster.verticalWidth + (extractedMedia == nil ? 0 : postGeneralSpacing + compactMediaSize.width)
+    let compactTitleWidth = postGeneralSpacing + VotesCluster.verticalWidth + (showSelfPostThumbnails || extractedMedia != nil ? postGeneralSpacing + compactMediaSize.width : 0)
+    
     let titleContentWidth = contentWidth - (compact ? compactTitleWidth : 0)
     
     var appendStr = ""
-    let titleAttr = NSMutableAttributedString(string: title, attributes: [.font: UIFont.systemFont(ofSize: theme.titleText.size, weight: theme.titleText.weight.ut)])
-    let titleAttrBlankSpace = NSAttributedString(string: " ", attributes: [.font: UIFont.systemFont(ofSize: theme.titleText.size, weight: theme.titleText.weight.ut)])
+    let titleAttr = NSMutableAttributedString(string: title, attributes: [.font: UIFont.systemFont(ofSize: theme.titleText.size + 0.35, weight: theme.titleText.weight.ut)])
+    let titleAttrBlankSpace = NSAttributedString(string: " ", attributes: [.font: UIFont.systemFont(ofSize: theme.titleText.size + 0.35, weight: theme.titleText.weight.ut)])
     if data.over_18 ?? false {
       titleAttr.append(titleAttrBlankSpace)
       appendStr += "NSFW"

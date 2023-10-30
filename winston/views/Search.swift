@@ -71,6 +71,7 @@ struct Search: View {
   @Default(.showUpvoteRatio) private var showUpvoteRatio
   @Default(.showSubsAtTop) private var showSubsAtTop
   @Default(.showTitleAtTop) private var showTitleAtTop
+  @Default(.showSelfPostThumbnails) private var showSelfPostThumbnails
   
   @ObservedObject var avatarCache = Caches.avatars
   @Environment(\.colorScheme) private var cs
@@ -185,6 +186,7 @@ struct Search: View {
                           compact: compactMode,
                           thumbnailPositionRight: thumbnailPositionRight,
                           voteButtonPositionRight: voteButtonPositionRight,
+                          showSelfPostThumbnails: showSelfPostThumbnails,
                           cs: cs
                         )
                         .swipyRev(size: winstonData.postDimensions.size, actionsSet: postSwipeActions, entity: post)

@@ -50,6 +50,8 @@ struct PostLinkNormal: View, Equatable {
   let showTitleAtTop: Bool
   var cs: ColorScheme
   
+  @Environment(\.useTheme) private var selectedTheme
+  
 //  @State private var isOpen = false
   
   func markAsRead() async {
@@ -111,6 +113,7 @@ struct PostLinkNormal: View, Equatable {
                     compact: false,
                     thumbnailPositionRight: nil,
                     voteButtonPositionRight: nil,
+                    showSelfPostThumbnails: false,
                     cs: cs
                   )
 //                }
@@ -148,7 +151,10 @@ struct PostLinkNormal: View, Equatable {
       }
       .postLinkStyle(post: post, sub: sub, routerProxy: routerProxy, theme: theme, size: winstonData.postDimensions.size, secondary: secondary, isOpen: false, openPost: openPost, readPostOnScroll: readPostOnScroll, hideReadPosts: hideReadPosts, cs: cs)
       .swipyUI(onTap: openPost, actionsSet: postSwipeActions, entity: post)
-
+      .onChange(of: selectedTheme) { val in
+        post.setupWinstonData(data: post.data, winstonData: winstonData, theme: val)
+//        winstonData.postDimensions = getPostDimensions(post: post, columnWidth: contentWidth, secondary: secondary, theme: val)
+      }
     }
   }
 }

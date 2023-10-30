@@ -40,6 +40,7 @@ struct SubredditPostsIPAD: View, Equatable {
   
   @Default(.showSubsAtTop) private var showSubsAtTop
   @Default(.showTitleAtTop) private var showTitleAtTop
+  @Default(.showSelfPostThumbnails) private var showSelfPostThumbnails
   
   @ObservedObject var avatarCache = Caches.avatars
   @ObservedObject private var videosCache = Caches.videos
@@ -88,6 +89,7 @@ struct SubredditPostsIPAD: View, Equatable {
                     compact: compactMode,
                     thumbnailPositionRight: thumbnailPositionRight,
                     voteButtonPositionRight: voteButtonPositionRight,
+                    showSelfPostThumbnails: showSelfPostThumbnails,
                     cs: cs
                   )
                   .swipyRev(size: winstonData.postDimensions.size, actionsSet: postSwipeActions, entity: post)
