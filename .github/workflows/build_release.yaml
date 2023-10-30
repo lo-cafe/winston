@@ -1,0 +1,59 @@
+on:
+  pull_request:
+    branches:
+      - alpha
+    #ypes: [closed] ##TODO: Remove after testing
+
+jobs:
+  build_and_release:
+    runs-on: macos-13
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Xcode
+      uses: maxim-lobanov/setup-xcode@v1.6.0
+      with:
+        xcode-version: '15.0.0'
+      
+    - name: Extract Version Number
+      id: extract_version
+      run: |
+        version=$(grep -m 1 -o 'MARKETING_VERSION\s*=\s*[^;]*' winston.xcodeproj/project.pbxproj | sed 's/MARKETING_VERSION = //')
+        if [ -z "$version" ]; then
+          echo "Version number not found"
+          exit 1
+        fi
+        echo set-output name=version::$version
+
+    - name: Read release body from whattotest file
+      id: read_file
+      # For some reason this works only with the deprecated output syntax
+      run: |
+        release_body=$(cat TestFlight/WhatToTest.en-US.txt)
+        echo "::set-output name=release_body::$release_body"
+
+    - name: Build and Archive App
+      uses: sparkfabrik/ios-build-action@v2.3.0
+      with:
+        apple-key-id: ${{ secrets.APPLE_KEY_ID }}
+        apple-key-issuer-id: ${{ secrets.APPLE_KEY_ISSUER_ID }}
+        apple-key-content: ${{ secrets.APPLE_KEY_CONTENT }}
+        project-path: winston.xcodeproj
+        export-method: package
+        match-build-type: appstore
+        scheme: winston
+        output-path: $PWD/build/Winston.ipa
+        team-id: Z2NNLU4F7U
+        team-name: "lo.cafe"
+        ios-app-id: lo.cafe.winston
+        upload-to-testflight: false    
+        increment-build-number: false
+
+    - name: Upload Release
+      uses: softprops/action-gh-release@v1
+      with:
+        files: $PWD/build/Winston.ipa
+        tag_name: Winston-v-${{ steps.extract_version.outputs.version }}
+        name: "Winston - v${{ steps.extract_version.outputs.version }}"
+        body: ${{ steps.read_file.outputs.release_body }}
