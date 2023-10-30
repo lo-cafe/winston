@@ -16,15 +16,20 @@ jobs:
       with:
         xcode-version: '15.0.0'
       
-    - name: Extract Version Number
-      id: extract_version
+
+    - name: Extract Version and Build Number
+      id: extract_version_build_number
       run: |
         version=$(grep -m 1 -o 'MARKETING_VERSION\s*=\s*[^;]*' winston.xcodeproj/project.pbxproj | sed 's/MARKETING_VERSION = //')
+        build_number=$(grep -m 1 -o 'CURRENT_PROJECT_VERSION\s*=\s*[^;]*' winston.xcodeproj/project.pbxproj | sed 's/CURRENT_PROJECT_VERSION = //')
         if [ -z "$version" ]; then
-          echo "Version number not found"
-          exit 1
+            version="$version"
         fi
-        echo set-output name=version::$version
+        if [ -z "$build_number" ]; then
+            build_number="-$buid_number"
+        fi
+        echo "::set-output name=version::$version"
+        echo "::set-output name=build_number::$build_number"
 
     - name: Read release body from whattotest file
       id: read_file
@@ -36,9 +41,9 @@ jobs:
     - name: Build and Archive App
       uses: sparkfabrik/ios-build-action@v2.3.0
       with:
-        apple-key-id: "${{ secrets.APPLE_KEY_ID }}"
-        apple-key-issuer-id: "${{ secrets.APPLE_KEY_ISSUER_ID }}"
-        apple-key-content: "${{ secrets.APPLE_KEY_CONTENT }}"
+        apple-key-id: ${{ secrets.APPLE_KEY_ID }}
+        apple-key-issuer-id: ${{ secrets.APPLE_KEY_ISSUER_ID }}
+        apple-key-content: ${{ secrets.APPLE_KEY_CONTENT }}
         project-path: winston.xcodeproj
         export-method: package
         match-build-type: appstore
@@ -54,6 +59,6 @@ jobs:
       uses: softprops/action-gh-release@v1
       with:
         files: $PWD/build/Winston.ipa
-        tag_name: Winston-v-${{ steps.extract_version.outputs.version }}
-        name: "Winston - v${{ steps.extract_version.outputs.version }}"
+        tag_name: Winston-v-${{ extract_version_build_number.outputs.version }}${{ extract_version_build_number.outputs.build_number }}
+        name: "Winston-v-${{ extract_version_build_number.outputs.version }}${{ extract_version_build_number.outputs.build_number }}"
         body: ${{ steps.read_file.outputs.release_body }}
