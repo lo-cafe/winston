@@ -1,7 +1,9 @@
+name: Build and Release
+
 on:
   pull_request:
     branches:
-      - alpha
+      - alpha #change to production after testing
     #ypes: [closed] ##TODO: Remove after testing
 
 jobs:
@@ -16,7 +18,6 @@ jobs:
       with:
         xcode-version: '15.0.1'
       
-
     - name: Extract Version and Build Number
       id: extract_version_build_number
       run: |
@@ -49,14 +50,23 @@ jobs:
         release_body=$(cat TestFlight/WhatToTest.en-US.txt)
         echo "::set-output name=release_body::$release_body"
 
-    - name: Decode apple-key-content
-      run: base64 -D -i "${{ secrets.APPLE_KEY_CONTENT_B64 }}" > apple_key.p8
+    - name: Load secrets
+      id: op-load-secret
+      uses: 1password/load-secrets-action@v1
+      with:
+        export-env: false
+      env:
+        OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
+        #TODO: Add Service Account Token and change path to secrets
+        APPLE_KEY_ID: op://app-cicd/hello-world/secret
+        APPLE_KEY_ISSUER_ID: op://app-cicd/hello-world/secret
+
 
     - name: Build and Archive App
       uses: sparkfabrik/ios-build-action@v2.3.0
       with:
-        apple-key-id: "${{ secrets.APPLE_KEY_ID }}"
-        apple-key-issuer-id: "${{ secrets.APPLE_KEY_ISSUER_ID }}"
+        apple-key-id: ${{ steps.op-load-secret.outputs.APPLE_KEY_ID }}
+        apple-key-issuer-id: ${{ steps.op-load-secret.outputs.APPLE_KEY_ISSUER_ID }}
         apple-key-content: apple_key.p8
         project-path: winston.xcodeproj
         export-method: package
