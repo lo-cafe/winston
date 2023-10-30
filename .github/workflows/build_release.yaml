@@ -59,6 +59,6 @@ jobs:
       uses: softprops/action-gh-release@v1
       with:
         files: $PWD/build/Winston.ipa
-        tag_name: Winston-v-${{ extract_version_build_number.outputs.version }}${{ extract_version_build_number.outputs.build_number }}
-        name: "Winston-v-${{ extract_version_build_number.outputs.version }}${{ extract_version_build_number.outputs.build_number }}"
+        tag_name: Winston-v-${{ steps.extract_version_build_number.outputs.version }}${{ steps.extract_version_build_number.outputs.build_number }}
+        name: "Winston-v-${{ steps.extract_version_build_number.outputs.version }}${{ steps.extract_version_build_number.outputs.build_number }}"
         body: ${{ steps.read_file.outputs.release_body }}
