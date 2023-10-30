@@ -23,7 +23,11 @@ struct SharedVideo: Equatable {
   }
 }
 
-struct VideoPlayerPost: View {
+struct VideoPlayerPost: View, Equatable {
+  static func == (lhs: VideoPlayerPost, rhs: VideoPlayerPost) -> Bool {
+    lhs.url == rhs.url && lhs.sharedVideo == rhs.sharedVideo
+  }
+  
   weak var controller: UIViewController?
   var sharedVideo: SharedVideo?
   let markAsSeen: (() async -> ())?
@@ -80,6 +84,7 @@ struct VideoPlayerPost: View {
         
       } else {
         ZStack {
+          
           Group {
             if !fullscreen {
               VideoPlayer(player: sharedVideo.player)

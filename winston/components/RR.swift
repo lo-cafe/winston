@@ -7,7 +7,6 @@
 
 
 import SwiftUI
-import SwiftUIX
 
 struct FilledRoundedRectangle<S: ShapeStyle>: View, Equatable {
   static func == (lhs: FilledRoundedRectangle, rhs: FilledRoundedRectangle) -> Bool {

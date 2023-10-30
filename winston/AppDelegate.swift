@@ -28,6 +28,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
       config.dataLoader = dataLoader
       config.dataCachePolicy = .storeAll
       config.isUsingPrepareForDisplay = false
+      
 //      let imgCache = ImageCache(costLimit: Int.max, countLimit: Int.max)
 //      imgCache.ttl = nil
 //      imgCache.entryCostLimit = 1

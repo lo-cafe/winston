@@ -59,7 +59,9 @@ struct PostView: View, Equatable {
       List {
         Group {
           Section {
-            PostContent(post: post, selfAttr: cachesPostsAttrStr.cache[post.id]?.data ?? selfAttr, sub: subreddit, forceCollapse: forceCollapse)
+            if let winstonData = post.winstonData {
+              PostContent(post: post, winstonData: winstonData, selfAttr: cachesPostsAttrStr.cache[post.id]?.data ?? selfAttr, sub: subreddit, forceCollapse: forceCollapse)
+            }
             //              .equatable()
             
             Text("Comments")

@@ -9,7 +9,7 @@ import SwiftUI
 import NukeUI
 import Nuke
 import NukeExtensions
-import Giffy
+//import Giffy
 
 struct URLImage: View, Equatable {
   static func == (lhs: URLImage, rhs: URLImage) -> Bool {
@@ -24,16 +24,30 @@ struct URLImage: View, Equatable {
   
   var body: some View {
     if url.absoluteString.hasSuffix(".gif") {
-      AsyncGiffy(url: url) { phase in
-        switch phase {
-        case .loading:
-          ProgressView()
-        case .error:
-          Text("Failed to load GIF")
-        case .success(let giffy):
-          giffy.scaledToFit()
+      LazyImage(url: url) { state in
+        if let imageData = state.imageContainer?.data {
+          GIFImage(data: imageData)
+        } else if state.error != nil {
+          Color.red.opacity(0.1)
+            .overlay(Image(systemName: "xmark.circle.fill").foregroundColor(.red))
+        } else {
+          URLImageLoader(size: 50).equatable()
         }
       }
+      .onDisappear(.cancel)
+      .processors(processors)
+//      GIFImage(url: url)
+//        .scaledToFill()
+//      AsyncGiffy(url: url) { phase in
+//        switch phase {
+//        case .loading:
+//          ProgressView()
+//        case .error:
+//          Text("Failed to load GIF")
+//        case .success(let giffy):
+//          giffy.scaledToFit()
+//        }
+//      }
     } else {
       if let imgRequest = imgRequest {
         LazyImage(request: imgRequest) { state in

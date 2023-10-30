@@ -24,7 +24,7 @@ struct PostLinkNormalSelftext: View, Equatable {
 
 struct PostLinkNormal: View, Equatable {
   static func == (lhs: PostLinkNormal, rhs: PostLinkNormal) -> Bool {
-    return lhs.theme == rhs.theme && lhs.cs == rhs.cs && lhs.contentWidth == rhs.contentWidth
+    return lhs.theme == rhs.theme && lhs.cs == rhs.cs && lhs.contentWidth == rhs.contentWidth && lhs.avatarRequest?.url == rhs.avatarRequest?.url && lhs.cachedVideo == rhs.cachedVideo && lhs.repostAvatarRequest?.url == rhs.repostAvatarRequest?.url
   }
   
   @EnvironmentObject var post: Post
@@ -50,7 +50,7 @@ struct PostLinkNormal: View, Equatable {
   let showTitleAtTop: Bool
   var cs: ColorScheme
   
-  @State private var isOpen = false
+//  @State private var isOpen = false
   
   func markAsRead() async {
     Task(priority: .background) { await post.toggleSeen(true) }
@@ -58,7 +58,7 @@ struct PostLinkNormal: View, Equatable {
   
   func openPost() {
     if let routerProxy = routerProxy {
-      withAnimation(nil) { isOpen = true }
+//      withAnimation(nil) { isOpen = true }
       routerProxy.router.path.append(PostViewPayload(post: post, postSelfAttr: nil, sub: feedsAndSuch.contains(sub.id) ? sub : sub))
     }
   }
@@ -146,7 +146,7 @@ struct PostLinkNormal: View, Equatable {
           
         }
       }
-      .postLinkStyle(post: post, sub: sub, routerProxy: routerProxy, theme: theme, size: winstonData.postDimensions.size, secondary: secondary, isOpen: isOpen, openPost: openPost, readPostOnScroll: readPostOnScroll, hideReadPosts: hideReadPosts, cs: cs)
+      .postLinkStyle(post: post, sub: sub, routerProxy: routerProxy, theme: theme, size: winstonData.postDimensions.size, secondary: secondary, isOpen: false, openPost: openPost, readPostOnScroll: readPostOnScroll, hideReadPosts: hideReadPosts, cs: cs)
       .swipyUI(onTap: openPost, actionsSet: postSwipeActions, entity: post)
 
     }

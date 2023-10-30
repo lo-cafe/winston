@@ -7,7 +7,7 @@
 
 import Foundation
 import SwiftUI
-import SwiftUIX
+//import SwiftUIX
 
 struct GesturerHolder<Content: View>: UIViewRepresentable, Identifiable {
 //  static func == (lhs: GesturerHolder<Content>, rhs: GesturerHolder<Content>) -> Bool {
@@ -53,34 +53,34 @@ struct GesturerHolder<Content: View>: UIViewRepresentable, Identifiable {
     self.content = content
   }
   
-  func makeUIView(context: Context) -> UIHostingView<Content> {
+  func makeUIView(context: Context) -> UIView {
     
-    let hostingView = UIHostingView(rootView: self.content)
-//    let hostingController = UIHostingController(rootView: self.content(nil))
+//    let hostingView = UIHostingView(rootView: self.content)
+    let hostingController = UIHostingController(rootView: self.content)
 //    let contentView = self.content(hostingController)
 //    hostingController.rootView = contentView
-//    hostingController.view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-    hostingView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-//    context.coordinator.view = hostingController.view
-    context.coordinator.view = hostingView
+    hostingController.view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+//    hostingView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+    context.coordinator.view = hostingController.view
+//    context.coordinator.view = hostingView
     
       
-//    if let view = hostingController.view {
+    if let view = hostingController.view {
       if (onTap != nil) {
-        addTapRecognizer(to: hostingView, with: context)
+        addTapRecognizer(to: view, with: context)
       }
       if (onPress != nil) {
-        addPressRecognizer(to: hostingView, with: context)
+        addPressRecognizer(to: view, with: context)
       }
       if (onDragChanged != nil || onDragEnded != nil) {
-        addDragRecognizer(to: hostingView, with: context)
+        addDragRecognizer(to: view, with: context)
       }
-//    }
-//    return hostingController
-    return hostingView
+    }
+      return hostingController.view
+//    return hostingView
   }
   
-  func updateUIView(_ hostingController: UIHostingView<Content>, context: Context) {
+  func updateUIView(_ hostingController: UIView, context: Context) {
 //    let newContentView = self.content(hostingController)
 //    hostingController.rootView = newContentView
 //    hostingController.view.bounds = CGRect(origin: .zero, size: size)

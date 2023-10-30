@@ -60,7 +60,6 @@ struct MediaPresenter: View, Equatable {
     switch media {
     case .image(let imgMediaExtracted):
       if !showURLInstead {
-        Group {
           if imgMediaExtracted.url.absoluteString.hasSuffix(".gif") {
             ImageMediaPost(postDimensions: $postDimensions, controller: controller, postTitle: postTitle, badgeKit: badgeKit, markAsSeen: markAsSeen, cornerRadius: cornerRadius, compact: compact, mediaImageRequest: imgRequests ?? [], images: [imgMediaExtracted], contentWidth: contentWidth)
               .nsfw(over18 && blurPostLinkNSFW)
@@ -70,14 +69,11 @@ struct MediaPresenter: View, Equatable {
               .drawingGroup()
             
           }
-        }
-                  
       }
     case .video(let videoMediaExtracted):
       if !showURLInstead {
         VideoPlayerPost(controller: controller, cachedVideo: cachedVideo, markAsSeen: markAsSeen, compact: compact, overrideWidth: contentWidth, url: videoMediaExtracted.url, size: CGSize(width: videoMediaExtracted.size.width, height: videoMediaExtracted.size.height))
           .nsfw(over18 && blurPostLinkNSFW)
-        
       }
     case .gallery(let imgs):
       if !showURLInstead {

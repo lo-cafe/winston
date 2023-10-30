@@ -8,7 +8,6 @@
 import Foundation
 import Combine
 import Defaults
-import SectionKit
 
 protocol GenericRedditEntityDataType: Codable, Hashable, Identifiable {
   var id: String { get }

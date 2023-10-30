@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import SwiftUIX
 
 private let handlerWidth: CGFloat = 108
 private let handlerDashWidth: CGFloat = 56

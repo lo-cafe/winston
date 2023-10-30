@@ -15,5 +15,5 @@ class Caches {
   static let postsAttrStr = BaseCache<AttributedString>(cacheLimit: 100)
   static let postsPreviewModels = BaseObservableCache<PreviewModel>(cacheLimit: 100)
   static let avatars = BaseCache<ImageRequest>(cacheLimit: 100)
-  static let videos = BaseCache<SharedVideo>(cacheLimit: 25)
+  static let videos = BaseCache<SharedVideo>(cacheLimit: 50)
 }
