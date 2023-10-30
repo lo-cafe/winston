@@ -54,8 +54,7 @@ jobs:
       with:
         apple-key-id: "${{ secrets.APPLE_KEY_ID }}"
         apple-key-issuer-id: "${{ secrets.APPLE_KEY_ISSUER_ID }}"
-        apple-key-content: "${{ secrets.APPLE_KEY_CONTENT_B64 }}"
-        is_key_content_base64: true
+        apple-key-content: "${{ secrets.APPLE_KEY_CONTENT }}"
         project-path: winston.xcodeproj
         export-method: package
         match-build-type: appstore
