@@ -14,7 +14,7 @@ jobs:
     - name: Set up Xcode
       uses: maxim-lobanov/setup-xcode@v1.6.0
       with:
-        xcode-version: '15.0.0'
+        xcode-version: '15.0.1'
       
 
     - name: Extract Version and Build Number
