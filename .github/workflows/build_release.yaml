@@ -58,9 +58,9 @@ jobs:
       env:
         OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.SERVICE_TOKEN_1P }}
 
-        APPLE_KEY_ID: op://Shared/Appstore-Connect-API/key-id	
-        APPLE_KEY_ISSUER_ID: op://Shared/Appstore-Connect-API/issuer-id
-        APPLE_KEY_CONTENT_B64: op://Shared/Appstore-Connect-API/auth-keyb64
+        APPLE_KEY_ID: op://xwqtdczjvxp7aekud5mbzygv7y/Appstore-Connect-API/key-id	
+        APPLE_KEY_ISSUER_ID: op://xwqtdczjvxp7aekud5mbzygv7y/Appstore-Connect-API/issuer-id
+        APPLE_KEY_CONTENT_B64: op://xwqtdczjvxp7aekud5mbzygv7y/Appstore-Connect-API/auth-keyb64
 
     - name: Decode apple-key-content
       env:
