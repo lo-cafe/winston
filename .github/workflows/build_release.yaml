@@ -56,7 +56,7 @@ jobs:
       with:
         export-env: false
       env:
-        OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
+        OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.SERVICE_TOKEN_1P }}
 
         APPLE_KEY_ID: op://Shared/Appstore-Connect-API/key-id	
         APPLE_KEY_ISSUER_ID: op://Shared/Appstore-Connect-API/issuer-id
