@@ -53,7 +53,7 @@ jobs:
     - name: Decode apple-key-content
       env:
         APPLE_KEY_CONTENT_B64: ${{ secrets.APPLE_KEY_CONTENT_B64 }}
-      run: base64 -D -i "$APPLE_KEY_CONTENT_B64" > apple_key.p8
+      run: base64 -D -i $APPLE_KEY_CONTENT_B64 > apple_key.p8
 
     - name: Build and Archive App
       uses: sparkfabrik/ios-build-action@v2.3.0
