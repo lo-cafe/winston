@@ -57,10 +57,15 @@ jobs:
         export-env: false
       env:
         OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
-        #TODO: Add Service Account Token and change path to secrets
-        APPLE_KEY_ID: op://app-cicd/hello-world/secret
-        APPLE_KEY_ISSUER_ID: op://app-cicd/hello-world/secret
 
+        APPLE_KEY_ID: op://Shared/Appstore-Connect-API/key-id	
+        APPLE_KEY_ISSUER_ID: op://Shared/Appstore-Connect-API/issuer-id
+        APPLE_KEY_CONTENT_B64: op://Shared/Appstore-Connect-API/auth-keyb64
+
+    - name: Decode apple-key-content
+      env:
+        APPLE_KEY_CONTENT_B64: ${{ steps.op-load-secret.outputs.APPLE_KEY_CONTENT_B64 }}
+      run: base64 -D -i "$APPLE_KEY_CONTENT_B64" > apple_key.p8
 
     - name: Build and Archive App
       uses: sparkfabrik/ios-build-action@v2.3.0
