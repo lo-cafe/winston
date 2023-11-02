@@ -50,17 +50,12 @@ jobs:
         release_body=$(cat TestFlight/WhatToTest.en-US.txt)
         echo "::set-output name=release_body::$release_body"
 
-    - name: Decode apple-key-content
-      env:
-        APPLE_KEY_CONTENT_B64: ${{ secrets.APPLE_KEY_CONTENT_B64 }}
-      run: base64 -D -i $APPLE_KEY_CONTENT_B64 > apple_key.p8
-
     - name: Build and Archive App
       uses: sparkfabrik/ios-build-action@v2.3.0
       with:
         apple-key-id: ${{ secrets.APPLE_KEY_ID }}
         apple-key-issuer-id: ${{ secrets.APPLE_KEY_ISSUER_ID }}
-        apple-key-content: apple_key.p8
+        apple-key-content: ${{ secrets.APPLE_KEY_CONTENT }}
         project-path: winston.xcodeproj
         export-method: package
         match-build-type: appstore
