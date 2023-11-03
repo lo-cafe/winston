@@ -58,6 +58,7 @@ jobs:
         apple-key-content: ${{ secrets.APPLE_KEY_CONTENT }}
         project-path: winston.xcodeproj
         export-method: ad-hoc
+        match-build-type: ad-hoc
         scheme: winston
         output-path: $PWD/build/Winston.ipa
         team-id: Z2NNLU4F7U
