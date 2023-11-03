@@ -58,7 +58,6 @@ jobs:
         apple-key-content: ${{ secrets.APPLE_KEY_CONTENT }}
         project-path: winston.xcodeproj
         export-method: package
-        match-build-type: appstore
         scheme: winston
         output-path: $PWD/build/Winston.ipa
         team-id: Z2NNLU4F7U
