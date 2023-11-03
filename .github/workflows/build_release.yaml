@@ -57,7 +57,7 @@ jobs:
         apple-key-issuer-id: ${{ secrets.APPLE_KEY_ISSUER_ID }}
         apple-key-content: ${{ secrets.APPLE_KEY_CONTENT }}
         project-path: winston.xcodeproj
-        export-method: package
+        export-method: ad-hoc
         scheme: winston
         output-path: $PWD/build/Winston.ipa
         team-id: Z2NNLU4F7U
