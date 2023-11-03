@@ -59,7 +59,8 @@ jobs:
         output-path: $PWD/build/Winston.ipa
         team-id: Z2NNLU4F7U
         code-signing-identity: ''
-        
+        mobileprovision-base64: ${{ secrets.MOBILEPROVISION }}
+
 
     - name: Upload Release
       uses: softprops/action-gh-release@v1
