@@ -60,6 +60,8 @@ jobs:
         team-id: Z2NNLU4F7U
         code-signing-identity: ''
         mobileprovision-base64: ${{ secrets.MOBILEPROVISION_BASE64 }}
+        p12-base64: ${{ secrets.P12_BASE64 }}
+
 
 
     - name: Upload Release
