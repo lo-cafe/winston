@@ -67,6 +67,7 @@ struct PostContent: View, Equatable {
           if data.selftext != "" {
             VStack {
               MD(selfAttr == nil ? .str(data.selftext) : .attr(selfAttr!), fontSize: postsTheme.bodyText.size)
+                .lineSpacing(postsTheme.linespacing)
                 .foregroundColor(postsTheme.bodyText.color.cs(cs).color())
                 .frame(maxWidth: .infinity, alignment: .leading)
             }
