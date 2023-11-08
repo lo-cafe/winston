@@ -44,6 +44,7 @@ let defaultTheme = WinstonTheme(
       stickyPostBorderColor: .init(thickness: 4, color: .init(light: .init(hex: "2FD058", alpha: 0.3), dark: .init(hex: "2FD058", alpha: 0.3))),
       titleText: .init(size: 16, color: themeFontPrimary, weight: .medium),
       bodyText: .init(size: 15, color: .init(light: ThemeColor(hex: "000000", alpha: 0.75), dark: .init(hex: "ffffff", alpha: 0.75))),
+      linespacing: 0,
       badge: badgeTheme,
       verticalElementsSpacing: 8,
       bg: .init(blurry: false, color: listSectionBGTheme),
