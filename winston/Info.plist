@@ -90,7 +90,5 @@
 			</dict>
 		</dict>
 	</array>
-	<key>NSFaceIDUsageDescription</key>
-	<string>Uses FaceID to lock and unlock Winston</string>
 </dict>
 </plist>

@@ -20,7 +20,6 @@
 		652012082AC327C7005DD899 /* uploadTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 652012072AC327C7005DD899 /* uploadTheme.swift */; };
 		653E2DA52A8E278800833556 /* GeneralPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 653E2DA42A8E278800833556 /* GeneralPanel.swift */; };
 		6543D8892A8D10B900A1FFF9 /* scaleEffectButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6543D8882A8D10B900A1FFF9 /* scaleEffectButtonStyle.swift */; };
-		6552D4B32AC48A55003FAD62 /* getEligibility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6552D4B22AC48A54003FAD62 /* getEligibility.swift */; };
 		657643782ACF1D2100805641 /* FittiingScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 657643772ACF1D2100805641 /* FittiingScrollView.swift */; };
 		6576437A2ACF1E1A00805641 /* AppDetailScreenshots.swift in Sources */ = {isa = PBXBuildFile; fileRef = 657643792ACF1E1A00805641 /* AppDetailScreenshots.swift */; };
 		6576437C2ACF1E3900805641 /* ScrolViewContentRTLFriendly.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6576437B2ACF1E3900805641 /* ScrolViewContentRTLFriendly.swift */; };
@@ -28,6 +27,7 @@
 		657643802ACF20F100805641 /* ExpandableText.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6576437F2ACF20F100805641 /* ExpandableText.swift */; };
 		657643822ACF224500805641 /* AppDetailFullView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 657643812ACF224500805641 /* AppDetailFullView.swift */; };
 		657643842AD0083500805641 /* fetchThemesByName.swift in Sources */ = {isa = PBXBuildFile; fileRef = 657643832AD0083500805641 /* fetchThemesByName.swift */; };
+		65840EE82AE11BFD000315E1 /* exportImportSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65840EE72AE11BFD000315E1 /* exportImportSettings.swift */; };
 		6593CC432A88C9E8003CA58D /* AccessibilityPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6593CC422A88C9E8003CA58D /* AccessibilityPanel.swift */; };
 		6593CC452A88D128003CA58D /* hapticFeedbackModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6593CC442A88D128003CA58D /* hapticFeedbackModifier.swift */; };
 		659F68022A84E32300989300 /* VotesCluster.swift in Sources */ = {isa = PBXBuildFile; fileRef = 659F68012A84E32300989300 /* VotesCluster.swift */; };
@@ -38,8 +38,9 @@
 		65CDA3642ACB0F140001EC44 /* ShareSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65CDA3632ACB0F140001EC44 /* ShareSheet.swift */; };
 		65CDA3662ACB0F3A0001EC44 /* LiveTextInteraction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65CDA3652ACB0F3A0001EC44 /* LiveTextInteraction.swift */; };
 		65D265412ABEC6FF009E01F9 /* urlCleaner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65D265402ABEC6FF009E01F9 /* urlCleaner.swift */; };
-		EC051C472ACAF2DC00E9D9ED /* themeFileIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = EC051C462ACAF2DC00E9D9ED /* themeFileIcon.png */; };
 		ABC2180F2ABA528D00F0DABA /* Biometrics.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABC2180E2ABA528D00F0DABA /* Biometrics.swift */; };
+		CE55C7472ADB51C300484EDA /* ObservedOptionalObject in Frameworks */ = {isa = PBXBuildFile; productRef = CE55C7462ADB51C300484EDA /* ObservedOptionalObject */; };
+		EC051C472ACAF2DC00E9D9ED /* themeFileIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = EC051C462ACAF2DC00E9D9ED /* themeFileIcon.png */; };
 		EC082F252A65FB4300BA2727 /* MeasureOnce.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC082F242A65FB4300BA2727 /* MeasureOnce.swift */; };
 		EC082F272A66132600BA2727 /* CommentLinkMore.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC082F262A66132600BA2727 /* CommentLinkMore.swift */; };
 		EC082F292A66134C00BA2727 /* CommentLinkFull.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC082F282A66134C00BA2727 /* CommentLinkFull.swift */; };
@@ -402,7 +403,6 @@
 		652012072AC327C7005DD899 /* uploadTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = uploadTheme.swift; sourceTree = "<group>"; };
 		653E2DA42A8E278800833556 /* GeneralPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneralPanel.swift; sourceTree = "<group>"; };
 		6543D8882A8D10B900A1FFF9 /* scaleEffectButtonStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = scaleEffectButtonStyle.swift; sourceTree = "<group>"; };
-		6552D4B22AC48A54003FAD62 /* getEligibility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = getEligibility.swift; sourceTree = "<group>"; };
 		657643772ACF1D2100805641 /* FittiingScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FittiingScrollView.swift; sourceTree = "<group>"; };
 		657643792ACF1E1A00805641 /* AppDetailScreenshots.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDetailScreenshots.swift; sourceTree = "<group>"; };
 		6576437B2ACF1E3900805641 /* ScrolViewContentRTLFriendly.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScrolViewContentRTLFriendly.swift; sourceTree = "<group>"; };
@@ -410,6 +410,7 @@
 		6576437F2ACF20F100805641 /* ExpandableText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExpandableText.swift; sourceTree = "<group>"; };
 		657643812ACF224500805641 /* AppDetailFullView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDetailFullView.swift; sourceTree = "<group>"; };
 		657643832AD0083500805641 /* fetchThemesByName.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = fetchThemesByName.swift; sourceTree = "<group>"; };
+		65840EE72AE11BFD000315E1 /* exportImportSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = exportImportSettings.swift; sourceTree = "<group>"; };
 		6593CC422A88C9E8003CA58D /* AccessibilityPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessibilityPanel.swift; sourceTree = "<group>"; };
 		6593CC442A88D128003CA58D /* hapticFeedbackModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = hapticFeedbackModifier.swift; sourceTree = "<group>"; };
 		659F68012A84E32300989300 /* VotesCluster.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VotesCluster.swift; sourceTree = "<group>"; };
@@ -420,9 +421,9 @@
 		65CDA3632ACB0F140001EC44 /* ShareSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareSheet.swift; sourceTree = "<group>"; };
 		65CDA3652ACB0F3A0001EC44 /* LiveTextInteraction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveTextInteraction.swift; sourceTree = "<group>"; };
 		65D265402ABEC6FF009E01F9 /* urlCleaner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = urlCleaner.swift; sourceTree = "<group>"; };
+		ABC2180E2ABA528D00F0DABA /* Biometrics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Biometrics.swift; sourceTree = "<group>"; };
 		EC051C2A2ACAEFC500E9D9ED /* QuickLookThumbnailing.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuickLookThumbnailing.framework; path = System/Library/Frameworks/QuickLookThumbnailing.framework; sourceTree = SDKROOT; };
 		EC051C462ACAF2DC00E9D9ED /* themeFileIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = themeFileIcon.png; sourceTree = "<group>"; };
-		ABC2180E2ABA528D00F0DABA /* Biometrics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Biometrics.swift; sourceTree = "<group>"; };
 		EC082F242A65FB4300BA2727 /* MeasureOnce.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeasureOnce.swift; sourceTree = "<group>"; };
 		EC082F262A66132600BA2727 /* CommentLinkMore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentLinkMore.swift; sourceTree = "<group>"; };
 		EC082F282A66134C00BA2727 /* CommentLinkFull.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentLinkFull.swift; sourceTree = "<group>"; };
@@ -740,6 +741,7 @@
 				ECAA8B842A76421000D9D636 /* YouTubePlayerKit in Frameworks */,
 				EC9BB1C22A8B05AA0070CD97 /* NukeExtensions in Frameworks */,
 				EC3188092A91991900CB3738 /* AlertToast in Frameworks */,
+				CE55C7472ADB51C300484EDA /* ObservedOptionalObject in Frameworks */,
 				ECE08B8D2AAB44DC00F84DC9 /* SymbolPicker in Frameworks */,
 				EC593B0C2A47B801002D6454 /* Alamofire in Frameworks */,
 				EC593B092A47B42D002D6454 /* KeychainAccess in Frameworks */,
@@ -776,7 +778,6 @@
 				652011F92AC2C46C005DD899 /* themeStore.swift */,
 				652012032AC322A3005DD899 /* fetchAllThemes.swift */,
 				652012052AC322BC005DD899 /* fetchThemeStatus.swift */,
-				6552D4B22AC48A54003FAD62 /* getEligibility.swift */,
 				652012072AC327C7005DD899 /* uploadTheme.swift */,
 				65010D022AC70ADD00A8F611 /* getDownloadURL.swift */,
 				65A5FFF12ACED3BF000D1ADA /* getPreviewImages.swift */,
@@ -1361,6 +1362,7 @@
 				EC75D7422AC96D0200594250 /* getEnabledTheme.swift */,
 				652011FF2AC309FA005DD899 /* downloader.swift */,
 				EC97F0272ACB006A001814A6 /* importTheme.swift */,
+				65840EE72AE11BFD000315E1 /* exportImportSettings.swift */,
 			);
 			path = utils;
 			sourceTree = "<group>";
@@ -1564,6 +1566,7 @@
 				EC3AC9D12AACC3DB0078EC78 /* DebouncedOnChange */,
 				EC6650E92AB7E21E006B83A4 /* Zip */,
 				EC2D72B22AC5335E002601E0 /* CHTCollectionViewWaterfallLayout */,
+				CE55C7462ADB51C300484EDA /* ObservedOptionalObject */,
 			);
 			productName = winston;
 			productReference = EC593AD42A4673B2002D6454 /* winston.app */;
@@ -1633,6 +1636,7 @@
 				EC3AC9D02AACC3DB0078EC78 /* XCRemoteSwiftPackageReference "DebouncedOnChange" */,
 				EC6650E82AB7E21E006B83A4 /* XCRemoteSwiftPackageReference "Zip" */,
 				EC2D72B12AC5335E002601E0 /* XCRemoteSwiftPackageReference "CHTCollectionViewWaterfallLayout" */,
+				CE55C7452ADB517600484EDA /* XCRemoteSwiftPackageReference "observed-optional-object" */,
 			);
 			productRefGroup = EC593AD52A4673B2002D6454 /* Products */;
 			projectDirPath = "";
@@ -1726,6 +1730,7 @@
 				ECF5535B2A5C9EEA004A0136 /* searchSubreddits.swift in Sources */,
 				65CDA3642ACB0F140001EC44 /* ShareSheet.swift in Sources */,
 				EC31881C2A92BBFB00CB3738 /* Multi.swift in Sources */,
+				65840EE82AE11BFD000315E1 /* exportImportSettings.swift in Sources */,
 				ECC2C7B22AAB48D1000E196C /* ThemesPanel.swift in Sources */,
 				ECAA8B892A764A3C00D9D636 /* YTMediaPost.swift in Sources */,
 				EC2A39152AC20155001E5354 /* PostLinkTitle.swift in Sources */,
@@ -1889,7 +1894,6 @@
 				EC31880B2A91AE6C00CB3738 /* MorphingGradientCircleScene.swift in Sources */,
 				EC31881A2A92BA9500CB3738 /* fetchMultiPosts.swift in Sources */,
 				EC0854222A4BFF1500E88389 /* fetchSubs.swift in Sources */,
-				6552D4B32AC48A55003FAD62 /* getEligibility.swift in Sources */,
 				ECDD51522A7359D100FD9498 /* MDEditor.swift in Sources */,
 				ECAD0F2C2A8B4CD4001C88B5 /* Markdownosaur.swift in Sources */,
 				EC1906ED2A55293500A0300E /* AppearancePanel.swift in Sources */,
@@ -2161,6 +2165,7 @@
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
 				INFOPLIST_KEY_LSSupportsOpeningDocumentsInPlace = YES;
 				INFOPLIST_KEY_NSDocumentsFolderUsageDescription = "Winston needs access to your documents to save/import themes.";
+				INFOPLIST_KEY_NSFaceIDUsageDescription = "Uses FaceID to lock and unlock Winston";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Winston needs access to your library to be able to download images.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -2173,7 +2178,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = lo.cafe.winston.frost;
+				PRODUCT_BUNDLE_IDENTIFIER = lo.cafe.winston;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -2201,6 +2206,7 @@
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
 				INFOPLIST_KEY_LSSupportsOpeningDocumentsInPlace = YES;
 				INFOPLIST_KEY_NSDocumentsFolderUsageDescription = "Winston needs access to your documents to save/import themes.";
+				INFOPLIST_KEY_NSFaceIDUsageDescription = "Uses FaceID to lock and unlock Winston";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Winston needs access to your library to be able to download images.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -2213,7 +2219,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = lo.cafe.winston.frost;
+				PRODUCT_BUNDLE_IDENTIFIER = lo.cafe.winston;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -2242,7 +2248,7 @@
 					"-framework",
 					SafariServices,
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "lo.cafe.winston.frost.winston-everywhere";
+				PRODUCT_BUNDLE_IDENTIFIER = "lo.cafe.winston.winston-everywhere";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -2272,7 +2278,7 @@
 					"-framework",
 					SafariServices,
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "lo.cafe.winston.frost.winston-everywhere";
+				PRODUCT_BUNDLE_IDENTIFIER = "lo.cafe.winston.winston-everywhere";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -2314,6 +2320,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		CE55C7452ADB517600484EDA /* XCRemoteSwiftPackageReference "observed-optional-object" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/fourplusone/observed-optional-object.git";
+			requirement = {
+				kind = upToNextMinorVersion;
+				minimumVersion = 0.1.0;
+			};
+		};
 		EC08543B2A4CFE1C00E88389 /* XCRemoteSwiftPackageReference "swiftui-introspect" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/siteline/swiftui-introspect";
@@ -2469,6 +2483,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		CE55C7462ADB51C300484EDA /* ObservedOptionalObject */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CE55C7452ADB517600484EDA /* XCRemoteSwiftPackageReference "observed-optional-object" */;
+			productName = ObservedOptionalObject;
+		};
 		EC08543C2A4CFE1C00E88389 /* SwiftUIIntrospect */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = EC08543B2A4CFE1C00E88389 /* XCRemoteSwiftPackageReference "swiftui-introspect" */;

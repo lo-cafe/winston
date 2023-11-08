@@ -8,14 +8,52 @@
 import SwiftUI
 import Defaults
 import WebKit
+import UniformTypeIdentifiers
 
 struct GeneralPanel: View {
   @Default(.likedButNotSubbed) var likedButNotSubbed
   @State private var totalCacheSize: String = ""
   @Environment(\.useTheme) private var theme
-  
+  @State var isMoving: Bool = false
+  @State var settingsFileURL: String = ""
+  @State var doImport: Bool = false
   var body: some View {
     List{
+      
+      Section("Backup"){
+        Button{
+          let date = Date()
+          let file = exportUserDefaultsToJSON(fileName: "WinstonSettings-" + date.ISO8601Format() + ".json")
+          if let file {
+            isMoving.toggle()
+            settingsFileURL = file
+          }
+        } label: {
+          Label("Export Settings", systemImage: "arrowshape.turn.up.left")
+        }
+        .fileMover(isPresented: $isMoving, file: URL(string: settingsFileURL), onCompletion: { completion in
+          print(completion)
+        })
+        Button{
+          doImport.toggle()
+        } label: {
+          Label("Import Settings", systemImage: "square.and.arrow.down")
+        }.fileImporter(isPresented: $doImport, allowedContentTypes: [UTType.json], allowsMultipleSelection: false, onCompletion: { result in
+            switch result {
+            case .success(let file):
+              let success = importUserDefaultsFromJSON(jsonFilePath: file[0])
+              if success {
+                print("success")
+              } else {
+                print("error")
+              }
+            case .failure(let error):
+              print(error.localizedDescription)
+            }
+          
+        })
+      }
+      
       Section("Advanced") {
         
         WListButton {

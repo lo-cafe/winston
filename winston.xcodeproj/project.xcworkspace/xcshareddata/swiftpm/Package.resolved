@@ -100,6 +100,15 @@
       }
     },
     {
+      "identity" : "observed-optional-object",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/fourplusone/observed-optional-object.git",
+      "state" : {
+        "revision" : "74aa40a398688b90ee7724797861185e5a696aca",
+        "version" : "0.1.1"
+      }
+    },
+    {
       "identity" : "opengraph",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/satoshi-takano/OpenGraph.git",

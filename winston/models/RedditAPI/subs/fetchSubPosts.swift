@@ -60,6 +60,8 @@ extension RedditAPI {
       case .top(let topSortOption):
         subID += "top\(appendedFileType)"
         subID += buildTopSortQuery(topSortOption)
+      case .controversial:
+        subID += "controversial\(appendedFileType)"
       }
     }
 

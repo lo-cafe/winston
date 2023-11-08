@@ -8,7 +8,7 @@
 import SwiftUI
 import Defaults
 import SwiftUIIntrospect
-
+import CoreData
 
 enum SubViewType: Hashable {
   case posts(Subreddit)
@@ -35,6 +35,9 @@ struct SubredditPosts: View, Equatable {
   @Environment(\.colorScheme) private var cs
   @Environment(\.contentWidth) private var contentWidth
   
+  let context = PersistenceController.shared.container.newBackgroundContext()
+  let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "SeenPost")
+
   init(subreddit: Subreddit) {
     self.subreddit = subreddit;
     _sort = State(initialValue: Defaults[.perSubredditSort] ? (Defaults[.subredditSorts][subreddit.id] ?? Defaults[.preferredSort]) : Defaults[.preferredSort]);
@@ -51,6 +54,8 @@ struct SubredditPosts: View, Equatable {
       loading = true
     }
     if let result = await subreddit.fetchPosts(sort: sort, after: loadMore ? lastPostAfter : nil, searchText: searchText, contentWidth: contentWidth), let newPosts = result.0 {
+      
+      await waitForPostsToLoadMediaInfo(posts: newPosts)
       withAnimation {
                 let newPostsFiltered = newPosts.filter { !loadedPosts.contains($0.id) && !filteredSubreddits.contains($0.data?.subreddit ?? "") }
         
@@ -73,6 +78,12 @@ struct SubredditPosts: View, Equatable {
     }
   }
   
+  func waitForPostsToLoadMediaInfo(posts: [Post]) async {
+    for i in 0...posts.count - 1 {
+      await posts[i].waitForMediaToLoad()
+    }
+  }
+  
   func fetch(_ loadMore: Bool = false, _ searchText: String? = nil) {
     Task(priority: .background) {
       await asyncFetch(loadMore: loadMore, searchText: searchText)
@@ -92,7 +103,7 @@ struct SubredditPosts: View, Equatable {
     }
     
   }
-  
+
   var body: some View {
     Group {
       if IPAD {
@@ -180,6 +191,9 @@ struct SubredditPostsNavBtns: View, Equatable {
               Label(opt.rawVal.value.capitalized, systemImage: opt.rawVal.icon)
                 .foregroundColor(Color.accentColor)
                 .font(.system(size: 17, weight: .bold))
+                .onAppear{
+                  print(opt.rawVal)
+                }
             }
           } else {
             Button {

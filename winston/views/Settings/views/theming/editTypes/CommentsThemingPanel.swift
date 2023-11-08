@@ -77,6 +77,10 @@ struct CommentsGeneralSettings: View {
       FakeSection("Load More background") {
         SchemesColorPicker(theme: $theme.comments.theme.loadMoreBackground, defaultVal:  defaultTheme.comments.theme.loadMoreBackground)
       }
+      
+      FakeSection("Unseen Dot") {
+        SchemesColorPicker(theme: $theme.comments.theme.unseenDot, defaultVal:  defaultTheme.comments.theme.unseenDot)
+      }
     }
   }
 }

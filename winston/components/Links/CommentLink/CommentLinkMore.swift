@@ -11,6 +11,7 @@ import Defaults
 struct CommentLinkMore: View {
   var arrowKinds: [ArrowKind]
   var comment: Comment
+  var post: Post?
   var postFullname: String?
   var parentElement: CommentParentElement?
   var indentLines: Int?
@@ -77,7 +78,7 @@ struct CommentLinkMore: View {
             loadMoreLoading = true
           }
           Task(priority: .background) {
-            await comment.loadChildren(parent: parentElement, postFullname: postFullname, avatarSize: selectedTheme.comments.theme.badge.avatar.size)
+            await comment.loadChildren(parent: parentElement, postFullname: postFullname, avatarSize: selectedTheme.comments.theme.badge.avatar.size, post: post)
             await MainActor.run {
               doThisAfter(0.5) {
                 withAnimation(spring) {
