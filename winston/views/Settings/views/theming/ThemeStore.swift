@@ -19,16 +19,20 @@ struct ThemeStore: View {
   var body: some View {
     HStack{
       List {
-        Section{
-          ForEach(themes, id: \.self) { theme in
-            NavigationLink(destination: ThemeStoreDetailsView(themeData: theme), label: {
-              OnlineThemeItem(theme: theme)
-            })
-            .themedListRowBG(enablePadding: true)
+        if !themes.isEmpty {
+          Section{
+            ForEach(themes, id: \.self) { theme in
+              NavigationLink(destination: ThemeStoreDetailsView(themeData: theme), label: {
+                OnlineThemeItem(theme: theme)
+              })
+              .themedListRowBG(enablePadding: true)
 
+            }
           }
+          .themedListDividers()
+        } else {
+          ProgressView()
         }
-        .themedListDividers()
       }
       .themedListBG(theme.lists.bg)
       .searchable(text: $searchQuery.text)
@@ -41,8 +45,13 @@ struct ThemeStore: View {
           }
         }
       }
-      .refreshable { // Add pull-to-refresh
+      .refreshable {
         await fetchThemes()
+      }
+      .onAppear{
+        Task{
+          await fetchThemes()
+        }
       }
       .navigationTitle("Theme Store")
       .navigationBarTitleDisplayMode(.large)
@@ -68,6 +77,8 @@ struct OnlineThemeItem: View {
   @Environment(\.openURL) private var openURL
   
   
+  var showShareButton: Bool = false
+  
   var body: some View {
     HStack(spacing: 8){
       Group {
@@ -91,14 +102,27 @@ struct OnlineThemeItem: View {
           .fixedSize(horizontal: true, vertical: true)
       }
       Spacer()
-      
       ThemeItemDownloadButton(theme: theme)
         .accentColor(accentColor)
+      if showShareButton {
+        ThemeItemShareButton(theme: theme)
+          .accentColor(accentColor)
+      }
     }
     
   }
   
 }
+
+
+struct ThemeItemShareButton: View {
+  var theme: ThemeData
+  var body: some View {
+    ShareLink(item: URL(string: "winstonapp://theme/\(theme.file_id ?? "")")!)
+      .labelStyle(.iconOnly)
+  }
+}
+
 
 struct ThemeItemDownloadButton: View {
   var theme: ThemeData

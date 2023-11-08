@@ -28,6 +28,7 @@
 		657643822ACF224500805641 /* AppDetailFullView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 657643812ACF224500805641 /* AppDetailFullView.swift */; };
 		657643842AD0083500805641 /* fetchThemesByName.swift in Sources */ = {isa = PBXBuildFile; fileRef = 657643832AD0083500805641 /* fetchThemesByName.swift */; };
 		65840EE82AE11BFD000315E1 /* exportImportSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65840EE72AE11BFD000315E1 /* exportImportSettings.swift */; };
+		658DB5A42AFBB8230062F8B1 /* fetchThemeByID.swift in Sources */ = {isa = PBXBuildFile; fileRef = 658DB5A32AFBB8230062F8B1 /* fetchThemeByID.swift */; };
 		6593CC432A88C9E8003CA58D /* AccessibilityPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6593CC422A88C9E8003CA58D /* AccessibilityPanel.swift */; };
 		6593CC452A88D128003CA58D /* hapticFeedbackModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6593CC442A88D128003CA58D /* hapticFeedbackModifier.swift */; };
 		659F68022A84E32300989300 /* VotesCluster.swift in Sources */ = {isa = PBXBuildFile; fileRef = 659F68012A84E32300989300 /* VotesCluster.swift */; };
@@ -411,6 +412,7 @@
 		657643812ACF224500805641 /* AppDetailFullView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDetailFullView.swift; sourceTree = "<group>"; };
 		657643832AD0083500805641 /* fetchThemesByName.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = fetchThemesByName.swift; sourceTree = "<group>"; };
 		65840EE72AE11BFD000315E1 /* exportImportSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = exportImportSettings.swift; sourceTree = "<group>"; };
+		658DB5A32AFBB8230062F8B1 /* fetchThemeByID.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = fetchThemeByID.swift; sourceTree = "<group>"; };
 		6593CC422A88C9E8003CA58D /* AccessibilityPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessibilityPanel.swift; sourceTree = "<group>"; };
 		6593CC442A88D128003CA58D /* hapticFeedbackModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = hapticFeedbackModifier.swift; sourceTree = "<group>"; };
 		659F68012A84E32300989300 /* VotesCluster.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VotesCluster.swift; sourceTree = "<group>"; };
@@ -782,6 +784,7 @@
 				65010D022AC70ADD00A8F611 /* getDownloadURL.swift */,
 				65A5FFF12ACED3BF000D1ADA /* getPreviewImages.swift */,
 				657643832AD0083500805641 /* fetchThemesByName.swift */,
+				658DB5A32AFBB8230062F8B1 /* fetchThemeByID.swift */,
 			);
 			path = ThemeStore;
 			sourceTree = "<group>";
@@ -1948,6 +1951,7 @@
 				ECC10C742A4A8729009124BE /* fontSize.swift in Sources */,
 				EC1906F32A55AC6E00A0300E /* fetchMoreReplies.swift in Sources */,
 				ECA30A372A622C2F00BB19D1 /* MD.swift in Sources */,
+				658DB5A42AFBB8230062F8B1 /* fetchThemeByID.swift in Sources */,
 				ECE08B7C2AA9F69A00F84DC9 /* CommentsThemingPanel.swift in Sources */,
 				EC1E7B682A815BE100DB459A /* LightboxButton.swift in Sources */,
 				6576437A2ACF1E1A00805641 /* AppDetailScreenshots.swift in Sources */,
