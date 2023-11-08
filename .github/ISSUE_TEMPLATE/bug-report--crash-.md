@@ -23,8 +23,7 @@ A clear and concise description of what you expected to happen.
 **Screenshots**
 If applicable, add screenshots or screen recordings to help explain your problem.
 
-**Desktop (please complete the following information):**
- - OS: [e.g. iOS]
+**Winston (please complete the following information):**
  - Version [e.g. Beta v1.0]
  - Build Number [e.g. 144]
 

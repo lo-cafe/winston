@@ -52,17 +52,17 @@ struct SubredditPosts: View, Equatable {
     }
     if let result = await subreddit.fetchPosts(sort: sort, after: loadMore ? lastPostAfter : nil, searchText: searchText, contentWidth: contentWidth), let newPosts = result.0 {
       withAnimation {
-        //        let newPostsFiltered = newPosts.filter { !loadedPosts.contains($0.id) && !filteredSubreddits.contains($0.data?.subreddit ?? "") }
+                let newPostsFiltered = newPosts.filter { !loadedPosts.contains($0.id) && !filteredSubreddits.contains($0.data?.subreddit ?? "") }
         
         if loadMore {
-          //          posts.data.append(contentsOf: newPostsFiltered)
-          posts.data.append(contentsOf: newPosts)
+                    posts.data.append(contentsOf: newPostsFiltered)
+//          posts.data.append(contentsOf: newPosts)
         } else {
-          //          posts.data = newPostsFiltered
-          posts.data = newPosts
+                    posts.data = newPostsFiltered
+//          posts.data = newPosts
         }
         
-        //        newPostsFiltered.forEach { loadedPosts.insert($0.id) }
+                newPostsFiltered.forEach { loadedPosts.insert($0.id) }
         
         loading = false
         lastPostAfter = result.1
@@ -151,7 +151,7 @@ struct SubredditPosts: View, Equatable {
 
 struct SubredditPostsNavBtns: View, Equatable {
   static func == (lhs: SubredditPostsNavBtns, rhs: SubredditPostsNavBtns) -> Bool {
-    lhs.sort == rhs.sort && lhs.subreddit.data.isNil == rhs.subreddit.data.isNil
+    lhs.sort == rhs.sort && lhs.subreddit.data == nil && rhs.subreddit.data == nil
   }
   @Binding var sort: SubListingSortOption
   @ObservedObject var subreddit: Subreddit

@@ -178,13 +178,13 @@ struct Tabber: View {
       , alignment: .bottom
     )
     .overlay(
-      tabBarHeight.isNil
+      tabBarHeight == nil
       ? nil
       : TabBarOverlay(router: payload[activeTab]!.router, tabHeight: tabHeight, meTabTap: meTabTap).id(payload[activeTab]!.router.id)
       , alignment: .bottom
     )
     .background(OFWOpener(router: payload[TabIdentifier.posts]!.router))
-    .fullScreenCover(isPresented: Binding(get: { !tempGlobalState.inAppBrowserURL.isNil }, set: { val in
+    .fullScreenCover(isPresented: Binding(get: { tempGlobalState.inAppBrowserURL != nil }, set: { val in
       tempGlobalState.inAppBrowserURL = nil
     })) {
       if let url = tempGlobalState.inAppBrowserURL {

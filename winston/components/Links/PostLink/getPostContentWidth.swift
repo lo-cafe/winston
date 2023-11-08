@@ -36,7 +36,7 @@ struct PostDimensions: Hashable, Equatable {
   var size: CGSize {
     
     let compactVSpacing = self.spacingHeight / 2
-    let tagHeight = urlTagHeight.isNil ? 0 : (compactVSpacing / 2) + (self.urlTagHeight ?? 0)
+    let tagHeight = urlTagHeight == nil ? 0 : (compactVSpacing / 2) + (self.urlTagHeight ?? 0)
     let compactHeight = max(self.titleSize.height + compactVSpacing + self.badgeSize.height + tagHeight, (mediaSize?.height ?? 0)) + dividerSize.height + compactVSpacing
     let normalHeight = self.titleSize.height + (self.bodySize?.height ?? 0) + (self.mediaSize?.height ?? 0) + self.dividerSize.height + self.badgeSize.height + self.spacingHeight
     return CGSize(
@@ -137,7 +137,7 @@ func getPostDimensions(post: Post, columnWidth: Double = UIScreen.screenWidth, s
     }
     
     
-    let compactTitleWidth = postGeneralSpacing + VotesCluster.verticalWidth + (extractedMedia.isNil ? 0 : postGeneralSpacing + compactMediaSize.width)
+    let compactTitleWidth = postGeneralSpacing + VotesCluster.verticalWidth + (extractedMedia == nil ? 0 : postGeneralSpacing + compactMediaSize.width)
     let titleContentWidth = contentWidth - (compact ? compactTitleWidth : 0)
     
     ACC_titleHeight = round(NSString(string: title).boundingRect(with: CGSize(width: titleContentWidth, height: .infinity), options: [.usesLineFragmentOrigin], attributes: [.font: UIFont.systemFont(ofSize: theme.titleText.size, weight: theme.titleText.weight.ut)], context: nil).height)
@@ -164,7 +164,7 @@ func getPostDimensions(post: Post, columnWidth: Double = UIScreen.screenWidth, s
     
     let theresTitle = true
     let theresSelftext = !compact && !data.selftext.isEmpty
-    let theresMedia = !extractedMedia.isNil
+    let theresMedia = extractedMedia != nil
     let theresSubDivider = true
     let theresBadge = true
     let elements = [theresTitle, theresSelftext, !compact && theresMedia, theresSubDivider, theresBadge]

@@ -40,7 +40,7 @@ struct AppContent: View {
     Tabber(theme: selectedTheme, cs: cs)
       .onAppear {
         themesPresets = themesPresets.filter { $0.id != "default" }
-        if selectedThemeRaw.isNil { selectedThemeID = "default" }
+        if selectedThemeRaw == nil { selectedThemeID = "default" }
       }
       .environment(\.useTheme, selectedTheme)
       .environmentObject(themeStore)

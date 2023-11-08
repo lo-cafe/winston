@@ -18,8 +18,8 @@ struct FlairTag: View {
       Text(text)
         .padding(.vertical, 2)
     }
-    .fontSize(13, data.isNil ? .regular : .semibold)
-    .padding(.leading, data.isNil ? 9 : 0)
+    .fontSize(13, data == nil ? .regular : .semibold)
+    .padding(.leading, data == nil ? 9 : 0)
     .padding(.trailing, 9)
     .background(Capsule(style: .continuous).fill(color.opacity(0.2)))
     .foregroundColor(.primary.opacity(0.5))
