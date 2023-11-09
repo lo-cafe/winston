@@ -64,7 +64,7 @@ struct SubPostsListTheme: Codable, Equatable, Hashable {
 
 struct PostLinkTheme: Codable, Hashable {
   enum CodingKeys: String, CodingKey {
-    case   cornerRadius, mediaCornerRadius, innerPadding, outerHPadding, stickyPostBorderColor, titleText, bodyText, badge, verticalElementsSpacing, bg, unseenType, unseenFadeOpacity
+    case   cornerRadius, mediaCornerRadius, innerPadding, outerHPadding, stickyPostBorderColor, titleText, bodyText, linespacing, badge, verticalElementsSpacing, bg, unseenType, unseenFadeOpacity
   }
   
   var cornerRadius: CGFloat
@@ -74,13 +74,14 @@ struct PostLinkTheme: Codable, Hashable {
   var stickyPostBorderColor: LineTheme
   var titleText: ThemeText
   var bodyText: ThemeText
+  var linespacing: CGFloat
   var badge: BadgeTheme
   var verticalElementsSpacing: CGFloat
   var bg: ThemeForegroundBG
   var unseenType: UnseenType
   var unseenFadeOpacity: CGFloat
   
-  init(cornerRadius: CGFloat, mediaCornerRadius: CGFloat, innerPadding: ThemePadding, outerHPadding: CGFloat, stickyPostBorderColor: LineTheme, titleText: ThemeText, bodyText: ThemeText, badge: BadgeTheme, verticalElementsSpacing: CGFloat, bg: ThemeForegroundBG, unseenType: UnseenType, unseenFadeOpacity: CGFloat) {
+    init(cornerRadius: CGFloat, mediaCornerRadius: CGFloat, innerPadding: ThemePadding, outerHPadding: CGFloat, stickyPostBorderColor: LineTheme, titleText: ThemeText, bodyText: ThemeText, linespacing: CGFloat, badge: BadgeTheme, verticalElementsSpacing: CGFloat, bg: ThemeForegroundBG, unseenType: UnseenType, unseenFadeOpacity: CGFloat) {
     self.cornerRadius = cornerRadius
     self.mediaCornerRadius = mediaCornerRadius
     self.innerPadding = innerPadding
@@ -88,6 +89,7 @@ struct PostLinkTheme: Codable, Hashable {
     self.stickyPostBorderColor = stickyPostBorderColor
     self.titleText = titleText
     self.bodyText = bodyText
+    self.linespacing = linespacing
     self.badge = badge
     self.verticalElementsSpacing = verticalElementsSpacing
     self.bg = bg
@@ -104,6 +106,7 @@ struct PostLinkTheme: Codable, Hashable {
     try container.encodeIfPresent(stickyPostBorderColor, forKey: .stickyPostBorderColor)
     try container.encodeIfPresent(titleText, forKey: .titleText)
     try container.encodeIfPresent(bodyText, forKey: .bodyText)
+    try container.encodeIfPresent(linespacing, forKey: .linespacing)
     try container.encodeIfPresent(badge, forKey: .badge)
     try container.encodeIfPresent(verticalElementsSpacing, forKey: .verticalElementsSpacing)
     try container.encodeIfPresent(bg, forKey: .bg)
@@ -121,6 +124,7 @@ struct PostLinkTheme: Codable, Hashable {
     self.stickyPostBorderColor = try container.decodeIfPresent(LineTheme.self, forKey: .stickyPostBorderColor) ?? t.stickyPostBorderColor
     self.titleText = try container.decodeIfPresent(ThemeText.self, forKey: .titleText) ?? t.titleText
     self.bodyText = try container.decodeIfPresent(ThemeText.self, forKey: .bodyText) ?? t.bodyText
+    self.linespacing = try container.decodeIfPresent(CGFloat.self, forKey: .linespacing) ?? t.linespacing
     self.badge = try container.decodeIfPresent(BadgeTheme.self, forKey: .badge) ?? t.badge
     self.verticalElementsSpacing = try container.decodeIfPresent(CGFloat.self, forKey: .verticalElementsSpacing) ?? t.verticalElementsSpacing
     self.bg = try container.decodeIfPresent(ThemeForegroundBG.self, forKey: .bg) ?? t.bg
