@@ -19,7 +19,11 @@ struct TextsSettings: View {
         FakeSection("Body") {
           FontSelector(theme: $theme.bodyText, defaultVal: defaultTheme.postLinks.theme.bodyText)
         }
-        
+          
+          FakeSection("Line Spacing") {
+              LabeledSlider(label: "Line spacing", value: $theme.linespacing, range: 0...64)
+                  .resetter($theme.linespacing, defaultTheme.postLinks.theme.linespacing)
+          }
       }
     }
 }

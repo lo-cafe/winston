@@ -53,6 +53,7 @@ struct PostLinkNormal: View {
         
         if !data.selftext.isEmpty && showSelfText {
           PostLinkNormalSelftext(selftext: data.selftext, theme: theme.theme.bodyText, cs: cs)
+                .lineSpacing(theme.theme.linespacing)
 //            .background(GeometryReader { geo in Color.clear.onAppear { print(data.title, "body", post.winstonData?.postDimensions?.bodySize?.height, geo.size.height) } })
         }
         

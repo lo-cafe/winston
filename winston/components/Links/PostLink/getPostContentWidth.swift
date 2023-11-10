@@ -68,7 +68,7 @@ func getPostDimensions(post: Post, columnWidth: Double = UIScreen.screenWidth, s
     let extractedMedia = post.winstonData?.extractedMedia
     let compactImgSize = scaledCompactModeThumbSize()
     let theme = selectedTheme.postLinks.theme
-    let postGeneralSpacing = theme.verticalElementsSpacing
+    let postGeneralSpacing = theme.verticalElementsSpacing + theme.linespacing
     let title = data.title
     let body = data.selftext
     

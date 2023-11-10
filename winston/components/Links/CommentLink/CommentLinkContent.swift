@@ -225,6 +225,7 @@ struct CommentLinkContent: View {
                       .lineLimit(lineLimit)
                   } else {
                     MD(data.winstonBodyAttrEncoded == nil ? .str(body) : .json(data.winstonBodyAttrEncoded!), fontSize: theme.theme.bodyText.size)
+                        .lineSpacing(theme.theme.linespacing)
                       .fixedSize(horizontal: false, vertical: true)
                       .overlay(
                         !selectable

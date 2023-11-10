@@ -17,10 +17,11 @@ struct ThemeStoreDetailsView: View {
   var body: some View {
     FittingScrollView{
       VStack(spacing: 0){
-        OnlineThemeItem(theme: themeData, accentColor: Color(uiColor: UIColor(hex: themeData.color!.hex)))
-          .padding()
-        Divider()
-          .padding(.horizontal)
+          OnlineThemeItem(theme: themeData, accentColor: Color(uiColor: UIColor(hex: themeData.color!.hex)), showShareButton: true)
+            .padding()
+          Divider()
+            .padding(.horizontal)
+        
         AppDetailScreenshots(screenshots: viewModel.previews)
           .shadow(radius: 1)
           .padding()
@@ -97,3 +98,4 @@ extension ThemeStoreDetailsView {
   }
   
 }
+
