@@ -27,7 +27,7 @@ struct LightBoxElementView: View {
       .scaledToFit()
     }
     .id("\(el.id)\(altSize.width + altSize.height)")
-    .frame(width: UIScreen.screenWidth, height: UIScreen.screenHeight)
+    .frame(width: UIScreen.screenWidth)
     .preferredColorScheme(.dark)
     .edgesIgnoringSafeArea(.all)
     .statusBar(hidden: true)

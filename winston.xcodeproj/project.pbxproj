@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		65010D032AC70ADD00A8F611 /* getDownloadURL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65010D022AC70ADD00A8F611 /* getDownloadURL.swift */; };
 		650ACAFC2A87A36900A7C600 /* calcVotes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 650ACAFB2A87A36900A7C600 /* calcVotes.swift */; };
+		6514FFEC2AFD01520051D264 /* WhatsNewKit in Frameworks */ = {isa = PBXBuildFile; productRef = 6514FFEB2AFD01520051D264 /* WhatsNewKit */; };
+		6514FFEE2AFD01AD0051D264 /* WhatsNewCollectionProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6514FFED2AFD01AD0051D264 /* WhatsNewCollectionProvider.swift */; };
 		651D19C72A90B7D6003867A9 /* PostFontSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 651D19C62A90B7D6003867A9 /* PostFontSettings.swift */; };
 		652011FA2AC2C46C005DD899 /* themeStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 652011F92AC2C46C005DD899 /* themeStore.swift */; };
 		652011FC2AC2C7BE005DD899 /* ThemeStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 652011FB2AC2C7BE005DD899 /* ThemeStore.swift */; };
@@ -35,10 +37,13 @@
 		659FDEA82A87798300103414 /* VoteButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 659FDEA72A87798300103414 /* VoteButton.swift */; };
 		65A5FFF22ACED3BF000D1ADA /* getPreviewImages.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65A5FFF12ACED3BF000D1ADA /* getPreviewImages.swift */; };
 		65AA535D2A8BB27900275299 /* FAQPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65AA535C2A8BB27900275299 /* FAQPanel.swift */; };
+		65B0619B2AFE8A05008B7AF3 /* changelog.json in Sources */ = {isa = PBXBuildFile; fileRef = 65E45A6D2AFD3C1D007DBBFC /* changelog.json */; };
 		65CDA3622ACB0EB50001EC44 /* ZoomableImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65CDA3612ACB0EB50001EC44 /* ZoomableImageView.swift */; };
 		65CDA3642ACB0F140001EC44 /* ShareSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65CDA3632ACB0F140001EC44 /* ShareSheet.swift */; };
 		65CDA3662ACB0F3A0001EC44 /* LiveTextInteraction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65CDA3652ACB0F3A0001EC44 /* LiveTextInteraction.swift */; };
 		65D265412ABEC6FF009E01F9 /* urlCleaner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65D265402ABEC6FF009E01F9 /* urlCleaner.swift */; };
+		65E45A6E2AFD3C1D007DBBFC /* changelog.json in Resources */ = {isa = PBXBuildFile; fileRef = 65E45A6D2AFD3C1D007DBBFC /* changelog.json */; };
+		65E45A702AFD3E48007DBBFC /* whatsNew.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65E45A6F2AFD3E48007DBBFC /* whatsNew.swift */; };
 		ABC2180F2ABA528D00F0DABA /* Biometrics.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABC2180E2ABA528D00F0DABA /* Biometrics.swift */; };
 		CE55C7472ADB51C300484EDA /* ObservedOptionalObject in Frameworks */ = {isa = PBXBuildFile; productRef = CE55C7462ADB51C300484EDA /* ObservedOptionalObject */; };
 		EC051C472ACAF2DC00E9D9ED /* themeFileIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = EC051C462ACAF2DC00E9D9ED /* themeFileIcon.png */; };
@@ -393,6 +398,7 @@
 /* Begin PBXFileReference section */
 		65010D022AC70ADD00A8F611 /* getDownloadURL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = getDownloadURL.swift; sourceTree = "<group>"; };
 		650ACAFB2A87A36900A7C600 /* calcVotes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = calcVotes.swift; sourceTree = "<group>"; };
+		6514FFED2AFD01AD0051D264 /* WhatsNewCollectionProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhatsNewCollectionProvider.swift; sourceTree = "<group>"; };
 		651D19C62A90B7D6003867A9 /* PostFontSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostFontSettings.swift; sourceTree = "<group>"; };
 		652011F92AC2C46C005DD899 /* themeStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = themeStore.swift; sourceTree = "<group>"; };
 		652011FB2AC2C7BE005DD899 /* ThemeStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeStore.swift; sourceTree = "<group>"; };
@@ -423,6 +429,8 @@
 		65CDA3632ACB0F140001EC44 /* ShareSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareSheet.swift; sourceTree = "<group>"; };
 		65CDA3652ACB0F3A0001EC44 /* LiveTextInteraction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveTextInteraction.swift; sourceTree = "<group>"; };
 		65D265402ABEC6FF009E01F9 /* urlCleaner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = urlCleaner.swift; sourceTree = "<group>"; };
+		65E45A6D2AFD3C1D007DBBFC /* changelog.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = changelog.json; sourceTree = "<group>"; };
+		65E45A6F2AFD3E48007DBBFC /* whatsNew.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = whatsNew.swift; sourceTree = "<group>"; };
 		ABC2180E2ABA528D00F0DABA /* Biometrics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Biometrics.swift; sourceTree = "<group>"; };
 		EC051C2A2ACAEFC500E9D9ED /* QuickLookThumbnailing.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuickLookThumbnailing.framework; path = System/Library/Frameworks/QuickLookThumbnailing.framework; sourceTree = SDKROOT; };
 		EC051C462ACAF2DC00E9D9ED /* themeFileIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = themeFileIcon.png; sourceTree = "<group>"; };
@@ -758,6 +766,7 @@
 				ECDD515F2A748C5800FD9498 /* OpenGraph in Frameworks */,
 				EC6650EA2AB7E21E006B83A4 /* Zip in Frameworks */,
 				ECDD51622A748DF600FD9498 /* SkeletonUI in Frameworks */,
+				6514FFEC2AFD01520051D264 /* WhatsNewKit in Frameworks */,
 				EC50A5A82A9EEF8A00DE8122 /* Giffy in Frameworks */,
 				EC9269F22A51A732003F33B1 /* HighlightedTextEditor in Frameworks */,
 				ECAD0F2F2A8B4D4B001C88B5 /* Markdown in Frameworks */,
@@ -1102,6 +1111,7 @@
 				ECD2A3762A69C26900EDD02D /* consts.swift */,
 				EC8F34982A6F7DDB00EB8249 /* winstonMDEditorPreset.swift */,
 				ECE08B7F2AA9F9BA00F84DC9 /* defaultTheme.swift */,
+				65E45A6F2AFD3E48007DBBFC /* whatsNew.swift */,
 			);
 			path = globals;
 			sourceTree = "<group>";
@@ -1146,6 +1156,7 @@
 			isa = PBXGroup;
 			children = (
 				EC8B814D2AC9650E000DC827 /* String.swift */,
+				6514FFED2AFD01AD0051D264 /* WhatsNewCollectionProvider.swift */,
 			);
 			path = extensions;
 			sourceTree = "<group>";
@@ -1178,6 +1189,7 @@
 			isa = PBXGroup;
 			children = (
 				ECA30A162A5FA08500BB19D1 /* WhatToTest.en-US.txt */,
+				65E45A6D2AFD3C1D007DBBFC /* changelog.json */,
 			);
 			path = TestFlight;
 			sourceTree = "<group>";
@@ -1570,6 +1582,7 @@
 				EC6650E92AB7E21E006B83A4 /* Zip */,
 				EC2D72B22AC5335E002601E0 /* CHTCollectionViewWaterfallLayout */,
 				CE55C7462ADB51C300484EDA /* ObservedOptionalObject */,
+				6514FFEB2AFD01520051D264 /* WhatsNewKit */,
 			);
 			productName = winston;
 			productReference = EC593AD42A4673B2002D6454 /* winston.app */;
@@ -1640,6 +1653,7 @@
 				EC6650E82AB7E21E006B83A4 /* XCRemoteSwiftPackageReference "Zip" */,
 				EC2D72B12AC5335E002601E0 /* XCRemoteSwiftPackageReference "CHTCollectionViewWaterfallLayout" */,
 				CE55C7452ADB517600484EDA /* XCRemoteSwiftPackageReference "observed-optional-object" */,
+				6514FFEA2AFD01520051D264 /* XCRemoteSwiftPackageReference "WhatsNewKit" */,
 			);
 			productRefGroup = EC593AD52A4673B2002D6454 /* Products */;
 			projectDirPath = "";
@@ -1659,6 +1673,7 @@
 				EC22A3172A5B74CE0062A112 /* ci_post_clone.sh in Resources */,
 				EC593ADC2A4673B3002D6454 /* Assets.xcassets in Resources */,
 				EC6CBE332A7D6BF80089EAA0 /* README.md in Resources */,
+				65E45A6E2AFD3C1D007DBBFC /* changelog.json in Resources */,
 				ECA30A172A5FA08500BB19D1 /* WhatToTest.en-US.txt in Resources */,
 				EC051C472ACAF2DC00E9D9ED /* themeFileIcon.png in Resources */,
 			);
@@ -1686,6 +1701,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				65B0619B2AFE8A05008B7AF3 /* changelog.json in Sources */,
 				EC593AF02A47ACB0002D6454 /* Tabber.swift in Sources */,
 				EC3AC9D42AACCBE40078EC78 /* LabeledTextField.swift in Sources */,
 				EC50B0E62A8460CD00AB8F72 /* replyModalPresenter.swift in Sources */,
@@ -1852,6 +1868,7 @@
 				EC08540E2A4BD26600E88389 /* ObservedScrollView.swift in Sources */,
 				652011FC2AC2C7BE005DD899 /* ThemeStore.swift in Sources */,
 				ECE08B7E2AA9F6A300F84DC9 /* PostThemingPanel.swift in Sources */,
+				6514FFEE2AFD01AD0051D264 /* WhatsNewCollectionProvider.swift in Sources */,
 				ECDBA8C72A4A83DB00FB42DB /* SubredditPosts.swift in Sources */,
 				ECE08B802AA9F9BA00F84DC9 /* defaultTheme.swift in Sources */,
 				EC2D275E2A4FC512006444D6 /* TappableView.swift in Sources */,
@@ -2000,6 +2017,7 @@
 				EC2D27652A4FCE42006444D6 /* SubredditInfo.swift in Sources */,
 				EC0854132A4BE13000E88389 /* PostView.swift in Sources */,
 				ECE449712A67610A00E2A3B7 /* VotesPopover.swift in Sources */,
+				65E45A702AFD3E48007DBBFC /* whatsNew.swift in Sources */,
 				ECE449812A689C8A00E2A3B7 /* subscribe.swift in Sources */,
 				EC3188322A94770700CB3738 /* GalleryThumb.swift in Sources */,
 				EC0854432A4D6A4800E88389 /* MasterButton.swift in Sources */,
@@ -2181,7 +2199,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = lo.cafe.winston;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -2222,7 +2240,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = lo.cafe.winston;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -2324,6 +2342,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		6514FFEA2AFD01520051D264 /* XCRemoteSwiftPackageReference "WhatsNewKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SvenTiigi/WhatsNewKit.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.1.0;
+			};
+		};
 		CE55C7452ADB517600484EDA /* XCRemoteSwiftPackageReference "observed-optional-object" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/fourplusone/observed-optional-object.git";
@@ -2487,6 +2513,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		6514FFEB2AFD01520051D264 /* WhatsNewKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 6514FFEA2AFD01520051D264 /* XCRemoteSwiftPackageReference "WhatsNewKit" */;
+			productName = WhatsNewKit;
+		};
 		CE55C7462ADB51C300484EDA /* ObservedOptionalObject */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = CE55C7452ADB517600484EDA /* XCRemoteSwiftPackageReference "observed-optional-object" */;

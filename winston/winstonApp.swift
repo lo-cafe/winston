@@ -8,6 +8,8 @@
 import SwiftUI
 import AlertToast
 import Defaults
+import WhatsNewKit
+
 var shortcutItemToProcess: UIApplicationShortcutItem?
 @main
 struct winstonApp: App {
@@ -15,11 +17,20 @@ struct winstonApp: App {
   let persistenceController = PersistenceController.shared
   @Environment(\.scenePhase) var phase
   @State private var activeTab: TabIdentifier = .posts
+  
 
   var body: some Scene {
     WindowGroup {
       AppContent(activeTab: activeTab)
+            
         .environment(\.managedObjectContext, persistenceController.container.viewContext)
+        .onAppear{
+            print(getCurrentChangelog())
+        }
+        .environment(
+          \.whatsNew,
+           WhatsNewEnvironment(currentVersion: .current(), whatsNewCollection: getCurrentChangelog())
+        )
     }
     .onChange(of: phase) { (newPhase) in
       switch newPhase {
@@ -32,7 +43,7 @@ struct winstonApp: App {
           print("saved is selected")
         case "search":
           print("search is selected")
-            activeTab = .search // Set the active tab to "Search"
+          activeTab = .search // Set the active tab to "Search"
         default:
           print("default " + name)
         }
@@ -49,7 +60,7 @@ struct winstonApp: App {
   
   func addQuickActions() {
     @FetchRequest(sortDescriptors: [NSSortDescriptor(key: "name", ascending: true)], animation: .default) var subreddits: FetchedResults<CachedSub>
-
+    
     var searchUserInfo: [String: NSSecureCoding] {
       return ["name" : "search" as NSSecureCoding]
     }
@@ -88,6 +99,7 @@ struct AppContent: View {
   var body: some View {
     let selectedTheme = selectedThemeRaw ?? defaultTheme
     Tabber(theme: selectedTheme, cs: cs, activeTab: activeTab)
+      .whatsNewSheet()
       .onAppear {
         themesPresets = themesPresets.filter { $0.id != "default" }
         if selectedThemeRaw == nil { selectedThemeID = "default" }
@@ -136,3 +148,4 @@ extension EnvironmentValues {
     set { self[CurrentThemeKey.self] = newValue }
   }
 }
+
