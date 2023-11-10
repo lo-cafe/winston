@@ -1,5 +1,3 @@
-A big update is coming soon, sorry for the wait.
-
 # Added
 
 - Live Text
