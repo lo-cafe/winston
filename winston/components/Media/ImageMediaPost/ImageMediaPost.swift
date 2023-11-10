@@ -17,7 +17,7 @@ struct ImageMediaPost: View, Equatable {
   }
     
   var compact = false
-  var post: Post
+  @ObservedObject var post: Post
   var images: [MediaExtracted]
   var contentWidth: CGFloat
   @State var fullscreen = false
@@ -89,7 +89,7 @@ struct ImageMediaPost: View, Equatable {
     }
     .frame(maxWidth: compact ? nil : .infinity)
     .fullScreenCover(item: $fullscreenIndex) { i in
-      LightBoxImage(post: post, i: i, imagesArr: images)
+      LightBoxImage(post: post, i: i, imagesArr: images, doLiveText: Defaults[.doLiveText])
     }
   }
 }

@@ -80,6 +80,7 @@ extension Comment {
       commentData.parent_id = message.parent_id
       commentData.score = nil
       commentData.author_fullname = message.author_fullname
+      commentData.author_flair_text = message.author_flair_text
       commentData.approved_by = nil
       commentData.mod_note = nil
       commentData.collapsed = false
@@ -160,7 +161,7 @@ extension Comment {
     }
   }
   
-  func loadChildren(parent: CommentParentElement, postFullname: String, avatarSize: Double) async {
+  func loadChildren(parent: CommentParentElement, postFullname: String, avatarSize: Double, post: Post?) async {
     if let kind = kind, kind == "more", let data = data, let count = data.count, let parent_id = data.parent_id, let childrenIDS = data.children {
       var actualID = id
 //      if actualID.hasSuffix("-more") {
@@ -186,6 +187,7 @@ extension Comment {
         let loadedComments: [Comment] = nestComments(children, parentID: parentID, api: RedditAPI.shared)
 
         Task(priority: .background) { [loadedComments] in
+          await post?.saveMoreComments(comments: loadedComments)
           await RedditAPI.shared.updateAvatarURLCacheFromComments(comments: loadedComments, avatarSize: avatarSize)
         }
         await MainActor.run { [loadedComments] in
@@ -433,7 +435,7 @@ struct CommentData: GenericRedditEntityDataType {
   //  let locked: Bool?
   //  let report_reasons: String?
   var created: Double?
-  //  let author_flair_text: String?
+  var author_flair_text: String?
   //  let treatment_tags: [String]?
   var link_id: String?
   var link_title: String?

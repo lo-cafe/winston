@@ -100,6 +100,15 @@
       }
     },
     {
+      "identity" : "observed-optional-object",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/fourplusone/observed-optional-object.git",
+      "state" : {
+        "revision" : "74aa40a398688b90ee7724797861185e5a696aca",
+        "version" : "0.1.1"
+      }
+    },
+    {
       "identity" : "opengraph",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/satoshi-takano/OpenGraph.git",
@@ -187,6 +196,15 @@
       "state" : {
         "revision" : "34f118e2a4712e3ceef05481b9f15ab1e890bc37",
         "version" : "1.5.0"
+      }
+    },
+    {
+      "identity" : "whatsnewkit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/SvenTiigi/WhatsNewKit.git",
+      "state" : {
+        "revision" : "238dadc14dd58885f51037e63d08baf4275c480e",
+        "version" : "2.1.0"
       }
     },
     {

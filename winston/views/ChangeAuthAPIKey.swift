@@ -172,7 +172,7 @@ struct ChangeAuthAPIKey: View {
               
               SmallStep {
                 VStack (alignment: .leading) {
-                  Text("Tap below's URL to copy and paste it in the \"redirect uri\" field:")
+                  Text("Tap the URL below to copy and paste it in the \"redirect uri\" field:")
                   CopiableValue(value: "https://app.winston.lo.cafe/auth-success")
                 }
               }
@@ -226,7 +226,7 @@ struct ChangeAuthAPIKey: View {
               }
               .fixedSize(horizontal: false, vertical: true)
               
-              Text("Now click below's button and grant full access to the app you created:")
+              Text("Now click the button below and grant full access to the app you created:")
               HStack {
                 MasterButton(label: "Back", mode: .soft, color: .gray, height: 44, fullWidth: true) {
                   withAnimation(spring) {

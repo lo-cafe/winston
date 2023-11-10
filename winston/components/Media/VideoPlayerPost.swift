@@ -68,7 +68,7 @@ class SharedVideo: ObservableObject {
 }
 
 struct VideoPlayerPost: View {
-  var post: Post
+  @ObservedObject var post: Post
   var compact = false
   var overrideWidth: CGFloat?
   var url: URL

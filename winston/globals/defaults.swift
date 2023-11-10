@@ -49,6 +49,7 @@ extension Defaults.Keys {
   static let postsInBox = Key<[PostInBox]>("postsInBox-v2", default: [])
   static let likedButNotSubbed = Key<[Subreddit]>("likedButNotSubbed", default: [])
   static let preferredSort = Key<SubListingSortOption>("preferredSort", default: .best)
+  static let preferredSearchSort = Key<SubListingSortOption>("preferredSearchSort", default: .best)
   static let blurPostLinkNSFW = Key<Bool>("blurPostLinkNSFW", default: true)
   static let blurPostNSFW = Key<Bool>("blurPostNSFW", default: false)
   static let collapseAutoModerator = Key<Bool>("collapseAutoModerator", default: false)
@@ -93,6 +94,7 @@ extension Defaults.Keys {
   static let showUsernameInTabBar = Key<Bool>("showUsernameInTabBar", default: false)
   static let openYoutubeApp = Key<Bool>("openYoutubeApp", default: true)
   static let preferenceDefaultFeed = Key<String>("preferenceDefaultFeed", default: "subList")
+  static let useAuth = Key<Bool>("useAuth", default: false)
   static let showHomeFeed = Key<Bool>("showHomeFeed", default: true)
   static let showPopularFeed = Key<Bool>("showPopularFeed", default: true)
   static let showAllFeed = Key<Bool>("showAllFeed", default: true)
@@ -125,6 +127,15 @@ extension Defaults.Keys {
   static let themesPresets = Key<[WinstonTheme]>("themesPresets", default: [])
   static let selectedThemeID = Key<String>("selectedThemeID", default: "default")
   static let feedPostsLoadLimit = Key<Int>("feedPostsLoadLimit", default: 35)
+  
+  static let themeStoreTint = Key<Bool>("themeStoreTint", default: true)
+    
+  static let perSubredditSort = Key<Bool>("perSubredditSort", default: true)
+  static let subredditSorts = Key<Dictionary<String, SubListingSortOption>>("subredditSorts", default: [String: SubListingSortOption]())
+    
+  static let perPostSort = Key<Bool>("perPostSort", default: true)
+  static let postSorts = Key<Dictionary<String, CommentSortOption>>("postSorts", default: [String: CommentSortOption]())
+  static let doLiveText = Key<Bool>("doLiveText", default: true)
 }
 
 extension UIScreen {

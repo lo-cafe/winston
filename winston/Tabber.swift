@@ -46,12 +46,12 @@ class TabPayload: ObservableObject {
 struct Tabber: View {
   @ObservedObject var tempGlobalState = TempGlobalState.shared
   @ObservedObject var errorAlert = Oops.shared
-  @State var activeTab = TabIdentifier.posts
+  @State var activeTab: TabIdentifier
   
   @State var credModalOpen = false
   @State var importedThemeAlert = false
-
-//  @State var tabBarHeight: CGFloat?
+  
+  //  @State var tabBarHeight: CGFloat?
   @StateObject private var inboxPayload = TabPayload("inboxRouter")
   @StateObject private var mePayload = TabPayload("meRouter")
   @StateObject private var postsPayload = TabPayload("postsRouter")
@@ -59,9 +59,13 @@ struct Tabber: View {
   @StateObject private var settingsPayload = TabPayload("settingsRouter")
   @Environment(\.useTheme) private var currentTheme
   @Environment(\.colorScheme) private var colorScheme
+  @EnvironmentObject var themeStoreAPI: ThemeStoreAPI
   @Default(.showUsernameInTabBar) private var showUsernameInTabBar
-  @Default(.showTestersCelebrationModal) private var showTestersCelebrationModal
   @Default(.showTipJarModal) private var showTipJarModal
+  
+  
+  @State var sharedTheme: ThemeData? = nil
+  @State var showingSharedThemeSheet: Bool = false
   
   var payload: [TabIdentifier:TabPayload] { [
     .inbox: inboxPayload,
@@ -79,7 +83,8 @@ struct Tabber: View {
     }
   }
   
-  init(theme: WinstonTheme, cs: ColorScheme) {
+  init(theme: WinstonTheme, cs: ColorScheme, activeTab: TabIdentifier) {
+    _activeTab = State(initialValue: activeTab) // Initialize activeTab
     Tabber.updateTabAndNavBar(tabTheme: theme.general.tabBarBG, navTheme: theme.general.navPanelBG, cs)
   }
   
@@ -216,9 +221,6 @@ struct Tabber: View {
       Text("The theme was imported successfully. Enable it in \"Themes\" section in the Settings tab.")
     }
     .onAppear {
-      if showTestersCelebrationModal {
-        showTipJarModal = false
-      }
       Defaults[.themesPresets] = Defaults[.themesPresets].filter { $0.id != "default" }
       if Defaults[.multis].count != 0 || Defaults[.subreddits].count != 0 {
         Defaults[.multis] = []
@@ -235,12 +237,6 @@ struct Tabber: View {
         }
       }
     }
-//    .onChange(of: currentTheme.general.tabBarBG, perform: { val in
-//      Tabber.updateTabAndNavBar(tabTheme: val, navTheme: currentTheme.general.navPanelBG, colorScheme)
-//    })
-//    .onChange(of: currentTheme.general.navPanelBG, perform: { val in
-//      Tabber.updateTabAndNavBar(tabTheme: currentTheme.general.tabBarBG, navTheme: val, colorScheme)
-//    })
     .onChange(of: RedditAPI.shared.loggedUser) { user in
       if user.apiAppID == nil || user.apiAppSecret == nil {
         withAnimation(spring) {
@@ -248,7 +244,21 @@ struct Tabber: View {
         }
       }
     }
+    .sheet(isPresented: $showingSharedThemeSheet, content: {
+      if let theme = sharedTheme {
+        ThemeStoreDetailsView(themeData: theme)
+      }
+    })
     .onOpenURL { url in
+      
+      if url.absoluteString.contains("winstonapp://theme/") {
+        let themeID = url.lastPathComponent
+        Task {
+          sharedTheme = await themeStoreAPI.fetchThemeByID(id: themeID)
+          showingSharedThemeSheet.toggle()
+        }
+      }
+      
       if url.absoluteString.hasSuffix(".winston") || url.absoluteString.hasSuffix(".zip") {
         TempGlobalState.shared.globalLoader.enable("Importing...")
         let result = importTheme(at: url)
@@ -275,9 +285,6 @@ struct Tabber: View {
         }
       }
     }
-    .sheet(isPresented: $showTestersCelebrationModal) {
-      TestersCelebration()
-    }
     .sheet(isPresented: $showTipJarModal) {
       TipJar()
     }
@@ -286,7 +293,7 @@ struct Tabber: View {
         .interactiveDismissDisabled(true)
     }
     .accentColor(currentTheme.general.accentColor.cs(colorScheme).color())
-//    .id(currentTheme.general.tabBarBG)
+    //    .id(currentTheme.general.tabBarBG)
   }
 }
 

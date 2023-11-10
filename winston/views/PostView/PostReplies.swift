@@ -10,7 +10,7 @@ import Defaults
 
 struct PostReplies: View {
   var update: Bool
-  var post: Post
+  @ObservedObject var post: Post
   @ObservedObject var subreddit: Subreddit
   var ignoreSpecificComment: Bool
   var highlightID: String?
@@ -22,6 +22,7 @@ struct PostReplies: View {
   @StateObject private var comments = ObservableArray<Comment>()
   @ObservedObject private var globalLoader = TempGlobalState.shared.globalLoader
   @State private var loading = true
+  @State var seenComments : String?
   
   func asyncFetch(_ full: Bool, _ altIgnoreSpecificComment: Bool? = nil) async {
     if let result = await post.refreshPost(commentID: (altIgnoreSpecificComment ?? ignoreSpecificComment) ? nil : highlightID, sort: sort, after: nil, subreddit: subreddit.data?.display_name ?? subreddit.id, full: full), let newComments = result.0 {
@@ -74,7 +75,7 @@ struct PostReplies: View {
               .id("\(comment.id)-top-decoration")
               .listRowInsets(EdgeInsets(top: 0, leading: horPad, bottom: 0, trailing: horPad))
             
-            CommentLink(highlightID: ignoreSpecificComment ? nil : highlightID, post: post, subreddit: subreddit, postFullname: postFullname, parentElement: .post(comments), comment: comment)
+            CommentLink(highlightID: ignoreSpecificComment ? nil : highlightID, post: post, subreddit: subreddit, postFullname: postFullname, seenComments: seenComments, parentElement: .post(comments), comment: comment)
             //                .equatable()
             
             Spacer()
@@ -143,6 +144,8 @@ struct PostReplies: View {
           .listRowBackground(Color.clear)
           .id("no-comments-placeholder")
       }
+    }.onAppear() {
+      seenComments = post.data?.winstonSeenComments
     }
   }
 }

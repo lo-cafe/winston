@@ -8,7 +8,7 @@
 import SwiftUI
 import Defaults
 import SwiftUIIntrospect
-
+import CoreData
 
 enum SubViewType: Hashable {
   case posts(Subreddit)
@@ -27,13 +27,21 @@ struct SubredditPosts: View, Equatable {
   @State private var loadedPosts: Set<String> = []
   @State private var lastPostAfter: String?
   @State private var searchText: String = ""
-  @State private var sort: SubListingSortOption = Defaults[.preferredSort]
+  @State private var sort: SubListingSortOption
   @State private var newPost = false
   
   @EnvironmentObject private var routerProxy: RouterProxy
   @Environment(\.useTheme) private var selectedTheme
   @Environment(\.colorScheme) private var cs
   @Environment(\.contentWidth) private var contentWidth
+  
+  let context = PersistenceController.shared.container.newBackgroundContext()
+  let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "SeenPost")
+
+  init(subreddit: Subreddit) {
+    self.subreddit = subreddit;
+    _sort = State(initialValue: Defaults[.perSubredditSort] ? (Defaults[.subredditSorts][subreddit.id] ?? Defaults[.preferredSort]) : Defaults[.preferredSort]);
+  }
   
   func asyncFetch(force: Bool = false, loadMore: Bool = false, searchText: String? = nil) async {
     if (subreddit.data == nil || force) && !feedsAndSuch.contains(subreddit.id) {
@@ -46,6 +54,8 @@ struct SubredditPosts: View, Equatable {
       loading = true
     }
     if let result = await subreddit.fetchPosts(sort: sort, after: loadMore ? lastPostAfter : nil, searchText: searchText, contentWidth: contentWidth), let newPosts = result.0 {
+      
+      await waitForPostsToLoadMediaInfo(posts: newPosts)
       withAnimation {
                 let newPostsFiltered = newPosts.filter { !loadedPosts.contains($0.id) && !filteredSubreddits.contains($0.data?.subreddit ?? "") }
         
@@ -68,6 +78,12 @@ struct SubredditPosts: View, Equatable {
     }
   }
   
+  func waitForPostsToLoadMediaInfo(posts: [Post]) async {
+    for i in 0...posts.count - 1 {
+      await posts[i].waitForMediaToLoad()
+    }
+  }
+  
   func fetch(_ loadMore: Bool = false, _ searchText: String? = nil) {
     Task(priority: .background) {
       await asyncFetch(loadMore: loadMore, searchText: searchText)
@@ -87,7 +103,7 @@ struct SubredditPosts: View, Equatable {
     }
     
   }
-  
+
   var body: some View {
     Group {
       if IPAD {
@@ -160,6 +176,7 @@ struct SubredditPostsNavBtns: View, Equatable {
               ForEach(SubListingSortOption.TopListingSortOption.allCases, id: \.self) { topOpt in
                 Button {
                   sort = .top(topOpt)
+                  Defaults[.subredditSorts][subreddit.id] = .top(topOpt)
                 } label: {
                   HStack {
                     Text(topOpt.rawValue.capitalized)
@@ -174,10 +191,14 @@ struct SubredditPostsNavBtns: View, Equatable {
               Label(opt.rawVal.value.capitalized, systemImage: opt.rawVal.icon)
                 .foregroundColor(Color.accentColor)
                 .font(.system(size: 17, weight: .bold))
+                .onAppear{
+                  print(opt.rawVal)
+                }
             }
           } else {
             Button {
               sort = opt
+              Defaults[.subredditSorts][subreddit.id] = opt
             } label: {
               HStack {
                 Text(opt.rawVal.value.capitalized)

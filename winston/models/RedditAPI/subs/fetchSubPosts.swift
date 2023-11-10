@@ -60,6 +60,8 @@ extension RedditAPI {
       case .top(let topSortOption):
         subID += "top\(appendedFileType)"
         subID += buildTopSortQuery(topSortOption)
+      case .controversial:
+        subID += "controversial\(appendedFileType)"
       }
     }
 
@@ -72,6 +74,9 @@ extension RedditAPI {
     if let searchText = searchText {
       subID += subID.contains("?") ? "&q=\(searchText)" : "?q=\(searchText)"
       subID += "&restrict_sr=on"
+     
+      // Add preferred sort to search url
+      subID += "&sort=\(Defaults[.preferredSearchSort])"
     }
     
     if let after = after {

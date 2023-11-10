@@ -9,6 +9,7 @@ import Foundation
 import SwiftUI
 import NukeUI
 import YouTubePlayerKit
+import Alamofire
 
 struct MediaExtracted: Hashable, Equatable, Identifiable {
   let url: URL
@@ -45,7 +46,7 @@ enum MediaExtractedType: Hashable, Equatable {
 }
 
 // ORDER MATTERS!
-func mediaExtractor(contentWidth: Double = UIScreen.screenWidth, _ data: PostData) -> MediaExtractedType? {
+func mediaExtractor(contentWidth: Double = UIScreen.screenWidth, _ data: PostData) async -> MediaExtractedType? {
   guard !data.is_self else { return nil }
   
   if let is_gallery = data.is_gallery, is_gallery, let galleryData = data.gallery_data?.items, let metadata = data.media_metadata {
@@ -100,6 +101,24 @@ func mediaExtractor(contentWidth: Double = UIScreen.screenWidth, _ data: PostDat
     return .video(MediaExtracted(url: url, size: CGSize(width: 0, height: 0)))
   }
   
+  if data.url.contains("streamable") {
+    let url = data.url;
+    let shortCode = url[url.index(url.lastIndex(of: "/") ?? url.startIndex, offsetBy: 1)...]
+
+    let response = await AF.request(
+      "https://api.streamable.com/videos/\(shortCode)"
+    ).serializingDecodable(StreamableAPIResponse.self).response
+    
+    switch response.result {
+    case .success(let data):
+      if let mp4 = data.files?.mp4Mobile ?? data.files?.mp4 {
+        return .video(MediaExtracted(url: URL(string: mp4.url)!, size: CGSize(width: mp4.width, height: mp4.height)))
+      }
+    case .failure:
+      return nil
+    }
+  }
+  
   let actualURL = data.url.hasPrefix("/r/") || data.url.hasPrefix("/u/") ? "https://reddit.com\(data.url)" : data.url
   guard let urlComponents = URLComponents(string: actualURL) else {
     return nil
@@ -145,4 +164,26 @@ private func extractYoutubeIdFromOEmbed(_ text: String) -> String? {
   return regex?.firstMatch(in: text, options: [], range: NSRange(location: 0, length: text.count)).map {
     String(text[Range($0.range, in: text)!])
   }
+}
+
+struct StreamableAPIParams: Codable {}
+          
+struct StreamableAPIResponse: Codable {
+  let files: StreamableAPIFiles?
+}
+
+struct StreamableAPIFiles: Codable {
+  let mp4 : StreamableAPIFile?
+  let mp4Mobile:  StreamableAPIFile?
+
+  enum CodingKeys : String, CodingKey {
+    case mp4 = "mp4"
+    case mp4Mobile = "mp4-mobile"
+  }
+}
+
+struct StreamableAPIFile: Codable {
+  let url: String
+  let width: Int
+  let height: Int
 }
