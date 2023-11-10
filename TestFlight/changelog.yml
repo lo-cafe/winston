@@ -1,0 +1,32 @@
+# ======================= Changelog File =======================
+#
+# Please add your release like in the example bellow to the file.
+# Winston will do the rest and present it.
+#
+#release:
+#  - version: "1.0.0"
+#    title: "What's New in Winson"
+#    features:
+#      - feature:
+#          - systemImage: "star"
+#            title: "What's New sheet"
+#            subtitle: "We've added a cool new What's New sheet!"
+#        feature:
+#          - systemImage: "start"
+#            title: "What's New sheet"
+#            subtitle: "We've added a cool new What's New sheet!"
+#
+# ===============================================================
+
+release:
+  - version: "1.0.1"
+    title: "What's New in Winston"
+    features:
+      - feature:
+          - systemImage: "star"
+            title: "What's New sheet"
+            subtitle: "We've added a cool new What's New sheet!"
+        feature:
+          - systemImage: "start"
+            title: "What's New sheet"
+            subtitle: "We've added a cool new What's New sheet!"

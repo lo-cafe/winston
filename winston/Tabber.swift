@@ -60,7 +60,6 @@ struct Tabber: View {
   @Environment(\.useTheme) private var currentTheme
   @Environment(\.colorScheme) private var colorScheme
   @Default(.showUsernameInTabBar) private var showUsernameInTabBar
-  @Default(.showTestersCelebrationModal) private var showTestersCelebrationModal
   @Default(.showTipJarModal) private var showTipJarModal
   
   var payload: [TabIdentifier:TabPayload] { [
@@ -217,9 +216,6 @@ struct Tabber: View {
       Text("The theme was imported successfully. Enable it in \"Themes\" section in the Settings tab.")
     }
     .onAppear {
-      if showTestersCelebrationModal {
-        showTipJarModal = false
-      }
       Defaults[.themesPresets] = Defaults[.themesPresets].filter { $0.id != "default" }
       if Defaults[.multis].count != 0 || Defaults[.subreddits].count != 0 {
         Defaults[.multis] = []
@@ -236,12 +232,6 @@ struct Tabber: View {
         }
       }
     }
-//    .onChange(of: currentTheme.general.tabBarBG, perform: { val in
-//      Tabber.updateTabAndNavBar(tabTheme: val, navTheme: currentTheme.general.navPanelBG, colorScheme)
-//    })
-//    .onChange(of: currentTheme.general.navPanelBG, perform: { val in
-//      Tabber.updateTabAndNavBar(tabTheme: currentTheme.general.tabBarBG, navTheme: val, colorScheme)
-//    })
     .onChange(of: RedditAPI.shared.loggedUser) { user in
       if user.apiAppID == nil || user.apiAppSecret == nil {
         withAnimation(spring) {
@@ -275,9 +265,6 @@ struct Tabber: View {
           break
         }
       }
-    }
-    .sheet(isPresented: $showTestersCelebrationModal) {
-      TestersCelebration()
     }
     .sheet(isPresented: $showTipJarModal) {
       TipJar()

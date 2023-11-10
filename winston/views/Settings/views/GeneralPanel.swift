@@ -19,7 +19,6 @@ struct GeneralPanel: View {
   @State var doImport: Bool = false
   var body: some View {
     List{
-      
       Section("Backup"){
         Button{
           let date = Date()
