@@ -58,7 +58,7 @@ struct Settings: View {
               } label: {
                 Label("Whats New", systemImage: "star")
               }
-              .disabled(whatsNewCollection.isEmpty)
+              .disabled(getCurrentChangelog().isEmpty)
               
               WListButton {
                 sendCustomEmail()
@@ -91,7 +91,7 @@ struct Settings: View {
           
         }
         .sheet(isPresented: $presentingWhatsNew){
-          if let isNew = whatsNewCollection.first {
+          if let isNew = getCurrentChangelog().first {
               WhatsNewView(whatsNew: isNew)
           }
         }

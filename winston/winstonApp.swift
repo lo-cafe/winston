@@ -22,10 +22,14 @@ struct winstonApp: App {
   var body: some Scene {
     WindowGroup {
       AppContent(activeTab: activeTab)
+            
         .environment(\.managedObjectContext, persistenceController.container.viewContext)
+        .onAppear{
+            print(getCurrentChangelog())
+        }
         .environment(
           \.whatsNew,
-           WhatsNewEnvironment(currentVersion: .current(), whatsNewCollection: whatsNewCollection)
+           WhatsNewEnvironment(currentVersion: .current(), whatsNewCollection: getCurrentChangelog())
         )
     }
     .onChange(of: phase) { (newPhase) in
