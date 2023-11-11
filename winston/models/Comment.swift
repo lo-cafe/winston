@@ -308,7 +308,7 @@ extension Comment {
         data?.ups = oldUps + (action.boolVersion() == oldLikes ? oldLikes == nil ? 0 : -action.rawValue : action.rawValue * (oldLikes == nil ? 1 : 2))
       }
     }
-    let result = await RedditAPI.shared.vote(newAction, id: "\(typePrefix ?? "")\(id)")
+    let result = await RedditAPI.shared.vote(newAction, id: "\(typePrefix ?? "")\(id.dropLast(2))")
     if result == nil || !result! {
       await MainActor.run { [oldLikes] in
         withAnimation {
