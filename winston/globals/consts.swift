@@ -26,7 +26,7 @@ func getSafeArea()->UIEdgeInsets{
     .connectedScenes
     .compactMap { ($0 as? UIWindowScene)?.keyWindow }
     .first
-  return (keyWindow?.safeAreaInsets)!
+  return (keyWindow?.safeAreaInsets) ?? UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
 }
 
 extension String {

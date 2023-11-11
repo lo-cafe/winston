@@ -64,8 +64,8 @@ extension Post {
         let halfWidthProcessor: [ImageProcessing] = contentWidth == 0 ? [] : [.resize(width: compact ? scaledCompactModeThumbSize() : ((contentWidth - 8) / 2))]
         let fullWidthProcessor: [ImageProcessing] = contentWidth == 0 ? [] : [.resize(width: compact ? scaledCompactModeThumbSize() : contentWidth)]
         var requests: [ImageRequest] = []
-        requests.append(ImageRequest(url: imgs[0].url, processors: halfWidthProcessor))
-        requests.append(ImageRequest(url: imgs[1].url, processors: halfWidthProcessor))
+        if imgs.count >= 1 { requests.append(ImageRequest(url: imgs[0].url, processors: halfWidthProcessor)) }
+        if imgs.count >= 2 { requests.append(ImageRequest(url: imgs[1].url, processors: halfWidthProcessor)) }
         if imgs.count >= 3 { requests.append(ImageRequest(url: imgs[2].url, processors: imgs.count > 3 ? halfWidthProcessor : fullWidthProcessor)) }
         requests += imgs.dropFirst(3).map { ImageRequest(url: $0.url, priority: .low) }
         self.winstonData?.mediaImageRequest = requests

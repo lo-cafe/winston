@@ -54,16 +54,18 @@ struct VotesClusterInfo: View {
           .fontSize(16, .semibold)
         //          .viewVotes(votes.upvotes, votes.downvotes)
         
-        if likeRatio != nil, let ratio = likeRatio {
-          Label(title: {
-            Text(String(Int(ratio * 100)) + "%")
-          }, icon: {
-            Image(systemName: "face.smiling")
-          })
-          .labelStyle(CustomLabel(spacing: 1))
-          .fontSize(12, .medium)
-          .foregroundColor(.gray)
-        }
+          if Defaults[.showUpvoteRatio] {
+              if likeRatio != nil, let ratio = likeRatio {
+                Label(title: {
+                  Text(String(Int(ratio * 100)) + "%")
+                }, icon: {
+                  Image(systemName: "face.smiling")
+                })
+                .labelStyle(CustomLabel(spacing: 1))
+                .fontSize(12, .medium)
+                .foregroundColor(.gray)
+              }
+          }
       }
     } else {
       Spacer()

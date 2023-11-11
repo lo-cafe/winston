@@ -1,6 +1,6 @@
-A big update is coming soon, sorry for the wait.
+# Fixed
 
---- QUICK EXPRESS UPDATE ---
-- Fixed subs order
-- Fixed subs filtering
-- Fixed favoriting subs not working properly
+- Winston doesn't crash on iOS 16.X anymore
+- Fix some other potential instances where the app could crash
+- Fix "Show Upvote Ratio" option
+
