@@ -51,7 +51,7 @@ jobs:
         echo "::set-output name=release_body::$release_body"
 
     - name: Build and Archive App
-      uses: yukiarrr/ios-build-action@v1.11.0
+      uses: sparkfabrik/ios-build-action@v1.2.0
       with:
         project-path: winston.xcodeproj
         export-method: app-store
