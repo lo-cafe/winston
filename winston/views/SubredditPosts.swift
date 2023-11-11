@@ -43,7 +43,7 @@ struct SubredditPosts: View, Equatable {
     _sort = State(initialValue: Defaults[.perSubredditSort] ? (Defaults[.subredditSorts][subreddit.id] ?? Defaults[.preferredSort]) : Defaults[.preferredSort]);
   }
   
-  func asyncFetch(force: Bool = false, loadMore: Bool = false, searchText: String? = nil) async {
+    func asyncFetch(force: Bool = false, loadMore: Bool = false, searchText: String? = nil) async throws {
     if (subreddit.data == nil || force) && !feedsAndSuch.contains(subreddit.id) {
       await subreddit.refreshSubreddit()
     }
@@ -86,7 +86,11 @@ struct SubredditPosts: View, Equatable {
   
   func fetch(_ loadMore: Bool = false, _ searchText: String? = nil) {
     Task(priority: .background) {
-      await asyncFetch(loadMore: loadMore, searchText: searchText)
+        do {
+            try await asyncFetch(loadMore: loadMore, searchText: searchText)
+        } catch {
+            print(error)
+        }
     }
   }
   
@@ -141,11 +145,21 @@ struct SubredditPosts: View, Equatable {
     }
     .refreshable {
       loadedPosts.removeAll()
-      await asyncFetch(force: true)
+        do {
+            try await asyncFetch(force: true)
+        } catch {
+            print(error)
+        }
     }
     .navigationTitle("\(feedsAndSuch.contains(subreddit.id) ? subreddit.id.capitalized : "r/\(subreddit.data?.display_name ?? subreddit.id)")")
     .task(priority: .background) {
-      if posts.data.count == 0 { await asyncFetch() }
+      if posts.data.count == 0 {
+          do {
+              try await asyncFetch()
+          } catch {
+              print(error)
+          }
+      }
     }
     .onChange(of: sort) { val in
       clearAndLoadData()
