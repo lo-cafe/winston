@@ -32,7 +32,7 @@ public struct Markdownosaur: MarkupVisitor {
     let plainText = text.plainText
     let textRange = NSRange(location: 0, length: plainText.utf16.count)
     let attributedString = NSMutableAttributedString(string: plainText, attributes: [.font: UIFont.systemFont(ofSize: baseFontSize, weight: .regular)])
-
+    attributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.label, range: NSRange(location: 0, length: attributedString.length))
     applyUsernameRegex(attributedString: attributedString, text: plainText, range: textRange)
     applySubredditRegex(attributedString: attributedString, text: plainText, range: textRange)
     applyUrlDetector(attributedString: attributedString, text: plainText, range: textRange)
