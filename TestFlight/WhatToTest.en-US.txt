@@ -1,23 +1,6 @@
-# Added
-
-- Live Text
-- Whats new Sheet
-- Lock the app
-- Theme Store
-- Subscribed indicator / button when searching for subs
-- Add settings import / export
-- Add line spacing option for themes
-- New comments indicator
-- Added flairs in comments
-
 # Fixed
 
-- "Streamable" videos now working
-- Blur nsfw when searching for subs
-- Default search sort in settings
-- Save sort per subreddit
-- Save comment search per port
-- Support for themable user flairs
-- Add theming for load more button
+- Winston doesn't crash on iOS 16.X anymore
+- Fix some other potential instances where the app could crash
+- Fix "Show Upvote Ratio" option
 
-Special thanks to rbertus2000, mmynk, Nelson Dane, Zander Bobronnikov and ben-wheeler for contributing to this release!
