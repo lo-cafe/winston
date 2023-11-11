@@ -87,7 +87,6 @@ extension RedditAPI {
         }
         return nil
       case .failure(let error):
-        Oops.shared.sendError(error)
         print(error)
         return nil
       }

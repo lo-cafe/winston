@@ -9,7 +9,7 @@ import SwiftUI
 import Defaults
 
 struct LightBoxOverlay: View {
-  var post: Post
+  var post: Post?
   var opacity: CGFloat
   var imagesArr: [MediaExtracted]
   var activeIndex: Int
@@ -25,7 +25,7 @@ struct LightBoxOverlay: View {
   var body: some View {
     VStack(alignment: .leading) {
       VStack(alignment: .leading, spacing: 8) {
-        if let title = post.data?.title {
+        if let post, let title = post.data?.title {
           Text(title)
             .fontSize(20, .semibold)
             .allowsHitTesting(false)
@@ -53,12 +53,14 @@ struct LightBoxOverlay: View {
       
       HStack(spacing: 12) {
         
-        LightBoxButton(icon: "bubble.right") {
-          if let data = post.data {
-            routerProxy.router.path.append(PostViewPayload(post: Post(id: post.id, api: post.redditAPI), sub: Subreddit(id: data.subreddit, api: post.redditAPI)))
-            dismiss()
+          if let post {
+              LightBoxButton(icon: "bubble.right") {
+            if let data = post.data {
+                  routerProxy.router.path.append(PostViewPayload(post: Post(id: post.id, api: post.redditAPI), sub: Subreddit(id: data.subreddit, api: post.redditAPI)))
+                  dismiss()
+                }
+              }
           }
-        }
         
         
         LightBoxButton(icon: "square.and.arrow.down") {

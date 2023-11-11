@@ -9,18 +9,6 @@ import SwiftUI
 import Defaults
 import SpriteKit
 
-class Oops: ObservableObject {
-  static var shared = Oops()
-  @Published var asking = false
-  @Published var error: String?
-  
-  func sendError(_ error: Any) {
-    DispatchQueue.main.async {
-      Oops.shared.asking = true
-      Oops.shared.error = String(reflecting: error)
-    }
-  }
-}
 
 class TempGlobalState: ObservableObject {
   static var shared = TempGlobalState()
@@ -45,7 +33,6 @@ class TabPayload: ObservableObject {
 
 struct Tabber: View {
   @ObservedObject var tempGlobalState = TempGlobalState.shared
-  @ObservedObject var errorAlert = Oops.shared
   @State var activeTab: TabIdentifier
   
   @State var credModalOpen = false
@@ -198,21 +185,6 @@ struct Tabber: View {
       }
     }
     .environmentObject(tempGlobalState)
-    .alert("OMG! Winston found a squirky bug!", isPresented: $errorAlert.asking) {
-      Button("Gratefully accept the weird gift") {
-        if let error = errorAlert.error {
-          sendEmail(error)
-        }
-        errorAlert.error = nil
-        errorAlert.asking = false
-      }
-      Button("Ignore the cat", role: .cancel) {
-        errorAlert.error = nil
-        errorAlert.asking = false
-      }
-    } message: {
-      Text("Something went wrong, but winston's is a fast cat, got the bug in his fangs and brought it to you. What do you wanna do?")
-    }
     .alert("Success!", isPresented: $importedThemeAlert) {
       Button("Nice!", role: .cancel) {
         importedThemeAlert = false
