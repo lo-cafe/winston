@@ -54,7 +54,7 @@ jobs:
       uses: sparkfabrik/ios-build-action@v1.2.0
       with:
         project-path: winston.xcodeproj
-        export-method: adhoc
+        export-method: app-store
         scheme: winston
         output-path: $PWD/build/Winston.ipa
         team-id: Z2NNLU4F7U
