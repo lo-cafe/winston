@@ -18,7 +18,6 @@ struct winstonApp: App {
   @Environment(\.scenePhase) var phase
   @State private var activeTab: TabIdentifier = .posts
   
-
   var body: some Scene {
     WindowGroup {
       AppContent(activeTab: activeTab)
