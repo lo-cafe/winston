@@ -247,6 +247,7 @@ struct UserView: View {
               .progressViewStyle(.circular)
               .frame(maxWidth: .infinity, minHeight: 100 )
               .id("post-loading")
+              .id(UUID()) // spawns unique spinner, swiftui bug.
           }
         }
         .listRowInsets(EdgeInsets(top: 8, leading: 8, bottom: 8, trailing: 8))
@@ -272,6 +273,11 @@ struct UserView: View {
       }
     }
     .onChange(of: dataTypeFilter) { _ in
+      withAnimation {
+        lastActivities?.removeAll()
+        loadingOverview = true
+      }
+      
       Task {
         await refresh()
       }
