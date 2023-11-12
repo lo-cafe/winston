@@ -8,7 +8,7 @@ on:
 
 jobs:
   build_and_release:
-    runs-on: macos-13
+    runs-on: macos-14
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
@@ -16,7 +16,7 @@ jobs:
     - name: Set up Xcode
       uses: maxim-lobanov/setup-xcode@v1.6.0
       with:
-        xcode-version: '15.1'
+        xcode-version: '15'
       
     - name: Extract Version and Build Number
       id: extract_version_build_number
