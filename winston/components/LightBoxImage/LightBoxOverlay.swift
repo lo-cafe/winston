@@ -7,36 +7,29 @@
 
 import SwiftUI
 import Defaults
+import NukeUI
 
 struct LightBoxOverlay: View {
-  var post: Post?
+  let postTitle: String
+  let badgeKit: BadgeKit
+  let avatarImageRequest: ImageRequest?
   var opacity: CGFloat
-  var imagesArr: [MediaExtracted]
+  var imagesArr: [ImgExtracted]
   var activeIndex: Int
   @Binding var loading: Bool
   @Environment(\.dismiss) var dismiss
   @Binding var done: Bool
   @Environment(\.useTheme) private var selectedTheme
-  @EnvironmentObject private var routerProxy: RouterProxy
-  
-  @State private var isPresentingShareSheet = false
+  @Environment(\.colorScheme) private var cs: ColorScheme
+    @State private var isPresentingShareSheet = false
   @State private var sharedImageData: Data?
-  
   var body: some View {
     VStack(alignment: .leading) {
       VStack(alignment: .leading, spacing: 8) {
-        if let post, let title = post.data?.title {
-          Text(title)
-            .fontSize(20, .semibold)
-            .allowsHitTesting(false)
-        }
-        
-        Badge(post: post,usernameColor: .primary, theme: selectedTheme.postLinks.theme.badge)
-          .equatable()
-          .foregroundColor(.primary)
-          .id("post-badge")
-          .listRowInsets(EdgeInsets(top: 6, leading: 8, bottom: 8, trailing: 8))
-      
+        Text(postTitle)
+          .fontSize(20, .semibold)
+          .allowsHitTesting(false)
+        BadgeView(avatarRequest: avatarImageRequest, saved: false, usernameColor: nil, author: badgeKit.author, fullname: badgeKit.authorFullname, created: badgeKit.created, avatarURL: nil, theme: selectedTheme.postLinks.theme.badge, cs: cs)
       }
       
       Spacer()
@@ -53,14 +46,15 @@ struct LightBoxOverlay: View {
       
       HStack(spacing: 12) {
         
-          if let post {
-              LightBoxButton(icon: "bubble.right") {
-            if let data = post.data {
-                  routerProxy.router.path.append(PostViewPayload(post: Post(id: post.id, api: post.redditAPI), sub: Subreddit(id: data.subreddit, api: post.redditAPI)))
-                  dismiss()
-                }
-              }
-          }
+          // MANDRAKE
+          // if let post {
+          //     LightBoxButton(icon: "bubble.right") {
+          //   if let data = post.data {
+          //         routerProxy.router.path.append(PostViewPayload(post: Post(id: post.id, api: post.redditAPI), sub: Subreddit(id: data.subreddit, api: post.redditAPI)))
+          //         dismiss()
+          //       }
+          //     }
+          // }
         
         
         LightBoxButton(icon: "square.and.arrow.down") {

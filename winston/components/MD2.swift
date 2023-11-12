@@ -10,6 +10,7 @@ import UIKit
 import Markdown
 import SafariServices
 import Defaults
+import NukeUI
 
 struct MD2: UIViewRepresentable {
   var attributedString: AttributedString
@@ -106,6 +107,6 @@ struct ImageView: View {
   @Namespace var presentationNamespace
   
   var body: some View {
-    LightBoxImage(post: nil, i: 0, imagesArr: [MediaExtracted(url: url, size: CGSize(width: 100, height: 100))], doLiveText: true)
+    LightBoxImage(i: 0, imagesArr: [ImgExtracted(url: url, size: CGSize(width: 100, height: 100), request: ImageRequest(url: url))], doLiveText: true)
   }
 }

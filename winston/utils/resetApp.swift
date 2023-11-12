@@ -34,9 +34,8 @@ func resetCaches() {
   Caches.ytPlayers.cache.removeAll()
   Caches.postsAttrStr.cache.removeAll()
   Caches.postsPreviewModels.cache.removeAll()
-  ThingEntityCache.shared.thingEntities.removeAll()
-  SharedVideoCache.shared.cache.removeAll()
-  AvatarCache.shared.data.removeAll()
+  Caches.avatars.cache.removeAll()
+  Caches.videos.cache.removeAll()
 }
 
 func resetCoreData() {

@@ -15,6 +15,7 @@ typealias Subreddit = GenericRedditEntity<SubredditData, AnyHashable>
 
 extension Subreddit {
   static var prefix = "t5"
+  var selfPrefix: String { Self.prefix }
   convenience init(data: T, api: RedditAPI) {
     self.init(data: data, api: api, typePrefix: "\(Subreddit.prefix)_")
     
@@ -273,6 +274,16 @@ struct SubredditData: Codable, GenericRedditEntityDataType, Defaults.Serializabl
   //  let banner_size: [Int]?
   //  let mobile_banner_image: String?
   //  let allow_predictions_tournament: Bool?
+  
+  var subredditIconKit: SubredditIconKit {
+    let communityIconArr = community_icon?.split(separator: "?") ?? []
+    let iconRaw = icon_img == "" || icon_img == nil ? communityIconArr.count > 0 ? String(communityIconArr[0]) : "" : icon_img
+    let name = display_name ?? ""
+    let iconURLStr = iconRaw == "" ? nil : iconRaw
+    let color = firstNonEmptyString(key_color, primary_color, "#828282") ?? ""
+    
+    return SubredditIconKit(url: iconURLStr, initialLetter: String((name).prefix(1)).uppercased(), color: String((firstNonEmptyString(color, "#828282") ?? "").dropFirst(1)))
+  }
   
   
   enum CodingKeys: String, CodingKey {

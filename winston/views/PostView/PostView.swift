@@ -76,7 +76,7 @@ struct PostView: View, Equatable {
     }
     if let result = await post.refreshPost(commentID: ignoreSpecificComment ? nil : highlightID, sort: sort, after: nil, subreddit: subreddit.data?.display_name ?? subreddit.id, full: full), let newComments = result.0 {
       Task(priority: .background) {
-        await RedditAPI.shared.updateAvatarURLCacheFromComments(comments: newComments, avatarSize: selectedTheme.comments.theme.badge.avatar.size)
+        await RedditAPI.shared.updateCommentsWithAvatar(comments: newComments, avatarSize: selectedTheme.comments.theme.badge.avatar.size)
       }
     }
   }
@@ -91,7 +91,9 @@ struct PostView: View, Equatable {
       List {
         Group {
           Section {
-            PostContent(post: post, selfAttr: cachesPostsAttrStr.cache[post.id]?.data ?? selfAttr, sub: subreddit, forceCollapse: forceCollapse)
+            if let winstonData = post.winstonData {
+              PostContent(post: post, winstonData: winstonData, selfAttr: cachesPostsAttrStr.cache[post.id]?.data ?? selfAttr, sub: subreddit, forceCollapse: forceCollapse)
+            }
             //              .equatable()
             
             Text("Comments")
@@ -198,7 +200,7 @@ private struct Toolbar: View {
       }
       
       if let data = subreddit.data, !feedsAndSuch.contains(subreddit.id) {
-        SubredditIcon(data: data)
+        SubredditIcon(subredditIconKit: data.subredditIconKit)
           .onTapGesture { routerProxy.router.path.append(SubViewType.info(subreddit)) }
       }
     }

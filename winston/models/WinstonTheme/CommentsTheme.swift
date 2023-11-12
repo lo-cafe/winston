@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct CommentsSectionTheme: Codable, Hashable {
+struct CommentsSectionTheme: Codable, Hashable, Equatable {
   enum CodingKeys: String, CodingKey {
     case theme, spacing, divider
   }
@@ -38,7 +38,7 @@ struct CommentsSectionTheme: Codable, Hashable {
   }
 }
 
-struct CommentTheme: Codable, Hashable {
+struct CommentTheme: Codable, Hashable, Equatable {
   enum CodingKeys: String, CodingKey {
     case innerPadding, outerHPadding, repliesSpacing, indentCurve, indentColor, cornerRadius, badge, bodyText, bodyAuthorSpacing, linespacing, bg, loadMoreInnerPadding, loadMoreOuterTopPadding, loadMoreText, loadMoreBackground, unseenDot
   }

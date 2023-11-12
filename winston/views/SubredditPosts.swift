@@ -17,7 +17,7 @@ enum SubViewType: Hashable {
 
 struct SubredditPosts: View, Equatable {
   static func == (lhs: SubredditPosts, rhs: SubredditPosts) -> Bool {
-    lhs.subreddit.id == rhs.subreddit.id
+    lhs.subreddit == rhs.subreddit
   }
   
   @ObservedObject var subreddit: Subreddit
@@ -54,8 +54,7 @@ struct SubredditPosts: View, Equatable {
       loading = true
     }
     if let result = await subreddit.fetchPosts(sort: sort, after: loadMore ? lastPostAfter : nil, searchText: searchText, contentWidth: contentWidth), let newPosts = result.0 {
-      
-      await waitForPostsToLoadMediaInfo(posts: newPosts)
+      await RedditAPI.shared.updatePostsWithAvatar(posts: newPosts, avatarSize: selectedTheme.postLinks.theme.badge.avatar.size)
       withAnimation {
                 let newPostsFiltered = newPosts.filter { !loadedPosts.contains($0.id) && !filteredSubreddits.contains($0.data?.subreddit ?? "") }
         
@@ -72,15 +71,6 @@ struct SubredditPosts: View, Equatable {
         loading = false
         lastPostAfter = result.1
       }
-      Task(priority: .background) {
-        await RedditAPI.shared.updateAvatarURLCacheFromPosts(posts: newPosts, avatarSize: selectedTheme.postLinks.theme.badge.avatar.size)
-      }
-    }
-  }
-  
-  func waitForPostsToLoadMediaInfo(posts: [Post]) async {
-    for i in 0...posts.count - 1 {
-      await posts[i].waitForMediaToLoad()
     }
   }
   
@@ -116,6 +106,7 @@ struct SubredditPosts: View, Equatable {
         SubredditPostsIOS(lastPostAfter: lastPostAfter, subreddit: subreddit, posts: posts.data, searchText: searchText, fetch: fetch, selectedTheme: selectedTheme)
       }
     }
+    .environment(\.defaultMinListRowHeight, 1)
     .loader(loading && posts.data.count == 0)
     .overlay(
       feedsAndSuch.contains(subreddit.id)
@@ -135,9 +126,9 @@ struct SubredditPosts: View, Equatable {
         .padding(.all, 12)
       , alignment: .bottomTrailing
     )
-    .sheet(isPresented: $newPost, content: {
-      NewPostModal(subreddit: subreddit)
-    })
+//    .sheet(isPresented: $newPost, content: {
+//      NewPostModal(subreddit: subreddit)
+//    })
     .navigationBarItems(trailing: SubredditPostsNavBtns(sort: $sort, subreddit: subreddit, routerProxy: routerProxy))
     .searchable(text: $searchText, prompt: "Search r/\(subreddit.data?.display_name ?? subreddit.id)")
     .onSubmit(of: .search) {
@@ -164,6 +155,11 @@ struct SubredditPosts: View, Equatable {
     .onChange(of: sort) { val in
       clearAndLoadData()
     }
+    .onChange(of: cs) { _ in
+      Task(priority: .background) {
+        posts.data.forEach { $0.setupWinstonData(data: $0.data, winstonData: $0.winstonData, theme: selectedTheme) }
+      }
+    }
     .onChange(of: searchText) { val in
       if searchText.isEmpty {
         clearAndLoadData()
@@ -176,7 +172,7 @@ struct SubredditPosts: View, Equatable {
 
 struct SubredditPostsNavBtns: View, Equatable {
   static func == (lhs: SubredditPostsNavBtns, rhs: SubredditPostsNavBtns) -> Bool {
-    lhs.sort == rhs.sort && lhs.subreddit.data == nil && rhs.subreddit.data == nil
+    lhs.sort == rhs.sort && (lhs.subreddit.data == nil) == (rhs.subreddit.data == nil)
   }
   @Binding var sort: SubListingSortOption
   @ObservedObject var subreddit: Subreddit
@@ -234,7 +230,7 @@ struct SubredditPostsNavBtns: View, Equatable {
         Button {
           routerProxy.router.path.append(SubViewType.info(subreddit))
         } label: {
-          SubredditIcon(data: data)
+          SubredditIcon(subredditIconKit: data.subredditIconKit)
         }
       }
     }

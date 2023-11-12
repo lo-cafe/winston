@@ -15,11 +15,30 @@ import Defaults
 
 struct UserView: View {
   @StateObject var user: User
-  @State private var lastActivities: [Either<PostData, CommentData>]?
+  @State private var lastActivities: [Either<Post, Comment>]?
   @State private var contentWidth: CGFloat = 0
   @State private var loadingOverview = true
   @State private var lastItemId: String? = nil
   @Environment(\.useTheme) private var selectedTheme
+  @EnvironmentObject private var routerProxy: RouterProxy
+  
+  @Default(.blurPostLinkNSFW) private var blurPostLinkNSFW
+  @Default(.postSwipeActions) private var postSwipeActions
+  @Default(.compactMode) private var compactMode
+  @Default(.showVotes) private var showVotes
+  @Default(.showSelfText) private var showSelfText
+  @Default(.thumbnailPositionRight) private var thumbnailPositionRight
+  @Default(.voteButtonPositionRight) private var voteButtonPositionRight
+  @Default(.readPostOnScroll) private var readPostOnScroll
+  @Default(.hideReadPosts) private var hideReadPosts
+  @Default(.showUpvoteRatio) private var showUpvoteRatio
+  @Default(.showSubsAtTop) private var showSubsAtTop
+  @Default(.showTitleAtTop) private var showTitleAtTop
+  @Default(.showSelfPostThumbnails) private var showSelfPostThumbnails
+  
+  @ObservedObject var avatarCache = Caches.avatars
+  @Environment(\.colorScheme) private var cs
+//  @Environment(\.contentWidth) private var contentWidth
   
   func refresh() async {
     await user.refetchUser()
@@ -31,7 +50,7 @@ struct UserView: View {
         }
       }
       
-      await user.redditAPI.updateAvatarURLCacheFromOverview(subjects: data, avatarSize: selectedTheme.postLinks.theme.badge.avatar.size)
+      await user.redditAPI.updateOverviewSubjectsWithAvatar(subjects: data, avatarSize: selectedTheme.postLinks.theme.badge.avatar.size)
       
       if let lastItem = data.last {
         lastItemId = getItemId(for: lastItem)
@@ -55,7 +74,7 @@ struct UserView: View {
     }
   }
   
-  func getItemId(for item: Either<PostData, CommentData>) -> String {
+  func getItemId(for item: Either<Post, Comment>) -> String {
     // As per API doc: https://www.reddit.com/dev/api/#GET_user_{username}_overview
     switch item {
     case .first(let post):
@@ -64,6 +83,13 @@ struct UserView: View {
     case .second(let comment):
       return "\(Comment.prefix)_\(comment.id)"
     }
+  }
+  
+  func getRepostAvatarRequest(_ post: Post?) -> ImageRequest? {
+    if let post = post, case .repost(let repost) = post.winstonData?.extractedMedia, let repostAuthorFullname = repost.data?.author_fullname {
+      return avatarCache.cache[repostAuthorFullname]?.data
+    }
+    return nil
   }
   
   var body: some View {
@@ -132,13 +158,47 @@ struct UserView: View {
               VStack(spacing: 0) {
                 switch item {
                 case .first(let post):
-                  PostLink(post: Post(data: post, api: user.redditAPI), sub: Subreddit(id: post.subreddit, api: user.redditAPI), showSub: true)
+                  if let postData = post.data, let winstonData = post.winstonData {
+//                    SwipeRevolution(size: winstonData.postDimensions.size, actionsSet: postSwipeActions, entity: post) { controller in
+                      PostLink(
+                        id: post.id,
+                        controller: nil,
+                        //                controller: nil,
+                        avatarRequest: avatarCache.cache[postData.author_fullname ?? ""]?.data,
+                        repostAvatarRequest: getRepostAvatarRequest(post),
+                        theme: selectedTheme.postLinks,
+                        showSub: true,
+                        routerProxy: routerProxy,
+                        contentWidth: contentWidth,
+                        blurPostLinkNSFW: blurPostLinkNSFW,
+                        postSwipeActions: postSwipeActions,
+                        showVotes: showVotes,
+                        showSelfText: showSelfText,
+                        readPostOnScroll: readPostOnScroll,
+                        hideReadPosts: hideReadPosts,
+                        showUpvoteRatio: showUpvoteRatio,
+                        showSubsAtTop: showSubsAtTop,
+                        showTitleAtTop: showTitleAtTop,
+                        compact: compactMode,
+                        thumbnailPositionRight: thumbnailPositionRight,
+                        voteButtonPositionRight: voteButtonPositionRight,
+                        showSelfPostThumbnails: showSelfPostThumbnails,
+                        cs: cs
+                      )
+                      .swipyRev(size: winstonData.postDimensions.size, actionsSet: postSwipeActions, entity: post)
+//                    }
+                    .environmentObject(post)
+                    .environmentObject(Subreddit(id: postData.subreddit, api: user.redditAPI))
+                    .environmentObject(winstonData)
+                  }
                 case .second(let comment):
                   VStack {
-                    ShortCommentPostLink(comment: Comment(data: comment, api: user.redditAPI))
-                    CommentLink(lineLimit: 3, showReplies: false, comment: Comment(data: comment, api: user.redditAPI))
-//                      .equatable()
-                      .allowsHitTesting(false)
+                    ShortCommentPostLink(comment: comment)
+                    if let commentWinstonData = comment.winstonData {
+                      CommentLink(lineLimit: 3, showReplies: false, comment: comment, commentWinstonData: commentWinstonData, children: comment.childrenWinston)
+                      //                      .equatable()
+                        .allowsHitTesting(false)
+                    }
                   }
                   .padding(.horizontal, 12)
                   .padding(.top, 12)

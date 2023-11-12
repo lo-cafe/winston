@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct BadgeTheme: Codable, Hashable {
+struct BadgeTheme: Codable, Hashable, Equatable {
   enum CodingKeys: String, CodingKey {
     case avatar, authorText, flairText, flairBackground, statsText, spacing
   }

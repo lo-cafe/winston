@@ -9,8 +9,9 @@ import Foundation
 import Defaults
 import SwiftUI
 import CoreData
+import NukeUI
 
-typealias Comment = GenericRedditEntity<CommentData, AnyHashable>
+typealias Comment = GenericRedditEntity<CommentData, CommentWinstonData>
 
 enum RandomErr: Error {
   case oops
@@ -19,24 +20,18 @@ enum RandomErr: Error {
 enum CommentParentElement {
   case post(ObservableArray<Comment>)
   case comment(Comment)
-  
-  var isPost: Bool {
-    switch self {
-    case .comment(_):
-      return false
-    case .post(_):
-      return true
-    }
-  }
 }
 
 extension Comment {
   static var prefix = "t1"
+  var selfPrefix: String { Self.prefix }
+  
   convenience init(data: T, api: RedditAPI, kind: String? = nil, parent: ObservableArray<GenericRedditEntity<T, B>>? = nil) {
     self.init(data: data, api: api, typePrefix: "\(Comment.prefix)_")
     if let parent = parent {
       self.parentWinston = parent
     }
+    self.winstonData = .init()
     self.kind = kind
     if let body = self.data?.body {
       let theme = Defaults[.themesPresets].first(where: { $0.id == Defaults[.selectedThemeID] }) ?? defaultTheme
@@ -103,6 +98,7 @@ extension Comment {
       commentData.num_reports = nil
       commentData.ups = nil
       self.init(data: commentData, api: rawMessage.redditAPI, typePrefix: "\(Comment.prefix)_")
+      self.winstonData = .init()
     } else {
       throw RandomErr.oops
     }
@@ -141,7 +137,7 @@ extension Comment {
       
       if let foundPost = foundPost {
         if collapsed == nil || collapsed == false {
-            context.delete(foundPost)
+          context.delete(foundPost)
           if !optimistic {
             data?.collapsed = false
           }
@@ -164,32 +160,34 @@ extension Comment {
   func loadChildren(parent: CommentParentElement, postFullname: String, avatarSize: Double, post: Post?) async {
     if let kind = kind, kind == "more", let data = data, let count = data.count, let parent_id = data.parent_id, let childrenIDS = data.children {
       var actualID = id
-//      if actualID.hasSuffix("-more") {
-//        actualID.removeLast(5)
-//      }
+      //      if actualID.hasSuffix("-more") {
+      //        actualID.removeLast(5)
+      //      }
       
       let childrensLimit = 25
       
       if let children = await RedditAPI.shared.fetchMoreReplies(comments: count > 0 ? Array(childrenIDS.prefix(childrensLimit)) : [String(parent_id.dropFirst(3))], moreID: actualID, postFullname: postFullname, dropFirst: count == 0) {
-                
+        
         let parentID = data.parent_id ?? ""
-//        switch parent {
-//        case .comment(let comment):
-//          if let name = comment.data?.parent_id ?? comment.data?.name {
-//              parentID = name
-//          }
-//        case .post(_):
-//          if let postID = children[0].data?.link_id {
-//            parentID = postID
-//          }
-//        }
+        //        switch parent {
+        //        case .comment(let comment):
+        //          if let name = comment.data?.parent_id ?? comment.data?.name {
+        //              parentID = name
+        //          }
+        //        case .post(_):
+        //          if let postID = children[0].data?.link_id {
+        //            parentID = postID
+        //          }
+        //        }
         
         let loadedComments: [Comment] = nestComments(children, parentID: parentID, api: RedditAPI.shared)
-
+        
         Task(priority: .background) { [loadedComments] in
+          await RedditAPI.shared.updateCommentsWithAvatar(comments: loadedComments, avatarSize: avatarSize)
+//          print(loadedComments.map {  $0.childrenWinston.data.map { x in x.winstonData?.avatarImageRequest } })
           await post?.saveMoreComments(comments: loadedComments)
-          await RedditAPI.shared.updateAvatarURLCacheFromComments(comments: loadedComments, avatarSize: avatarSize)
         }
+        
         await MainActor.run { [loadedComments] in
           switch parent {
           case .comment(let comment):
@@ -367,6 +365,22 @@ extension Comment {
   }
 }
 
+class CommentWinstonData: Hashable, ObservableObject {
+  static func == (lhs: CommentWinstonData, rhs: CommentWinstonData) -> Bool { lhs.avatarImageRequest?.url == rhs.avatarImageRequest?.url }
+  
+  //  var permaURL: URL? = nil
+  //  @Published var extractedMedia: MediaExtractedType? = nil
+  //  var subreddit: Subreddit?
+  //  @Published var mediaImageRequest: [ImageRequest] = []
+  @Published var avatarImageRequest: ImageRequest? = nil
+  //  @Published var postDimensions: PostDimensions = .zero
+  //  @Published var titleAttr: NSAttributedString?
+  
+  func hash(into hasher: inout Hasher) {
+    hasher.combine(avatarImageRequest?.description)
+  }
+}
+
 struct CommentData: GenericRedditEntityDataType {
   
   init(id: String) {
@@ -430,7 +444,7 @@ struct CommentData: GenericRedditEntityDataType {
   //  let unrepliable_reason: String?
   //  let author_flair_text_color: String?
   //  let score_hidden: Bool?
-    var permalink: String?
+  var permalink: String?
   //  let subreddit_type: String?
   //  let locked: Bool?
   //  let report_reasons: String?
@@ -448,6 +462,19 @@ struct CommentData: GenericRedditEntityDataType {
   var num_reports: Int?
   var ups: Int?
   var winstonSelecting: Bool? = false
+  
+  var badgeKit: BadgeKit {
+    BadgeKit(
+      numComments: 0,
+      ups: ups ?? 0,
+      saved: saved ?? false,
+      author: author ?? "",
+      authorFullname: author_fullname ?? "",
+      created: created ?? 0
+    )
+  }
+  
+  var votesKit: VotesKit { VotesKit(ups: ups ?? 0, ratio: 0, likes: likes, id: id) }
 }
 
 // Encode AttributedString manually

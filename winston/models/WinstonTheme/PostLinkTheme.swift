@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum UnseenType: Codable, Hashable {
+enum UnseenType: Codable, Hashable, Equatable {
   case dot(ColorSchemes<ThemeColor>), fade
   
   func isEqual(_ to: UnseenType) -> Bool {
@@ -50,6 +50,7 @@ struct SubPostsListTheme: Codable, Equatable, Hashable {
     try container.encodeIfPresent(theme, forKey: .theme)
     try container.encodeIfPresent(spacing, forKey: .spacing)
     try container.encodeIfPresent(divider, forKey: .divider)
+    try container.encodeIfPresent(bg, forKey: .bg)
   }
   
   init(from decoder: Decoder) throws {
@@ -62,7 +63,7 @@ struct SubPostsListTheme: Codable, Equatable, Hashable {
   }
 }
 
-struct PostLinkTheme: Codable, Hashable {
+struct PostLinkTheme: Codable, Hashable, Equatable {
   enum CodingKeys: String, CodingKey {
     case   cornerRadius, mediaCornerRadius, innerPadding, outerHPadding, stickyPostBorderColor, titleText, bodyText, linespacing, badge, verticalElementsSpacing, bg, unseenType, unseenFadeOpacity
   }

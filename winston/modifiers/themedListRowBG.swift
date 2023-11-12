@@ -27,7 +27,6 @@ struct ThemedListRowBGModifier: ViewModifier {
         : Rectangle()
           .fill(theme.lists.foreground.blurry ? AnyShapeStyle(.bar) : AnyShapeStyle(isActive ? .blue : theme.lists.foreground.color.cs(cs).color()))
           .overlay(!theme.lists.foreground.blurry ? nil : Rectangle().fill(isActive ? .blue : theme.lists.foreground.color.cs(cs).color()))
-          
       )
   }
 }

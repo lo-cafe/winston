@@ -9,9 +9,9 @@ import SwiftUI
 
 struct DefaultDestinationInjector<Content: View>: View {
   @StateObject var routerProxy: RouterProxy
-  @ViewBuilder var content: () -> Content
+  @ViewBuilder var content: (RouterProxy) -> Content
   var body: some View {
-    content()
+    content(routerProxy)
       .navigationDestination(for: URL.self) { url in
         SafariWebView(url: url).ignoresSafeArea()
       }

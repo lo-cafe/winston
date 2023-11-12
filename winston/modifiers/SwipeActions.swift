@@ -20,12 +20,8 @@ enum TriggeredAction: Int {
 
 struct SwipeUI<T: GenericRedditEntityDataType, B: Hashable>: ViewModifier {
   @Default(.enableSwipeAnywhere) private var enableSwipeAnywhere
-  @State private var pressing: Bool = false
   @State private var dragAmount: CGFloat = 0
   @State private var offset: CGFloat?
-  @State private var firstLeftAction = false
-  @State private var firstRightAction = false
-  @State private var secondAction = false
   @State private var triggeredAction: TriggeredAction = .none
   
   var offsetYAction: CGFloat = 0
@@ -33,11 +29,11 @@ struct SwipeUI<T: GenericRedditEntityDataType, B: Hashable>: ViewModifier {
   var controlledIsSource = true
   var onTapAction: (() -> Void)?
   var actionsSet: SwipeActionsSet
-  var entity: GenericRedditEntity<T, B>
+  weak var entity: GenericRedditEntity<T, B>?
   var disabled: Bool = false
   
   private let firstActionThreshold: CGFloat = 75
-  private let secondActionThreshold: CGFloat = 175
+  private let secondActionThreshold: CGFloat = 150
   
   func infoRight() -> (SwipeActionItem, SwipeActionItem, SwipeActionItem, Bool)? {
     let rightFirstNil = actionsSet.rightFirst.id == "none"
@@ -89,8 +85,8 @@ struct SwipeUI<T: GenericRedditEntityDataType, B: Hashable>: ViewModifier {
         ? nil
         : HStack {
           
-          SwipeUIBtn(info: infoRight(), secondActiveFunc: actionsSet.rightSecond.active, firstActiveFunc: actionsSet.rightFirst.active, entity: entity)
-//            .equatable()
+          SwipeUIBtn(info: infoRight(), secondActiveFunc: actionsSet.rightSecond.active, firstActiveFunc: actionsSet.rightFirst.active, entity: entity!)
+          //            .equatable()
             .scaleEffect(triggeredAction == .rightSecond ? 1.1 : triggeredAction == .rightFirst ? 1 : max(0.001, offsetXInterpolate([-0.9, 0.85], false)))
             .opacity(max(0, offsetXInterpolate([-0.9, 1], false)))
             .frame(width: actualOffsetX < 0 ? 10 : abs(actualOffsetX))
@@ -98,8 +94,8 @@ struct SwipeUI<T: GenericRedditEntityDataType, B: Hashable>: ViewModifier {
           
           Spacer()
           
-          SwipeUIBtn(info: infoLeft(), secondActiveFunc: actionsSet.leftSecond.active, firstActiveFunc: actionsSet.leftFirst.active, entity: entity)
-//            .equatable()
+          SwipeUIBtn(info: infoLeft(), secondActiveFunc: actionsSet.leftSecond.active, firstActiveFunc: actionsSet.leftFirst.active, entity: entity!)
+          //            .equatable()
             .scaleEffect(triggeredAction == .leftSecond ? 1.1 : triggeredAction == .leftFirst ? 1 : max(0.001, offsetXNegativeInterpolate([-0.9, 0.85], false)))
             .opacity(max(0, offsetXNegativeInterpolate([-0.9, 1], false)))
             .frame(width: actualOffsetX > 0 ? 10 : abs(actualOffsetX))
@@ -115,23 +111,17 @@ struct SwipeUI<T: GenericRedditEntityDataType, B: Hashable>: ViewModifier {
       .gesture(
         enableSwipeAnywhere
         ? nil
-        : DragGesture(minimumDistance: 0, coordinateSpace: .local)
+        : DragGesture(minimumDistance: 30, coordinateSpace: .local)
           .onChanged { val in
             let x = val.translation.width
             if offset == nil && x != 0 {
               offset = x
             }
             if let offset = offset {
-              var transaction = Transaction()
-              transaction.isContinuous = true
-              transaction.animation = controlledDragAmount != nil ? nil : draggingAnimation
-              
-              withTransaction(transaction) {
-                if controlledDragAmount != nil {
-                  controlledDragAmount?.wrappedValue =  x - offset
-                } else {
-                  dragAmount = x - offset
-                }
+              if controlledDragAmount != nil {
+                controlledDragAmount?.wrappedValue =  x - offset
+              } else {
+                dragAmount = x - offset
               }
             }
           }
@@ -143,7 +133,7 @@ struct SwipeUI<T: GenericRedditEntityDataType, B: Hashable>: ViewModifier {
             var initialVel = abs(predictedEnd / distance)
             initialVel = initialVel < 3.75 ? 0 : initialVel * 2
             
-            withAnimation(.interpolatingSpring(stiffness: 150, damping: 17, initialVelocity: initialVel)) {
+            withAnimation(.interpolatingSpring(stiffness: 150, damping: 16, initialVelocity: initialVel)) {
               if controlledDragAmount != nil {
                 controlledDragAmount?.wrappedValue =  0
               } else {
@@ -160,13 +150,13 @@ struct SwipeUI<T: GenericRedditEntityDataType, B: Hashable>: ViewModifier {
             
             switch triggeredAction {
             case .leftFirst:
-              await actionsSet.leftFirst.action(entity)
+              await actionsSet.leftFirst.action(entity!)
             case .leftSecond:
-              await actionsSet.leftSecond.action(entity)
+              await actionsSet.leftSecond.action(entity!)
             case .rightFirst:
-              await actionsSet.rightFirst.action(entity)
+              await actionsSet.rightFirst.action(entity!)
             case .rightSecond:
-              await actionsSet.rightSecond.action(entity)
+              await actionsSet.rightSecond.action(entity!)
             default:
               break
             }
@@ -177,16 +167,16 @@ struct SwipeUI<T: GenericRedditEntityDataType, B: Hashable>: ViewModifier {
         
         var triggering: TriggeredAction = .none
         
-        if (actionsSet.rightFirst.id != "none" && actionsSet.rightFirst.enabled(entity) && newValue >= firstActionThreshold) {
+        if (actionsSet.rightFirst.id != "none" && actionsSet.rightFirst.enabled(entity!) && newValue >= firstActionThreshold) {
           triggering = .rightFirst
         }
-        if actionsSet.rightSecond.id != "none" && actionsSet.rightSecond.enabled(entity) && (newValue) >= secondActionThreshold {
+        if actionsSet.rightSecond.id != "none" && actionsSet.rightSecond.enabled(entity!) && (newValue) >= secondActionThreshold {
           triggering = .rightSecond
         }
-        if (actionsSet.leftFirst.id != "none" && actionsSet.leftFirst.enabled(entity) && newValue <= -firstActionThreshold) {
+        if (actionsSet.leftFirst.id != "none" && actionsSet.leftFirst.enabled(entity!) && newValue <= -firstActionThreshold) {
           triggering = .leftFirst
         }
-        if actionsSet.leftSecond.id != "none" && actionsSet.leftSecond.enabled(entity) && (newValue) <= -secondActionThreshold {
+        if actionsSet.leftSecond.id != "none" && actionsSet.leftSecond.enabled(entity!) && (newValue) <= -secondActionThreshold {
           triggering = .leftSecond
         }
         
@@ -208,19 +198,36 @@ struct SwipeUI<T: GenericRedditEntityDataType, B: Hashable>: ViewModifier {
 }
 
 struct SwipeUIBtn<T: GenericRedditEntityDataType, B: Hashable>: View, Equatable {
+//struct SwipeUIBtn: View {
   static func == (lhs: SwipeUIBtn<T, B>, rhs: SwipeUIBtn<T, B>) -> Bool {
-    lhs.info?.0 == rhs.info?.0 && lhs.info?.1 == rhs.info?.1 && lhs.info?.2 == rhs.info?.2 && lhs.info?.3 == rhs.info?.3
+    lhs.entity == rhs.entity && lhs.info?.0 == rhs.info?.0 && lhs.info?.1 == rhs.info?.1 && lhs.info?.2 == rhs.info?.2 && lhs.info?.3 == rhs.info?.3
   }
   
   var info: (SwipeActionItem, SwipeActionItem, SwipeActionItem, Bool)?
   var secondActiveFunc: (GenericRedditEntity<T, B>) -> Bool
   var firstActiveFunc: (GenericRedditEntity<T, B>) -> Bool
-  @ObservedObject var entity: GenericRedditEntity<T, B>
-
+  weak var entity: GenericRedditEntity<T, B>?
+  
   var body: some View {
     if let info = info {
-      let active = info.3 ? secondActiveFunc(entity) : firstActiveFunc(entity)
-      MasterButton(softDisabled: true, icon: active ? info.0.active : info.0.normal, color: Color.hex(active ? info.2.active : info.2.normal), textColor: Color.hex(active ? info.1.active : info.1.normal), proportional: .circle) {}
+      let active = info.3 ? secondActiveFunc(entity!) : firstActiveFunc(entity!)
+      Image(systemName: active ? info.0.active : info.0.normal)
+//      Image(systemName: "square.and.arrow.up.circle.fill")
+        .ifIOS17({ img in
+          if #available(iOS 17, *) {
+            img.contentTransition(.symbolEffect)
+          } else {
+            img
+              .transition(.scaleAndBlur)
+              .id(active ? info.0.active : info.0.normal)
+          }
+        })
+        .frame(36)
+        .background(Circle().fill(Color.hex(active ? info.2.active : info.2.normal)))
+        .foregroundStyle(Color.hex(active ? info.1.active : info.1.normal))
+        .allowsHitTesting(false)
+        .compositingGroup()
+        .fontSize(16, .semibold)
     }
   }
 }

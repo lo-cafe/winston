@@ -9,6 +9,7 @@ import Foundation
 import Alamofire
 import SwiftUI
 import NukeUI
+import Nuke
 import Defaults
 
 extension RedditAPI {
@@ -36,49 +37,87 @@ extension RedditAPI {
     }
   }
   
-  func updateAvatarURLCacheFromOverview(subjects: [Either<PostData, CommentData>], avatarSize: Double) async {
+  func updateOverviewSubjectsWithAvatar(subjects: [Either<Post, Comment>], avatarSize: Double) async {
     var namesArr: [String] = []
     subjects.forEach { subject in
       switch subject {
       case .first(let post):
-        if let fullname = post.author_fullname {
+        if let data = post.data, let fullname = data.author_fullname {
           namesArr.append(fullname)
         }
       case .second(let comment):
-        if let fullname = comment.author_fullname {
+        if let data = comment.data, let fullname = data.author_fullname {
           namesArr.append(fullname)
         }
       }
     }
-    await updateAvatarURL(names: namesArr, avatarSize: avatarSize)
+    if let avatarsDict = await updateAvatarURL(names: namesArr, avatarSize: avatarSize) {
+      subjects.forEach { subject in
+        switch subject {
+        case .first(let post):
+          if let author = post.data?.author_fullname {
+            post.winstonData?.avatarImageRequest = avatarsDict[author]
+          }
+        case .second(let comment):
+          if let authorFullname = comment.data?.author_fullname {
+            DispatchQueue.main.async { [avatarsDict] in
+              comment.winstonData?.avatarImageRequest = avatarsDict[authorFullname]
+            }
+          }
+        }
+      }
+    }
   }
   
-  func updateAvatarURLCacheFromComments(comments: [Comment], avatarSize: Double) async {
-    let namesArr = getNamesFromComments(comments)
-    await updateAvatarURL(names: namesArr, avatarSize: avatarSize)
+  func updateCommentsWithAvatar(comments: [Comment], avatarSize: Double, presentAvatarsDict: [String:ImageRequest]? = nil) async {
+    let namesArr = presentAvatarsDict != nil ? [] : getNamesFromComments(comments)
+    var avatarsDict: [String:ImageRequest] = presentAvatarsDict ?? [:]
+    if avatarsDict.isEmpty, let newDict = await updateAvatarURL(names: namesArr, avatarSize: avatarSize) { avatarsDict = newDict }
+    print(namesArr)
+    print("---------")
+    print(avatarsDict.mapValues { $0.url?.absoluteString })
+    print("---------")
+    comments.forEach { comment in
+      if let authorFullname = comment.data?.author_fullname {
+        DispatchQueue.main.async { [avatarsDict] in
+          print(authorFullname, avatarsDict[authorFullname]?.url?.absoluteString)
+          comment.winstonData?.avatarImageRequest = avatarsDict[authorFullname]
+        }
+      }
+      Task { [avatarsDict] in await self.updateCommentsWithAvatar(comments: comment.childrenWinston.data, avatarSize: avatarSize, presentAvatarsDict: avatarsDict) }
+    }
   }
   
-  func updateAvatarURLCacheFromPosts(posts: [Post], avatarSize: Double) async {
+  func updatePostsWithAvatar(posts: [Post], avatarSize: Double) async {
     let namesArr = posts.compactMap { $0.data?.author_fullname }
-    await updateAvatarURL(names: namesArr, avatarSize: avatarSize)
+    if let avatarsDict =  await updateAvatarURL(names: namesArr, avatarSize: avatarSize) {
+      posts.forEach { post in
+        if let author = post.data?.author_fullname {
+          post.winstonData?.avatarImageRequest = avatarsDict[author]
+        }
+      }
+    }
   }
   
-  func updateAvatarURL(names: [String], avatarSize: Double) async {
+  func updateAvatarURL(names: [String], avatarSize: Double) async -> [String:ImageRequest]? {
     if let data = await self.fetchUsers(names) {
-//      let avatarSize = Defaults[]
+      //      let avatarSize = Defaults[]
       var reqs: [ImageRequest] = []
       let newDict = data.compactMapValues { val in
         if let urlStr = val.profile_img, let url = URL(string: String(urlStr.split(separator: "?")[0])) {
-          let req = ImageRequest(url: url, processors: [.resize(width: avatarSize)], priority: .veryHigh)
+          //          let userInfoKey = ImageRequest.UserInfoKey()
+          //          ImageProcessing
+          let thumbOpt = ImageRequest.ThumbnailOptions(size: .init(width: avatarSize, height: avatarSize), unit: .points, contentMode: .aspectFill)
+          let req = ImageRequest(url: url, priority: .veryHigh, userInfo: [.thumbnailKey: thumbOpt])
           reqs.append(req)
           return req
         }
         return nil
       }
       Post.prefetcher.startPrefetching(with: reqs)
-      
-      await Caches.avatars.merge(newDict)
+      return newDict
     }
+    return nil
   }
   
   func addImgReqToAvatarCache(_ author: String, _ url: String, avatarSize: Double) {
@@ -97,33 +136,23 @@ extension RedditAPI {
   typealias MultipleUsersDictionary = [String: MultipleUsersUser]
   
   struct MultipleUsersUser: Codable {
-      let name: String?
-      let created_utc: Double?
-      let link_karma: Int?
-      let comment_karma: Int?
-      let profile_img: String?
-      let profile_color: String?
-      let profile_over_18: Bool?
+    let name: String?
+    let created_utc: Double?
+    let link_karma: Int?
+    let comment_karma: Int?
+    let profile_img: String?
+    let profile_color: String?
+    let profile_over_18: Bool?
   }
 }
 
-func getNamesFromComments(_ comments: [Comment]? = nil, _ commentDatas: [CommentData]? = nil) -> [String] {
+func getNamesFromComments(_ comments: [Comment]) -> [String] {
   var namesArr: [String] = []
-  let actualComments = commentDatas ?? comments?.compactMap { $0.data } ?? []
-  actualComments.forEach { comment in
-    if let fullname = comment.author_fullname {
+  comments.forEach { comment in
+    if let fullname = comment.data?.author_fullname {
       namesArr.append(fullname)
     }
-    switch comment.replies {
-      case .first(_):
-        break
-      case .second(let listing):
-        if let replies = listing.data?.children, replies.count > 0 {
-          namesArr += getNamesFromComments(nil, replies.map { $0.data }.compactMap { $0 } )
-        }
-      case .none:
-        break
-      }
+    namesArr += getNamesFromComments(comment.childrenWinston.data)
   }
   return namesArr
 }
