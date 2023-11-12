@@ -21,8 +21,8 @@ extension User {
     self.init(id: id, api: api, typePrefix: "\(User.prefix)_")
   }
   
-  func refetchOverview(_ after: String? = nil) async -> [Either<Post, Comment>]? {
-    if let name = data?.name, let overviewData = await RedditAPI.shared.fetchUserOverview(name, after) {
+  func refetchOverview(_ dataTypeFilter: String? = nil, _ after: String? = nil) async -> [Either<Post, Comment>]? {
+    if let name = data?.name, let overviewData = await RedditAPI.shared.fetchUserOverview(name, dataTypeFilter, after) {
       await MainActor.run {
         self.loading = false
       }
