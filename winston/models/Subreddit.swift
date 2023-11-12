@@ -19,7 +19,6 @@ extension Subreddit {
   convenience init(data: T, api: RedditAPI) {
     self.init(data: data, api: api, typePrefix: "\(Subreddit.prefix)_")
     
-    saveSubredditIconToDefaults(name: self.data?.display_name, data: self.data)
   }
   
   convenience init(id: String, api: RedditAPI) {
@@ -30,14 +29,8 @@ extension Subreddit {
     self.init(id: entity.uuid ?? UUID().uuidString, api: api, typePrefix: "\(Subreddit.prefix)_")
     self.data = SubredditData(entity: entity)
     
-    saveSubredditIconToDefaults(name: self.data?.display_name, data: self.data)
   }
   
-  func saveSubredditIconToDefaults(name: String?, data: SubredditData?) {
-    if data?.community_icon != nil || data?.icon_img != nil, let displayName = name {
-      Defaults[.subredditIcons][displayName] = [ "community_icon" : data!.community_icon, "icon_img" : data!.icon_img ]
-    }
-  }
   
   /// Add a subreddit to the local like list
   /// This is a seperate list from reddits liked intenden for usage with subreddits a user wants to favorite but not subscribe to
