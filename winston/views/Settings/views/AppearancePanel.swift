@@ -27,7 +27,7 @@ struct AppearancePanel: View {
   @Default(.showSelfPostThumbnails) var showSelfPostThumbnails
   @Default(.disableAlphabetLettersSectionsInSubsList) var disableAlphabetLettersSectionsInSubsList
 //  @Default(.preferInlineTags) var preferInlineTags
-  
+  @Default(.themeStoreTint) var themeStoreTint
   @Environment(\.useTheme) private var theme
   
   var body: some View {
@@ -36,18 +36,26 @@ struct AppearancePanel: View {
         Group {
           Toggle("Show Username in Tab Bar", isOn: $showUsernameInTabBar)
           Toggle("Disable subs list letter sections", isOn: $disableAlphabetLettersSectionsInSubsList)
+          Toggle("Theme Store Tint", isOn: $themeStoreTint)
         }
         .themedListRowBG(enablePadding: true)
       }
       .themedListDividers()
       
-      Section {
+      Section{
         WNavigationLink(value: SettingsPages.themes) {
           Label("Themes", systemImage: "paintbrush.fill")
         }
         WNavigationLink(value: SettingsPages.appIcon) {
           Label("App icon", systemImage: "appclip")
         }
+        WNavigationLink(value: SettingsPages.themeStore){
+          Label("Theme Store (alpha)", systemImage: "giftcard.fill")
+        }
+      } header: {
+        Text("Themeing")
+      } footer: {
+        Text("This is a special menu because in Winston you can change 90% of what you see. Enjoy the theming system!")
       }
       .themedListDividers()
       

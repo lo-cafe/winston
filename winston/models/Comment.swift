@@ -75,6 +75,7 @@ extension Comment {
       commentData.parent_id = message.parent_id
       commentData.score = nil
       commentData.author_fullname = message.author_fullname
+      commentData.author_flair_text = message.author_flair_text
       commentData.approved_by = nil
       commentData.mod_note = nil
       commentData.collapsed = false
@@ -156,7 +157,7 @@ extension Comment {
     }
   }
   
-  func loadChildren(parent: CommentParentElement, postFullname: String, avatarSize: Double) async {
+  func loadChildren(parent: CommentParentElement, postFullname: String, avatarSize: Double, post: Post?) async {
     if let kind = kind, kind == "more", let data = data, let count = data.count, let parent_id = data.parent_id, let childrenIDS = data.children {
       var actualID = id
       //      if actualID.hasSuffix("-more") {
@@ -184,6 +185,7 @@ extension Comment {
         Task(priority: .background) { [loadedComments] in
           await RedditAPI.shared.updateCommentsWithAvatar(comments: loadedComments, avatarSize: avatarSize)
 //          print(loadedComments.map {  $0.childrenWinston.data.map { x in x.winstonData?.avatarImageRequest } })
+          await post?.saveMoreComments(comments: loadedComments)
         }
         
         await MainActor.run { [loadedComments] in
@@ -304,7 +306,7 @@ extension Comment {
         data?.ups = oldUps + (action.boolVersion() == oldLikes ? oldLikes == nil ? 0 : -action.rawValue : action.rawValue * (oldLikes == nil ? 1 : 2))
       }
     }
-    let result = await RedditAPI.shared.vote(newAction, id: "\(typePrefix ?? "")\(id)")
+    let result = await RedditAPI.shared.vote(newAction, id: "\(typePrefix ?? "")\(id.dropLast(2))")
     if result == nil || !result! {
       await MainActor.run { [oldLikes] in
         withAnimation {
@@ -447,7 +449,7 @@ struct CommentData: GenericRedditEntityDataType {
   //  let locked: Bool?
   //  let report_reasons: String?
   var created: Double?
-  //  let author_flair_text: String?
+  var author_flair_text: String?
   //  let treatment_tags: [String]?
   var link_id: String?
   var link_title: String?

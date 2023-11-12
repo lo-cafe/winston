@@ -8,7 +8,7 @@
 import SwiftUI
 import Defaults
 import SwiftUIIntrospect
-
+import CoreData
 
 enum SubViewType: Hashable {
   case posts(Subreddit)
@@ -27,7 +27,7 @@ struct SubredditPosts: View, Equatable {
   @State private var loadedPosts: Set<String> = []
   @State private var lastPostAfter: String?
   @State private var searchText: String = ""
-  @State private var sort: SubListingSortOption = Defaults[.preferredSort]
+  @State private var sort: SubListingSortOption
   @State private var newPost = false
   
   @EnvironmentObject private var routerProxy: RouterProxy
@@ -35,7 +35,15 @@ struct SubredditPosts: View, Equatable {
   @Environment(\.colorScheme) private var cs
   @Environment(\.contentWidth) private var contentWidth
   
-  func asyncFetch(force: Bool = false, loadMore: Bool = false, searchText: String? = nil) async {
+  let context = PersistenceController.shared.container.newBackgroundContext()
+  let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "SeenPost")
+
+  init(subreddit: Subreddit) {
+    self.subreddit = subreddit;
+    _sort = State(initialValue: Defaults[.perSubredditSort] ? (Defaults[.subredditSorts][subreddit.id] ?? Defaults[.preferredSort]) : Defaults[.preferredSort]);
+  }
+  
+    func asyncFetch(force: Bool = false, loadMore: Bool = false, searchText: String? = nil) async throws {
     if (subreddit.data == nil || force) && !feedsAndSuch.contains(subreddit.id) {
       await subreddit.refreshSubreddit()
     }
@@ -48,17 +56,17 @@ struct SubredditPosts: View, Equatable {
     if let result = await subreddit.fetchPosts(sort: sort, after: loadMore ? lastPostAfter : nil, searchText: searchText, contentWidth: contentWidth), let newPosts = result.0 {
       await RedditAPI.shared.updatePostsWithAvatar(posts: newPosts, avatarSize: selectedTheme.postLinks.theme.badge.avatar.size)
       withAnimation {
-        //        let newPostsFiltered = newPosts.filter { !loadedPosts.contains($0.id) && !filteredSubreddits.contains($0.data?.subreddit ?? "") }
+                let newPostsFiltered = newPosts.filter { !loadedPosts.contains($0.id) && !filteredSubreddits.contains($0.data?.subreddit ?? "") }
         
         if loadMore {
-          //          posts.data.append(contentsOf: newPostsFiltered)
-          posts.data.append(contentsOf: newPosts)
+                    posts.data.append(contentsOf: newPostsFiltered)
+//          posts.data.append(contentsOf: newPosts)
         } else {
-          //          posts.data = newPostsFiltered
-          posts.data = newPosts
+                    posts.data = newPostsFiltered
+//          posts.data = newPosts
         }
         
-        //        newPostsFiltered.forEach { loadedPosts.insert($0.id) }
+                newPostsFiltered.forEach { loadedPosts.insert($0.id) }
         
         loading = false
         lastPostAfter = result.1
@@ -68,7 +76,11 @@ struct SubredditPosts: View, Equatable {
   
   func fetch(_ loadMore: Bool = false, _ searchText: String? = nil) {
     Task(priority: .background) {
-      await asyncFetch(loadMore: loadMore, searchText: searchText)
+        do {
+            try await asyncFetch(loadMore: loadMore, searchText: searchText)
+        } catch {
+            print(error)
+        }
     }
   }
   
@@ -85,7 +97,7 @@ struct SubredditPosts: View, Equatable {
     }
     
   }
-  
+
   var body: some View {
     Group {
       if IPAD {
@@ -124,11 +136,21 @@ struct SubredditPosts: View, Equatable {
     }
     .refreshable {
       loadedPosts.removeAll()
-      await asyncFetch(force: true)
+        do {
+            try await asyncFetch(force: true)
+        } catch {
+            print(error)
+        }
     }
     .navigationTitle("\(feedsAndSuch.contains(subreddit.id) ? subreddit.id.capitalized : "r/\(subreddit.data?.display_name ?? subreddit.id)")")
     .task(priority: .background) {
-      if posts.data.count == 0 { await asyncFetch() }
+      if posts.data.count == 0 {
+          do {
+              try await asyncFetch()
+          } catch {
+              print(error)
+          }
+      }
     }
     .onChange(of: sort) { val in
       clearAndLoadData()
@@ -164,6 +186,7 @@ struct SubredditPostsNavBtns: View, Equatable {
               ForEach(SubListingSortOption.TopListingSortOption.allCases, id: \.self) { topOpt in
                 Button {
                   sort = .top(topOpt)
+                  Defaults[.subredditSorts][subreddit.id] = .top(topOpt)
                 } label: {
                   HStack {
                     Text(topOpt.rawValue.capitalized)
@@ -178,10 +201,14 @@ struct SubredditPostsNavBtns: View, Equatable {
               Label(opt.rawVal.value.capitalized, systemImage: opt.rawVal.icon)
                 .foregroundColor(Color.accentColor)
                 .font(.system(size: 17, weight: .bold))
+                .onAppear{
+                  print(opt.rawVal)
+                }
             }
           } else {
             Button {
               sort = opt
+              Defaults[.subredditSorts][subreddit.id] = opt
             } label: {
               HStack {
                 Text(opt.rawVal.value.capitalized)

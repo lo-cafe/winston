@@ -17,9 +17,12 @@ struct LightBoxOverlay: View {
   var imagesArr: [ImgExtracted]
   var activeIndex: Int
   @Binding var loading: Bool
+  @Environment(\.dismiss) var dismiss
   @Binding var done: Bool
   @Environment(\.useTheme) private var selectedTheme
   @Environment(\.colorScheme) private var cs: ColorScheme
+    @State private var isPresentingShareSheet = false
+  @State private var sharedImageData: Data?
   var body: some View {
     VStack(alignment: .leading) {
       VStack(alignment: .leading, spacing: 8) {
@@ -42,7 +45,19 @@ struct LightBoxOverlay: View {
       }
       
       HStack(spacing: 12) {
-        LightBoxButton(icon: "square.and.arrow.down.fill") {
+        
+          // MANDRAKE
+          // if let post {
+          //     LightBoxButton(icon: "bubble.right") {
+          //   if let data = post.data {
+          //         routerProxy.router.path.append(PostViewPayload(post: Post(id: post.id, api: post.redditAPI), sub: Subreddit(id: data.subreddit, api: post.redditAPI)))
+          //         dismiss()
+          //       }
+          //     }
+          // }
+        
+        
+        LightBoxButton(icon: "square.and.arrow.down") {
           withAnimation(spring) {
             loading = true
           }
@@ -52,10 +67,22 @@ struct LightBoxOverlay: View {
             }
           }
         }
-        ShareLink(item: imagesArr[activeIndex].url.absoluteString) {
-          LightBoxButton(icon: "square.and.arrow.up.fill") {}
-            .allowsHitTesting(false)
-            .contentShape(Circle())
+        LightBoxButton(icon: "square.and.arrow.up"){
+          Task{
+            sharedImageData = try await downloadAndSaveImage(url: imagesArr[activeIndex].url)
+          }
+          isPresentingShareSheet.toggle()
+        }
+        .contentShape(Circle())
+        .sheet(isPresented: $isPresentingShareSheet) {
+          if let sharedImageData = sharedImageData, let uiimg = UIImage(data: sharedImageData){
+            let image = ShareImage(placeholderItem: uiimg)
+            ShareSheet(items: [image])
+              .onAppear{
+                print("Share sheet")
+                print(image)
+              }
+          }
         }
       }
       .compositingGroup()

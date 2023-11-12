@@ -24,7 +24,7 @@ struct Onboarding6Auth: View {
           .fixedSize(horizontal: false, vertical: true)
           .frame(maxWidth: 300)
         
-        Text("For that, just click below's button, scroll down the page and click \"Accept\".")
+        Text("For that, just click the button below, scroll down the page and click \"Accept\".")
           .fixedSize(horizontal: false, vertical: true)
           .frame(maxWidth: 300)
         

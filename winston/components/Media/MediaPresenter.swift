@@ -18,7 +18,7 @@ struct OnlyURL: View {
   var body: some View {
     HStack {
       Image(systemName: "link")
-      Text(url.absoluteString.replacingOccurrences(of: "https://", with: ""))
+      Text(cleanURL(url: url, showPath: false))
     }
     .padding(.horizontal, 6)
     .padding(.vertical, 2)

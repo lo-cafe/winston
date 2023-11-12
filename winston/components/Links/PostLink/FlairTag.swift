@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Defaults
 
 struct FlairTag: View {
   static let height: Double = 20

@@ -7,15 +7,46 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		65010D032AC70ADD00A8F611 /* getDownloadURL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65010D022AC70ADD00A8F611 /* getDownloadURL.swift */; };
 		650ACAFC2A87A36900A7C600 /* calcVotes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 650ACAFB2A87A36900A7C600 /* calcVotes.swift */; };
+		6514FFEC2AFD01520051D264 /* WhatsNewKit in Frameworks */ = {isa = PBXBuildFile; productRef = 6514FFEB2AFD01520051D264 /* WhatsNewKit */; };
+		6514FFEE2AFD01AD0051D264 /* WhatsNewCollectionProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6514FFED2AFD01AD0051D264 /* WhatsNewCollectionProvider.swift */; };
 		651D19C72A90B7D6003867A9 /* PostFontSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 651D19C62A90B7D6003867A9 /* PostFontSettings.swift */; };
+		652011FA2AC2C46C005DD899 /* themeStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 652011F92AC2C46C005DD899 /* themeStore.swift */; };
+		652011FC2AC2C7BE005DD899 /* ThemeStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 652011FB2AC2C7BE005DD899 /* ThemeStore.swift */; };
+		652011FE2AC2D4F9005DD899 /* ThemeStoreDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 652011FD2AC2D4F9005DD899 /* ThemeStoreDetailsView.swift */; };
+		652012002AC309FA005DD899 /* downloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 652011FF2AC309FA005DD899 /* downloader.swift */; };
+		652012022AC31E7C005DD899 /* ThemeStoreUploadSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 652012012AC31E7C005DD899 /* ThemeStoreUploadSheet.swift */; };
+		652012042AC322A3005DD899 /* fetchAllThemes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 652012032AC322A3005DD899 /* fetchAllThemes.swift */; };
+		652012062AC322BC005DD899 /* fetchThemeStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 652012052AC322BC005DD899 /* fetchThemeStatus.swift */; };
+		652012082AC327C7005DD899 /* uploadTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 652012072AC327C7005DD899 /* uploadTheme.swift */; };
 		653E2DA52A8E278800833556 /* GeneralPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 653E2DA42A8E278800833556 /* GeneralPanel.swift */; };
 		6543D8892A8D10B900A1FFF9 /* scaleEffectButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6543D8882A8D10B900A1FFF9 /* scaleEffectButtonStyle.swift */; };
+		657643782ACF1D2100805641 /* FittiingScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 657643772ACF1D2100805641 /* FittiingScrollView.swift */; };
+		6576437A2ACF1E1A00805641 /* AppDetailScreenshots.swift in Sources */ = {isa = PBXBuildFile; fileRef = 657643792ACF1E1A00805641 /* AppDetailScreenshots.swift */; };
+		6576437C2ACF1E3900805641 /* ScrolViewContentRTLFriendly.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6576437B2ACF1E3900805641 /* ScrolViewContentRTLFriendly.swift */; };
+		6576437E2ACF20DA00805641 /* AppDetailDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6576437D2ACF20DA00805641 /* AppDetailDescription.swift */; };
+		657643802ACF20F100805641 /* ExpandableText.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6576437F2ACF20F100805641 /* ExpandableText.swift */; };
+		657643822ACF224500805641 /* AppDetailFullView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 657643812ACF224500805641 /* AppDetailFullView.swift */; };
+		657643842AD0083500805641 /* fetchThemesByName.swift in Sources */ = {isa = PBXBuildFile; fileRef = 657643832AD0083500805641 /* fetchThemesByName.swift */; };
+		65840EE82AE11BFD000315E1 /* exportImportSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65840EE72AE11BFD000315E1 /* exportImportSettings.swift */; };
+		658DB5A42AFBB8230062F8B1 /* fetchThemeByID.swift in Sources */ = {isa = PBXBuildFile; fileRef = 658DB5A32AFBB8230062F8B1 /* fetchThemeByID.swift */; };
 		6593CC432A88C9E8003CA58D /* AccessibilityPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6593CC422A88C9E8003CA58D /* AccessibilityPanel.swift */; };
 		6593CC452A88D128003CA58D /* hapticFeedbackModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6593CC442A88D128003CA58D /* hapticFeedbackModifier.swift */; };
 		659F68022A84E32300989300 /* VotesCluster.swift in Sources */ = {isa = PBXBuildFile; fileRef = 659F68012A84E32300989300 /* VotesCluster.swift */; };
 		659FDEA82A87798300103414 /* VoteButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 659FDEA72A87798300103414 /* VoteButton.swift */; };
+		65A5FFF22ACED3BF000D1ADA /* getPreviewImages.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65A5FFF12ACED3BF000D1ADA /* getPreviewImages.swift */; };
 		65AA535D2A8BB27900275299 /* FAQPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65AA535C2A8BB27900275299 /* FAQPanel.swift */; };
+		65B0619B2AFE8A05008B7AF3 /* changelog.json in Sources */ = {isa = PBXBuildFile; fileRef = 65E45A6D2AFD3C1D007DBBFC /* changelog.json */; };
+		65C169EA2AFFA578007764D5 /* MD2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65C169E92AFFA578007764D5 /* MD2.swift */; };
+		65C169EC2AFFA60B007764D5 /* isImageUrl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65C169EB2AFFA60B007764D5 /* isImageUrl.swift */; };
+		65CDA3622ACB0EB50001EC44 /* ZoomableImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65CDA3612ACB0EB50001EC44 /* ZoomableImageView.swift */; };
+		65CDA3642ACB0F140001EC44 /* ShareSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65CDA3632ACB0F140001EC44 /* ShareSheet.swift */; };
+		65CDA3662ACB0F3A0001EC44 /* LiveTextInteraction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65CDA3652ACB0F3A0001EC44 /* LiveTextInteraction.swift */; };
+		65D265412ABEC6FF009E01F9 /* urlCleaner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65D265402ABEC6FF009E01F9 /* urlCleaner.swift */; };
+		65E45A6E2AFD3C1D007DBBFC /* changelog.json in Resources */ = {isa = PBXBuildFile; fileRef = 65E45A6D2AFD3C1D007DBBFC /* changelog.json */; };
+		65E45A702AFD3E48007DBBFC /* whatsNew.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65E45A6F2AFD3E48007DBBFC /* whatsNew.swift */; };
+		ABC2180F2ABA528D00F0DABA /* Biometrics.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABC2180E2ABA528D00F0DABA /* Biometrics.swift */; };
 		EC051C472ACAF2DC00E9D9ED /* themeFileIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = EC051C462ACAF2DC00E9D9ED /* themeFileIcon.png */; };
 		EC082F252A65FB4300BA2727 /* MeasureOnce.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC082F242A65FB4300BA2727 /* MeasureOnce.swift */; };
 		EC082F272A66132600BA2727 /* CommentLinkMore.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC082F262A66132600BA2727 /* CommentLinkMore.swift */; };
@@ -224,9 +255,6 @@
 		ECA86A812AB94DA200C31EC6 /* SubredditsStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECA86A802AB94DA200C31EC6 /* SubredditsStack.swift */; };
 		ECAA23822A9EC34100874731 /* inlineSymbol.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECAA23812A9EC34100874731 /* inlineSymbol.swift */; };
 		ECAA35532AFE550900C0C232 /* SwiftUIIntrospect in Frameworks */ = {isa = PBXBuildFile; productRef = ECAA35522AFE550900C0C232 /* SwiftUIIntrospect */; };
-		ECAA35562AFFA86B00C0C232 /* MD2.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECAA35552AFFA86B00C0C232 /* MD2.swift */; };
-		ECAA35582AFFA87200C0C232 /* isImageUrl.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECAA35572AFFA87200C0C232 /* isImageUrl.swift */; };
-		ECAA355A2B00D08100C0C232 /* LightBoxOverlayAlt.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECAA35592B00D08100C0C232 /* LightBoxOverlayAlt.swift */; };
 		ECAA8B5A2A75004300D9D636 /* redditURLParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECAA8B592A75004300D9D636 /* redditURLParser.swift */; };
 		ECAA8B5C2A75025200D9D636 /* fetchInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECAA8B5B2A75025200D9D636 /* fetchInfo.swift */; };
 		ECAA8B602A75216E00D9D636 /* ShortPostLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECAA8B5F2A75216E00D9D636 /* ShortPostLink.swift */; };
@@ -381,15 +409,44 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		65010D022AC70ADD00A8F611 /* getDownloadURL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = getDownloadURL.swift; sourceTree = "<group>"; };
 		650ACAFB2A87A36900A7C600 /* calcVotes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = calcVotes.swift; sourceTree = "<group>"; };
+		6514FFED2AFD01AD0051D264 /* WhatsNewCollectionProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhatsNewCollectionProvider.swift; sourceTree = "<group>"; };
 		651D19C62A90B7D6003867A9 /* PostFontSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostFontSettings.swift; sourceTree = "<group>"; };
+		652011F92AC2C46C005DD899 /* themeStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = themeStore.swift; sourceTree = "<group>"; };
+		652011FB2AC2C7BE005DD899 /* ThemeStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeStore.swift; sourceTree = "<group>"; };
+		652011FD2AC2D4F9005DD899 /* ThemeStoreDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeStoreDetailsView.swift; sourceTree = "<group>"; };
+		652011FF2AC309FA005DD899 /* downloader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = downloader.swift; sourceTree = "<group>"; };
+		652012012AC31E7C005DD899 /* ThemeStoreUploadSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeStoreUploadSheet.swift; sourceTree = "<group>"; };
+		652012032AC322A3005DD899 /* fetchAllThemes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = fetchAllThemes.swift; sourceTree = "<group>"; };
+		652012052AC322BC005DD899 /* fetchThemeStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = fetchThemeStatus.swift; sourceTree = "<group>"; };
+		652012072AC327C7005DD899 /* uploadTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = uploadTheme.swift; sourceTree = "<group>"; };
 		653E2DA42A8E278800833556 /* GeneralPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneralPanel.swift; sourceTree = "<group>"; };
 		6543D8882A8D10B900A1FFF9 /* scaleEffectButtonStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = scaleEffectButtonStyle.swift; sourceTree = "<group>"; };
+		657643772ACF1D2100805641 /* FittiingScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FittiingScrollView.swift; sourceTree = "<group>"; };
+		657643792ACF1E1A00805641 /* AppDetailScreenshots.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDetailScreenshots.swift; sourceTree = "<group>"; };
+		6576437B2ACF1E3900805641 /* ScrolViewContentRTLFriendly.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScrolViewContentRTLFriendly.swift; sourceTree = "<group>"; };
+		6576437D2ACF20DA00805641 /* AppDetailDescription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDetailDescription.swift; sourceTree = "<group>"; };
+		6576437F2ACF20F100805641 /* ExpandableText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExpandableText.swift; sourceTree = "<group>"; };
+		657643812ACF224500805641 /* AppDetailFullView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDetailFullView.swift; sourceTree = "<group>"; };
+		657643832AD0083500805641 /* fetchThemesByName.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = fetchThemesByName.swift; sourceTree = "<group>"; };
+		65840EE72AE11BFD000315E1 /* exportImportSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = exportImportSettings.swift; sourceTree = "<group>"; };
+		658DB5A32AFBB8230062F8B1 /* fetchThemeByID.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = fetchThemeByID.swift; sourceTree = "<group>"; };
 		6593CC422A88C9E8003CA58D /* AccessibilityPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessibilityPanel.swift; sourceTree = "<group>"; };
 		6593CC442A88D128003CA58D /* hapticFeedbackModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = hapticFeedbackModifier.swift; sourceTree = "<group>"; };
 		659F68012A84E32300989300 /* VotesCluster.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VotesCluster.swift; sourceTree = "<group>"; };
 		659FDEA72A87798300103414 /* VoteButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoteButton.swift; sourceTree = "<group>"; };
+		65A5FFF12ACED3BF000D1ADA /* getPreviewImages.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = getPreviewImages.swift; sourceTree = "<group>"; };
 		65AA535C2A8BB27900275299 /* FAQPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FAQPanel.swift; sourceTree = "<group>"; };
+		65C169E92AFFA578007764D5 /* MD2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MD2.swift; sourceTree = "<group>"; };
+		65C169EB2AFFA60B007764D5 /* isImageUrl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = isImageUrl.swift; sourceTree = "<group>"; };
+		65CDA3612ACB0EB50001EC44 /* ZoomableImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZoomableImageView.swift; sourceTree = "<group>"; };
+		65CDA3632ACB0F140001EC44 /* ShareSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareSheet.swift; sourceTree = "<group>"; };
+		65CDA3652ACB0F3A0001EC44 /* LiveTextInteraction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveTextInteraction.swift; sourceTree = "<group>"; };
+		65D265402ABEC6FF009E01F9 /* urlCleaner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = urlCleaner.swift; sourceTree = "<group>"; };
+		65E45A6D2AFD3C1D007DBBFC /* changelog.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = changelog.json; sourceTree = "<group>"; };
+		65E45A6F2AFD3E48007DBBFC /* whatsNew.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = whatsNew.swift; sourceTree = "<group>"; };
+		ABC2180E2ABA528D00F0DABA /* Biometrics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Biometrics.swift; sourceTree = "<group>"; };
 		EC051C2A2ACAEFC500E9D9ED /* QuickLookThumbnailing.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuickLookThumbnailing.framework; path = System/Library/Frameworks/QuickLookThumbnailing.framework; sourceTree = SDKROOT; };
 		EC051C462ACAF2DC00E9D9ED /* themeFileIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = themeFileIcon.png; sourceTree = "<group>"; };
 		EC082F242A65FB4300BA2727 /* MeasureOnce.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeasureOnce.swift; sourceTree = "<group>"; };
@@ -585,9 +642,6 @@
 		ECA5E6472AA5D36E00F6C7A5 /* resetApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = resetApp.swift; sourceTree = "<group>"; };
 		ECA86A802AB94DA200C31EC6 /* SubredditsStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubredditsStack.swift; sourceTree = "<group>"; };
 		ECAA23812A9EC34100874731 /* inlineSymbol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = inlineSymbol.swift; sourceTree = "<group>"; };
-		ECAA35552AFFA86B00C0C232 /* MD2.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MD2.swift; sourceTree = "<group>"; };
-		ECAA35572AFFA87200C0C232 /* isImageUrl.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = isImageUrl.swift; sourceTree = "<group>"; };
-		ECAA35592B00D08100C0C232 /* LightBoxOverlayAlt.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LightBoxOverlayAlt.swift; sourceTree = "<group>"; };
 		ECAA8B592A75004300D9D636 /* redditURLParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = redditURLParser.swift; sourceTree = "<group>"; };
 		ECAA8B5B2A75025200D9D636 /* fetchInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = fetchInfo.swift; sourceTree = "<group>"; };
 		ECAA8B5F2A75216E00D9D636 /* ShortPostLink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShortPostLink.swift; sourceTree = "<group>"; };
@@ -738,6 +792,7 @@
 				ECDD515F2A748C5800FD9498 /* OpenGraph in Frameworks */,
 				EC6650EA2AB7E21E006B83A4 /* Zip in Frameworks */,
 				ECDD51622A748DF600FD9498 /* SkeletonUI in Frameworks */,
+				6514FFEC2AFD01520051D264 /* WhatsNewKit in Frameworks */,
 				EC9269F22A51A732003F33B1 /* HighlightedTextEditor in Frameworks */,
 				ECAD0F2F2A8B4D4B001C88B5 /* Markdown in Frameworks */,
 			);
@@ -754,6 +809,21 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		652011F82AC2C45D005DD899 /* ThemeStore */ = {
+			isa = PBXGroup;
+			children = (
+				652011F92AC2C46C005DD899 /* themeStore.swift */,
+				652012032AC322A3005DD899 /* fetchAllThemes.swift */,
+				652012052AC322BC005DD899 /* fetchThemeStatus.swift */,
+				652012072AC327C7005DD899 /* uploadTheme.swift */,
+				65010D022AC70ADD00A8F611 /* getDownloadURL.swift */,
+				65A5FFF12ACED3BF000D1ADA /* getPreviewImages.swift */,
+				657643832AD0083500805641 /* fetchThemesByName.swift */,
+				658DB5A32AFBB8230062F8B1 /* fetchThemeByID.swift */,
+			);
+			path = ThemeStore;
+			sourceTree = "<group>";
+		};
 		EC051C292ACAEFC500E9D9ED /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -1012,6 +1082,7 @@
 				EC593AED2A4796C1002D6454 /* winston.entitlements */,
 				EC593AEF2A47ACB0002D6454 /* Tabber.swift */,
 				ECAEFF612A77AF8E0052FCD3 /* AppDelegate.swift */,
+				ABC2180E2ABA528D00F0DABA /* Biometrics.swift */,
 				EC593AD72A4673B2002D6454 /* winstonApp.swift */,
 				EC593AE02A4673B3002D6454 /* Persistence.swift */,
 			);
@@ -1042,6 +1113,7 @@
 			isa = PBXGroup;
 			children = (
 				ECBD8E292ABBC6CF00C74E87 /* caches */,
+				652011F82AC2C45D005DD899 /* ThemeStore */,
 				ECE08B5C2AA9C93E00F84DC9 /* WinstonTheme */,
 				EC08541C2A4BFEF100E88389 /* RedditAPI */,
 				ECDBA8C22A4A820800FB42DB /* Post.swift */,
@@ -1067,6 +1139,7 @@
 				ECD2A3762A69C26900EDD02D /* consts.swift */,
 				EC8F34982A6F7DDB00EB8249 /* winstonMDEditorPreset.swift */,
 				ECE08B7F2AA9F9BA00F84DC9 /* defaultTheme.swift */,
+				65E45A6F2AFD3E48007DBBFC /* whatsNew.swift */,
 			);
 			path = globals;
 			sourceTree = "<group>";
@@ -1112,6 +1185,7 @@
 			children = (
 				EC8B814D2AC9650E000DC827 /* String.swift */,
 				ECF2C44A2AE81D5F004FCA79 /* DispatchQueue.swift */,
+				6514FFED2AFD01AD0051D264 /* WhatsNewCollectionProvider.swift */,
 			);
 			path = extensions;
 			sourceTree = "<group>";
@@ -1144,6 +1218,7 @@
 			isa = PBXGroup;
 			children = (
 				ECA30A162A5FA08500BB19D1 /* WhatToTest.en-US.txt */,
+				65E45A6D2AFD3C1D007DBBFC /* changelog.json */,
 			);
 			path = TestFlight;
 			sourceTree = "<group>";
@@ -1220,16 +1295,6 @@
 			path = shared;
 			sourceTree = "<group>";
 		};
-		ECAA35542AFFA86500C0C232 /* MD2 */ = {
-			isa = PBXGroup;
-			children = (
-				ECAA35572AFFA87200C0C232 /* isImageUrl.swift */,
-				ECAA35592B00D08100C0C232 /* LightBoxOverlayAlt.swift */,
-				ECAA35552AFFA86B00C0C232 /* MD2.swift */,
-			);
-			path = MD2;
-			sourceTree = "<group>";
-		};
 		ECAA8B662A75261000D9D636 /* winston-everywhere */ = {
 			isa = PBXGroup;
 			children = (
@@ -1299,6 +1364,7 @@
 				ECC10C732A4A8729009124BE /* fontSize.swift */,
 				EC9EAEC32A4AAB470074D06B /* fromHex.swift */,
 				EC08542A2A4C2B6B00E88389 /* if.swift */,
+				65D265402ABEC6FF009E01F9 /* urlCleaner.swift */,
 				EC08543E2A4D0C0700E88389 /* doThisAfter.swift */,
 				6543D8882A8D10B900A1FFF9 /* scaleEffectButtonStyle.swift */,
 				EC0854472A4D6E8C00E88389 /* getInitialSize.swift */,
@@ -1338,8 +1404,11 @@
 				ECF314E42ABC187400DFDDBA /* hashableCGSize.swift */,
 				ECF5B3062AC83AE600355589 /* getAppIcon.swift */,
 				EC75D7422AC96D0200594250 /* getEnabledTheme.swift */,
+				652011FF2AC309FA005DD899 /* downloader.swift */,
 				EC97F0272ACB006A001814A6 /* importTheme.swift */,
 				EC4F8F092AE7070500801104 /* getTagsFromTitle.swift */,
+				65840EE72AE11BFD000315E1 /* exportImportSettings.swift */,
+				65C169EB2AFFA60B007764D5 /* isImageUrl.swift */,
 			);
 			path = utils;
 			sourceTree = "<group>";
@@ -1347,7 +1416,6 @@
 		ECC10C752A4A8746009124BE /* components */ = {
 			isa = PBXGroup;
 			children = (
-				ECAA35542AFFA86500C0C232 /* MD2 */,
 				EC3188302A9476BE00CB3738 /* Media */,
 				ECE00EE52A8D6A19000A6E21 /* TabBar */,
 				EC8F34952A6F5A5400EB8249 /* Modals */,
@@ -1360,6 +1428,8 @@
 				EC2D27582A4F782F006444D6 /* GoodNavigator.swift */,
 				EC2D275D2A4FC512006444D6 /* TappableView.swift */,
 				ECE2859A2A5010E2009CF9DD /* DataBlock.swift */,
+				657643792ACF1E1A00805641 /* AppDetailScreenshots.swift */,
+				6576437B2ACF1E3900805641 /* ScrolViewContentRTLFriendly.swift */,
 				ECE285A02A50EC9E009CF9DD /* Badge.swift */,
 				EC9269E72A514AA6003F33B1 /* DownAttributedString.swift */,
 				ECD1FC082A570B4F00723016 /* PostFloatingPill.swift */,
@@ -1368,7 +1438,10 @@
 				ECA30A182A604ACC00BB19D1 /* SubredditIcon.swift */,
 				ECA30A362A622C2F00BB19D1 /* MD.swift */,
 				ECE4497E2A6896B700E2A3B7 /* SubscribeButton.swift */,
+				6576437D2ACF20DA00805641 /* AppDetailDescription.swift */,
+				657643812ACF224500805641 /* AppDetailFullView.swift */,
 				ECD1FC062A56D46D00723016 /* ObservableArray.swift */,
+				6576437F2ACF20F100805641 /* ExpandableText.swift */,
 				EC8F349A2A6F92DC00EB8249 /* PillTab.swift */,
 				ECDD51512A7359D100FD9498 /* MDEditor.swift */,
 				ECDD51652A74E4DD00FD9498 /* SubredditPostsContainer.swift */,
@@ -1392,6 +1465,7 @@
 				EC3AC9CE2AACB2A30078EC78 /* LabeledSlider.swift */,
 				EC3AC9D32AACCBE40078EC78 /* LabeledTextField.swift */,
 				EC3AC9D62AAD0E300078EC78 /* TagsOptionsCarousel.swift */,
+				65CDA3652ACB0F3A0001EC44 /* LiveTextInteraction.swift */,
 				EC8B77A32AB4D89A00875C98 /* Dividers.swift */,
 				EC91C8532AB9601000F2AD30 /* TabBarOverlay.swift */,
 				EC46E9272ABA3B05001BC068 /* WNavigationLink.swift */,
@@ -1406,6 +1480,9 @@
 				ECF2C4482AE81C4D004FCA79 /* CustomPresenter.swift */,
 				ECB03BFA2AEC2D090090674A /* AltImage.swift */,
 				EC16852D2AEF4B18000DD701 /* GIFViewer.swift */,
+				657643772ACF1D2100805641 /* FittiingScrollView.swift */,
+				65CDA3632ACB0F140001EC44 /* ShareSheet.swift */,
+				65C169E92AFFA578007764D5 /* MD2.swift */,
 			);
 			path = components;
 			sourceTree = "<group>";
@@ -1451,6 +1528,9 @@
 				EC3AC9D52AAD0DF60078EC78 /* editing */,
 				ECC2C7B32AAB4A64000E196C /* ThemeEditPanel.swift */,
 				ECC2C7B12AAB48D1000E196C /* ThemesPanel.swift */,
+				652011FB2AC2C7BE005DD899 /* ThemeStore.swift */,
+				652011FD2AC2D4F9005DD899 /* ThemeStoreDetailsView.swift */,
+				652012012AC31E7C005DD899 /* ThemeStoreUploadSheet.swift */,
 			);
 			path = theming;
 			sourceTree = "<group>";
@@ -1472,6 +1552,7 @@
 				EC1E7B672A815BE100DB459A /* LightboxButton.swift */,
 				EC1E7B692A815BF300DB459A /* LightBoxOverlay.swift */,
 				EC1E7B652A815BC100DB459A /* LightBoxElementView.swift */,
+				65CDA3612ACB0EB50001EC44 /* ZoomableImageView.swift */,
 				EC08542F2A4CDF8A00E88389 /* LightBoxImage.swift */,
 			);
 			path = LightBoxImage;
@@ -1550,6 +1631,7 @@
 				EC6650E92AB7E21E006B83A4 /* Zip */,
 				EC2D72B22AC5335E002601E0 /* CHTCollectionViewWaterfallLayout */,
 				EC1685302AEF4BF2000DD701 /* Gifu */,
+				6514FFEB2AFD01520051D264 /* WhatsNewKit */,
 			);
 			productName = winston;
 			productReference = EC593AD42A4673B2002D6454 /* winston.app */;
@@ -1622,6 +1704,7 @@
 				EC6650E82AB7E21E006B83A4 /* XCRemoteSwiftPackageReference "Zip" */,
 				EC2D72B12AC5335E002601E0 /* XCRemoteSwiftPackageReference "CHTCollectionViewWaterfallLayout" */,
 				EC16852F2AEF4BF2000DD701 /* XCRemoteSwiftPackageReference "Gifu" */,
+				6514FFEA2AFD01520051D264 /* XCRemoteSwiftPackageReference "WhatsNewKit" */,
 			);
 			productRefGroup = EC593AD52A4673B2002D6454 /* Products */;
 			projectDirPath = "";
@@ -1641,6 +1724,7 @@
 				EC22A3172A5B74CE0062A112 /* ci_post_clone.sh in Resources */,
 				EC593ADC2A4673B3002D6454 /* Assets.xcassets in Resources */,
 				EC6CBE332A7D6BF80089EAA0 /* README.md in Resources */,
+				65E45A6E2AFD3C1D007DBBFC /* changelog.json in Resources */,
 				ECA30A172A5FA08500BB19D1 /* WhatToTest.en-US.txt in Resources */,
 				EC051C472ACAF2DC00E9D9ED /* themeFileIcon.png in Resources */,
 			);
@@ -1668,8 +1752,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				65B0619B2AFE8A05008B7AF3 /* changelog.json in Sources */,
 				EC593AF02A47ACB0002D6454 /* Tabber.swift in Sources */,
-				ECAA35582AFFA87200C0C232 /* isImageUrl.swift in Sources */,
 				EC3AC9D42AACCBE40078EC78 /* LabeledTextField.swift in Sources */,
 				EC50B0E62A8460CD00AB8F72 /* replyModalPresenter.swift in Sources */,
 				EC593AF82A47AE39002D6454 /* Search.swift in Sources */,
@@ -1689,16 +1773,20 @@
 				ECFDEAD02A7F151500DF102D /* PostsInBoxView.swift in Sources */,
 				EC8B814E2AC9650E000DC827 /* String.swift in Sources */,
 				651D19C72A90B7D6003867A9 /* PostFontSettings.swift in Sources */,
+				65CDA3622ACB0EB50001EC44 /* ZoomableImageView.swift in Sources */,
 				EC0854262A4C013B00E88389 /* Avatar.swift in Sources */,
 				ECE285A82A513342009CF9DD /* ReplyModal.swift in Sources */,
 				ECEFC2652A5DE5910003C6C4 /* SubredditLink.swift in Sources */,
 				EC46E92E2ABA7FC1001BC068 /* BuiltInBrowser.swift in Sources */,
 				EC8F34662A6A348F00EB8249 /* SwipeActions.swift in Sources */,
 				EC3188252A92F42800CB3738 /* MultiLink.swift in Sources */,
+				652011FA2AC2C46C005DD899 /* themeStore.swift in Sources */,
 				ECAA8B5A2A75004300D9D636 /* redditURLParser.swift in Sources */,
 				EC63735D2A791E47000A03A3 /* Onboarding7Ending.swift in Sources */,
 				ECC68D412A799CDD005BC7B4 /* SelectableText.swift in Sources */,
 				ECDD515C2A73A90700FD9498 /* PreviewLink.swift in Sources */,
+				652012062AC322BC005DD899 /* fetchThemeStatus.swift in Sources */,
+				652012022AC31E7C005DD899 /* ThemeStoreUploadSheet.swift in Sources */,
 				EC5EDA712A4DA94A00140A08 /* SwipeActionsOld.swift in Sources */,
 				EC3AC9F02AB39BE50078EC78 /* FeedThemingPanel.swift in Sources */,
 				ECF0B7E92A543795002B9FAD /* fetchUsers.swift in Sources */,
@@ -1707,9 +1795,12 @@
 				ECF064ED2A7F405C0088C2C0 /* KeyWindow.swift in Sources */,
 				ECE4497D2A688A2A00E2A3B7 /* fetchSubRules.swift in Sources */,
 				EC5EDA792A4F4D4200140A08 /* vote.swift in Sources */,
+				652012002AC309FA005DD899 /* downloader.swift in Sources */,
 				ECE449792A68897600E2A3B7 /* SubredditRulesTab.swift in Sources */,
 				ECF5535B2A5C9EEA004A0136 /* searchSubreddits.swift in Sources */,
+				65CDA3642ACB0F140001EC44 /* ShareSheet.swift in Sources */,
 				EC31881C2A92BBFB00CB3738 /* Multi.swift in Sources */,
+				65840EE82AE11BFD000315E1 /* exportImportSettings.swift in Sources */,
 				ECC2C7B22AAB48D1000E196C /* ThemesPanel.swift in Sources */,
 				ECAA8B892A764A3C00D9D636 /* YTMediaPost.swift in Sources */,
 				EC2A39152AC20155001E5354 /* PostLinkTitle.swift in Sources */,
@@ -1725,6 +1816,7 @@
 				EC200C882A7795BA00E69543 /* PostContent.swift in Sources */,
 				EC3AC9D72AAD0E300078EC78 /* TagsOptionsCarousel.swift in Sources */,
 				65AA535D2A8BB27900275299 /* FAQPanel.swift in Sources */,
+				657643782ACF1D2100805641 /* FittiingScrollView.swift in Sources */,
 				ECBD8E2D2ABBCECC00C74E87 /* caches.swift in Sources */,
 				EC1E7B6A2A815BF300DB459A /* LightBoxOverlay.swift in Sources */,
 				EC6495A72A999C4A00B1852C /* CachedSub+CoreDataProperties.swift in Sources */,
@@ -1746,6 +1838,7 @@
 				ECDD514C2A72561500FD9498 /* getFlairs.swift in Sources */,
 				EC91C8542AB9601000F2AD30 /* TabBarOverlay.swift in Sources */,
 				ECE285992A50086D009CF9DD /* UserView.swift in Sources */,
+				657643802ACF20F100805641 /* ExpandableText.swift in Sources */,
 				ECD1FC072A56D46D00723016 /* ObservableArray.swift in Sources */,
 				EC8F34A12A6FC99000EB8249 /* updatePostsInBox.swift in Sources */,
 				6543D8892A8D10B900A1FFF9 /* scaleEffectButtonStyle.swift in Sources */,
@@ -1763,6 +1856,7 @@
 				659FDEA82A87798300103414 /* VoteButton.swift in Sources */,
 				ECDD51642A74C03C00FD9498 /* sendErrorEmail.swift in Sources */,
 				EC0854172A4BF45C00E88389 /* Comment.swift in Sources */,
+				ABC2180F2ABA528D00F0DABA /* Biometrics.swift in Sources */,
 				EC8F34A32A6FCB3500EB8249 /* timeSince.swift in Sources */,
 				EC8B77A22AB4D5F000875C98 /* LineThemeEditor.swift in Sources */,
 				ECF2C44B2AE81D5F004FCA79 /* DispatchQueue.swift in Sources */,
@@ -1783,8 +1877,8 @@
 				ECF5B3072AC83AE600355589 /* getAppIcon.swift in Sources */,
 				ECA30A3B2A6329CC00BB19D1 /* colors.swift in Sources */,
 				EC6373612A792B44000A03A3 /* KeyboardAware.swift in Sources */,
-				ECAA35562AFFA86B00C0C232 /* MD2.swift in Sources */,
 				EC4F8F0A2AE7070500801104 /* getTagsFromTitle.swift in Sources */,
+				652012042AC322A3005DD899 /* fetchAllThemes.swift in Sources */,
 				EC3AC9E52AAD1F260078EC78 /* TextsSettings.swift in Sources */,
 				EC593AF22A47AD97002D6454 /* Subreddits.swift in Sources */,
 				EC8F34932A6F497700EB8249 /* submitPost.swift in Sources */,
@@ -1792,6 +1886,7 @@
 				EC593AE12A4673B3002D6454 /* Persistence.swift in Sources */,
 				EC58D4532AC0251700FF5B6B /* getPostContentWidth.swift in Sources */,
 				ECC2C7B72AAC90BD000E196C /* PostSample.swift in Sources */,
+				657643822ACF224500805641 /* AppDetailFullView.swift in Sources */,
 				EC92FBDE2A589BE200391D1D /* SquircleUIKit.swift in Sources */,
 				ECAA8B602A75216E00D9D636 /* ShortPostLink.swift in Sources */,
 				ECE08B5B2AA9C43B00F84DC9 /* saveAndLoadImages.swift in Sources */,
@@ -1823,12 +1918,16 @@
 				EC0854482A4D6E8C00E88389 /* getInitialSize.swift in Sources */,
 				EC5EDA752A4E937700140A08 /* GenericRedditEntity.swift in Sources */,
 				EC91C8562AB9838D00F2AD30 /* CommonListsThemingPanel.swift in Sources */,
+				652012082AC327C7005DD899 /* uploadTheme.swift in Sources */,
 				EC3188162A92A46100CB3738 /* updateMulti.swift in Sources */,
 				EC08540E2A4BD26600E88389 /* ObservedScrollView.swift in Sources */,
+				652011FC2AC2C7BE005DD899 /* ThemeStore.swift in Sources */,
 				ECE08B7E2AA9F6A300F84DC9 /* PostThemingPanel.swift in Sources */,
+				6514FFEE2AFD01AD0051D264 /* WhatsNewCollectionProvider.swift in Sources */,
 				ECDBA8C72A4A83DB00FB42DB /* SubredditPosts.swift in Sources */,
 				ECE08B802AA9F9BA00F84DC9 /* defaultTheme.swift in Sources */,
 				EC2D275E2A4FC512006444D6 /* TappableView.swift in Sources */,
+				6576437E2ACF20DA00805641 /* AppDetailDescription.swift in Sources */,
 				EC3B32442AC64F43002C1291 /* SubredditPostsIOS.swift in Sources */,
 				EC593B922A494E7F002D6454 /* defaults.swift in Sources */,
 				EC31882D2A94736E00CB3738 /* MediaPresenter.swift in Sources */,
@@ -1845,6 +1944,7 @@
 				ECEFC2632A5DDBE00003C6C4 /* onBindingUpdate.swift in Sources */,
 				ECE731122AE042DF0059065B /* WinstonCollectionView.swift in Sources */,
 				EC593AF42A47AE1F002D6454 /* Inbox.swift in Sources */,
+				657643842AD0083500805641 /* fetchThemesByName.swift in Sources */,
 				EC1E7B642A81507B00DB459A /* UIShortTapGestureRecognizer.swift in Sources */,
 				ECF064EF2A80383C0088C2C0 /* sumCGSize.swift in Sources */,
 				ECE08B622AA9C99D00F84DC9 /* ListsTheme.swift in Sources */,
@@ -1854,9 +1954,12 @@
 				EC3B32412AC64DDE002C1291 /* Waterfall.swift in Sources */,
 				EC3AC9E92AB317CB0078EC78 /* subtleSheet.swift in Sources */,
 				EC3AC9D92AAD123E0078EC78 /* FontSelector.swift in Sources */,
+				652011FE2AC2D4F9005DD899 /* ThemeStoreDetailsView.swift in Sources */,
 				EC0854412A4D558D00E88389 /* Interpolator.swift in Sources */,
 				6593CC452A88D128003CA58D /* hapticFeedbackModifier.swift in Sources */,
 				ECAEFF6B2A77DE490052FCD3 /* emojiCodes.swift in Sources */,
+				65CDA3662ACB0F3A0001EC44 /* LiveTextInteraction.swift in Sources */,
+				65C169EC2AFFA60B007764D5 /* isImageUrl.swift in Sources */,
 				ECFDEAD22A7F154C00DF102D /* SubItem.swift in Sources */,
 				EC8F34992A6F7DDB00EB8249 /* winstonMDEditorPreset.swift in Sources */,
 				EC6495A62A999C4A00B1852C /* CachedSub+CoreDataClass.swift in Sources */,
@@ -1872,10 +1975,10 @@
 				ECDD51522A7359D100FD9498 /* MDEditor.swift in Sources */,
 				ECAD0F2C2A8B4CD4001C88B5 /* Markdownosaur.swift in Sources */,
 				EC1906ED2A55293500A0300E /* AppearancePanel.swift in Sources */,
+				65C169EA2AFFA578007764D5 /* MD2.swift in Sources */,
 				EC8B779C2AB3A45800875C98 /* ImageThemePicker.swift in Sources */,
 				EC3188062A918FF300CB3738 /* URLImage.swift in Sources */,
 				ECC10C772A4A874C009124BE /* RR.swift in Sources */,
-				ECAA355A2B00D08100C0C232 /* LightBoxOverlayAlt.swift in Sources */,
 				ECE08B822AAA0D0100F84DC9 /* PostTheme.swift in Sources */,
 				650ACAFC2A87A36900A7C600 /* calcVotes.swift in Sources */,
 				ECC2C7B42AAB4A64000E196C /* ThemeEditPanel.swift in Sources */,
@@ -1915,6 +2018,7 @@
 				EC22A3202A5C7FB50062A112 /* Message.swift in Sources */,
 				EC593AFD2A47AEBC002D6454 /* RedditAPI.swift in Sources */,
 				EC6373492A78E49A000A03A3 /* OnboardingWelcome.swift in Sources */,
+				6576437C2ACF1E3900805641 /* ScrolViewContentRTLFriendly.swift in Sources */,
 				ECDD51542A73889A00FD9498 /* rootURL.swift in Sources */,
 				EC1E7B6C2A81650700DB459A /* loader.swift in Sources */,
 				EC58D4582AC02BA500FF5B6B /* PostLinkContext.swift in Sources */,
@@ -1928,12 +2032,15 @@
 				EC1906F32A55AC6E00A0300E /* fetchMoreReplies.swift in Sources */,
 				ECB03BFB2AEC2D090090674A /* AltImage.swift in Sources */,
 				ECA30A372A622C2F00BB19D1 /* MD.swift in Sources */,
+				658DB5A42AFBB8230062F8B1 /* fetchThemeByID.swift in Sources */,
 				ECE08B7C2AA9F69A00F84DC9 /* CommentsThemingPanel.swift in Sources */,
 				EC1E7B682A815BE100DB459A /* LightboxButton.swift in Sources */,
+				6576437A2ACF1E1A00805641 /* AppDetailScreenshots.swift in Sources */,
 				6593CC432A88C9E8003CA58D /* AccessibilityPanel.swift in Sources */,
 				ECEFC2732A5F70B70003C6C4 /* saveMedia.swift in Sources */,
 				ECEFC2672A5DE60C0003C6C4 /* UserLink.swift in Sources */,
 				ECC68D492A7A9136005BC7B4 /* WDivider.swift in Sources */,
+				65010D032AC70ADD00A8F611 /* getDownloadURL.swift in Sources */,
 				EC6373572A791A2D000A03A3 /* Onboarding5GettingSecret.swift in Sources */,
 				ECF1478F2AB620A400572352 /* CommentSample.swift in Sources */,
 				ECE08B682AA9E62900F84DC9 /* AvatarTheme.swift in Sources */,
@@ -1945,6 +2052,7 @@
 				EC3188102A92A40600CB3738 /* fetchMyMultis.swift in Sources */,
 				EC8B779E2AB3A9C500875C98 /* SchemesBGImagesPicker.swift in Sources */,
 				EC828EA92A904E56009478B1 /* TestersCelebration.swift in Sources */,
+				65A5FFF22ACED3BF000D1ADA /* getPreviewImages.swift in Sources */,
 				ECE08B862AAA43F400F84DC9 /* NiceDivider.swift in Sources */,
 				EC12D7182A59C7A800C300B3 /* Arrows.swift in Sources */,
 				ECDD514E2A726E5900FD9498 /* modifyColor.swift in Sources */,
@@ -1952,6 +2060,7 @@
 				ECE08B8A2AAB421400F84DC9 /* randWord.swift in Sources */,
 				ECF314E52ABC187400DFDDBA /* hashableCGSize.swift in Sources */,
 				EC593AF62A47AE30002D6454 /* Me.swift in Sources */,
+				65D265412ABEC6FF009E01F9 /* urlCleaner.swift in Sources */,
 				EC3188142A92A43300CB3738 /* fetchMultiInfo.swift in Sources */,
 				EC12D71A2A59C81A00C300B3 /* CommentLinkContent.swift in Sources */,
 				ECE08B592AA9A3C300F84DC9 /* WinstonTheme.swift in Sources */,
@@ -1972,6 +2081,7 @@
 				EC2D27652A4FCE42006444D6 /* SubredditInfo.swift in Sources */,
 				EC0854132A4BE13000E88389 /* PostView.swift in Sources */,
 				ECE449712A67610A00E2A3B7 /* VotesPopover.swift in Sources */,
+				65E45A702AFD3E48007DBBFC /* whatsNew.swift in Sources */,
 				ECE449812A689C8A00E2A3B7 /* subscribe.swift in Sources */,
 				EC3188322A94770700CB3738 /* GalleryThumb.swift in Sources */,
 				EC7DBDF32A86C92200D7C123 /* PostSwipePanel.swift in Sources */,
@@ -2144,6 +2254,7 @@
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
 				INFOPLIST_KEY_LSSupportsOpeningDocumentsInPlace = YES;
 				INFOPLIST_KEY_NSDocumentsFolderUsageDescription = "Winston needs access to your documents to save/import themes.";
+				INFOPLIST_KEY_NSFaceIDUsageDescription = "Uses FaceID to lock and unlock Winston";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Winston needs access to your library to be able to download images.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -2155,7 +2266,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = lo.cafe.winston;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SCAN_ALL_SOURCE_FILES_FOR_INCLUDES = NO;
@@ -2186,6 +2297,7 @@
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
 				INFOPLIST_KEY_LSSupportsOpeningDocumentsInPlace = YES;
 				INFOPLIST_KEY_NSDocumentsFolderUsageDescription = "Winston needs access to your documents to save/import themes.";
+				INFOPLIST_KEY_NSFaceIDUsageDescription = "Uses FaceID to lock and unlock Winston";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Winston needs access to your library to be able to download images.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -2197,7 +2309,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = lo.cafe.winston;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SCAN_ALL_SOURCE_FILES_FOR_INCLUDES = NO;
@@ -2300,6 +2412,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		6514FFEA2AFD01520051D264 /* XCRemoteSwiftPackageReference "WhatsNewKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SvenTiigi/WhatsNewKit.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.1.0;
+			};
+		};
 		EC08543B2A4CFE1C00E88389 /* XCRemoteSwiftPackageReference "swiftui-introspect" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/siteline/swiftui-introspect";
@@ -2455,6 +2575,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		6514FFEB2AFD01520051D264 /* WhatsNewKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 6514FFEA2AFD01520051D264 /* XCRemoteSwiftPackageReference "WhatsNewKit" */;
+			productName = WhatsNewKit;
+		};
 		EC08543C2A4CFE1C00E88389 /* SwiftUIIntrospect */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = EC08543B2A4CFE1C00E88389 /* XCRemoteSwiftPackageReference "swiftui-introspect" */;

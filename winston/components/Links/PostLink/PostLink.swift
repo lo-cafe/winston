@@ -120,7 +120,7 @@ extension View {
 //      .gesture(TapGesture().onEnded(openPost))
       .compositingGroup()
       .brightness(isOpen.wrappedValue ? 0.075 : 0)
-      .opacity(fadeReadPosts && seen ? 0.6 : 1)
+      .opacity(fadeReadPosts && seen ? theme.theme.unseenFadeOpacity : 1)
       .contextMenu(menuItems: { PostLinkContext(post: post) }, preview: { PostLinkContextPreview(post: post, sub: sub, routerProxy: routerProxy) })
       .foregroundStyle(.primary)
       .multilineTextAlignment(.leading)

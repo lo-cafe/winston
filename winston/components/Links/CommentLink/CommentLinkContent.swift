@@ -40,7 +40,8 @@ class MyDefaults {
 struct CommentLinkContent: View {
   var disableBG = false
   var highlightID: String?
-  //  @Default(.commentSwipeActions) private var commentSwipeActions
+//  @Default(.commentSwipeActions) private var commentSwipeActions
+  // var seenComments: String?
   var forcedBodySize: CGSize?
   var showReplies = true
   var arrowKinds: [ArrowKind]
@@ -68,10 +69,11 @@ struct CommentLinkContent: View {
   
   @State var commentViewLoaded = false
   
-  var body: some View {
+  var body: some View {    
     let theme = selectedTheme.comments
     let selectable = (comment.data?.winstonSelecting ?? false)
     let horPad = theme.theme.innerPadding.horizontal
+    
     if let data = comment.data {
       let collapsed = data.collapsed ?? false
       Group {
@@ -122,7 +124,11 @@ struct CommentLinkContent: View {
               HStack(alignment: .center, spacing: 4) {
                 Image(systemName: "arrow.up")
                   .foregroundColor(data.likes != nil && data.likes! ? .orange : .gray)
-                
+                  .contentShape(Rectangle())
+                  .onTapGesture {
+                      Task { _ = await comment.vote(action: .up) }
+                  }
+                  
                 let downup = Int(ups)
                 Text(formatBigNumber(downup))
                   .foregroundColor(data.likes != nil ? (data.likes! ? .orange : .blue) : .gray)
@@ -133,6 +139,10 @@ struct CommentLinkContent: View {
                 
                 Image(systemName: "arrow.down")
                   .foregroundColor(data.likes != nil && !data.likes! ? .blue : .gray)
+                  .contentShape(Rectangle())
+                  .onTapGesture {
+                      Task { _ = await comment.vote(action: .down) }
+                  }
               }
               .fontSize(14, .medium)
               .padding(.horizontal, 6)
@@ -219,7 +229,8 @@ struct CommentLinkContent: View {
                     Text(body.md())
                       .lineLimit(lineLimit)
                   } else {
-                    MD(data.winstonBodyAttrEncoded == nil ? .str(body) : .json(data.winstonBodyAttrEncoded!), fontSize: theme.theme.bodyText.size)
+                    MD2(data.winstonBodyAttrEncoded == nil ? .str(body) : .json(data.winstonBodyAttrEncoded!), fontSize: theme.theme.bodyText.size)
+                        .lineSpacing(theme.theme.linespacing)
                       .fixedSize(horizontal: false, vertical: true)
                       .overlay(
                         !selectable

@@ -44,7 +44,7 @@ struct SubItem: View {
     if let data = sub.data {
       let favorite = cachedSub.user_has_favorited
       let localFav = likedButNotSubbed.contains(sub)
-      let isActive = selectedSub == .sub(sub) 
+      let isActive = selectedSub == .sub(sub)
       WListButton(showArrow: !IPAD, active: isActive) {
         selectedSub = .sub(sub)
       } label: {

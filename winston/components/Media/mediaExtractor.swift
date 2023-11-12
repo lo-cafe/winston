@@ -10,6 +10,7 @@ import SwiftUI
 import NukeUI
 import Nuke
 import YouTubePlayerKit
+import Alamofire
 
 struct ImgExtracted: Equatable, Identifiable {
   static func == (lhs: ImgExtracted, rhs: ImgExtracted) -> Bool {
@@ -134,6 +135,25 @@ func mediaExtractor(compact: Bool, contentWidth: Double = UIScreen.screenWidth, 
     return .video(SharedVideo(url: url, size: CGSize(width: 0, height: 0)))
   }
   
+  // MANDRAKE
+//  if data.url.contains("streamable") {
+//    let url = data.url;
+//    let shortCode = url[url.index(url.lastIndex(of: "/") ?? url.startIndex, offsetBy: 1)...]
+//
+//    let response = await AF.request(
+//      "https://api.streamable.com/videos/\(shortCode)"
+//    ).serializingDecodable(StreamableAPIResponse.self).response
+//    
+//    switch response.result {
+//    case .success(let data):
+//      if let mp4 = data.files?.mp4Mobile ?? data.files?.mp4 {
+//        return .video(MediaExtracted(url: URL(string: mp4.url)!, size: CGSize(width: mp4.width, height: mp4.height)))
+//      }
+//    case .failure:
+//      return nil
+//    }
+//  }
+  
   let actualURL = data.url.hasPrefix("/r/") || data.url.hasPrefix("/u/") ? "https://reddit.com\(data.url)" : data.url
   guard let urlComponents = URLComponents(string: actualURL) else {
     return nil
@@ -195,4 +215,26 @@ private func extractYoutubeIdFromOEmbed(_ text: String) -> String? {
   return regex?.firstMatch(in: text, options: [], range: NSRange(location: 0, length: text.count)).map {
     String(text[Range($0.range, in: text)!])
   }
+}
+
+struct StreamableAPIParams: Codable {}
+          
+struct StreamableAPIResponse: Codable {
+  let files: StreamableAPIFiles?
+}
+
+struct StreamableAPIFiles: Codable {
+  let mp4 : StreamableAPIFile?
+  let mp4Mobile:  StreamableAPIFile?
+
+  enum CodingKeys : String, CodingKey {
+    case mp4 = "mp4"
+    case mp4Mobile = "mp4-mobile"
+  }
+}
+
+struct StreamableAPIFile: Codable {
+  let url: String
+  let width: Int
+  let height: Int
 }

@@ -12,10 +12,21 @@ import AVKit
 import AVFoundation
 import Nuke
 
-class AppDelegate: NSObject, UIApplicationDelegate {
+class AppDelegate: UIResponder, UIApplicationDelegate {
   func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
     try? AVAudioSession.sharedInstance().setCategory(.playback, mode: .default, options: [.mixWithOthers])
     return true
+  }
+  
+  func application(_ application: UIApplication, configurationForConnecting connectingSceneSession: UISceneSession, options: UIScene.ConnectionOptions) -> UISceneConfiguration {
+    if let shortcutItem = options.shortcutItem {
+      shortcutItemToProcess = shortcutItem
+    }
+    
+    let sceneConfiguration = UISceneConfiguration(name: "Custom Configuration", sessionRole: connectingSceneSession.role)
+    sceneConfiguration.delegateClass = CustomSceneDelegate.self
+    
+    return sceneConfiguration
   }
   func applicationDidFinishLaunching(_ application: UIApplication) {
     let defaultPipeline = ImagePipeline { config in
@@ -35,5 +46,11 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 //      config.isRateLimiterEnabled = false
     }
     ImagePipeline.shared = defaultPipeline
+  }
+}
+
+class CustomSceneDelegate: UIResponder, UIWindowSceneDelegate {
+  func windowScene(_ windowScene: UIWindowScene, performActionFor shortcutItem: UIApplicationShortcutItem, completionHandler: @escaping (Bool) -> Void) {
+    shortcutItemToProcess = shortcutItem
   }
 }

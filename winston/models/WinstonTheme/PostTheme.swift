@@ -9,7 +9,7 @@ import Foundation
 
 struct PostTheme: Codable, Hashable, Equatable {
   enum CodingKeys: String, CodingKey {
-    case padding, spacing, badge, bg, commentsDistance, titleText, bodyText
+    case padding, spacing, badge, bg, commentsDistance, titleText, bodyText, linespacing
   }
 
   var padding: ThemePadding
@@ -19,8 +19,9 @@ struct PostTheme: Codable, Hashable, Equatable {
   var commentsDistance: CGFloat
   var titleText: ThemeText
   var bodyText: ThemeText
+  var linespacing: CGFloat
   
-  init(padding: ThemePadding, spacing: CGFloat, badge: BadgeTheme, bg: ThemeBG, commentsDistance: CGFloat, titleText: ThemeText, bodyText: ThemeText) {
+  init(padding: ThemePadding, spacing: CGFloat, badge: BadgeTheme, bg: ThemeBG, commentsDistance: CGFloat, titleText: ThemeText, bodyText: ThemeText, linespacing: CGFloat) {
     self.padding = padding
     self.spacing = spacing
     self.badge = badge
@@ -28,6 +29,7 @@ struct PostTheme: Codable, Hashable, Equatable {
     self.commentsDistance = commentsDistance
     self.titleText = titleText
     self.bodyText = bodyText
+    self.linespacing = linespacing
   }
   
   func encode(to encoder: Encoder) throws {
@@ -39,6 +41,7 @@ struct PostTheme: Codable, Hashable, Equatable {
     try container.encodeIfPresent(commentsDistance, forKey: .commentsDistance)
     try container.encodeIfPresent(titleText, forKey: .titleText)
     try container.encodeIfPresent(bodyText, forKey: .bodyText)
+    try container.encodeIfPresent(linespacing, forKey: .linespacing)
   }
   
   init(from decoder: Decoder) throws {
@@ -51,5 +54,6 @@ struct PostTheme: Codable, Hashable, Equatable {
     self.commentsDistance = try container.decodeIfPresent(CGFloat.self, forKey: .commentsDistance) ?? t.commentsDistance
     self.titleText = try container.decodeIfPresent(ThemeText.self, forKey: .titleText) ?? t.titleText
     self.bodyText = try container.decodeIfPresent(ThemeText.self, forKey: .bodyText) ?? t.bodyText
+    self.linespacing = try container.decodeIfPresent(CGFloat.self, forKey: .linespacing) ?? t.linespacing
   }
 }

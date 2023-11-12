@@ -52,6 +52,7 @@ struct MessageData: GenericRedditEntityDataType {
 //    let associated_awarding_id: String?
 //    let score: Int?
     let author: String?
+    let author_flair_text: String?
 //    let num_comments: Int?
     let parent_id: String?
     let subreddit_name_prefixed: String?

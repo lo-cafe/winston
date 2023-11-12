@@ -12,12 +12,13 @@ import Defaults
 private let SPACING = 24.0
 
 struct LightBoxImage: View {
-  let postTitle: String
-  let badgeKit: BadgeKit
-  let avatarImageRequest: ImageRequest?
-  let markAsSeen: (() async -> ())?
+  var postTitle: String? = nil
+  var badgeKit: BadgeKit? = nil
+  var avatarImageRequest: ImageRequest? = nil
+  var markAsSeen: (() async -> ())? = nil
   var i: Int
   var imagesArr: [ImgExtracted]
+  var doLiveText: Bool
   @Environment(\.dismiss) private var dismiss
   @State private var appearBlack = false
   @State private var appearContent = false
@@ -32,6 +33,7 @@ struct LightBoxImage: View {
   @Default(.lightboxViewsPost) private var lightboxViewsPost
   
   @State private var isPinching: Bool = false
+  @State private var isZoomed: Bool = false
   @State private var scale: CGFloat = 1.0
   
   private enum Axis {
@@ -50,7 +52,7 @@ struct LightBoxImage: View {
     HStack(spacing: SPACING) {
       ForEach(Array(imagesArr.enumerated()), id: \.element.id) { index, img in
         let selected = index == activeIndex
-        LightBoxElementView(el: img, onTap: toggleOverlay, isPinching: $isPinching)
+        LightBoxElementView(el: img, onTap: toggleOverlay, doLiveText: doLiveText, isPinching: $isPinching, isZoomed: $isZoomed)
           .allowsHitTesting(selected)
           .scaleEffect(!selected ? 1 : interpolate([1, 0.9], true))
           .blur(radius: selected && loading ? 24 : 0)
@@ -123,7 +125,13 @@ struct LightBoxImage: View {
           }
         }
     )
-    .overlay(LightBoxOverlay(postTitle: postTitle, badgeKit: badgeKit, avatarImageRequest: avatarImageRequest, opacity: !showOverlay || isPinching ? 0 : interpolate([1, 0], false), imagesArr: imagesArr, activeIndex: activeIndex, loading: $loading, done: $done))
+    .overlay(
+      Group {
+        if let postTitle = postTitle, let badgeKit = badgeKit {
+          LightBoxOverlay(postTitle: postTitle, badgeKit: badgeKit, avatarImageRequest: avatarImageRequest, opacity: !showOverlay || isPinching ? 0 : interpolate([1, 0], false), imagesArr: imagesArr, activeIndex: activeIndex, loading: $loading, done: $done)
+        }
+      }
+    )
     .background(
       !appearBlack
       ? nil

@@ -53,7 +53,7 @@ struct PostLinkNormal: View, Equatable {
   let showTitleAtTop: Bool
   var cs: ColorScheme
   
-//  @Environment(\.useTheme) private var selectedTheme
+  //  @Environment(\.useTheme) private var selectedTheme
   
   @State private var isOpen = false
   
@@ -84,7 +84,7 @@ struct PostLinkNormal: View, Equatable {
       let over18 = data.over_18 ?? false
       VStack(alignment: .leading, spacing: theme.theme.verticalElementsSpacing) {
         if showSubsAtTop {
-//          SubsNStuffLine(showSub: showSub, feedsAndSuch: feedsAndSuch, subredditIconKit: subData.subredditIconKit, sub: sub, routerProxy: routerProxy, over18: over18)
+          //          SubsNStuffLine(showSub: showSub, feedsAndSuch: feedsAndSuch, subredditIconKit: subData.subredditIconKit, sub: sub, routerProxy: routerProxy, over18: over18)
           SubsNStuffLine()
             .equatable()
         }
@@ -94,43 +94,44 @@ struct PostLinkNormal: View, Equatable {
           
           if case .repost(let repost) = extractedMedia {
             if let repostSub = repost.winstonData?.subreddit, let repostWinstonData = repost.winstonData {
-//                SwipeRevolution(size: repostWinstonData.postDimensions.size, actionsSet: postSwipeActions, entity: repost) { controller in
-                  PostLink(
-                    id: repost.id,
-                    controller: controller,
-                    avatarRequest: repostAvatarRequest,
-                    theme: theme,
-                    showSub: true,
-                    secondary: true,
-                    routerProxy: routerProxy,
-                    contentWidth: contentWidth,
-                    blurPostLinkNSFW: blurPostLinkNSFW,
-                    postSwipeActions: postSwipeActions,
-                    showVotes: showVotes,
-                    showSelfText: showSelfText,
-                    readPostOnScroll: readPostOnScroll,
-                    hideReadPosts: hideReadPosts,
-                    showUpvoteRatio: showUpvoteRatio,
-                    showSubsAtTop: showSubsAtTop,
-                    showTitleAtTop: showTitleAtTop,
-                    compact: false,
-                    thumbnailPositionRight: nil,
-                    voteButtonPositionRight: nil,
-                    showSelfPostThumbnails: false,
-                    cs: cs
-                  )
-//                }
-                  .swipyRev(size: winstonData.postDimensions.size, actionsSet: postSwipeActions, entity: post)
-                .environmentObject(repost)
-                .environmentObject(repostWinstonData)
-                .environmentObject(repostSub)
-              }
+              //                SwipeRevolution(size: repostWinstonData.postDimensions.size, actionsSet: postSwipeActions, entity: repost) { controller in
+              PostLink(
+                id: repost.id,
+                controller: controller,
+                avatarRequest: repostAvatarRequest,
+                theme: theme,
+                showSub: true,
+                secondary: true,
+                routerProxy: routerProxy,
+                contentWidth: contentWidth,
+                blurPostLinkNSFW: blurPostLinkNSFW,
+                postSwipeActions: postSwipeActions,
+                showVotes: showVotes,
+                showSelfText: showSelfText,
+                readPostOnScroll: readPostOnScroll,
+                hideReadPosts: hideReadPosts,
+                showUpvoteRatio: showUpvoteRatio,
+                showSubsAtTop: showSubsAtTop,
+                showTitleAtTop: showTitleAtTop,
+                compact: false,
+                thumbnailPositionRight: nil,
+                voteButtonPositionRight: nil,
+                showSelfPostThumbnails: false,
+                cs: cs
+              )
+              //                }
+              .swipyRev(size: winstonData.postDimensions.size, actionsSet: postSwipeActions, entity: post)
+              .environmentObject(repost)
+              .environmentObject(repostWinstonData)
+              .environmentObject(repostSub)
+            }
           }
         }
         PostLinkTitle(attrString: winstonData.titleAttr, label: data.title.escape, theme: theme.theme.titleText, cs: cs, size: winstonData.postDimensions.titleSize, nsfw: over18, flair: data.link_flair_text)
         
         if !data.selftext.isEmpty && showSelfText {
           PostLinkNormalSelftext(selftext: data.selftext, theme: theme.theme.bodyText, cs: cs)
+            .lineSpacing(theme.theme.linespacing)
         }
         
         if showTitleAtTop, let extractedMedia = post.winstonData?.extractedMedia {
@@ -139,10 +140,10 @@ struct PostLinkNormal: View, Equatable {
         
         
         if !showSubsAtTop {
-//          SubsNStuffLine(showSub: showSub, feedsAndSuch: feedsAndSuch, subredditIconKit: subData.subredditIconKit, sub: sub, routerProxy: routerProxy, over18: over18).equatable()
+          //          SubsNStuffLine(showSub: showSub, feedsAndSuch: feedsAndSuch, subredditIconKit: subData.subredditIconKit, sub: sub, routerProxy: routerProxy, over18: over18).equatable()
           SubsNStuffLine().equatable()
         }
-//        
+        //
         HStack {
           BadgeView(avatarRequest: winstonData.avatarImageRequest, saved: data.badgeKit.saved, usernameColor: nil, author: data.badgeKit.author, fullname: data.badgeKit.authorFullname, created: data.badgeKit.created, avatarURL: nil, theme: theme.theme.badge, commentsCount: formatBigNumber(data.badgeKit.numComments), votesCount: !showVotes ? nil : formatBigNumber(data.badgeKit.ups), routerProxy: routerProxy, cs: cs)
           
@@ -153,9 +154,9 @@ struct PostLinkNormal: View, Equatable {
         }
       }
       .postLinkStyle(post: post, sub: sub, routerProxy: routerProxy, theme: theme, size: winstonData.postDimensions.size, secondary: secondary, isOpen: $isOpen, openPost: openPost, readPostOnScroll: readPostOnScroll, hideReadPosts: hideReadPosts, cs: cs)
-//      .scrollSwipe(size: winstonData.postDimensions.size, actionsSet: postSwipeActions, entity: post)
+      //      .scrollSwipe(size: winstonData.postDimensions.size, actionsSet: postSwipeActions, entity: post)
       .swipyUI(onTap: openPost, actionsSet: postSwipeActions, entity: post)
-//      .onChange(of: selectedTheme) { x in post.setupWinstonData(data: post.data, winstonData: winstonData, theme: x) }
+      //      .onChange(of: selectedTheme) { x in post.setupWinstonData(data: post.data, winstonData: winstonData, theme: x) }
       .frame(width: winstonData.postDimensions.size.width, height: winstonData.postDimensions.size.height)
     }
   }

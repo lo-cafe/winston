@@ -40,7 +40,7 @@ struct CommentsSectionTheme: Codable, Hashable, Equatable {
 
 struct CommentTheme: Codable, Hashable, Equatable {
   enum CodingKeys: String, CodingKey {
-    case innerPadding, outerHPadding, repliesSpacing, indentCurve, indentColor, cornerRadius, badge, bodyText, bodyAuthorSpacing, bg
+    case innerPadding, outerHPadding, repliesSpacing, indentCurve, indentColor, cornerRadius, badge, bodyText, bodyAuthorSpacing, linespacing, bg, loadMoreInnerPadding, loadMoreOuterTopPadding, loadMoreText, loadMoreBackground, unseenDot
   }
   
   var innerPadding: ThemePadding
@@ -52,9 +52,17 @@ struct CommentTheme: Codable, Hashable, Equatable {
   var badge: BadgeTheme
   var bodyText: ThemeText
   var bodyAuthorSpacing: CGFloat
+  var linespacing: CGFloat
   var bg: ColorSchemes<ThemeColor>
+    
+  var loadMoreInnerPadding: ThemePadding
+  var loadMoreOuterTopPadding: CGFloat
+  var loadMoreText : ThemeText
+  var loadMoreBackground : ColorSchemes<ThemeColor>
   
-  init(innerPadding: ThemePadding, outerHPadding: CGFloat, repliesSpacing: CGFloat, indentCurve: CGFloat, indentColor: ColorSchemes<ThemeColor>, cornerRadius: CGFloat, badge: BadgeTheme, bodyText: ThemeText, bodyAuthorSpacing: CGFloat, bg: ColorSchemes<ThemeColor>) {
+  var unseenDot : ColorSchemes<ThemeColor>
+  
+  init(innerPadding: ThemePadding, outerHPadding: CGFloat, repliesSpacing: CGFloat, indentCurve: CGFloat, indentColor: ColorSchemes<ThemeColor>, cornerRadius: CGFloat, badge: BadgeTheme, bodyText: ThemeText, bodyAuthorSpacing: CGFloat, linespacing: CGFloat, bg: ColorSchemes<ThemeColor>, loadMoreInnerPadding: ThemePadding, loadMoreOuterTopPadding: CGFloat, loadMoreText : ThemeText, loadMoreBackground : ColorSchemes<ThemeColor>, unseenDot : ColorSchemes<ThemeColor>) {
     self.innerPadding = innerPadding
     self.outerHPadding = outerHPadding
     self.repliesSpacing = repliesSpacing
@@ -64,7 +72,14 @@ struct CommentTheme: Codable, Hashable, Equatable {
     self.badge = badge
     self.bodyText = bodyText
     self.bodyAuthorSpacing = bodyAuthorSpacing
+    self.linespacing = linespacing
     self.bg = bg
+    self.loadMoreInnerPadding = loadMoreInnerPadding
+    self.loadMoreOuterTopPadding = loadMoreOuterTopPadding
+    self.loadMoreText = loadMoreText
+    self.loadMoreBackground = loadMoreBackground
+    self.unseenDot = unseenDot
+    
   }
   
   func encode(to encoder: Encoder) throws {
@@ -78,7 +93,13 @@ struct CommentTheme: Codable, Hashable, Equatable {
     try container.encodeIfPresent(badge, forKey: .badge)
     try container.encodeIfPresent(bodyText, forKey: .bodyText)
     try container.encodeIfPresent(bodyAuthorSpacing, forKey: .bodyAuthorSpacing)
+    try container.encodeIfPresent(linespacing, forKey: .linespacing)
     try container.encodeIfPresent(bg, forKey: .bg)
+    try container.encodeIfPresent(loadMoreInnerPadding, forKey: .loadMoreInnerPadding)
+    try container.encodeIfPresent(loadMoreOuterTopPadding, forKey: .loadMoreOuterTopPadding)
+    try container.encodeIfPresent(loadMoreText, forKey: .loadMoreText)
+    try container.encodeIfPresent(loadMoreBackground, forKey: .loadMoreBackground)
+    try container.encodeIfPresent(unseenDot, forKey: .unseenDot)
   }
   
   init(from decoder: Decoder) throws {
@@ -93,6 +114,13 @@ struct CommentTheme: Codable, Hashable, Equatable {
     self.badge = try container.decodeIfPresent(BadgeTheme.self, forKey: .badge) ?? t.badge
     self.bodyText = try container.decodeIfPresent(ThemeText.self, forKey: .bodyText) ?? t.bodyText
     self.bodyAuthorSpacing = try container.decodeIfPresent(CGFloat.self, forKey: .bodyAuthorSpacing) ?? t.bodyAuthorSpacing
+    self.linespacing = try container.decodeIfPresent(CGFloat.self, forKey: .linespacing) ?? t.linespacing
     self.bg = try container.decodeIfPresent(ColorSchemes<ThemeColor>.self, forKey: .bg) ?? t.bg
+    self.loadMoreInnerPadding = try container.decodeIfPresent(ThemePadding.self, forKey: .loadMoreInnerPadding) ?? t.loadMoreInnerPadding
+    self.loadMoreOuterTopPadding = try container.decodeIfPresent(CGFloat.self, forKey: .loadMoreOuterTopPadding) ?? t.loadMoreOuterTopPadding
+    self.loadMoreText = try container.decodeIfPresent(ThemeText.self, forKey: .loadMoreText) ?? t.loadMoreText
+    self.loadMoreText = try container.decodeIfPresent(ThemeText.self, forKey: .loadMoreText) ?? t.loadMoreText
+    self.loadMoreBackground = try container.decodeIfPresent(ColorSchemes<ThemeColor>.self, forKey: .loadMoreBackground) ?? t.loadMoreBackground
+    self.unseenDot = try container.decodeIfPresent(ColorSchemes<ThemeColor>.self, forKey: .unseenDot) ?? t.unseenDot
   }
 }

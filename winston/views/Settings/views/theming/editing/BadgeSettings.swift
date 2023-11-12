@@ -32,6 +32,14 @@ struct BadgeSettings: View {
         FakeSection("Author font") {
           FontSelector(theme: $theme.authorText, defaultVal: defaultVal.authorText)
         }
+          
+        FakeSection("Flair font") {
+          FontSelector(theme: $theme.flairText, defaultVal: defaultVal.flairText)
+        }
+        
+        FakeSection("Flair Background") {
+          SchemesColorPicker(theme: $theme.flairBackground, defaultVal: defaultVal.flairBackground)
+        }
         
         FakeSection("Stats font") {
           FontSelector(theme: $theme.statsText, defaultVal: defaultTheme.posts.badge.statsText)

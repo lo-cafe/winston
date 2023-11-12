@@ -7,10 +7,11 @@
 
 import SwiftUI
 import Defaults
+import WhatsNewKit
 //import SceneKit
 
 enum SettingsPages {
-  case behavior, appearance, account, about, commentSwipe, postSwipe, accessibility, faq, general, postFontSettings, themes, filteredSubreddits, appIcon
+  case behavior, appearance, account, about, commentSwipe, postSwipe, accessibility, faq, general, postFontSettings, themes, filteredSubreddits, appIcon, themeStore
 }
 
 struct Settings: View {
@@ -21,6 +22,9 @@ struct Settings: View {
   @Environment(\.useTheme) private var selectedTheme
   @Environment(\.colorScheme) private var cs
   @State private var id = UUID().uuidString
+  
+  @State var presentingWhatsNew: Bool = false
+  
   var body: some View {
     NavigationStack(path: $router.path) {
       RouterProxyInjector(routerProxy: RouterProxy(router)) { routerProxy in
@@ -48,6 +52,13 @@ struct Settings: View {
               WNavigationLink(value: SettingsPages.about) {
                 Label("About", systemImage: "cup.and.saucer.fill")
               }
+              
+              WListButton {
+                presentingWhatsNew.toggle()
+              } label: {
+                Label("Whats New", systemImage: "star")
+              }
+              .disabled(getCurrentChangelog().isEmpty)
               
               WListButton {
                 sendCustomEmail()
@@ -79,6 +90,11 @@ struct Settings: View {
           .themedListDividers()
           
         }
+        .sheet(isPresented: $presentingWhatsNew){
+          if let isNew = getCurrentChangelog().first {
+              WhatsNewView(whatsNew: isNew)
+          }
+        }
         .themedListBG(selectedTheme.lists.bg)
         .scrollContentBackground(.hidden)
         .navigationDestination(for: SettingsPages.self) { x in
@@ -108,6 +124,8 @@ struct Settings: View {
               FAQPanel()
             case .themes:
               ThemesPanel()
+            case .themeStore:
+              ThemeStore()
             case .appIcon:
               AppIconSetting()
             }
@@ -121,6 +139,7 @@ struct Settings: View {
         .onChange(of: reset) { _ in router.path.removeLast(router.path.count) }
       }
     }
+    
   }
 }
 

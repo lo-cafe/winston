@@ -35,6 +35,9 @@ struct CommentsGeneralSettings: View {
           Divider()
           LabeledSlider(label: "Body/author spacing", value: $theme.comments.theme.bodyAuthorSpacing, range: 0...64)
             .resetter($theme.comments.theme.bodyAuthorSpacing, defaultTheme.comments.theme.bodyAuthorSpacing)
+          Divider()
+          LabeledSlider(label: "Line spacing", value: $theme.comments.theme.linespacing, range: 0...64)
+            .resetter($theme.comments.theme.linespacing, defaultTheme.comments.theme.linespacing)
         }
       }
       
@@ -57,6 +60,29 @@ struct CommentsGeneralSettings: View {
       
       FakeSection("Comments divider") {
         LineThemeEditor(theme: $theme.comments.divider, defaultVal: defaultTheme.comments.divider)
+      }
+        
+      FakeSection("Load More spacing") {
+        LabeledSlider(label: "Inner horizontal padding", value: $theme.comments.theme.loadMoreInnerPadding.horizontal, range: 0...64)
+          .resetter($theme.comments.theme.innerPadding.horizontal, defaultTheme.comments.theme.loadMoreInnerPadding.horizontal)
+        Divider()
+        LabeledSlider(label: "Inner vertical padding", value: $theme.comments.theme.loadMoreInnerPadding.vertical, range: 0...64)
+          .resetter($theme.comments.theme.innerPadding.vertical, defaultTheme.comments.theme.loadMoreInnerPadding.vertical)
+        Divider()
+        LabeledSlider(label: "Outer top padding", value: $theme.comments.theme.loadMoreOuterTopPadding, range: 0...64)
+          .resetter($theme.comments.theme.outerHPadding, defaultTheme.comments.theme.loadMoreOuterTopPadding)
+      }
+      
+      FakeSection("Load More text") {
+        FontSelector(theme: $theme.comments.theme.loadMoreText, defaultVal: defaultTheme.comments.theme.loadMoreText)
+      }
+      
+      FakeSection("Load More background") {
+        SchemesColorPicker(theme: $theme.comments.theme.loadMoreBackground, defaultVal:  defaultTheme.comments.theme.loadMoreBackground)
+      }
+      
+      FakeSection("Unseen Dot") {
+        SchemesColorPicker(theme: $theme.comments.theme.unseenDot, defaultVal:  defaultTheme.comments.theme.unseenDot)
       }
     }
   }

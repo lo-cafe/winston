@@ -116,7 +116,7 @@ struct ImageMediaPost: View, Equatable {
 //      LightBoxImage(postTitle: postTitle, badgeKit: badgeKit, markAsSeen: markAsSeen, i: fullscreenIndex ?? 0, imagesArr: images)
 //    })
     .fullScreenCover(item: $fullscreenIndex) { i in
-      LightBoxImage(postTitle: postTitle, badgeKit: badgeKit, avatarImageRequest: avatarImageRequest, markAsSeen: markAsSeen, i: i, imagesArr: images)
+      LightBoxImage(postTitle: postTitle, badgeKit: badgeKit, avatarImageRequest: avatarImageRequest, markAsSeen: markAsSeen, i: i, imagesArr: images, doLiveText: Defaults[.doLiveText])
     }
   }
 }

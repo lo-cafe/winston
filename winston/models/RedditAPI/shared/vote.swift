@@ -12,7 +12,7 @@ extension RedditAPI {
   func vote(_ action: VoteAction, id: String) async -> Bool? {
     await refreshToken()
     //    await getModHash()
-    if let headers = self.getRequestHeaders() {
+    if var headers = self.getRequestHeaders() {
       let params = VotePayload(dir: action.rawValue, id: id)
       let dataTask = AF.request(
         "\(RedditAPI.redditApiURLBase)/api/vote?redditWebClient=2x&app=desktop2x-client-production&raw_json=1&gilding_detail=1",

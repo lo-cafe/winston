@@ -9,7 +9,7 @@ import SwiftUI
 import NukeUI
 import Nuke
 import NukeExtensions
-//import Giffy
+import VisionKit
 
 struct URLImage: View, Equatable {
   static func == (lhs: URLImage, rhs: URLImage) -> Bool {
@@ -17,6 +17,7 @@ struct URLImage: View, Equatable {
   }
   
   let url: URL
+  var doLiveText: Bool = false
   var imgRequest: ImageRequest? = nil
   var pipeline: ImagePipeline? = nil
   var processors: [ImageProcessing]? = nil
@@ -56,7 +57,23 @@ struct URLImage: View, Equatable {
 ////            Image(uiImage: response.image).resizable()
 //          }
           if let image = state.image {
-            image.resizable()
+            if doLiveText && ImageAnalyzer.isSupported {
+              LiveTextInteraction(image: image)
+                .scaledToFill()
+            } else {
+              image
+                .resizable()
+                .scaledToFit()
+            }
+          // } else if state.error != nil {
+          //   Color.red.opacity(0.1)
+          //     .overlay(Image(systemName: "xmark.circle.fill").foregroundColor(.red))
+          // } else {
+          //   Image(.loader)
+          //     .resizable()
+          //     .scaledToFill()
+          //     .mask(Circle())
+          //     .frame(maxWidth: 50, maxHeight: 50)
           }
         }
         .onDisappear(.cancel)
@@ -64,7 +81,14 @@ struct URLImage: View, Equatable {
       } else {
         LazyImage(url: url) { state in
           if let image = state.image {
-            image.resizable()
+            if doLiveText && ImageAnalyzer.isSupported {
+              LiveTextInteraction(image: image)
+                .scaledToFill()
+            } else {
+              image
+                .resizable()
+                .scaledToFit()
+            }
           } else if state.error != nil {
             Color.red.opacity(0.1)
               .overlay(Image(systemName: "xmark.circle.fill").foregroundColor(.red))

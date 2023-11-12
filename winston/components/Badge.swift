@@ -18,12 +18,15 @@ struct BadgeView: View, Equatable {
   
   var avatarRequest: ImageRequest?
   var saved = false
+  var unseen = false
   var usernameColor: Color?
   var author: String
+  var flair: String?
   var fullname: String? = nil
   var created: Double
   var avatarURL: String?
   var theme: BadgeTheme
+  var commentTheme: CommentTheme?
   //  var extraInfo: [BadgeExtraInfo] = []
   var commentsCount: String?
   var votesCount: String?
@@ -55,9 +58,34 @@ struct BadgeView: View, Equatable {
       }
       
       VStack(alignment: .leading, spacing: BadgeView.authorStatsSpacing) {
-        //
+        
+        HStack(alignment: .center, spacing: 6) {
         Text(author).font(.system(size: theme.authorText.size, weight: theme.authorText.weight.t)).foregroundColor(author == "[deleted]" ? .red : usernameColor ?? theme.authorText.color.cs(cs).color())
           .onTapGesture(perform: openUser)
+
+                    if unseen {
+            ZStack {
+              Circle()
+                .fill(commentTheme?.unseenDot.cs(cs).color() ?? .red)
+                .frame(width: 6, height: 6)
+              Circle()
+                .fill(commentTheme?.unseenDot.cs(cs).color() ?? .red)
+                .frame(width: 8, height: 8)
+                .blur(radius: 8)
+            }
+          }
+          
+          if let f = flair?.trimmingCharacters(in: .whitespacesAndNewlines) {
+            if !f.isEmpty {
+              let colonIndex = f.lastIndex(of: ":")
+              let flairWithoutEmoji = String(f[(f.contains(":") ? f.index(colonIndex!, offsetBy: min(2, max(0, f.count - f.distance(from: f.startIndex, to: colonIndex!)))) : f.startIndex)...])
+              if !flairWithoutEmoji.isEmpty {
+                // TODO Load flair emojis via GET /api/v1/{subreddit}/emojis/{emoji_name}
+                Text(flairWithoutEmoji).font(.system(size: theme.flairText.size, weight: theme.flairText.weight.t)).lineLimit(1).foregroundColor(theme.flairText.color.cs(cs).color()).padding(EdgeInsets(top: 0, leading: 6, bottom: 0, trailing: 6)).background(theme.flairBackground.cs(cs).color()).clipShape(Capsule())
+              }
+            }
+          }
+        }
         ////
         HStack(alignment: .center, spacing: 6) {
           
@@ -67,6 +95,13 @@ struct BadgeView: View, Equatable {
               Text(commentsCount)
             }
           }
+
+              //           if elem.type == "comments", let seenComments = post?.data?.winstonSeenCommentCount, let totalComments = Int(elem.text) {
+              //   let unseenComments = totalComments - seenComments
+              //   if unseenComments > 0 {
+              //     Text("(\(Int(unseenComments)))").foregroundColor(.accentColor)
+              //   }
+              // }
           
           if let votesCount = votesCount {
             HStack(alignment: .center, spacing: 2) {
@@ -143,20 +178,21 @@ struct BadgeOpt: View, Equatable {
 
 struct BadgeComment: View, Equatable {
   static func == (lhs: BadgeComment, rhs: BadgeComment) -> Bool {
-    return lhs.badgeKit == rhs.badgeKit && lhs.theme == rhs.theme && lhs.cs == rhs.cs
+    return lhs.badgeKit == rhs.badgeKit && lhs.theme == rhs.theme && lhs.cs == rhs.cs && lhs.unseen == rhs.unseen
   }
   
   let badgeKit: BadgeKit
   var cs: ColorScheme
   var routerProxy: RouterProxy?
   var showVotes = false
+  var unseen: Bool
   var usernameColor: Color?
   var avatarURL: String?
   var theme: BadgeTheme
   @ObservedObject private var avatarCache = Caches.avatars
   
   var body: some View {
-    BadgeView(avatarRequest: avatarCache.cache[badgeKit.authorFullname]?.data, saved: badgeKit.saved, usernameColor: usernameColor, author: badgeKit.author, fullname: badgeKit.authorFullname, created: badgeKit.created, avatarURL: avatarURL, theme: theme, commentsCount: formatBigNumber(badgeKit.numComments), votesCount: !showVotes ? nil : formatBigNumber(badgeKit.ups), routerProxy: routerProxy, cs: cs)
+    BadgeView(avatarRequest: avatarCache.cache[badgeKit.authorFullname]?.data, saved: badgeKit.saved, unseen: unseen, usernameColor: usernameColor, author: badgeKit.author, fullname: badgeKit.authorFullname, created: badgeKit.created, avatarURL: avatarURL, theme: theme, commentsCount: formatBigNumber(badgeKit.numComments), votesCount: !showVotes ? nil : formatBigNumber(badgeKit.ups), routerProxy: routerProxy, cs: cs)
   }
 }
 

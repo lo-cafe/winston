@@ -27,6 +27,17 @@ extension Post {
   
   convenience init(id: String, api: RedditAPI) {
     self.init(id: id, api: api, typePrefix: "\(Post.prefix)_")
+    
+    let context = PersistenceController.shared.container.newBackgroundContext()
+    let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "SeenPost")
+    fetchRequest.predicate = NSPredicate(format: "postID == %@", id)
+    if let seenPost = (context.performAndWait { (try? context.fetch(fetchRequest) as? [SeenPost])?.first }) {
+      context.performAndWait {
+        self.data?.winstonSeen = true
+        self.data?.winstonSeenCommentCount = Int(seenPost.numComments)
+        self.data?.winstonSeenComments = seenPost.seenComments
+      }
+    }
   }
   
   func setupWinstonData(data: PostData? = nil, winstonData: PostWinstonData? = nil, contentWidth: Double = UIScreen.screenWidth, secondary: Bool = false, theme: WinstonTheme, fetchSub: Bool = false) {
@@ -97,6 +108,13 @@ extension Post {
           let priority = i > 19 ? .veryLow : priorityIMap[priorityIMap.keys.first { $0 > i } ?? 19]!
           let newPost = Post.init(data: data, api: api, fetchSub: fetchSubs, contentWidth: contentWidth, imgPriority: i > 7 ? .veryLow : priority)
           newPost.data?.winstonSeen = isSeen
+          
+          if (isSeen) {
+            let foundPost = results.first(where: { $0.postID == data.id })
+            newPost.data?.winstonSeenCommentCount = Int(foundPost?.numComments ?? 0)
+            newPost.data?.winstonSeenComments = foundPost?.seenComments
+          }
+          
           return newPost
         }
       }
@@ -115,6 +133,7 @@ extension Post {
       let imgRequests = posts.reduce(into: []) { prev, curr in
         prev = prev + (curr.winstonData?.mediaImageRequest ?? [])
       }
+      
       Post.prefetcher.startPrefetching(with: imgRequests)
       return posts
     }
@@ -137,7 +156,6 @@ extension Post {
     if let results = (await context.perform(schedule: .enqueued) { try? context.fetch(fetchRequest) as? [SeenPost] }) {
       await context.perform(schedule: .enqueued) {
         let foundPost = results.first(where: { obj in obj.postID == self.id })
-        
         
         if let foundPost = foundPost {
           if seen == nil || seen == false {
@@ -177,6 +195,119 @@ extension Post {
     Defaults[.filteredSubreddits] = filteredSubreddits
   }
   
+  func saveCommentCount(numComments: Int) async -> Void {
+    let context = PersistenceController.shared.container.viewContext
+
+    let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "SeenPost")
+    if let results = (await context.perform(schedule: .enqueued) { try? context.fetch(fetchRequest) as? [SeenPost] }) {
+      await context.perform(schedule: .enqueued) {
+        let foundPost = results.first(where: { obj in obj.postID == self.id })
+        
+        if let seenPost = foundPost {
+          seenPost.numComments = Int32(numComments)
+          try? context.save()
+          
+          DispatchQueue.main.async {
+            withAnimation {
+              self.data?.winstonSeenCommentCount = numComments
+            }
+          }
+        }
+      }
+    }
+  }
+  
+  func saveSeenComments(comments: ListingData<CommentData>?) async -> Void {
+    let context = PersistenceController.shared.container.viewContext
+    let newComments = self.getCommentIds(comments: comments)
+
+    let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "SeenPost")
+    if let results = (await context.perform(schedule: .enqueued) { try? context.fetch(fetchRequest) as? [SeenPost] }) {
+      await context.perform(schedule: .enqueued) {
+        let foundPost = results.first(where: { obj in obj.postID == self.id })
+        
+        if let seenPost = foundPost {
+          var seenComments = seenPost.seenComments ?? ""
+          newComments.forEach { id in
+            if (!seenComments.contains(id)) {
+              seenComments += "\(seenComments.isEmpty ? "" : ",")\(id)"
+            }
+          }
+          
+          let finalSeen = seenComments
+          seenPost.seenComments = finalSeen
+          try? context.save()
+          
+          DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+            withAnimation {
+              self.data?.winstonSeenComments = finalSeen
+            }
+          }
+        }
+      }
+    }
+  }
+  
+  func saveMoreComments(comments: [Comment]) async -> Void {
+    let context = PersistenceController.shared.container.viewContext
+
+    let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "SeenPost")
+    if let results = (await context.perform(schedule: .enqueued) { try? context.fetch(fetchRequest) as? [SeenPost] }) {
+      await context.perform(schedule: .enqueued) {
+        let foundPost = results.first(where: { obj in obj.postID == self.id })
+        
+        if let seenPost = foundPost {
+          var seenComments = seenPost.seenComments ?? ""
+          let newComments: [String] = comments.map { $0.data?.id ?? "" }
+          
+          newComments.forEach { id in
+            if (!seenComments.contains(id)) {
+              seenComments += "\(seenComments.isEmpty ? "" : ",")\(id)"
+            }
+          }
+          
+          let finalSeen = seenComments
+          seenPost.seenComments = finalSeen
+          try? context.save()
+          
+          DispatchQueue.main.async {
+            withAnimation {
+              self.data?.winstonSeenComments = finalSeen
+            }
+          }
+        }
+      }
+    }
+  }
+  
+  
+  func getCommentIds(comments: ListingData<CommentData>?) -> Array<String> {
+    var ids = Array<String>()
+    
+    if let children = comments?.children {
+      for i in 0...children.count - 1 {
+        let child = children[i]
+        
+        if (child.kind == "more") { continue }
+        
+        if let commentId = child.data?.id {
+          ids.append(commentId)
+        }
+        
+        if let replies = child.data?.replies  {
+          switch replies {
+          case .first(_):
+            break
+          case .second(let actualData):
+            ids += getCommentIds(comments: actualData.data)
+          }
+        }
+      }
+    }
+    
+    return ids
+  }
+
   func reply(_ text: String, updateComments: (() -> ())? = nil) async -> Bool {
     if let fullname = data?.name {
       let result = await RedditAPI.shared.newReply(text, fullname) ?? false
@@ -240,6 +371,10 @@ extension Post {
       if let post = response[0] {
         switch post {
         case .first(let actualData):
+          if let numComments = actualData.data?.children?[0].data?.num_comments {
+            await saveCommentCount(numComments: numComments)
+          }
+          
           if full {
             await MainActor.run {
               let newData = actualData.data?.children?[0].data
@@ -256,11 +391,11 @@ extension Post {
           return nil
         case .second(let actualData):
           if let data = actualData.data {
+            await saveSeenComments(comments: data)
+
             if let dataArr = data.children?.compactMap({ $0 }) {
-              return (
-                Comment.initMultiple(datas: dataArr, api: RedditAPI.shared),
-                data.after
-              )
+              let comments = Comment.initMultiple(datas: dataArr, api: RedditAPI.shared);
+              return ( comments, data.after )
             }
             return nil
           }
@@ -478,6 +613,8 @@ struct PostData: GenericRedditEntityDataType {
   
   var votesKit: VotesKit { VotesKit(ups: ups, ratio: upvote_ratio, likes: likes, id: id) }
   
+  var winstonSeenCommentCount: Int? = nil
+  var winstonSeenComments: String? = nil
 }
 
 struct GalleryData: Codable, Hashable {

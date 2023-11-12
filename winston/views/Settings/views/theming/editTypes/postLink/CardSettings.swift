@@ -59,7 +59,6 @@ struct CardSettings: View {
                 CarouselTagElement<UnseenType>(label: "Fade", value: UnseenType.fade, active: theme.unseenType.isEqual(.fade))
               ]
             )
-            
           }
           .padding(.horizontal, 16)
           .resetter($theme.unseenType, defaultTheme.postLinks.theme.unseenType)
@@ -71,7 +70,8 @@ struct CardSettings: View {
               theme.unseenType = .dot(val)
             }), defaultVal: .init(light: .init(hex: "4FFF85"), dark: .init(hex: "4FFF85")))
           case .fade:
-            EmptyView()
+            LabeledSlider(label: "Fade Opacity", value: $theme.unseenFadeOpacity, range: 0...1, step: 0.01)
+              .resetter($theme.unseenFadeOpacity, defaultTheme.postLinks.theme.unseenFadeOpacity)
           }
 
         }

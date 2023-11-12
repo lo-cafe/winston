@@ -73,6 +73,7 @@ struct PostContent: View, Equatable {
           if data.selftext != "" {
             VStack {
               MD(selfAttr == nil ? .str(data.selftext) : .attr(selfAttr!), fontSize: postsTheme.bodyText.size)
+                .lineSpacing(postsTheme.linespacing)
                 .foregroundColor(postsTheme.bodyText.color.cs(cs).color())
                 .frame(maxWidth: .infinity, alignment: .leading)
             }
@@ -106,7 +107,7 @@ struct PostContent: View, Equatable {
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .contentShape(Rectangle())
             .onTapGesture { withAnimation(spring) { collapsed.toggle() } }
-            .foregroundColor(.blue)
+            .foregroundColor(.accentColor)
             .allowsHitTesting(isCollapsed)
             .opacity(isCollapsed ? 1 : 0)
           , alignment: .bottom
