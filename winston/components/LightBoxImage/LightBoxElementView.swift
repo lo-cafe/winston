@@ -15,7 +15,7 @@ struct LightBoxElement: Identifiable, Equatable {
 }
 
 struct LightBoxElementView: View {
-  var el: MediaExtracted
+  var el: ImgExtracted
   var onTap: (()->())?
   @Binding var isPinching: Bool
   @State private var scale: CGFloat = 1.0

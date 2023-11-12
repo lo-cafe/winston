@@ -53,33 +53,12 @@ struct SubtleSheetModifier<T: View>: ViewModifier {
           }
         }
       }
-//      .onChanged({ val in
-//        let y = val.translation.height
-//        if initialDragOffset == nil && y != 0 {
-//          initialDragOffset = y
-//        }
-//        if let initialDragOffset = initialDragOffset {
-//          var trans = Transaction()
-//          trans.isContinuous = true
-////          trans.animation = .interpolatingSpring(stiffness: 1000, damping: 100)
-//          trans.animation = .interactiveSpring()
-//          withTransaction(trans) {
-//            dragOffset = y - initialDragOffset
-//          }
-//        }
-//      })
       .onEnded({ val in
         dragOffsetPersist = val.translation.height - (initialDragOffset ?? 0)
-//        initialDragOffset = nil
-        //                offset += val.translation.height
         guard let nextI = stepPoints.closest(to: stepPoints[currentStepIndex] + val.predictedEndTranslation.height) else { return }
-        //                let newI = max(0, min(stepPoints.count - 1, nextI + (abs(endLocationDiff) > 100 ? endLocationDiff > 0 ? 1 : -1 : 0)))
         let newI = nextI
         let newY = stepPoints[newI]
-//        let distance = abs(newY - stepPoints[currentStepIndex])
-//        let initialVel = abs(val.predictedEndTranslation.height / distance)
-//        withAnimation(.interpolatingSpring(stiffness: 150, damping: 17, initialVelocity: initialVel)) {
-          withAnimation(.spring()) {
+        withAnimation(.spring()) {
           currentStepIndex = newI
           dragOffsetPersist = 0
         }
@@ -92,12 +71,12 @@ struct SubtleSheetModifier<T: View>: ViewModifier {
         VStack {
           sheetContent(handlerHeight)
             .background(GeometryReader { g in Color.clear.onAppear { sheetContentSize = CGSize(width: g.size.width, height: g.size.height - handlerHeight) }.onChange(of: g.size) { sheetContentSize = CGSize(width: $0.width, height: $0.height - handlerHeight) } })
-//            .measure($sheetContentSize)
+          //            .measure($sheetContentSize)
         }
-//          .onChange(of: sheetContentSize, perform: { newValue in
-//            print(newValue)
-//          })
-//          .padding(.top, handlerHeight)
+        //          .onChange(of: sheetContentSize, perform: { newValue in
+        //            print(newValue)
+        //          })
+        //          .padding(.top, handlerHeight)
           .frame(width: UIScreen.screenWidth, height: UIScreen.screenHeight, alignment: .top)
           .mask(SheetShape(width: UIScreen.screenWidth, height: UIScreen.screenHeight).fill(.black))
           .overlay(
@@ -113,15 +92,10 @@ struct SubtleSheetModifier<T: View>: ViewModifier {
             SheetShape(width: UIScreen.screenWidth, height: UIScreen.screenHeight)
               .fill(AnyShapeStyle(bg))
               .shadow(radius: 16)
-//              .allowsHitTesting(false)
+              .allowsHitTesting(!disabled)
           )
-//          .overlay {
-//            !border
-//            ? nil
-//            : SheetShape(width: UIScreen.screenWidth, height: UIScreen.screenHeight)
-//              .strokeBorder(Color.primary.opacity(0.25), lineWidth: 2)
-//          }
-          .contentShape(SheetShape(width: UIScreen.screenWidth, height: UIScreen.screenHeight))
+//          .contentShape(.contextMenuPreview, SheetShape(width: UIScreen.screenWidth, height: UIScreen.screenHeight))
+//          .contentShape()
           .scaleEffect(1)
           .compositingGroup()
           .offset(y: max(stepPoints[stepPoints.count - 1], stepPoints[currentStepIndex] + dragOffset + dragOffsetPersist))
@@ -149,13 +123,13 @@ struct SheetShape: InsettableShape {
   var insetAmount = 0.0
   
   func inset(by amount: CGFloat) -> some InsettableShape {
-      var arc = self
-      arc.insetAmount += amount
-      return arc
+    var arc = self
+    arc.insetAmount += amount
+    return arc
   }
   
   func path(in rect: CGRect) -> Path {
-//    let bodyHeight = height - handlerHeight
+    //    let bodyHeight = height - handlerHeight
     
     var path = Path()
     

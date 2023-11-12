@@ -106,13 +106,13 @@ struct VotesClusterVertical: View, Equatable {
   var body: some View {
     VStack(spacing: 12) {
       if #available(iOS 17, *) {
-        VoteButton(active: (likes ?? false), color: .orange, image: "arrow.up").equatable().onTapGesture(perform: upvote)
+        VoteButton(active: (likes ?? false), color: .orange, image: "arrow.up").equatable().highPriorityGesture(TapGesture().onEnded(upvote))
       } else {
         VoteButtonFallback(color: (likes ?? false) ? .orange : .gray, voteAction: upvote, image: "arrow.up")
       }
       
       if #available(iOS 17, *) {
-        VoteButton(active: !(likes ?? true), color: .blue, image: "arrow.down").equatable().onTapGesture(perform: downvote)
+        VoteButton(active: !(likes ?? true), color: .blue, image: "arrow.down").equatable().highPriorityGesture(TapGesture().onEnded(downvote))
       } else {
         VoteButtonFallback(color: !(likes ?? true) ? .blue : .gray, voteAction: downvote, image: "arrow.down")
       }

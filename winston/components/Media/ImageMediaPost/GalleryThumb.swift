@@ -11,7 +11,7 @@ import Nuke
 
 struct GalleryThumb: View, Equatable {
   static func == (lhs: GalleryThumb, rhs: GalleryThumb) -> Bool {
-    lhs.url == rhs.url && lhs.width == rhs.width && lhs.height == rhs.height
+    lhs.url == rhs.url && lhs.width == rhs.width && lhs.height == rhs.height && lhs.cornerRadius == rhs.cornerRadius
   }
   
   var cornerRadius: Double

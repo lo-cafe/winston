@@ -37,7 +37,7 @@ struct OnlyURL: View {
 
 struct MediaPresenter: View, Equatable {
   static func == (lhs: MediaPresenter, rhs: MediaPresenter) -> Bool {
-    lhs.media == rhs.media && lhs.compact == rhs.compact && lhs.contentWidth == rhs.contentWidth && lhs.badgeKit == rhs.badgeKit && lhs.cachedVideo == rhs.cachedVideo
+    lhs.compact == rhs.compact && lhs.contentWidth == rhs.contentWidth && lhs.badgeKit == rhs.badgeKit && lhs.cachedVideo == rhs.cachedVideo && lhs.cornerRadius == rhs.cornerRadius && lhs.media == rhs.media
   }
   
   @Binding var postDimensions: PostDimensions
@@ -46,6 +46,7 @@ struct MediaPresenter: View, Equatable {
   var imgRequests: [ImageRequest]?
   let postTitle: String
   let badgeKit: BadgeKit
+  let avatarImageRequest: ImageRequest?
   let markAsSeen: (() async -> ())?
   var cornerRadius: Double
   var blurPostLinkNSFW: Bool
@@ -58,87 +59,90 @@ struct MediaPresenter: View, Equatable {
   
   var body: some View {
     switch media {
-    case .image(let imgMediaExtracted):
+    case .imgs(let imgsExtracted):
       if !showURLInstead {
-          if imgMediaExtracted.url.absoluteString.hasSuffix(".gif") {
-            ImageMediaPost(postDimensions: $postDimensions, controller: controller, postTitle: postTitle, badgeKit: badgeKit, markAsSeen: markAsSeen, cornerRadius: cornerRadius, compact: compact, mediaImageRequest: imgRequests ?? [], images: [imgMediaExtracted], contentWidth: contentWidth)
-              .nsfw(over18 && blurPostLinkNSFW)
+        if imgsExtracted.count > 0 && imgsExtracted[0].url.absoluteString.hasSuffix(".gif") {
+          ImageMediaPost(postDimensions: $postDimensions, controller: controller, postTitle: postTitle, badgeKit: badgeKit, avatarImageRequest: avatarImageRequest, markAsSeen: markAsSeen, cornerRadius: cornerRadius, compact: compact, images: imgsExtracted, contentWidth: contentWidth)
+            .nsfw(over18 && blurPostLinkNSFW)
+        } else {
+          ImageMediaPost(postDimensions: $postDimensions, controller: controller, postTitle: postTitle, badgeKit: badgeKit, avatarImageRequest: avatarImageRequest, markAsSeen: markAsSeen, cornerRadius: cornerRadius, compact: compact, images: imgsExtracted, contentWidth: contentWidth)
+            .drawingGroup()
+            .nsfw(over18 && blurPostLinkNSFW)
+          
+        }
+      }
+    case .video(let sharedVideo):
+      if !showURLInstead {
+        VideoPlayerPost(controller: controller, cachedVideo: sharedVideo, markAsSeen: markAsSeen, compact: compact, overrideWidth: contentWidth, url: sharedVideo.url)
+          .nsfw(over18 && blurPostLinkNSFW)
+      }
+    case .yt(let ytMediaExtracted):
+      if !showURLInstead {
+        YTMediaPostPlayer(compact: compact, player: ytMediaExtracted.player, ytMediaExtracted: ytMediaExtracted, contentWidth: contentWidth)
+      }
+    case .link(let previewModel):
+      if let previewURL = previewModel.previewURL {
+        if !showURLInstead {
+          PreviewLinkContent(compact: compact, viewModel: previewModel, url: previewURL)
+        } else {
+          OnlyURL(url: previewURL)
+        }
+      }
+    case .post(let postExtractedEntity):
+      if let postExtractedEntity = postExtractedEntity {
+        if !showURLInstead {
+          if compact, let sub = postExtractedEntity.subredditID, let postID = postExtractedEntity.postID {
+            if let url = URL(string: "https://reddit.com/r/\(sub)/comments/\(postID)") {
+              PreviewLink(url: url, compact: compact, previewModel: PreviewModel(url))
+            }
           } else {
-            ImageMediaPost(postDimensions: $postDimensions, controller: controller, postTitle: postTitle, badgeKit: badgeKit, markAsSeen: markAsSeen, cornerRadius: cornerRadius, compact: compact, mediaImageRequest: imgRequests ?? [], images: [imgMediaExtracted], contentWidth: contentWidth)
-              .nsfw(over18 && blurPostLinkNSFW)
-              .drawingGroup()
-            
+            RedditMediaPost(entity: .post(postExtractedEntity.entity))
           }
-      }
-    case .video(let videoMediaExtracted):
-      if !showURLInstead {
-        VideoPlayerPost(controller: controller, cachedVideo: cachedVideo, markAsSeen: markAsSeen, compact: compact, overrideWidth: contentWidth, url: videoMediaExtracted.url, size: CGSize(width: videoMediaExtracted.size.width, height: videoMediaExtracted.size.height))
-          .nsfw(over18 && blurPostLinkNSFW)
-      }
-    case .gallery(let imgs):
-      if !showURLInstead {
-        ImageMediaPost(postDimensions: $postDimensions, controller: controller, postTitle: postTitle, badgeKit: badgeKit, markAsSeen: markAsSeen, cornerRadius: cornerRadius, compact: compact, mediaImageRequest: imgRequests ?? [], images: imgs, contentWidth: contentWidth)
-          .nsfw(over18 && blurPostLinkNSFW)
-          .drawingGroup()
-      }
-    case .youtube(let videoID, let size):
-      if !showURLInstead {
-        YTMediaPost(compact: compact, videoID: videoID, size: size, contentWidth: contentWidth)
-//          .equatable()
-      }
-    case .link(let url):
-      if !showURLInstead {
-        PreviewLink(url: url, compact: compact)
-      } else {
-        OnlyURL(url: url)
-      }
-    case .post(let id, let subreddit):
-      if !showURLInstead {
-        if compact {
-          if let url = URL(string: "https://reddit.com/r/\(subreddit)/comments/\(id)") {
-            PreviewLink(url: url, compact: compact)
-          }
-        } else {
-          RedditMediaPost(thing: .post(id: id, subreddit: subreddit))
+        } else if let sub = postExtractedEntity.subredditID, let postID = postExtractedEntity.postID, let url = URL(string: "https://reddit.com/r/\(sub)/comments/\(postID)") {
+          OnlyURL(url: url)
         }
-      } else if let url = URL(string: "https://reddit.com/r/\(subreddit)/comments/\(id)") {
-        OnlyURL(url: url)
       }
-    case .comment(let id, let postID, let subreddit):
-      if !showURLInstead {
-        if compact {
-          if let url = URL(string: "https://reddit.com/r/\(subreddit)/comments/\(postID)/comment/\(id)") {
-            PreviewLink(url: url, compact: compact)
+    case .comment(let commentExtractedEntity):
+      if let commentExtractedEntity = commentExtractedEntity {
+        if !showURLInstead {
+          if compact, let sub = commentExtractedEntity.subredditID, let postID = commentExtractedEntity.postID, let commentID = commentExtractedEntity.commentID {
+            if let url = URL(string: "https://reddit.com/r/\(sub)/comments/\(postID)/comment/\(commentID)") {
+              PreviewLink(url: url, compact: compact, previewModel: PreviewModel(url))
+            }
+          } else {
+            RedditMediaPost(entity: .comment(commentExtractedEntity.entity))
           }
-        } else {
-          RedditMediaPost(thing: .comment(id: id, postID: postID, subreddit: subreddit))
+        } else if let sub = commentExtractedEntity.subredditID, let postID = commentExtractedEntity.postID, let commentID = commentExtractedEntity.commentID, let url = URL(string: "https://reddit.com/r/\(sub)/comments/\(postID)/comment/\(commentID)") {
+          OnlyURL(url: url)
         }
-      } else if let url = URL(string: "https://reddit.com/r/\(subreddit)/comments/\(postID)/comment/\(id)") {
-        OnlyURL(url: url)
       }
-    case .subreddit(let name):
-      if !showURLInstead {
-        if compact {
-          if let url = URL(string: "https://reddit.com/r/\(name)") {
-            PreviewLink(url: url, compact: compact)
+    case .subreddit(let subExtractedEntity):
+      if let subExtractedEntity = subExtractedEntity {
+        if !showURLInstead {
+          if compact {
+            if let url = URL(string: "https://reddit.com/r/\(subExtractedEntity.subredditID ?? "")") {
+              PreviewLink(url: url, compact: compact, previewModel: PreviewModel(url))
+            }
+          } else {
+            RedditMediaPost(entity: .subreddit(subExtractedEntity.entity))
           }
-        } else {
-          RedditMediaPost(thing: .subreddit(name: name))
+        } else if let url = URL(string: "https://reddit.com/r/\(subExtractedEntity.subredditID ?? "")") {
+          OnlyURL(url: url)
         }
-      } else if let url = URL(string: "https://reddit.com/r/\(name)") {
-        OnlyURL(url: url)
       }
-    case .user(let username):
-      if !showURLInstead {
-        if compact {
-          if let url = URL(string: "https://reddit.com/u/\(username)") {
-            PreviewLink(url: url, compact: compact)
+    case .user(let userExtractedEntity):
+      if let userExtractedEntity = userExtractedEntity {
+        if !showURLInstead {
+          if compact {
+            if let url = URL(string: "https://reddit.com/u/\(userExtractedEntity.userID ?? "")") {
+              PreviewLink(url: url, compact: compact, previewModel: PreviewModel(url))
+            }
+          } else {
+            RedditMediaPost(entity: .user(userExtractedEntity.entity))
           }
-        } else {
-          RedditMediaPost(thing: .user(username: username))
+        } else if let url = URL(string: "https://reddit.com/u/\(userExtractedEntity.userID ?? "")") {
+          OnlyURL(url: url)
         }
-      } else if let url = URL(string: "https://reddit.com/u/\(username)") {
-        OnlyURL(url: url)
       }
     default:
       EmptyView()

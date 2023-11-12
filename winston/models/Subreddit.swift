@@ -15,6 +15,7 @@ typealias Subreddit = GenericRedditEntity<SubredditData, AnyHashable>
 
 extension Subreddit {
   static var prefix = "t5"
+  var selfPrefix: String { Self.prefix }
   convenience init(data: T, api: RedditAPI) {
     self.init(data: data, api: api, typePrefix: "\(Subreddit.prefix)_")
   }
@@ -75,7 +76,7 @@ extension Subreddit {
     let context = PersistenceController.shared.container.viewContext
     
     if let data = data {
-      func doToggle() {
+      @Sendable func doToggle() {
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "CachedSub")
         guard let results = (context.performAndWait { return try? context.fetch(fetchRequest) as? [CachedSub] }) else { return }
         let foundSub = context.performAndWait { results.first(where: { $0.name == self.data?.name }) }

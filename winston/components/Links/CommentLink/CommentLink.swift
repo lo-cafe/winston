@@ -65,7 +65,8 @@ struct CommentLink: View, Equatable {
     lhs.post?.data == rhs.post?.data &&
     lhs.subreddit?.data == rhs.subreddit?.data &&
     lhs.indentLines == rhs.indentLines &&
-    lhs.highlightID == rhs.highlightID
+    lhs.highlightID == rhs.highlightID &&
+    lhs.comment == rhs.comment
   }
   
   var lineLimit: Int?
@@ -80,6 +81,8 @@ struct CommentLink: View, Equatable {
   
   var parentElement: CommentParentElement? = nil
   @ObservedObject var comment: Comment
+  @ObservedObject var commentWinstonData: CommentWinstonData
+  @ObservedObject var children: ObservableArray<Comment>
   //  @State var collapsed = false
   
   var body: some View {
@@ -96,16 +99,16 @@ struct CommentLink: View, Equatable {
               CommentLinkMore(arrowKinds: arrowKinds, comment: comment, postFullname: postFullname, parentElement: parentElement, indentLines: indentLines)
             }
           } else {
-            CommentLinkContent(highlightID: highlightID, showReplies: showReplies, arrowKinds: arrowKinds, indentLines: indentLines, lineLimit: lineLimit, post: post, comment: comment, avatarsURL: avatarsURL)
+            CommentLinkContent(highlightID: highlightID, showReplies: showReplies, arrowKinds: arrowKinds, indentLines: indentLines, lineLimit: lineLimit, post: post, comment: comment, winstonData: commentWinstonData, avatarsURL: avatarsURL)
           }
         }
         
         if !collapsed && showReplies {
-          ForEach(Array(comment.childrenWinston.data.enumerated()), id: \.element.id) { index, commentChild in
-            let childrenCount = comment.childrenWinston.data.count
-            if let _ = commentChild.data {
-              CommentLink(post: post, arrowKinds: arrowKinds.map { $0.child } + [(childrenCount - 1 == index ? ArrowKind.curve : ArrowKind.straightCurve)], postFullname: postFullname, parentElement: .comment(comment), comment: commentChild)
-//                .equatable()
+          ForEach(Array(children.data.enumerated()), id: \.element.id) { index, commentChild in
+            let childrenCount = children.data.count
+            if let _ = commentChild.data, let childCommentWinstonData = commentChild.winstonData {
+              CommentLink(post: post, arrowKinds: arrowKinds.map { $0.child } + [(childrenCount - 1 == index ? ArrowKind.curve : ArrowKind.straightCurve)], postFullname: postFullname, parentElement: .comment(comment), comment: commentChild, commentWinstonData: childCommentWinstonData, children: commentChild.childrenWinston)
+              //                .equatable()
             }
           }
         }
@@ -114,6 +117,24 @@ struct CommentLink: View, Equatable {
       
     } else {
       Text("Oops")
+    }
+  }
+}
+
+struct CustomDisclosureGroupStyle: DisclosureGroupStyle {
+  func makeBody(configuration: Configuration) -> some View {
+    VStack {
+      configuration.label
+        .contentShape(Rectangle())
+        .onTapGesture {
+          withAnimation {
+            configuration.isExpanded.toggle()
+          }
+        }
+      if configuration.isExpanded {
+        configuration.content
+          .disclosureGroupStyle(self)
+      }
     }
   }
 }

@@ -50,6 +50,7 @@ struct SubPostsListTheme: Codable, Equatable, Hashable {
     try container.encodeIfPresent(theme, forKey: .theme)
     try container.encodeIfPresent(spacing, forKey: .spacing)
     try container.encodeIfPresent(divider, forKey: .divider)
+    try container.encodeIfPresent(bg, forKey: .bg)
   }
   
   init(from decoder: Decoder) throws {

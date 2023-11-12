@@ -99,14 +99,17 @@ func getPostDimensions(post: Post, winstonData: PostWinstonData? = nil, columnWi
         }
         
         switch extractedMedia {
-        case .image(let mediaExtracted):
-          ACC_mediaSize = defaultMediaSize(mediaExtracted.size)
+        case .imgs(let mediaExtracted):
+          if mediaExtracted.count == 1 {
+            ACC_mediaSize = defaultMediaSize(mediaExtracted[0].size)
+          } else if mediaExtracted.count > 1 {
+            let size = compact ? scaledCompactModeThumbSize() : ((contentWidth - 8) / 2)
+            ACC_mediaSize = mediaExtracted.count == 2 ? CGSize(width: contentWidth, height: size) : CGSize(width: contentWidth, height: (size * 2) + ImageMediaPost.gallerySpacing)
+          }
         case .video(let video):
           ACC_mediaSize = defaultMediaSize(video.size)
-        case .gallery(let mediasExtracted):
-          let size = compact ? scaledCompactModeThumbSize() : ((contentWidth - 8) / 2)
-          ACC_mediaSize = mediasExtracted.count == 2 ? CGSize(width: contentWidth, height: size) : CGSize(width: contentWidth, height: (size * 2) + ImageMediaPost.gallerySpacing)
-        case .youtube(_, let size):
+        case .yt(let ytMediaExtracted):
+          let size = ytMediaExtracted.size
           let actualHeight = (contentWidth * CGFloat(size.height)) / CGFloat(size.width)
           ACC_mediaSize = CGSize(width: contentWidth, height: actualHeight)
         case .link(_):
@@ -118,10 +121,10 @@ func getPostDimensions(post: Post, winstonData: PostWinstonData? = nil, columnWi
           //        if let repostSize = getPostDimensions(post: repost, secondary: true) {
           //          ACC_mediaSize = repostSize.size
           //        }
-        case .post(_, _):
+        case .post(_):
           if !compact { ACC_mediaSize = CGSize(width: contentWidth, height: RedditMediaPost.height) }
           break
-        case .comment(_, _, _):
+        case .comment(_):
           if !compact { ACC_mediaSize = CGSize(width: contentWidth, height: RedditMediaPost.height) }
           break
         case .subreddit(_):

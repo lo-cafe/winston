@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import NukeUI
 import Defaults
 
 private let SPACING = 24.0
@@ -13,9 +14,10 @@ private let SPACING = 24.0
 struct LightBoxImage: View {
   let postTitle: String
   let badgeKit: BadgeKit
+  let avatarImageRequest: ImageRequest?
   let markAsSeen: (() async -> ())?
   var i: Int
-  var imagesArr: [MediaExtracted]
+  var imagesArr: [ImgExtracted]
   @Environment(\.dismiss) private var dismiss
   @State private var appearBlack = false
   @State private var appearContent = false
@@ -121,7 +123,7 @@ struct LightBoxImage: View {
           }
         }
     )
-    .overlay(LightBoxOverlay(postTitle: postTitle, badgeKit: badgeKit, opacity: !showOverlay || isPinching ? 0 : interpolate([1, 0], false), imagesArr: imagesArr, activeIndex: activeIndex, loading: $loading, done: $done))
+    .overlay(LightBoxOverlay(postTitle: postTitle, badgeKit: badgeKit, avatarImageRequest: avatarImageRequest, opacity: !showOverlay || isPinching ? 0 : interpolate([1, 0], false), imagesArr: imagesArr, activeIndex: activeIndex, loading: $loading, done: $done))
     .background(
       !appearBlack
       ? nil

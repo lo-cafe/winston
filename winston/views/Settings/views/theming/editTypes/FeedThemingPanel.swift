@@ -79,7 +79,7 @@ struct FeedThemingPanel: View {
             )
             .equatable()
             .environment(\.useTheme, theme)
-            .allowsHitTesting(false)
+            //            .allowsHitTesting(false)
             
             NiceDivider(divider: theme.postLinks.divider)
             
@@ -109,19 +109,21 @@ struct FeedThemingPanel: View {
             )
             .equatable()
             .environment(\.useTheme, theme)
-            .allowsHitTesting(false)
           }
           .environmentObject(previewPostSample)
           .environmentObject(previewPostSubSample)
           .environmentObject(winstonData)
+          .padding(.horizontal, theme.postLinks.theme.outerHPadding)
+          .allowsHitTesting(false)
+          .contentShape(Rectangle())
           .highPriorityGesture(DragGesture())
-          .frame(height: (UIScreen.screenHeight - getSafeArea().top - getSafeArea().bottom) / 2, alignment: .top)
-          .clipped()
-          .mask(RR(20, .black).padding(.horizontal, theme.postLinks.theme.outerHPadding))
         }
       }
+      .frame(height: (UIScreen.screenHeight - getSafeArea().top - getSafeArea().bottom) / 2, alignment: .top)
+      .clipped()
     }
     .onAppear { previewPostSample.setupWinstonData(winstonData: previewPostSample.winstonData, theme: theme) }
+    .onChange(of: theme) { x in previewPostSample.setupWinstonData(winstonData: previewPostSample.winstonData, theme: x) }
     .scrollContentBackground(.hidden)
     .themedListBG(theme.lists.bg)
     .navigationTitle("Posts feed")

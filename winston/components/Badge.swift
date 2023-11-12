@@ -13,7 +13,7 @@ import NukeUI
 struct BadgeView: View, Equatable {
   static let authorStatsSpacing: Double = 2
   static func == (lhs: BadgeView, rhs: BadgeView) -> Bool {
-    return lhs.avatarURL == rhs.avatarURL && lhs.saved == rhs.saved && lhs.avatarRequest?.url == rhs.avatarRequest?.url
+    return lhs.cs == rhs.cs && lhs.avatarURL == rhs.avatarURL && lhs.saved == rhs.saved && lhs.avatarRequest?.url == rhs.avatarRequest?.url && lhs.theme == rhs.theme && lhs.commentsCount == rhs.commentsCount && lhs.votesCount == rhs.votesCount
   }
   
   var avatarRequest: ImageRequest?
@@ -44,6 +44,7 @@ struct BadgeView: View, Equatable {
           .fontSize(16)
           .foregroundColor(.green)
           .transition(.scale.combined(with: .opacity))
+          .drawingGroup()
       }
       
       if showAvatar {
@@ -83,10 +84,10 @@ struct BadgeView: View, Equatable {
         .foregroundStyle(defaultIconColor)
         .font(.system(size: theme.statsText.size, weight: theme.statsText.weight.t))
       }
+      .drawingGroup()
     }
     .scaleEffect(1)
     .animation(showAvatar ? nil : spring.delay(0.4), value: saved)
-    .drawingGroup()
   }
 }
 
@@ -136,28 +137,26 @@ struct BadgeOpt: View, Equatable {
   
   
   var body: some View {
-    BadgeView(avatarRequest: avatarRequest, saved: badgeKit.saved, usernameColor: usernameColor, author: badgeKit.author, fullname: badgeKit.authorFullname, created: badgeKit.created, avatarURL: avatarURL, theme: theme, commentsCount: formatBigNumber(badgeKit.numComments), votesCount: !showVotes ? nil : formatBigNumber(badgeKit.ups), routerProxy: routerProxy, cs: cs)
+    BadgeView(avatarRequest: avatarRequest ?? Caches.avatars.cache[badgeKit.authorFullname]?.data, saved: badgeKit.saved, usernameColor: usernameColor, author: badgeKit.author, fullname: badgeKit.authorFullname, created: badgeKit.created, avatarURL: avatarURL, theme: theme, commentsCount: formatBigNumber(badgeKit.numComments), votesCount: !showVotes ? nil : formatBigNumber(badgeKit.ups), routerProxy: routerProxy, cs: cs)
   }
 }
 
 struct BadgeComment: View, Equatable {
   static func == (lhs: BadgeComment, rhs: BadgeComment) -> Bool {
-    lhs.extraInfo == rhs.extraInfo && lhs.theme == rhs.theme && lhs.avatarURL == rhs.avatarURL
+    return lhs.badgeKit == rhs.badgeKit && lhs.theme == rhs.theme && lhs.cs == rhs.cs
   }
   
-  @ObservedObject var comment: Comment
+  let badgeKit: BadgeKit
+  var cs: ColorScheme
+  var routerProxy: RouterProxy?
+  var showVotes = false
   var usernameColor: Color?
   var avatarURL: String?
   var theme: BadgeTheme
-  var extraInfo: [BadgeExtraInfo] = []
-  @EnvironmentObject private var routerProxy: RouterProxy
-  @Environment(\.colorScheme) private var cs: ColorScheme
+  @ObservedObject private var avatarCache = Caches.avatars
   
   var body: some View {
-    if let data = comment.data, let author = data.author, let created = data.created {
-      //      BadgeView(saved: data.saved ?? false, usernameColor: usernameColor, author: author, fullname: data.author_fullname, created: created, avatarURL: avatarURL, theme: theme, extraInfo: extraInfo, routerProxy: routerProxy, cs: cs)
-      BadgeView(saved: data.saved ?? false, usernameColor: usernameColor, author: author, fullname: data.author_fullname, created: created, avatarURL: avatarURL, theme: theme, routerProxy: routerProxy, cs: cs)
-    }
+    BadgeView(avatarRequest: avatarCache.cache[badgeKit.authorFullname]?.data, saved: badgeKit.saved, usernameColor: usernameColor, author: badgeKit.author, fullname: badgeKit.authorFullname, created: badgeKit.created, avatarURL: avatarURL, theme: theme, commentsCount: formatBigNumber(badgeKit.numComments), votesCount: !showVotes ? nil : formatBigNumber(badgeKit.ups), routerProxy: routerProxy, cs: cs)
   }
 }
 

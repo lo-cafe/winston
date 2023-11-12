@@ -7,12 +7,14 @@
 
 import SwiftUI
 import Defaults
+import NukeUI
 
 struct LightBoxOverlay: View {
   let postTitle: String
   let badgeKit: BadgeKit
+  let avatarImageRequest: ImageRequest?
   var opacity: CGFloat
-  var imagesArr: [MediaExtracted]
+  var imagesArr: [ImgExtracted]
   var activeIndex: Int
   @Binding var loading: Bool
   @Binding var done: Bool
@@ -24,8 +26,7 @@ struct LightBoxOverlay: View {
         Text(postTitle)
           .fontSize(20, .semibold)
           .allowsHitTesting(false)
-        BadgeOpt(badgeKit: badgeKit, cs: cs, theme: selectedTheme.postLinks.theme.badge)
-          .listRowInsets(EdgeInsets(top: 6, leading: 8, bottom: 8, trailing: 8))
+        BadgeView(avatarRequest: avatarImageRequest, saved: false, usernameColor: nil, author: badgeKit.author, fullname: badgeKit.authorFullname, created: badgeKit.created, avatarURL: nil, theme: selectedTheme.postLinks.theme.badge, cs: cs)
       }
       
       Spacer()

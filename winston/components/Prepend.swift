@@ -14,12 +14,12 @@ struct PrependTag: Hashable, Equatable {
   let bgColor: Color
 }
 
-func createTitleTagsAttrString(titleTheme: ThemeText, postData: PostData) -> NSAttributedString {
+func createTitleTagsAttrString(titleTheme: ThemeText, postData: PostData, textColor: Color) -> NSAttributedString {
   let tagFont = UIFont.systemFont(ofSize: Double(((titleTheme.size - 2) * 100) / 120), weight: .medium)
   let titleFont = UIFont.systemFont(ofSize: titleTheme.size, weight: titleTheme.weight.ut)
   let titleTagsImages = getTagsFromTitle(postData).compactMap { createTagImage(withTitle: $0.label, color: UIColor.label.withAlphaComponent(0.2), font: tagFont) }
   
-  let attrTitle = NSMutableAttributedString(string: postData.title.escape, attributes: [.font: titleFont, .foregroundColor: UIColor(.primary)])
+  let attrTitle = NSMutableAttributedString(string: postData.title.escape, attributes: [.font: titleFont, .foregroundColor: UIColor(textColor)])
   
   titleTagsImages.forEach { img in
     let attach = NSTextAttachment(image: img)
@@ -70,8 +70,7 @@ func createTagImage(withTitle title: String, color: UIColor, font: UIFont) -> UI
   return image
 }
 
-func buildTitleWithTags(attrString: NSAttributedString, title: String, tags: [PrependTag], fontSize: Double, fontWeight: UIFont.Weight, color: Color, size: CGSize) -> UIView {
-  let attr = attrString
+func buildTitleWithTags(attrString: NSAttributedString, title: String, tags: [PrependTag], fontSize: Double, fontWeight: UIFont.Weight, color: Color, size: CGSize) -> UILabel {
   
 //  let text = UITextView(usingTextLayoutManager: false)
   let text = UILabel()
@@ -79,20 +78,21 @@ func buildTitleWithTags(attrString: NSAttributedString, title: String, tags: [Pr
 
 //  text.layer.shouldRasterize = true
 //  text.layer.rasterizationScale = UIScreen.main.scale
+  text.textColor = UIColor(color)
   text.backgroundColor = .clear
   text.numberOfLines = 0
   text.lineBreakMode = .byWordWrapping
   text.isUserInteractionEnabled = false
   text.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
   text.translatesAutoresizingMaskIntoConstraints = false
-  text.attributedText = attr
+  text.attributedText = attrString
   text.sizeToFit()
   return text
 }
 
 struct Prepend: UIViewRepresentable, Equatable {
   static func == (lhs: Prepend, rhs: Prepend) -> Bool {
-    lhs.title == rhs.title && lhs.size == rhs.size
+    lhs.title == rhs.title && lhs.size == rhs.size && lhs.color == rhs.color && lhs.fontWeight == rhs.fontWeight && lhs.attrString.isEqual(to: rhs.attrString)
   }
   
   var attrString: NSAttributedString
@@ -103,12 +103,13 @@ struct Prepend: UIViewRepresentable, Equatable {
   var tags: [PrependTag]
   var size: CGSize
   
-  func makeUIView(context: Context) -> UIView {
+  func makeUIView(context: Context) -> UILabel {
     let view = buildTitleWithTags(attrString: attrString, title: title, tags: tags, fontSize: fontSize, fontWeight: fontWeight, color: color, size: size)
     return view
   }
   
-  func updateUIView(_ uiView: UIView, context: Context) {
-    if size != uiView.frame.size { uiView.frame.size = size }
+  func updateUIView(_ uiLabel: UILabel, context: Context) {
+    if size != uiLabel.frame.size { uiLabel.frame.size = size }
+    if !(uiLabel.attributedText?.isEqual(to: attrString) ?? false) { uiLabel.attributedText = attrString }
   }
 }

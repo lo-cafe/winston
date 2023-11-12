@@ -15,7 +15,7 @@ struct Me: View {
   @State private var loading = true
   var body: some View {
     NavigationStack(path: $router.path) {
-      DefaultDestinationInjector(routerProxy: RouterProxy(router)) {
+      DefaultDestinationInjector(routerProxy: RouterProxy(router)) { _ in
         Group {
           if let user = redditAPI.me {
             UserView(user: user)

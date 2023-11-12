@@ -81,7 +81,7 @@ struct SwipeUI<T: GenericRedditEntityDataType, B: Hashable>: ViewModifier {
     content
       .offset(x: controlledDragAmount != nil ? 0 : dragAmount)
       .background(
-        !controlledIsSource || enableSwipeAnywhere || dragAmount == 0
+        !controlledIsSource || enableSwipeAnywhere
         ? nil
         : HStack {
           

@@ -52,7 +52,7 @@ struct PostLinkCompact: View, Equatable {
   
   @Environment(\.useTheme) private var selectedTheme
   
-//  @State private var isOpen = false
+  @State private var isOpen = false
   
   func markAsRead() async {
     Task(priority: .background) { await post.toggleSeen(true) }
@@ -60,7 +60,7 @@ struct PostLinkCompact: View, Equatable {
   
   func openPost() {
     if let routerProxy = routerProxy {
-//      withAnimation(nil) { isOpen = true }
+      withAnimation(nil) { isOpen = true }
       routerProxy.router.path.append(PostViewPayload(post: post, postSelfAttr: nil, sub: feedsAndSuch.contains(sub.id) ? sub : sub))
     }
   }
@@ -90,9 +90,9 @@ struct PostLinkCompact: View, Equatable {
           if !thumbnailPositionRight {
             if let extractedMedia = post.winstonData?.extractedMedia {
               if case .repost(let repost) = extractedMedia, let repostData = repost.data, let url = URL(string: "https://reddit.com/r/\(repostData.subreddit)/comments/\(repost.id)") {
-                PreviewLink(url: url, compact: true)
+                PreviewLink(url: url, compact: true, previewModel: PreviewModel(url))
               }
-              MediaPresenter(postDimensions: $winstonData.postDimensions, controller: controller, cachedVideo: cachedVideo, imgRequests: winstonData.mediaImageRequest, postTitle: data.title, badgeKit: data.badgeKit, markAsSeen: markAsRead, cornerRadius: theme.theme.mediaCornerRadius, blurPostLinkNSFW: blurPostLinkNSFW, media: extractedMedia, over18: over18, compact: true, contentWidth: winstonData.postDimensions.mediaSize?.width ?? 0, routerProxy: routerProxy)
+              MediaPresenter(postDimensions: $winstonData.postDimensions, controller: controller, cachedVideo: cachedVideo, imgRequests: winstonData.mediaImageRequest, postTitle: data.title, badgeKit: data.badgeKit, avatarImageRequest: winstonData.avatarImageRequest, markAsSeen: markAsRead, cornerRadius: theme.theme.mediaCornerRadius, blurPostLinkNSFW: blurPostLinkNSFW, media: extractedMedia, over18: over18, compact: true, contentWidth: winstonData.postDimensions.mediaSize?.width ?? 0, routerProxy: routerProxy)
             } else if showSelfPostThumbnails {
               PostLinkCompactThumbPlaceholder().equatable()
             }
@@ -106,21 +106,21 @@ struct PostLinkCompact: View, Equatable {
                 if case .repost(let repost) = extractedMedia, let repostData = repost.data, let url = URL(string: "https://reddit.com/r/\(repostData.subreddit)/comments/\(repost.id)") {
                   OnlyURL(url: url)
                 }
-                MediaPresenter(postDimensions: $winstonData.postDimensions, controller: controller, cachedVideo: cachedVideo, imgRequests: winstonData.mediaImageRequest, postTitle: data.title, badgeKit: data.badgeKit, markAsSeen: markAsRead, cornerRadius: theme.theme.mediaCornerRadius, blurPostLinkNSFW: blurPostLinkNSFW, showURLInstead: true, media: extractedMedia, over18: over18, compact: true, contentWidth: winstonData.postDimensions.mediaSize?.width ?? 0, routerProxy: routerProxy)
+                MediaPresenter(postDimensions: $winstonData.postDimensions, controller: controller, cachedVideo: cachedVideo, imgRequests: winstonData.mediaImageRequest, postTitle: data.title, badgeKit: data.badgeKit, avatarImageRequest: winstonData.avatarImageRequest, markAsSeen: markAsRead, cornerRadius: theme.theme.mediaCornerRadius, blurPostLinkNSFW: blurPostLinkNSFW, showURLInstead: true, media: extractedMedia, over18: over18, compact: true, contentWidth: winstonData.postDimensions.mediaSize?.width ?? 0, routerProxy: routerProxy)
               }
             }
                         
 //            BadgeOpt(avatarRequest: avatarRequest, badgeKit: data.badgeKit, cs: cs, routerProxy: routerProxy, showVotes: true, theme: theme.theme.badge)
-            BadgeView(avatarRequest: avatarRequest, saved: data.badgeKit.saved, usernameColor: nil, author: data.badgeKit.author, fullname: data.badgeKit.authorFullname, created: data.badgeKit.created, avatarURL: nil, theme: theme.theme.badge, commentsCount: formatBigNumber(data.badgeKit.numComments), votesCount: formatBigNumber(data.badgeKit.ups), routerProxy: routerProxy, cs: cs)
+            BadgeView(avatarRequest: winstonData.avatarImageRequest, saved: data.badgeKit.saved, usernameColor: nil, author: data.badgeKit.author, fullname: data.badgeKit.authorFullname, created: data.badgeKit.created, avatarURL: nil, theme: theme.theme.badge, commentsCount: formatBigNumber(data.badgeKit.numComments), votesCount: formatBigNumber(data.badgeKit.ups), routerProxy: routerProxy, cs: cs)
           }
           .frame(maxWidth: .infinity, alignment: .topLeading)
           
           if thumbnailPositionRight {
             if let extractedMedia = post.winstonData?.extractedMedia {
               if case .repost(let repost) = extractedMedia, let repostData = repost.data, let url = URL(string: "https://reddit.com/r/\(repostData.subreddit)/comments/\(repost.id)") {
-                PreviewLink(url: url, compact: true)
+                PreviewLink(url: url, compact: true, previewModel: PreviewModel(url))
               }
-              MediaPresenter(postDimensions: $winstonData.postDimensions, controller: controller, cachedVideo: cachedVideo, imgRequests: winstonData.mediaImageRequest, postTitle: data.title, badgeKit: data.badgeKit, markAsSeen: markAsRead, cornerRadius: theme.theme.mediaCornerRadius, blurPostLinkNSFW: blurPostLinkNSFW, media: extractedMedia, over18: over18, compact: true, contentWidth: winstonData.postDimensions.mediaSize?.width ?? 0, routerProxy: routerProxy)
+              MediaPresenter(postDimensions: $winstonData.postDimensions, controller: controller, cachedVideo: cachedVideo, imgRequests: winstonData.mediaImageRequest, postTitle: data.title, badgeKit: data.badgeKit, avatarImageRequest: winstonData.avatarImageRequest, markAsSeen: markAsRead, cornerRadius: theme.theme.mediaCornerRadius, blurPostLinkNSFW: blurPostLinkNSFW, media: extractedMedia, over18: over18, compact: true, contentWidth: winstonData.postDimensions.mediaSize?.width ?? 0, routerProxy: routerProxy)
             } else if showSelfPostThumbnails {
               PostLinkCompactThumbPlaceholder().equatable()
             }
@@ -136,11 +136,9 @@ struct PostLinkCompact: View, Equatable {
         .frame(maxWidth: .infinity, alignment: .topLeading)
         
       }
-      .postLinkStyle(post: post, sub: sub, routerProxy: routerProxy, theme: theme, size: winstonData.postDimensions.size, secondary: secondary, isOpen: false, openPost: openPost, readPostOnScroll: readPostOnScroll, hideReadPosts: hideReadPosts, cs: cs)
+      .postLinkStyle(post: post, sub: sub, routerProxy: routerProxy, theme: theme, size: winstonData.postDimensions.size, secondary: secondary, isOpen: $isOpen, openPost: openPost, readPostOnScroll: readPostOnScroll, hideReadPosts: hideReadPosts, cs: cs)
       .swipyUI(onTap: openPost, actionsSet: postSwipeActions, entity: post)
-      .onChange(of: selectedTheme) { val in
-        winstonData.postDimensions = getPostDimensions(post: post, winstonData: winstonData, columnWidth: contentWidth, secondary: secondary, rawTheme: val)
-      }
+      .frame(width: winstonData.postDimensions.size.width, height: winstonData.postDimensions.size.height)
     }
   }
 }

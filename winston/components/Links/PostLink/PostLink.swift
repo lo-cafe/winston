@@ -16,7 +16,7 @@ let POSTLINK_INNER_H_PAD: CGFloat = 16
 
 struct PostLink: View, Equatable, Identifiable {
   static func == (lhs: PostLink, rhs: PostLink) -> Bool {
-    return lhs.id == rhs.id && lhs.avatarRequest?.url == rhs.avatarRequest?.url && lhs.cachedVideo == rhs.cachedVideo && lhs.repostAvatarRequest?.url == rhs.repostAvatarRequest?.url && lhs.theme == rhs.theme
+    return lhs.id == rhs.id && lhs.avatarRequest?.url == rhs.avatarRequest?.url && lhs.cachedVideo == rhs.cachedVideo && lhs.repostAvatarRequest?.url == rhs.repostAvatarRequest?.url && lhs.theme == rhs.theme && lhs.cs == rhs.cs
   }
   
   //  var disableOuterVSpacing = false
@@ -104,7 +104,7 @@ struct PostLink: View, Equatable, Identifiable {
 }
 
 extension View {
-  func postLinkStyle(post: Post, sub: Subreddit, routerProxy: RouterProxy, theme: SubPostsListTheme, size: CGSize, secondary: Bool, isOpen: Bool, openPost: @escaping () -> (), readPostOnScroll: Bool, hideReadPosts: Bool, cs: ColorScheme) -> some View {
+  func postLinkStyle(post: Post, sub: Subreddit, routerProxy: RouterProxy, theme: SubPostsListTheme, size: CGSize, secondary: Bool, isOpen: Binding<Bool>, openPost: @escaping () -> (), readPostOnScroll: Bool, hideReadPosts: Bool, cs: ColorScheme) -> some View {
     let seen = (post.data?.winstonSeen ?? false)
 //    let size = CGSize(width: winstonData.postDimensions.size.width, height: winstonData.postDimensions.size.height)
     let fadeReadPosts = theme.theme.unseenType == .fade
@@ -119,11 +119,17 @@ extension View {
       .contentShape(Rectangle())
 //      .gesture(TapGesture().onEnded(openPost))
       .compositingGroup()
-      .brightness(isOpen ? 0.075 : 0)
+      .brightness(isOpen.wrappedValue ? 0.075 : 0)
       .opacity(fadeReadPosts && seen ? 0.6 : 1)
       .contextMenu(menuItems: { PostLinkContext(post: post) }, preview: { PostLinkContextPreview(post: post, sub: sub, routerProxy: routerProxy) })
       .foregroundStyle(.primary)
       .multilineTextAlignment(.leading)
+      .onAppear {
+        withAnimation { if isOpen.wrappedValue { isOpen.wrappedValue = false } }
+        if let bodyAttr = post.winstonData?.postBodyAttr {
+          Caches.postsAttrStr.addKeyValue(key: post.id) { bodyAttr }
+        }
+      }
       .onDisappear {
         Task(priority: .background) {
           if readPostOnScroll {
@@ -187,9 +193,9 @@ struct PostLinkBG: View, Equatable {
         }
       } else {
         if theme.theme.bg.blurry {
-          RR(theme.theme.cornerRadius, .ultraThinMaterial)
+          RR(theme.theme.cornerRadius, .ultraThinMaterial).equatable()
         }
-        RR(theme.theme.cornerRadius, secondary ? Color("primaryInverted").opacity(0.15) : theme.theme.bg.color.cs(cs).color())
+        RoundedRectangle(cornerRadius: theme.theme.cornerRadius, style: .continuous).fill(secondary ? Color("primaryInverted").opacity(0.15) : theme.theme.bg.color.cs(cs).color())
         if (stickied ?? false) {
           RoundedRectangle(cornerRadius: theme.theme.cornerRadius, style: .continuous)
             .stroke(theme.theme.stickyPostBorderColor.color.cs(cs).color(), lineWidth: theme.theme.stickyPostBorderColor.thickness)

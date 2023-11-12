@@ -62,7 +62,7 @@ struct SubredditPostsIOS: View, Equatable {
     let paddingV = selectedTheme.postLinks.spacing / (isThereDivider ? 4 : 2)
     List {
       Section {
-
+        
         ForEach(Array(posts.enumerated()), id: \.self.element.id) { i, post in
           
           if let sub = subreddit ?? post.winstonData?.subreddit, let postData = post.data, let winstonData = post.winstonData {

@@ -60,6 +60,7 @@ struct CommentLinkMore: View {
         .padding(.horizontal, 12)
         .opacity(loadMoreLoading ? 0.5 : 1)
         .background(Capsule(style: .continuous).fill(curveColor))
+        .mask(Capsule(style: .continuous).fill(.black))
         .padding(.vertical, 4)
         .compositingGroup()
         .fontSize(selectedTheme.comments.theme.bodyText.size, .medium)

@@ -15,12 +15,14 @@ private enum Category: String, CaseIterable {
 struct PostLinkThemingPanel: View {
   @Binding var theme: WinstonTheme
   @State private var selectedCategory = "card"
-  @StateObject private var previewPostSample = Post(data: postSampleData, api: RedditAPI.shared)
+  @StateObject var previewPostSample: Post
   @StateObject private var previewPostSubSample = Subreddit(id: postSampleData.subreddit, api: RedditAPI.shared)
   @Default(.themesPresets) private var themesPresets
   @ObservedObject var tempGlobalState = TempGlobalState.shared
   @Environment(\.colorScheme) private var cs
   @StateObject private var routerProxy = RouterProxy(Router(id: "PostLinkThemingPanelRouter"))
+  
+  
   
   @Default(.blurPostLinkNSFW) private var blurPostLinkNSFW
   @Default(.postSwipeActions) private var postSwipeActions
@@ -71,7 +73,7 @@ struct PostLinkThemingPanel: View {
             avatarRequest: avatarCache.cache["t2_winston_sample"]?.data,
             theme: theme.postLinks,
             showSub: true,
-            secondary: true,
+            secondary: false,
             routerProxy: routerProxy,
             contentWidth: contentWidth,
             blurPostLinkNSFW: blurPostLinkNSFW,
@@ -89,11 +91,11 @@ struct PostLinkThemingPanel: View {
             showSelfPostThumbnails: showSelfPostThumbnails,
             cs: cs
           )
-          .equatable()
+//          .equatable()
           .environmentObject(previewPostSample)
           .environmentObject(previewPostSubSample)
           .environmentObject(winstonData)
-          .environment(\.useTheme, theme)
+//          .environment(\.useTheme, theme)
           .allowsHitTesting(false)
         }
       }
@@ -121,6 +123,7 @@ struct PostLinkThemingPanel: View {
       
     }
     .onAppear { previewPostSample.setupWinstonData(winstonData: previewPostSample.winstonData, theme: theme) }
+    .onChange(of: theme) { x in previewPostSample.setupWinstonData(winstonData: previewPostSample.winstonData, theme: x) }
     .themedListBG(theme.lists.bg)
     .scrollContentBackground(.hidden)
     .listStyle(.plain)

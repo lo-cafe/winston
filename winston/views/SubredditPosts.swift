@@ -46,7 +46,7 @@ struct SubredditPosts: View, Equatable {
       loading = true
     }
     if let result = await subreddit.fetchPosts(sort: sort, after: loadMore ? lastPostAfter : nil, searchText: searchText, contentWidth: contentWidth), let newPosts = result.0 {
-      await RedditAPI.shared.updateAvatarURLCacheFromPosts(posts: newPosts, avatarSize: selectedTheme.postLinks.theme.badge.avatar.size)
+      await RedditAPI.shared.updatePostsWithAvatar(posts: newPosts, avatarSize: selectedTheme.postLinks.theme.badge.avatar.size)
       withAnimation {
         //        let newPostsFiltered = newPosts.filter { !loadedPosts.contains($0.id) && !filteredSubreddits.contains($0.data?.subreddit ?? "") }
         
@@ -132,6 +132,11 @@ struct SubredditPosts: View, Equatable {
     }
     .onChange(of: sort) { val in
       clearAndLoadData()
+    }
+    .onChange(of: cs) { _ in
+      Task(priority: .background) {
+        posts.data.forEach { $0.setupWinstonData(data: $0.data, winstonData: $0.winstonData, theme: selectedTheme) }
+      }
     }
     .onChange(of: searchText) { val in
       if searchText.isEmpty {

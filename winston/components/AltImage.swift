@@ -20,7 +20,9 @@ struct AltImage: UIViewRepresentable, Equatable {
     let imageView = UIImageView(frame: CGRect(origin: .zero, size: size ?? .zero))
     imageView.translatesAutoresizingMaskIntoConstraints = false
     imageView.clipsToBounds = true
-//    imageView.layer.shouldRasterize = trueh
+    imageView.layer.shouldRasterize = true
+    imageView.layer.rasterizationScale = UIScreen.main.scale
+//    imageView.scalesLargeContentImage
     imageView.contentMode = .scaleAspectFill
     
     imageView.setContentHuggingPriority(.defaultLow, for: .vertical)

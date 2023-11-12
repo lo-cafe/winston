@@ -36,7 +36,6 @@ func resetCaches() {
   Caches.postsPreviewModels.cache.removeAll()
   Caches.avatars.cache.removeAll()
   Caches.videos.cache.removeAll()
-  ThingEntityCache.shared.thingEntities.removeAll()
 }
 
 func resetCoreData() {

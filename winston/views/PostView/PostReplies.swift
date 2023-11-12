@@ -26,7 +26,7 @@ struct PostReplies: View {
   func asyncFetch(_ full: Bool, _ altIgnoreSpecificComment: Bool? = nil) async {
     if let result = await post.refreshPost(commentID: (altIgnoreSpecificComment ?? ignoreSpecificComment) ? nil : highlightID, sort: sort, after: nil, subreddit: subreddit.data?.display_name ?? subreddit.id, full: full), let newComments = result.0 {
       Task(priority: .background) {
-        await RedditAPI.shared.updateAvatarURLCacheFromComments(comments: newComments, avatarSize: selectedTheme.comments.theme.badge.avatar.size)
+        let avatarsDict = await RedditAPI.shared.updateCommentsWithAvatar(comments: newComments, avatarSize: selectedTheme.comments.theme.badge.avatar.size)
       }
       newComments.forEach { $0.parentWinston = comments }
       await MainActor.run {
@@ -74,7 +74,9 @@ struct PostReplies: View {
               .id("\(comment.id)-top-decoration")
               .listRowInsets(EdgeInsets(top: 0, leading: horPad, bottom: 0, trailing: horPad))
             
-            CommentLink(highlightID: ignoreSpecificComment ? nil : highlightID, post: post, subreddit: subreddit, postFullname: postFullname, parentElement: .post(comments), comment: comment)
+            if let commentWinstonData = comment.winstonData {
+              CommentLink(highlightID: ignoreSpecificComment ? nil : highlightID, post: post, subreddit: subreddit, postFullname: postFullname, parentElement: .post(comments), comment: comment, commentWinstonData: commentWinstonData, children: comment.childrenWinston)
+            }
             //                .equatable()
             
             Spacer()

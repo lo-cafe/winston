@@ -57,7 +57,6 @@ struct Search: View {
   @State private var searchViewLoaded: Bool = false
   
   @Environment(\.useTheme) private var theme
-  @EnvironmentObject private var routerProxy: RouterProxy
   
   @Default(.blurPostLinkNSFW) private var blurPostLinkNSFW
   @Default(.postSwipeActions) private var postSwipeActions
@@ -137,7 +136,7 @@ struct Search: View {
   
   var body: some View {
     NavigationStack(path: $router.path) {
-      DefaultDestinationInjector(routerProxy: RouterProxy(router)) {
+      DefaultDestinationInjector(routerProxy: RouterProxy(router)) { routerProxy in
         List {
           Group {
             Section {

@@ -21,9 +21,10 @@ struct VoteButton: View, Equatable {
   var body: some View {
     Image(systemName: image)
       .symbolEffect(active ? .bounce.up : .bounce.down, options: .speed(2.75), value: active)
-      .frame(21)
+      .frame(37)
       .background(Color.clear)
-      .contentShape(Circle())
+      .contentShape(Rectangle())
+      .frame(21)
       .foregroundColor(active ? color : .gray)
   }
 }
@@ -52,7 +53,7 @@ struct VoteButtonFallback: View, Equatable {
       .frame(21)
       .background(Color.clear)
       .contentShape(Circle())
-      .onTapGesture(perform: action)
+      .highPriorityGesture(TapGesture().onEnded(action))
       .foregroundColor(color)
       .scaleEffect(animate ? 1 : 1.3)
   }

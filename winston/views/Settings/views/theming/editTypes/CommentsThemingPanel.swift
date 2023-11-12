@@ -119,7 +119,9 @@ struct PreviewComment: View {
         .frame(maxWidth: .infinity, minHeight: theme.theme.cornerRadius, maxHeight: theme.theme.cornerRadius, alignment: .top)
         .clipped()
       
-      CommentLink(comment: comment)
+      if let commentWinstonData = comment.winstonData {
+        CommentLink(comment: comment, commentWinstonData: commentWinstonData, children: comment.childrenWinston)
+      }
       
       Spacer()
         .frame(maxWidth: .infinity, minHeight: theme.theme.cornerRadius * 2, maxHeight: theme.theme.cornerRadius * 2, alignment: .top)

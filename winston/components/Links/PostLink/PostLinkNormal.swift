@@ -9,6 +9,9 @@ import SwiftUI
 import NukeUI
 
 struct PostLinkNormalSelftext: View, Equatable {
+  static func == (lhs: PostLinkNormalSelftext, rhs: PostLinkNormalSelftext) -> Bool {
+    return lhs.selftext == rhs.selftext && lhs.theme == rhs.theme && lhs.cs == rhs.cs
+  }
   var selftext: String
   var theme: ThemeText
   var cs: ColorScheme
@@ -24,7 +27,7 @@ struct PostLinkNormalSelftext: View, Equatable {
 
 struct PostLinkNormal: View, Equatable {
   static func == (lhs: PostLinkNormal, rhs: PostLinkNormal) -> Bool {
-    return lhs.theme == rhs.theme && lhs.cs == rhs.cs && lhs.contentWidth == rhs.contentWidth && lhs.avatarRequest?.url == rhs.avatarRequest?.url && lhs.cachedVideo == rhs.cachedVideo && lhs.repostAvatarRequest?.url == rhs.repostAvatarRequest?.url
+    return lhs.theme == rhs.theme && lhs.cs == rhs.cs && lhs.contentWidth == rhs.contentWidth && lhs.avatarRequest?.url == rhs.avatarRequest?.url && lhs.cachedVideo == rhs.cachedVideo && lhs.repostAvatarRequest?.url == rhs.repostAvatarRequest?.url && lhs.blurPostLinkNSFW == rhs.blurPostLinkNSFW && lhs.hideReadPosts == rhs.hideReadPosts
   }
   
   @EnvironmentObject var post: Post
@@ -50,9 +53,9 @@ struct PostLinkNormal: View, Equatable {
   let showTitleAtTop: Bool
   var cs: ColorScheme
   
-  @Environment(\.useTheme) private var selectedTheme
+//  @Environment(\.useTheme) private var selectedTheme
   
-//  @State private var isOpen = false
+  @State private var isOpen = false
   
   func markAsRead() async {
     Task(priority: .background) { await post.toggleSeen(true) }
@@ -60,7 +63,7 @@ struct PostLinkNormal: View, Equatable {
   
   func openPost() {
     if let routerProxy = routerProxy {
-//      withAnimation(nil) { isOpen = true }
+      withAnimation(nil) { isOpen = true }
       routerProxy.router.path.append(PostViewPayload(post: post, postSelfAttr: nil, sub: feedsAndSuch.contains(sub.id) ? sub : sub))
     }
   }
@@ -87,7 +90,7 @@ struct PostLinkNormal: View, Equatable {
         }
         
         if !showTitleAtTop, let extractedMedia = post.winstonData?.extractedMedia {
-          MediaPresenter(postDimensions: $winstonData.postDimensions, controller: controller, cachedVideo: cachedVideo, imgRequests: winstonData.mediaImageRequest, postTitle: data.title, badgeKit: data.badgeKit, markAsSeen: markAsRead, cornerRadius: theme.theme.mediaCornerRadius, blurPostLinkNSFW: blurPostLinkNSFW, media: extractedMedia, over18: over18, compact: false, contentWidth: winstonData.postDimensions.mediaSize?.width ?? 0, routerProxy: routerProxy)
+          MediaPresenter(postDimensions: $winstonData.postDimensions, controller: controller, cachedVideo: cachedVideo, imgRequests: winstonData.mediaImageRequest, postTitle: data.title, badgeKit: data.badgeKit, avatarImageRequest: winstonData.avatarImageRequest, markAsSeen: markAsRead, cornerRadius: theme.theme.mediaCornerRadius, blurPostLinkNSFW: blurPostLinkNSFW, media: extractedMedia, over18: over18, compact: false, contentWidth: winstonData.postDimensions.mediaSize?.width ?? 0, routerProxy: routerProxy)
           
           if case .repost(let repost) = extractedMedia {
             if let repostSub = repost.winstonData?.subreddit, let repostWinstonData = repost.winstonData {
@@ -131,7 +134,7 @@ struct PostLinkNormal: View, Equatable {
         }
         
         if showTitleAtTop, let extractedMedia = post.winstonData?.extractedMedia {
-          MediaPresenter(postDimensions: $winstonData.postDimensions, controller: controller, cachedVideo: cachedVideo, imgRequests: winstonData.mediaImageRequest, postTitle: data.title, badgeKit: data.badgeKit, markAsSeen: markAsRead, cornerRadius: theme.theme.mediaCornerRadius, blurPostLinkNSFW: blurPostLinkNSFW, media: extractedMedia, over18: over18, compact: false, contentWidth: winstonData.postDimensions.mediaSize?.width ?? 0, routerProxy: routerProxy)
+          MediaPresenter(postDimensions: $winstonData.postDimensions, controller: controller, cachedVideo: cachedVideo, imgRequests: winstonData.mediaImageRequest, postTitle: data.title, badgeKit: data.badgeKit, avatarImageRequest: winstonData.avatarImageRequest, markAsSeen: markAsRead, cornerRadius: theme.theme.mediaCornerRadius, blurPostLinkNSFW: blurPostLinkNSFW, media: extractedMedia, over18: over18, compact: false, contentWidth: winstonData.postDimensions.mediaSize?.width ?? 0, routerProxy: routerProxy)
         }
         
         
@@ -141,7 +144,7 @@ struct PostLinkNormal: View, Equatable {
         }
 //        
         HStack {
-          BadgeView(avatarRequest: avatarRequest, saved: data.badgeKit.saved, usernameColor: nil, author: data.badgeKit.author, fullname: data.badgeKit.authorFullname, created: data.badgeKit.created, avatarURL: nil, theme: theme.theme.badge, commentsCount: formatBigNumber(data.badgeKit.numComments), votesCount: !showVotes ? nil : formatBigNumber(data.badgeKit.ups), routerProxy: routerProxy, cs: cs)
+          BadgeView(avatarRequest: winstonData.avatarImageRequest, saved: data.badgeKit.saved, usernameColor: nil, author: data.badgeKit.author, fullname: data.badgeKit.authorFullname, created: data.badgeKit.created, avatarURL: nil, theme: theme.theme.badge, commentsCount: formatBigNumber(data.badgeKit.numComments), votesCount: !showVotes ? nil : formatBigNumber(data.badgeKit.ups), routerProxy: routerProxy, cs: cs)
           
           Spacer()
           
@@ -149,12 +152,11 @@ struct PostLinkNormal: View, Equatable {
           
         }
       }
-      .postLinkStyle(post: post, sub: sub, routerProxy: routerProxy, theme: theme, size: winstonData.postDimensions.size, secondary: secondary, isOpen: false, openPost: openPost, readPostOnScroll: readPostOnScroll, hideReadPosts: hideReadPosts, cs: cs)
+      .postLinkStyle(post: post, sub: sub, routerProxy: routerProxy, theme: theme, size: winstonData.postDimensions.size, secondary: secondary, isOpen: $isOpen, openPost: openPost, readPostOnScroll: readPostOnScroll, hideReadPosts: hideReadPosts, cs: cs)
+//      .scrollSwipe(size: winstonData.postDimensions.size, actionsSet: postSwipeActions, entity: post)
       .swipyUI(onTap: openPost, actionsSet: postSwipeActions, entity: post)
-      .onChange(of: selectedTheme) { val in
-        post.setupWinstonData(data: post.data, winstonData: winstonData, theme: val)
-//        winstonData.postDimensions = getPostDimensions(post: post, columnWidth: contentWidth, secondary: secondary, theme: val)
-      }
+//      .onChange(of: selectedTheme) { x in post.setupWinstonData(data: post.data, winstonData: winstonData, theme: x) }
+      .frame(width: winstonData.postDimensions.size.width, height: winstonData.postDimensions.size.height)
     }
   }
 }

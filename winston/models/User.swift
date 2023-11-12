@@ -5,12 +5,14 @@
 //  Created by Igor Marcossi on 28/06/23.
 //
 
+import SwiftUI
 import Foundation
 
 typealias User = GenericRedditEntity<UserData, AnyHashable>
 
 extension User {
   static var prefix = "t2"
+  var selfPrefix: String { Self.prefix }
   
   convenience init(data: T, api: RedditAPI) {
     self.init(data: data, api: api, typePrefix: "\(User.prefix)_")
@@ -52,7 +54,15 @@ extension User {
     }
   }
   
-  
+  func fetchItself() {
+    Task(priority: .background) {
+      if let data = await RedditAPI.shared.fetchUser(id) {
+        await MainActor.run { withAnimation {
+          self.data = data
+        } }
+      }
+    }
+  }
 }
 
 struct UserData: GenericRedditEntityDataType {

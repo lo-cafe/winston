@@ -50,7 +50,7 @@ struct UserView: View {
         }
       }
       
-      await user.redditAPI.updateAvatarURLCacheFromOverview(subjects: data, avatarSize: selectedTheme.postLinks.theme.badge.avatar.size)
+      await user.redditAPI.updateOverviewSubjectsWithAvatar(subjects: data, avatarSize: selectedTheme.postLinks.theme.badge.avatar.size)
       
       if let lastItem = data.last {
         lastItemId = getItemId(for: lastItem)
@@ -194,9 +194,11 @@ struct UserView: View {
                 case .second(let comment):
                   VStack {
                     ShortCommentPostLink(comment: comment)
-                    CommentLink(lineLimit: 3, showReplies: false, comment: comment)
-//                      .equatable()
-                      .allowsHitTesting(false)
+                    if let commentWinstonData = comment.winstonData {
+                      CommentLink(lineLimit: 3, showReplies: false, comment: comment, commentWinstonData: commentWinstonData, children: comment.childrenWinston)
+                      //                      .equatable()
+                        .allowsHitTesting(false)
+                    }
                   }
                   .padding(.horizontal, 12)
                   .padding(.top, 12)

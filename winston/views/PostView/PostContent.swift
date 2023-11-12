@@ -66,7 +66,7 @@ struct PostContent: View, Equatable {
         VStack(spacing: selectedTheme.posts.spacing) {
           
           if let extractedMedia = post.winstonData?.extractedMedia {
-            MediaPresenter(postDimensions: $winstonData.postDimensions, controller: nil, cachedVideo: videosCache.cache[post.id]?.data, imgRequests: winstonData.mediaImageRequest, postTitle: data.title, badgeKit: data.badgeKit, markAsSeen: {}, cornerRadius: selectedTheme.postLinks.theme.mediaCornerRadius, blurPostLinkNSFW: blurPostLinkNSFW, media: extractedMedia, over18: over18, compact: false, contentWidth: contentWidth, routerProxy: routerProxy)
+            MediaPresenter(postDimensions: $winstonData.postDimensions, controller: nil, cachedVideo: videosCache.cache[post.id]?.data, imgRequests: winstonData.mediaImageRequest, postTitle: data.title, badgeKit: data.badgeKit, avatarImageRequest: winstonData.avatarImageRequest, markAsSeen: {}, cornerRadius: selectedTheme.postLinks.theme.mediaCornerRadius, blurPostLinkNSFW: blurPostLinkNSFW, media: extractedMedia, over18: over18, compact: false, contentWidth: contentWidth, routerProxy: routerProxy)
               .id("media-post-open")
           }
           
@@ -83,14 +83,14 @@ struct PostContent: View, Equatable {
         }
         .fixedSize(horizontal: false, vertical: true)
         .measure($size)
-        .modifier(AnimatingCellHeight(height: isCollapsed ? 75 : size.height, disable: !forceCollapse && size.height == 0))
+        .modifier(AnimatingCellHeight(height: isCollapsed ? 175 : size.height, disable: !forceCollapse && size.height == 0))
         .clipped()
         .opacity(isCollapsed ? 0.3 : 1)
         .mask(
           Rectangle()
             .fill(LinearGradient(
               gradient: Gradient(stops: [
-                .init(color: Color.black.opacity(1), location: 0),
+                .init(color: Color.black.opacity(isCollapsed ? 0.75 : 1), location: 0),
                 .init(color: Color.black.opacity(isCollapsed ? 0 : 1), location: 1)
               ]),
               startPoint: .top,
@@ -102,6 +102,7 @@ struct PostContent: View, Equatable {
             Image(systemName: "eye.fill")
             Text("Tap to expand").allowsHitTesting(false)
           }
+            .padding(.top, 50)
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .contentShape(Rectangle())
             .onTapGesture { withAnimation(spring) { collapsed.toggle() } }
@@ -115,7 +116,7 @@ struct PostContent: View, Equatable {
       .id("post-content")
       .listRowInsets(EdgeInsets(top: postsTheme.spacing / 2, leading: postsTheme.padding.horizontal, bottom: postsTheme.spacing / 2, trailing: postsTheme.spacing / 2))
       
-      Badge(cs: cs, routerProxy: routerProxy, post: post, theme: postsTheme.badge)
+      BadgeOpt(avatarRequest: winstonData.avatarImageRequest, badgeKit: data.badgeKit, cs: cs, routerProxy: routerProxy, showVotes: false, theme: postsTheme.badge)
         .id("post-badge")
         .listRowInsets(EdgeInsets(top: postsTheme.spacing / 2, leading: postsTheme.padding.horizontal, bottom: postsTheme.spacing * 0.75, trailing: postsTheme.padding.horizontal))
       

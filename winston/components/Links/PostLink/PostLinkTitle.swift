@@ -9,7 +9,7 @@ import SwiftUI
 
 struct PostLinkTitle: View, Equatable {
   static func == (lhs: PostLinkTitle, rhs: PostLinkTitle) -> Bool {
-    lhs.label == rhs.label && lhs.theme == rhs.theme && lhs.cs == rhs.cs && lhs.size == rhs.size
+    lhs.label == rhs.label && lhs.theme == rhs.theme && lhs.cs == rhs.cs && lhs.size == rhs.size && (lhs.attrString?.isEqual(to: rhs.attrString ?? NSAttributedString()) ?? false)
   }
   var attrString: NSAttributedString?
   var label: String
@@ -38,7 +38,6 @@ struct PostLinkTitle: View, Equatable {
   }
   var body: some View {
     if let attrString = attrString {
-      //        Text(attrString)
       Prepend(attrString: attrString, title: label, fontSize: theme.size, fontWeight: theme.weight.ut, color: theme.color.cs(cs).color(), tags: tags, size: size)
         .equatable()
         .frame(width: size.width, height: size.height, alignment: .topLeading)

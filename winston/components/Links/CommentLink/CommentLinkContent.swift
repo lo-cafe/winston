@@ -7,6 +7,7 @@
 
 import SwiftUI
 import Defaults
+import SwiftUIIntrospect
 
 class Sizer: ObservableObject {
   @Published var size: CGSize = .zero
@@ -23,9 +24,9 @@ struct CommentLinkContentPreview: View {
   var comment: Comment
   var avatarsURL: [String:String]?
   var body: some View {
-    if let data = comment.data {
+    if let data = comment.data, let winstonData = comment.winstonData {
       VStack(alignment: .leading, spacing: 0) {
-        CommentLinkContent(forcedBodySize: sizer.size, showReplies: showReplies, arrowKinds: arrowKinds, indentLines: indentLines, lineLimit: lineLimit, post: post, comment: comment, avatarsURL: avatarsURL)
+        CommentLinkContent(forcedBodySize: sizer.size, showReplies: showReplies, arrowKinds: arrowKinds, indentLines: indentLines, lineLimit: lineLimit, post: post, comment: comment, winstonData: winstonData, avatarsURL: avatarsURL)
       }
       .frame(width: UIScreen.screenWidth, height: sizer.size.height + CGFloat((data.depth != 0 ? 42 : 30) + 16))
     }
@@ -37,8 +38,9 @@ class MyDefaults {
 }
 
 struct CommentLinkContent: View {
+  var disableBG = false
   var highlightID: String?
-//  @Default(.commentSwipeActions) private var commentSwipeActions
+  //  @Default(.commentSwipeActions) private var commentSwipeActions
   var forcedBodySize: CGSize?
   var showReplies = true
   var arrowKinds: [ArrowKind]
@@ -46,6 +48,7 @@ struct CommentLinkContent: View {
   var lineLimit: Int?
   var post: Post?
   @ObservedObject var comment: Comment
+  @ObservedObject var winstonData: CommentWinstonData
   @State var sizer = Sizer()
   var avatarsURL: [String:String]?
   //  @Binding var collapsed: Bool
@@ -87,18 +90,19 @@ struct CommentLinkContent: View {
           }
           HStack(spacing: 8) {
             if let author = data.author {
-              BadgeComment(comment: comment, usernameColor: (post?.data?.author ?? "") == author ? Color.green : nil, avatarURL: avatarsURL?[data.author_fullname!], theme: theme.theme.badge)
+              BadgeView(avatarRequest: winstonData.avatarImageRequest, saved: data.badgeKit.saved, usernameColor: (post?.data?.author ?? "") == author ? Color.green : nil, author: data.badgeKit.author, fullname: data.badgeKit.authorFullname, created: data.badgeKit.created, theme: theme.theme.badge, routerProxy: routerProxy, cs: cs)
+              //              BadgeComment(badgeKit: data.badgeKit, cs: cs, routerProxy: routerProxy, showVotes: false, usernameColor:  , theme: theme.theme.badge)
             }
             
             Spacer()
-
+            
             if (data.saved ?? false) {
               Image(systemName: "bookmark.fill")
                 .fontSize(14)
                 .foregroundColor(.green)
                 .transition(.scale.combined(with: .opacity))
             }
-
+            
             if selectable {
               HStack(spacing: 2) {
                 Circle()
@@ -113,20 +117,20 @@ struct CommentLinkContent: View {
               .background(.orange, in: Capsule(style: .continuous))
               .onTapGesture { withAnimation { comment.data?.winstonSelecting = false } }
             }
-
+            
             if let ups = data.ups {
               HStack(alignment: .center, spacing: 4) {
                 Image(systemName: "arrow.up")
                   .foregroundColor(data.likes != nil && data.likes! ? .orange : .gray)
-
+                
                 let downup = Int(ups)
                 Text(formatBigNumber(downup))
                   .foregroundColor(data.likes != nil ? (data.likes! ? .orange : .blue) : .gray)
                   .contentTransition(.numericText())
-                  
+                
                 //                  .foregroundColor(downup == 0 ? .gray : downup > 0 ? .orange : .blue)
                   .fontSize(14, .semibold)
-
+                
                 Image(systemName: "arrow.down")
                   .foregroundColor(data.likes != nil && !data.likes! ? .blue : .gray)
               }
@@ -134,17 +138,17 @@ struct CommentLinkContent: View {
               .padding(.horizontal, 6)
               .padding(.vertical, 2)
               .background(Capsule(style: .continuous).fill(.secondary.opacity(0.1)))
-//              .viewVotes(ups, downs)
+              //              .viewVotes(ups, downs)
               .allowsHitTesting(!collapsed)
               .scaleEffect(1)
-
+              
               if collapsed {
                 Image(systemName: "eye.slash.fill")
                   .fontSize(14, .medium)
                   .opacity(0.5)
                   .allowsHitTesting(false)
               }
-
+              
             }
           }
           .padding(.top, data.depth != 0 ? theme.theme.innerPadding.vertical + theme.theme.repliesSpacing : 0)
@@ -153,7 +157,7 @@ struct CommentLinkContent: View {
           .offset(x: offsetX)
           .animation(draggingAnimation, value: offsetX)
           .contentShape(Rectangle())
-//          .padding(.top, data.depth != 0 ? 6 : 0)
+          .padding(.top, data.depth != 0 ? 6 : 0)
           .swipyUI(
             controlledDragAmount: $offsetX,
             controlledIsSource: false,
@@ -166,10 +170,10 @@ struct CommentLinkContent: View {
           cell.layer.masksToBounds = false
         }
         .padding(.horizontal, horPad)
-        .frame(height: max((theme.theme.badge.authorText.size + theme.theme.badge.statsText.size + 2), theme.theme.badge.avatar.size) + (data.depth != 0 ? theme.theme.innerPadding.vertical + theme.theme.repliesSpacing : 0), alignment: .leading)
+        .frame(height: max(((theme.theme.badge.authorText.size * 1.2) + (theme.theme.badge.statsText.size * 1.2) + 2), theme.theme.badge.avatar.size) + (data.depth != 0 ? theme.theme.innerPadding.vertical + theme.theme.repliesSpacing : 0) + (data.depth != 0 ? 6 : 0), alignment: .leading)
         .mask(Color.black)
         .background(Color.accentColor.opacity(highlight ? 0.2 : 0))
-        .background(showReplies ? theme.theme.bg.cs(cs).color() : .clear)
+        .background(!disableBG && showReplies ? theme.theme.bg.cs(cs).color() : .clear)
         .onAppear {
           let newCommentSwipeActions = Defaults[.commentSwipeActions]
           if commentSwipeActions != newCommentSwipeActions {
@@ -239,7 +243,7 @@ struct CommentLinkContent: View {
               //              .padding(.leading, 6)
               .frame(maxWidth: .infinity, alignment: .topLeading)
               .offset(x: offsetX)
-              .animation(.interpolatingSpring(stiffness: 1000, damping: 100, initialVelocity: 0), value: offsetX)
+              .animation(draggingAnimation, value: offsetX)
               .padding(.top, theme.theme.bodyAuthorSpacing)
               .padding(.bottom, data.depth == 0 && comment.childrenWinston.data.count == 0 ? 0 : theme.theme.innerPadding.vertical)
               .scaleEffect(1)
@@ -281,7 +285,7 @@ struct CommentLinkContent: View {
               }
             }
           }
-
+          
           if let permalink = data.permalink, let permaURL = URL(string: "https://reddit.com\(permalink.escape.urlEncoded)") {
             ShareLink(item: permaURL) { Label("Share", systemImage: "square.and.arrow.up") }
           }

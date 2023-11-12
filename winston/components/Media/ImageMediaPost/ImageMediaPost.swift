@@ -10,21 +10,36 @@ import Defaults
 import NukeUI
 import Nuke
 
+struct ImageMediaPostCompactMoreImagesOverlay: View, Equatable {
+  static func == (lhs: ImageMediaPostCompactMoreImagesOverlay, rhs: ImageMediaPostCompactMoreImagesOverlay) -> Bool {
+    return lhs.count == rhs.count
+  }
+  var count: Int
+  var body: some View {
+    Text("\(count)+")
+      .fontSize(12, .semibold)
+      .padding(.all, 6)
+      .background(Circle().fill(.bar))
+      .padding(.all, 4)
+      .allowsHitTesting(false)
+  }
+}
+
 struct ImageMediaPost: View, Equatable {
   static let gallerySpacing: CGFloat = 8
   static func == (lhs: ImageMediaPost, rhs: ImageMediaPost) -> Bool {
-    return lhs.postTitle == rhs.postTitle && lhs.compact == rhs.compact && lhs.contentWidth == rhs.contentWidth
+    return lhs.postTitle == rhs.postTitle && lhs.compact == rhs.compact && lhs.contentWidth == rhs.contentWidth && lhs.badgeKit == rhs.badgeKit && lhs.cornerRadius == rhs.cornerRadius
   }
     
   @Binding var postDimensions: PostDimensions
   weak var controller: UIViewController?
   let postTitle: String
   let badgeKit: BadgeKit
+  let avatarImageRequest: ImageRequest?
   let markAsSeen: (() async -> ())?
   var cornerRadius: Double
   var compact = false
-  var mediaImageRequest: [ImageRequest] = []
-  var images: [MediaExtracted]
+  var images: [ImgExtracted]
   var contentWidth: CGFloat
 //  @State var fullscreen = false
   @State var fullscreenIndex: Int?
@@ -42,19 +57,13 @@ struct ImageMediaPost: View, Equatable {
         let propHeight = (contentWidth * sourceHeight) / sourceWidth
         let finalHeight = maxPostLinkImageHeightPercentage != 110 ? Double(min(maxHeight, propHeight)) : Double(propHeight)
         
-        GalleryThumb(cornerRadius: cornerRadius, width: compact ? scaledCompactModeThumbSize() : contentWidth, height: compact ? scaledCompactModeThumbSize() : sourceHeight > 0 ? finalHeight : nil, url: img.url, imgRequest: mediaImageRequest.count > 0 ? mediaImageRequest[0] : nil)
-//          .equatable()
+        GalleryThumb(cornerRadius: cornerRadius, width: compact ? scaledCompactModeThumbSize() : contentWidth, height: compact ? scaledCompactModeThumbSize() : sourceHeight > 0 ? finalHeight : nil, url: img.url, imgRequest: images.count > 0 ? images[0].request : nil)
           .background(sourceHeight > 0 || compact ? nil : GeometryReader { geo in Color.clear.onAppear { postDimensions.mediaSize = geo.size }.onChange(of: geo.size) { postDimensions.mediaSize = $0 } })
           .onTapGesture { withAnimation(spring) { fullscreenIndex = 0 } }
           .overlay(
             !compact || images.count <= 1
             ? nil
-            : Text("\(images.count - 1)+")
-              .fontSize(16, .semibold)
-              .padding(.all, 8)
-              .background(Circle().fill(.bar))
-              .padding(.all, 4)
-              .allowsHitTesting(false)
+            : ImageMediaPostCompactMoreImagesOverlay(count: images.count - 1).equatable()
             , alignment: .bottomTrailing
           )
         
@@ -64,11 +73,11 @@ struct ImageMediaPost: View, Equatable {
         let height = width
         VStack(spacing: ImageMediaPost.gallerySpacing) {
           HStack(spacing: ImageMediaPost.gallerySpacing) {
-            GalleryThumb(cornerRadius: cornerRadius, width: compact ? scaledCompactModeThumbSize() : width, height: compact ? scaledCompactModeThumbSize() : height, url: images[0].url, imgRequest: mediaImageRequest.count > 0 ? mediaImageRequest[0] : nil)
+            GalleryThumb(cornerRadius: cornerRadius, width: compact ? scaledCompactModeThumbSize() : width, height: compact ? scaledCompactModeThumbSize() : height, url: images[0].url, imgRequest: images.count > 0 ? images[0].request : nil)
               .equatable()
               .onTapGesture { withAnimation(spring) { fullscreenIndex = 0 } }
 
-            GalleryThumb(cornerRadius: cornerRadius, width: width, height: height, url: images[1].url, imgRequest: mediaImageRequest.count > 1 ? mediaImageRequest[1] : nil)
+            GalleryThumb(cornerRadius: cornerRadius, width: width, height: height, url: images[1].url, imgRequest: images.count > 1 ? images[1].request : nil)
               .equatable()
                 .onTapGesture { withAnimation(spring) { fullscreenIndex = 1 } }
           }
@@ -76,11 +85,11 @@ struct ImageMediaPost: View, Equatable {
           
           if images.count > 2 {
             HStack(spacing: ImageMediaPost.gallerySpacing) {
-              GalleryThumb(cornerRadius: cornerRadius, width: images.count == 3 ? contentWidth : width, height: height, url: images[2].url, imgRequest: mediaImageRequest.count > 2 ? mediaImageRequest[2] : nil)
+              GalleryThumb(cornerRadius: cornerRadius, width: images.count == 3 ? contentWidth : width, height: height, url: images[2].url, imgRequest: images.count > 2 ? images[2].request : nil)
                 .equatable()
                 .onTapGesture { withAnimation(spring) { fullscreenIndex = 2 } }
               if images.count == 4 {
-                GalleryThumb(cornerRadius: cornerRadius, width: width, height: height, url: images[3].url, imgRequest: mediaImageRequest.count > 3 ? mediaImageRequest[3] : nil)
+                GalleryThumb(cornerRadius: cornerRadius, width: width, height: height, url: images[3].url, imgRequest: images.count > 3 ? images[3].request : nil)
                   .equatable()
                   .onTapGesture { withAnimation(spring) { fullscreenIndex = 3 } }
               } else if images.count > 4 {
@@ -107,7 +116,7 @@ struct ImageMediaPost: View, Equatable {
 //      LightBoxImage(postTitle: postTitle, badgeKit: badgeKit, markAsSeen: markAsSeen, i: fullscreenIndex ?? 0, imagesArr: images)
 //    })
     .fullScreenCover(item: $fullscreenIndex) { i in
-      LightBoxImage(postTitle: postTitle, badgeKit: badgeKit, markAsSeen: markAsSeen, i: i, imagesArr: images)
+      LightBoxImage(postTitle: postTitle, badgeKit: badgeKit, avatarImageRequest: avatarImageRequest, markAsSeen: markAsSeen, i: i, imagesArr: images)
     }
   }
 }

@@ -46,14 +46,14 @@ struct VideoPlayerPost: View, Equatable {
   @Default(.loopVideos) private var loopVideos
   @Default(.lightboxViewsPost) private var lightboxViewsPost
   
-  init(controller: UIViewController?, cachedVideo: SharedVideo?, markAsSeen: (() async -> ())?, compact: Bool = false, overrideWidth: CGFloat? = nil, url: URL, size: CGSize) {
+  init(controller: UIViewController?, cachedVideo: SharedVideo?, markAsSeen: (() async -> ())?, compact: Bool = false, overrideWidth: CGFloat? = nil, url: URL) {
     self.controller = controller
     self.sharedVideo = cachedVideo
     self.markAsSeen = markAsSeen
     self.compact = compact
     self.overrideWidth = overrideWidth
     self.url = url
-    self.size = size
+    self.size = cachedVideo?.size ?? .zero
   }
   
   var safe: Double { getSafeArea().top + getSafeArea().bottom }

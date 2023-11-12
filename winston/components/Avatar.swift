@@ -48,7 +48,7 @@ struct AvatarRaw: View, Equatable {
         Image(systemName: "trash")
           .foregroundColor(.red)
           .background(
-            RR(cornerRadius, Color.gray.opacity(0.5))
+            RR(cornerRadius, Color.gray.opacity(0.5)).equatable()
               .frame(width: avatarSize, height: avatarSize)
           )
       } else {
@@ -57,16 +57,17 @@ struct AvatarRaw: View, Equatable {
         } else {
           Text(userID.prefix(1).uppercased())
             .fontSize(avatarSize / 2)
-            .background(
-              RR(cornerRadius, .gray.opacity(0.5))
-                .frame(width: avatarSize, height: avatarSize)
-            )
+//            .background(
+//              RR(cornerRadius, .gray.opacity(0.5)).equatable()
+//                .frame(width: avatarSize, height: avatarSize)
+//            )
         }
       }
     }
     .frame(width: avatarSize, height: avatarSize)
     .mask(RR(cornerRadius, .black).equatable())
-    .background(SavedFlag(saved: saved).equatable())
+    .drawingGroup()
+    .background(SavedFlag(cornerRadius: cornerRadius, saved: saved).equatable())
   }
 }
 
@@ -74,27 +75,17 @@ struct AvatarRaw: View, Equatable {
 struct SavedFlag: View, Equatable {
   private let flagY: CGFloat = 16
   static func == (lhs: SavedFlag, rhs: SavedFlag) -> Bool {
-    lhs.saved == rhs.saved
+    lhs.saved == rhs.saved && lhs.cornerRadius == rhs.cornerRadius
   }
+  var cornerRadius: Double
   var saved: Bool
   var body: some View {
     ZStack {
       Image(systemName: "bookmark.fill")
         .foregroundColor(.green)
         .offset(y: saved ? flagY : 0)
-      
-      Circle()
-        .fill(.gray)
-//        .performantShadow(cornerRadius: 15, color: .black, opacity: 0.15, radius: 4, offsetY: 4, size: CGSize(width: 30, height: 30))
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .mask(
-          Image(systemName: "bookmark.fill")
-            .foregroundColor(.black)
-            .offset(y: saved ? flagY : 0)
-        )
-      
-      Circle()
-        .fill(.gray)
+
+      RR(cornerRadius, .gray).equatable()
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
     .compositingGroup()
