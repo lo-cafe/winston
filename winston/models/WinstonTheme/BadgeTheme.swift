@@ -9,19 +9,21 @@ import Foundation
 
 struct BadgeTheme: Codable, Hashable, Equatable {
   enum CodingKeys: String, CodingKey {
-    case avatar, authorText, flairText, flairBackground, statsText, spacing
+    case avatar, authorText, subColor, flairText, flairBackground, statsText, spacing
   }
   
   var avatar: AvatarTheme
   var authorText: ThemeText
+  var subColor: ColorSchemes<ThemeColor>
   var flairText: ThemeText
   var flairBackground: ColorSchemes<ThemeColor>
   var statsText: ThemeText
   var spacing: CGFloat
   
-  init(avatar: AvatarTheme, authorText: ThemeText, flairText: ThemeText, flairBackground: ColorSchemes<ThemeColor>, statsText: ThemeText, spacing: CGFloat) {
+  init(avatar: AvatarTheme, authorText: ThemeText, subColor: ColorSchemes<ThemeColor>, flairText: ThemeText, flairBackground: ColorSchemes<ThemeColor>, statsText: ThemeText, spacing: CGFloat) {
     self.avatar = avatar
     self.authorText = authorText
+    self.subColor = subColor
     self.flairText = flairText
     self.flairBackground = flairBackground
     self.statsText = statsText
@@ -32,6 +34,7 @@ struct BadgeTheme: Codable, Hashable, Equatable {
     var container = encoder.container(keyedBy: CodingKeys.self)
     try container.encodeIfPresent(avatar, forKey: .avatar)
     try container.encodeIfPresent(authorText, forKey: .authorText)
+    try container.encodeIfPresent(subColor, forKey: .subColor)
     try container.encodeIfPresent(flairText, forKey: .flairText)
     try container.encodeIfPresent(flairBackground, forKey: .flairBackground)
     try container.encodeIfPresent(statsText, forKey: .statsText)
@@ -43,6 +46,7 @@ struct BadgeTheme: Codable, Hashable, Equatable {
     let container = try decoder.container(keyedBy: CodingKeys.self)
     self.avatar = try container.decodeIfPresent(AvatarTheme.self, forKey: .avatar) ?? t.avatar
     self.authorText = try container.decodeIfPresent(ThemeText.self, forKey: .authorText) ?? t.authorText
+    self.subColor = try container.decodeIfPresent(ColorSchemes<ThemeColor>.self, forKey: .subColor) ?? t.subColor
     self.flairText = try container.decodeIfPresent(ThemeText.self, forKey: .flairText) ?? t.flairText
     self.flairBackground = try container.decodeIfPresent(ColorSchemes<ThemeColor>.self, forKey: .flairBackground) ?? t.flairBackground
     self.statsText = try container.decodeIfPresent(ThemeText.self, forKey: .statsText) ?? t.statsText

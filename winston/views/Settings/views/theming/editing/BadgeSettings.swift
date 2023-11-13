@@ -10,6 +10,7 @@ import SwiftUI
 struct BadgeSettings: View {
   @Binding var theme: BadgeTheme
   var defaultVal: BadgeTheme
+  var showSub: Bool = false
     var body: some View {
       Group {
         
@@ -31,6 +32,12 @@ struct BadgeSettings: View {
         
         FakeSection("Author font") {
           FontSelector(theme: $theme.authorText, defaultVal: defaultVal.authorText)
+        }
+        
+        if (showSub) {
+          FakeSection("Subreddit Color") {
+            SchemesColorPicker(theme: $theme.subColor, defaultVal: defaultVal.subColor)
+          }
         }
           
         FakeSection("Flair font") {

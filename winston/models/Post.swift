@@ -595,6 +595,7 @@ struct PostData: GenericRedditEntityDataType {
       saved: saved,
       author: author,
       authorFullname: author_fullname ?? "",
+      userFlair: author_flair_text ?? "",
       created: created
     )
   }

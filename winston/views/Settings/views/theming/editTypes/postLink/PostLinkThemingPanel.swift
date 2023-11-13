@@ -52,7 +52,7 @@ struct PostLinkThemingPanel: View {
         case "texts":
           TextsSettings(theme: $theme.postLinks.theme)
         case "badge":
-          BadgeSettings(theme: $theme.postLinks.theme.badge, defaultVal: defaultTheme.postLinks.theme.badge)
+          BadgeSettings(theme: $theme.postLinks.theme.badge, defaultVal: defaultTheme.postLinks.theme.badge, showSub: true)
         default:
           EmptyView()
         }

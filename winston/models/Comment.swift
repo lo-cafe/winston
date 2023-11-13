@@ -492,6 +492,7 @@ struct CommentData: GenericRedditEntityDataType {
       saved: saved ?? false,
       author: author ?? "",
       authorFullname: author_fullname ?? "",
+      userFlair : author_flair_text ?? "",
       created: created ?? 0
     )
   }
