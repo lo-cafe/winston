@@ -145,6 +145,7 @@
 		EC3B32462AC64F4C002C1291 /* SubredditPostsIPAD.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC3B32452AC64F4C002C1291 /* SubredditPostsIPAD.swift */; };
 		EC3BC5EC2ACC21AA0050CA8F /* SwipeRevolution.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC3BC5EB2ACC21AA0050CA8F /* SwipeRevolution.swift */; };
 		EC3BC5EE2ACC22340050CA8F /* Gesturer.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC3BC5ED2ACC22340050CA8F /* Gesturer.swift */; };
+		EC3E7B242B0542EA004B4F21 /* Pow in Frameworks */ = {isa = PBXBuildFile; productRef = EC3E7B232B0542EA004B4F21 /* Pow */; };
 		EC46E9282ABA3B05001BC068 /* WNavigationLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC46E9272ABA3B05001BC068 /* WNavigationLink.swift */; };
 		EC46E92A2ABA4340001BC068 /* themedListRowBG.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC46E9292ABA4340001BC068 /* themedListRowBG.swift */; };
 		EC46E92C2ABA4460001BC068 /* themedListDividers.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC46E92B2ABA4460001BC068 /* themedListDividers.swift */; };
@@ -154,7 +155,7 @@
 		EC50B0E42A84563C00AB8F72 /* SwipeAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC50B0E32A84563C00AB8F72 /* SwipeAction.swift */; };
 		EC50B0E62A8460CD00AB8F72 /* replyModalPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC50B0E52A8460CD00AB8F72 /* replyModalPresenter.swift */; };
 		EC58D4532AC0251700FF5B6B /* getPostContentWidth.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC58D4522AC0251700FF5B6B /* getPostContentWidth.swift */; };
-		EC58D4562AC02B6900FF5B6B /* FlairTag.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC58D4552AC02B6900FF5B6B /* FlairTag.swift */; };
+		EC58D4562AC02B6900FF5B6B /* Tag.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC58D4552AC02B6900FF5B6B /* Tag.swift */; };
 		EC58D4582AC02BA500FF5B6B /* PostLinkContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC58D4572AC02BA500FF5B6B /* PostLinkContext.swift */; };
 		EC58D45A2AC02BF500FF5B6B /* SubsNStuffLine.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC58D4592AC02BF500FF5B6B /* SubsNStuffLine.swift */; };
 		EC593AD82A4673B2002D6454 /* winstonApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC593AD72A4673B2002D6454 /* winstonApp.swift */; };
@@ -550,7 +551,7 @@
 		EC50B0E32A84563C00AB8F72 /* SwipeAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwipeAction.swift; sourceTree = "<group>"; };
 		EC50B0E52A8460CD00AB8F72 /* replyModalPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = replyModalPresenter.swift; sourceTree = "<group>"; };
 		EC58D4522AC0251700FF5B6B /* getPostContentWidth.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = getPostContentWidth.swift; sourceTree = "<group>"; };
-		EC58D4552AC02B6900FF5B6B /* FlairTag.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlairTag.swift; sourceTree = "<group>"; };
+		EC58D4552AC02B6900FF5B6B /* Tag.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tag.swift; sourceTree = "<group>"; };
 		EC58D4572AC02BA500FF5B6B /* PostLinkContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostLinkContext.swift; sourceTree = "<group>"; };
 		EC58D4592AC02BF500FF5B6B /* SubsNStuffLine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubsNStuffLine.swift; sourceTree = "<group>"; };
 		EC593AD42A4673B2002D6454 /* winston.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = winston.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -781,6 +782,7 @@
 				ECE08B8D2AAB44DC00F84DC9 /* SymbolPicker in Frameworks */,
 				EC593B0C2A47B801002D6454 /* Alamofire in Frameworks */,
 				EC593B092A47B42D002D6454 /* KeychainAccess in Frameworks */,
+				EC3E7B242B0542EA004B4F21 /* Pow in Frameworks */,
 				ECE285972A4FD6FC009CF9DD /* SwiftDate in Frameworks */,
 				EC9BB1C62A8B05AA0070CD97 /* NukeVideo in Frameworks */,
 				EC9BB1C42A8B05AA0070CD97 /* NukeUI in Frameworks */,
@@ -1030,7 +1032,7 @@
 			isa = PBXGroup;
 			children = (
 				EC58D4522AC0251700FF5B6B /* getPostContentWidth.swift */,
-				EC58D4552AC02B6900FF5B6B /* FlairTag.swift */,
+				EC58D4552AC02B6900FF5B6B /* Tag.swift */,
 				EC58D4572AC02BA500FF5B6B /* PostLinkContext.swift */,
 				EC58D4592AC02BF500FF5B6B /* SubsNStuffLine.swift */,
 				EC2A39142AC20155001E5354 /* PostLinkTitle.swift */,
@@ -1632,6 +1634,7 @@
 				EC2D72B22AC5335E002601E0 /* CHTCollectionViewWaterfallLayout */,
 				EC1685302AEF4BF2000DD701 /* Gifu */,
 				6514FFEB2AFD01520051D264 /* WhatsNewKit */,
+				EC3E7B232B0542EA004B4F21 /* Pow */,
 			);
 			productName = winston;
 			productReference = EC593AD42A4673B2002D6454 /* winston.app */;
@@ -1705,6 +1708,7 @@
 				EC2D72B12AC5335E002601E0 /* XCRemoteSwiftPackageReference "CHTCollectionViewWaterfallLayout" */,
 				EC16852F2AEF4BF2000DD701 /* XCRemoteSwiftPackageReference "Gifu" */,
 				6514FFEA2AFD01520051D264 /* XCRemoteSwiftPackageReference "WhatsNewKit" */,
+				EC3E7B222B0542EA004B4F21 /* XCRemoteSwiftPackageReference "Pow" */,
 			);
 			productRefGroup = EC593AD52A4673B2002D6454 /* Products */;
 			projectDirPath = "";
@@ -1908,7 +1912,7 @@
 				ECA30A192A604ACC00BB19D1 /* SubredditIcon.swift in Sources */,
 				EC9ECA082A8805DF00470F89 /* performantShadow.swift in Sources */,
 				EC1906F12A552A6800A0300E /* BehaviorPanel.swift in Sources */,
-				EC58D4562AC02B6900FF5B6B /* FlairTag.swift in Sources */,
+				EC58D4562AC02B6900FF5B6B /* Tag.swift in Sources */,
 				ECDD51662A74E4DD00FD9498 /* SubredditPostsContainer.swift in Sources */,
 				EC3AC9CD2AAC9A970078EC78 /* SubredditSample.swift in Sources */,
 				ECDBA8C32A4A820800FB42DB /* Post.swift in Sources */,
@@ -2460,6 +2464,14 @@
 				minimumVersion = 1.0.0;
 			};
 		};
+		EC3E7B222B0542EA004B4F21 /* XCRemoteSwiftPackageReference "Pow" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/movingparts-io/Pow";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
 		EC593AFE2A47AFC1002D6454 /* XCRemoteSwiftPackageReference "Defaults" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/sindresorhus/Defaults";
@@ -2604,6 +2616,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = EC3AC9D02AACC3DB0078EC78 /* XCRemoteSwiftPackageReference "DebouncedOnChange" */;
 			productName = DebouncedOnChange;
+		};
+		EC3E7B232B0542EA004B4F21 /* Pow */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = EC3E7B222B0542EA004B4F21 /* XCRemoteSwiftPackageReference "Pow" */;
+			productName = Pow;
 		};
 		EC593AFF2A47AFC1002D6454 /* Defaults */ = {
 			isa = XCSwiftPackageProductDependency;

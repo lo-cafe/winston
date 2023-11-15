@@ -50,6 +50,7 @@ struct PostLink: View, Equatable, Identifiable {
     Group {
       if compact {
         PostLinkCompact(
+          id: id,
           controller: controller,
           //                controller: nil,
           avatarRequest: avatarRequest,
@@ -77,6 +78,7 @@ struct PostLink: View, Equatable, Identifiable {
         .equatable()
       } else {
         PostLinkNormal(
+          id: id,
           controller: controller,
           //                controller: nil,
           avatarRequest: avatarRequest,
@@ -84,6 +86,7 @@ struct PostLink: View, Equatable, Identifiable {
           repostAvatarRequest: repostAvatarRequest,
           theme: theme,
           showSub: showSub,
+          secondary: secondary,
           routerProxy: routerProxy,
           contentWidth: contentWidth,
           blurPostLinkNSFW: blurPostLinkNSFW,
@@ -177,7 +180,7 @@ struct PostLinkGlowDot: View, Equatable {
 
 struct PostLinkBG: View, Equatable {
   static func == (lhs: PostLinkBG, rhs: PostLinkBG) -> Bool {
-    return lhs.theme == rhs.theme && lhs.stickied == rhs.stickied && lhs.cs == rhs.cs
+    return lhs.theme == rhs.theme && lhs.stickied == rhs.stickied && lhs.cs == rhs.cs && lhs.secondary == rhs.secondary
   }
   
   let theme: SubPostsListTheme
@@ -192,14 +195,18 @@ struct PostLinkBG: View, Equatable {
           theme.theme.stickyPostBorderColor.color.cs(cs).color()
         }
       } else {
+        
         if theme.theme.bg.blurry {
           RR(theme.theme.cornerRadius, .ultraThinMaterial).equatable()
         }
-        RoundedRectangle(cornerRadius: theme.theme.cornerRadius, style: .continuous).fill(secondary ? Color("primaryInverted").opacity(0.15) : theme.theme.bg.color.cs(cs).color())
+        
+        RoundedRectangle(cornerRadius: theme.theme.cornerRadius, style: .continuous).fill(secondary ? .primary.opacity(0.06) : theme.theme.bg.color.cs(cs).color())
+        
         if (stickied ?? false) {
           RoundedRectangle(cornerRadius: theme.theme.cornerRadius, style: .continuous)
             .stroke(theme.theme.stickyPostBorderColor.color.cs(cs).color(), lineWidth: theme.theme.stickyPostBorderColor.thickness)
         }
+        
       }
     }
     .allowsHitTesting(false)

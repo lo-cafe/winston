@@ -24,6 +24,7 @@ struct SwipeUI<T: GenericRedditEntityDataType, B: Hashable>: ViewModifier {
   @State private var offset: CGFloat?
   @State private var triggeredAction: TriggeredAction = .none
   
+  var secondary: Bool
   var offsetYAction: CGFloat = 0
   var controlledDragAmount: Binding<CGFloat>?
   var controlledIsSource = true
@@ -105,9 +106,8 @@ struct SwipeUI<T: GenericRedditEntityDataType, B: Hashable>: ViewModifier {
           .offset(y: offsetYAction)
           .allowsHitTesting(false)
       )
-      .onTapGesture {
-        onTapAction?()
-      }
+      .highPriorityGesture(secondary ? TapGesture().onEnded({ onTapAction?() }) : nil)
+      .gesture(secondary ? nil : TapGesture().onEnded({ onTapAction?() }))
       .gesture(
         enableSwipeAnywhere
         ? nil
@@ -198,7 +198,7 @@ struct SwipeUI<T: GenericRedditEntityDataType, B: Hashable>: ViewModifier {
 }
 
 struct SwipeUIBtn<T: GenericRedditEntityDataType, B: Hashable>: View, Equatable {
-//struct SwipeUIBtn: View {
+  //struct SwipeUIBtn: View {
   static func == (lhs: SwipeUIBtn<T, B>, rhs: SwipeUIBtn<T, B>) -> Bool {
     lhs.entity == rhs.entity && lhs.info?.0 == rhs.info?.0 && lhs.info?.1 == rhs.info?.1 && lhs.info?.2 == rhs.info?.2 && lhs.info?.3 == rhs.info?.3
   }
@@ -212,7 +212,7 @@ struct SwipeUIBtn<T: GenericRedditEntityDataType, B: Hashable>: View, Equatable 
     if let info = info {
       let active = info.3 ? secondActiveFunc(entity!) : firstActiveFunc(entity!)
       Image(systemName: active ? info.0.active : info.0.normal)
-//      Image(systemName: "square.and.arrow.up.circle.fill")
+      //      Image(systemName: "square.and.arrow.up.circle.fill")
         .ifIOS17({ img in
           if #available(iOS 17, *) {
             img.contentTransition(.symbolEffect)
@@ -240,9 +240,11 @@ extension View {
     onTap: (() -> Void)? = nil,
     actionsSet: SwipeActionsSet,
     entity: GenericRedditEntity<T, B>,
-    disabled: Bool = false
+    disabled: Bool = false,
+    secondary: Bool = false
   ) -> some View {
     self.modifier(SwipeUI(
+      secondary: secondary,
       offsetYAction: offsetYAction,
       controlledDragAmount: controlledDragAmount,
       controlledIsSource: controlledIsSource,

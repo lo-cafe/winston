@@ -21,10 +21,11 @@ struct PostLinkCompactThumbPlaceholder: View, Equatable {
   }
 }
 
-struct PostLinkCompact: View, Equatable {
+struct PostLinkCompact: View, Equatable, Identifiable {
   static func == (lhs: PostLinkCompact, rhs: PostLinkCompact) -> Bool {
-    return lhs.theme == rhs.theme && lhs.cs == rhs.cs && lhs.contentWidth == rhs.contentWidth && lhs.avatarRequest?.url == rhs.avatarRequest?.url && lhs.cachedVideo == rhs.cachedVideo && lhs.repostAvatarRequest?.url == rhs.repostAvatarRequest?.url
+    return lhs.id == rhs.id && lhs.theme == rhs.theme && lhs.cs == rhs.cs && lhs.contentWidth == rhs.contentWidth && lhs.avatarRequest?.url == rhs.avatarRequest?.url && lhs.cachedVideo == rhs.cachedVideo && lhs.repostAvatarRequest?.url == rhs.repostAvatarRequest?.url
   }
+  var id: String
   @EnvironmentObject var post: Post
   @EnvironmentObject var winstonData: PostWinstonData
   @EnvironmentObject var sub: Subreddit
@@ -133,7 +134,7 @@ struct PostLinkCompact: View, Equatable {
             
             if showSub {
               let subName = data.subreddit
-              FlairTag(subredditIconKit: nil, text: "r/\(subName)", color: .blue)
+              Tag(subredditIconKit: nil, text: "r/\(subName)", color: .blue)
                 .highPriorityGesture(TapGesture() .onEnded {
                   routerProxy.router.path.append(SubViewType.posts(Subreddit(id: subName, api: RedditAPI.shared)))
                 })

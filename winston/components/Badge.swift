@@ -32,6 +32,8 @@ struct BadgeView: View, Equatable {
   var votesCount: String?
   weak var routerProxy: RouterProxy?
   var cs: ColorScheme
+  var openSub: (() -> ())? = nil
+  var subName: String? = nil
   
   nonisolated func openUser() {
     routerProxy?.router.path.append(User(id: author, api: RedditAPI.shared))
@@ -60,10 +62,10 @@ struct BadgeView: View, Equatable {
       VStack(alignment: .leading, spacing: BadgeView.authorStatsSpacing) {
         
         HStack(alignment: .center, spacing: 6) {
-        Text(author).font(.system(size: theme.authorText.size, weight: theme.authorText.weight.t)).foregroundColor(author == "[deleted]" ? .red : usernameColor ?? theme.authorText.color.cs(cs).color())
-          .onTapGesture(perform: openUser)
-
-                    if unseen {
+          Text(author).font(.system(size: theme.authorText.size, weight: theme.authorText.weight.t)).foregroundColor(author == "[deleted]" ? .red : usernameColor ?? theme.authorText.color.cs(cs).color())
+            .onTapGesture(perform: openUser)
+          
+          if unseen {
             ZStack {
               Circle()
                 .fill(commentTheme?.unseenDot.cs(cs).color() ?? .red)
@@ -86,8 +88,14 @@ struct BadgeView: View, Equatable {
             }
           }
         }
-        ////
-        HStack(alignment: .center, spacing: 6) {
+        
+        
+        HStack(alignment: .center, spacing: theme.statsText.size * 0.416666667 /* Yes, absurd number, I thought it was funny */) {
+          
+          if let openSub = openSub, let subName = subName {
+            Tag(subredditIconKit: nil, text: "r/\(subName)", color: .blue, fontSize: ((theme.statsText.size * 1.2) - 2.0))
+              .highPriorityGesture(TapGesture().onEnded(openSub))
+          }
           
           if let commentsCount = commentsCount {
             HStack(alignment: .center, spacing: 2) {
@@ -95,13 +103,13 @@ struct BadgeView: View, Equatable {
               Text(commentsCount)
             }
           }
-
-              //           if elem.type == "comments", let seenComments = post?.data?.winstonSeenCommentCount, let totalComments = Int(elem.text) {
-              //   let unseenComments = totalComments - seenComments
-              //   if unseenComments > 0 {
-              //     Text("(\(Int(unseenComments)))").foregroundColor(.accentColor)
-              //   }
-              // }
+          
+          //           if elem.type == "comments", let seenComments = post?.data?.winstonSeenCommentCount, let totalComments = Int(elem.text) {
+          //   let unseenComments = totalComments - seenComments
+          //   if unseenComments > 0 {
+          //     Text("(\(Int(unseenComments)))").foregroundColor(.accentColor)
+          //   }
+          // }
           
           if let votesCount = votesCount {
             HStack(alignment: .center, spacing: 2) {
@@ -116,6 +124,7 @@ struct BadgeView: View, Equatable {
           }
           
         }
+        .fixedSize(horizontal: true, vertical: false)
         .foregroundStyle(defaultIconColor)
         .font(.system(size: theme.statsText.size, weight: theme.statsText.weight.t))
       }
