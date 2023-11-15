@@ -203,9 +203,6 @@ struct SubredditPostsNavBtns: View, Equatable {
               Label(opt.rawVal.value.capitalized, systemImage: opt.rawVal.icon)
                 .foregroundColor(Color.accentColor)
                 .font(.system(size: 17, weight: .bold))
-                .onAppear{
-                  print(opt.rawVal)
-                }
             }
           } else {
             Button {
