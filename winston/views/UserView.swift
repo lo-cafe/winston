@@ -26,6 +26,8 @@ struct UserView: View {
   @Environment(\.useTheme) private var selectedTheme
   @EnvironmentObject private var routerProxy: RouterProxy
   
+  @State private var dataTypeFilter: String = "" // Handles filtering for only posts or only comments.
+  
   @Default(.blurPostLinkNSFW) private var blurPostLinkNSFW
   @Default(.postSwipeActions) private var postSwipeActions
   @Default(.compactMode) private var compactMode
@@ -46,7 +48,7 @@ struct UserView: View {
   
   func refresh() async {
     await user.refetchUser()
-    if let data = await user.refetchOverview() {
+    if let data = await user.refetchOverview(dataTypeFilter) {
       await MainActor.run {
         withAnimation {
           loadingOverview = false
@@ -64,7 +66,7 @@ struct UserView: View {
   
   func loadNextData() {
     Task {
-      if let lastId = lastItemId, let overviewData = await user.refetchOverview(lastId) {
+      if let lastId = lastItemId, let overviewData = await user.refetchOverview(dataTypeFilter, lastId) {
         await MainActor.run {
           withAnimation {
             lastActivities?.append(contentsOf: overviewData)
@@ -133,13 +135,42 @@ struct UserView: View {
             VStack {
               HStack {
                 if let postKarma = data.link_karma {
-                  DataBlock(icon: "highlighter", label: "Post karma", value: "\(formatBigNumber(postKarma))")
+                  DataBlock(icon: "highlighter", label: "Post karma",
+                            value: "\(formatBigNumber(postKarma))") // maybe switch this to use the theme colors?
                     .transition(.opacity)
+                    .onTapGesture {
+                      withAnimation(.easeInOut(duration: 0.2)) {
+                        if dataTypeFilter == "posts" {
+                          dataTypeFilter = ""
+                        } else {
+                          dataTypeFilter = "posts"
+                        }
+                      }
+                    }
+                    .overlay(dataTypeFilter == "posts" ?
+                                Color.accentColor.opacity(0.2)
+                                  .clipShape(RoundedRectangle(cornerRadius: 20))
+                                  .allowsHitTesting(false)
+                                : nil)
                 }
                 
                 if let commentKarma = data.comment_karma {
                   DataBlock(icon: "checkmark.message.fill", label: "Comment karma", value: "\(formatBigNumber(commentKarma))")
                     .transition(.opacity)
+                    .onTapGesture {
+                      withAnimation(.easeInOut(duration: 0.2)) {
+                        if dataTypeFilter == "comments" {
+                          dataTypeFilter = ""
+                        } else {
+                          dataTypeFilter = "comments"
+                        }
+                      }
+                    }
+                    .overlay(dataTypeFilter == "comments" ?
+                                Color.accentColor.opacity(0.2)
+                                  .clipShape(RoundedRectangle(cornerRadius: 20))
+                                  .allowsHitTesting(false)
+                                : nil)
                 }
               }
               if let created = data.created {
@@ -152,7 +183,7 @@ struct UserView: View {
             .transition(.opacity)
           }
           
-          Text("Last activities")
+          Text(dataTypeFilter.isEmpty ? "Latest activity" : "Latest " + dataTypeFilter)
             .fontSize(20, .bold)
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.horizontal, 16)
@@ -220,6 +251,7 @@ struct UserView: View {
               .progressViewStyle(.circular)
               .frame(maxWidth: .infinity, minHeight: 100 )
               .id("post-loading")
+              .id(UUID()) // spawns unique spinner, swiftui bug.
           }
         }
         .listRowInsets(EdgeInsets(top: 8, leading: 8, bottom: 8, trailing: 8))
@@ -242,6 +274,16 @@ struct UserView: View {
         if user.data == nil || lastActivities == nil {
           await refresh()
         }
+      }
+    }
+    .onChange(of: dataTypeFilter) { _ in
+      withAnimation {
+        lastActivities?.removeAll()
+        loadingOverview = true
+      }
+      
+      Task {
+        await refresh()
       }
     }
   }
