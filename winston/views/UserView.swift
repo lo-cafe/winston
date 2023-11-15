@@ -9,9 +9,13 @@ import SwiftUI
 import NukeUI
 import Defaults
 
-//enum UserViewSections: Int {
-//  case
-//}
+struct UserViewContextPreview: View {
+  var author: String
+  weak var routerProxy: RouterProxy?
+  var body: some View {
+    NavigationStack { UserView(user: User(id: author, api: RedditAPI.shared)) }
+  }
+}
 
 struct UserView: View {
   @StateObject var user: User
