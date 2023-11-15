@@ -109,6 +109,15 @@
       }
     },
     {
+      "identity" : "pow",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/movingparts-io/Pow",
+      "state" : {
+        "branch" : "main",
+        "revision" : "d5dc8370f8da53aa54cee9fa909cbe8d6d122ccc"
+      }
+    },
+    {
       "identity" : "skeletonui",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/CSolanaM/SkeletonUI.git",

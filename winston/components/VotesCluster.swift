@@ -7,6 +7,7 @@
 
 import SwiftUI
 import Defaults
+import Pow
 
 struct VotesKit: Equatable, Identifiable {
   let ups: Int
@@ -18,17 +19,17 @@ struct VotesKit: Equatable, Identifiable {
 /// A cluster consisting of the upvote, downvote button and the amount of upvotes with an optional upvote ratio
 struct VotesCluster: View, Equatable {
   static let verticalWidth: Double = 24
-    static func == (lhs: VotesCluster, rhs: VotesCluster) -> Bool {
-      lhs.votesKit == rhs.votesKit
-    }
+  static func == (lhs: VotesCluster, rhs: VotesCluster) -> Bool {
+    lhs.votesKit == rhs.votesKit
+  }
   
-//  var likeRatio: CGFloat? //if the upvote ratio is nil it will be hidden
+  //  var likeRatio: CGFloat? //if the upvote ratio is nil it will be hidden
   var votesKit: VotesKit
-//  @ObservedObject var post: Post
+  //  @ObservedObject var post: Post
   var voteAction: (RedditAPI.VoteAction) async -> Bool?
   
   var vertical = false
-//  @Default(.showUpvoteRatio) var showUpvoteRatio
+  //  @Default(.showUpvoteRatio) var showUpvoteRatio
   
   nonisolated func haptic() {
     Task(priority: .background) {
@@ -53,12 +54,12 @@ struct VotesCluster: View, Equatable {
   }
   
   var body: some View {
-      //    let votes = calculateUpAndDownVotes(upvoteRatio: votesKit.ratio, score: votesKit.ups)
-      if vertical {
-        VotesClusterVertical(id: votesKit.id, likes: votesKit.likes, upvote: upvote, downvote: downvote)
-      } else {
-        VotesClusterHorizontal(likes: votesKit.likes, ups: votesKit.ups, upvote_ratio: votesKit.ratio, showUpvoteRatio: true, upvote: upvote, downvote: downvote)
-      }
+    //    let votes = calculateUpAndDownVotes(upvoteRatio: votesKit.ratio, score: votesKit.ups)
+    if vertical {
+      VotesClusterVertical(id: votesKit.id, likes: votesKit.likes, upvote: upvote, downvote: downvote)
+    } else {
+      VotesClusterHorizontal(likes: votesKit.likes, ups: votesKit.ups, upvote_ratio: votesKit.ratio, showUpvoteRatio: true, upvote: upvote, downvote: downvote)
+    }
   }
 }
 
@@ -81,7 +82,7 @@ struct VotesClusterHorizontal: View, Equatable {
         VoteButtonFallback(color: (likes ?? false) ? .orange : .gray, voteAction: upvote, image: "arrow.up")
       }
       
-      VotesClusterInfo(ups: ups, likes: likes, likeRatio: upvote_ratio)
+      VotesClusterInfo(ups: ups, likes: likes, likeRatio: upvote_ratio, flyingNumber: FlyingNumberInfo(counter: 0, color: likes))
         .allowsHitTesting(false)
       
       if #available(iOS 17, *) {
@@ -90,7 +91,7 @@ struct VotesClusterHorizontal: View, Equatable {
         VoteButtonFallback(color: !(likes ?? true) ? .blue : .gray, voteAction: downvote, image: "arrow.down")
       }
     }
-    .drawingGroup()
+    //    .drawingGroup()
   }
 }
 
@@ -123,17 +124,39 @@ struct VotesClusterVertical: View, Equatable {
   }
 }
 
+struct FlyingNumberInfo: Equatable {
+  var counter: Int
+  var value: Int = 0
+  var color: Bool?
+}
+
 struct VotesClusterInfo: View, Equatable {
+  static func == (lhs: VotesClusterInfo, rhs: VotesClusterInfo) -> Bool {
+    lhs.ups == rhs.ups && lhs.likes == rhs.likes && lhs.likeRatio == rhs.likeRatio
+  }
+  
   var ups: Int
   var likes: Bool?
   var likeRatio: CGFloat?
+  @State var flyingNumber: FlyingNumberInfo
   var body: some View {
     VStack(spacing: 0) {
       Text(formatBigNumber(ups))
         .contentTransition(.numericText())
         .foregroundColor(likes != nil ? (likes! ? .orange : .blue) : .gray)
         .fontSize(16, .semibold)
-      //          .viewVotes(votes.upvotes, votes.downvotes)
+        .drawingGroup()
+        .ifIOS17 { view in
+          if #available(iOS 17, *) {
+            view
+              .changeEffect(
+                .rise(origin: UnitPoint(x: 0.75, y: 0.25)) {
+                  Text(flyingNumber.value > 0 ? "+\(flyingNumber.value)" : "\(flyingNumber.value)" )
+                    .foregroundStyle(flyingNumber.color == true ? .orange : flyingNumber.color == nil ? .gray : .blue)
+                    .font(.system(size: 12, weight: .semibold))
+                }, value: flyingNumber)
+          }
+        }
       
       if likeRatio != nil, let ratio = likeRatio {
         HStack(spacing: 1) {
@@ -142,6 +165,15 @@ struct VotesClusterInfo: View, Equatable {
         }
         .fontSize(12, .medium)
         .foregroundColor(.gray)
+      }
+    }
+    .ifIOS17 { view in
+      if #available(iOS 17, *) {
+        view.onChange(of: ups) { oldValue, newValue in
+          flyingNumber.counter += 1
+          flyingNumber.value = newValue - oldValue
+          flyingNumber.color = likes
+        }
       }
     }
   }
