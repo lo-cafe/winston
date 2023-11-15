@@ -12,7 +12,7 @@ struct SubsNStuffLine: View, Equatable {
     true
   }
   
-//  static let height = FlairTag.height + 4
+//  static let height = Tag.height + 4
   static let height: CGFloat = 1
   
   var showSub: Bool?
@@ -29,7 +29,7 @@ struct SubsNStuffLine: View, Equatable {
     HStack(spacing: 0) {
       WDivider()
 //      if showSub || feedsAndSuch.contains(sub.id) {
-//        FlairTag(subredditIconKit: subredditIconKit, text: "r/\(subName)", color: .blue)
+//        Tag(subredditIconKit: subredditIconKit, text: "r/\(subName)", color: .blue)
 //          .highPriorityGesture(TapGesture() .onEnded {
 //            routerProxy.router.path.append(SubViewType.posts(Subreddit(id: subName, api: RedditAPI.shared)))
 //          })
@@ -39,13 +39,13 @@ struct SubsNStuffLine: View, Equatable {
 //      }
 //      
 //      if over18 {
-//        FlairTag(text: "NSFW", color: .red)
+//        Tag(text: "NSFW", color: .red)
 //      }
 //      
 //      WDivider()
 //      
 //      if let flair = flair {
-//        FlairTag(text: flair)
+//        Tag(text: flair)
 //          .allowsHitTesting(false)
 //      }
     }

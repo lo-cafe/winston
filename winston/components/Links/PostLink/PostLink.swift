@@ -110,7 +110,7 @@ extension View {
     let fadeReadPosts = theme.theme.unseenType == .fade
     return self
       .padding(EdgeInsets(top: theme.theme.innerPadding.vertical, leading: theme.theme.innerPadding.horizontal, bottom: theme.theme.innerPadding.vertical, trailing: theme.theme.innerPadding.horizontal))
-      .frame(width: size.width, height: size.height + (showSub ? FlairTag.height : 0), alignment: .top)
+      .frame(width: size.width, height: size.height + (showSub ? Tag.height : 0), alignment: .top)
       .fixedSize()
       .background(PostLinkBG(theme: theme, stickied: post.data?.stickied, secondary: secondary, cs: cs).equatable())
       .mask(RR(theme.theme.cornerRadius, Color.black).equatable())

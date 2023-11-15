@@ -28,7 +28,7 @@ struct ShortPostLink: View {
 //              .equatable()
           }
           Spacer()
-          FlairTag(text: "r/\(data.subreddit)", color: .blue)
+          Tag(text: "r/\(data.subreddit)", color: .blue)
             .highPriorityGesture(TapGesture().onEnded {
               routerProxy.router.path.append(SubViewType.posts(Subreddit(id: data.subreddit, api: post.redditAPI)))
             })
