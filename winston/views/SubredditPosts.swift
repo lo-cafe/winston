@@ -37,14 +37,16 @@ struct SubredditPosts: View, Equatable {
   
   let context = PersistenceController.shared.container.newBackgroundContext()
   let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "SeenPost")
-
+  
   init(subreddit: Subreddit) {
     self.subreddit = subreddit;
     _sort = State(initialValue: Defaults[.perSubredditSort] ? (Defaults[.subredditSorts][subreddit.id] ?? Defaults[.preferredSort]) : Defaults[.preferredSort]);
   }
   
-    func asyncFetch(force: Bool = false, loadMore: Bool = false, searchText: String? = nil) async throws {
-    if (subreddit.data == nil || force) && !feedsAndSuch.contains(subreddit.id) {
+  var isFeedsAndSuch: Bool { feedsAndSuch.contains(subreddit.id) }
+  
+  func asyncFetch(force: Bool = false, loadMore: Bool = false, searchText: String? = nil) async throws {
+    if (subreddit.data == nil || force) && !isFeedsAndSuch {
       await subreddit.refreshSubreddit()
     }
     if posts.data.count > 0 && lastPostAfter == nil && !force {
@@ -56,17 +58,17 @@ struct SubredditPosts: View, Equatable {
     if let result = await subreddit.fetchPosts(sort: sort, after: loadMore ? lastPostAfter : nil, searchText: searchText, contentWidth: contentWidth), let newPosts = result.0 {
       await RedditAPI.shared.updatePostsWithAvatar(posts: newPosts, avatarSize: selectedTheme.postLinks.theme.badge.avatar.size)
       withAnimation {
-                let newPostsFiltered = newPosts.filter { !loadedPosts.contains($0.id) && !filteredSubreddits.contains($0.data?.subreddit ?? "") }
+        let newPostsFiltered = newPosts.filter { !loadedPosts.contains($0.id) && !filteredSubreddits.contains($0.data?.subreddit ?? "") }
         
         if loadMore {
-                    posts.data.append(contentsOf: newPostsFiltered)
-//          posts.data.append(contentsOf: newPosts)
+          posts.data.append(contentsOf: newPostsFiltered)
+          //          posts.data.append(contentsOf: newPosts)
         } else {
-                    posts.data = newPostsFiltered
-//          posts.data = newPosts
+          posts.data = newPostsFiltered
+          //          posts.data = newPosts
         }
         
-                newPostsFiltered.forEach { loadedPosts.insert($0.id) }
+        newPostsFiltered.forEach { loadedPosts.insert($0.id) }
         
         loading = false
         lastPostAfter = result.1
@@ -76,11 +78,11 @@ struct SubredditPosts: View, Equatable {
   
   func fetch(_ loadMore: Bool = false, _ searchText: String? = nil) {
     Task(priority: .background) {
-        do {
-            try await asyncFetch(loadMore: loadMore, searchText: searchText)
-        } catch {
-            print(error)
-        }
+      do {
+        try await asyncFetch(loadMore: loadMore, searchText: searchText)
+      } catch {
+        print(error)
+      }
     }
   }
   
@@ -97,19 +99,19 @@ struct SubredditPosts: View, Equatable {
     }
     
   }
-
+  
   var body: some View {
     Group {
       if IPAD {
-        SubredditPostsIPAD(subreddit: subreddit, posts: posts.data, searchText: searchText, fetch: fetch, selectedTheme: selectedTheme)
+        SubredditPostsIPAD(showSub: isFeedsAndSuch, subreddit: subreddit, posts: posts.data, searchText: searchText, fetch: fetch, selectedTheme: selectedTheme)
       } else {
-        SubredditPostsIOS(lastPostAfter: lastPostAfter, subreddit: subreddit, posts: posts.data, searchText: searchText, fetch: fetch, selectedTheme: selectedTheme)
+        SubredditPostsIOS(showSub: isFeedsAndSuch, lastPostAfter: lastPostAfter, subreddit: subreddit, posts: posts.data, searchText: searchText, fetch: fetch, selectedTheme: selectedTheme)
       }
     }
     .environment(\.defaultMinListRowHeight, 1)
     .loader(loading && posts.data.count == 0)
     .overlay(
-      feedsAndSuch.contains(subreddit.id)
+      isFeedsAndSuch
       ? nil
       : Button {
         newPost = true
@@ -126,9 +128,9 @@ struct SubredditPosts: View, Equatable {
         .padding(.all, 12)
       , alignment: .bottomTrailing
     )
-//    .sheet(isPresented: $newPost, content: {
-//      NewPostModal(subreddit: subreddit)
-//    })
+    //    .sheet(isPresented: $newPost, content: {
+    //      NewPostModal(subreddit: subreddit)
+    //    })
     .navigationBarItems(trailing: SubredditPostsNavBtns(sort: $sort, subreddit: subreddit, routerProxy: routerProxy))
     .searchable(text: $searchText, prompt: "Search r/\(subreddit.data?.display_name ?? subreddit.id)")
     .onSubmit(of: .search) {
@@ -136,20 +138,20 @@ struct SubredditPosts: View, Equatable {
     }
     .refreshable {
       loadedPosts.removeAll()
-        do {
-            try await asyncFetch(force: true)
-        } catch {
-            print(error)
-        }
+      do {
+        try await asyncFetch(force: true)
+      } catch {
+        print(error)
+      }
     }
-    .navigationTitle("\(feedsAndSuch.contains(subreddit.id) ? subreddit.id.capitalized : "r/\(subreddit.data?.display_name ?? subreddit.id)")")
+    .navigationTitle("\(isFeedsAndSuch ? subreddit.id.capitalized : "r/\(subreddit.data?.display_name ?? subreddit.id)")")
     .task(priority: .background) {
       if posts.data.count == 0 {
-          do {
-              try await asyncFetch()
-          } catch {
-              print(error)
-          }
+        do {
+          try await asyncFetch()
+        } catch {
+          print(error)
+        }
       }
     }
     .onChange(of: sort) { val in

@@ -79,6 +79,17 @@ struct PostLinkNormal: View, Equatable {
     }
   }
   
+  var over18: Bool { post.data?.over_18 ?? false }
+  
+  @ViewBuilder
+  func mediaComponentCall() -> some View {
+    if let data = post.data {
+      if let extractedMedia = post.winstonData?.extractedMedia {
+        MediaPresenter(postDimensions: $winstonData.postDimensions, controller: controller, cachedVideo: cachedVideo, imgRequests: winstonData.mediaImageRequest, postTitle: data.title, badgeKit: data.badgeKit, avatarImageRequest: winstonData.avatarImageRequest, markAsSeen: markAsRead, cornerRadius: theme.theme.mediaCornerRadius, blurPostLinkNSFW: blurPostLinkNSFW, media: extractedMedia, over18: over18, compact: false, contentWidth: winstonData.postDimensions.mediaSize?.width ?? 0, routerProxy: routerProxy)
+      }
+    }
+  }
+  
   var body: some View {
     if let routerProxy = routerProxy, let data = post.data {
       let over18 = data.over_18 ?? false
@@ -90,7 +101,7 @@ struct PostLinkNormal: View, Equatable {
         }
         
         if !showTitleAtTop, let extractedMedia = post.winstonData?.extractedMedia {
-          MediaPresenter(postDimensions: $winstonData.postDimensions, controller: controller, cachedVideo: cachedVideo, imgRequests: winstonData.mediaImageRequest, postTitle: data.title, badgeKit: data.badgeKit, avatarImageRequest: winstonData.avatarImageRequest, markAsSeen: markAsRead, cornerRadius: theme.theme.mediaCornerRadius, blurPostLinkNSFW: blurPostLinkNSFW, media: extractedMedia, over18: over18, compact: false, contentWidth: winstonData.postDimensions.mediaSize?.width ?? 0, routerProxy: routerProxy)
+          mediaComponentCall()
           
           if case .repost(let repost) = extractedMedia {
             if let repostSub = repost.winstonData?.subreddit, let repostWinstonData = repost.winstonData {
@@ -134,8 +145,8 @@ struct PostLinkNormal: View, Equatable {
             .lineSpacing(theme.theme.linespacing)
         }
         
-        if showTitleAtTop, let extractedMedia = post.winstonData?.extractedMedia {
-          MediaPresenter(postDimensions: $winstonData.postDimensions, controller: controller, cachedVideo: cachedVideo, imgRequests: winstonData.mediaImageRequest, postTitle: data.title, badgeKit: data.badgeKit, avatarImageRequest: winstonData.avatarImageRequest, markAsSeen: markAsRead, cornerRadius: theme.theme.mediaCornerRadius, blurPostLinkNSFW: blurPostLinkNSFW, media: extractedMedia, over18: over18, compact: false, contentWidth: winstonData.postDimensions.mediaSize?.width ?? 0, routerProxy: routerProxy)
+        if showTitleAtTop {
+          mediaComponentCall()
         }
         
         

@@ -16,7 +16,7 @@ struct OnlyURL: View {
   var url: URL
   @Environment(\.openURL) private var openURL
   var body: some View {
-    HStack {
+    HStack(spacing: 4) {
       Image(systemName: "link")
       Text(cleanURL(url: url, showPath: false))
     }

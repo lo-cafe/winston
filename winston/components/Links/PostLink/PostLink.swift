@@ -104,13 +104,13 @@ struct PostLink: View, Equatable, Identifiable {
 }
 
 extension View {
-  func postLinkStyle(post: Post, sub: Subreddit, routerProxy: RouterProxy, theme: SubPostsListTheme, size: CGSize, secondary: Bool, isOpen: Binding<Bool>, openPost: @escaping () -> (), readPostOnScroll: Bool, hideReadPosts: Bool, cs: ColorScheme) -> some View {
+  func postLinkStyle(showSub: Bool = false, post: Post, sub: Subreddit, routerProxy: RouterProxy, theme: SubPostsListTheme, size: CGSize, secondary: Bool, isOpen: Binding<Bool>, openPost: @escaping () -> (), readPostOnScroll: Bool, hideReadPosts: Bool, cs: ColorScheme) -> some View {
     let seen = (post.data?.winstonSeen ?? false)
 //    let size = CGSize(width: winstonData.postDimensions.size.width, height: winstonData.postDimensions.size.height)
     let fadeReadPosts = theme.theme.unseenType == .fade
     return self
       .padding(EdgeInsets(top: theme.theme.innerPadding.vertical, leading: theme.theme.innerPadding.horizontal, bottom: theme.theme.innerPadding.vertical, trailing: theme.theme.innerPadding.horizontal))
-      .frame(width: size.width, height: size.height, alignment: .top)
+      .frame(width: size.width, height: size.height + (showSub ? FlairTag.height : 0), alignment: .top)
       .fixedSize()
       .background(PostLinkBG(theme: theme, stickied: post.data?.stickied, secondary: secondary, cs: cs).equatable())
       .mask(RR(theme.theme.cornerRadius, Color.black).equatable())

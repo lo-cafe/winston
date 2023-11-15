@@ -11,11 +11,12 @@ import NukeUI
 struct PostLinkCompactThumbPlaceholder: View, Equatable {
   static func == (lhs: PostLinkCompactThumbPlaceholder, rhs: PostLinkCompactThumbPlaceholder) -> Bool { true }
   var body: some View {
+    let scaledCompactModeThumbSize = scaledCompactModeThumbSize()
     Image(.winstonFlat)
       .resizable()
       .scaledToFill()
-      .padding(4)
-      .frame(scaledCompactModeThumbSize())
+      .padding(scaledCompactModeThumbSize * 0.075)
+      .frame(scaledCompactModeThumbSize)
       .foregroundStyle(.primary.opacity(0.2))
   }
 }
@@ -76,27 +77,45 @@ struct PostLinkCompact: View, Equatable {
     }
   }
   
+  var over18: Bool { post.data?.over_18 ?? false }
+  
+  @ViewBuilder
+  func mediaComponentCall(showURLInstead: Bool = false) -> some View {
+    if let data = post.data, let extractedMedia = post.winstonData?.extractedMedia {
+      MediaPresenter(postDimensions: $winstonData.postDimensions, controller: controller, cachedVideo: cachedVideo, imgRequests: winstonData.mediaImageRequest, postTitle: data.title, badgeKit: data.badgeKit, avatarImageRequest: winstonData.avatarImageRequest, markAsSeen: markAsRead, cornerRadius: theme.theme.mediaCornerRadius, blurPostLinkNSFW: blurPostLinkNSFW, showURLInstead: showURLInstead, media: extractedMedia, over18: over18, compact: true, contentWidth: winstonData.postDimensions.mediaSize?.width ?? 0, routerProxy: routerProxy)
+    }
+  }
+  
+  @ViewBuilder
+  func votesPiece() -> some View {
+    if let data = post.data, showVotes {
+      VotesCluster(votesKit: data.votesKit, voteAction: post.vote, vertical: true).fontSize(22, .medium)
+        .frame(maxHeight: .infinity)
+        .fontSize(22, .medium)
+    }
+  }
+  
+  @ViewBuilder
+  func mediaPiece() -> some View {
+    if let extractedMedia = post.winstonData?.extractedMedia {
+      if case .repost(let repost) = extractedMedia, let repostData = repost.data, let url = URL(string: "https://reddit.com/r/\(repostData.subreddit)/comments/\(repost.id)") {
+        PreviewLink(url: url, compact: true, previewModel: PreviewModel(url))
+      } else {
+        mediaComponentCall()
+      }
+    } else {
+      PostLinkCompactThumbPlaceholder().equatable()
+    }
+  }
+  
   var body: some View {
     if let routerProxy = routerProxy, let data = post.data {
-      let over18 = data.over_18 ?? false
       VStack(alignment: .leading, spacing: theme.theme.verticalElementsSpacing) {
         HStack(alignment: .top, spacing: theme.theme.verticalElementsSpacing) {
-          if showVotes && !voteButtonPositionRight {
-            VotesCluster(votesKit: data.votesKit, voteAction: post.vote, vertical: true).fontSize(22, .medium)
-              .frame(maxHeight: .infinity)
-              .fontSize(22, .medium)
-          }
           
-          if !thumbnailPositionRight {
-            if let extractedMedia = post.winstonData?.extractedMedia {
-              if case .repost(let repost) = extractedMedia, let repostData = repost.data, let url = URL(string: "https://reddit.com/r/\(repostData.subreddit)/comments/\(repost.id)") {
-                PreviewLink(url: url, compact: true, previewModel: PreviewModel(url))
-              }
-              MediaPresenter(postDimensions: $winstonData.postDimensions, controller: controller, cachedVideo: cachedVideo, imgRequests: winstonData.mediaImageRequest, postTitle: data.title, badgeKit: data.badgeKit, avatarImageRequest: winstonData.avatarImageRequest, markAsSeen: markAsRead, cornerRadius: theme.theme.mediaCornerRadius, blurPostLinkNSFW: blurPostLinkNSFW, media: extractedMedia, over18: over18, compact: true, contentWidth: winstonData.postDimensions.mediaSize?.width ?? 0, routerProxy: routerProxy)
-            } else if showSelfPostThumbnails {
-              PostLinkCompactThumbPlaceholder().equatable()
-            }
-          }
+          if !voteButtonPositionRight { votesPiece() }
+          
+          if !thumbnailPositionRight { mediaPiece() }
           
           VStack(alignment: .leading, spacing: theme.theme.verticalElementsSpacing) {
             VStack(alignment: .leading, spacing: theme.theme.verticalElementsSpacing / 2) {
@@ -106,39 +125,33 @@ struct PostLinkCompact: View, Equatable {
                 if case .repost(let repost) = extractedMedia, let repostData = repost.data, let url = URL(string: "https://reddit.com/r/\(repostData.subreddit)/comments/\(repost.id)") {
                   OnlyURL(url: url)
                 }
-                MediaPresenter(postDimensions: $winstonData.postDimensions, controller: controller, cachedVideo: cachedVideo, imgRequests: winstonData.mediaImageRequest, postTitle: data.title, badgeKit: data.badgeKit, avatarImageRequest: winstonData.avatarImageRequest, markAsSeen: markAsRead, cornerRadius: theme.theme.mediaCornerRadius, blurPostLinkNSFW: blurPostLinkNSFW, showURLInstead: true, media: extractedMedia, over18: over18, compact: true, contentWidth: winstonData.postDimensions.mediaSize?.width ?? 0, routerProxy: routerProxy)
+                mediaComponentCall(showURLInstead: true)
               }
             }
-                        
-//            BadgeOpt(avatarRequest: avatarRequest, badgeKit: data.badgeKit, cs: cs, routerProxy: routerProxy, showVotes: true, theme: theme.theme.badge)
+            
             BadgeView(avatarRequest: winstonData.avatarImageRequest, saved: data.badgeKit.saved, usernameColor: nil, author: data.badgeKit.author, fullname: data.badgeKit.authorFullname, created: data.badgeKit.created, avatarURL: nil, theme: theme.theme.badge, commentsCount: formatBigNumber(data.badgeKit.numComments), votesCount: formatBigNumber(data.badgeKit.ups), routerProxy: routerProxy, cs: cs)
+            
+            if showSub {
+              let subName = data.subreddit
+              FlairTag(subredditIconKit: nil, text: "r/\(subName)", color: .blue)
+                .highPriorityGesture(TapGesture() .onEnded {
+                  routerProxy.router.path.append(SubViewType.posts(Subreddit(id: subName, api: RedditAPI.shared)))
+                })
+            }
           }
           .frame(maxWidth: .infinity, alignment: .topLeading)
           
-          if thumbnailPositionRight {
-            if let extractedMedia = post.winstonData?.extractedMedia {
-              if case .repost(let repost) = extractedMedia, let repostData = repost.data, let url = URL(string: "https://reddit.com/r/\(repostData.subreddit)/comments/\(repost.id)") {
-                PreviewLink(url: url, compact: true, previewModel: PreviewModel(url))
-              }
-              MediaPresenter(postDimensions: $winstonData.postDimensions, controller: controller, cachedVideo: cachedVideo, imgRequests: winstonData.mediaImageRequest, postTitle: data.title, badgeKit: data.badgeKit, avatarImageRequest: winstonData.avatarImageRequest, markAsSeen: markAsRead, cornerRadius: theme.theme.mediaCornerRadius, blurPostLinkNSFW: blurPostLinkNSFW, media: extractedMedia, over18: over18, compact: true, contentWidth: winstonData.postDimensions.mediaSize?.width ?? 0, routerProxy: routerProxy)
-            } else if showSelfPostThumbnails {
-              PostLinkCompactThumbPlaceholder().equatable()
-            }
-          }
+          if thumbnailPositionRight { mediaPiece() }
           
-          if showVotes && voteButtonPositionRight {
-            VotesCluster(votesKit: data.votesKit, voteAction: post.vote, vertical: true)
-              .frame(maxHeight: .infinity)
-              .fontSize(22, .medium)
-          }
+          if voteButtonPositionRight { votesPiece() }
         }
         .zIndex(1)
         .frame(maxWidth: .infinity, alignment: .topLeading)
         
       }
-      .postLinkStyle(post: post, sub: sub, routerProxy: routerProxy, theme: theme, size: winstonData.postDimensions.size, secondary: secondary, isOpen: $isOpen, openPost: openPost, readPostOnScroll: readPostOnScroll, hideReadPosts: hideReadPosts, cs: cs)
+      .postLinkStyle(showSub: showSub, post: post, sub: sub, routerProxy: routerProxy, theme: theme, size: winstonData.postDimensions.size, secondary: secondary, isOpen: $isOpen, openPost: openPost, readPostOnScroll: readPostOnScroll, hideReadPosts: hideReadPosts, cs: cs)
       .swipyUI(onTap: openPost, actionsSet: postSwipeActions, entity: post)
-      .frame(width: winstonData.postDimensions.size.width, height: winstonData.postDimensions.size.height)
+//      .frame(width: winstonData.postDimensions.size.width, height: winstonData.postDimensions.size.height)
     }
   }
 }
