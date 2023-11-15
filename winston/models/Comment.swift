@@ -184,7 +184,6 @@ extension Comment {
         
         Task(priority: .background) { [loadedComments] in
           await RedditAPI.shared.updateCommentsWithAvatar(comments: loadedComments, avatarSize: avatarSize)
-//          print(loadedComments.map {  $0.childrenWinston.data.map { x in x.winstonData?.avatarImageRequest } })
           await post?.saveMoreComments(comments: loadedComments)
         }
         

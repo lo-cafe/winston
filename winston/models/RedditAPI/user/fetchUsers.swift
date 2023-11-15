@@ -73,14 +73,9 @@ extension RedditAPI {
     let namesArr = presentAvatarsDict != nil ? [] : getNamesFromComments(comments)
     var avatarsDict: [String:ImageRequest] = presentAvatarsDict ?? [:]
     if avatarsDict.isEmpty, let newDict = await updateAvatarURL(names: namesArr, avatarSize: avatarSize) { avatarsDict = newDict }
-    print(namesArr)
-    print("---------")
-    print(avatarsDict.mapValues { $0.url?.absoluteString })
-    print("---------")
     comments.forEach { comment in
       if let authorFullname = comment.data?.author_fullname {
         DispatchQueue.main.async { [avatarsDict] in
-          print(authorFullname, avatarsDict[authorFullname]?.url?.absoluteString)
           comment.winstonData?.avatarImageRequest = avatarsDict[authorFullname]
         }
       }

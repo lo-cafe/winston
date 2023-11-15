@@ -201,7 +201,6 @@ struct ScrollSwipeModifier<T: GenericRedditEntityDataType, B: Hashable>: ViewMod
         //        .animation(nil, value: dragAmount)
       )
       .onChange(of: isScrolling) { isIt in
-        print(isIt)
         if !isIt {
           Task(priority: .background) { [triggeredAction] in
             

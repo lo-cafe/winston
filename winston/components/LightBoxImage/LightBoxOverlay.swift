@@ -78,10 +78,6 @@ struct LightBoxOverlay: View {
           if let sharedImageData = sharedImageData, let uiimg = UIImage(data: sharedImageData){
             let image = ShareImage(placeholderItem: uiimg)
             ShareSheet(items: [image])
-              .onAppear{
-                print("Share sheet")
-                print(image)
-              }
           }
         }
       }

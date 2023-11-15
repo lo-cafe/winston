@@ -106,7 +106,7 @@ struct Subreddits: View, Equatable {
 //                    .equatable()
                     .id("\(cachedSub.uuid ?? "")-fav")
                     .onAppear{
-                      print("Adding" + cachedSub.display_name)
+//                      print("Adding" + cachedSub.display_name)
                       UIApplication.shared.shortcutItems?.append(UIApplicationShortcutItem(type: "subFav", localizedTitle: cachedSub.display_name ?? "Test", localizedSubtitle: "", icon: UIApplicationShortcutIcon(type: .love), userInfo: ["name" : "sub" as NSSecureCoding]))
                     }
                 }

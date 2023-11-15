@@ -11,7 +11,6 @@ import WhatsNewKit
 // Function to read JSON file and append WhatsNew to the collection
 func getCurrentChangelog() -> WhatsNewCollection {
     let filePath = Bundle.main.path(forResource: "changelog", ofType: "json") ?? ""
-    print("Get")
 
     // Read JSON content from the file
     guard let jsonData = try? Data(contentsOf: URL(fileURLWithPath: filePath)) else { return [] }
@@ -21,7 +20,7 @@ func getCurrentChangelog() -> WhatsNewCollection {
     // Decode JSON data into a WhatsNewRelease object
     do {
         let changelog = try decoder.decode(WhatsNewRelease.self, from: jsonData)
-        print(changelog)
+//        print(changelog)
 
         // Extract relevant information from the WhatsNewRelease object
         let version = changelog.version
