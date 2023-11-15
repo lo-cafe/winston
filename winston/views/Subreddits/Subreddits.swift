@@ -72,20 +72,20 @@ struct Subreddits: View, Equatable {
 //            .listRowInsets(EdgeInsets(top: 0, leading: 16, bottom: 0, trailing: 16))
             .listRowBackground(Color.clear)
           
-//          if multis.count > 0 {
-//            Section("Multis") {
-//              ScrollView(.horizontal) {
-//                HStack(spacing: 16) {
-//                  ForEach(multis) { multi in
-//                    MultiLink(selectedSub: $selectedSub, multi: Multi(data: MultiData(entity: multi), api: RedditAPI.shared))
-//                  }
-//                }
-//                .padding(.horizontal, 16)
-//              }
-//            }
-//            .listRowBackground(Color.clear)
-//            .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
-//          }
+          if multis.count > 0 {
+            Section("Multis") {
+              ScrollView(.horizontal) {
+                HStack(spacing: 16) {
+                  ForEach(multis) { multi in
+                    MultiLink(selectedSub: $selectedSub, multi: Multi(data: MultiData(entity: multi), api: RedditAPI.shared))
+                  }
+                }
+                .padding(.horizontal, 16)
+              }
+            }
+            .listRowBackground(Color.clear)
+            .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
+          }
         }
         
         Group {
