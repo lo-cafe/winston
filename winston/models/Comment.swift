@@ -31,17 +31,17 @@ extension Comment {
     if let parent = parent {
       self.parentWinston = parent
     }
-    self.winstonData = .init()
+    self.setupWinstonData()
     self.kind = kind
-    if let body = self.data?.body {
-      let theme = Defaults[.themesPresets].first(where: { $0.id == Defaults[.selectedThemeID] }) ?? defaultTheme
-      let newWinstonBodyAttr = stringToAttr(body, fontSize: theme.comments.theme.bodyText.size)
-      let encoder = JSONEncoder()
-      if let jsonData = try? encoder.encode(newWinstonBodyAttr) {
-        let json = String(decoding: jsonData, as: UTF8.self)
-        self.data?.winstonBodyAttrEncoded = json
-      }
-    }
+//    if let body = self.data?.body {
+//      let theme = Defaults[.themesPresets].first(where: { $0.id == Defaults[.selectedThemeID] }) ?? defaultTheme
+//      let newWinstonBodyAttr = stringToAttr(body, fontSize: theme.comments.theme.bodyText.size)
+//      let encoder = JSONEncoder()
+//      if let jsonData = try? encoder.encode(newWinstonBodyAttr) {
+//        let json = String(decoding: jsonData, as: UTF8.self)
+//        self.data?.winstonBodyAttrEncoded = json
+//      }
+//    }
     if let replies = self.data?.replies {
       switch replies {
       case .first(_):
@@ -56,6 +56,28 @@ extension Comment {
         } ?? []
       }
     }
+  }
+  
+  func setupWinstonData() {
+    self.winstonData = .init()
+    
+    guard let winstonData = self.winstonData, let data = self.data else { return }
+    let theme = getEnabledTheme().comments.theme
+    let bodyAttr = NSMutableAttributedString(attributedString: stringToNSAttr(data.body ?? "", fontSize: theme.bodyText.size))
+    let style = NSMutableParagraphStyle()
+    style.lineSpacing = theme.linespacing
+    bodyAttr.addAttribute(.paragraphStyle, value: style, range: NSRange(location: 0, length: bodyAttr.length))
+    winstonData.bodyAttr = bodyAttr
+    
+    let screenWidth = UIScreen.screenWidth
+    var bodyMaxWidth = Double(screenWidth - (theme.outerHPadding * 2) - (theme.innerPadding.horizontal * 2))
+    if let depth = data.depth, depth > 0 {
+      bodyMaxWidth -= Double(CommentLinkContent.indentLineContentSpacing)
+      bodyMaxWidth -= CommentLinkContent.indentLinesSpacing * Double(depth - 1)
+      bodyMaxWidth -= theme.indentCurve * Double(depth)
+    }
+    let bodyHeight = bodyAttr.boundingRect(with: CGSize(width: bodyMaxWidth, height: .infinity), options: [.usesLineFragmentOrigin], context: nil).height
+    winstonData.commentBodySize = .init(width: bodyMaxWidth, height: bodyHeight + 1)
   }
   
   convenience init(message: Message) throws {
@@ -372,11 +394,12 @@ class CommentWinstonData: Hashable, ObservableObject {
   //  var subreddit: Subreddit?
   //  @Published var mediaImageRequest: [ImageRequest] = []
   @Published var avatarImageRequest: ImageRequest? = nil
-  //  @Published var postDimensions: PostDimensions = .zero
-  //  @Published var titleAttr: NSAttributedString?
+  @Published var commentBodySize: CGSize = .zero
+  @Published var bodyAttr: NSAttributedString?
   
   func hash(into hasher: inout Hasher) {
     hasher.combine(avatarImageRequest?.description)
+    hasher.combine(commentBodySize)
   }
 }
 

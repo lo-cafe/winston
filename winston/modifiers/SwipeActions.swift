@@ -106,8 +106,8 @@ struct SwipeUI<T: GenericRedditEntityDataType, B: Hashable>: ViewModifier {
           .offset(y: offsetYAction)
           .allowsHitTesting(false)
       )
-      .highPriorityGesture(secondary ? TapGesture().onEnded({ onTapAction?() }) : nil)
-      .gesture(secondary ? nil : TapGesture().onEnded({ onTapAction?() }))
+      .highPriorityGesture(secondary && onTapAction != nil ? TapGesture().onEnded({ onTapAction?() }) : nil)
+      .gesture(secondary || onTapAction == nil ? nil : TapGesture().onEnded({ onTapAction?() }))
       .gesture(
         enableSwipeAnywhere
         ? nil

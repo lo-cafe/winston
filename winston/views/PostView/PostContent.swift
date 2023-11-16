@@ -17,10 +17,8 @@ struct PostContent: View, Equatable {
   
   @ObservedObject var post: Post
   @ObservedObject var winstonData: PostWinstonData
-  var selfAttr: AttributedString? = nil
   var sub: Subreddit
   var forceCollapse: Bool = false
-  @State private var size: CGSize = .zero
   @State private var collapsed = false
   @Default(.blurPostNSFW) private var blurPostNSFW
   @EnvironmentObject private var routerProxy: RouterProxy
@@ -71,20 +69,16 @@ struct PostContent: View, Equatable {
           }
           
           if data.selftext != "" {
-            VStack {
-              MD(selfAttr == nil ? .str(data.selftext) : .attr(selfAttr!), fontSize: postsTheme.bodyText.size)
-                .lineSpacing(postsTheme.linespacing)
-                .foregroundColor(postsTheme.bodyText.color.cs(cs).color())
-                .frame(maxWidth: .infinity, alignment: .leading)
-            }
-            .contentShape(Rectangle())
-            .onTapGesture { withAnimation(spring) { collapsed.toggle() } }
-            .allowsHitTesting(!isCollapsed)
+
+            MD2(winstonData.postBodyAttr == nil ? .str(data.selftext) : .nsAttr(winstonData.postBodyAttr!), onTap: { withAnimation(spring) { collapsed.toggle() } })
+              .frame(width: winstonData.postViewBodySize.width, height: winstonData.postViewBodySize.height, alignment: .topLeading)
+              .fixedSize()
+//              .foregroundColor(postsTheme.bodyText.color.cs(cs).color())
+              .allowsHitTesting(!isCollapsed)
           }
         }
+        .modifier(AnimatingCellHeight(height: isCollapsed ? 175 : winstonData.postViewBodySize.height + (winstonData.postDimensions.mediaSize?.height ?? 0), disable: false))
         .fixedSize(horizontal: false, vertical: true)
-        .measure($size)
-        .modifier(AnimatingCellHeight(height: isCollapsed ? 175 : size.height, disable: !forceCollapse && size.height == 0))
         .clipped()
         .opacity(isCollapsed ? 0.3 : 1)
         .mask(

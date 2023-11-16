@@ -75,6 +75,7 @@
 		EC1312A52AB50C6800C95D3A /* PostTextsTheming.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC1312A42AB50C6700C95D3A /* PostTextsTheming.swift */; };
 		EC1312A92AB5127500C95D3A /* PostPageTheming.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC1312A82AB5127500C95D3A /* PostPageTheming.swift */; };
 		EC1312AB2AB5234000C95D3A /* ThemeForegroundEdit.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC1312AA2AB5234000C95D3A /* ThemeForegroundEdit.swift */; };
+		EC15F3C02B059E3300D5B5D7 /* openInBuiltInBrowser.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC15F3BF2B059E3300D5B5D7 /* openInBuiltInBrowser.swift */; };
 		EC16852E2AEF4B18000DD701 /* GIFViewer.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC16852D2AEF4B18000DD701 /* GIFViewer.swift */; };
 		EC1685312AEF4BF2000DD701 /* Gifu in Frameworks */ = {isa = PBXBuildFile; productRef = EC1685302AEF4BF2000DD701 /* Gifu */; };
 		EC1884482A8D7C1C00CAFB7A /* SwipeAnywhere.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC1884472A8D7C1C00CAFB7A /* SwipeAnywhere.swift */; };
@@ -476,6 +477,7 @@
 		EC1312A42AB50C6700C95D3A /* PostTextsTheming.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostTextsTheming.swift; sourceTree = "<group>"; };
 		EC1312A82AB5127500C95D3A /* PostPageTheming.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostPageTheming.swift; sourceTree = "<group>"; };
 		EC1312AA2AB5234000C95D3A /* ThemeForegroundEdit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeForegroundEdit.swift; sourceTree = "<group>"; };
+		EC15F3BF2B059E3300D5B5D7 /* openInBuiltInBrowser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = openInBuiltInBrowser.swift; sourceTree = "<group>"; };
 		EC16852D2AEF4B18000DD701 /* GIFViewer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GIFViewer.swift; sourceTree = "<group>"; };
 		EC1884472A8D7C1C00CAFB7A /* SwipeAnywhere.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwipeAnywhere.swift; sourceTree = "<group>"; };
 		EC1906E82A55240600A0300E /* cancelableTimer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = cancelableTimer.swift; sourceTree = "<group>"; };
@@ -1411,6 +1413,7 @@
 				EC4F8F092AE7070500801104 /* getTagsFromTitle.swift */,
 				65840EE72AE11BFD000315E1 /* exportImportSettings.swift */,
 				65C169EB2AFFA60B007764D5 /* isImageUrl.swift */,
+				EC15F3BF2B059E3300D5B5D7 /* openInBuiltInBrowser.swift */,
 			);
 			path = utils;
 			sourceTree = "<group>";
@@ -2069,6 +2072,7 @@
 				EC12D71A2A59C81A00C300B3 /* CommentLinkContent.swift in Sources */,
 				ECE08B592AA9A3C300F84DC9 /* WinstonTheme.swift in Sources */,
 				ECE08B5E2AA9C94800F84DC9 /* CommentsTheme.swift in Sources */,
+				EC15F3C02B059E3300D5B5D7 /* openInBuiltInBrowser.swift in Sources */,
 				EC9ECA0A2A88602F00470F89 /* debounce.swift in Sources */,
 				ECE449832A68A22200E2A3B7 /* favorite.swift in Sources */,
 				ECDBA8C52A4A835800FB42DB /* Subreddit.swift in Sources */,

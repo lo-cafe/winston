@@ -12,6 +12,7 @@ import Markdown
 enum MDType {
   case str(String)
   case attr(AttributedString)
+  case nsAttr(NSAttributedString)
   case json(String)
 }
 
@@ -26,6 +27,8 @@ struct MD: View {
     case .str(let str):
       self.str = str
       self.attributedString = stringToAttr(str, fontSize: fontSize)
+    case .nsAttr(let nsAttr):
+      self.attributedString = AttributedString(nsAttr)
     case .json(let json):
       let decoder = JSONDecoder()
       let jsonData = (try? decoder.decode(AttributedString.self, from: json.data(using: .utf8)!)) ?? AttributedString()

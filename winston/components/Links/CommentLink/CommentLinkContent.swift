@@ -38,9 +38,11 @@ class MyDefaults {
 }
 
 struct CommentLinkContent: View {
+  static let indentLineContentSpacing: Double = 4
+  static let indentLinesSpacing: Double = 6
   var disableBG = false
   var highlightID: String?
-//  @Default(.commentSwipeActions) private var commentSwipeActions
+  //  @Default(.commentSwipeActions) private var commentSwipeActions
   // var seenComments: String?
   var forcedBodySize: CGSize?
   var showReplies = true
@@ -78,9 +80,9 @@ struct CommentLinkContent: View {
       let collapsed = data.collapsed ?? false
       Group {
         
-        HStack {
+        HStack(spacing: CommentLinkContent.indentLineContentSpacing) {
           if data.depth != 0 && indentLines != 0 {
-            HStack(alignment:. bottom, spacing: 6) {
+            HStack(alignment:. bottom, spacing: CommentLinkContent.indentLinesSpacing) {
               let shapes = Array(1...Int(indentLines ?? data.depth ?? 1))
               ForEach(shapes, id: \.self) { i in
                 if arrowKinds.indices.contains(i - 1) {
@@ -126,9 +128,9 @@ struct CommentLinkContent: View {
                   .foregroundColor(data.likes != nil && data.likes! ? .orange : .gray)
                   .contentShape(Rectangle())
                   .onTapGesture {
-                      Task { _ = await comment.vote(action: .up) }
+                    Task { _ = await comment.vote(action: .up) }
                   }
-                  
+                
                 let downup = Int(ups)
                 Text(formatBigNumber(downup))
                   .foregroundColor(data.likes != nil ? (data.likes! ? .orange : .blue) : .gray)
@@ -141,7 +143,7 @@ struct CommentLinkContent: View {
                   .foregroundColor(data.likes != nil && !data.likes! ? .blue : .gray)
                   .contentShape(Rectangle())
                   .onTapGesture {
-                      Task { _ = await comment.vote(action: .down) }
+                    Task { _ = await comment.vote(action: .down) }
                   }
               }
               .fontSize(14, .medium)
@@ -209,9 +211,9 @@ struct CommentLinkContent: View {
         .id("\(data.id)-header\(forcedBodySize == nil ? "" : "-preview")")
         
         if !collapsed {
-          HStack {
+          HStack(spacing: CommentLinkContent.indentLineContentSpacing) {
             if data.depth != 0 && indentLines != 0 {
-              HStack(alignment:. bottom, spacing: 6) {
+              HStack(alignment:. bottom, spacing: CommentLinkContent.indentLinesSpacing) {
                 let shapes = Array(1...Int(indentLines ?? data.depth ?? 1))
                 ForEach(shapes, id: \.self) { i in
                   if arrowKinds.indices.contains(i - 1) {
@@ -229,9 +231,9 @@ struct CommentLinkContent: View {
                     Text(body.md())
                       .lineLimit(lineLimit)
                   } else {
-                    MD2(data.winstonBodyAttrEncoded == nil ? .str(body) : .json(data.winstonBodyAttrEncoded!), fontSize: theme.theme.bodyText.size)
-                        .lineSpacing(theme.theme.linespacing)
-                      .fixedSize(horizontal: false, vertical: true)
+                    MD2(winstonData.bodyAttr == nil ? .str(body) : .nsAttr(winstonData.bodyAttr!), fontSize: theme.theme.bodyText.size, onTap: { if !selectable { withAnimation(spring) { comment.toggleCollapsed(optimistic: true) } } })
+                      .frame(width: winstonData.commentBodySize.width, height: winstonData.commentBodySize.height, alignment: .topLeading)
+                      .fixedSize()
                       .overlay(
                         !selectable
                         ? nil
@@ -262,7 +264,7 @@ struct CommentLinkContent: View {
               .swipyUI(
                 offsetYAction: -15,
                 controlledDragAmount: $offsetX,
-                onTap: { if !selectable { withAnimation(spring) { comment.toggleCollapsed(optimistic: true) } } },
+                //                onTap: { if !selectable { withAnimation(spring) { comment.toggleCollapsed(optimistic: true) } } },
                 actionsSet: commentSwipeActions,
                 entity: comment
               )
@@ -329,6 +331,6 @@ struct AnimatingCellHeight: AnimatableModifier {
   }
   
   func body(content: Content) -> some View {
-    content.frame(maxHeight: disable ? nil : height, alignment: .topLeading)
+    content.frame(height: disable ? nil : height, alignment: .topLeading)
   }
 }

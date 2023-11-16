@@ -24,17 +24,6 @@ struct PostLinkTitle: View, Equatable {
     self.cs = cs
     self.size = size
     self.attrString = attrString
-    
-    //    var newTags: [PrependTag] = []
-    //    
-    //    if nsfw { newTags.append(.init(label: "NSFW", bgColor: .red.opacity(0.25))) }
-    //    if let flair = flair { newTags.append(.init(label: flair, bgColor: .primary.opacity(0.2))) }
-    //    self.tags = newTags
-    //    self.tags = []
-    //    self.attrString = NSAttributedString(string: label)
-    //    let newAttrString = attrString ?? buildTitleAttr(title: label, tags: tags, fontSize: theme.size, fontWeight: theme.weight.ut, color: theme.color.cs(cs).color(), size: size)
-    //    self.attrString = newAttrString
-    
   }
   var body: some View {
     if let attrString = attrString {

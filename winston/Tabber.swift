@@ -31,6 +31,10 @@ class TabPayload: ObservableObject {
   }
 }
 
+class GlobalNavPathWrapper: ObservableObject {
+  @Published var path = NavigationPath()
+}
+
 struct Tabber: View {
   @ObservedObject var tempGlobalState = TempGlobalState.shared
   @State var activeTab: TabIdentifier = .posts

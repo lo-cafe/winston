@@ -23,7 +23,6 @@ struct PostView: View, Equatable {
   }
   
   @ObservedObject var post: Post
-  @ObservedObject private var cachesPostsAttrStr = Caches.postsAttrStr
   var selfAttr: AttributedString? = nil
   var subreddit: Subreddit
   var highlightID: String?
@@ -92,7 +91,7 @@ struct PostView: View, Equatable {
         Group {
           Section {
             if let winstonData = post.winstonData {
-              PostContent(post: post, winstonData: winstonData, selfAttr: cachesPostsAttrStr.cache[post.id]?.data ?? selfAttr, sub: subreddit, forceCollapse: forceCollapse)
+              PostContent(post: post, winstonData: winstonData, sub: subreddit, forceCollapse: forceCollapse)
             }
             //              .equatable()
             
@@ -149,6 +148,11 @@ struct PostView: View, Equatable {
       .toolbar { Toolbar(hideElements: hideElements, subreddit: subreddit, post: post, routerProxy: routerProxy, sort: $sort) }
       .onChange(of: sort) { val in
         updatePost()
+      }
+      .onChange(of: cs) { _ in
+        Task(priority: .background) {
+          post.setupWinstonData(data: post.data, winstonData: post.winstonData, theme: selectedTheme)
+        }
       }
       .onAppear {
         if post.data == nil {

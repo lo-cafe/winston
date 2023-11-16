@@ -127,12 +127,6 @@ extension View {
       .contextMenu(menuItems: { PostLinkContext(post: post) }, preview: { PostLinkContextPreview(post: post, sub: sub, routerProxy: routerProxy) })
       .foregroundStyle(.primary)
       .multilineTextAlignment(.leading)
-      .onAppear {
-        withAnimation { if isOpen.wrappedValue { isOpen.wrappedValue = false } }
-        if let bodyAttr = post.winstonData?.postBodyAttr {
-          Caches.postsAttrStr.addKeyValue(key: post.id) { bodyAttr }
-        }
-      }
       .onDisappear {
         Task(priority: .background) {
           if readPostOnScroll {
