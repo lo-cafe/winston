@@ -151,8 +151,13 @@ extension Subreddit {
   }
   
   func fetchPosts(sort: SubListingSortOption = .best, after: String? = nil, searchText: String? = nil, contentWidth: CGFloat = UIScreen.screenWidth) async -> ([Post]?, String?)? {
-    if let response = await RedditAPI.shared.fetchSubPosts(data?.url ?? (id == "home" ? "" : id), sort: sort, after: after, searchText: searchText), let data = response.0 {
-      return (Post.initMultiple(datas: data.compactMap { $0.data }, api: RedditAPI.shared, contentWidth: contentWidth), response.1)
+    if id != "saved" {
+      if let response = await RedditAPI.shared.fetchSubPosts(data?.url ?? (id == "home" ? "" : id), sort: sort, after: after, searchText: searchText), let data = response.0 {
+        return (Post.initMultiple(datas: data.compactMap { $0.data }, api: RedditAPI.shared, contentWidth: contentWidth), response.1)
+      }
+    } else {
+      // saved feed is a mix of posts and comments - logic needs to be handled separately
+      
     }
     return nil
   }
