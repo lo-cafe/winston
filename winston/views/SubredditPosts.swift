@@ -20,6 +20,7 @@ struct SubredditPosts: View, Equatable {
     lhs.subreddit == rhs.subreddit
   }
   
+  @ObservedObject var redditAPI = RedditAPI.shared
   @ObservedObject var subreddit: Subreddit
   @Default(.filteredSubreddits) private var filteredSubreddits
   @State private var loading = true
@@ -29,6 +30,9 @@ struct SubredditPosts: View, Equatable {
   @State private var searchText: String = ""
   @State private var sort: SubListingSortOption
   @State private var newPost = false
+  
+  @State private var savedMixedMediaLinks: [Either<Post, Comment>]?
+  @State private var loadNextData: Bool = false
   
   @EnvironmentObject private var routerProxy: RouterProxy
   @Environment(\.useTheme) private var selectedTheme
@@ -55,23 +59,37 @@ struct SubredditPosts: View, Equatable {
     withAnimation {
       loading = true
     }
-    if let result = await subreddit.fetchPosts(sort: sort, after: loadMore ? lastPostAfter : nil, searchText: searchText, contentWidth: contentWidth), let newPosts = result.0 {
-      await RedditAPI.shared.updatePostsWithAvatar(posts: newPosts, avatarSize: selectedTheme.postLinks.theme.badge.avatar.size)
-      withAnimation {
-        let newPostsFiltered = newPosts.filter { !loadedPosts.contains($0.id) && !filteredSubreddits.contains($0.data?.subreddit ?? "") }
-        
-        if loadMore {
-          posts.data.append(contentsOf: newPostsFiltered)
-          //          posts.data.append(contentsOf: newPosts)
-        } else {
-          posts.data = newPostsFiltered
-          //          posts.data = newPosts
+    
+    if subreddit.id != "saved" {
+      if let result = await subreddit.fetchPosts(sort: sort, after: loadMore ? lastPostAfter : nil, searchText: searchText, contentWidth: contentWidth), let newPosts = result.0 {
+        await RedditAPI.shared.updatePostsWithAvatar(posts: newPosts, avatarSize: selectedTheme.postLinks.theme.badge.avatar.size)
+        withAnimation {
+          let newPostsFiltered = newPosts.filter { !loadedPosts.contains($0.id) && !filteredSubreddits.contains($0.data?.subreddit ?? "") }
+          
+          if loadMore {
+            posts.data.append(contentsOf: newPostsFiltered)
+          } else {
+            posts.data = newPostsFiltered
+          }
+          
+          newPostsFiltered.forEach { loadedPosts.insert($0.id) }
+          
+          loading = false
+          lastPostAfter = result.1
         }
-        
-        newPostsFiltered.forEach { loadedPosts.insert($0.id) }
-        
-        loading = false
-        lastPostAfter = result.1
+      }
+    } else {
+      if let result = await subreddit.fetchSavedMixedMedia(sort: sort, after: loadMore ? lastPostAfter : nil, searchText: searchText, contentWidth: contentWidth) {
+        withAnimation {
+          if loadMore {
+            savedMixedMediaLinks?.append(contentsOf: result)
+          } else {
+            savedMixedMediaLinks = result
+          }
+                    
+          loading = false
+//          lastPostAfter = result.last
+        }
       }
     }
   }
@@ -102,10 +120,24 @@ struct SubredditPosts: View, Equatable {
   
   var body: some View {
     Group {
-      if IPAD {
-        SubredditPostsIPAD(showSub: isFeedsAndSuch, subreddit: subreddit, posts: posts.data, searchText: searchText, fetch: fetch, selectedTheme: selectedTheme)
+      if subreddit.id != "saved" {
+        if IPAD {
+          SubredditPostsIPAD(showSub: isFeedsAndSuch, subreddit: subreddit, posts: posts.data, searchText: searchText, fetch: fetch, selectedTheme: selectedTheme)
+        } else {
+          SubredditPostsIOS(showSub: isFeedsAndSuch, lastPostAfter: lastPostAfter, subreddit: subreddit, posts: posts.data, searchText: searchText, fetch: fetch, selectedTheme: selectedTheme)
+        }
       } else {
-        SubredditPostsIOS(showSub: isFeedsAndSuch, lastPostAfter: lastPostAfter, subreddit: subreddit, posts: posts.data, searchText: searchText, fetch: fetch, selectedTheme: selectedTheme)
+        if let savedMixedMediaLinks = savedMixedMediaLinks, let user = redditAPI.me {
+          ScrollView {
+            MixedMediaFeedLinksView(mixedMediaLinks: savedMixedMediaLinks, loadNextData: $loadNextData, user: user)
+            //            .onChange(of: loadNextData) { shouldLoad in
+            //              if shouldLoad {
+            //                getNextData()
+            //                loadNextData = false
+            //              }
+            //            }
+          }
+        }
       }
     }
     .environment(\.defaultMinListRowHeight, 1)

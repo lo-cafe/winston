@@ -38,8 +38,6 @@ extension RedditAPI {
         return nil
       }
 
-      print(requestURL)
-
       let response = await AF.request(
         requestURL,
         method: .get,

@@ -151,13 +151,28 @@ extension Subreddit {
   }
   
   func fetchPosts(sort: SubListingSortOption = .best, after: String? = nil, searchText: String? = nil, contentWidth: CGFloat = UIScreen.screenWidth) async -> ([Post]?, String?)? {
-    if id != "saved" {
-      if let response = await RedditAPI.shared.fetchSubPosts(data?.url ?? (id == "home" ? "" : id), sort: sort, after: after, searchText: searchText), let data = response.0 {
-        return (Post.initMultiple(datas: data.compactMap { $0.data }, api: RedditAPI.shared, contentWidth: contentWidth), response.1)
+    if let response = await RedditAPI.shared.fetchSubPosts(data?.url ?? (id == "home" ? "" : id), sort: sort, after: after, searchText: searchText), let data = response.0 {
+      return (Post.initMultiple(datas: data.compactMap { $0.data }, api: RedditAPI.shared, contentWidth: contentWidth), response.1)
+    }
+    
+    return nil
+  }
+  
+  func fetchSavedMixedMedia(sort: SubListingSortOption = .best, after: String? = nil, searchText: String? = nil, contentWidth: CGFloat = UIScreen.screenWidth) async -> [Either<Post, Comment>]? {
+    // saved feed is a mix of posts and comments - logic needs to be handled separately
+    if let savedMediaData = await RedditAPI.shared.fetchSavedPosts("saved", sort: sort, after: after, searchText: searchText) {
+      await MainActor.run {
+        self.loading = false
       }
-    } else {
-      // saved feed is a mix of posts and comments - logic needs to be handled separately
       
+      return savedMediaData.map {
+        switch $0 {
+        case .first(let postData):
+          return .first(Post(data: postData, api: RedditAPI.shared))
+        case .second(let commentData):
+          return .second(Comment(data: commentData, api: RedditAPI.shared))
+        }
+      }
     }
     return nil
   }
