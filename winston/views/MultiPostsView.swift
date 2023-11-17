@@ -106,7 +106,7 @@ struct MultiPostsView: View {
     )
     .onAppear {
       if posts.data.count == 0 {
-        doThisAfter(0) {
+        doThisAfter(0.0) {
           fetch()
         }
       }

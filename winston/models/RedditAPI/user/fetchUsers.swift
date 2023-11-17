@@ -56,7 +56,9 @@ extension RedditAPI {
         switch subject {
         case .first(let post):
           if let author = post.data?.author_fullname {
-            post.winstonData?.avatarImageRequest = avatarsDict[author]
+            DispatchQueue.main.async {
+              post.winstonData?.avatarImageRequest = avatarsDict[author]
+            }
           }
         case .second(let comment):
           if let authorFullname = comment.data?.author_fullname {

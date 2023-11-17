@@ -169,7 +169,7 @@ struct TestersCelebration: View {
     .confettiCannon(counter: $counter, num: 30, openingAngle: Angle.degrees(60), closingAngle: Angle.degrees(120), radius: UIScreen.screenWidth)
     .onAppear {
       if showTipJarModal { showTipJarModal = false }
-      doThisAfter(1) { withAnimation { counter += 1 } }
+      doThisAfter(1.0) { withAnimation { counter += 1 } }
     }
     .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
       if thanks { doThisAfter(0.25) { withAnimation { counter += 1 } } }
