@@ -21,7 +21,6 @@ struct CommentLinkMore: View {
   @Environment(\.colorScheme) private var cs
   
   var body: some View {
-    let curveColor = selectedTheme.comments.theme.indentColor.cs(cs).color()
     let cardedCommentsInnerHPadding = selectedTheme.comments.theme.innerPadding.horizontal
     let horPad = cardedCommentsInnerHPadding
     if let data = comment.data, let count = data.count, let parentElement = parentElement, count > 0 {
@@ -30,6 +29,7 @@ struct CommentLinkMore: View {
           HStack(alignment:. bottom, spacing: 6) {
             let shapes = Array(1...Int(indentLines ?? data.depth ?? 1))
             ForEach(shapes, id: \.self) { i in
+              let curveColor = getColorFromPalette(index:  i, palette: selectedTheme.comments.theme.indentColor)
               if arrowKinds.indices.contains(i - 1) {
                 let actualArrowKind = arrowKinds[i - 1]
                 Arrows(kind: actualArrowKind, offset: selectedTheme.comments.theme.loadMoreOuterTopPadding)

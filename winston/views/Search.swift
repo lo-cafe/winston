@@ -32,6 +32,7 @@ struct SearchOption: View {
       }
       .shrinkOnTap()
   }
+  
 }
 
 enum SearchTypeArr {
@@ -54,6 +55,9 @@ struct Search: View {
   @State private var dummyAllSub: Subreddit? = nil
   @State private var searchViewLoaded: Bool = false
   
+  @State private var topSubs:[ListingChild<SubredditData>] = []
+  @State private var topPosts: ([ListingChild<PostData>]?, String?) = ([], "")
+  
   @Environment(\.useTheme) private var theme
   
   func fetch() {
@@ -70,7 +74,6 @@ struct Search: View {
             withAnimation {
               resultsSubs.data = subs
               loading = false
-              
               hideSpinner = resultsSubs.data.isEmpty
             }
           }
@@ -121,6 +124,38 @@ struct Search: View {
               .id("options")
             }
             
+            
+//            if searchQuery.text == ""{
+//              Section("Popular Subs"){
+//                ScrollView(.horizontal){
+//                  HStack{
+//                    ForEach(topSubs.filter{$0.data?.display_name != "Home"}, id:\.self){ sub in
+//                      HorizontalItemElement(sub: sub)
+//                        .id(sub.id)
+//                    }
+//                  }
+//                  
+//                }
+//                .scrollIndicators(.hidden)
+//                .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
+//              }
+//              
+//              if let posts = topPosts.0 {
+//                Section("Popular Posts"){
+//                  ScrollView(.horizontal){
+//                    HStack{
+//                      ForEach(posts, id:\.self){ post in
+//                        HorizontalPostItem(post: post)
+//                      }
+//                    }
+//                  }
+//                  .scrollIndicators(.hidden)
+//                  .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
+//                }
+//              }
+//            }
+//            
+            
             Section {
               switch searchType {
               case .subreddit:
@@ -135,7 +170,7 @@ struct Search: View {
                 if let dummyAllSub = dummyAllSub {
                   ForEach(resultPosts.data) { post in
                     PostLink(post: post, sub: dummyAllSub)
-//                      .equatable()
+                    //                      .equatable()
                       .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
                       .animation(.default, value: resultPosts.data)
                   }
@@ -174,12 +209,156 @@ struct Search: View {
           dummyAllSub = Subreddit(id: "all", api: RedditAPI.shared)
           searchViewLoaded = true
         }
+        if topSubs.isEmpty {
+          Task {
+            topSubs = await RedditAPI.shared.fetchPopularSubs() ?? []
+            topPosts = await RedditAPI.shared.fetchSubPosts("all", sort: .top(.day)) ?? ([], "")
+          }
+        }
       }
-//      .defaultNavDestinations(router)
+      //      .defaultNavDestinations(router)
     }
     .swipeAnywhere(routerProxy: RouterProxy(router), routerContainer: router.isRootWrapper)
   }
 }
+
+
+private struct HorizontalPostItem: View {
+  let post:  ListingChild<PostData>
+  @State var extractedMedia: MediaExtractedType? = nil
+  @EnvironmentObject private var routerProxy: RouterProxy
+  var body: some View {
+    let color = getRandColor()
+    if let data = post.data {
+      VStack(alignment: .leading, spacing: 4){
+        
+        Text(data.title)
+          .fontSize(16, .semibold)
+          .lineLimit(2)
+        Text(data.selftext)
+          .fontSize(13)
+          .lineLimit(3)
+        
+        
+        Spacer()
+          .frame(maxHeight: .infinity)
+        
+        HStack{
+          let sub = Subreddit(id: data.subreddit_id ?? "", api: RedditAPI.shared)
+          if let subdata = sub.data {
+            SubredditIcon(data: subdata, size: 27)
+          }
+          
+          Text("r/\(data.subreddit)")
+            .fontSize(13,.medium)
+        }
+        
+      }
+      .foregroundColor(.white)
+      .padding(.horizontal, 13)
+      .padding(.vertical, 11)
+      .frame(width: (UIScreen.screenWidth * 0.5), height: 100, alignment: .topLeading)
+      .background{
+        if let url = getMediaURL(extractedMedia: extractedMedia) {
+          URLImage(url: url)
+            .scaledToFill()
+            .overlay{
+              Rectangle()
+                .fill(LinearGradient(
+                  gradient: Gradient(stops: [
+                    .init(color: Color.black.opacity(0.7), location: 0),
+                    .init(color: Color.black.opacity(0.3), location: 1)
+                  ]),
+                  startPoint: .bottom,
+                  endPoint: .top
+                ))
+                .frame(height: 100)
+            }
+        } else {
+          LinearGradient(colors: [color.opacity(0.7), color.opacity(0.3)], startPoint: .topLeading, endPoint: .bottomTrailing)
+        }
+        
+      }
+      .mask(RR(20, Color.black))
+      .onTapGesture {
+        routerProxy.router.path.append(PostViewPayload(post: Post(data: data, api: RedditAPI.shared), sub: Subreddit(id: data.subreddit, api: RedditAPI.shared)))
+      }
+      .onAppear{
+        Task {
+          extractedMedia = await mediaExtractor(contentWidth: (UIScreen.screenWidth * 0.5), data)
+        }
+      }
+      
+    }
+  }
+  
+  func getMediaURL(extractedMedia: MediaExtractedType?) -> URL? {
+    switch extractedMedia {
+    case .image(let url):
+      return url.url
+    case .gallery(let imgs):
+      return imgs.first!.url
+    case .link(let url):
+      return nil
+    default:
+      return nil
+    }
+  }
+  
+  func getRandColor()-> Color {
+    let colors = [Color.blue, Color.blue, Color.yellow, Color.red, Color.accentColor, Color.orange, Color.cyan, Color.mint, Color.indigo, Color.purple, Color.teal]
+    let randCol = colors.randomElement()
+    return randCol!
+  }
+}
+
+
+private struct HorizontalItemElement: View {
+  let sub: ListingChild<SubredditData>
+  @Environment(\.useTheme) private var theme
+  @EnvironmentObject private var routerProxy: RouterProxy
+  var body: some View {
+    if let data = sub.data {
+      VStack(alignment: .leading, spacing: 4){
+        HStack{
+          SubredditIcon(data: data, size: 27)
+          Text("r/" + data.display_name)
+            .fontSize(16, .semibold)
+        }
+        HStack{
+          Text(data.public_description)
+            .font(.caption)
+            .lineLimit(2)
+        }
+        Spacer()
+          .frame(maxHeight: .infinity)
+        
+        HStack(alignment: .center, spacing: 2) {
+          Image(systemName: "person.3.fill")
+          Text(formatBigNumber(data.subscribers ?? 0))
+            .contentTransition(.numericText())
+        }
+        .font(.system(size: 13, weight: .medium))
+        .compositingGroup()
+        .opacity(0.5)
+        
+        
+      }
+      .padding(.horizontal, 13)
+      .padding(.vertical, 11)
+      .frame(width: (UIScreen.screenWidth * 0.5), height: 100, alignment: .topLeading)
+      .background{
+        LinearGradient(gradient: Gradient(colors: [Color(uiColor: UIColor(hex: data.banner_background_color ?? "#FFFFFF")).opacity(0.3), Color(uiColor: UIColor(hex: data.banner_background_color ?? "#FFFFFF")).opacity(0.5)]), startPoint: .topLeading, endPoint: .bottomTrailing)
+          .clipShape(RoundedRectangle(cornerSize: CGSize(width: 20, height: 20)))
+        
+      }
+      .onTapGesture {
+        routerProxy.router.path.append(SubredditPostsContainerPayload(sub: Subreddit(id: data.display_name ?? "", api: RedditAPI.shared)))
+      }
+    }
+  }
+}
+
 
 //struct Search_Previews: PreviewProvider {
 //    static var previews: some View {

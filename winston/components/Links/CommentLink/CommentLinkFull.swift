@@ -21,7 +21,6 @@ struct CommentLinkFull: View {
   @Environment(\.colorScheme) private var cs
   
   var body: some View {
-    let curveColor = selectedTheme.comments.theme.indentColor.cs(cs).color()
     let cardedCommentsInnerHPadding = selectedTheme.comments.theme.innerPadding.horizontal
     let horPad = cardedCommentsInnerHPadding
     if let data = comment.data {
@@ -30,9 +29,11 @@ struct CommentLinkFull: View {
           HStack(alignment:. bottom, spacing: 6) {
             let shapes = Array(1...Int(indentLines ?? data.depth ?? 1))
             ForEach(shapes, id: \.self) { i in
+              let curveColor = getColorFromPalette(index: i, palette: selectedTheme.comments.theme.indentColor)
               if arrowKinds.indices.contains(i - 1) {
                 let actualArrowKind = arrowKinds[i - 1]
                 Arrows(kind: actualArrowKind)
+                  .background(Color(uiColor: UIColor(hex: curveColor)))
               }
             }
           }
@@ -50,7 +51,6 @@ struct CommentLinkFull: View {
       }
       .padding(.horizontal, horPad)
       .frame(maxWidth: .infinity, alignment: .leading)
-      .background(curveColor)
       .contentShape(Rectangle())
       .onTapGesture {
         routerProxy.router.path.append(PostViewPayload(post: post, postSelfAttr: nil, sub: subreddit))

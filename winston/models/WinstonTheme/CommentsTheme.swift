@@ -6,6 +6,10 @@
 //
 
 import Foundation
+import Defaults
+import SwiftUI
+
+typealias IndentationLinePalette = Dictionary<String, [Color]>
 
 struct CommentsSectionTheme: Codable, Hashable {
   enum CodingKeys: String, CodingKey {
@@ -47,7 +51,7 @@ struct CommentTheme: Codable, Hashable {
   var outerHPadding: CGFloat
   var repliesSpacing: CGFloat
   var indentCurve: CGFloat
-  var indentColor: ColorSchemes<ThemeColor>
+  var indentColor: Dictionary<String, [String]>
   var cornerRadius: CGFloat
   var badge: BadgeTheme
   var bodyText: ThemeText
@@ -62,7 +66,7 @@ struct CommentTheme: Codable, Hashable {
   
   var unseenDot : ColorSchemes<ThemeColor>
   
-  init(innerPadding: ThemePadding, outerHPadding: CGFloat, repliesSpacing: CGFloat, indentCurve: CGFloat, indentColor: ColorSchemes<ThemeColor>, cornerRadius: CGFloat, badge: BadgeTheme, bodyText: ThemeText, bodyAuthorSpacing: CGFloat, linespacing: CGFloat, bg: ColorSchemes<ThemeColor>, loadMoreInnerPadding: ThemePadding, loadMoreOuterTopPadding: CGFloat, loadMoreText : ThemeText, loadMoreBackground : ColorSchemes<ThemeColor>, unseenDot : ColorSchemes<ThemeColor>) {
+  init(innerPadding: ThemePadding, outerHPadding: CGFloat, repliesSpacing: CGFloat, indentCurve: CGFloat, indentColor: Dictionary<String, [String]>, cornerRadius: CGFloat, badge: BadgeTheme, bodyText: ThemeText, bodyAuthorSpacing: CGFloat, bg: ColorSchemes<ThemeColor>, loadMoreInnerPadding: ThemePadding, loadMoreOuterTopPadding: CGFloat, loadMoreText : ThemeText, loadMoreBackground : ColorSchemes<ThemeColor>, unseenDot : ColorSchemes<ThemeColor>) {
     self.innerPadding = innerPadding
     self.outerHPadding = outerHPadding
     self.repliesSpacing = repliesSpacing
@@ -88,7 +92,7 @@ struct CommentTheme: Codable, Hashable {
     try container.encodeIfPresent(outerHPadding, forKey: .outerHPadding)
     try container.encodeIfPresent(repliesSpacing, forKey: .repliesSpacing)
     try container.encodeIfPresent(indentCurve, forKey: .indentCurve)
-    try container.encodeIfPresent(indentColor, forKey: .indentColor)
+    try container.encode(indentColor, forKey: .indentColor)
     try container.encodeIfPresent(cornerRadius, forKey: .cornerRadius)
     try container.encodeIfPresent(badge, forKey: .badge)
     try container.encodeIfPresent(bodyText, forKey: .bodyText)
@@ -109,7 +113,7 @@ struct CommentTheme: Codable, Hashable {
     self.outerHPadding = try container.decodeIfPresent(CGFloat.self, forKey: .outerHPadding) ?? t.outerHPadding
     self.repliesSpacing = try container.decodeIfPresent(CGFloat.self, forKey: .repliesSpacing) ?? t.repliesSpacing
     self.indentCurve = try container.decodeIfPresent(CGFloat.self, forKey: .indentCurve) ?? t.indentCurve
-    self.indentColor = try container.decodeIfPresent(ColorSchemes<ThemeColor>.self, forKey: .indentColor) ?? t.indentColor
+    self.indentColor = try container.decode(Dictionary<String, [String]>.self, forKey: .indentColor) ?? t.indentColor
     self.cornerRadius = try container.decodeIfPresent(CGFloat.self, forKey: .cornerRadius) ?? t.cornerRadius
     self.badge = try container.decodeIfPresent(BadgeTheme.self, forKey: .badge) ?? t.badge
     self.bodyText = try container.decodeIfPresent(ThemeText.self, forKey: .bodyText) ?? t.bodyText
@@ -123,4 +127,42 @@ struct CommentTheme: Codable, Hashable {
     self.loadMoreBackground = try container.decodeIfPresent(ColorSchemes<ThemeColor>.self, forKey: .loadMoreBackground) ?? t.loadMoreBackground
     self.unseenDot = try container.decodeIfPresent(ColorSchemes<ThemeColor>.self, forKey: .unseenDot) ?? t.unseenDot
   }
+}
+
+
+enum ArrowColorPalette: Codable, CaseIterable, Identifiable, Defaults.Serializable{
+  
+  var id: [Color]{
+    self.rawVal
+  }
+  
+  case monochrome
+  case rainbow
+  case ibm
+  case ocean
+  case forest
+  case fire
+  
+  var rawVal: [Color] {
+    switch self{
+    case .monochrome:
+      [Color("divider")]
+    case .ibm:
+      [Color(hex: 0x648FFF), Color(hex: 0x785EF0), Color(hex: 0xDC267F), Color(hex: 0xFE6100), Color(hex: 0xFFB000)]
+    case .ocean:
+      [Color(hex: 0x0370C2), Color(hex: 0x0190FB), Color(hex: 0x00C3FA), Color(hex: 0x0090FC), Color(hex: 0x23A0FF)]
+    case .forest:
+      [Color(hex: 0x275036), Color(hex: 0x55713B), Color(hex: 0x318F28), Color(hex: 0x98CB6D), Color(hex: 0xA8BF65)]
+    case .fire:
+      [Color(hex: 0xFF0000), Color(hex: 0xD40000), Color(hex: 0xCF5B00), Color(hex: 0xcFF7C00), Color(hex: 0xF0A208)]
+    case .rainbow:
+      [Color(hex: 0xF44236), Color(hex: 0xFE922D), Color(hex: 0x2C704B), Color(hex: 0x0D73DC), Color(hex: 0x653996)]
+    }
+  }
+  
+}
+
+/// A function that returns a color from a color palette (array of colors) given an index
+func getColorFromPalette(index: Int, palette: Dictionary<String, [String]>) -> String{
+  return palette.first!.value[(index - 1) % palette.count]
 }

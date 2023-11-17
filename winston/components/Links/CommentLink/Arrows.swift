@@ -37,20 +37,20 @@ struct Arrows: View {
   @Environment(\.colorScheme) private var cs
   var body: some View {
     let curve = selectedTheme.comments.theme.indentCurve
-    let curveColor = selectedTheme.comments.theme.indentColor
+    let color: Color = ArrowColorPalette.monochrome.rawVal.first!
     let avatarSize = selectedTheme.comments.theme.badge.avatar.size
       Group {
         switch kind {
         case .curve:
           CurveShape(offset: offset, curve: curve, avatarSize: avatarSize)
-            .stroke(curveColor.cs(cs).color(), style: StrokeStyle(lineWidth: 2, lineCap: .round))
+            .stroke(color, style: StrokeStyle(lineWidth: 2, lineCap: .round))
         case .straight:
           StraightShape()
-            .stroke(curveColor.cs(cs).color(), style: StrokeStyle(lineWidth: 2, lineCap: .round))
+            .stroke(color, style: StrokeStyle(lineWidth: 2, lineCap: .round))
             .padding(.vertical, -1)
         case .straightCurve:
           StraightCurveShape(offset: offset, curve: curve, avatarSize: avatarSize)
-            .stroke(curveColor.cs(cs).color(), style: StrokeStyle(lineWidth: 2, lineCap: .round))
+            .stroke(color, style: StrokeStyle(lineWidth: 2, lineCap: .round))
             .padding(.vertical, -1)
         case .empty:
           Color.clear

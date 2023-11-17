@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Defaults
 
 private enum Category: String, CaseIterable {
   case general, badge
@@ -13,6 +14,8 @@ private enum Category: String, CaseIterable {
 
 struct CommentsGeneralSettings: View {
   @Binding var theme: WinstonTheme
+  @State var showingPaletteCreator: Bool = false
+  @Default(.customIndentationThemes) var customIndentationThemes
   var body: some View {
     Group {
       FakeSection("Spacing") {
@@ -46,10 +49,27 @@ struct CommentsGeneralSettings: View {
       }
       
       FakeSection("Indentation lines") {
-        LabeledSlider(label: "Corner curvature", value: $theme.comments.theme.indentCurve, range: 3...32)
+        LabeledSlider(label: "Corner curvature", value: $theme.comments.theme.indentCurve, range: 0...32)
           .resetter($theme.comments.theme.indentCurve, defaultTheme.comments.theme.indentCurve)
         
-        SchemesColorPicker(theme: $theme.comments.theme.indentColor, defaultVal: defaultTheme.comments.theme.indentColor)
+        //        SchemesColorPicker(theme: $theme.comments.theme.indentColor, defaultVal: defaultTheme.comments.theme.indentColor)
+        Picker("Comments Theme", selection: Binding(get: {
+          customIndentationThemes
+        }, set: { val, _ in
+          theme.comments.theme.indentColor = val
+          print(val)
+        })){
+          ForEach(Array(customIndentationThemes.keys).sorted(by: >), id: \.self) { key in
+            PaletteDisplayItem(palette: customIndentationThemes[key]!, name: key)
+          }
+        }
+        .pickerStyle(.inline)
+        Button{
+          showingPaletteCreator.toggle()
+        } label: {
+          Label("Add or Edit Color Palette", systemImage: "swatchpalette")
+        }
+        .padding()
       }
       
       FakeSection("Background") {
@@ -61,7 +81,7 @@ struct CommentsGeneralSettings: View {
       FakeSection("Comments divider") {
         LineThemeEditor(theme: $theme.comments.divider, defaultVal: defaultTheme.comments.divider)
       }
-        
+      
       FakeSection("Load More spacing") {
         LabeledSlider(label: "Inner horizontal padding", value: $theme.comments.theme.loadMoreInnerPadding.horizontal, range: 0...64)
           .resetter($theme.comments.theme.innerPadding.horizontal, defaultTheme.comments.theme.loadMoreInnerPadding.horizontal)
@@ -85,6 +105,9 @@ struct CommentsGeneralSettings: View {
         SchemesColorPicker(theme: $theme.comments.theme.unseenDot, defaultVal:  defaultTheme.comments.theme.unseenDot)
       }
     }
+    .sheet(isPresented: $showingPaletteCreator){
+      PaletteCreator()
+    }
   }
 }
 
@@ -93,7 +116,7 @@ struct CommentsThemingPanel: View {
   @State private var selectedCategory = Category.general.rawValue
   @StateObject private var routerProxy = RouterProxy(Router(id: "CommentsThemingPanel"))
   @StateObject private var sampleComment = Comment(data: getCommentSampleData(), api: RedditAPI.shared)
-//  
+  //
   var body: some View {
     ScrollWithPreview(handlerBGOnly: false, theme: theme.postLinks.bg) {
       VStack(spacing: 32) {
@@ -123,7 +146,7 @@ struct CommentsThemingPanel: View {
       .highPriorityGesture(DragGesture())
       .frame(height: (UIScreen.screenHeight - getSafeArea().top - getSafeArea().bottom) / 2, alignment: .top)
       .clipped()
-//      .mask(RR(20, .black).padding(.horizontal, theme.comments.theme.outerHPadding))
+      //      .mask(RR(20, .black).padding(.horizontal, theme.comments.theme.outerHPadding))
     }
     .scrollContentBackground(.hidden)
     .themedListBG(theme.lists.bg)

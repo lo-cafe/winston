@@ -15,6 +15,7 @@ let listSectionBGTheme: ColorSchemes<ThemeColor> = .init(light: .init(hex: "ffff
 let defaultBG: ColorSchemes<ThemeColor> = .init(light: .init(hex: "F2F2F7"), dark: .init(hex: "000000"))
 private let clearColor: ColorSchemes<ThemeColor> = .init(light: .init(hex: "ffffff", alpha: 0), dark: .init(hex: "ffffff", alpha: 0))
 let defaultThemeDividerColor: ColorSchemes<ThemeColor> = .init(light: .init(hex: "C6C6C8"), dark: .init(hex: "3D3C41"))
+let defaultIndentColorScheme: ArrowColorPalette = ArrowColorPalette.monochrome
 let listDefaultBGImage: ColorSchemes<String> = .init(light: "winstonNoBG", dark: "winstonNoBG")
 let defaultFancyDivider: LineTheme = .init(style: .fancy, thickness: 6, color: .init(light: .init(hex: "ffffff", alpha: 0.5), dark: .init(hex: "1C1C1E", alpha: 0.5)))
 let defaultThemeBG: ThemeBG = .color(defaultBG)
@@ -71,7 +72,7 @@ let defaultTheme = WinstonTheme(
       outerHPadding: 8,
       repliesSpacing: 0,
       indentCurve: 12,
-      indentColor: defaultThemeDividerColor,
+      indentColor: ["Monochrome": ["#FFFFFF"]],
       cornerRadius: 10,
       badge: badgeTheme,
       bodyText: .init(size: 15, color: themeFontPrimary),

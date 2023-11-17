@@ -136,6 +136,16 @@ extension Defaults.Keys {
   static let perPostSort = Key<Bool>("perPostSort", default: true)
   static let postSorts = Key<Dictionary<String, CommentSortOption>>("postSorts", default: [String: CommentSortOption]())
   static let doLiveText = Key<Bool>("doLiveText", default: true)
+  
+  static let preferredThemeMode = Key<Int>("preferredThemeMode", default: 0)
+  static let customIndentationThemes = Key<Dictionary<String,[String]>>("customIndentationThemes", default: [
+    "Monochrome": ArrowColorPalette.monochrome.rawVal.colorsToHexStrings(),
+    "Rainbow": ArrowColorPalette.rainbow.rawVal.colorsToHexStrings(),
+    "IBM": ArrowColorPalette.ibm.rawVal.colorsToHexStrings(),
+    "Fire": ArrowColorPalette.fire.rawVal.colorsToHexStrings(),
+    "Forest": ArrowColorPalette.forest.rawVal.colorsToHexStrings(),
+    "Ocean": ArrowColorPalette.ocean.rawVal.colorsToHexStrings()
+  ])
 }
 
 extension UIScreen {

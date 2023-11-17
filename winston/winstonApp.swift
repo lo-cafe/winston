@@ -17,7 +17,7 @@ struct winstonApp: App {
   let persistenceController = PersistenceController.shared
   @Environment(\.scenePhase) var phase
   @State private var activeTab: TabIdentifier = .posts
-  
+  @Default(.preferredThemeMode) var preferredThemeMode
 
   var body: some Scene {
     WindowGroup {
@@ -31,6 +31,7 @@ struct winstonApp: App {
           \.whatsNew,
            WhatsNewEnvironment(currentVersion: .current(), whatsNewCollection: getCurrentChangelog())
         )
+        .preferredColorScheme(preferredThemeMode == 1 ? .light : preferredThemeMode == 2 ? .dark : .none)
     }
     .onChange(of: phase) { (newPhase) in
       switch newPhase {
