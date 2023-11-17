@@ -95,6 +95,11 @@ struct PostView: View, Equatable {
             }
             //              .equatable()
             
+            if selectedTheme.posts.inlineFloatingPill {
+              PostFloatingPill(post: post, subreddit: subreddit)
+                    .padding(-10)
+            }
+            
             Text("Comments")
               .fontSize(20, .bold)
               .frame(maxWidth: .infinity, alignment: .leading)
@@ -143,7 +148,11 @@ struct PostView: View, Equatable {
         withAnimation { update.toggle() }
         await asyncFetch(true)
       }
-      .overlay(PostFloatingPill(post: post, subreddit: subreddit), alignment: .bottomTrailing)
+      .overlay(alignment: .bottomTrailing) {
+        if !selectedTheme.posts.inlineFloatingPill {
+          PostFloatingPill(post: post, subreddit: subreddit)
+        }
+      }
       .navigationBarTitle("\(post.data?.num_comments ?? 0) comments", displayMode: .inline)
       .toolbar { Toolbar(hideElements: hideElements, subreddit: subreddit, post: post, routerProxy: routerProxy, sort: $sort) }
       .onChange(of: sort) { val in
