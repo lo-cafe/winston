@@ -45,7 +45,7 @@ class GlobalLoader: ObservableObject {
   
   func enable(_ str: String) {
     self.loadingText = str
-    doThisAfter(0) {
+    doThisAfter(0.0) {
       withAnimation(spring) {
         self.showing = true
       }

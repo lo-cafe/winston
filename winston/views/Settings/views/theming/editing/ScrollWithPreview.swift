@@ -26,7 +26,7 @@ struct ScrollWithPreview<Content: View, Preview: View>: View {
     var body: some View {
       let tabHeight = (tempGlobalState.tabBarHeight ?? 0)
       let interpolation = [
-        -((UIScreen.screenHeight - (tabHeight)) - ((contentSize.height + getSafeArea().top + tabHeight) - (previewContentSize.height + 40))),
+        -((UIScreen.screenHeight - (tabHeight)) - ((contentSize.height + getSafeArea().top + tabHeight) - (previewContentSize.height + 40 + 16))),
          (contentSize.height + getSafeArea().top + tabHeight) - (UIScreen.screenHeight - (getSafeArea().top)) - 20
       ]
       let interpolate = interpolatorBuilder(interpolation, value: scrollOffset)

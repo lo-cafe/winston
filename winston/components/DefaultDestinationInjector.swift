@@ -9,12 +9,10 @@ import SwiftUI
 
 struct DefaultDestinationInjector<Content: View>: View {
   @StateObject var routerProxy: RouterProxy
-  @ViewBuilder var content: () -> Content
+  @ViewBuilder var content: (RouterProxy) -> Content
+  
   var body: some View {
-    content()
-      .navigationDestination(for: URL.self) { url in
-        SafariWebView(url: url).ignoresSafeArea()
-      }
+    content(routerProxy)
       .navigationDestination(for: PostViewPayload.self) { postPayload in
         PostView(post: postPayload.post, selfAttr: postPayload.postSelfAttr, subreddit: postPayload.sub, highlightID: postPayload.highlightID)
           .equatable()

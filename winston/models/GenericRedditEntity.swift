@@ -8,12 +8,13 @@
 import Foundation
 import Combine
 import Defaults
+import SwiftUI
 
 protocol GenericRedditEntityDataType: Codable, Hashable, Identifiable {
   var id: String { get }
 }
 
-class GenericRedditEntity<T: GenericRedditEntityDataType, B: Hashable>: Identifiable, Hashable, ObservableObject, Codable,  _DefaultsSerializable {
+class GenericRedditEntity<T: GenericRedditEntityDataType, B: Hashable>: Identifiable, Hashable, ObservableObject, Observable, Codable,  _DefaultsSerializable {
   func hash(into hasher: inout Hasher) {
 //    hasher.combine(data)
 //    hasher.combine(childrenWinston.data)
@@ -37,6 +38,8 @@ class GenericRedditEntity<T: GenericRedditEntityDataType, B: Hashable>: Identifi
       }
     }
   }
+  
+  var selfPrefix: String { "" }
   
   @Published var winstonData: B? = nil
   @Published var _id: String
@@ -76,17 +79,21 @@ class GenericRedditEntity<T: GenericRedditEntityDataType, B: Hashable>: Identifi
   }
   
   let redditAPI: RedditAPI
-  var anyCancellable: AnyCancellable? = nil
+  var anyCancellables: [AnyCancellable]? = nil
   @Published var childrenWinston: ObservableArray<GenericRedditEntity<T, B>> = ObservableArray<GenericRedditEntity<T, B>>(array: [])
   var parentWinston: ObservableArray<GenericRedditEntity<T, B>>?
+  
+  private func setupWatchers() {
+    anyCancellables?.append(childrenWinston.objectWillChange.sink { [weak self] (_) in
+        self?.objectWillChange.send()
+    })
+  }
   
   required init(id: String, api: RedditAPI, typePrefix: String?) {
     self._id = id
     self.redditAPI = api
     self.typePrefix = typePrefix
-    anyCancellable = childrenWinston.objectWillChange.sink { [weak self] (_) in
-        self?.objectWillChange.send()
-    }
+//    self.setupWatchers()
   }
 
   required init(data: T, api: RedditAPI, typePrefix: String?) {
@@ -94,9 +101,7 @@ class GenericRedditEntity<T: GenericRedditEntityDataType, B: Hashable>: Identifi
     self._id = data.id
     self.redditAPI = api
     self.typePrefix = typePrefix
-    anyCancellable = childrenWinston.objectWillChange.sink { [weak self] (_) in
-        self?.objectWillChange.send()
-    }
+//    self.setupWatchers()
   }
   
   init(data: T, api: RedditAPI, typePrefix: String?, kind: String? = nil) {
@@ -105,9 +110,7 @@ class GenericRedditEntity<T: GenericRedditEntityDataType, B: Hashable>: Identifi
     self._id = data.id
     self.redditAPI = api
     self.typePrefix = typePrefix
-    anyCancellable = childrenWinston.objectWillChange.sink { [weak self] (_) in
-        self?.objectWillChange.send()
-    }
+//    self.setupWatchers()
   }
   
   func duplicate() -> GenericRedditEntity<T, B> {
@@ -117,47 +120,21 @@ class GenericRedditEntity<T: GenericRedditEntityDataType, B: Hashable>: Identifi
     copy.childrenWinston = childrenWinston
     return copy
   }
+  
+  func fetchItself() {
+    Task(priority: .background) {
+      if let data = await RedditAPI.shared.fetchInfo(fullnames: ["\(self.selfPrefix)_\(id)"]) {
+        await MainActor.run { withAnimation {
+          if let data = data as? T { self.data = data }
+        } }
+      }
+    }
+  }
 }
 
-
-
-
-
-
-//class GenericRedditEntity<T: GenericRedditEntityDataType>: Codable, Identifiable, Hashable, ObservableObject {
-//  func hash(into hasher: inout Hasher) {
-//    hasher.combine(data)
-//  }
-//
-//  static func == (lhs: GenericRedditEntity<T>, rhs: GenericRedditEntity<T>) -> Bool {
-////    print(lhs.id, rhs.id, lhs.id == rhs.id)
-//    return lhs.id == rhs.id
-//  }
-//
-//  @Published var data: T? {
-//    didSet {
-//      if let id = data?.id {
-//        self.id = id
-//      }
-//    }
-//  }
-//  let redditAPI: RedditAPI
-//  @Published var id: String
-//  @Published var loading = false
-//  @Published var typePrefix: String?
-//  var kind: String?
-//  var anyCancellable: AnyCancellable? = nil
-//
-//  init(id: String, api: RedditAPI, typePrefix: String?) {
-//    self.id = id
-//    self.redditAPI = api
-//    self.typePrefix = typePrefix
-//  }
-//
-//  init(data: T, api: RedditAPI, typePrefix: String?) {
-//    self.data = data
-//    self.id = data.id
-//    self.redditAPI = api
-//    self.typePrefix = typePrefix
-//  }
-//}
+enum RedditEntityType {
+  case post(Post)
+  case comment(Comment)
+  case user(User)
+  case subreddit(Subreddit)
+}

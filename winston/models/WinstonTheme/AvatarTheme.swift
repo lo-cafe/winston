@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct AvatarTheme: Codable, Hashable {
+struct AvatarTheme: Codable, Hashable, Equatable {
   enum CodingKeys: String, CodingKey {
     case size, cornerRadius, visible
   }

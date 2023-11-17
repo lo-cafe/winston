@@ -59,7 +59,7 @@ struct CommentLinkFull: View {
       .opacity(loadMoreLoading ? 0.5 : 1)
       .id("\(comment.id)-\(id)")
     } else {
-      Text("Depressive load more :(")
+      Text("Depressive load full :(")
     }
   }
 }

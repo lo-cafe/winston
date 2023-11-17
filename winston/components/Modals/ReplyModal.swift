@@ -8,6 +8,7 @@
 import SwiftUI
 import HighlightedTextEditor
 import Defaults
+import NukeUI
 
 class TextFieldObserver : ObservableObject {
   @Published var debouncedTeplyText: String
@@ -65,7 +66,9 @@ struct ReplyModalComment: View {
   var body: some View {
     ReplyModal(thingFullname: comment.data?.name ?? "", action: action) {
       VStack {
-        CommentLink(indentLines: 0, showReplies: false, comment: comment)
+        if let commentWinstonData = comment.winstonData {
+          CommentLink(indentLines: 0, showReplies: false, comment: comment, commentWinstonData: commentWinstonData, children: comment.childrenWinston)
+        }
 //          .equatable()
       }
     }
@@ -134,9 +137,8 @@ struct ReplyModal<Content: View>: View {
         VStack(spacing: 12) {
           
           VStack(alignment: .leading) {
-            if let me = redditAPI.me?.data {
-              BadgeView(id: "replies", author: me.name, fullname: "t2_\(me.id)", created: Date().timeIntervalSince1970, avatarURL: me.icon_img ?? me.snoovatar_img, theme: selectedTheme.comments.theme.badge, routerProxy: routerProxy, cs: cs)
-                .equatable()
+            if let me = redditAPI.me?.data, let avatarLink = me.icon_img ?? me.snoovatar_img, let rootURL = rootURLString(avatarLink), let avatarURL = URL(string: rootURL) {
+              BadgeOpt(avatarRequest: ImageRequest(url: avatarURL), badgeKit: .init(numComments: 0, ups: 0, saved: false, author: me.name, authorFullname: "t2_\(me.id)", created: Date().timeIntervalSince1970), cs: cs, routerProxy: routerProxy, avatarURL: me.icon_img ?? me.snoovatar_img, theme: selectedTheme.comments.theme.badge)
             }
             MDEditor(text: $textWrapper.replyText)
           }

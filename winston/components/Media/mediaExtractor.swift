@@ -8,12 +8,18 @@
 import Foundation
 import SwiftUI
 import NukeUI
+import Nuke
 import YouTubePlayerKit
 import Alamofire
 
-struct MediaExtracted: Hashable, Equatable, Identifiable {
+struct ImgExtracted: Equatable, Identifiable {
+  static func == (lhs: ImgExtracted, rhs: ImgExtracted) -> Bool {
+    lhs.id == rhs.id && lhs.size == rhs.size
+  }
+  
   let url: URL
   let size: CGSize
+  let request: ImageRequest
   var id: String { self.url.absoluteString }
 }
 
@@ -32,55 +38,70 @@ struct YTMediaExtracted: Equatable, Identifiable {
   var id: String { self.videoID }
 }
 
-enum MediaExtractedType: Hashable, Equatable {
-  case image(MediaExtracted)
-  case video(MediaExtracted)
-  case gallery([MediaExtracted])
-  case youtube(String, CGSize)
-  case link(URL)
+struct EntityExtracted<T: GenericRedditEntityDataType, B: Hashable>: Equatable {
+  static func == (lhs: EntityExtracted, rhs: EntityExtracted) -> Bool {
+    lhs.entity == rhs.entity
+  }
+  var subredditID: String? = nil
+  var postID: String? = nil
+  var commentID: String? = nil
+  var userID: String? = nil
+  let entity: GenericRedditEntity<T, B>
+}
+
+enum MediaExtractedType: Equatable {
+  case link(PreviewModel)
+  case video(SharedVideo)
+  case imgs([ImgExtracted])
+  case yt(YTMediaExtracted)
   case repost(Post)
-  case post(id: String, subreddit: String)
-  case comment(id: String, postID: String, subreddit: String)
-  case subreddit(name: String)
-  case user(username: String)
+  case post(EntityExtracted<PostData, PostWinstonData>?)
+  case comment(EntityExtracted<CommentData, CommentWinstonData>?)
+  case subreddit(EntityExtracted<SubredditData, AnyHashable>?)
+  case user(EntityExtracted<UserData, AnyHashable>?)
 }
 
 // ORDER MATTERS!
-func mediaExtractor(contentWidth: Double = UIScreen.screenWidth, _ data: PostData) async -> MediaExtractedType? {
+func mediaExtractor(compact: Bool, contentWidth: Double = UIScreen.screenWidth, _ data: PostData, theme: WinstonTheme? = nil) -> MediaExtractedType? {
   guard !data.is_self else { return nil }
-  
+
   if let is_gallery = data.is_gallery, is_gallery, let galleryData = data.gallery_data?.items, let metadata = data.media_metadata {
     let galleryArr = galleryData.compactMap { item in
       let id = item.media_id
       if let itemMeta = metadata[String(id)], let extArr = itemMeta?.m?.split(separator: "/"), let size = itemMeta?.s, let imgURL = URL(string: "https://i.redd.it/\(id).\(extArr[extArr.count - 1])") {
-        return MediaExtracted(url: imgURL, size: CGSize(width: size.x, height: size.y))
+        
+        let processors: [ImageProcessing] = contentWidth == 0 ? [] : [.resize(width: compact ? scaledCompactModeThumbSize() : contentWidth)]
+        var userInfo: [ImageRequest.UserInfoKey : Any] = [:]
+        if compact {
+          userInfo[.thumbnailKey] = ImageRequest.ThumbnailOptions(size: .init(width: scaledCompactModeThumbSize(), height: scaledCompactModeThumbSize()), unit: .points, contentMode: .aspectFill)
+        }
+        return ImgExtracted(url: imgURL, size: CGSize(width: size.x, height: size.y), request: ImageRequest(url: imgURL, processors: processors, userInfo: userInfo))
       }
       return nil
     }
-    return .gallery(galleryArr)
+    return .imgs(galleryArr)
   }
   
   if let videoPreview = data.preview?.reddit_video_preview, let url = videoPreview.hls_url, let videoURL = URL(string: url), let width = videoPreview.width, let height = videoPreview.height  {
-    return .video(MediaExtracted(url: videoURL, size: CGSize(width: CGFloat(width), height: CGFloat(height))))
+    return .video(SharedVideo(url: videoURL, size: CGSize(width: CGFloat(width), height: CGFloat(height))))
   }
   
   if let redditVideo = data.media?.reddit_video, let url = redditVideo.hls_url, let videoURL = URL(string: url), let width = redditVideo.width, let height = redditVideo.height {
-    return .video(MediaExtracted(url: videoURL, size: CGSize(width: CGFloat(width), height: CGFloat(height))))
+    return .video(SharedVideo(url: videoURL, size: CGSize(width: CGFloat(width), height: CGFloat(height))))
   }
   
   if data.media?.type == "youtube.com", let oembed = data.media?.oembed, let html = oembed.html, let ytID = extractYoutubeIdFromOEmbed(html), let width = oembed.width, let height = oembed.height, let author_name = oembed.author_name, let author_url = oembed.author_url, let authorURL = URL(string: author_url), let thumb = oembed.thumbnail_url, let thumbURL = URL(string: thumb) {
-    let thumbReq = ImageRequest(url: thumbURL, processors: [.resize(width: getPostContentWidth(contentWidth: contentWidth))], priority: .normal)
+    let thumbReq = ImageRequest(url: thumbURL, processors: [.resize(width: getPostContentWidth(contentWidth: contentWidth, theme: theme))], priority: .normal)
     Post.prefetcher.startPrefetching(with: [thumbReq])
     let size = CGSize(width: CGFloat(width), height: CGFloat(height))
     let newExtracted = YTMediaExtracted(videoID: ytID, size: size, thumbnailURL: thumbURL, thumbnailRequest: thumbReq, player: YouTubePlayer(source: .video(id: ytID)), author: author_name, authorURL: authorURL)
-    Caches.ytPlayers.addKeyValue(key: ytID, data: { newExtracted } )
-    return .youtube(ytID, size)
+//    Caches.ytPlayers.addKeyValue(key: ytID, data: { newExtracted } )
+    return .yt(newExtracted)
   }
-  
   
   if let postEmbed = data.crosspost_parent_list?.first {
 //    return .repost(Post(data: postEmbed, api: RedditAPI.shared, fetchSub: true, contentWidth: getPostContentWidth(contentWidth: contentWidth, secondary: true) ))
-    return .repost(Post(data: postEmbed, api: RedditAPI.shared, fetchSub: true, contentWidth: contentWidth, secondary: true ))
+    return .repost(Post(data: postEmbed, api: RedditAPI.shared, fetchSub: true, contentWidth: contentWidth, secondary: true, theme: theme))
   }
   
   if IMAGES_FORMATS.contains(where: { data.url.hasSuffix($0) }), let url = rootURL(data.url) {
@@ -90,34 +111,48 @@ func mediaExtractor(contentWidth: Double = UIScreen.screenWidth, _ data: PostDat
       actualWidth = width
       actualHeight = height
     }
-    return .image(MediaExtracted(url: url, size: CGSize(width: actualWidth, height: actualHeight)))
+    
+    let processors: [ImageProcessing] = contentWidth == 0 ? [] : [.resize(width: compact ? scaledCompactModeThumbSize() : contentWidth)]
+    var userInfo: [ImageRequest.UserInfoKey : Any] = [:]
+    if compact {
+      userInfo[.thumbnailKey] = ImageRequest.ThumbnailOptions(size: .init(width: scaledCompactModeThumbSize(), height: scaledCompactModeThumbSize()), unit: .points, contentMode: .aspectFill)
+    }
+    let imgExtracted = ImgExtracted(url: url, size: CGSize(width: actualWidth, height: actualHeight), request: ImageRequest(url: url, processors: processors, userInfo: userInfo))
+    return .imgs([imgExtracted])
   }
   
   if let images = data.preview?.images, images.count > 0, let image = images[0].source, let src = image.url?.replacing("/preview.", with: "/i."), !src.contains("external-preview"), let imgURL = rootURL(src.escape), let width = image.width, let height = image.height {
-    return .image(MediaExtracted(url: imgURL, size: CGSize(width: width, height: height)))
+    let processors: [ImageProcessing] = contentWidth == 0 ? [] : [.resize(width: compact ? scaledCompactModeThumbSize() : contentWidth)]
+    var userInfo: [ImageRequest.UserInfoKey : Any] = [:]
+    if compact {
+      userInfo[.thumbnailKey] = ImageRequest.ThumbnailOptions(size: .init(width: scaledCompactModeThumbSize(), height: scaledCompactModeThumbSize()), unit: .points, contentMode: .aspectFill)
+    }
+    let imgExtracted = ImgExtracted(url: imgURL, size: CGSize(width: width, height: height), request: ImageRequest(url: imgURL, processors: processors, userInfo: userInfo))
+    return .imgs([imgExtracted])
   }
   
   if VIDEOS_FORMATS.contains(where: { data.url.hasSuffix($0) }), let url = URL(string: data.url) {
-    return .video(MediaExtracted(url: url, size: CGSize(width: 0, height: 0)))
+    return .video(SharedVideo(url: url, size: CGSize(width: 0, height: 0)))
   }
   
-  if data.url.contains("streamable") {
-    let url = data.url;
-    let shortCode = url[url.index(url.lastIndex(of: "/") ?? url.startIndex, offsetBy: 1)...]
-
-    let response = await AF.request(
-      "https://api.streamable.com/videos/\(shortCode)"
-    ).serializingDecodable(StreamableAPIResponse.self).response
-    
-    switch response.result {
-    case .success(let data):
-      if let mp4 = data.files?.mp4Mobile ?? data.files?.mp4 {
-        return .video(MediaExtracted(url: URL(string: mp4.url)!, size: CGSize(width: mp4.width, height: mp4.height)))
-      }
-    case .failure:
-      return nil
-    }
-  }
+  // MANDRAKE
+//  if data.url.contains("streamable") {
+//    let url = data.url;
+//    let shortCode = url[url.index(url.lastIndex(of: "/") ?? url.startIndex, offsetBy: 1)...]
+//
+//    let response = await AF.request(
+//      "https://api.streamable.com/videos/\(shortCode)"
+//    ).serializingDecodable(StreamableAPIResponse.self).response
+//    
+//    switch response.result {
+//    case .success(let data):
+//      if let mp4 = data.files?.mp4Mobile ?? data.files?.mp4 {
+//        return .video(MediaExtracted(url: URL(string: mp4.url)!, size: CGSize(width: mp4.width, height: mp4.height)))
+//      }
+//    case .failure:
+//      return nil
+//    }
+//  }
   
   let actualURL = data.url.hasPrefix("/r/") || data.url.hasPrefix("/u/") ? "https://reddit.com\(data.url)" : data.url
   guard let urlComponents = URLComponents(string: actualURL) else {
@@ -134,25 +169,41 @@ func mediaExtractor(contentWidth: Double = UIScreen.screenWidth, _ data: PostDat
         let postId = pathComponents[3]
         if pathComponents.count >= 6 {
           let commentId = pathComponents[5]
-          return .comment(id: commentId, postID: postId, subreddit: subredditName)
+          let comment = Comment(id: commentId, api: RedditAPI.shared, typePrefix: Comment.prefix)
+          comment.fetchItself()
+          let entityExtracted = EntityExtracted(subredditID: subredditName, postID: postId, commentID: commentId, entity: comment)
+          return .comment(entityExtracted)
         }
-        return .post(id: postId, subreddit: subredditName)
+        let post = Post(id: postId, api: RedditAPI.shared, typePrefix: Post.prefix)
+        post.fetchItself()
+        let entityExtracted = EntityExtracted(subredditID: subredditName, postID: postId, entity: post)
+        return .post(entityExtracted)
+//        return .post(id: postId, subreddit: subredditName)
       }
-      return .subreddit(name: subredditName)
+      let sub = Subreddit(id: subredditName, api: RedditAPI.shared)
+      Task(priority: .background) {
+        await sub.refreshSubreddit()
+      }
+      let entityExtracted = EntityExtracted(subredditID: subredditName, entity: sub)
+      return .subreddit(entityExtracted)
       
     case "user", "u":
       let username = pathComponents[1]
-      return .user(username: username)
+      let user = User(id: username, api: RedditAPI.shared, typePrefix: User.prefix)
+      user.fetchItself()
+      let entityExtracted = EntityExtracted(userID: username, entity: user)
+      return .user(entityExtracted)
+//      return .user(username: username)
       
     default:
       if !data.is_self, let linkURL = URL(string: data.url) {
-        return .link(linkURL)
+        return .link(PreviewModel(linkURL))
       }
     }
   }
   
   if data.post_hint == "link", let linkURL = URL(string: data.url) {
-    return .link(linkURL)
+    return .link(PreviewModel(linkURL))
   }
   
   return nil

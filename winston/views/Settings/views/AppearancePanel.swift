@@ -26,6 +26,7 @@ struct AppearancePanel: View {
   @Default(.voteButtonPositionRight) var voteButtonPositionRight
   @Default(.showSelfPostThumbnails) var showSelfPostThumbnails
   @Default(.disableAlphabetLettersSectionsInSubsList) var disableAlphabetLettersSectionsInSubsList
+//  @Default(.preferInlineTags) var preferInlineTags
   @Default(.themeStoreTint) var themeStoreTint
   @Default(.preferredThemeMode) var preferredThemeMode
   @Environment(\.useTheme) private var theme
@@ -72,11 +73,12 @@ struct AppearancePanel: View {
       
       Section("Posts") {
         Group {
-          Toggle("Show Upvote Ratio", isOn: $showUpvoteRatio)
-          Toggle("Show Voting Buttons", isOn: $showVotes)
-          Toggle("Show Self Text", isOn: $showSelfText)
-          Toggle("Show Subreddit at Top", isOn: $showSubsAtTop)
-          Toggle("Show Title at Top", isOn: $showTitleAtTop)
+        Toggle("Show Upvote Ratio", isOn: $showUpvoteRatio)
+        Toggle("Show Voting Buttons", isOn: $showVotes)
+        Toggle("Show Self Text", isOn: $showSelfText)
+        Toggle("Show Subreddit at Top", isOn: $showSubsAtTop)
+        Toggle("Show Title at Top", isOn: $showTitleAtTop)
+//        Toggle("Prefer inline tags", isOn: $preferInlineTags)
         }
         .themedListRowBG(enablePadding: true)
       }
@@ -84,39 +86,15 @@ struct AppearancePanel: View {
       
       Section("Compact Posts"){
         Group {
-          Toggle("Compact Mode", isOn: $compactMode)
-          Toggle("Show Self Post Thumbnails", isOn: $showSelfPostThumbnails)
-          Picker("Thumbnail Position", selection: Binding(get: {
-            thumbnailPositionRight ? "Right" : "Left"
-          }, set: {val, _ in
-            thumbnailPositionRight = val == "Right"
-          })){
-            Text("Left").tag("Left")
-            Text("Right").tag("Right")
-          }
-          
-          Picker("Thumbnail Size", selection: Binding(get: {
-            compThumbnailSize
-          }, set: { val, _ in
-            compThumbnailSize = val
-            // This is a bit of a hacky way of refreshing the images, but it works
-            compactMode = false
-            compactMode = true
-          })){
-            Text("Hidden").tag(ThumbnailSizeModifier.hidden)
-            Text("Small").tag(ThumbnailSizeModifier.small)
-            Text("Medium").tag(ThumbnailSizeModifier.medium)
-            Text("Large").tag(ThumbnailSizeModifier.large)
-          }
-          
-          Picker("Voting Buttons Position", selection: Binding(get: {
-            voteButtonPositionRight ? "Right" : "Left"
-          }, set: {val, _ in
-            voteButtonPositionRight = val == "Right"
-          })){
-            Text("Left").tag("Left")
-            Text("Right").tag("Right")
-          }
+        Toggle("Compact Mode", isOn: $compactMode)
+        Toggle("Show Thumbnail Placeholder", isOn: $showSelfPostThumbnails)
+        Picker("Thumbnail Position", selection: Binding(get: {
+          thumbnailPositionRight ? "Right" : "Left"
+        }, set: {val, _ in
+          thumbnailPositionRight = val == "Right"
+        })){
+          Text("Left").tag("Left")
+          Text("Right").tag("Right")
         }
         .themedListRowBG(enablePadding: true)
       }

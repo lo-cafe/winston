@@ -67,7 +67,14 @@ struct MasterButton: View {
       }
       if let icon = icon {
         Image(systemName: icon)
-          .transition(.scaleAndBlur)
+          .ifIOS17({ img in
+            if #available(iOS 17, *) {
+              img.contentTransition(.symbolEffect)
+            } else {
+              img.transition(.scaleAndBlur)
+            }
+          })
+          
 //          .id(icon)
       }
       Group {

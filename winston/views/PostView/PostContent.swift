@@ -16,15 +16,19 @@ struct PostContent: View, Equatable {
   }
   
   @ObservedObject var post: Post
-  var selfAttr: AttributedString? = nil
+  @ObservedObject var winstonData: PostWinstonData
   var sub: Subreddit
   var forceCollapse: Bool = false
-  @State private var size: CGSize = .zero
   @State private var collapsed = false
   @Default(.blurPostNSFW) private var blurPostNSFW
   @EnvironmentObject private var routerProxy: RouterProxy
   @Environment(\.useTheme) private var selectedTheme
   @Environment(\.colorScheme) private var cs
+  
+  @ObservedObject var avatarCache = Caches.avatars
+  @ObservedObject private var videosCache = Caches.videos
+  
+  @Default(.blurPostLinkNSFW) private var blurPostLinkNSFW
   
   var contentWidth: CGFloat { UIScreen.screenWidth - (selectedTheme.posts.padding.horizontal * 2) }
   
@@ -60,32 +64,28 @@ struct PostContent: View, Equatable {
         VStack(spacing: selectedTheme.posts.spacing) {
           
           if let extractedMedia = post.winstonData?.extractedMedia {
-            MediaPresenter(blurPostLinkNSFW: blurPostNSFW, media: extractedMedia, post: post, compact: false, contentWidth: contentWidth, routerProxy: routerProxy)
+            MediaPresenter(postDimensions: $winstonData.postDimensions, controller: nil, cachedVideo: videosCache.cache[post.id]?.data, imgRequests: winstonData.mediaImageRequest, postTitle: data.title, badgeKit: data.badgeKit, avatarImageRequest: winstonData.avatarImageRequest, markAsSeen: {}, cornerRadius: selectedTheme.postLinks.theme.mediaCornerRadius, blurPostLinkNSFW: blurPostLinkNSFW, media: extractedMedia, over18: over18, compact: false, contentWidth: contentWidth, routerProxy: routerProxy)
               .id("media-post-open")
           }
           
           if data.selftext != "" {
-            VStack {
-              MD(selfAttr == nil ? .str(data.selftext) : .attr(selfAttr!), fontSize: postsTheme.bodyText.size)
-                .lineSpacing(postsTheme.linespacing)
-                .foregroundColor(postsTheme.bodyText.color.cs(cs).color())
-                .frame(maxWidth: .infinity, alignment: .leading)
-            }
-            .contentShape(Rectangle())
-            .onTapGesture { withAnimation(spring) { collapsed.toggle() } }
-            .allowsHitTesting(!isCollapsed)
+
+            MD2(winstonData.postBodyAttr == nil ? .str(data.selftext) : .nsAttr(winstonData.postBodyAttr!), onTap: { withAnimation(spring) { collapsed.toggle() } })
+              .frame(width: winstonData.postViewBodySize.width, height: winstonData.postViewBodySize.height, alignment: .topLeading)
+              .fixedSize()
+//              .foregroundColor(postsTheme.bodyText.color.cs(cs).color())
+              .allowsHitTesting(!isCollapsed)
           }
         }
+        .modifier(AnimatingCellHeight(height: isCollapsed ? 175 : winstonData.postViewBodySize.height + (winstonData.postDimensions.mediaSize?.height ?? 0), disable: false))
         .fixedSize(horizontal: false, vertical: true)
-        .measure($size)
-        .modifier(AnimatingCellHeight(height: isCollapsed ? 75 : size.height, disable: !forceCollapse && size.height == 0))
         .clipped()
         .opacity(isCollapsed ? 0.3 : 1)
         .mask(
           Rectangle()
             .fill(LinearGradient(
               gradient: Gradient(stops: [
-                .init(color: Color.black.opacity(1), location: 0),
+                .init(color: Color.black.opacity(isCollapsed ? 0.75 : 1), location: 0),
                 .init(color: Color.black.opacity(isCollapsed ? 0 : 1), location: 1)
               ]),
               startPoint: .top,
@@ -97,10 +97,11 @@ struct PostContent: View, Equatable {
             Image(systemName: "eye.fill")
             Text("Tap to expand").allowsHitTesting(false)
           }
+            .padding(.top, 50)
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .contentShape(Rectangle())
             .onTapGesture { withAnimation(spring) { collapsed.toggle() } }
-            .foregroundColor(.blue)
+            .foregroundColor(.accentColor)
             .allowsHitTesting(isCollapsed)
             .opacity(isCollapsed ? 1 : 0)
           , alignment: .bottom
@@ -110,13 +111,11 @@ struct PostContent: View, Equatable {
       .id("post-content")
       .listRowInsets(EdgeInsets(top: postsTheme.spacing / 2, leading: postsTheme.padding.horizontal, bottom: postsTheme.spacing / 2, trailing: postsTheme.spacing / 2))
       
-        Badge(post: post, theme: postsTheme.badge)
-//          .equatable()
-          .id("post-badge")
-          .listRowInsets(EdgeInsets(top: postsTheme.spacing / 2, leading: postsTheme.padding.horizontal, bottom: postsTheme.spacing * 0.75, trailing: postsTheme.padding.horizontal))
+      BadgeOpt(avatarRequest: winstonData.avatarImageRequest, badgeKit: data.badgeKit, cs: cs, routerProxy: routerProxy, showVotes: false, theme: postsTheme.badge)
+        .id("post-badge")
+        .listRowInsets(EdgeInsets(top: postsTheme.spacing / 2, leading: postsTheme.padding.horizontal, bottom: postsTheme.spacing * 0.75, trailing: postsTheme.padding.horizontal))
       
-      
-      SubsNStuffLine(showSub: true, feedsAndSuch: feedsAndSuch, post: post, sub: sub, routerProxy: routerProxy, over18: over18)
+      SubsNStuffLine()
         .id("post-flair-divider")
         .listRowInsets(EdgeInsets(top: 0, leading: postsTheme.padding.horizontal, bottom: postsTheme.commentsDistance / 2, trailing: postsTheme.padding.horizontal))
     }

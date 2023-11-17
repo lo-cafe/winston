@@ -13,6 +13,7 @@ struct ShortPostLink: View {
   var post: Post
   @EnvironmentObject private var routerProxy: RouterProxy
   @Environment(\.useTheme) private var selectedTheme
+  @Environment(\.colorScheme) private var cs: ColorScheme
 
   var body: some View {
     if let data = post.data {
@@ -23,11 +24,11 @@ struct ShortPostLink: View {
           .fontSize(15).opacity(0.75)
         HStack {
           if let fullname = data.author_fullname {
-            Badge(post: post, theme: selectedTheme.postLinks.theme.badge, extraInfo: [PresetBadgeExtraInfo().commentsExtraInfo(data: data), PresetBadgeExtraInfo().upvotesExtraInfo(data: data)])
-              .equatable()
+            Badge(cs: cs, routerProxy: routerProxy, showVotes: true, post: post, theme: selectedTheme.postLinks.theme.badge)
+//              .equatable()
           }
           Spacer()
-          FlairTag(text: "r/\(data.subreddit)", color: .blue)
+          Tag(text: "r/\(data.subreddit)", color: .blue)
             .highPriorityGesture(TapGesture().onEnded {
               routerProxy.router.path.append(SubViewType.posts(Subreddit(id: data.subreddit, api: post.redditAPI)))
             })

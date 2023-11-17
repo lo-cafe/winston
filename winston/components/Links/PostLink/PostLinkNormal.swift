@@ -6,8 +6,12 @@
 //
 
 import SwiftUI
+import NukeUI
 
-struct PostLinkNormalSelftext: View {
+struct PostLinkNormalSelftext: View, Equatable {
+  static func == (lhs: PostLinkNormalSelftext, rhs: PostLinkNormalSelftext) -> Bool {
+    return lhs.selftext == rhs.selftext && lhs.theme == rhs.theme && lhs.cs == rhs.cs
+  }
   var selftext: String
   var theme: ThemeText
   var cs: ColorScheme
@@ -21,65 +25,151 @@ struct PostLinkNormalSelftext: View {
   }
 }
 
-struct PostLinkNormal: View {
-  var post: Post
+struct PostLinkNormal: View, Equatable, Identifiable {
+  static func == (lhs: PostLinkNormal, rhs: PostLinkNormal) -> Bool {
+    return lhs.id == rhs.id && lhs.theme == rhs.theme && lhs.cs == rhs.cs && lhs.contentWidth == rhs.contentWidth && lhs.avatarRequest?.url == rhs.avatarRequest?.url && lhs.cachedVideo == rhs.cachedVideo && lhs.repostAvatarRequest?.url == rhs.repostAvatarRequest?.url && lhs.blurPostLinkNSFW == rhs.blurPostLinkNSFW && lhs.hideReadPosts == rhs.hideReadPosts && lhs.secondary == rhs.secondary
+  }
+  
+  @EnvironmentObject var post: Post
+  @EnvironmentObject var winstonData: PostWinstonData
+  @EnvironmentObject var sub: Subreddit
+  var id: String
+  weak var controller: UIViewController?
+  var avatarRequest: ImageRequest?
+  var cachedVideo: SharedVideo?
+  var repostAvatarRequest: ImageRequest?
   var theme: SubPostsListTheme
-  let sub: Subreddit
   var showSub = false
-  let routerProxy: RouterProxy
+  var secondary = false
+  weak var routerProxy: RouterProxy?
   let contentWidth: CGFloat
   let blurPostLinkNSFW: Bool
+  var postSwipeActions: SwipeActionsSet
   let showVotes: Bool
+  let showSelfText: Bool
+  var readPostOnScroll: Bool
+  var hideReadPosts: Bool
   let showUpvoteRatio: Bool
   let showSubsAtTop: Bool
-  let showSelfText: Bool
   let showTitleAtTop: Bool
-  let over18: Bool
   var cs: ColorScheme
   
-  var body: some View {
-    if let data = post.data {
-      VStack(alignment: .leading, spacing: theme.theme.verticalElementsSpacing) {
-        if showSubsAtTop {
-          SubsNStuffLine(showSub: showSub, feedsAndSuch: feedsAndSuch, post: post, sub: sub, routerProxy: routerProxy, over18: over18)
-        }
-        
-        if !showTitleAtTop, let extractedMedia = post.winstonData?.extractedMedia {
-          MediaPresenter(blurPostLinkNSFW: blurPostLinkNSFW, media: extractedMedia, post: post, compact: false, contentWidth: contentWidth, routerProxy: routerProxy)
-        }
-        
-        PostLinkTitle(label: data.title.escape, theme: theme.theme.titleText, cs: cs)
-//          .background(GeometryReader { geo in Color.clear.onAppear { print(data.title, "title", post.winstonData?.postDimensions?.titleSize.height, geo.size.height) } })
-        
-        if !data.selftext.isEmpty && showSelfText {
-          PostLinkNormalSelftext(selftext: data.selftext, theme: theme.theme.bodyText, cs: cs)
-                .lineSpacing(theme.theme.linespacing)
-//            .background(GeometryReader { geo in Color.clear.onAppear { print(data.title, "body", post.winstonData?.postDimensions?.bodySize?.height, geo.size.height) } })
-        }
-        
-        if showTitleAtTop, let extractedMedia = post.winstonData?.extractedMedia {
-          MediaPresenter(blurPostLinkNSFW: blurPostLinkNSFW, media: extractedMedia, post: post, compact: false, contentWidth: contentWidth, routerProxy: routerProxy)
-//            .background(GeometryReader { geo in Color.clear.onAppear { print(data.title, "media", post.winstonData?.postDimensions?.mediaSize?.height, geo.size.height) } })
-        }
-        
-        
-        if !showSubsAtTop {
-          SubsNStuffLine(showSub: showSub, feedsAndSuch: feedsAndSuch, post: post, sub: sub, routerProxy: routerProxy, over18: over18)
-//            .background(GeometryReader { geo in Color.clear.onAppear { print(data.title, "divider", post.winstonData?.postDimensions?.dividerSize.height, geo.size.height) } })
-        }
-        
-        HStack {
-          Badge(post: post, theme: theme.theme.badge, extraInfo: !showVotes ? [PresetBadgeExtraInfo().commentsExtraInfo(data: data), PresetBadgeExtraInfo().upvotesExtraInfo(data: data)] : [PresetBadgeExtraInfo().commentsExtraInfo(data: data)])
-          
-          Spacer()
-          
-          HStack(alignment: .center) {
-            if showVotes { VotesCluster(likeRatio: showUpvoteRatio ? data.upvote_ratio : nil, post: post).id("votes-cluster") }
-          }
-          .fontSize(22, .medium)
-        }
-//        .background(GeometryReader { geo in Color.clear.onAppear { print(data.title, "badge", post.winstonData?.postDimensions?.badgeSize.height, geo.size.height) } })
+  //  @Environment(\.useTheme) private var selectedTheme
+  
+  @State private var isOpen = false
+  
+  func markAsRead() async {
+    Task(priority: .background) { await post.toggleSeen(true) }
+  }
+  
+  func openPost() {
+    if let routerProxy = routerProxy {
+      withAnimation(nil) { isOpen = true }
+      routerProxy.router.path.append(PostViewPayload(post: post, postSelfAttr: nil, sub: feedsAndSuch.contains(sub.id) ? sub : sub))
+    }
+  }
+  
+  func openSub() {
+    if let routerProxy = routerProxy, let sub = winstonData.subreddit {
+      routerProxy.router.path.append(SubViewType.posts(sub))
+    }
+  }
+  
+  func onDisappear() {
+    Task(priority: .background) {
+      if readPostOnScroll {
+        await post.toggleSeen(true, optimistic: true)
+      }
+      if hideReadPosts {
+        await post.hide(true)
       }
     }
   }
+  
+  var over18: Bool { post.data?.over_18 ?? false }
+  
+  @ViewBuilder
+  func mediaComponentCall() -> some View {
+    if let data = post.data {
+      if let extractedMedia = winstonData.extractedMedia {
+        MediaPresenter(postDimensions: $winstonData.postDimensions, controller: controller, cachedVideo: cachedVideo, imgRequests: winstonData.mediaImageRequest, postTitle: data.title, badgeKit: data.badgeKit, avatarImageRequest: winstonData.avatarImageRequest, markAsSeen: markAsRead, cornerRadius: theme.theme.mediaCornerRadius, blurPostLinkNSFW: blurPostLinkNSFW, media: extractedMedia, over18: over18, compact: false, contentWidth: winstonData.postDimensions.mediaSize?.width ?? 0, routerProxy: routerProxy)
+        
+        if case .repost(let repost) = extractedMedia {
+          if let repostWinstonData = repost.winstonData, let repostSub = repostWinstonData.subreddit {
+            PostLink(
+              id: repost.id,
+              controller: controller,
+              avatarRequest: repostAvatarRequest,
+              theme: theme,
+              showSub: true,
+              secondary: true,
+              routerProxy: routerProxy,
+              contentWidth: contentWidth,
+              blurPostLinkNSFW: blurPostLinkNSFW,
+              postSwipeActions: postSwipeActions,
+              showVotes: showVotes,
+              showSelfText: showSelfText,
+              readPostOnScroll: readPostOnScroll,
+              hideReadPosts: hideReadPosts,
+              showUpvoteRatio: showUpvoteRatio,
+              showSubsAtTop: showSubsAtTop,
+              showTitleAtTop: showTitleAtTop,
+              compact: false,
+              thumbnailPositionRight: nil,
+              voteButtonPositionRight: nil,
+              showSelfPostThumbnails: false,
+              cs: cs
+            )
+            //                }
+            //            .swipyRev(size: repostWinstonData.postDimensions.size, actionsSet: postSwipeActions, entity: repost)
+            .environmentObject(repost)
+            .environmentObject(repostWinstonData)
+            .environmentObject(repostSub)
+          }
+        }
+      }
+    }
+  }
+  
+  var body: some View {
+    if let routerProxy = routerProxy, let data = post.data {
+      let over18 = data.over_18 ?? false
+      VStack(alignment: .leading, spacing: theme.theme.verticalElementsSpacing) {
+        
+        if showSubsAtTop { SubsNStuffLine().equatable() }
+        
+        if !showTitleAtTop { mediaComponentCall() }
+        
+        PostLinkTitle(attrString: winstonData.titleAttr, label: data.title.escape, theme: theme.theme.titleText, cs: cs, size: winstonData.postDimensions.titleSize, nsfw: over18, flair: data.link_flair_text)
+        
+        if !data.selftext.isEmpty && showSelfText {
+          PostLinkNormalSelftext(selftext: data.selftext, theme: theme.theme.bodyText, cs: cs)
+            .lineSpacing(theme.theme.linespacing)
+        }
+        
+        if showTitleAtTop { mediaComponentCall() }
+        
+        
+        if !showSubsAtTop { SubsNStuffLine().equatable() }
+        
+        HStack {
+          BadgeView(avatarRequest: winstonData.avatarImageRequest, saved: data.badgeKit.saved, usernameColor: nil, author: data.badgeKit.author, fullname: data.badgeKit.authorFullname, created: data.badgeKit.created, avatarURL: nil, theme: theme.theme.badge, commentsCount: formatBigNumber(data.num_comments), votesCount: showVotes ? nil : formatBigNumber(data.ups), routerProxy: routerProxy, cs: cs, openSub: showSub ? openSub : nil, subName: data.subreddit)
+          
+          Spacer()
+          
+          if showVotes { VotesCluster(votesKit: data.votesKit, voteAction: post.vote).fontSize(22, .medium) }
+          
+        }
+      }
+      .postLinkStyle(post: post, sub: sub, routerProxy: routerProxy, theme: theme, size: winstonData.postDimensions.size, secondary: secondary, isOpen: $isOpen, openPost: openPost, readPostOnScroll: readPostOnScroll, hideReadPosts: hideReadPosts, cs: cs)
+      //      .scrollSwipe(size: winstonData.postDimensions.size, actionsSet: postSwipeActions, entity: post)
+      .swipyUI(onTap: openPost, actionsSet: postSwipeActions, entity: post, secondary: secondary)
+      //      .onChange(of: selectedTheme) { x in post.setupWinstonData(data: post.data, winstonData: winstonData, theme: x) }
+      .frame(width: winstonData.postDimensions.size.width, height: winstonData.postDimensions.size.height)
+      .fixedSize()
+    }
+  }
 }
+
+//let atr = NSTextAttachment()
+//atr.

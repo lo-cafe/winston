@@ -9,8 +9,8 @@ import Foundation
 import SwiftUI
 import Defaults
 
-func getPostContentWidth(contentWidth: Double = UIScreen.screenWidth, secondary: Bool = false) -> CGFloat {
-  let selectedTheme = Defaults[.themesPresets].first(where: { $0.id == Defaults[.selectedThemeID] }) ?? defaultTheme
+func getPostContentWidth(contentWidth: Double = UIScreen.screenWidth, secondary: Bool = false, theme: WinstonTheme? = nil) -> CGFloat {
+  let selectedTheme = theme ?? getEnabledTheme()
   let theme = selectedTheme.postLinks.theme
   var value: CGFloat = 0
   if IPAD {
@@ -22,30 +22,32 @@ func getPostContentWidth(contentWidth: Double = UIScreen.screenWidth, secondary:
 }
 
 struct PostDimensions: Hashable, Equatable {
+  static var zero: PostDimensions {
+    PostDimensions(contentWidth: 0, titleSize: .zero, dividerSize: .zero, badgeSize: .zero, spacingHeight: 0)
+  }
   let contentWidth: Double
   let titleSize: CGSize
   var bodySize: CGSize? = nil
   var urlTagHeight: Double? = nil
   var mediaSize: CGSize? = nil
-  var dividerSize: CGSize
+  var dividerSize: CGSize? = nil
   var badgeSize: CGSize
   var spacingHeight: Double
   var padding: CGSize { self.theme.innerPadding.toSize() }
   var theme: PostLinkTheme
   var compact: Bool
   var size: CGSize {
-    
     let compactVSpacing = self.spacingHeight / 2
     let tagHeight = urlTagHeight == nil ? 0 : (compactVSpacing / 2) + (self.urlTagHeight ?? 0)
-    let compactHeight = max(self.titleSize.height + compactVSpacing + self.badgeSize.height + tagHeight, (mediaSize?.height ?? 0)) + dividerSize.height + compactVSpacing
-    let normalHeight = self.titleSize.height + (self.bodySize?.height ?? 0) + (self.mediaSize?.height ?? 0) + self.dividerSize.height + self.badgeSize.height + self.spacingHeight
+    let compactHeight = max(self.titleSize.height + compactVSpacing + self.badgeSize.height + tagHeight, (mediaSize?.height ?? 0))
+    let normalHeight = self.titleSize.height + (self.bodySize?.height ?? 0) + (self.mediaSize?.height ?? 0) + (self.dividerSize?.height ?? 00) + self.badgeSize.height + self.spacingHeight
     return CGSize(
       width: self.contentWidth + (self.padding.width * 2),
       height: (self.compact ? compactHeight : normalHeight) + (self.padding.height * 2)
     )
   }
   
-  init(contentWidth: Double, compact: Bool? = nil, theme: PostLinkTheme? = nil, titleSize: CGSize, bodySize: CGSize? = nil, urlTagHeight: Double? = nil, mediaSize: CGSize? = nil, dividerSize: CGSize, badgeSize: CGSize, spacingHeight: Double) {
+  init(contentWidth: Double, compact: Bool? = nil, theme: PostLinkTheme? = nil, titleSize: CGSize, bodySize: CGSize? = nil, urlTagHeight: Double? = nil, mediaSize: CGSize? = nil, dividerSize: CGSize? = nil, badgeSize: CGSize, spacingHeight: Double) {
     self.contentWidth = contentWidth
     self.compact = compact ?? Defaults[.compactMode]
     self.theme = theme ?? getEnabledTheme().postLinks.theme
@@ -59,13 +61,14 @@ struct PostDimensions: Hashable, Equatable {
   }
 }
 
-func getPostDimensions(post: Post, columnWidth: Double = UIScreen.screenWidth, secondary: Bool = false, theme: WinstonTheme? = nil) -> PostDimensions? {
+func getPostDimensions(post: Post, winstonData: PostWinstonData? = nil, columnWidth: Double = UIScreen.screenWidth, secondary: Bool = false, rawTheme: WinstonTheme? = nil) -> PostDimensions {
   if let data = post.data {
-    let selectedTheme = theme ?? getEnabledTheme()
+    let selectedTheme = rawTheme ?? getEnabledTheme()
+    let showSelfPostThumbnails = Defaults[.showSelfPostThumbnails]
     let compact = Defaults[.compactMode]
     let maxDefaultHeight: CGFloat = Defaults[.maxPostLinkImageHeightPercentage]
     let maxHeight: CGFloat = (maxDefaultHeight / 100) * (UIScreen.screenHeight)
-    let extractedMedia = post.winstonData?.extractedMedia
+    let extractedMedia = winstonData?.extractedMedia
     let compactImgSize = scaledCompactModeThumbSize()
     let theme = selectedTheme.postLinks.theme
     let postGeneralSpacing = theme.verticalElementsSpacing + theme.linespacing
@@ -88,22 +91,25 @@ func getPostDimensions(post: Post, columnWidth: Double = UIScreen.screenWidth, s
     if let extractedMedia = extractedMedia {
       if compact { ACC_mediaSize = compactMediaSize } else {
         func defaultMediaSize(_ size: CGSize) -> CGSize {
-          let sourceHeight = size.height == 0 ? post.winstonData?.postDimensions?.mediaSize?.height ?? 0 : size.height
-          let sourceWidth = size.width == 0 ? post.winstonData?.postDimensions?.mediaSize?.width ?? 0 : size.width
-          let propHeight = (contentWidth * sourceHeight) / sourceWidth
+          let sourceHeight = size.height == 0 ? winstonData?.postDimensions.mediaSize?.height ?? 0 : size.height
+          let sourceWidth = size.width == 0 ? winstonData?.postDimensions.mediaSize?.width ?? 0 : size.width
+          let propHeight = (contentWidth * sourceHeight) / (sourceWidth == 0 ? 1 : sourceWidth)
           let finalHeight = maxDefaultHeight != 110 ? Double(min(maxHeight, propHeight)) : Double(propHeight)
           return CGSize(width: contentWidth, height: finalHeight)
         }
         
         switch extractedMedia {
-        case .image(let mediaExtracted):
-          ACC_mediaSize = defaultMediaSize(mediaExtracted.size)
+        case .imgs(let mediaExtracted):
+          if mediaExtracted.count == 1 {
+            ACC_mediaSize = defaultMediaSize(mediaExtracted[0].size)
+          } else if mediaExtracted.count > 1 {
+            let size = compact ? scaledCompactModeThumbSize() : ((contentWidth - 8) / 2)
+            ACC_mediaSize = mediaExtracted.count == 2 ? CGSize(width: contentWidth, height: size) : CGSize(width: contentWidth, height: (size * 2) + ImageMediaPost.gallerySpacing)
+          }
         case .video(let video):
           ACC_mediaSize = defaultMediaSize(video.size)
-        case .gallery(let mediasExtracted):
-          let size = compact ? scaledCompactModeThumbSize() : ((contentWidth - 8) / 2)
-          ACC_mediaSize = mediasExtracted.count == 2 ? CGSize(width: contentWidth, height: size) : CGSize(width: contentWidth, height: (size * 2) + ImageMediaPost.gallerySpacing)
-        case .youtube(_, let size):
+        case .yt(let ytMediaExtracted):
+          let size = ytMediaExtracted.size
           let actualHeight = (contentWidth * CGFloat(size.height)) / CGFloat(size.width)
           ACC_mediaSize = CGSize(width: contentWidth, height: actualHeight)
         case .link(_):
@@ -115,10 +121,10 @@ func getPostDimensions(post: Post, columnWidth: Double = UIScreen.screenWidth, s
           //        if let repostSize = getPostDimensions(post: repost, secondary: true) {
           //          ACC_mediaSize = repostSize.size
           //        }
-        case .post(_, _):
+        case .post(_):
           if !compact { ACC_mediaSize = CGSize(width: contentWidth, height: RedditMediaPost.height) }
           break
-        case .comment(_, _, _):
+        case .comment(_):
           if !compact { ACC_mediaSize = CGSize(width: contentWidth, height: RedditMediaPost.height) }
           break
         case .subreddit(_):
@@ -137,10 +143,27 @@ func getPostDimensions(post: Post, columnWidth: Double = UIScreen.screenWidth, s
     }
     
     
-    let compactTitleWidth = postGeneralSpacing + VotesCluster.verticalWidth + (extractedMedia == nil ? 0 : postGeneralSpacing + compactMediaSize.width)
+    let compactTitleWidth = postGeneralSpacing + VotesCluster.verticalWidth + (showSelfPostThumbnails || extractedMedia != nil ? postGeneralSpacing + compactMediaSize.width : 0)
+    
     let titleContentWidth = contentWidth - (compact ? compactTitleWidth : 0)
     
-    ACC_titleHeight = round(NSString(string: title).boundingRect(with: CGSize(width: titleContentWidth, height: .infinity), options: [.usesLineFragmentOrigin], attributes: [.font: UIFont.systemFont(ofSize: theme.titleText.size, weight: theme.titleText.weight.ut)], context: nil).height)
+    var appendStr = ""
+    let titleAttr = NSMutableAttributedString(string: title, attributes: [.font: UIFont.systemFont(ofSize: theme.titleText.size + 0.35, weight: theme.titleText.weight.ut)])
+    let titleAttrBlankSpace = NSAttributedString(string: " ", attributes: [.font: UIFont.systemFont(ofSize: theme.titleText.size + 0.35, weight: theme.titleText.weight.ut)])
+    if data.over_18 ?? false {
+      titleAttr.append(titleAttrBlankSpace)
+      appendStr += "NSFW"
+    }
+    if let flair = data.link_flair_text, !flair.isEmpty {
+      titleAttr.append(titleAttrBlankSpace)
+      appendStr += flair
+    }
+    let append = NSMutableAttributedString(string: appendStr, attributes: [.font: UIFont.systemFont(ofSize: ((theme.titleText.size - 1) * 100) / 120, weight: theme.titleText.weight.ut)])
+    if !appendStr.isEmpty {
+      titleAttr.append(append)
+      titleAttr.append(titleAttrBlankSpace)
+    }
+    ACC_titleHeight = round(titleAttr.boundingRect(with: CGSize(width: titleContentWidth, height: .infinity), options: [.usesLineFragmentOrigin], context: nil).height)
     
     if !body.isEmpty && !compact {
       ACC_bodyHeight = round(NSString(string: body).boundingRect(with: CGSize(width: contentWidth, height: (theme.bodyText.size * 1.2) * 3), options: [.usesLineFragmentOrigin, .truncatesLastVisibleLine], attributes: [.font: UIFont.systemFont(ofSize: theme.bodyText.size, weight: theme.bodyText.weight.ut)], context: nil).height)
@@ -177,16 +200,16 @@ func getPostDimensions(post: Post, columnWidth: Double = UIScreen.screenWidth, s
     let dimensions = PostDimensions(
       contentWidth: contentWidth,
       theme: theme,
-      titleSize: CGSize(width: titleContentWidth, height: ACC_titleHeight),
+      titleSize: CGSize(width: titleContentWidth, height: ACC_titleHeight + 1),
       bodySize: !theresSelftext || compact ? nil : CGSize(width: contentWidth, height: ACC_bodyHeight),
       urlTagHeight: urlTagHeight,
       mediaSize: !theresMedia ? nil : compact ? compactMediaSize : CGSize(width: contentWidth, height: ACC_mediaSize.height),
-      dividerSize: CGSize(width: contentWidth, height: ACC_SubDividerHeight),
+      dividerSize: compact ? nil : CGSize(width: contentWidth, height: ACC_SubDividerHeight),
       badgeSize: CGSize(width: contentWidth, height: ACC_badgeHeight),
       spacingHeight: ACC_allSpacingsHeight
     )
 
     return dimensions
   }
-  return nil
+  return .zero
 }
