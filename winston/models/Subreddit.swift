@@ -158,9 +158,9 @@ extension Subreddit {
     return nil
   }
   
-  func fetchSavedMixedMedia(sort: SubListingSortOption = .best, after: String? = nil, searchText: String? = nil, contentWidth: CGFloat = UIScreen.screenWidth) async -> [Either<Post, Comment>]? {
+  func fetchSavedMixedMedia(after: String? = nil, searchText: String? = nil, contentWidth: CGFloat = UIScreen.screenWidth) async -> [Either<Post, Comment>]? {
     // saved feed is a mix of posts and comments - logic needs to be handled separately
-    if let savedMediaData = await RedditAPI.shared.fetchSavedPosts("saved", sort: sort, after: after, searchText: searchText) {
+    if let savedMediaData = await RedditAPI.shared.fetchSavedPosts("saved", after: after, searchText: searchText) {
       await MainActor.run {
         self.loading = false
       }

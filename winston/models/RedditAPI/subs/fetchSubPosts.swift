@@ -40,10 +40,10 @@ extension RedditAPI {
     }
   }
   
-  func fetchSavedPosts(_ id: String, sort: SubListingSortOption = .best, after: String? = nil, searchText: String? = nil) async -> [Either<PostData, CommentData>]? {
+  func fetchSavedPosts(_ id: String, after: String? = nil, searchText: String? = nil) async -> [Either<PostData, CommentData>]? {
     await refreshToken()
     if let headers = self.getRequestHeaders() {
-      let subID = buildSubID(id, sort, after, searchText)
+      let subID = buildSubID(id, nil, after, searchText)
       let limit = Defaults[.feedPostsLoadLimit]
       let params = FetchSubsPayload(limit: limit, after: after)
       
@@ -71,7 +71,7 @@ extension RedditAPI {
     }
   }
     
-  private func buildSubID(_ id: String, _ sort: SubListingSortOption, _ after: String?, _ searchText: String?) -> String {
+  private func buildSubID(_ id: String, _ sort: SubListingSortOption?, _ after: String?, _ searchText: String?) -> String {
     let appendedFileType = ".json"
     var subID = ""
   
@@ -88,18 +88,20 @@ extension RedditAPI {
     if searchText != nil {
       subID += "search\(appendedFileType)"
     } else {
-      switch sort {
-      case .best:
-        subID += "best\(appendedFileType)"
-      case .hot:
-        subID += "hot\(appendedFileType)"
-      case .new:
-        subID += "new\(appendedFileType)"
-      case .top(let topSortOption):
-        subID += "top\(appendedFileType)"
-        subID += buildTopSortQuery(topSortOption)
-      case .controversial:
-        subID += "controversial\(appendedFileType)"
+      if let sort = sort {
+        switch sort {
+        case .best:
+          subID += "best\(appendedFileType)"
+        case .hot:
+          subID += "hot\(appendedFileType)"
+        case .new:
+          subID += "new\(appendedFileType)"
+        case .top(let topSortOption):
+          subID += "top\(appendedFileType)"
+          subID += buildTopSortQuery(topSortOption)
+        case .controversial:
+          subID += "controversial\(appendedFileType)"
+        }
       }
     }
     
