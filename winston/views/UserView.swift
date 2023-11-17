@@ -27,20 +27,7 @@ struct UserView: View {
   @EnvironmentObject private var routerProxy: RouterProxy
   
   @State private var dataTypeFilter: String = "" // Handles filtering for only posts or only comments.
-  
-  @Default(.blurPostLinkNSFW) private var blurPostLinkNSFW
-  @Default(.postSwipeActions) private var postSwipeActions
-  @Default(.compactMode) private var compactMode
-  @Default(.showVotes) private var showVotes
-  @Default(.showSelfText) private var showSelfText
-  @Default(.thumbnailPositionRight) private var thumbnailPositionRight
-  @Default(.voteButtonPositionRight) private var voteButtonPositionRight
-  @Default(.readPostOnScroll) private var readPostOnScroll
-  @Default(.hideReadPosts) private var hideReadPosts
-  @Default(.showUpvoteRatio) private var showUpvoteRatio
-  @Default(.showSubsAtTop) private var showSubsAtTop
-  @Default(.showTitleAtTop) private var showTitleAtTop
-  @Default(.showSelfPostThumbnails) private var showSelfPostThumbnails
+  @State private var loadNextData: Bool = false
   
   @ObservedObject var avatarCache = Caches.avatars
   @Environment(\.colorScheme) private var cs
@@ -64,7 +51,7 @@ struct UserView: View {
     }
   }
   
-  func loadNextData() {
+  func getNextData() {
     Task {
       if let lastId = lastItemId, let overviewData = await user.refetchOverview(dataTypeFilter, lastId) {
         await MainActor.run {
@@ -77,17 +64,6 @@ struct UserView: View {
           lastItemId = getItemId(for: lastItem)
         }
       }
-    }
-  }
-  
-  func getItemId(for item: Either<Post, Comment>) -> String {
-    // As per API doc: https://www.reddit.com/dev/api/#GET_user_{username}_overview
-    switch item {
-    case .first(let post):
-      return "\(Post.prefix)_\(post.id)"
-      
-    case .second(let comment):
-      return "\(Comment.prefix)_\(comment.id)"
     }
   }
   
@@ -189,61 +165,13 @@ struct UserView: View {
             .padding(.horizontal, 16)
           
           if let lastActivities = lastActivities {
-            ForEach(Array(lastActivities.enumerated()), id: \.self.element.hashValue) { i, item in
-              VStack(spacing: 0) {
-                switch item {
-                case .first(let post):
-                  if let postData = post.data, let winstonData = post.winstonData {
-//                    SwipeRevolution(size: winstonData.postDimensions.size, actionsSet: postSwipeActions, entity: post) { controller in
-                      PostLink(
-                        id: post.id,
-                        controller: nil,
-                        //                controller: nil,
-                        avatarRequest: avatarCache.cache[postData.author_fullname ?? ""]?.data,
-                        repostAvatarRequest: getRepostAvatarRequest(post),
-                        theme: selectedTheme.postLinks,
-                        showSub: true,
-                        routerProxy: routerProxy,
-                        contentWidth: contentWidth,
-                        blurPostLinkNSFW: blurPostLinkNSFW,
-                        postSwipeActions: postSwipeActions,
-                        showVotes: showVotes,
-                        showSelfText: showSelfText,
-                        readPostOnScroll: readPostOnScroll,
-                        hideReadPosts: hideReadPosts,
-                        showUpvoteRatio: showUpvoteRatio,
-                        showSubsAtTop: showSubsAtTop,
-                        showTitleAtTop: showTitleAtTop,
-                        compact: compactMode,
-                        thumbnailPositionRight: thumbnailPositionRight,
-                        voteButtonPositionRight: voteButtonPositionRight,
-                        showSelfPostThumbnails: showSelfPostThumbnails,
-                        cs: cs
-                      )
-                      .swipyRev(size: winstonData.postDimensions.size, actionsSet: postSwipeActions, entity: post)
-//                    }
-                    .environmentObject(post)
-                    .environmentObject(Subreddit(id: postData.subreddit, api: user.redditAPI))
-                    .environmentObject(winstonData)
-                  }
-                case .second(let comment):
-                  VStack {
-                    ShortCommentPostLink(comment: comment)
-                    if let commentWinstonData = comment.winstonData {
-                      CommentLink(lineLimit: 3, showReplies: false, comment: comment, commentWinstonData: commentWinstonData, children: comment.childrenWinston)
-                      //                      .equatable()
-                        .allowsHitTesting(false)
-                    }
-                  }
-                  .padding(.horizontal, 12)
-                  .padding(.top, 12)
-                  .padding(.bottom, 10)
-                  .themedListRowBG()
-                  .mask(RR(20, Color.black))
+            MixedMediaFeedLinksView(mixedMediaLinks: lastActivities, loadNextData: $loadNextData, user: user)
+              .onChange(of: loadNextData) { shouldLoad in
+                if shouldLoad {
+                  getNextData()
+                  loadNextData = false
                 }
               }
-              .onAppear { if lastActivities.count > 0 && (Int(Double(lastActivities.count) * 0.75) == i) { loadNextData() }}
-            }
           }
           
           if lastItemId != nil || loadingOverview {

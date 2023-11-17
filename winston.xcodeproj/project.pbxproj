@@ -47,6 +47,8 @@
 		65E45A6E2AFD3C1D007DBBFC /* changelog.json in Resources */ = {isa = PBXBuildFile; fileRef = 65E45A6D2AFD3C1D007DBBFC /* changelog.json */; };
 		65E45A702AFD3E48007DBBFC /* whatsNew.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65E45A6F2AFD3E48007DBBFC /* whatsNew.swift */; };
 		ABC2180F2ABA528D00F0DABA /* Biometrics.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABC2180E2ABA528D00F0DABA /* Biometrics.swift */; };
+		BB0D15272B0698FD00668448 /* MixedMediaFeedLinks.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0D15262B0698FD00668448 /* MixedMediaFeedLinks.swift */; };
+		BB0D15292B069A9700668448 /* getItemId.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0D15282B069A9700668448 /* getItemId.swift */; };
 		EC051C472ACAF2DC00E9D9ED /* themeFileIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = EC051C462ACAF2DC00E9D9ED /* themeFileIcon.png */; };
 		EC082F252A65FB4300BA2727 /* MeasureOnce.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC082F242A65FB4300BA2727 /* MeasureOnce.swift */; };
 		EC082F272A66132600BA2727 /* CommentLinkMore.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC082F262A66132600BA2727 /* CommentLinkMore.swift */; };
@@ -449,6 +451,8 @@
 		65E45A6D2AFD3C1D007DBBFC /* changelog.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = changelog.json; sourceTree = "<group>"; };
 		65E45A6F2AFD3E48007DBBFC /* whatsNew.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = whatsNew.swift; sourceTree = "<group>"; };
 		ABC2180E2ABA528D00F0DABA /* Biometrics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Biometrics.swift; sourceTree = "<group>"; };
+		BB0D15262B0698FD00668448 /* MixedMediaFeedLinks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MixedMediaFeedLinks.swift; sourceTree = "<group>"; };
+		BB0D15282B069A9700668448 /* getItemId.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = getItemId.swift; sourceTree = "<group>"; };
 		EC051C2A2ACAEFC500E9D9ED /* QuickLookThumbnailing.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuickLookThumbnailing.framework; path = System/Library/Frameworks/QuickLookThumbnailing.framework; sourceTree = SDKROOT; };
 		EC051C462ACAF2DC00E9D9ED /* themeFileIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = themeFileIcon.png; sourceTree = "<group>"; };
 		EC082F242A65FB4300BA2727 /* MeasureOnce.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeasureOnce.swift; sourceTree = "<group>"; };
@@ -1109,6 +1113,7 @@
 				EC22A3132A5B4B9C0062A112 /* ChangeAuthAPIKey.swift */,
 				ECDBA8C62A4A83DB00FB42DB /* SubredditPosts.swift */,
 				EC3188202A92D6D900CB3738 /* MultiPostsView.swift */,
+				BB0D15262B0698FD00668448 /* MixedMediaFeedLinks.swift */,
 			);
 			path = views;
 			sourceTree = "<group>";
@@ -1414,6 +1419,7 @@
 				65840EE72AE11BFD000315E1 /* exportImportSettings.swift */,
 				65C169EB2AFFA60B007764D5 /* isImageUrl.swift */,
 				EC15F3BF2B059E3300D5B5D7 /* openInBuiltInBrowser.swift */,
+				BB0D15282B069A9700668448 /* getItemId.swift */,
 			);
 			path = utils;
 			sourceTree = "<group>";
@@ -2052,6 +2058,7 @@
 				ECF1478F2AB620A400572352 /* CommentSample.swift in Sources */,
 				ECE08B682AA9E62900F84DC9 /* AvatarTheme.swift in Sources */,
 				EC08541B2A4BFEB300E88389 /* User.swift in Sources */,
+				BB0D15272B0698FD00668448 /* MixedMediaFeedLinks.swift in Sources */,
 				EC2D275C2A4FBF00006444D6 /* ShrinkOnTap.swift in Sources */,
 				EC1312A52AB50C6800C95D3A /* PostTextsTheming.swift in Sources */,
 				EC08542B2A4C2B6B00E88389 /* if.swift in Sources */,
@@ -2093,6 +2100,7 @@
 				ECE449812A689C8A00E2A3B7 /* subscribe.swift in Sources */,
 				EC3188322A94770700CB3738 /* GalleryThumb.swift in Sources */,
 				EC7DBDF32A86C92200D7C123 /* PostSwipePanel.swift in Sources */,
+				BB0D15292B069A9700668448 /* getItemId.swift in Sources */,
 				EC0854432A4D6A4800E88389 /* MasterButton.swift in Sources */,
 				ECAA23822A9EC34100874731 /* inlineSymbol.swift in Sources */,
 			);

@@ -210,8 +210,12 @@ struct Tabber: View {
         }
       } else if RedditAPI.shared.loggedUser.accessToken != nil && RedditAPI.shared.loggedUser.refreshToken != nil {
         Task(priority: .background) {
+          print("Fetching 'me' user variable...")
           await RedditAPI.shared.fetchMe(force: true)
+          print("\(RedditAPI.shared.me?.data?.name ?? "---USER FETCH FAILED---") username registered.")
         }
+        
+        
       }
     }
     .onChange(of: RedditAPI.shared.loggedUser) { user in

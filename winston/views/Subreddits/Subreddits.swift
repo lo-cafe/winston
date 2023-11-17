@@ -57,7 +57,6 @@ struct Subreddits: View, Equatable {
               ListBigBtn(selectedSub: $selectedSub, icon: "signpost.right.and.left.circle.fill", iconColor: .orange, label: "All", destination: Subreddit(id: "all", api: RedditAPI.shared))
               
               ListBigBtn(selectedSub: $selectedSub, icon: "bookmark.circle.fill", iconColor: .green, label: "Saved", destination: Subreddit(id: "saved", api: RedditAPI.shared))
-                .opacity(0.5).allowsHitTesting(false)
             }
           }
           .frame(maxWidth: .infinity)
