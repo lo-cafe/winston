@@ -96,6 +96,7 @@ struct PostView: View, Equatable {
             
             if selectedTheme.posts.inlineFloatingPill {
               PostFloatingPill(post: post, subreddit: subreddit)
+                    .padding(-10)
             }
             
             Text("Comments")
