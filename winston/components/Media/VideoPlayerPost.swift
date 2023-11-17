@@ -75,13 +75,12 @@ struct VideoPlayerPost: View, Equatable {
           .mask(RR(12, Color.black))
           .allowsHitTesting(false)
           .contentShape(Rectangle())
-          .highPriorityGesture(TapGesture().onEnded({ _ in
+          .onTapGesture {
             if lightboxViewsPost { Task(priority: .background) { await markAsSeen?() } }
             withAnimation {
               fullscreen = true
             }
-          }))
-        
+          }
       } else {
         ZStack {
           
@@ -242,14 +241,14 @@ struct AVPlayerRepresentable: UIViewRepresentable {
   let player: AVPlayer
   let aspect: AVLayerVideoGravity
   var controller: UIViewController
-  
+
   func makeUIView(context: Context) -> UIView {
     let view = UIView()
     let playerController = NiceAVPlayer(fullscreen: $fullscreen, autoPlayVideos: autoPlayVideos)
     playerController.allowsVideoFrameAnalysis = false
     playerController.player = player
     playerController.videoGravity = aspect
-    
+
     context.coordinator.controller = playerController
     controller.addChild(playerController)
     playerController.view.frame = view.bounds
@@ -258,39 +257,23 @@ struct AVPlayerRepresentable: UIViewRepresentable {
     view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
     return view
   }
-  
+
   func updateUIView(_ view: UIView, context: Context) {
     if let playerController = context.coordinator.controller, playerController.autoPlayVideos != autoPlayVideos {
       playerController.autoPlayVideos = autoPlayVideos
     }
-    if let playerController = context.coordinator.controller {
-      if fullscreen {
-        playerController.enterFullScreen(animated: true)
-      }
+    if fullscreen {
+      context.coordinator.controller?.enterFullScreen(animated: true)
     }
   }
-  
+
   func makeCoordinator() -> Coordinator {
     Coordinator()
   }
-  
+
   class Coordinator: NSObject {
     var controller: NiceAVPlayer? = nil
   }
-  
-  //  func makeCoordinator() -> Coordinator {
-  //    Coordinator(parent: self)
-  //  }
-  //
-  //  class Coordinator: NSObject, AVPlayerViewControllerDelegate {
-  //    private var parent: AVPlayerControllerRepresentable
-  //
-  //    init(parent: AVPlayerControllerRepresentable) {
-  //      self.parent = parent
-  //    }
-  //
-  //
-  //  }
 }
 
 class NiceAVPlayer: AVPlayerViewController, AVPlayerViewControllerDelegate {
@@ -302,35 +285,31 @@ class NiceAVPlayer: AVPlayerViewController, AVPlayerViewControllerDelegate {
   override open var prefersStatusBarHidden: Bool {
     return true
   }
-  
+
   init(fullscreen: Binding<Bool>, autoPlayVideos: Bool) {
     self._fullscreen = fullscreen
     self.autoPlayVideos = autoPlayVideos
     super.init(nibName: nil, bundle: nil)
     self.delegate = self
     showsPlaybackControls = false
-    //    let tapGesture = UITapGestureRecognizer(target: self, action: #selector(didTapView))
-    //    self.view.addGestureRecognizer(tapGesture)
-    //    self.player?.play()
   }
-  
+
   required init?(coder aDecoder: NSCoder) {
     self.autoPlayVideos = false
     self._fullscreen = Binding(get: { true }, set: { _, _ in false })
     super.init(coder: aDecoder)
   }
-  
+
   override func viewDidAppear(_ animated: Bool) {
     super.viewDidAppear(animated)
     if loopVideos, let player = self.player {
       NotificationCenter.default.addObserver(
         forName: .AVPlayerItemDidPlayToEndTime,
         object: player.currentItem,
-        queue: nil) { notif in
-          Task(priority: .background) {
-            player.seek(to: .zero)
-            player.play()
-          }
+        queue: nil) { [weak self] notif in
+          guard let self = self else { return }
+          player.seek(to: .zero)
+          player.play()
         }
     }
     if autoPlayVideos && gone {
@@ -338,7 +317,7 @@ class NiceAVPlayer: AVPlayerViewController, AVPlayerViewControllerDelegate {
       gone = false
     }
   }
-  
+
   override func viewDidDisappear(_ animated: Bool) {
     super.viewDidDisappear(animated)
     if let player = self.player {
@@ -352,12 +331,12 @@ class NiceAVPlayer: AVPlayerViewController, AVPlayerViewControllerDelegate {
       gone = true
     }
   }
-  
+
   @objc private func didTapView() {
     enterFullScreen(animated: true)
     showsPlaybackControls = true
   }
-  
+
   func enterFullScreen(animated: Bool) {
     let selector = NSSelectorFromString("enterFullScreenAnimated:completionHandler:")
     
@@ -365,7 +344,7 @@ class NiceAVPlayer: AVPlayerViewController, AVPlayerViewControllerDelegate {
       self.perform(selector, with: animated, with: nil)
     }
   }
-  
+
   func exitFullScreen(animated: Bool) {
     let selector = NSSelectorFromString("exitFullScreenAnimated:completionHandler:")
     
@@ -373,12 +352,13 @@ class NiceAVPlayer: AVPlayerViewController, AVPlayerViewControllerDelegate {
       self.perform(selector, with: animated, with: nil)
     }
   }
-  
+
   func playerViewController(
     _ playerViewController: AVPlayerViewController,
     willBeginFullScreenPresentationWithAnimationCoordinator coordinator: UIViewControllerTransitionCoordinator
   ) {
-    coordinator.animate(alongsideTransition: nil) { context in
+    coordinator.animate(alongsideTransition: nil) { [weak self] context in
+      guard let self = self else { return }
       if context.isCancelled {
         // Still embedded inline
       } else {
@@ -390,20 +370,21 @@ class NiceAVPlayer: AVPlayerViewController, AVPlayerViewControllerDelegate {
       }
     }
   }
-  
+
   func playerViewController(
     _ playerViewController: AVPlayerViewController,
     willEndFullScreenPresentationWithAnimationCoordinator coordinator: UIViewControllerTransitionCoordinator
   ) {
     let isPlaying = self.player?.isPlaying ?? false
-    coordinator.animate(alongsideTransition: nil) { context in
+    coordinator.animate(alongsideTransition: nil) { [weak self] context in
+      guard let self = self else { return }
       if context.isCancelled {
-        //        // Still full screen
+        // Still full screen
       } else {
-        //        // Embedded inline
-        //        // Remove strong reference to playerViewController if held
+        // Embedded inline
+        // Remove strong reference to playerViewController if held
         self.fullscreen = false
-        doThisAfter(0) {
+        doThisAfter(0.0) {
           self.player?.volume = 0.0
         }
         self.showsPlaybackControls = false
@@ -411,4 +392,14 @@ class NiceAVPlayer: AVPlayerViewController, AVPlayerViewControllerDelegate {
       }
     }
   }
+}
+
+extension AVPlayer {
+  var isVideoPlaying: Bool {
+    return rate != 0 && error == nil
+  }
+}
+
+func doThisAfter(_ seconds: Double, _ completion: @escaping () -> Void) {
+  DispatchQueue.main.asyncAfter(deadline: .now() + seconds, execute: completion)
 }

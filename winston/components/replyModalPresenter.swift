@@ -47,21 +47,21 @@ class ReplyModalInstance: ObservableObject {
     switch subject {
     case .commentEdit(let comment):
       subjectCommentEdit = comment
-      doThisAfter(0) {
+      doThisAfter(0.0) {
         withAnimation(spring) {
           self.isShowing = .commentEdit
         }
       }
     case .comment(let comment):
       subjectComment = comment
-      doThisAfter(0) {
+      doThisAfter(0.0) {
         withAnimation(spring) {
           self.isShowing = .comment
         }
       }
     case .post(let post):
       subjectPost = post
-      doThisAfter(0) {
+      doThisAfter(0.0) {
         withAnimation(spring) {
           self.isShowing = .post
         }

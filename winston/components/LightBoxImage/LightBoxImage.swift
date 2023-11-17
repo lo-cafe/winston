@@ -178,7 +178,7 @@ struct LightBoxImage: View {
       if lightboxViewsPost { Task(priority: .background) { await markAsSeen?() } }
       xPos = -CGFloat(i) * (UIScreen.screenWidth + SPACING)
       activeIndex = i
-      doThisAfter(0) {
+      doThisAfter(0.0) {
         withAnimation(.easeOut) {
           appearContent = true
           appearBlack = true

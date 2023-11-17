@@ -23,7 +23,7 @@ class SwipeAnywhereRouterContainer: ObservableObject {
   
   init(_ router: Router) {
     self.router = router
-    doThisAfter(0) {
+    doThisAfter(0.0) {
       self.cancellable = self.router.objectWillChange.sink { [weak self] val in
         let isIt = self?.router.path.count == 0
         if self?.isRoot != isIt { self?.isRoot = isIt }
