@@ -9,21 +9,33 @@ import SwiftUI
 import NukeUI
 import Defaults
 
-//enum UserViewSections: Int {
-//  case
-//}
+struct UserViewContextPreview: View {
+  var author: String
+  weak var routerProxy: RouterProxy?
+  var body: some View {
+    NavigationStack { UserView(user: User(id: author, api: RedditAPI.shared)) }
+  }
+}
 
 struct UserView: View {
   @StateObject var user: User
-  @State private var lastActivities: [Either<PostData, CommentData>]?
+  @State private var lastActivities: [Either<Post, Comment>]?
   @State private var contentWidth: CGFloat = 0
   @State private var loadingOverview = true
   @State private var lastItemId: String? = nil
   @Environment(\.useTheme) private var selectedTheme
+  @EnvironmentObject private var routerProxy: RouterProxy
+  
+  @State private var dataTypeFilter: String = "" // Handles filtering for only posts or only comments.
+  @State private var loadNextData: Bool = false
+  
+  @ObservedObject var avatarCache = Caches.avatars
+  @Environment(\.colorScheme) private var cs
+//  @Environment(\.contentWidth) private var contentWidth
   
   func refresh() async {
     await user.refetchUser()
-    if let data = await user.refetchOverview() {
+    if let data = await user.refetchOverview(dataTypeFilter) {
       await MainActor.run {
         withAnimation {
           loadingOverview = false
@@ -31,7 +43,7 @@ struct UserView: View {
         }
       }
       
-      await user.redditAPI.updateAvatarURLCacheFromOverview(subjects: data, avatarSize: selectedTheme.postLinks.theme.badge.avatar.size)
+      await user.redditAPI.updateOverviewSubjectsWithAvatar(subjects: data, avatarSize: selectedTheme.postLinks.theme.badge.avatar.size)
       
       if let lastItem = data.last {
         lastItemId = getItemId(for: lastItem)
@@ -39,9 +51,9 @@ struct UserView: View {
     }
   }
   
-  func loadNextData() {
+  func getNextData() {
     Task {
-      if let lastId = lastItemId, let overviewData = await user.refetchOverview(lastId) {
+      if let lastId = lastItemId, let overviewData = await user.refetchOverview(dataTypeFilter, lastId) {
         await MainActor.run {
           withAnimation {
             lastActivities?.append(contentsOf: overviewData)
@@ -55,15 +67,11 @@ struct UserView: View {
     }
   }
   
-  func getItemId(for item: Either<PostData, CommentData>) -> String {
-    // As per API doc: https://www.reddit.com/dev/api/#GET_user_{username}_overview
-    switch item {
-    case .first(let post):
-      return "\(Post.prefix)_\(post.id)"
-      
-    case .second(let comment):
-      return "\(Comment.prefix)_\(comment.id)"
+  func getRepostAvatarRequest(_ post: Post?) -> ImageRequest? {
+    if let post = post, case .repost(let repost) = post.winstonData?.extractedMedia, let repostAuthorFullname = repost.data?.author_fullname {
+      return avatarCache.cache[repostAuthorFullname]?.data
     }
+    return nil
   }
   
   var body: some View {
@@ -103,13 +111,42 @@ struct UserView: View {
             VStack {
               HStack {
                 if let postKarma = data.link_karma {
-                  DataBlock(icon: "highlighter", label: "Post karma", value: "\(formatBigNumber(postKarma))")
+                  DataBlock(icon: "highlighter", label: "Post karma",
+                            value: "\(formatBigNumber(postKarma))") // maybe switch this to use the theme colors?
                     .transition(.opacity)
+                    .onTapGesture {
+                      withAnimation(.easeInOut(duration: 0.2)) {
+                        if dataTypeFilter == "posts" {
+                          dataTypeFilter = ""
+                        } else {
+                          dataTypeFilter = "posts"
+                        }
+                      }
+                    }
+                    .overlay(dataTypeFilter == "posts" ?
+                                Color.accentColor.opacity(0.2)
+                                  .clipShape(RoundedRectangle(cornerRadius: 20))
+                                  .allowsHitTesting(false)
+                                : nil)
                 }
                 
                 if let commentKarma = data.comment_karma {
                   DataBlock(icon: "checkmark.message.fill", label: "Comment karma", value: "\(formatBigNumber(commentKarma))")
                     .transition(.opacity)
+                    .onTapGesture {
+                      withAnimation(.easeInOut(duration: 0.2)) {
+                        if dataTypeFilter == "comments" {
+                          dataTypeFilter = ""
+                        } else {
+                          dataTypeFilter = "comments"
+                        }
+                      }
+                    }
+                    .overlay(dataTypeFilter == "comments" ?
+                                Color.accentColor.opacity(0.2)
+                                  .clipShape(RoundedRectangle(cornerRadius: 20))
+                                  .allowsHitTesting(false)
+                                : nil)
                 }
               }
               if let created = data.created {
@@ -122,33 +159,19 @@ struct UserView: View {
             .transition(.opacity)
           }
           
-          Text("Last activities")
+          Text(dataTypeFilter.isEmpty ? "Latest activity" : "Latest " + dataTypeFilter)
             .fontSize(20, .bold)
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.horizontal, 16)
           
           if let lastActivities = lastActivities {
-            ForEach(Array(lastActivities.enumerated()), id: \.self.element.hashValue) { i, item in
-              VStack(spacing: 0) {
-                switch item {
-                case .first(let post):
-                  PostLink(post: Post(data: post, api: user.redditAPI), sub: Subreddit(id: post.subreddit, api: user.redditAPI), showSub: true)
-                case .second(let comment):
-                  VStack {
-                    ShortCommentPostLink(comment: Comment(data: comment, api: user.redditAPI))
-                    CommentLink(lineLimit: 3, showReplies: false, comment: Comment(data: comment, api: user.redditAPI))
-//                      .equatable()
-                      .allowsHitTesting(false)
-                  }
-                  .padding(.horizontal, 12)
-                  .padding(.top, 12)
-                  .padding(.bottom, 10)
-                  .themedListRowBG()
-                  .mask(RR(20, Color.black))
+            MixedMediaFeedLinksView(mixedMediaLinks: lastActivities, loadNextData: $loadNextData, user: user)
+              .onChange(of: loadNextData) { shouldLoad in
+                if shouldLoad {
+                  getNextData()
+                  loadNextData = false
                 }
               }
-              .onAppear { if lastActivities.count > 0 && (Int(Double(lastActivities.count) * 0.75) == i) { loadNextData() }}
-            }
           }
           
           if lastItemId != nil || loadingOverview {
@@ -156,6 +179,7 @@ struct UserView: View {
               .progressViewStyle(.circular)
               .frame(maxWidth: .infinity, minHeight: 100 )
               .id("post-loading")
+              .id(UUID()) // spawns unique spinner, swiftui bug.
           }
         }
         .listRowInsets(EdgeInsets(top: 8, leading: 8, bottom: 8, trailing: 8))
@@ -178,6 +202,16 @@ struct UserView: View {
         if user.data == nil || lastActivities == nil {
           await refresh()
         }
+      }
+    }
+    .onChange(of: dataTypeFilter) { _ in
+      withAnimation {
+        lastActivities?.removeAll()
+        loadingOverview = true
+      }
+      
+      Task {
+        await refresh()
       }
     }
   }

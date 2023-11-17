@@ -35,7 +35,7 @@ struct Inbox: View {
   
   var body: some View {
     NavigationStack(path: $router.path) {
-      DefaultDestinationInjector(routerProxy: RouterProxy(router)) {
+      DefaultDestinationInjector(routerProxy: RouterProxy(router)) { _ in
         List {
           ForEach(messages.data, id: \.self.id) { message in
             MessageLink(message: message)

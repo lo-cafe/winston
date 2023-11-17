@@ -70,7 +70,7 @@ struct WinstonTheme: Codable, Identifiable, Hashable, Equatable, Defaults.Serial
   }
 }
 
-struct WinstonThemeMeta: Codable, Hashable {
+struct WinstonThemeMeta: Codable, Hashable, Equatable {
   enum CodingKeys: String, CodingKey {
     case name, description, color, icon, author
   }
@@ -111,7 +111,7 @@ struct WinstonThemeMeta: Codable, Hashable {
 
 // ---- ELDER ONES ---- //
 
-enum CodableFontWeight: Codable, Hashable, CaseIterable {
+enum CodableFontWeight: Codable, Hashable, CaseIterable, Equatable {
   case light, regular, medium, semibold, bold
   
   var t: Font.Weight {
@@ -153,7 +153,7 @@ enum CodableFontWeight: Codable, Hashable, CaseIterable {
   }
 }
 
-struct ThemeText: Codable, Hashable {
+struct ThemeText: Codable, Hashable, Equatable {
   enum CodingKeys: String, CodingKey {
     case size, color, weight
   }
@@ -183,7 +183,7 @@ struct ThemeText: Codable, Hashable {
   }
 }
 
-struct ColorSchemes<Thing: Codable & Hashable>: Codable, Hashable {
+struct ColorSchemes<Thing: Codable & Hashable>: Codable, Hashable, Equatable {
   var light: Thing
   var dark: Thing
   
@@ -199,14 +199,14 @@ struct ColorSchemes<Thing: Codable & Hashable>: Codable, Hashable {
   }
 }
 
-struct ThemePadding: Codable, Hashable {
+struct ThemePadding: Codable, Hashable, Equatable {
   var horizontal: CGFloat
   var vertical: CGFloat
   
   func toSize() -> CGSize { CGSize(width: horizontal, height: vertical) }
 }
 
-struct ThemeColor: Codable, Hashable {
+struct ThemeColor: Codable, Hashable, Equatable {
   var hex: String
   var alpha: CGFloat = 1.0
   
@@ -215,12 +215,12 @@ struct ThemeColor: Codable, Hashable {
   }
 }
 
-struct ThemeForegroundBG: Codable, Hashable {
+struct ThemeForegroundBG: Codable, Hashable, Equatable {
   var blurry: Bool
   var color: ColorSchemes<ThemeColor>
 }
 
-enum ThemeBG: Codable, Hashable {
+enum ThemeBG: Codable, Hashable, Equatable {
   case color(ColorSchemes<ThemeColor>)
   case img(ColorSchemes<String>)
   

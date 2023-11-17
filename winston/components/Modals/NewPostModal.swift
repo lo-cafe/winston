@@ -94,7 +94,7 @@ struct FlairPicker: View {
               withAnimation(spring) {
                 searching = true
               }
-              doThisAfter(0) {
+              doThisAfter(0.0) {
                 focused = true
               }
             } label: {
@@ -172,7 +172,7 @@ struct FlairPicker: View {
       .onChange(of: focused) { newValue in
         if !newValue {
           withAnimation(spring) { searching = false }
-          doThisAfter(0) {
+          doThisAfter(0.0) {
             withAnimation {
               searchQuery.text = ""
               searchQuery.debounced = ""

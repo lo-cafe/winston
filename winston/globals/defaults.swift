@@ -27,17 +27,19 @@ struct PostInBox: Codable, Identifiable, Hashable, Defaults.Serializable {
 }
 
 let DEFAULT_POST_SWIPE_ACTIONS = SwipeActionsSet(
-    leftFirst: AnySwipeAction(UpvotePostAction()),
-    leftSecond: AnySwipeAction(SavePostAction()),
-    rightFirst: AnySwipeAction(DownvotePostAction()),
-    rightSecond: AnySwipeAction(SeenPostAction())
+  id: "post-swipe-actions",
+  leftFirst: AnySwipeAction(UpvotePostAction()),
+  leftSecond: AnySwipeAction(SavePostAction()),
+  rightFirst: AnySwipeAction(DownvotePostAction()),
+  rightSecond: AnySwipeAction(SeenPostAction())
 )
 
 let DEFAULT_COMMENT_SWIPE_ACTIONS = SwipeActionsSet(
-    leftFirst: AnySwipeAction(UpvoteCommentAction()),
-    leftSecond: AnySwipeAction(SaveCommentAction()),
-    rightFirst: AnySwipeAction(DownvoteCommentAction()),
-    rightSecond: AnySwipeAction(ReplyCommentAction())
+  id: "comment-swipe-actions",
+  leftFirst: AnySwipeAction(UpvoteCommentAction()),
+  leftSecond: AnySwipeAction(SaveCommentAction()),
+  rightFirst: AnySwipeAction(DownvoteCommentAction()),
+  rightSecond: AnySwipeAction(ReplyCommentAction())
 )
 
 extension Defaults.Keys {
@@ -65,8 +67,8 @@ extension Defaults.Keys {
   static let postSwipeActions = Key<SwipeActionsSet>("postSwipeActions", default: DEFAULT_POST_SWIPE_ACTIONS)
   static let commentSwipeActions = Key<SwipeActionsSet>("commentSwipeActions", default: DEFAULT_COMMENT_SWIPE_ACTIONS)
   
-//  static let postLinksOuterHPadding = Key<CGFloat>("postLinksOuterHPadding", default: 0)
-//  static let postLinksOuterVPadding = Key<CGFloat>("postLinksOuterVPadding", default: 8)
+  //  static let postLinksOuterHPadding = Key<CGFloat>("postLinksOuterHPadding", default: 0)
+  //  static let postLinksOuterVPadding = Key<CGFloat>("postLinksOuterVPadding", default: 8)
   static let postLinksInnerHPadding = Key<CGFloat>("postLinksInnerHPadding", default: 8)
   static let postLinksInnerVPadding = Key<CGFloat>("postLinksInnerVPadding", default: 14)
   static let showUpvoteRatio = Key<Bool>("showUpvoteRatio", default: true)
@@ -82,7 +84,7 @@ extension Defaults.Keys {
   static let showSelfText = Key<Bool>("showSelfText", default: true)
   static let cardedCommentsOuterHPadding = Key<CGFloat>("cardedCommentsOuterHPadding", default: 8)
   static let cardedCommentsInnerHPadding = Key<CGFloat>("cardedCommentsInnerHPadding", default: 13)
-    
+  
   static let preferenceShowPostsAvatars = Key<Bool>("preferenceShowPostsAvatars", default: true)
   static let preferenceShowPostsCards = Key<Bool>("preferenceShowPostsCards", default: true)
   static let preferenceShowCommentsAvatars = Key<Bool>("preferenceShowCommentsAvatars", default: true)
@@ -109,6 +111,7 @@ extension Defaults.Keys {
   static let showSubsAtTop = Key<Bool>("showSubsAtTop", default: false)
   static let showTitleAtTop = Key<Bool>("showTitleAtTop", default: true)
   
+  static let preferInlineTags = Key<Bool>("preferInlineTags", default: false)
   static let postLinkTitleSize = Key<CGFloat>("postLinkTitleSize", default: 16)
   static let postLinkBodySize = Key<CGFloat>("postLinkBodySize", default: 14)
   static let postViewTitleSize = Key<CGFloat>("postViewTitleSize", default: 20)
@@ -136,10 +139,12 @@ extension Defaults.Keys {
   static let perPostSort = Key<Bool>("perPostSort", default: true)
   static let postSorts = Key<Dictionary<String, CommentSortOption>>("postSorts", default: [String: CommentSortOption]())
   static let doLiveText = Key<Bool>("doLiveText", default: true)
+  
+
 }
 
 extension UIScreen {
-   static let screenWidth = UIScreen.main.bounds.size.width
-   static let screenHeight = UIScreen.main.bounds.size.height
-   static let screenSize = UIScreen.main.bounds.size
+  static let screenWidth = UIScreen.main.bounds.size.width
+  static let screenHeight = UIScreen.main.bounds.size.height
+  static let screenSize = UIScreen.main.bounds.size
 }

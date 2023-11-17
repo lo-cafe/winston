@@ -163,6 +163,26 @@ struct PostFloatingPill: View {
                     }
                 }
             }
+//            .toast(isPresenting: $showAddedToast, tapToDismiss: true){
+//              AlertToast(displayMode: .hud, type: .systemImage("plus.circle", Color.blue), title: "Added to Posts Box!")
+//            }
+//            .toast(isPresenting: $showRemovedToast, tapToDismiss: true){
+//              AlertToast(displayMode: .hud, type: .systemImage("trash", Color.blue), title: "Removed from Posts Box!")
+//            }
+            
+            LightBoxButton(icon: "arrowshape.turn.up.left.fill") {
+              withAnimation(spring) {
+                showReplyModal = true
+              }
+            }
+          }
+          
+          HStack(alignment: .center, spacing: 8) {
+  
+            VotesCluster(votesKit: data.votesKit, voteAction: post.vote, vertical: false)
+            
+          }
+          
         }
         .fontSize(20, .semibold)
         .foregroundColor(Color.accentColor)

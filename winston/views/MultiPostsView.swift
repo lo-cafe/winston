@@ -45,7 +45,7 @@ struct MultiPostsView: View {
         lastPostAfter = result.1
       }
       Task(priority: .background) {
-        await RedditAPI.shared.updateAvatarURLCacheFromPosts(posts: newPosts, avatarSize: selectedTheme.postLinks.theme.badge.avatar.size)
+        await RedditAPI.shared.updatePostsWithAvatar(posts: newPosts, avatarSize: selectedTheme.postLinks.theme.badge.avatar.size)
       }
     }
   }
@@ -106,7 +106,7 @@ struct MultiPostsView: View {
     )
     .onAppear {
       if posts.data.count == 0 {
-        doThisAfter(0) {
+        doThisAfter(0.0) {
           fetch()
         }
       }

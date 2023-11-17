@@ -8,16 +8,20 @@
 
 import SwiftUI
 
-struct FilledRoundedRectangle: View {
+struct FilledRoundedRectangle<S: ShapeStyle>: View, Equatable {
+  static func == (lhs: FilledRoundedRectangle, rhs: FilledRoundedRectangle) -> Bool {
+    lhs.cornerRadius == rhs.cornerRadius
+  }
+  
     let cornerRadius: CGFloat
-    let fill: any ShapeStyle
+    let fill: S
     
     var body: some View {
         RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
-            .fill(AnyShapeStyle(fill))
+        .fill(fill)
     }
 }
 
-func RR(_ cornerRadius: CGFloat, _ fill: any ShapeStyle) -> FilledRoundedRectangle {
+func RR<S: ShapeStyle>(_ cornerRadius: CGFloat, _ fill: S) -> FilledRoundedRectangle<S> {
     return FilledRoundedRectangle(cornerRadius: cornerRadius, fill: fill)
 }

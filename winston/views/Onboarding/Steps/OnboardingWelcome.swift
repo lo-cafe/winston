@@ -76,11 +76,11 @@ struct OnboardingWelcome: View {
               withAnimation(spring) {
                 showHello = true
               }
-              doThisAfter(1) {
+              doThisAfter(1.0) {
                 withAnimation(spring) {
                   showAppName = true
                 }
-                doThisAfter(1) {
+                doThisAfter(1.0) {
                   withAnimation(spring) {
                     showText = true
                   }
