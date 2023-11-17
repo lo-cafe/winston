@@ -9,7 +9,7 @@ import Foundation
 
 struct PostTheme: Codable, Hashable {
   enum CodingKeys: String, CodingKey {
-    case padding, spacing, badge, bg, commentsDistance, titleText, bodyText, linespacing
+    case padding, spacing, badge, bg, commentsDistance, titleText, bodyText, linespacing, inlineFloatingPill
   }
 
   var padding: ThemePadding
@@ -20,8 +20,10 @@ struct PostTheme: Codable, Hashable {
   var titleText: ThemeText
   var bodyText: ThemeText
   var linespacing: CGFloat
+  var inlineFloatingPill: Bool
   
-  init(padding: ThemePadding, spacing: CGFloat, badge: BadgeTheme, bg: ThemeBG, commentsDistance: CGFloat, titleText: ThemeText, bodyText: ThemeText, linespacing: CGFloat) {
+  init(padding: ThemePadding, spacing: CGFloat, badge: BadgeTheme, bg: ThemeBG, commentsDistance: CGFloat, titleText: ThemeText, bodyText: ThemeText, 
+       linespacing: CGFloat, inlineFloatingPill: Bool) {
     self.padding = padding
     self.spacing = spacing
     self.badge = badge
@@ -30,6 +32,7 @@ struct PostTheme: Codable, Hashable {
     self.titleText = titleText
     self.bodyText = bodyText
     self.linespacing = linespacing
+    self.inlineFloatingPill = inlineFloatingPill
   }
   
   func encode(to encoder: Encoder) throws {
@@ -42,6 +45,7 @@ struct PostTheme: Codable, Hashable {
     try container.encodeIfPresent(titleText, forKey: .titleText)
     try container.encodeIfPresent(bodyText, forKey: .bodyText)
     try container.encodeIfPresent(linespacing, forKey: .linespacing)
+    try container.encodeIfPresent(inlineFloatingPill, forKey: .inlineFloatingPill)
   }
   
   init(from decoder: Decoder) throws {
@@ -55,5 +59,6 @@ struct PostTheme: Codable, Hashable {
     self.titleText = try container.decodeIfPresent(ThemeText.self, forKey: .titleText) ?? t.titleText
     self.bodyText = try container.decodeIfPresent(ThemeText.self, forKey: .bodyText) ?? t.bodyText
     self.linespacing = try container.decodeIfPresent(CGFloat.self, forKey: .linespacing) ?? t.linespacing
+    self.inlineFloatingPill = try container.decodeIfPresent(Bool.self, forKey: .inlineFloatingPill) ?? t.inlineFloatingPill
   }
 }

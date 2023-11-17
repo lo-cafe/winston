@@ -63,7 +63,8 @@ let defaultTheme = WinstonTheme(
     commentsDistance: 16,
     titleText: .init(size: 20, color: themeFontPrimary),
     bodyText: .init(size: 15, color: themeFontPrimary),
-    linespacing: 0
+    linespacing: 0,
+    inlineFloatingPill: false
   ),
   comments: .init(
     theme: .init(
