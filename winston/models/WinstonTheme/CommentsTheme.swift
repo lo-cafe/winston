@@ -40,7 +40,7 @@ struct CommentsSectionTheme: Codable, Hashable {
 
 struct CommentTheme: Codable, Hashable {
   enum CodingKeys: String, CodingKey {
-    case innerPadding, outerHPadding, repliesSpacing, indentCurve, indentColor, cornerRadius, badge, bodyText, bodyAuthorSpacing, bg, loadMoreInnerPadding, loadMoreOuterTopPadding, loadMoreText, loadMoreBackground, unseenDot
+    case innerPadding, outerHPadding, repliesSpacing, indentCurve, indentColor, cornerRadius, badge, bodyText, bodyAuthorSpacing, linespacing, bg, loadMoreInnerPadding, loadMoreOuterTopPadding, loadMoreText, loadMoreBackground, unseenDot
   }
   
   var innerPadding: ThemePadding
@@ -52,6 +52,7 @@ struct CommentTheme: Codable, Hashable {
   var badge: BadgeTheme
   var bodyText: ThemeText
   var bodyAuthorSpacing: CGFloat
+  var linespacing: CGFloat
   var bg: ColorSchemes<ThemeColor>
     
   var loadMoreInnerPadding: ThemePadding
@@ -61,7 +62,7 @@ struct CommentTheme: Codable, Hashable {
   
   var unseenDot : ColorSchemes<ThemeColor>
   
-  init(innerPadding: ThemePadding, outerHPadding: CGFloat, repliesSpacing: CGFloat, indentCurve: CGFloat, indentColor: ColorSchemes<ThemeColor>, cornerRadius: CGFloat, badge: BadgeTheme, bodyText: ThemeText, bodyAuthorSpacing: CGFloat, bg: ColorSchemes<ThemeColor>, loadMoreInnerPadding: ThemePadding, loadMoreOuterTopPadding: CGFloat, loadMoreText : ThemeText, loadMoreBackground : ColorSchemes<ThemeColor>, unseenDot : ColorSchemes<ThemeColor>) {
+  init(innerPadding: ThemePadding, outerHPadding: CGFloat, repliesSpacing: CGFloat, indentCurve: CGFloat, indentColor: ColorSchemes<ThemeColor>, cornerRadius: CGFloat, badge: BadgeTheme, bodyText: ThemeText, bodyAuthorSpacing: CGFloat, linespacing: CGFloat, bg: ColorSchemes<ThemeColor>, loadMoreInnerPadding: ThemePadding, loadMoreOuterTopPadding: CGFloat, loadMoreText : ThemeText, loadMoreBackground : ColorSchemes<ThemeColor>, unseenDot : ColorSchemes<ThemeColor>) {
     self.innerPadding = innerPadding
     self.outerHPadding = outerHPadding
     self.repliesSpacing = repliesSpacing
@@ -71,6 +72,7 @@ struct CommentTheme: Codable, Hashable {
     self.badge = badge
     self.bodyText = bodyText
     self.bodyAuthorSpacing = bodyAuthorSpacing
+    self.linespacing = linespacing
     self.bg = bg
     self.loadMoreInnerPadding = loadMoreInnerPadding
     self.loadMoreOuterTopPadding = loadMoreOuterTopPadding
@@ -91,6 +93,7 @@ struct CommentTheme: Codable, Hashable {
     try container.encodeIfPresent(badge, forKey: .badge)
     try container.encodeIfPresent(bodyText, forKey: .bodyText)
     try container.encodeIfPresent(bodyAuthorSpacing, forKey: .bodyAuthorSpacing)
+    try container.encodeIfPresent(linespacing, forKey: .linespacing)
     try container.encodeIfPresent(bg, forKey: .bg)
     try container.encodeIfPresent(loadMoreInnerPadding, forKey: .loadMoreInnerPadding)
     try container.encodeIfPresent(loadMoreOuterTopPadding, forKey: .loadMoreOuterTopPadding)
@@ -111,6 +114,7 @@ struct CommentTheme: Codable, Hashable {
     self.badge = try container.decodeIfPresent(BadgeTheme.self, forKey: .badge) ?? t.badge
     self.bodyText = try container.decodeIfPresent(ThemeText.self, forKey: .bodyText) ?? t.bodyText
     self.bodyAuthorSpacing = try container.decodeIfPresent(CGFloat.self, forKey: .bodyAuthorSpacing) ?? t.bodyAuthorSpacing
+    self.linespacing = try container.decodeIfPresent(CGFloat.self, forKey: .linespacing) ?? t.linespacing
     self.bg = try container.decodeIfPresent(ColorSchemes<ThemeColor>.self, forKey: .bg) ?? t.bg
     self.loadMoreInnerPadding = try container.decodeIfPresent(ThemePadding.self, forKey: .loadMoreInnerPadding) ?? t.loadMoreInnerPadding
     self.loadMoreOuterTopPadding = try container.decodeIfPresent(CGFloat.self, forKey: .loadMoreOuterTopPadding) ?? t.loadMoreOuterTopPadding

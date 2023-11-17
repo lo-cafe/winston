@@ -35,6 +35,9 @@ struct CommentsGeneralSettings: View {
           Divider()
           LabeledSlider(label: "Body/author spacing", value: $theme.comments.theme.bodyAuthorSpacing, range: 0...64)
             .resetter($theme.comments.theme.bodyAuthorSpacing, defaultTheme.comments.theme.bodyAuthorSpacing)
+          Divider()
+          LabeledSlider(label: "Line spacing", value: $theme.comments.theme.linespacing, range: 0...64)
+            .resetter($theme.comments.theme.linespacing, defaultTheme.comments.theme.linespacing)
         }
       }
       

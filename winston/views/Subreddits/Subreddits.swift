@@ -94,7 +94,7 @@ struct Subreddits: View, Equatable {
               let foundSubs = Array(Array(subreddits.filter { ($0.display_name ?? "").lowercased().contains(searchText.lowercased()) }).enumerated())
               ForEach(foundSubs, id: \.self.element.uuid) { i, cachedSub in
                 SubItem(forcedMaskType: CommentBGSide.getFromArray(count: foundSubs.count, i: i), selectedSub: $selectedSub, sub: Subreddit(data: SubredditData(entity: cachedSub), api: RedditAPI.shared), cachedSub: cachedSub)
-                  .equatable()
+//                  .equatable()
               }
             }
           } else {
@@ -104,7 +104,7 @@ struct Subreddits: View, Equatable {
                 let favs = Array(favs.sorted(by: { x, y in (x.display_name?.lowercased() ?? "a") < (y.display_name?.lowercased() ?? "a") }).enumerated())
                 ForEach(favs, id: \.self.element) { i, cachedSub in
                   SubItem(forcedMaskType: CommentBGSide.getFromArray(count: favs.count, i: i), selectedSub: $selectedSub, sub: Subreddit(data: SubredditData(entity: cachedSub), api: RedditAPI.shared), cachedSub: cachedSub)
-                    .equatable()
+//                    .equatable()
                     .id("\(cachedSub.uuid ?? "")-fav")
                     .onAppear{
                       print("Adding" + cachedSub.display_name)
@@ -122,7 +122,7 @@ struct Subreddits: View, Equatable {
                 let subs = Array(subreddits.filter({ $0.user_is_subscriber }).sorted(by: { x, y in (x.display_name?.lowercased() ?? "a") < (y.display_name?.lowercased() ?? "a") }).enumerated())
                 ForEach(subs, id: \.self.element) { i, cachedSub in
                   SubItem(forcedMaskType: CommentBGSide.getFromArray(count: subs.count, i: i), selectedSub: $selectedSub, sub: Subreddit(data: SubredditData(entity: cachedSub), api: RedditAPI.shared), cachedSub: cachedSub)
-                    .equatable()
+//                    .equatable()
                 }
               }
               
@@ -136,7 +136,7 @@ struct Subreddits: View, Equatable {
                     }).enumerated())
                     ForEach(subs, id: \.self.element.uuid) { i, cachedSub in
                       SubItem(forcedMaskType: CommentBGSide.getFromArray(count: subs.count, i: i), selectedSub: $selectedSub, sub: Subreddit(data: SubredditData(entity: cachedSub), api: RedditAPI.shared), cachedSub: cachedSub)
-                        .equatable()
+//                        .equatable()
                     }
                     .onDelete(perform: { i in
                       deleteFromList(at: i, letter: letter)

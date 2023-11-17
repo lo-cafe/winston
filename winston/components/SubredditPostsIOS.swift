@@ -55,7 +55,7 @@ struct SubredditPostsIOS: View, Equatable {
       .listRowBackground(Color.clear)
       
       Section {
-        if !lastPostAfter.isNil {
+        if lastPostAfter != nil {
           ProgressView()
             .progressViewStyle(.circular)
             .frame(maxWidth: .infinity, minHeight: posts.count > 0 ? 100 : UIScreen.screenHeight - 200 )

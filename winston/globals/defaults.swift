@@ -127,8 +127,6 @@ extension Defaults.Keys {
   static let themesPresets = Key<[WinstonTheme]>("themesPresets", default: [])
   static let selectedThemeID = Key<String>("selectedThemeID", default: "default")
   static let feedPostsLoadLimit = Key<Int>("feedPostsLoadLimit", default: 35)
-  static let themestoreID = Key<String>("themestoreID", default: "")
-  static let themeStoreEligibility = Key<Bool>("themeStoreEligibility", default: false)
   
   static let themeStoreTint = Key<Bool>("themeStoreTint", default: true)
     

@@ -20,7 +20,7 @@ class ThingEntityCache: ObservableObject {
   @Published var thingEntities: [RedditURLType:ThingType] = [:]
   
   func load(_ thing: RedditURLType, redditAPI: RedditAPI) {
-    if !thingEntities[thing].isNil { return }
+    if thingEntities[thing] != nil { return }
     Task(priority: .background) {
       switch thing {
       case .comment(let id, _, _):

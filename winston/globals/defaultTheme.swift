@@ -44,6 +44,7 @@ let defaultTheme = WinstonTheme(
       stickyPostBorderColor: .init(thickness: 4, color: .init(light: .init(hex: "2FD058", alpha: 0.3), dark: .init(hex: "2FD058", alpha: 0.3))),
       titleText: .init(size: 16, color: themeFontPrimary, weight: .medium),
       bodyText: .init(size: 15, color: .init(light: ThemeColor(hex: "000000", alpha: 0.75), dark: .init(hex: "ffffff", alpha: 0.75))),
+      linespacing: 0,
       badge: badgeTheme,
       verticalElementsSpacing: 8,
       bg: .init(blurry: false, color: listSectionBGTheme),
@@ -61,7 +62,8 @@ let defaultTheme = WinstonTheme(
     bg: defaultThemeBG,
     commentsDistance: 16,
     titleText: .init(size: 20, color: themeFontPrimary),
-    bodyText: .init(size: 15, color: themeFontPrimary)
+    bodyText: .init(size: 15, color: themeFontPrimary),
+    linespacing: 0
   ),
   comments: .init(
     theme: .init(
@@ -74,6 +76,7 @@ let defaultTheme = WinstonTheme(
       badge: badgeTheme,
       bodyText: .init(size: 15, color: themeFontPrimary),
       bodyAuthorSpacing: 6,
+      linespacing: 0,
       bg: listSectionBGTheme,
       loadMoreInnerPadding: .init(horizontal: 10, vertical: 6),
       loadMoreOuterTopPadding: 12,

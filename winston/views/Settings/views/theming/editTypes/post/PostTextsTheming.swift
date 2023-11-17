@@ -20,6 +20,10 @@ struct PostTextsTheming: View {
         FontSelector(theme: $theme.bodyText, defaultVal: defaultTheme.posts.bodyText)
       }
       
+      FakeSection("Line Spacing") {
+          LabeledSlider(label: "Line spacing", value: $theme.linespacing, range: 0...64)
+            .resetter($theme.linespacing, defaultTheme.posts.linespacing)
+      }
     }
   }
 }

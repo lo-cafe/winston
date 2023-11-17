@@ -1,15 +1,6 @@
---- QUICK EXPRESS UPDATE ---
-- Fixes a major performance issue that I hadn't notice before
-- Fixes flair tag centered again
-- Tries to fix a few remaining errors related to themes
---- QUICK EXPRESS UPDATE ---
-- Fixed crash when replying
-- Fixed crash when importing new themes
-- Fixed crash when long pressing on comment
-- Fixed random name in exported themes
-- Now exported themes have ".winston" extension (zip will continue to work though)
-- Sharing zip to winston is now allowed
-- ".winston" open in one tap into winston and imports it
-- Fixed subs not showing up in multis
-- Fixed centered tags in post links
+# Fixed
+
+- Winston doesn't crash on iOS 16.X anymore
+- Fix some other potential instances where the app could crash
+- Fix "Show Upvote Ratio" option
 
