@@ -85,7 +85,7 @@ struct PostFloatingPill: View {
                                 
                                 HStack(alignment: .center, spacing: 8) {
                                     
-                                    VotesCluster(likeRatio: showUpvoteRatio ? data.upvote_ratio : nil, post: post)
+                                    VotesCluster(votesKit: data.votesKit, voteAction: post.vote, vertical: false)
                                     
                                 }
                                 
@@ -152,7 +152,7 @@ struct PostFloatingPill: View {
                             Spacer()
                             
                             // VotesCluster
-                            VotesCluster(likeRatio: showUpvoteRatio ? data.upvote_ratio : nil, post: post)
+                            VotesCluster(votesKit: data.votesKit, voteAction: post.vote, vertical: false)
                                 .padding(.vertical, -2)
                             
                             Spacer()
