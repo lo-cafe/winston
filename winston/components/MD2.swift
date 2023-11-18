@@ -89,19 +89,19 @@ struct MD2: UIViewRepresentable {
     }
     
     // Implement the UITextViewDelegate method to handle URL interaction
-    func textView(_ textView: UITextView, shouldInteractWith url: URL, in characterRange: NSRange, interaction: UITextItemInteraction) -> Bool {
+    func textView(_ textView: UITextView, shouldInteractWith URL: URL, in characterRange: NSRange, interaction: UITextItemInteraction) -> Bool {
       switch interaction {
       case .invokeDefaultAction:
-          if Defaults[.openLinksInSafari] || url.scheme?.lowercased().contains(/http(s)?/)==false {
+        if Defaults[.openLinksInSafari] {
           return true
         }
-        if isImageUrl(url.absoluteString)  {
-          let imageView = ImageView(url: url) // Create a custom ImageView
+        if isImageUrl(URL.absoluteString)  {
+          let imageView = ImageView(url: URL) // Create a custom ImageView
           let hostingController = UIHostingController(rootView: imageView)
           hostingController.overrideUserInterfaceStyle = .dark
           UIApplication.shared.firstKeyWindow?.rootViewController?.present(hostingController, animated: true)
         } else {
-          openInBuiltInBrowser(url)
+          openInBuiltInBrowser(URL)
         }
         return false
         //      case .presentActions:
