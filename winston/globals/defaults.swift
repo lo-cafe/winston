@@ -143,6 +143,8 @@ extension Defaults.Keys {
 
   
   static let syncKeyChainAndSettings = Key<Bool>("syncKeyChainAndSettings", default: true)
+  
+  static let syncKeyChainAndSettings = Key<Bool>("syncKeyChainAndSettings", default: true)
 }
 
 extension UIScreen {
