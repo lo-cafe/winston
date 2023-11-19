@@ -23,15 +23,6 @@ jobs:
       run: |
         version=$(grep -m 1 -o 'MARKETING_VERSION\s*=\s*[^;]*' winston.xcodeproj/project.pbxproj | sed 's/MARKETING_VERSION = //')
         build_number=$(/usr/libexec/PlistBuddy -c "Print CFBundleShortVersionString" winston/Info.plist)
-        
-        if [ -z "$version" ]; then
-          echo "Version not set"
-          version=""
-        fi
-        if [ -z "$build_number" ]; then
-          echo "Build Number not set"
-          build_number=""
-        fi
 
         echo "{version}={$version}" >> $GITHUB_OUTPUT
         echo "{build_number}={$build_number}" >> $GITHUB_OUTPUT
