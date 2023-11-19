@@ -21,7 +21,7 @@ struct GeneralPanel: View {
   var body: some View {
     List{
       Section("General"){
-        Toggle("Sync API Key and Settings", isOn: $syncKeyChainAndSettings)
+        Toggle("Sync API Key", isOn: $syncKeyChainAndSettings)
       }
       Section("Backup"){
         Button{
