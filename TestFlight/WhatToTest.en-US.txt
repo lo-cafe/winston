@@ -1,6 +1,2 @@
-A big update is coming soon, sorry for the wait.
-
---- QUICK EXPRESS UPDATE ---
-- Fixed subs order
-- Fixed subs filtering
-- Fixed favoriting subs not working properly
+- Implemented subreddit button to feeds (Home etc...)
+- Tweaked post placeholder image padding

@@ -13,6 +13,7 @@ typealias Multi = GenericRedditEntity<MultiData, AnyHashable>
 
 extension Multi {
   static var prefix = "LabeledMulti"
+  var selfPrefix: String { Self.prefix }
   convenience init(data: T, api: RedditAPI) {
     self.init(data: data, api: api, typePrefix: "\(Post.prefix)_")
   }

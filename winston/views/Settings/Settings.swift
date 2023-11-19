@@ -7,6 +7,7 @@
 
 import SwiftUI
 import Defaults
+import WhatsNewKit
 //import SceneKit
 
 enum SettingsPages {
@@ -21,6 +22,9 @@ struct Settings: View {
   @Environment(\.useTheme) private var selectedTheme
   @Environment(\.colorScheme) private var cs
   @State private var id = UUID().uuidString
+  
+  @State var presentingWhatsNew: Bool = false
+  
   var body: some View {
     NavigationStack(path: $router.path) {
       RouterProxyInjector(routerProxy: RouterProxy(router)) { routerProxy in
@@ -50,10 +54,11 @@ struct Settings: View {
               }
               
               WListButton {
-                sendCustomEmail()
+                presentingWhatsNew.toggle()
               } label: {
-                Label("Report a bug", systemImage: "ladybug.fill")
+                Label("Whats New", systemImage: "star")
               }
+              .disabled(getCurrentChangelog().isEmpty)
               
               WSListButton("Donate monthly", icon: "heart.fill") {
                 openURL(URL(string: "https://patreon.com/user?u=93745105")!)
@@ -78,6 +83,11 @@ struct Settings: View {
           }
           .themedListDividers()
           
+        }
+        .sheet(isPresented: $presentingWhatsNew){
+          if let isNew = getCurrentChangelog().first {
+              WhatsNewView(whatsNew: isNew)
+          }
         }
         .themedListBG(selectedTheme.lists.bg)
         .scrollContentBackground(.hidden)
@@ -123,6 +133,7 @@ struct Settings: View {
         .onChange(of: reset) { _ in router.path.removeLast(router.path.count) }
       }
     }
+    
   }
 }
 

@@ -38,7 +38,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
       }()
       config.dataLoader = dataLoader
       config.dataCachePolicy = .storeAll
-      config.isUsingPrepareForDisplay = true
+      config.isUsingPrepareForDisplay = false
+      
+//      let imgCache = ImageCache(costLimit: Int.max, countLimit: Int.max)
+//      imgCache.ttl = nil
+//      imgCache.entryCostLimit = 1
+//      config.isRateLimiterEnabled = false
     }
     ImagePipeline.shared = defaultPipeline
   }

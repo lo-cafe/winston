@@ -106,7 +106,7 @@ struct CopiableValue: View {
         withAnimation {
           copied = true
         }
-        doThisAfter(1) {
+        doThisAfter(1.0) {
           withAnimation {
             copied = false
           }

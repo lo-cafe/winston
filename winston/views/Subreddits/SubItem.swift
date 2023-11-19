@@ -18,7 +18,7 @@ struct SubItemButton: View {
       } label: {
         HStack {
           Text(data.display_name ?? "")
-          SubredditIcon(data: data)
+          SubredditIcon(subredditIconKit: data.subredditIconKit)
         }
       }
     }
@@ -29,7 +29,7 @@ struct SubItem: View {
   var forcedMaskType: CommentBGSide = .middle
   @Binding var selectedSub: FirstSelectable?
   @StateObject var sub: Subreddit
-  var cachedSub: CachedSub? = nil
+  var cachedSub: CachedSub
   @Default(.likedButNotSubbed) private var likedButNotSubbed
   
   func favoriteToggle() {
@@ -42,14 +42,14 @@ struct SubItem: View {
   
   var body: some View {
     if let data = sub.data {
-      let favorite = cachedSub?.user_has_favorited ?? false
+      let favorite = cachedSub.user_has_favorited
       let localFav = likedButNotSubbed.contains(sub)
       let isActive = selectedSub == .sub(sub)
       WListButton(showArrow: !IPAD, active: isActive) {
         selectedSub = .sub(sub)
       } label: {
         HStack {
-          SubredditIcon(data: data)
+          SubredditIcon(subredditIconKit: data.subredditIconKit)
           Text(data.display_name ?? "")
             .foregroundStyle(isActive ? .white : .primary)
           
@@ -60,7 +60,6 @@ struct SubItem: View {
             .highPriorityGesture( TapGesture().onEnded(favoriteToggle) )
         }
       }
-      .mask(CommentBG(cornerRadius: 10, pos: forcedMaskType).fill(.black))
       
     } else {
       Text("Error")

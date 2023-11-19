@@ -25,7 +25,7 @@ struct SubredditsStack: View {
         .measure($sidebarSize)
     } detail: {
       NavigationStack(path: $router.path) {
-        DefaultDestinationInjector(routerProxy: RouterProxy(router)) {
+        DefaultDestinationInjector(routerProxy: RouterProxy(router)) { _ in
           if let selectedSub = selectedSub {
             switch selectedSub {
             case .multi(let multi):

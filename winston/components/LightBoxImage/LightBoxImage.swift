@@ -6,15 +6,19 @@
 //
 
 import SwiftUI
+import NukeUI
 import Defaults
 
 private let SPACING = 24.0
 
 struct LightBoxImage: View {
-  var post: Post
+  var postTitle: String? = nil
+  var badgeKit: BadgeKit? = nil
+  var avatarImageRequest: ImageRequest? = nil
+  var markAsSeen: (() async -> ())? = nil
   var i: Int
-  var imagesArr: [MediaExtracted]
-  @State var doLiveText: Bool
+  var imagesArr: [ImgExtracted]
+  var doLiveText: Bool
   @Environment(\.dismiss) private var dismiss
   @State private var appearBlack = false
   @State private var appearContent = false
@@ -30,6 +34,7 @@ struct LightBoxImage: View {
   
   @State private var isPinching: Bool = false
   @State private var isZoomed: Bool = false
+  @State private var scale: CGFloat = 1.0
   
   private enum Axis {
     case horizontal
@@ -58,7 +63,7 @@ struct LightBoxImage: View {
     .offset(x: xPos + (dragAxis == .horizontal ? drag.width : 0))
     .frame(maxWidth: UIScreen.screenWidth, maxHeight: UIScreen.screenHeight, alignment: .leading)
     .highPriorityGesture(
-      isZoomed
+      scale > 1
       ? nil
       : DragGesture(minimumDistance: 20)
         .onChanged { val in
@@ -120,7 +125,13 @@ struct LightBoxImage: View {
           }
         }
     )
-    .overlay(LightBoxOverlay(post: post, opacity: !showOverlay || isPinching ? 0 : interpolate([1, 0], false), imagesArr: imagesArr, activeIndex: activeIndex, loading: $loading, done: $done))
+    .overlay(
+      Group {
+        if let postTitle = postTitle, let badgeKit = badgeKit {
+          LightBoxOverlay(postTitle: postTitle, badgeKit: badgeKit, avatarImageRequest: avatarImageRequest, opacity: !showOverlay || isPinching ? 0 : interpolate([1, 0], false), imagesArr: imagesArr, activeIndex: activeIndex, loading: $loading, done: $done)
+        }
+      }
+    )
     .background(
       !appearBlack
       ? nil
@@ -164,10 +175,10 @@ struct LightBoxImage: View {
       }
     }
     .onAppear {
-      if lightboxViewsPost { Task(priority: .background) { await post.toggleSeen(true) } }
+      if lightboxViewsPost { Task(priority: .background) { await markAsSeen?() } }
       xPos = -CGFloat(i) * (UIScreen.screenWidth + SPACING)
       activeIndex = i
-      doThisAfter(0) {
+      doThisAfter(0.0) {
         withAnimation(.easeOut) {
           appearContent = true
           appearBlack = true
