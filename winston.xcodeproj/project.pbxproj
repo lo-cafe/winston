@@ -37,7 +37,6 @@
 		659FDEA82A87798300103414 /* VoteButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 659FDEA72A87798300103414 /* VoteButton.swift */; };
 		65A5FFF22ACED3BF000D1ADA /* getPreviewImages.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65A5FFF12ACED3BF000D1ADA /* getPreviewImages.swift */; };
 		65AA535D2A8BB27900275299 /* FAQPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65AA535C2A8BB27900275299 /* FAQPanel.swift */; };
-		65B0619B2AFE8A05008B7AF3 /* changelog.json in Sources */ = {isa = PBXBuildFile; fileRef = 65E45A6D2AFD3C1D007DBBFC /* changelog.json */; };
 		65C169EA2AFFA578007764D5 /* MD2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65C169E92AFFA578007764D5 /* MD2.swift */; };
 		65C169EC2AFFA60B007764D5 /* isImageUrl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65C169EB2AFFA60B007764D5 /* isImageUrl.swift */; };
 		65CDA3622ACB0EB50001EC44 /* ZoomableImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65CDA3612ACB0EB50001EC44 /* ZoomableImageView.swift */; };
@@ -1761,7 +1760,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				65B0619B2AFE8A05008B7AF3 /* changelog.json in Sources */,
 				EC593AF02A47ACB0002D6454 /* Tabber.swift in Sources */,
 				EC3AC9D42AACCBE40078EC78 /* LabeledTextField.swift in Sources */,
 				EC50B0E62A8460CD00AB8F72 /* replyModalPresenter.swift in Sources */,
