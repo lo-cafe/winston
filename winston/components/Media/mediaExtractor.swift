@@ -72,7 +72,7 @@ func mediaExtractor(compact: Bool, contentWidth: Double = UIScreen.screenWidth, 
         
         let processors: [ImageProcessing] = contentWidth == 0 ? [] : [.resize(width: compact ? scaledCompactModeThumbSize() : contentWidth)]
         var userInfo: [ImageRequest.UserInfoKey : Any] = [:]
-        if compact {
+        if compact && !imgURL.absoluteString.hasSuffix(".gif") {
           userInfo[.thumbnailKey] = ImageRequest.ThumbnailOptions(size: .init(width: scaledCompactModeThumbSize(), height: scaledCompactModeThumbSize()), unit: .points, contentMode: .aspectFill)
         }
         return ImgExtracted(url: imgURL, size: CGSize(width: size.x, height: size.y), request: ImageRequest(url: imgURL, processors: processors, userInfo: userInfo))
@@ -114,7 +114,7 @@ func mediaExtractor(compact: Bool, contentWidth: Double = UIScreen.screenWidth, 
     
     let processors: [ImageProcessing] = contentWidth == 0 ? [] : [.resize(width: compact ? scaledCompactModeThumbSize() : contentWidth)]
     var userInfo: [ImageRequest.UserInfoKey : Any] = [:]
-    if compact {
+    if compact && !url.absoluteString.hasSuffix(".gif") {
       userInfo[.thumbnailKey] = ImageRequest.ThumbnailOptions(size: .init(width: scaledCompactModeThumbSize(), height: scaledCompactModeThumbSize()), unit: .points, contentMode: .aspectFill)
     }
     let imgExtracted = ImgExtracted(url: url, size: CGSize(width: actualWidth, height: actualHeight), request: ImageRequest(url: url, processors: processors, userInfo: userInfo))

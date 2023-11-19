@@ -27,7 +27,8 @@ struct URLImage: View, Equatable {
     if url.absoluteString.hasSuffix(".gif") {
       LazyImage(url: url) { state in
         if let imageData = state.imageContainer?.data {
-          GIFImage(data: imageData)
+          GIFImage(data: imageData, size: size)
+            .scaledToFill()
         } else if state.error != nil {
           Color.red.opacity(0.1)
             .overlay(Image(systemName: "xmark.circle.fill").foregroundColor(.red))

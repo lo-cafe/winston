@@ -37,9 +37,8 @@ struct PostDimensions: Hashable, Equatable {
   var theme: PostLinkTheme
   var compact: Bool
   var size: CGSize {
-    let compactVSpacing = self.spacingHeight / 2
-    let tagHeight = urlTagHeight == nil ? 0 : (compactVSpacing / 2) + (self.urlTagHeight ?? 0)
-    let compactHeight = max(self.titleSize.height + compactVSpacing + self.badgeSize.height + tagHeight, (mediaSize?.height ?? 0))
+    let tagHeight = urlTagHeight == nil ? 0 : (self.spacingHeight / 2) + (self.urlTagHeight ?? 0)
+    let compactHeight = max(self.titleSize.height + self.spacingHeight + self.badgeSize.height + tagHeight, (mediaSize?.height ?? 0))
     let normalHeight = self.titleSize.height + (self.bodySize?.height ?? 0) + (self.mediaSize?.height ?? 0) + (self.dividerSize?.height ?? 00) + self.badgeSize.height + self.spacingHeight
     return CGSize(
       width: self.contentWidth + (self.padding.width * 2),
@@ -61,17 +60,18 @@ struct PostDimensions: Hashable, Equatable {
   }
 }
 
-func getPostDimensions(post: Post, winstonData: PostWinstonData? = nil, columnWidth: Double = UIScreen.screenWidth, secondary: Bool = false, rawTheme: WinstonTheme? = nil) -> PostDimensions {
+func getPostDimensions(post: Post, winstonData: PostWinstonData? = nil, columnWidth: Double = UIScreen.screenWidth, secondary: Bool = false, rawTheme: WinstonTheme? = nil, compact: Bool? = nil) -> PostDimensions {
   if let data = post.data {
     let selectedTheme = rawTheme ?? getEnabledTheme()
     let showSelfPostThumbnails = Defaults[.showSelfPostThumbnails]
-    let compact = Defaults[.compactMode]
+    let compact = compact ?? Defaults[.compactMode]
+    let showAuthorOnPostLinks = Defaults[.showAuthorOnPostLinks]
     let maxDefaultHeight: CGFloat = Defaults[.maxPostLinkImageHeightPercentage]
     let maxHeight: CGFloat = (maxDefaultHeight / 100) * (UIScreen.screenHeight)
-    let extractedMedia = winstonData?.extractedMedia
+    let extractedMedia = compact ? winstonData?.extractedMedia : winstonData?.extractedMediaForcedNormal
     let compactImgSize = scaledCompactModeThumbSize()
     let theme = selectedTheme.postLinks.theme
-    let postGeneralSpacing = theme.verticalElementsSpacing + theme.linespacing
+    let postGeneralSpacing = theme.verticalElementsSpacing
     let title = data.title
     let body = data.selftext
     
@@ -88,8 +88,8 @@ func getPostDimensions(post: Post, winstonData: PostWinstonData? = nil, columnWi
     var ACC_mediaSize: CGSize = .zero
     let compactMediaSize = CGSize(width: compactImgSize, height: compactImgSize)
     
+    if compact { ACC_mediaSize = extractedMedia != nil || showSelfPostThumbnails ? compactMediaSize : .zero } else {
     if let extractedMedia = extractedMedia {
-      if compact { ACC_mediaSize = compactMediaSize } else {
         func defaultMediaSize(_ size: CGSize) -> CGSize {
           let sourceHeight = size.height == 0 ? winstonData?.postDimensions.mediaSize?.height ?? 0 : size.height
           let sourceWidth = size.width == 0 ? winstonData?.postDimensions.mediaSize?.width ?? 0 : size.width
@@ -137,7 +137,7 @@ func getPostDimensions(post: Post, winstonData: PostWinstonData? = nil, columnWi
       }
     }
     
-    var urlTagHeight: Double = 0
+    var urlTagHeight: Double? = nil
     if compact, let extractedMedia = extractedMedia, case .link(_) = extractedMedia {
       urlTagHeight = OnlyURL.height
     }
@@ -181,14 +181,14 @@ func getPostDimensions(post: Post, winstonData: PostWinstonData? = nil, columnWi
     let badgeStatsFontHeight = theme.badge.statsText.size * 1.2
     let badgeAuthorStatsSpacing = BadgeView.authorStatsSpacing
     
-    let ACC_badgeHeight = round(max(badgeAvatarHeight, badgeAuthorHeight + badgeStatsFontHeight + badgeAuthorStatsSpacing, 34))
+    let ACC_badgeHeight = round(max(badgeAvatarHeight, (showAuthorOnPostLinks ? badgeAuthorHeight + badgeAuthorStatsSpacing : 0) + badgeStatsFontHeight))
     
     
     
     let theresTitle = true
     let theresSelftext = !compact && !data.selftext.isEmpty
     let theresMedia = extractedMedia != nil
-    let theresSubDivider = true
+    let theresSubDivider = !compact
     let theresBadge = true
     let elements = [theresTitle, theresSelftext, !compact && theresMedia, theresSubDivider, theresBadge]
     let ACC_allSpacingsHeight = Double(elements.filter { $0 }.count - 1) * postGeneralSpacing
@@ -199,6 +199,7 @@ func getPostDimensions(post: Post, winstonData: PostWinstonData? = nil, columnWi
     
     let dimensions = PostDimensions(
       contentWidth: contentWidth,
+      compact: compact,
       theme: theme,
       titleSize: CGSize(width: titleContentWidth, height: ACC_titleHeight + 1),
       bodySize: !theresSelftext || compact ? nil : CGSize(width: contentWidth, height: ACC_bodyHeight),

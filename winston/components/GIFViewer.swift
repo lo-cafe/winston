@@ -20,20 +20,24 @@ public struct GIFImage: UIViewRepresentable {
   
   private let source: Source
   private var loopCount = 0
+  private var size: CGSize = .zero
   
   /// Initializes the view with the given GIF image data.
-  public init(data: Data) {
+  public init(data: Data, size: CGSize? = nil) {
     self.source = .data(data)
+    if let size = size { self.size = size }
   }
   
   /// Initialzies the view with the given GIF image url.
-  public init(url: URL) {
+  public init(url: URL, size: CGSize? = nil) {
     self.source = .url(url)
+    if let size = size { self.size = size }
   }
   
   /// Initialzies the view with the given GIF image name.
-  public init(imageName: String) {
+  public init(imageName: String, size: CGSize? = nil) {
     self.source = .imageName(imageName)
+    if let size = size { self.size = size }
   }
   
   /// Sets the desired number of loops. By default, the number of loops infinite.
@@ -44,7 +48,17 @@ public struct GIFImage: UIViewRepresentable {
   }
   
   public func makeUIView(context: Context) -> GIFImageView {
-    GIFImageView(frame: .zero)
+    let view = GIFImageView(frame: .init(origin: .zero, size: self.size))
+    view.contentMode = .scaleAspectFill
+    view.frame.size = self.size
+    view.clipsToBounds = true
+    view.translatesAutoresizingMaskIntoConstraints = false
+    view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+    view.setContentHuggingPriority(.required, for: .horizontal)
+    view.setContentHuggingPriority(.required, for: .vertical)
+    view.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+    view.setContentCompressionResistancePriority(.defaultLow, for: .vertical)
+    return view
   }
   
   public func updateUIView(_ view: GIFImageView, context: Context) {
@@ -56,6 +70,15 @@ public struct GIFImage: UIViewRepresentable {
     case .imageName(let imageName):
       view.animate(withGIFNamed: imageName, loopCount: loopCount)
     }
+    view.contentMode = .scaleAspectFill
+    view.clipsToBounds = true
+    view.frame.size = self.size
+    view.translatesAutoresizingMaskIntoConstraints = false
+    view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+    view.setContentHuggingPriority(.required, for: .horizontal)
+    view.setContentHuggingPriority(.required, for: .vertical)
+    view.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+    view.setContentCompressionResistancePriority(.defaultLow, for: .vertical)
   }
   
   public static func dismantleUIView(

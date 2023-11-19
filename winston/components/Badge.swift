@@ -17,6 +17,7 @@ struct BadgeView: View, Equatable {
   }
   
   var avatarRequest: ImageRequest?
+  var showAuthorOnPostLinks = true
   var saved = false
   var unseen = false
   var usernameColor: Color?
@@ -61,29 +62,40 @@ struct BadgeView: View, Equatable {
       
       VStack(alignment: .leading, spacing: BadgeView.authorStatsSpacing) {
         
-        HStack(alignment: .center, spacing: 6) {
-          Text(author).font(.system(size: theme.authorText.size, weight: theme.authorText.weight.t)).foregroundColor(author == "[deleted]" ? .red : usernameColor ?? theme.authorText.color.cs(cs).color())
-            .onTapGesture(perform: openUser)
-          
-          if unseen {
-            ZStack {
-              Circle()
-                .fill(commentTheme?.unseenDot.cs(cs).color() ?? .red)
-                .frame(width: 6, height: 6)
-              Circle()
-                .fill(commentTheme?.unseenDot.cs(cs).color() ?? .red)
-                .frame(width: 8, height: 8)
-                .blur(radius: 8)
+        if showAuthorOnPostLinks {
+          HStack(alignment: .center, spacing: 4) {
+            
+            Text(author).font(.system(size: theme.authorText.size, weight: theme.authorText.weight.t)).foregroundColor(author == "[deleted]" ? .red : usernameColor ?? theme.authorText.color.cs(cs).color())
+              .onTapGesture(perform: openUser)
+            
+            if let openSub = openSub, let subName = subName {
+              Image(systemName: "arrowshape.right.fill")
+                .fontSize(theme.authorText.size * 0.9)
+              Text(subName).foregroundStyle(Color.accentColor)
+                .fontSize(theme.authorText.size, .semibold)
+                .highPriorityGesture(TapGesture().onEnded(openSub))
             }
-          }
-          
-          if let f = flair?.trimmingCharacters(in: .whitespacesAndNewlines) {
-            if !f.isEmpty {
-              let colonIndex = f.lastIndex(of: ":")
-              let flairWithoutEmoji = String(f[(f.contains(":") ? f.index(colonIndex!, offsetBy: min(2, max(0, f.count - f.distance(from: f.startIndex, to: colonIndex!)))) : f.startIndex)...])
-              if !flairWithoutEmoji.isEmpty {
-                // TODO Load flair emojis via GET /api/v1/{subreddit}/emojis/{emoji_name}
-                Text(flairWithoutEmoji).font(.system(size: theme.flairText.size, weight: theme.flairText.weight.t)).lineLimit(1).foregroundColor(theme.flairText.color.cs(cs).color()).padding(EdgeInsets(top: 0, leading: 6, bottom: 0, trailing: 6)).background(theme.flairBackground.cs(cs).color()).clipShape(Capsule())
+            
+            if unseen {
+              ZStack {
+                Circle()
+                  .fill(commentTheme?.unseenDot.cs(cs).color() ?? .red)
+                  .frame(width: 6, height: 6)
+                Circle()
+                  .fill(commentTheme?.unseenDot.cs(cs).color() ?? .red)
+                  .frame(width: 8, height: 8)
+                  .blur(radius: 8)
+              }
+            }
+            
+            if let f = flair?.trimmingCharacters(in: .whitespacesAndNewlines) {
+              if !f.isEmpty {
+                let colonIndex = f.lastIndex(of: ":")
+                let flairWithoutEmoji = String(f[(f.contains(":") ? f.index(colonIndex!, offsetBy: min(2, max(0, f.count - f.distance(from: f.startIndex, to: colonIndex!)))) : f.startIndex)...])
+                if !flairWithoutEmoji.isEmpty {
+                  // TODO Load flair emojis via GET /api/v1/{subreddit}/emojis/{emoji_name}
+                  Text(flairWithoutEmoji).font(.system(size: theme.flairText.size, weight: theme.flairText.weight.t)).lineLimit(1).foregroundColor(theme.flairText.color.cs(cs).color()).padding(EdgeInsets(top: 0, leading: 6, bottom: 0, trailing: 6)).background(theme.flairBackground.cs(cs).color()).clipShape(Capsule())
+                }
               }
             }
           }
@@ -92,8 +104,8 @@ struct BadgeView: View, Equatable {
         
         HStack(alignment: .center, spacing: theme.statsText.size * 0.416666667 /* Yes, absurd number, I thought it was funny */) {
           
-          if let openSub = openSub, let subName = subName {
-            Tag(subredditIconKit: nil, text: "r/\(subName)", color: .blue, fontSize: ((theme.statsText.size * 1.2) - 2.0))
+          if let openSub = openSub, let subName = subName, !showAuthorOnPostLinks {
+            Tag(subredditIconKit: nil, text: "r/\(subName)", color: .blue, fontSize: theme.statsText.size)
               .highPriorityGesture(TapGesture().onEnded(openSub))
           }
           

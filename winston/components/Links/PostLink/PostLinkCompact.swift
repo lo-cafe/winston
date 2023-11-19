@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Defaults
 import NukeUI
 
 struct PostLinkCompactThumbPlaceholder: View, Equatable {
@@ -53,6 +54,7 @@ struct PostLinkCompact: View, Equatable, Identifiable {
   var cs: ColorScheme
   
   @Environment(\.useTheme) private var selectedTheme
+  @Default(.showAuthorOnPostLinks) private var showAuthorOnPostLinks
   
   @State private var isOpen = false
   
@@ -64,6 +66,12 @@ struct PostLinkCompact: View, Equatable, Identifiable {
     if let routerProxy = routerProxy {
       withAnimation(nil) { isOpen = true }
       routerProxy.router.path.append(PostViewPayload(post: post, postSelfAttr: nil, sub: feedsAndSuch.contains(sub.id) ? sub : sub))
+    }
+  }
+  
+  func openSubreddit() {
+    if let routerProxy = routerProxy, let subName = post.data?.subreddit {
+      routerProxy.router.path.append(SubViewType.posts(Subreddit(id: subName, api: RedditAPI.shared)))
     }
   }
   
@@ -83,7 +91,7 @@ struct PostLinkCompact: View, Equatable, Identifiable {
   @ViewBuilder
   func mediaComponentCall(showURLInstead: Bool = false) -> some View {
     if let data = post.data, let extractedMedia = post.winstonData?.extractedMedia {
-      MediaPresenter(postDimensions: $winstonData.postDimensions, controller: controller, cachedVideo: cachedVideo, imgRequests: winstonData.mediaImageRequest, postTitle: data.title, badgeKit: data.badgeKit, avatarImageRequest: winstonData.avatarImageRequest, markAsSeen: markAsRead, cornerRadius: theme.theme.mediaCornerRadius, blurPostLinkNSFW: blurPostLinkNSFW, showURLInstead: showURLInstead, media: extractedMedia, over18: over18, compact: true, contentWidth: winstonData.postDimensions.mediaSize?.width ?? 0, routerProxy: routerProxy)
+      MediaPresenter(postDimensions: $winstonData.postDimensions, controller: controller, postTitle: data.title, badgeKit: data.badgeKit, avatarImageRequest: winstonData.avatarImageRequest, markAsSeen: markAsRead, cornerRadius: theme.theme.mediaCornerRadius, blurPostLinkNSFW: blurPostLinkNSFW, showURLInstead: showURLInstead, media: extractedMedia, over18: over18, compact: true, contentWidth: winstonData.postDimensions.mediaSize?.width ?? 0, routerProxy: routerProxy)
     }
   }
   
@@ -130,14 +138,12 @@ struct PostLinkCompact: View, Equatable, Identifiable {
               }
             }
             
-            BadgeView(avatarRequest: winstonData.avatarImageRequest, saved: data.badgeKit.saved, usernameColor: nil, author: data.badgeKit.author, fullname: data.badgeKit.authorFullname, created: data.badgeKit.created, avatarURL: nil, theme: theme.theme.badge, commentsCount: formatBigNumber(data.badgeKit.numComments), votesCount: formatBigNumber(data.badgeKit.ups), routerProxy: routerProxy, cs: cs)
+            BadgeView(avatarRequest: winstonData.avatarImageRequest, showAuthorOnPostLinks: showAuthorOnPostLinks, saved: data.badgeKit.saved, usernameColor: nil, author: data.badgeKit.author, fullname: data.badgeKit.authorFullname, created: data.badgeKit.created, avatarURL: nil, theme: theme.theme.badge, commentsCount: formatBigNumber(data.badgeKit.numComments), votesCount: formatBigNumber(data.badgeKit.ups), routerProxy: routerProxy, cs: cs, openSub: !theme.theme.badge.avatar.visible && showSub ? openSubreddit : nil, subName: data.subreddit)
             
-            if showSub {
+            if showSub && theme.theme.badge.avatar.visible {
               let subName = data.subreddit
               Tag(subredditIconKit: nil, text: "r/\(subName)", color: .blue)
-                .highPriorityGesture(TapGesture() .onEnded {
-                  routerProxy.router.path.append(SubViewType.posts(Subreddit(id: subName, api: RedditAPI.shared)))
-                })
+                .highPriorityGesture(TapGesture().onEnded(openSubreddit))
             }
           }
           .frame(maxWidth: .infinity, alignment: .topLeading)
@@ -150,7 +156,7 @@ struct PostLinkCompact: View, Equatable, Identifiable {
         .frame(maxWidth: .infinity, alignment: .topLeading)
         
       }
-      .postLinkStyle(showSub: showSub, post: post, sub: sub, routerProxy: routerProxy, theme: theme, size: winstonData.postDimensions.size, secondary: secondary, isOpen: $isOpen, openPost: openPost, readPostOnScroll: readPostOnScroll, hideReadPosts: hideReadPosts, cs: cs)
+      .postLinkStyle(showSubBottom: showSub && theme.theme.badge.avatar.visible, post: post, sub: sub, routerProxy: routerProxy, theme: theme, size: winstonData.postDimensions.size, secondary: secondary, isOpen: $isOpen, openPost: openPost, readPostOnScroll: readPostOnScroll, hideReadPosts: hideReadPosts, cs: cs)
       .swipyUI(onTap: openPost, actionsSet: postSwipeActions, entity: post)
 //      .frame(width: winstonData.postDimensions.size.width, height: winstonData.postDimensions.size.height)
     }

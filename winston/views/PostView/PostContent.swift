@@ -63,9 +63,8 @@ struct PostContent: View, Equatable {
       VStack(spacing: 0) {
         VStack(spacing: selectedTheme.posts.spacing) {
           
-          if let extractedMedia = post.winstonData?.extractedMedia {
-            MediaPresenter(postDimensions: $winstonData.postDimensions, controller: nil, cachedVideo: videosCache.cache[post.id]?.data, imgRequests: winstonData.mediaImageRequest, postTitle: data.title, badgeKit: data.badgeKit, avatarImageRequest: winstonData.avatarImageRequest, markAsSeen: {}, cornerRadius: selectedTheme.postLinks.theme.mediaCornerRadius, blurPostLinkNSFW: blurPostLinkNSFW, media: extractedMedia, over18: over18, compact: false, contentWidth: contentWidth, routerProxy: routerProxy)
-              .id("media-post-open")
+          if let extractedMedia = winstonData.extractedMediaForcedNormal {
+            MediaPresenter(postDimensions: $winstonData.postDimensionsForcedNormal, controller: nil, postTitle: data.title, badgeKit: data.badgeKit, avatarImageRequest: winstonData.avatarImageRequest, markAsSeen: {}, cornerRadius: selectedTheme.postLinks.theme.mediaCornerRadius, blurPostLinkNSFW: false, media: extractedMedia, over18: over18, compact: false, contentWidth: winstonData.postDimensionsForcedNormal.mediaSize?.width ?? 0, routerProxy: routerProxy)
           }
           
           if data.selftext != "" {
@@ -77,7 +76,7 @@ struct PostContent: View, Equatable {
               .allowsHitTesting(!isCollapsed)
           }
         }
-        .modifier(AnimatingCellHeight(height: isCollapsed ? 175 : winstonData.postViewBodySize.height + (winstonData.postDimensions.mediaSize?.height ?? 0), disable: false))
+        .modifier(AnimatingCellHeight(height: isCollapsed ? 175 : winstonData.postViewBodySize.height + (winstonData.postDimensionsForcedNormal.mediaSize?.height ?? 0), disable: false))
         .fixedSize(horizontal: false, vertical: true)
         .clipped()
         .opacity(isCollapsed ? 0.3 : 1)

@@ -27,10 +27,10 @@ struct GalleryThumb: View, Equatable {
       .scaledToFill()
       .zIndex(1)
       .fixedSize(horizontal: false, vertical: height == nil)
+      .allowsHitTesting(false)
       .frame(width: width, height: height)
       .clipped()
       .mask(RR(cornerRadius, Color.black).equatable())
-      .allowsHitTesting(false)
       .contentShape(Rectangle())
   }
 }

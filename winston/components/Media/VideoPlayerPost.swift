@@ -93,6 +93,8 @@ struct VideoPlayerPost: View, Equatable {
             }
           }
           .frame(width: compact ? scaledCompactModeThumbSize() : contentWidth, height: compact ? scaledCompactModeThumbSize() : CGFloat(finalHeight))
+          .clipped()
+          .fixedSize()
           .mask(RR(12, Color.black))
           .allowsHitTesting(false)
           .contentShape(Rectangle())
@@ -109,7 +111,6 @@ struct VideoPlayerPost: View, Equatable {
             }
             sharedVideo.player.volume = val ? 1.0 : 0.0
           }
-          .fixedSize()
           .allowsHitTesting(false)
           .mask(RR(12, Color.black))
           .overlay(

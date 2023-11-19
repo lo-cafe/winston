@@ -22,8 +22,6 @@ struct PostLinkThemingPanel: View {
   @Environment(\.colorScheme) private var cs
   @StateObject private var routerProxy = RouterProxy(Router(id: "PostLinkThemingPanelRouter"))
   
-  
-  
   @Default(.blurPostLinkNSFW) private var blurPostLinkNSFW
   @Default(.postSwipeActions) private var postSwipeActions
   @Default(.compactMode) private var compactMode
@@ -85,7 +83,7 @@ struct PostLinkThemingPanel: View {
             showUpvoteRatio: showUpvoteRatio,
             showSubsAtTop: showSubsAtTop,
             showTitleAtTop: showTitleAtTop,
-            compact: false,
+            compact: compactMode,
             thumbnailPositionRight: nil,
             voteButtonPositionRight: nil,
             showSelfPostThumbnails: showSelfPostThumbnails,

@@ -37,13 +37,11 @@ struct OnlyURL: View {
 
 struct MediaPresenter: View, Equatable {
   static func == (lhs: MediaPresenter, rhs: MediaPresenter) -> Bool {
-    lhs.compact == rhs.compact && lhs.contentWidth == rhs.contentWidth && lhs.badgeKit == rhs.badgeKit && lhs.cachedVideo == rhs.cachedVideo && lhs.cornerRadius == rhs.cornerRadius && lhs.media == rhs.media
+    lhs.compact == rhs.compact && lhs.contentWidth == rhs.contentWidth && lhs.badgeKit == rhs.badgeKit && lhs.cornerRadius == rhs.cornerRadius && lhs.media == rhs.media
   }
   
   @Binding var postDimensions: PostDimensions
   weak var controller: UIViewController?
-  var cachedVideo: SharedVideo?
-  var imgRequests: [ImageRequest]?
   let postTitle: String
   let badgeKit: BadgeKit
   let avatarImageRequest: ImageRequest?
@@ -63,18 +61,18 @@ struct MediaPresenter: View, Equatable {
       if !showURLInstead {
         if imgsExtracted.count > 0 && imgsExtracted[0].url.absoluteString.hasSuffix(".gif") {
           ImageMediaPost(postDimensions: $postDimensions, controller: controller, postTitle: postTitle, badgeKit: badgeKit, avatarImageRequest: avatarImageRequest, markAsSeen: markAsSeen, cornerRadius: cornerRadius, compact: compact, images: imgsExtracted, contentWidth: contentWidth)
-            .nsfw(over18 && blurPostLinkNSFW)
+            .nsfw(over18 && blurPostLinkNSFW, smallIcon: compact, size: postDimensions.mediaSize)
         } else {
           ImageMediaPost(postDimensions: $postDimensions, controller: controller, postTitle: postTitle, badgeKit: badgeKit, avatarImageRequest: avatarImageRequest, markAsSeen: markAsSeen, cornerRadius: cornerRadius, compact: compact, images: imgsExtracted, contentWidth: contentWidth)
             .drawingGroup()
-            .nsfw(over18 && blurPostLinkNSFW)
+            .nsfw(over18 && blurPostLinkNSFW, smallIcon: compact, size: postDimensions.mediaSize)
           
         }
       }
     case .video(let sharedVideo):
       if !showURLInstead {
         VideoPlayerPost(controller: controller, cachedVideo: sharedVideo, markAsSeen: markAsSeen, compact: compact, overrideWidth: contentWidth, url: sharedVideo.url)
-          .nsfw(over18 && blurPostLinkNSFW)
+          .nsfw(over18 && blurPostLinkNSFW, smallIcon: compact, size: postDimensions.mediaSize)
       }
     case .yt(let ytMediaExtracted):
       if !showURLInstead {

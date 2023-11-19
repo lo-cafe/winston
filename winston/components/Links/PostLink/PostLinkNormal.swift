@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Defaults
 import NukeUI
 
 struct PostLinkNormalSelftext: View, Equatable {
@@ -54,6 +55,8 @@ struct PostLinkNormal: View, Equatable, Identifiable {
   let showTitleAtTop: Bool
   var cs: ColorScheme
   
+  @Default(.showAuthorOnPostLinks) private var showAuthorOnPostLinks
+  
   //  @Environment(\.useTheme) private var selectedTheme
   
   @State private var isOpen = false
@@ -92,7 +95,7 @@ struct PostLinkNormal: View, Equatable, Identifiable {
   func mediaComponentCall() -> some View {
     if let data = post.data {
       if let extractedMedia = winstonData.extractedMedia {
-        MediaPresenter(postDimensions: $winstonData.postDimensions, controller: controller, cachedVideo: cachedVideo, imgRequests: winstonData.mediaImageRequest, postTitle: data.title, badgeKit: data.badgeKit, avatarImageRequest: winstonData.avatarImageRequest, markAsSeen: markAsRead, cornerRadius: theme.theme.mediaCornerRadius, blurPostLinkNSFW: blurPostLinkNSFW, media: extractedMedia, over18: over18, compact: false, contentWidth: winstonData.postDimensions.mediaSize?.width ?? 0, routerProxy: routerProxy)
+        MediaPresenter(postDimensions: $winstonData.postDimensions, controller: controller, postTitle: data.title, badgeKit: data.badgeKit, avatarImageRequest: winstonData.avatarImageRequest, markAsSeen: markAsRead, cornerRadius: theme.theme.mediaCornerRadius, blurPostLinkNSFW: blurPostLinkNSFW, media: extractedMedia, over18: over18, compact: false, contentWidth: winstonData.postDimensions.mediaSize?.width ?? 0, routerProxy: routerProxy)
         
         if case .repost(let repost) = extractedMedia {
           if let repostWinstonData = repost.winstonData, let repostSub = repostWinstonData.subreddit {
@@ -153,7 +156,7 @@ struct PostLinkNormal: View, Equatable, Identifiable {
         if !showSubsAtTop { SubsNStuffLine().equatable() }
         
         HStack {
-          BadgeView(avatarRequest: winstonData.avatarImageRequest, saved: data.badgeKit.saved, usernameColor: nil, author: data.badgeKit.author, fullname: data.badgeKit.authorFullname, created: data.badgeKit.created, avatarURL: nil, theme: theme.theme.badge, commentsCount: formatBigNumber(data.num_comments), votesCount: showVotes ? nil : formatBigNumber(data.ups), routerProxy: routerProxy, cs: cs, openSub: showSub ? openSub : nil, subName: data.subreddit)
+          BadgeView(avatarRequest: winstonData.avatarImageRequest, showAuthorOnPostLinks: showAuthorOnPostLinks, saved: data.badgeKit.saved, usernameColor: nil, author: data.badgeKit.author, fullname: data.badgeKit.authorFullname, created: data.badgeKit.created, avatarURL: nil, theme: theme.theme.badge, commentsCount: formatBigNumber(data.num_comments), votesCount: showVotes ? nil : formatBigNumber(data.ups), routerProxy: routerProxy, cs: cs, openSub: showSub ? openSub : nil, subName: data.subreddit)
           
           Spacer()
           

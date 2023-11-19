@@ -19,10 +19,10 @@ extension Post {
   static var prefix = "t3"
   var selfPrefix: String { Self.prefix }
   
-  convenience init(data: T, api: RedditAPI, fetchSub: Bool = false, contentWidth: Double = UIScreen.screenWidth, secondary: Bool = false, imgPriority: ImageRequest.Priority = .low, theme: WinstonTheme? = nil) {
+  convenience init(data: T, api: RedditAPI, fetchSub: Bool = false, contentWidth: Double = UIScreen.screenWidth, secondary: Bool = false, imgPriority: ImageRequest.Priority = .low, theme: WinstonTheme? = nil, fetchAvatar: Bool = true) {
     let theme = theme ?? getEnabledTheme()
     self.init(data: data, api: api, typePrefix: "\(Post.prefix)_")
-    setupWinstonData(data: data, contentWidth: contentWidth, secondary: secondary, theme: theme, fetchSub: fetchSub)
+    setupWinstonData(data: data, contentWidth: contentWidth, secondary: secondary, theme: theme, fetchSub: fetchSub, fetchAvatar: fetchAvatar)
   }
   
   convenience init(id: String, api: RedditAPI) {
@@ -40,22 +40,29 @@ extension Post {
     }
   }
   
-  func setupWinstonData(data: PostData? = nil, winstonData: PostWinstonData? = nil, contentWidth: Double = UIScreen.screenWidth, secondary: Bool = false, theme: WinstonTheme, fetchSub: Bool = false) {
+  func setupWinstonData(data: PostData? = nil, winstonData: PostWinstonData? = nil, contentWidth: Double = UIScreen.screenWidth, secondary: Bool = false, theme: WinstonTheme, fetchSub: Bool = false, fetchAvatar: Bool = true) {
     if let data = data ?? self.data {
       let cs: ColorScheme = UIScreen.main.traitCollection.userInterfaceStyle == .dark ? .dark : .light
       let compact = Defaults[.compactMode]
       if self.winstonData == nil { self.winstonData = PostWinstonData() }
       self.winstonData?.permaURL = URL(string: "https://reddit.com\(data.permalink.escape.urlEncoded)")
       let extractedMedia = mediaExtractor(compact: compact, contentWidth: contentWidth, data, theme: theme)
+      let extractedMediaForcedNormal = mediaExtractor(compact: false, contentWidth: contentWidth, data, theme: theme)
       self.winstonData?.extractedMedia = extractedMedia
+      self.winstonData?.extractedMediaForcedNormal = extractedMediaForcedNormal
       self.winstonData?.postDimensions = getPostDimensions(post: self, winstonData: self.winstonData, columnWidth: contentWidth, secondary: secondary, rawTheme: theme)
+      self.winstonData?.postDimensionsForcedNormal = getPostDimensions(post: self, winstonData: self.winstonData, columnWidth: contentWidth, secondary: secondary, rawTheme: theme, compact: false)
       self.winstonData?.titleAttr = createTitleTagsAttrString(titleTheme: theme.postLinks.theme.titleText, postData: data, textColor: theme.postLinks.theme.titleText.color.cs(cs).color())
       if fetchSub {
         self.winstonData?.subreddit = Subreddit(id: data.subreddit, api: RedditAPI.shared)
       }
-      //        let bodyAttr = stringToNSAttr(data.selftext, fontSize: theme.posts.bodyText.size)
       
-      
+      if fetchAvatar {
+        Task(priority: .background) {
+          await RedditAPI.shared.updatePostsWithAvatar(posts: [self], avatarSize: theme.postLinks.theme.badge.avatar.size)
+        }
+      }
+
       let bodyAttr = NSMutableAttributedString(attributedString: stringToNSAttr(data.selftext, fontSize: theme.posts.bodyText.size))
       let style = NSMutableParagraphStyle()
       style.lineSpacing = theme.posts.linespacing
@@ -66,41 +73,6 @@ extension Post {
       
       let postViewBodyHeight = bodyAttr.boundingRect(with: CGSize(width: postViewBodyMaxWidth, height: .infinity), options: [.usesLineFragmentOrigin], context: nil).height
       self.winstonData?.postViewBodySize = .init(width: postViewBodyMaxWidth, height: postViewBodyHeight)
-      //      self.winstonData?.postViewBodySize =
-      //      switch extractedMedia {
-      //      case .image(let url):
-      //
-      //        let processors: [ImageProcessing] = contentWidth == 0 ? [] : [.resize(width: compact ? scaledCompactModeThumbSize() : contentWidth)]
-      //        var userInfo: [ImageRequest.UserInfoKey : Any] = [:]
-      //        if compact {
-      //          userInfo[.thumbnailKey] = ImageRequest.ThumbnailOptions(size: .init(width: scaledCompactModeThumbSize(), height: scaledCompactModeThumbSize()), unit: .points, contentMode: .aspectFill)
-      //        }
-      //        self.winstonData?.media = .imgs([ImageRequest(url: url.url, processors: processors, userInfo: userInfo)])
-      //      case .gallery(let imgs):
-      //        var userInfo: [ImageRequest.UserInfoKey : Any] = [:]
-      //        if compact {
-      //          userInfo[.thumbnailKey] = ImageRequest.ThumbnailOptions(size: .init(width: scaledCompactModeThumbSize(), height: scaledCompactModeThumbSize()), unit: .points, contentMode: .aspectFill)
-      //        }
-      //        let halfWidthProcessor: [ImageProcessing] = contentWidth == 0 ? [] : [.resize(width: compact ? scaledCompactModeThumbSize() : ((contentWidth - 8) / 2))]
-      //        let fullWidthProcessor: [ImageProcessing] = contentWidth == 0 ? [] : [.resize(width: compact ? scaledCompactModeThumbSize() : contentWidth)]
-      //        var requests: [ImageRequest] = []
-      //        if imgs.count > 0 {
-      //          requests.append(ImageRequest(url: imgs[0].url, processors: halfWidthProcessor, userInfo: userInfo))
-      //          requests.append(ImageRequest(url: imgs[1].url, processors: halfWidthProcessor, userInfo: userInfo))
-      //          if imgs.count >= 3 { requests.append(ImageRequest(url: imgs[2].url, processors: imgs.count > 3 ? halfWidthProcessor : fullWidthProcessor, userInfo: userInfo)) }
-      //          requests += imgs.dropFirst(3).map { ImageRequest(url: $0.url, priority: .low) }
-      //        }
-      //        self.winstonData?.media = .imgs(requests)
-      //      case .link(let url):
-      ////        self.winstonData?.linkMedia =
-      //        self.winstonData?.media = .link(PreviewModel(url))
-      //      case .video(let mediaExtracted):
-      //        self.winstonData?.media = .video(SharedVideo(url: mediaExtracted.url, size: mediaExtracted.size))
-      //      default:
-      //        break
-      //      }
-      
-      
     }
   }
   
@@ -119,7 +91,7 @@ extension Post {
             19: .low
           ]
           let priority = i > 19 ? .veryLow : priorityIMap[priorityIMap.keys.first { $0 > i } ?? 19]!
-          let newPost = Post.init(data: data, api: api, fetchSub: fetchSubs, contentWidth: contentWidth, imgPriority: i > 7 ? .veryLow : priority)
+          let newPost = Post.init(data: data, api: api, fetchSub: fetchSubs, contentWidth: contentWidth, imgPriority: i > 7 ? .veryLow : priority, fetchAvatar: false)
           newPost.data?.winstonSeen = isSeen
           
           if (isSeen) {
@@ -493,10 +465,12 @@ class PostWinstonData: Hashable, ObservableObject {
   
   var permaURL: URL? = nil
   @Published var extractedMedia: MediaExtractedType? = nil
+  @Published var extractedMediaForcedNormal: MediaExtractedType? = nil
   var subreddit: Subreddit?
   @Published var mediaImageRequest: [ImageRequest] = []
   @Published var avatarImageRequest: ImageRequest? = nil
   @Published var postDimensions: PostDimensions = .zero
+  @Published var postDimensionsForcedNormal: PostDimensions = .zero
   @Published var postViewBodySize: CGSize = .zero
   @Published var titleAttr: NSAttributedString?
   @Published var linkMedia: PreviewModel?

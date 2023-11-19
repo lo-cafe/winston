@@ -202,7 +202,7 @@ struct SubredditPosts: View, Equatable {
     }
     .onChange(of: cs) { _ in
       Task(priority: .background) {
-        posts.data.forEach { $0.setupWinstonData(data: $0.data, winstonData: $0.winstonData, theme: selectedTheme) }
+        posts.data.forEach { $0.setupWinstonData(data: $0.data, winstonData: $0.winstonData, theme: selectedTheme, fetchAvatar: false) }
       }
     }
     .onChange(of: searchText) { val in

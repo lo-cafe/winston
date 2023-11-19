@@ -160,7 +160,7 @@ struct PostView: View, Equatable {
       }
       .onChange(of: cs) { _ in
         Task(priority: .background) {
-          post.setupWinstonData(data: post.data, winstonData: post.winstonData, theme: selectedTheme)
+          post.setupWinstonData(data: post.data, winstonData: post.winstonData, theme: selectedTheme, fetchAvatar: false)
         }
       }
       .onAppear {

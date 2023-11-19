@@ -22,7 +22,7 @@ struct Tag: View {
     HStack(spacing: 4) {
       if let subredditIconKit = subredditIconKit { SubredditIcon(subredditIconKit: subredditIconKit, size: 16) }
       Text(text)
-        .padding(.vertical, 2)
+        .padding(.vertical, 1)
     }
     .fontSize(fontSize ?? 13, .semibold)
     .padding(.leading, subredditIconKit == nil ? 9 : 0)

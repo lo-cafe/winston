@@ -90,14 +90,20 @@ extension RedditAPI {
     if let avatarsDict =  await updateAvatarURL(names: namesArr, avatarSize: avatarSize) {
       posts.forEach { post in
         if let author = post.data?.author_fullname {
-          post.winstonData?.avatarImageRequest = avatarsDict[author]
+          DispatchQueue.main.async { [avatarsDict] in
+            post.winstonData?.avatarImageRequest = avatarsDict[author]
+          }
         }
       }
     }
   }
   
   func updateAvatarURL(names: [String], avatarSize: Double) async -> [String:ImageRequest]? {
-    if let data = await self.fetchUsers(names) {
+    let nonWinstonAppNames = names.filter { $0 != SAMPLE_USER_AVATAR }
+    var returnDict: [String:ImageRequest] = [:]
+    returnDict[SAMPLE_USER_AVATAR] = ImageRequest(stringLiteral: "https://winston.cafe/icons/iconExplode.png")
+
+    if !nonWinstonAppNames.isEmpty, let data = await self.fetchUsers(nonWinstonAppNames) {
       //      let avatarSize = Defaults[]
       var reqs: [ImageRequest] = []
       let newDict = data.compactMapValues { val in
@@ -112,9 +118,9 @@ extension RedditAPI {
         return nil
       }
       Post.prefetcher.startPrefetching(with: reqs)
-      return newDict
+      return newDict.merging(returnDict) { x, _ in x }
     }
-    return nil
+    return returnDict
   }
   
   func addImgReqToAvatarCache(_ author: String, _ url: String, avatarSize: Double) {
