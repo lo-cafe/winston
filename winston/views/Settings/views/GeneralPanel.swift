@@ -34,9 +34,9 @@ struct GeneralPanel: View {
         } label: {
           Label("Export Settings", systemImage: "arrowshape.turn.up.left")
         }
-//        .fileMover(isPresented: $isMoving, file: URL(string: settingsFileURL), onCompletion: { completion in
-////          print(completion)
-//        })
+        .fileMover(isPresented: $isMoving, file: URL(string: settingsFileURL), onCompletion: { completion in
+//          print(completion)
+        })
         Button{
           doImport.toggle()
         } label: {
