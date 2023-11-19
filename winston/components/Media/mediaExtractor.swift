@@ -49,17 +49,30 @@ struct EntityExtracted<T: GenericRedditEntityDataType, B: Hashable>: Equatable {
   let entity: GenericRedditEntity<T, B>
 }
 
+struct StreamableExtracted: Equatable {
+  static func == (lhs: StreamableExtracted, rhs: StreamableExtracted) -> Bool {
+    lhs.shortCode == rhs.shortCode
+  }
+  
+  let shortCode: String
+  init(url: String) {
+    self.shortCode = String(url[url.index(url.lastIndex(of: "/") ?? url.startIndex, offsetBy: 1)...])
+  }
+}
+
 enum MediaExtractedType: Equatable {
   case link(PreviewModel)
   case video(SharedVideo)
   case imgs([ImgExtracted])
   case yt(YTMediaExtracted)
+  case streamable(StreamableExtracted)
   case repost(Post)
   case post(EntityExtracted<PostData, PostWinstonData>?)
   case comment(EntityExtracted<CommentData, CommentWinstonData>?)
   case subreddit(EntityExtracted<SubredditData, AnyHashable>?)
   case user(EntityExtracted<UserData, AnyHashable>?)
 }
+
 
 // ORDER MATTERS!
 func mediaExtractor(compact: Bool, contentWidth: Double = UIScreen.screenWidth, _ data: PostData, theme: WinstonTheme? = nil) -> MediaExtractedType? {
@@ -135,24 +148,9 @@ func mediaExtractor(compact: Bool, contentWidth: Double = UIScreen.screenWidth, 
     return .video(SharedVideo(url: url, size: CGSize(width: 0, height: 0)))
   }
   
-  // MANDRAKE
-//  if data.url.contains("streamable") {
-//    let url = data.url;
-//    let shortCode = url[url.index(url.lastIndex(of: "/") ?? url.startIndex, offsetBy: 1)...]
-//
-//    let response = await AF.request(
-//      "https://api.streamable.com/videos/\(shortCode)"
-//    ).serializingDecodable(StreamableAPIResponse.self).response
-//    
-//    switch response.result {
-//    case .success(let data):
-//      if let mp4 = data.files?.mp4Mobile ?? data.files?.mp4 {
-//        return .video(MediaExtracted(url: URL(string: mp4.url)!, size: CGSize(width: mp4.width, height: mp4.height)))
-//      }
-//    case .failure:
-//      return nil
-//    }
-//  }
+  if data.url.contains("streamable") {
+    return .streamable(StreamableExtracted(url: data.url))
+  }
   
   let actualURL = data.url.hasPrefix("/r/") || data.url.hasPrefix("/u/") ? "https://reddit.com\(data.url)" : data.url
   guard let urlComponents = URLComponents(string: actualURL) else {
