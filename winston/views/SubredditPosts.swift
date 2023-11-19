@@ -148,6 +148,9 @@ struct SubredditPosts: View, Equatable {
                 }
               }
           }
+          .themedListBG(selectedTheme.lists.bg)
+          .scrollContentBackground(.hidden)
+          .listStyle(.plain)
         }
       }
     }
