@@ -12,6 +12,7 @@ import UniformTypeIdentifiers
 
 struct GeneralPanel: View {
   @Default(.likedButNotSubbed) var likedButNotSubbed
+  @Default(.syncKeyChainAndSettings) var syncKeyChainAndSettings
   @State private var totalCacheSize: String = ""
   @Environment(\.useTheme) private var theme
   @State var isMoving: Bool = false
@@ -19,6 +20,9 @@ struct GeneralPanel: View {
   @State var doImport: Bool = false
   var body: some View {
     List{
+      Section("General"){
+        Toggle("Sync API Key", isOn: $syncKeyChainAndSettings)
+      }
       Section("Backup"){
         Button{
           let date = Date()

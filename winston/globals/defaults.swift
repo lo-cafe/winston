@@ -141,7 +141,7 @@ extension Defaults.Keys {
   static let postSorts = Key<Dictionary<String, CommentSortOption>>("postSorts", default: [String: CommentSortOption]())
   static let doLiveText = Key<Bool>("doLiveText", default: true)
   
-
+  static let syncKeyChainAndSettings = Key<Bool>("syncKeyChainAndSettings", default: true)
 }
 
 extension UIScreen {
