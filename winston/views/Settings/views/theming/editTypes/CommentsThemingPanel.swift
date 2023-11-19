@@ -53,17 +53,25 @@ struct CommentsGeneralSettings: View {
           .resetter($theme.comments.theme.indentCurve, defaultTheme.comments.theme.indentCurve)
         
         //        SchemesColorPicker(theme: $theme.comments.theme.indentColor, defaultVal: defaultTheme.comments.theme.indentColor)
-        Picker("Comments Theme", selection: Binding(get: {
-          customIndentationThemes
-        }, set: { val, _ in
-          theme.comments.theme.indentColor = val
-          print(val)
-        })){
-          ForEach(Array(customIndentationThemes.keys).sorted(by: >), id: \.self) { key in
-            PaletteDisplayItem(palette: customIndentationThemes[key]!, name: key)
+          
+          Picker("Comments Theme", selection: Binding(get: {
+              return customIndentationThemes.index(forKey: theme.comments.theme.indentColor.first?.key ?? "")!
+          }, set: { selectedPaletteKey in
+              theme.comments.theme.indentColor = [customIndentationThemes[selectedPaletteKey].key: customIndentationThemes[selectedPaletteKey].value]
+          })) {
+              ForEach(Array($customIndentationThemes.wrappedValue.keys).sorted(by: >), id: \.self) { key in
+                  PaletteDisplayItem(palette: $customIndentationThemes.wrappedValue[key] ?? [], name: key).tag(key)
+              }
+              
           }
-        }
-        .pickerStyle(.inline)
+          .pickerStyle(.inline)
+          
+
+//                    ForEach(Array(customIndentationThemes.wrappedValue.keys).sorted(by: >), id: \.self) { key in
+//                        PaletteDisplayItem(palette: customIndentationThemes.wrappedValue[key] ?? [], name: key).tag(key)
+//                    }
+
+
         Button{
           showingPaletteCreator.toggle()
         } label: {

@@ -37,7 +37,7 @@ struct Arrows: View {
   @Environment(\.colorScheme) private var cs
   var body: some View {
     let curve = selectedTheme.comments.theme.indentCurve
-    let color: Color = ArrowColorPalette.monochrome.rawVal.first!
+    let color: Color = Color("divider")
     let avatarSize = selectedTheme.comments.theme.badge.avatar.size
       Group {
         switch kind {

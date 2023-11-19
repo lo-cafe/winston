@@ -15,7 +15,7 @@ struct PaletteCreator: View {
     NavigationView {
       List {
         Section("My Palettes") {
-          ForEach(Array(customIndentationThemes.keys), id: \.self) { key in
+            ForEach(Array(customIndentationThemes.keys).sorted(), id: \.self) { key in
             HStack {
               PaletteDisplayItem(palette: customIndentationThemes[key]!, name: key)
               Spacer()
