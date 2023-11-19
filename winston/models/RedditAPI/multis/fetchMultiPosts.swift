@@ -28,7 +28,6 @@ extension RedditAPI {
       case .success(let data):
         return (data.data?.children, data.data?.after)
       case .failure(let error):
-        Oops.shared.sendError(error)
         print(error)
         return nil
       }

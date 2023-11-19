@@ -27,17 +27,19 @@ struct PostInBox: Codable, Identifiable, Hashable, Defaults.Serializable {
 }
 
 let DEFAULT_POST_SWIPE_ACTIONS = SwipeActionsSet(
-    leftFirst: AnySwipeAction(UpvotePostAction()),
-    leftSecond: AnySwipeAction(SavePostAction()),
-    rightFirst: AnySwipeAction(DownvotePostAction()),
-    rightSecond: AnySwipeAction(SeenPostAction())
+  id: "post-swipe-actions",
+  leftFirst: AnySwipeAction(UpvotePostAction()),
+  leftSecond: AnySwipeAction(SavePostAction()),
+  rightFirst: AnySwipeAction(DownvotePostAction()),
+  rightSecond: AnySwipeAction(SeenPostAction())
 )
 
 let DEFAULT_COMMENT_SWIPE_ACTIONS = SwipeActionsSet(
-    leftFirst: AnySwipeAction(UpvoteCommentAction()),
-    leftSecond: AnySwipeAction(SaveCommentAction()),
-    rightFirst: AnySwipeAction(DownvoteCommentAction()),
-    rightSecond: AnySwipeAction(ReplyCommentAction())
+  id: "comment-swipe-actions",
+  leftFirst: AnySwipeAction(UpvoteCommentAction()),
+  leftSecond: AnySwipeAction(SaveCommentAction()),
+  rightFirst: AnySwipeAction(DownvoteCommentAction()),
+  rightSecond: AnySwipeAction(ReplyCommentAction())
 )
 
 extension Defaults.Keys {

@@ -27,6 +27,12 @@ struct PostPageTheming: View {
       
       LabeledSlider(label: "Vertical padding", value: $theme.padding.vertical, range: 0...64)
         .resetter($theme.padding.vertical, defaultTheme.posts.padding.vertical)
+      
+      Divider()
+      
+      Toggle("Inline upvote toolbar", isOn: $theme.inlineFloatingPill)
+        .padding(.horizontal, 16)
+        .resetter($theme.inlineFloatingPill, defaultTheme.posts.inlineFloatingPill)
     }
   }
 }

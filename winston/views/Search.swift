@@ -6,6 +6,8 @@
 //
 
 import SwiftUI
+import NukeUI
+import Defaults
 
 enum SearchType: String {
   case subreddit = "Subreddit"
@@ -60,6 +62,31 @@ struct Search: View {
   
   @Environment(\.useTheme) private var theme
   
+  @Default(.blurPostLinkNSFW) private var blurPostLinkNSFW
+  @Default(.postSwipeActions) private var postSwipeActions
+  @Default(.compactMode) private var compactMode
+  @Default(.showVotes) private var showVotes
+  @Default(.showSelfText) private var showSelfText
+  @Default(.thumbnailPositionRight) private var thumbnailPositionRight
+  @Default(.voteButtonPositionRight) private var voteButtonPositionRight
+  @Default(.readPostOnScroll) private var readPostOnScroll
+  @Default(.hideReadPosts) private var hideReadPosts
+  @Default(.showUpvoteRatio) private var showUpvoteRatio
+  @Default(.showSubsAtTop) private var showSubsAtTop
+  @Default(.showTitleAtTop) private var showTitleAtTop
+  @Default(.showSelfPostThumbnails) private var showSelfPostThumbnails
+  
+  @ObservedObject var avatarCache = Caches.avatars
+  @Environment(\.colorScheme) private var cs
+  @Environment(\.contentWidth) private var contentWidth
+  
+  func getRepostAvatarRequest(_ post: Post?) -> ImageRequest? {
+    if let post = post, case .repost(let repost) = post.winstonData?.extractedMedia, let repostAuthorFullname = repost.data?.author_fullname {
+      return avatarCache.cache[repostAuthorFullname]?.data
+    }
+    return nil
+  }
+  
   func fetch() {
     if searchQuery.text == "" { return }
     withAnimation {
@@ -112,7 +139,7 @@ struct Search: View {
   
   var body: some View {
     NavigationStack(path: $router.path) {
-      DefaultDestinationInjector(routerProxy: RouterProxy(router)) {
+      DefaultDestinationInjector(routerProxy: RouterProxy(router)) { routerProxy in
         List {
           Group {
             Section {
@@ -169,10 +196,41 @@ struct Search: View {
               case .post:
                 if let dummyAllSub = dummyAllSub {
                   ForEach(resultPosts.data) { post in
-                    PostLink(post: post, sub: dummyAllSub)
-                    //                      .equatable()
+                    if let postData = post.data, let winstonData = post.winstonData {
+//                      SwipeRevolution(size: winstonData.postDimensions.size, actionsSet: postSwipeActions, entity: post) { controller in
+                        PostLink(
+                          id: post.id,
+                          controller: nil,
+                          //                controller: nil,
+                          avatarRequest: avatarCache.cache[postData.author_fullname ?? ""]?.data,
+                          repostAvatarRequest: getRepostAvatarRequest(post),
+                          theme: theme.postLinks,
+                          showSub: true,
+                          routerProxy: routerProxy,
+                          contentWidth: contentWidth,
+                          blurPostLinkNSFW: blurPostLinkNSFW,
+                          postSwipeActions: postSwipeActions,
+                          showVotes: showVotes,
+                          showSelfText: showSelfText,
+                          readPostOnScroll: readPostOnScroll,
+                          hideReadPosts: hideReadPosts,
+                          showUpvoteRatio: showUpvoteRatio,
+                          showSubsAtTop: showSubsAtTop,
+                          showTitleAtTop: showTitleAtTop,
+                          compact: compactMode,
+                          thumbnailPositionRight: thumbnailPositionRight,
+                          voteButtonPositionRight: voteButtonPositionRight,
+                          showSelfPostThumbnails: showSelfPostThumbnails,
+                          cs: cs
+                        )
+                        .swipyRev(size: winstonData.postDimensions.size, actionsSet: postSwipeActions, entity: post)
+//                      }
                       .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
                       .animation(.default, value: resultPosts.data)
+                      .environmentObject(post)
+                      .environmentObject(dummyAllSub)
+                      .environmentObject(winstonData)
+                    }
                   }
                 }
               }

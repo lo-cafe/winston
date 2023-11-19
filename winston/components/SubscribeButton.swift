@@ -59,7 +59,7 @@ struct SubscribeButton: View {
         .foregroundColor(subscribed ? .white : isSmall ? .accentColor : .primary)
         .padding(.horizontal, isSmall ? 5 : 16)
         .padding(.vertical, isSmall ? 4 : 12)
-        .background(RR(16, (subscribed ? .green : isSmall ? .thickMaterial : .secondary.opacity(0.2))))
+        .background(RR(16, (subscribed ? .green : isSmall ? .clear : .secondary.opacity(0.2))))
         .overlay(RoundedRectangle(cornerRadius: 16, style: .continuous).stroke(isSmall ? Color.accentColor.opacity(subscribed ? 0 : 1) : .secondary.opacity(subscribed ? 0 : 0.2), lineWidth: 1))
         .brightness(pressing ? -0.1 : 0)
         .contentShape(Rectangle())

@@ -14,7 +14,7 @@ struct BadgeSettings: View {
       Group {
         
         FakeSection("General") {
-          LabeledSlider(label: "Distance", value: $theme.spacing, range: 0...40)
+          LabeledSlider(label: "Avatar Distance", value: $theme.spacing, range: 0...40)
             .resetter($theme.spacing, defaultVal.spacing)
         }
         

@@ -60,12 +60,6 @@ struct Settings: View {
               }
               .disabled(getCurrentChangelog().isEmpty)
               
-              WListButton {
-                sendCustomEmail()
-              } label: {
-                Label("Report a bug", systemImage: "ladybug.fill")
-              }
-              
               WSListButton("Donate monthly", icon: "heart.fill") {
                 openURL(URL(string: "https://patreon.com/user?u=93745105")!)
               }

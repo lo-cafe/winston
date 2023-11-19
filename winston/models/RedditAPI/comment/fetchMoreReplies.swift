@@ -25,7 +25,6 @@ extension RedditAPI {
       case .success(let data):
         return data.json.data?.things
       case .failure(let err):
-        Oops.shared.sendError(err)
         print(err)
 //        var errorString: String?
 //        if let data = response.data {

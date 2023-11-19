@@ -12,24 +12,6 @@ import SwiftUI
 import Defaults
 import Combine
 
-//class AvatarCache: ObservableObject {
-//  static var shared = AvatarCache()
-//  @Published var data: [String:String] = [:]
-//}
-
-class AvatarCache: ObservableObject {
-  
-  static let shared = AvatarCache()
-  private init() {}
-    
-  var data: [String:URL] = ["t2_winston_sample":URL(string: "https://winston.cafe/square-icon.jpg")!]
-
-  func merge(_ dict: [String:URL]) {
-    data.merge(dict) { (_, new) in new }
-  }
-}
-
-
 class RedditAPI: ObservableObject {
   static let shared = RedditAPI()
   static let winstonAPIBase = "https://winston.lo.cafe/api"

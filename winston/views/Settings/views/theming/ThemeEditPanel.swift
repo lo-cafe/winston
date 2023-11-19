@@ -31,7 +31,9 @@ class ThemeEditedInstance: ObservableObject {
         guard let self = self else {
           return
         }
-        Defaults[.themesPresets][index] = updatedTheme
+        var themesArr = Defaults[.themesPresets]
+        themesArr[index] = updatedTheme
+        Defaults[.themesPresets] = themesArr
       }
   }
 }
@@ -130,7 +132,7 @@ struct ThemeEditPanel: View {
         case .general:
           GeneralThemingPanel(theme: $themeEditedInstance.winstonTheme)
         case .postLinks:
-          PostLinkThemingPanel(theme: $themeEditedInstance.winstonTheme)
+          PostLinkThemingPanel(theme: $themeEditedInstance.winstonTheme, previewPostSample: Post(data: postSampleData, api: RedditAPI.shared, theme: themeEditedInstance.winstonTheme))
         case .posts:
           PostThemingPanel(theme: $themeEditedInstance.winstonTheme)
         case .feed:
