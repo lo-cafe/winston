@@ -40,6 +40,10 @@ struct MixedMediaFeedLinksView: View {
   @Environment(\.colorScheme) private var cs
 
   var body: some View {
+    let isThereDivider = selectedTheme.postLinks.divider.style != .no
+    let paddingH = selectedTheme.postLinks.theme.outerHPadding
+    let paddingV = selectedTheme.postLinks.spacing / (isThereDivider ? 4 : 2)
+    
     ForEach(Array(mixedMediaLinks.enumerated()), id: \.self.element.hashValue) { i, item in
       VStack(spacing: 0) {
         switch item {
@@ -73,6 +77,7 @@ struct MixedMediaFeedLinksView: View {
             .environmentObject(post)
             .environmentObject(Subreddit(id: postData.subreddit, api: user.redditAPI))
             .environmentObject(winstonData)
+            .listRowInsets(EdgeInsets(top: paddingV, leading: paddingH, bottom: paddingV, trailing: paddingH))
           }
         case .second(let comment):
           VStack {
@@ -94,6 +99,13 @@ struct MixedMediaFeedLinksView: View {
           loadNextData = true
         }
       }
+      
+      if selectedTheme.postLinks.divider.style != .no && i != (mixedMediaLinks.count - 1) {
+        NiceDivider(divider: selectedTheme.postLinks.divider)
+          .id("mixed-media-\(i)-divider")
+          .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
+      }
     }
+    .environment(\.defaultMinListRowHeight, 1)
   }
 }
