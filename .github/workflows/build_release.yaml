@@ -4,7 +4,7 @@ on:
   pull_request:
     branches:
       - alpha #change to production after testing
-    #ypes: [closed] ##TODO: Remove after testing
+    #types: [closed] ##TODO: Remove after testing
 
 jobs:
   build_and_release:
@@ -22,33 +22,26 @@ jobs:
       id: extract_version_build_number
       run: |
         version=$(grep -m 1 -o 'MARKETING_VERSION\s*=\s*[^;]*' winston.xcodeproj/project.pbxproj | sed 's/MARKETING_VERSION = //')
-        build_number=$(grep -m 1 -o 'CURRENT_PROJECT_VERSION\s*=\s*[^;]*' winston.xcodeproj/project.pbxproj | sed 's/CURRENT_PROJECT_VERSION = //')
+        build_number=$(/usr/libexec/PlistBuddy -c "Print CFBundleShortVersionString" winston/Info.plist)
         
         if [ -z "$version" ]; then
-            echo "Version not set"
-            version=""
+          echo "Version not set"
+          version=""
         fi
         if [ -z "$build_number" ]; then
-            build_number="-$build_number"
+          echo "Build Number not set"
+          build_number=""
         fi
 
-        if [ -z "$build_number" ]; then
-            echo "Build Number not set"
-            build_number=""
-        fi
-        if [ -z "$build_number" ]; then
-            build_number="-$buid_number"
-        fi
-        #TODO: Does this work?
-        echo "::set-output name=version::$version"
-        echo "::set-output name=build_number::$build_number"
+        echo "{version}={$version}" >> $GITHUB_OUTPUT
+        echo "{build_number}={$build_number}" >> $GITHUB_OUTPUT
 
     - name: Read release body from whattotest file
       id: read_file
       # For some reason this works only with the deprecated output syntax
       run: |
         release_body=$(cat TestFlight/WhatToTest.en-US.txt)
-        echo "::set-output name=release_body::$release_body"
+        echo "{release_body}={$release_body}" >> $GITHUB_OUTPUT
 
     - name: Build and Archive App
       uses: yukiarrr/ios-build-action@v1.11.0
