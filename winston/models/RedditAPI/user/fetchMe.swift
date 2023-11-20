@@ -21,17 +21,20 @@ extension RedditAPI {
           headers: headers
         )
           .serializingDecodable(UserData.self).response
-        switch response.result {
-        case .success(let data):
-          await MainActor.run {
+        
+        await MainActor.run {
+          switch response.result {
+          case .success(let data):
             RedditAPI.shared.me = User(data: data, api: self)
+          case .failure(let error):
+            print(error)
+            RedditAPI.shared.me = nil
           }
-        case .failure(let error):
-          print(error)
-          RedditAPI.shared.me = nil
         }
       } else {
-        RedditAPI.shared.me = nil
+        await MainActor.run {
+          RedditAPI.shared.me = nil
+        }
       }
     }
   }
