@@ -113,9 +113,9 @@ struct PreviewLinkContentRaw: View, Equatable {
     .highPriorityGesture(TapGesture().onEnded {
       if let newURL = URL(string: url.absoluteString.replacingOccurrences(of: "https://reddit.com/", with: "winstonapp://")) {
         if openLinksInSafari {
-          openURL(newURL)
+          openURL(url)
         } else {
-          openInBuiltInBrowser(newURL)
+          openURL(newURL)
         }
       }
     })
