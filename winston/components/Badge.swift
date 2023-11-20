@@ -130,6 +130,20 @@ struct BadgeView: View, Equatable {
                             HStack{
                                 Text(author).font(.system(size: theme.authorText.size, weight: theme.authorText.weight.t)).foregroundColor(author == "[deleted]" ? .red : usernameColor ?? theme.authorText.color.cs(cs).color()).lineLimit(1)
                                     .onTapGesture(perform: openUser)
+                              
+                                if unseen {
+                                    PostLinkGlowDot(unseenType: .dot(commentTheme?.unseenDot ?? ColorSchemes<ThemeColor>(light: .init(hex: "FF0000"), dark: .init(hex: "FF0000"))), seen: false, cs: cs, badge: true).equatable()
+                                }
+                                
+                                if openSub == nil {
+                                    if let flairs = flairWithoutEmojis(str: userFlair) {
+                                        // TODO Load flair emojis via GET /api/v1/{subreddit}/emojis/{emoji_name}
+                                        ForEach(flairs, id: \.self) {
+                                            UserFlair(flair: $0, flairText: theme.flairText, flairBackground: theme.flairBackground, cs: cs).equatable()
+                                        }
+                                    }
+                                }
+                              
                                 Spacer()
                             }
                             
@@ -170,19 +184,6 @@ struct BadgeView: View, Equatable {
                             .font(.system(size: theme.statsText.size, weight: theme.statsText.weight.t))
                             
                            
-                        }
-                        
-                        if unseen {
-                            PostLinkGlowDot(unseenType: .dot(commentTheme?.unseenDot ?? ColorSchemes<ThemeColor>(light: .init(hex: "FF0000"), dark: .init(hex: "FF0000"))), seen: false, cs: cs, badge: true).equatable()
-                        }
-                        
-                        if openSub == nil {
-                            if let flairs = flairWithoutEmojis(str: userFlair) {
-                                // TODO Load flair emojis via GET /api/v1/{subreddit}/emojis/{emoji_name}
-                                ForEach(flairs, id: \.self) {
-                                    UserFlair(flair: $0, flairText: theme.flairText, flairBackground: theme.flairBackground, cs: cs).equatable()
-                                }
-                            }
                         }
                     }
                 }
