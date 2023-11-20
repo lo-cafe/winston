@@ -111,8 +111,8 @@ struct BadgeView: View, Equatable {
               .onTapGesture(perform: openUser)
             
             if let openSub = openSub, let subName = subName {
-              Image(systemName: "arrow.right")
-                .fontSize(theme.authorText.size * 0.9)
+              Text("·")
+                .fontSize(theme.authorText.size * 1.5)
                 .foregroundColor(.secondary)
               Text(subName)
                 .fontSize(theme.authorText.size, .semibold).lineLimit(1)
