@@ -157,7 +157,7 @@ struct PostLinkNormal: View, Equatable, Identifiable {
         
         HStack {
           
-          BadgeView(avatarRequest: winstonData.avatarImageRequest, showAuthorOnPostLinks: showAuthorOnPostLinks, saved: data.badgeKit.saved, usernameColor: nil, author: data.badgeKit.author, fullname: data.badgeKit.authorFullname, userFlair: data.badgeKit.userFlair, created: data.badgeKit.created, avatarURL: nil, theme: theme.theme.badge, commentsCount: formatBigNumber(data.num_comments), seenCommentsCount: post.data?.winstonSeenCommentCount, numComments: data.num_comments, votesCount: showVotes ? nil : formatBigNumber(data.ups), routerProxy: routerProxy, cs: cs, openSub: showSub ? openSub : nil, subName: data.subreddit)
+          BadgeView(avatarRequest: winstonData.avatarImageRequest, showAuthorOnPostLinks: showAuthorOnPostLinks, showSubOnTop: showSubsAtTop, saved: data.badgeKit.saved, usernameColor: nil, author: data.badgeKit.author, fullname: data.badgeKit.authorFullname, userFlair: data.badgeKit.userFlair, created: data.badgeKit.created, avatarURL: nil, theme: theme.theme.badge, commentsCount: formatBigNumber(data.num_comments), seenCommentsCount: post.data?.winstonSeenCommentCount, numComments: data.num_comments, votesCount: showVotes ? nil : formatBigNumber(data.ups), routerProxy: routerProxy, cs: cs, openSub: showSub ? openSub : nil, subName: data.subreddit)
           
           Spacer()
           

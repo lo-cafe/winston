@@ -139,12 +139,6 @@ struct PostLinkCompact: View, Equatable, Identifiable {
             }
             
             BadgeView(avatarRequest: winstonData.avatarImageRequest, showAuthorOnPostLinks: showAuthorOnPostLinks, saved: data.badgeKit.saved, usernameColor: nil, author: data.badgeKit.author, fullname: data.badgeKit.authorFullname, userFlair: data.badgeKit.userFlair, created: data.badgeKit.created, avatarURL: nil, theme: theme.theme.badge, commentsCount: formatBigNumber(data.badgeKit.numComments), seenCommentsCount: post.data?.winstonSeenCommentCount, numComments: data.num_comments, votesCount: formatBigNumber(data.badgeKit.ups), routerProxy: routerProxy, cs: cs, openSub: openSubreddit, subName: data.subreddit)
-            
-//            if showSub && theme.theme.badge.avatar.visible {
-//              let subName = data.subreddit
-//              Tag(subredditIconKit: nil, text: "r/\(subName)", color: .blue)
-//                .highPriorityGesture(TapGesture().onEnded(openSubreddit))
-//            }
                       
           }
           .frame(maxWidth: .infinity, alignment: .topLeading)

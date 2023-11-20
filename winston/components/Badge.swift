@@ -39,6 +39,7 @@ struct BadgeView: View, Equatable {
   
   var avatarRequest: ImageRequest?
   var showAuthorOnPostLinks = true
+  var showSubOnTop = false
   var saved = false
   var unseen = false
   var usernameColor: Color?
@@ -85,7 +86,6 @@ struct BadgeView: View, Equatable {
     let showAvatar = theme.avatar.visible
     let defaultIconColor = theme.statsText.color.cs(cs).color()
     HStack(spacing: theme.spacing) {
-      
       if saved && !showAvatar {
         Image(systemName: "bookmark.fill")
           .fontSize(16)
@@ -96,44 +96,43 @@ struct BadgeView: View, Equatable {
       
       VStack(alignment: .leading, spacing: BadgeView.authorStatsSpacing) {
         HStack(alignment: .center, spacing: 4) {
-          
-          if showAvatar {
+          if showAvatar && showAuthorOnPostLinks {
             AvatarRaw(saved: saved, avatarImgRequest: avatarRequest, userID: author, fullname: fullname, theme: theme.avatar)
               .equatable()
               .highPriorityGesture(TapGesture().onEnded(openUser))
           }
           
           VStack(alignment: .leading) {
-            
-            
-//            HStack {
+            HStack {
+              if let openSub = openSub, let subName = subName, !showSubOnTop {
+                Tag(subredditIconKit: nil, text: "r/\(subName)", color: .blue, fontSize: theme.statsText.size)
+                  .highPriorityGesture(TapGesture().onEnded(openSub))
+                  .lineLimit(1)
+              }
               
-                HStack {
-                  if let openSub = openSub, let subName = subName {
-                    Tag(subredditIconKit: nil, text: "r/\(subName)", color: .blue, fontSize: theme.statsText.size)
-                      .highPriorityGesture(TapGesture().onEnded(openSub))
-                      .lineLimit(1)
-                  }
-                  
-                  if showAuthorOnPostLinks {
-                    Text(author)
-                      .font(.system(size: theme.authorText.size, weight: theme.authorText.weight.t))
-                      .foregroundColor(author == "[deleted]" ? .red : usernameColor ?? theme.authorText.color.cs(cs).color())
-                      .lineLimit(1)
-                      .onTapGesture(perform: openUser)
-                  }
-                  
-                  Spacer()
+              if showAuthorOnPostLinks {
+                Text(author)
+                  .font(.system(size: theme.authorText.size, weight: theme.authorText.weight.t))
+                  .foregroundColor(author == "[deleted]" ? .red : usernameColor ?? theme.authorText.color.cs(cs).color())
+                  .lineLimit(1)
+                  .onTapGesture(perform: openUser)
+                
+                if unseen {
+                  PostLinkGlowDot(unseenType: .dot(commentTheme?.unseenDot ?? ColorSchemes<ThemeColor>(light: .init(hex: "FF0000"), dark: .init(hex: "FF0000"))), seen: false, cs: cs, badge: true).equatable()
                 }
-//              }
-//            }
+                
+                if openSub == nil {
+                  if let flairs = flairWithoutEmojis(str: userFlair) {
+                    ForEach(flairs, id: \.self) {
+                      UserFlair(flair: $0, flairText: theme.flairText, flairBackground: theme.flairBackground, cs: cs).equatable()
+                    }
+                  }
+                }
+              }
+              Spacer()
+            }
             
             HStack(spacing:theme.statsText.size * 0.416666667){
-//              if let openSub = openSub, let subName = subName, !showAuthorOnPostLinks {
-//                Tag(subredditIconKit: nil, text: "r/\(subName)", color: .blue, fontSize: theme.statsText.size)
-//                  .highPriorityGesture(TapGesture().onEnded(openSub))
-//              }
-              
               if let commentsCount = commentsCount {
                 HStack(alignment: .center, spacing: 2) {
                   Image(systemName: "message.fill")
@@ -163,18 +162,6 @@ struct BadgeView: View, Equatable {
             }
             .foregroundStyle(defaultIconColor)
             .font(.system(size: theme.statsText.size, weight: theme.statsText.weight.t))
-          }
-          
-          if unseen {
-            PostLinkGlowDot(unseenType: .dot(commentTheme?.unseenDot ?? ColorSchemes<ThemeColor>(light: .init(hex: "FF0000"), dark: .init(hex: "FF0000"))), seen: false, cs: cs, badge: true).equatable()
-          }
-          
-          if openSub == nil {
-            if let flairs = flairWithoutEmojis(str: userFlair) {
-              ForEach(flairs, id: \.self) {
-                UserFlair(flair: $0, flairText: theme.flairText, flairBackground: theme.flairBackground, cs: cs).equatable()
-              }
-            }
           }
         }
       }
