@@ -173,7 +173,7 @@ struct ChangeAuthAPIKey: View {
               SmallStep {
                 VStack (alignment: .leading) {
                   Text("Tap the URL below to copy and paste it in the \"redirect uri\" field:")
-                  CopiableValue(value: "https://app.winston.lo.cafe/auth-success")
+                  CopiableValue(value: "https://winston.cafe/auth-success")
                 }
               }
               .fixedSize(horizontal: false, vertical: true)

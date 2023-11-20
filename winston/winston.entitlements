@@ -4,8 +4,8 @@
 <dict>
 	<key>com.apple.developer.associated-domains</key>
 	<array>
-		<string>applinks:app.winston.lo.cafe</string>
 		<string>applinks:winston.cafe</string>
+		<string>applinks:app.winston.lo.cafe</string>
 	</array>
 </dict>
 </plist>
