@@ -53,11 +53,7 @@ struct PostContent: View, Equatable {
         .foregroundColor(postsTheme.titleText.color.cs(cs).color())
         .fixedSize(horizontal: false, vertical: true)
         .id("post-title")
-        .onAppear {
-          Task {
-            await post.toggleSeen(true)
-          }
-        }
+        .onAppear { Task { await post.toggleSeen(true) } }
         .listRowInsets(EdgeInsets(top: postsTheme.padding.vertical, leading: postsTheme.padding.horizontal, bottom: postsTheme.spacing / 2, trailing: selectedTheme.posts.padding.horizontal))
       
       VStack(spacing: 0) {
