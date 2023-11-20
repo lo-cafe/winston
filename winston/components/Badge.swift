@@ -111,10 +111,12 @@ struct BadgeView: View, Equatable {
               .onTapGesture(perform: openUser)
             
             if let openSub = openSub, let subName = subName {
-              Image(systemName: "arrowshape.right.fill")
+              Image(systemName: "arrow.right")
                 .fontSize(theme.authorText.size * 0.9)
-              Text(subName).foregroundStyle(theme.subColor.cs(cs).color())
+                .foregroundColor(.secondary)
+              Text(subName)
                 .fontSize(theme.authorText.size, .semibold).lineLimit(1)
+                .foregroundStyle(theme.subColor.cs(cs).color())
                 .highPriorityGesture(TapGesture().onEnded(openSub))
             }
             
