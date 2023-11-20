@@ -29,16 +29,16 @@ struct SubredditsStack: View {
             switch firstSelected {
             case .multi(let multi):
               MultiPostsView(multi: multi)
-                .id("\(multi.id)-first-tab")
+                .id("\(multi.id)-multi-first-tab")
             case .sub(let sub):
               SubredditPosts(subreddit: sub)
-                .id("\(sub.id)-first-tab")
+                .id("\(sub.id)-sub-first-tab")
             case .post(let payload):
               PostView(post: payload.post, subreddit: payload.sub)
-                .id("\(payload.post.id)-first-tab")
+                .id("\(payload.post.id)-post-first-tab")
             case .user(let user):
               UserView(user: user)
-                .id("\(user.id)-first-tab")
+                .id("\(user.id)-user-first-tab")
             }
           } else {
             VStack(spacing: 24) {
@@ -73,6 +73,9 @@ struct SubredditsStack: View {
         }
       }
       .environment(\.contentWidth, postContentWidth)
+    }
+    .onChange(of: router.firstSelected) { x in
+      print(x)
     }
     .swipeAnywhere(routerProxy: RouterProxy(router), routerContainer: router.isRootWrapper)
     .environment(\.contentWidth, postContentWidth)

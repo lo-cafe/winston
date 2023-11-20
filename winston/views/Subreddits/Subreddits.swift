@@ -21,7 +21,7 @@ enum FirstSelectable: Equatable, Hashable {
 
 struct Subreddits: View, Equatable {
   static func == (lhs: Subreddits, rhs: Subreddits) -> Bool {
-    return lhs.loaded == rhs.loaded
+    return lhs.loaded == rhs.loaded && lhs.selectedSub == rhs.selectedSub
   }
   @Binding var selectedSub: FirstSelectable?
   var loaded: Bool
