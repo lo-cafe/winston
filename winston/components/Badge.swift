@@ -105,7 +105,7 @@ struct BadgeView: View, Equatable {
           VStack(alignment: .leading) {
             HStack {
               if let openSub = openSub, let subName = subName, !showSubOnTop {
-                Tag(subredditIconKit: nil, text: "r/\(subName)", color: .blue, fontSize: theme.statsText.size)
+                Tag(subredditIconKit: nil, text: "r/\(subName)", color: theme.subColor.cs(cs).color(), fontSize: theme.statsText.size)
                   .highPriorityGesture(TapGesture().onEnded(openSub))
                   .lineLimit(1)
               }
