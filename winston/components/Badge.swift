@@ -95,78 +95,84 @@ struct BadgeView: View, Equatable {
       }
       
       VStack(alignment: .leading, spacing: BadgeView.authorStatsSpacing) {
-        if showAuthorOnPostLinks {
-          HStack(alignment: .center, spacing: 4) {
+        HStack(alignment: .center, spacing: 4) {
+          
+          if showAvatar {
+            AvatarRaw(saved: saved, avatarImgRequest: avatarRequest, userID: author, fullname: fullname, theme: theme.avatar)
+              .equatable()
+              .highPriorityGesture(TapGesture().onEnded(openUser))
+          }
+          
+          VStack(alignment: .leading) {
             
-            if showAvatar {
-              AvatarRaw(saved: saved, avatarImgRequest: avatarRequest, userID: author, fullname: fullname, theme: theme.avatar)
-                .equatable()
-                .highPriorityGesture(TapGesture().onEnded(openUser))
-            }
             
-            VStack{
-              if let openSub = openSub, let subName = subName {
-                HStack{
-                  Text("r/\(subName)")
-                    .fontSize(theme.authorText.size, .semibold).lineLimit(1)
-                    .foregroundStyle(theme.subColor.cs(cs).color())
-                    .highPriorityGesture(TapGesture().onEnded(openSub))
+//            HStack {
+              
+                HStack {
+                  if let openSub = openSub, let subName = subName {
+                    Tag(subredditIconKit: nil, text: "r/\(subName)", color: .blue, fontSize: theme.statsText.size)
+                      .highPriorityGesture(TapGesture().onEnded(openSub))
+                      .lineLimit(1)
+                  }
+                  
+                  if showAuthorOnPostLinks {
+                    Text(author)
+                      .font(.system(size: theme.authorText.size, weight: theme.authorText.weight.t))
+                      .foregroundColor(author == "[deleted]" ? .red : usernameColor ?? theme.authorText.color.cs(cs).color())
+                      .lineLimit(1)
+                      .onTapGesture(perform: openUser)
+                  }
+                  
                   Spacer()
                 }
-              }
+//              }
+//            }
+            
+            HStack(spacing:theme.statsText.size * 0.416666667){
+//              if let openSub = openSub, let subName = subName, !showAuthorOnPostLinks {
+//                Tag(subredditIconKit: nil, text: "r/\(subName)", color: .blue, fontSize: theme.statsText.size)
+//                  .highPriorityGesture(TapGesture().onEnded(openSub))
+//              }
               
-              HStack{
-                Text(author).font(.system(size: theme.authorText.size, weight: theme.authorText.weight.t)).foregroundColor(author == "[deleted]" ? .red : usernameColor ?? theme.authorText.color.cs(cs).color()).lineLimit(1)
-                  .onTapGesture(perform: openUser)
-                Spacer()
-              }
-              
-              HStack(spacing:theme.statsText.size * 0.416666667){
-                if let openSub = openSub, let subName = subName, !showAuthorOnPostLinks {
-                  Tag(subredditIconKit: nil, text: "r/\(subName)", color: .blue, fontSize: theme.statsText.size)
-                    .highPriorityGesture(TapGesture().onEnded(openSub))
-                }
-                
-                if let commentsCount = commentsCount {
-                  HStack(alignment: .center, spacing: 2) {
-                    Image(systemName: "message.fill")
-                    Text(commentsCount)
-                  }
-                }
-                
-                if let seenComments = seenCommentsCount, let total = numComments {
-                  let newComments = total - seenComments
-                  if newComments > 0 {
-                    Text("(\(newComments))").foregroundColor(.accentColor)
-                  }
-                }
-                
-                if let votesCount = votesCount {
-                  HStack(alignment: .center, spacing: 2) {
-                    Image(systemName: "arrow.up")
-                    Text(votesCount)
-                  }
-                }
-                
+              if let commentsCount = commentsCount {
                 HStack(alignment: .center, spacing: 2) {
-                  Image(systemName: "hourglass.bottomhalf.filled")
-                  Text(timeSince(Int(created)))
+                  Image(systemName: "message.fill")
+                  Text(commentsCount)
                 }
-                Spacer()
               }
-              .foregroundStyle(defaultIconColor)
-              .font(.system(size: theme.statsText.size, weight: theme.statsText.weight.t))
-            }
-            
-            if unseen {
-              PostLinkGlowDot(unseenType: .dot(commentTheme?.unseenDot ?? ColorSchemes<ThemeColor>(light: .init(hex: "FF0000"), dark: .init(hex: "FF0000"))), seen: false, cs: cs, badge: true).equatable()
-            }
-            
-            if openSub == nil {
-              if let flairs = flairWithoutEmojis(str: userFlair) {
-                ForEach(flairs, id: \.self) {
-                  UserFlair(flair: $0, flairText: theme.flairText, flairBackground: theme.flairBackground, cs: cs).equatable()
+              
+              if let seenComments = seenCommentsCount, let total = numComments {
+                let newComments = total - seenComments
+                if newComments > 0 {
+                  Text("(\(newComments))").foregroundColor(.accentColor)
                 }
+              }
+              
+              if let votesCount = votesCount {
+                HStack(alignment: .center, spacing: 2) {
+                  Image(systemName: "arrow.up")
+                  Text(votesCount)
+                }
+              }
+              
+              HStack(alignment: .center, spacing: 2) {
+                Image(systemName: "hourglass.bottomhalf.filled")
+                Text(timeSince(Int(created)))
+              }
+              Spacer()
+            }
+            .foregroundStyle(defaultIconColor)
+            .font(.system(size: theme.statsText.size, weight: theme.statsText.weight.t))
+          }
+          
+          if unseen {
+            PostLinkGlowDot(unseenType: .dot(commentTheme?.unseenDot ?? ColorSchemes<ThemeColor>(light: .init(hex: "FF0000"), dark: .init(hex: "FF0000"))), seen: false, cs: cs, badge: true).equatable()
+          }
+          
+          if openSub == nil {
+            if let flairs = flairWithoutEmojis(str: userFlair) {
+              ForEach(flairs, id: \.self) {
+                UserFlair(flair: $0, flairText: theme.flairText, flairBackground: theme.flairBackground, cs: cs).equatable()
               }
             }
           }
