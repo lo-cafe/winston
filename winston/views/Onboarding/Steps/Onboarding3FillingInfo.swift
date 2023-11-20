@@ -23,7 +23,7 @@ struct Onboarding3FillingInfo: View {
           .resizable()
           .scaledToFit()
           .frame(maxWidth: UIScreen.screenWidth * 0.85)
-          .mask(RR(12, .black))
+          .mask(RR(12, Color.black))
         
         Text("Here are the values if you wanna quick copy them:")
           .fixedSize(horizontal: false, vertical: true)
@@ -31,7 +31,7 @@ struct Onboarding3FillingInfo: View {
         
         VStack {
           CopiableValue(value: "https://lo.cafe")
-          CopiableValue(value: "https://app.winston.lo.cafe/auth-success")
+          CopiableValue(value: "https://winston.cafe/auth-success")
         }
         
       }

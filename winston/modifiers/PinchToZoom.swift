@@ -56,7 +56,7 @@ class PinchZoomView: UIView, UIGestureRecognizerDelegate {
     panGesture = newPanGesture
     addGestureRecognizer(newPanGesture)
     
-    if !onTap.isNil {
+    if onTap != nil {
       let doubleTap = UIShortTapGestureRecognizer(target: self, action: #selector(doubleTap(gesture:)))
       doubleTap.numberOfTapsRequired = 2
       addGestureRecognizer(doubleTap)
@@ -316,9 +316,10 @@ struct PinchToZoom: ViewModifier {
   
   func body(content: Content) -> some View {
     content
+      .frame(width: IPAD ? (UIScreen.screenHeight * size.width) / size.height : UIScreen.screenWidth, height: IPAD ? UIScreen.screenHeight : (UIScreen.screenWidth * size.height) / size.width)
       .scaleEffect(scale, anchor: anchor)
       .offset(offset)
-      .frame(width: UIScreen.screenWidth, height: UIScreen.screenHeight)
+      .frame(width: UIScreen.screenWidth, height: UIScreen.screenHeight, alignment: .center)
       .overlay(PinchZoom(onTap: onTap, imgSize: size, scale: $scale, anchor: $anchor, offset: $offset, isPinching: $isPinching))
   }
 }

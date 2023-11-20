@@ -21,12 +21,12 @@ extension RedditAPI {
         encoder: URLEncodedFormParameterEncoder(destination: .queryString),
         headers: headers
       )
+
         .serializingDecodable(Listing<SubredditData>.self).result
       switch response {
       case .success(let data):
         return data.data?.children?.compactMap { $0.data }
       case .failure(let error):
-        Oops.shared.sendError(error)
         print(error)
         return nil
       }
@@ -46,3 +46,4 @@ extension RedditAPI {
     var sort = "relevance"
   }
 }
+

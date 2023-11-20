@@ -9,7 +9,6 @@ import SwiftUI
 import Defaults
 import SwiftUIIntrospect
 
-let NEST_LINES_WIDTH: CGFloat = 12
 let ZINDEX_SLOTS_COMMENT = 100000
 
 struct Top: Shape {
@@ -24,9 +23,19 @@ enum CommentBGSide {
   case middle
   case bottom
   case single
+  
+  static func getFromArray(count: Int, i: Int) -> Self {
+    if !IPAD { return .middle }
+    let finalIndex = count - 1
+    if count == 1 { return .single }
+    if i == 0 { return .top }
+    if i == finalIndex { return .bottom }
+    return .middle
+  }
 }
 
 struct CommentBG: Shape {
+  var cornerRadius: CGFloat = 10
   var pos: CommentBGSide
   func path(in rect: CGRect) -> Path {
     var roundingCorners: UIRectCorner = []
@@ -41,7 +50,7 @@ struct CommentBG: Shape {
     case .single:
       roundingCorners = [.bottomLeft, .bottomRight, .topLeft, .topRight]
     }
-    let path = UIBezierPath(roundedRect: rect, byRoundingCorners: roundingCorners, cornerRadii: CGSize(width: 20, height: 20))
+    let path = UIBezierPath(roundedRect: rect, byRoundingCorners: roundingCorners, cornerRadii: CGSize(width: cornerRadius, height: cornerRadius))
     return Path(path.cgPath)
   }
 }
@@ -51,7 +60,15 @@ class SubCommentsReferencesContainer: ObservableObject {
   @Published var data: [Comment] = []
 }
 
-struct CommentLink: View {
+struct CommentLink: View, Equatable {
+  static func == (lhs: CommentLink, rhs: CommentLink) -> Bool {
+    lhs.post?.data == rhs.post?.data &&
+    lhs.subreddit?.data == rhs.subreddit?.data &&
+    lhs.indentLines == rhs.indentLines &&
+    lhs.highlightID == rhs.highlightID &&
+    lhs.comment == rhs.comment
+  }
+  
   var lineLimit: Int?
   var highlightID: String?
   var post: Post?
@@ -61,9 +78,12 @@ struct CommentLink: View {
   var avatarsURL: [String:String]? = nil
   var postFullname: String?
   var showReplies = true
+  var seenComments: String?
   
   var parentElement: CommentParentElement? = nil
   @ObservedObject var comment: Comment
+  @ObservedObject var commentWinstonData: CommentWinstonData
+  @ObservedObject var children: ObservableArray<Comment>
   //  @State var collapsed = false
   
   var body: some View {
@@ -77,18 +97,19 @@ struct CommentLink: View {
                 CommentLinkFull(post: post, subreddit: subreddit, arrowKinds: arrowKinds, comment: comment, indentLines: indentLines)
               }
             } else {
-              CommentLinkMore(arrowKinds: arrowKinds, comment: comment, postFullname: postFullname, parentElement: parentElement, indentLines: indentLines)
+              CommentLinkMore(arrowKinds: arrowKinds, comment: comment, post: post, postFullname: postFullname, parentElement: parentElement, indentLines: indentLines)
             }
           } else {
-            CommentLinkContent(highlightID: highlightID, showReplies: showReplies, arrowKinds: arrowKinds, indentLines: indentLines, lineLimit: lineLimit, post: post, comment: comment, avatarsURL: avatarsURL)
+            CommentLinkContent(highlightID: highlightID, seenComments: seenComments, showReplies: showReplies, arrowKinds: arrowKinds, indentLines: indentLines, lineLimit: lineLimit, post: post, comment: comment, winstonData: commentWinstonData, avatarsURL: avatarsURL)
           }
         }
         
         if !collapsed && showReplies {
-          ForEach(Array(comment.childrenWinston.data.enumerated()), id: \.element.id) { index, commentChild in
-            let childrenCount = comment.childrenWinston.data.count
-            if let _ = commentChild.data {
-              CommentLink(post: post, arrowKinds: arrowKinds.map { $0.child } + [(childrenCount - 1 == index ? ArrowKind.curve : ArrowKind.straightCurve)], postFullname: postFullname, parentElement: .comment(comment), comment: commentChild)
+          ForEach(Array(children.data.enumerated()), id: \.element.id) { index, commentChild in
+            let childrenCount = children.data.count
+            if let _ = commentChild.data, let childCommentWinstonData = commentChild.winstonData {
+              CommentLink(post: post, arrowKinds: arrowKinds.map { $0.child } + [(childrenCount - 1 == index ? ArrowKind.curve : ArrowKind.straightCurve)], postFullname: postFullname, seenComments: seenComments, parentElement: .comment(comment), comment: commentChild, commentWinstonData: childCommentWinstonData, children: commentChild.childrenWinston)
+              //                .equatable()
             }
           }
         }
@@ -97,6 +118,24 @@ struct CommentLink: View {
       
     } else {
       Text("Oops")
+    }
+  }
+}
+
+struct CustomDisclosureGroupStyle: DisclosureGroupStyle {
+  func makeBody(configuration: Configuration) -> some View {
+    VStack {
+      configuration.label
+        .contentShape(Rectangle())
+        .onTapGesture {
+          withAnimation {
+            configuration.isExpanded.toggle()
+          }
+        }
+      if configuration.isExpanded {
+        configuration.content
+          .disclosureGroupStyle(self)
+      }
     }
   }
 }

@@ -9,13 +9,13 @@ import SwiftUI
 
 struct Me: View {
   var reset: Bool
-  @ObservedObject var router: Router
-  @Environment(\.openURL) private var openURL
-  @EnvironmentObject private var redditAPI: RedditAPI
+  @StateObject var router: Router
+  @ObservedObject var redditAPI = RedditAPI.shared
+  
   @State private var loading = true
   var body: some View {
     NavigationStack(path: $router.path) {
-      DefaultDestinationInjector(routerProxy: RouterProxy(router)) {
+      DefaultDestinationInjector(routerProxy: RouterProxy(router)) { _ in
         Group {
           if let user = redditAPI.me {
             UserView(user: user)
@@ -26,16 +26,16 @@ struct Me: View {
               .frame(maxWidth: .infinity, minHeight: UIScreen.screenHeight - 200 )
               .onAppear {
                 Task(priority: .background) {
-                  await redditAPI.fetchMe(force: true)
+                  await RedditAPI.shared.fetchMe(force: true)
                 }
               }
           }
         }
+        .onChange(of: reset) { _ in router.path.removeLast(router.path.count) }
       }
 //      .defaultNavDestinations(router)
     }
-    .onChange(of: reset) { _ in router.path.removeLast(router.path.count) }
-    .swipeAnywhere(routerProxy: RouterProxy(router))
+    .swipeAnywhere(routerProxy: RouterProxy(router), routerContainer: router.isRootWrapper)
   }
 }
 

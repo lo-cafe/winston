@@ -32,7 +32,7 @@ public struct Markdownosaur: MarkupVisitor {
     let plainText = text.plainText
     let textRange = NSRange(location: 0, length: plainText.utf16.count)
     let attributedString = NSMutableAttributedString(string: plainText, attributes: [.font: UIFont.systemFont(ofSize: baseFontSize, weight: .regular)])
-
+    attributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.label, range: NSRange(location: 0, length: attributedString.length))
     applyUsernameRegex(attributedString: attributedString, text: plainText, range: textRange)
     applySubredditRegex(attributedString: attributedString, text: plainText, range: textRange)
     applyUrlDetector(attributedString: attributedString, text: plainText, range: textRange)
@@ -269,25 +269,9 @@ public struct Markdownosaur: MarkupVisitor {
     let result = NSMutableAttributedString()
 
     for child in blockQuote.children {
-      var quoteAttributes: [NSAttributedString.Key: Any] = [:]
-
-      let quoteParagraphStyle = NSMutableParagraphStyle()
-
-      let baseLeftMargin: CGFloat = 15.0
-      let leftMarginOffset = baseLeftMargin + (20.0 * CGFloat(blockQuote.quoteDepth))
-
-      quoteParagraphStyle.tabStops = [NSTextTab(textAlignment: .left, location: leftMarginOffset)]
-
-      quoteParagraphStyle.headIndent = leftMarginOffset
-
-      quoteAttributes[.paragraphStyle] = quoteParagraphStyle
-      quoteAttributes[.font] = UIFont.systemFont(ofSize: baseFontSize, weight: .regular)
-      quoteAttributes[.listDepth] = blockQuote.quoteDepth
-
       let quoteAttributedString = visit(child).mutableCopy() as! NSMutableAttributedString
-      quoteAttributedString.insert(NSAttributedString(string: "\t", attributes: quoteAttributes), at: 0)
-
       quoteAttributedString.addAttribute(.foregroundColor, value: UIColor.systemGray)
+      quoteAttributedString.addAttribute(.font, value: UIFont.systemFont(ofSize: baseFontSize, weight: .regular))
 
       result.append(quoteAttributedString)
     }

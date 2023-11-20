@@ -52,7 +52,7 @@ extension RedditAPI {
         if let fetchedSubs = data.data?.children {
           finalSubs += fetchedSubs
         }
-        if !after.isNil {
+        if after != nil {
           return finalSubs
         }
         
@@ -87,7 +87,6 @@ extension RedditAPI {
         }
         return nil
       case .failure(let error):
-        Oops.shared.sendError(error)
         print(error)
         return nil
       }

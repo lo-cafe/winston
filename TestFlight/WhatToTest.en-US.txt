@@ -1,4 +1,2 @@
-- Added hyperlinks for r/Sub and u/User in markdown texts (comments, post etc) - (Thanks, @rogue!)
-- Added hour, day, week, month, year and all to top sorting options - (Thanks, @rogue!)
-- Added search in subreddits - (Thanks, @rogue!)
-- Added search posts in whole reddit - (Thanks, @rogue!)
+- Implemented subreddit button to feeds (Home etc...)
+- Tweaked post placeholder image padding

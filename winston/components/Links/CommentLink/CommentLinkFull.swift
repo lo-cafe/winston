@@ -10,7 +10,6 @@ import Defaults
 
 struct CommentLinkFull: View {
   @EnvironmentObject private var routerProxy: RouterProxy
-  @Default(.preferenceShowCommentsCards) private var preferenceShowCommentsCards
   var post: Post
   var subreddit: Subreddit
   var arrowKinds: [ArrowKind]
@@ -18,10 +17,13 @@ struct CommentLinkFull: View {
   var indentLines: Int?
   @State private var loadMoreLoading = false
   @State private var id = UUID().uuidString
-  @StateObject private var attrStrLoader = AttributedStringLoader()
-  @Default(.cardedCommentsInnerHPadding) var cardedCommentsInnerHPadding
+  @Environment(\.useTheme) private var selectedTheme
+  @Environment(\.colorScheme) private var cs
+  
   var body: some View {
-    let horPad = preferenceShowCommentsCards ? cardedCommentsInnerHPadding : 0
+    let curveColor = selectedTheme.comments.theme.indentColor.cs(cs).color()
+    let cardedCommentsInnerHPadding = selectedTheme.comments.theme.innerPadding.horizontal
+    let horPad = cardedCommentsInnerHPadding
     if let data = comment.data {
       HStack {
         if data.depth != 0 && indentLines != 0 {
@@ -39,7 +41,6 @@ struct CommentLinkFull: View {
           HStack {
             Image(systemName: "plus.message.fill")
             Text(loadMoreLoading ? "Just a sec..." : "View full conversation")
-              .onAppear { if let selfBody = post.data?.selftext { attrStrLoader.load(str: selfBody) } }
           }
           .allowsHitTesting(false)
           .padding(.vertical, 12)
@@ -49,16 +50,16 @@ struct CommentLinkFull: View {
       }
       .padding(.horizontal, horPad)
       .frame(maxWidth: .infinity, alignment: .leading)
-      .background(preferenceShowCommentsCards ? Color.listBG : .clear)
+      .background(curveColor)
       .contentShape(Rectangle())
       .onTapGesture {
-        routerProxy.router.path.append(PostViewPayload(post: post, postSelfAttr: attrStrLoader.data, sub: subreddit))
+        routerProxy.router.path.append(PostViewPayload(post: post, postSelfAttr: nil, sub: subreddit))
       }
       .allowsHitTesting(!loadMoreLoading)
       .opacity(loadMoreLoading ? 0.5 : 1)
       .id("\(comment.id)-\(id)")
     } else {
-      Text("Depressive load more :(")
+      Text("Depressive load full :(")
     }
   }
 }

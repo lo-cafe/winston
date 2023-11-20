@@ -7,13 +7,15 @@
 
 import Foundation
 import Alamofire
+import Defaults
 
 extension RedditAPI {
   func searchInSubreddit(_ subreddit: String, _ query: String) async -> [UserData]? {
     await refreshToken()
     //    await getModHash()
     if let headers = self.getRequestHeaders() {
-      let params = SearchInSubredditPayload(q: query)
+      let limit = Defaults[.feedPostsLoadLimit]
+      let params = SearchInSubredditPayload(limit: limit, q: query)
       let response = await AF.request(
         "\(RedditAPI.redditApiURLBase)/r/\(subreddit)/search",
         method: .get,
@@ -26,7 +28,6 @@ extension RedditAPI {
       case .success(let data):
         return data.data?.children?.compactMap { $0.data }
       case .failure(let error):
-        Oops.shared.sendError(error)
         return nil
       }
     } else {

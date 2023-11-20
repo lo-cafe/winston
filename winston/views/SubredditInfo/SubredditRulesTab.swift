@@ -37,7 +37,7 @@ struct SubredditRulesTab: View {
                 Text(String(i + 1))
                   .frame(width: 24, height: 24)
                   .fontSize(16, .semibold)
-                  .background(.blue, in: Circle())
+                  .background(Color.accentColor, in: Circle())
                   .foregroundColor(.white)
                 
                 VStack(alignment: .leading) {

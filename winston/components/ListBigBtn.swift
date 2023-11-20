@@ -9,13 +9,15 @@ import SwiftUI
 
 struct ListBigBtn: View {
   @EnvironmentObject private var routerProxy: RouterProxy
+  @Binding var selectedSub: FirstSelectable?
   var icon: String
   var iconColor: Color
   var label: String
   var destination: Subreddit
+  @Environment(\.useTheme) private var theme
   var body: some View {
     Button {
-      routerProxy.router.path.append(SubViewType.posts(destination))
+      selectedSub = .sub(destination) 
     } label: {
       VStack(alignment: .leading, spacing: 8) {
         Image(systemName: icon)
@@ -27,10 +29,11 @@ struct ListBigBtn: View {
       .padding(.all, 10)
       .frame(maxWidth: .infinity, alignment: .leading)
       .foregroundColor(.primary)
-      .background(RR(13, .listBG))
+      .themedListRowBG()
       .contentShape(RoundedRectangle(cornerRadius: 13))
       //    .onChange(of: reset) { _ in active = false }
     }
-    .buttonStyle(.plain)
+    .buttonStyle(WNavLinkButtonStyle())
+    .mask(RR(10, .black))
   }
 }

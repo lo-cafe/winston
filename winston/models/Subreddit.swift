@@ -11,12 +11,14 @@ import Defaults
 import SwiftUI
 
 
-typealias Subreddit = GenericRedditEntity<SubredditData>
+typealias Subreddit = GenericRedditEntity<SubredditData, AnyHashable>
 
 extension Subreddit {
   static var prefix = "t5"
+  var selfPrefix: String { Self.prefix }
   convenience init(data: T, api: RedditAPI) {
     self.init(data: data, api: api, typePrefix: "\(Subreddit.prefix)_")
+    
   }
   
   convenience init(id: String, api: RedditAPI) {
@@ -26,7 +28,9 @@ extension Subreddit {
   convenience init(entity: CachedSub, api: RedditAPI) {
     self.init(id: entity.uuid ?? UUID().uuidString, api: api, typePrefix: "\(Subreddit.prefix)_")
     self.data = SubredditData(entity: entity)
+    
   }
+  
   
   /// Add a subreddit to the local like list
   /// This is a seperate list from reddits liked intenden for usage with subreddits a user wants to favorite but not subscribe to
@@ -46,17 +50,23 @@ extension Subreddit {
   }
   
   func favoriteToggle(entity: CachedSub? = nil) {
-    if let favoritedStatus = data?.user_has_favorited, let name = data?.display_name {
-      
-      if let entity = entity, let context = entity.managedObjectContext {
+    if let entity = entity, let name = data?.display_name {
+      let favoritedStatus = entity.user_has_favorited
+      if let context = entity.managedObjectContext {
         entity.user_has_favorited = !favoritedStatus
+        withAnimation {
+          self.data?.user_has_favorited = !favoritedStatus
           try? context.save()
+        }
         
         Task {
-          let result = await redditAPI.favorite(!favoritedStatus, subName: name)
+          let result = await RedditAPI.shared.favorite(!favoritedStatus, subName: name)
           if !result {
             entity.user_has_favorited = favoritedStatus
-            try? context.save()
+            withAnimation {
+              self.data?.user_has_favorited = favoritedStatus
+              try? context.save()
+            }
           }
         }
       }
@@ -69,44 +79,43 @@ extension Subreddit {
     let context = PersistenceController.shared.container.viewContext
     
     if let data = data {
-      let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "CachedSub")
-      guard let results = (context.performAndWait { return try? context.fetch(fetchRequest) as? [CachedSub] }) else { return }
-      
-      let foundSub = context.performAndWait { results.first(where: { $0.name == self.data?.name }) }
-      //      let likedButNotSubbed = Defaults[.likedButNotSubbed]
-      if optimistic {
+      @Sendable func doToggle() {
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "CachedSub")
+        guard let results = (context.performAndWait { return try? context.fetch(fetchRequest) as? [CachedSub] }) else { return }
+        let foundSub = context.performAndWait { results.first(where: { $0.name == self.data?.name }) }
+        
+        withAnimation {
+          self.data?.user_is_subscriber?.toggle()
+        }
         if let foundSub = foundSub { // when unsubscribe
           context.delete(foundSub)
-        } else {
+        } else if let newData = self.data {
           context.performAndWait {
-            _ = CachedSub(data: data, context: context)
+            _ = CachedSub(data: newData, context: context)
           }
-        }
-        context.performAndWait {
-          try? context.save()
         }
       }
-      Task {
-        let result = await redditAPI.subscribe(!foundSub.isNil ? .unsub : .sub, subFullname: data.name)
+      
+      //      let likedButNotSubbed = Defaults[.likedButNotSubbed]
+      if optimistic {
+        doToggle()
         context.performAndWait {
-          if result {
-            if !optimistic {
-              if let foundSub = foundSub {
-                context.delete(foundSub)
-              } else {
-                _ = CachedSub(data: data, context: context)
-              }
-            }
-          } else {
-            if optimistic {
-              if let foundSub = foundSub {
-                context.delete(foundSub)
-              } else {
-                _ = CachedSub(data: data, context: context)
-              }
+          withAnimation {
+            try? context.save()
+          }
+        }
+      }
+      Task(priority: .background) {
+        let result = await RedditAPI.shared.subscribe((self.data?.user_is_subscriber ?? false) ? (optimistic ? .sub : .unsub) : (optimistic ? .unsub : .sub), subFullname: data.name)
+        context.performAndWait {
+          if (result && !optimistic) || (!result && optimistic) {
+            doToggle()
+          }
+          context.performAndWait {
+            withAnimation {
+              try? context.save()
             }
           }
-          try? context.save()
           cb?()
         }
       }
@@ -114,7 +123,7 @@ extension Subreddit {
   }
   
   func getFlairs() async -> [Flair]? {
-    if let data = (await redditAPI.getFlairs(data?.display_name ?? id)) {
+    if let data = (await RedditAPI.shared.getFlairs(data?.display_name ?? id)) {
       await MainActor.run {
         withAnimation {
           self.data?.winstonFlairs = data
@@ -125,7 +134,7 @@ extension Subreddit {
   }
   
   func refreshSubreddit() async {
-    if let data = (await redditAPI.fetchSub(data?.display_name ?? id))?.data {
+    if let data = (await RedditAPI.shared.fetchSub(data?.display_name ?? id))?.data {
       await MainActor.run {
         withAnimation {
           self.data = data
@@ -135,15 +144,35 @@ extension Subreddit {
   }
   
   func fetchRules() async -> RedditAPI.FetchSubRulesResponse? {
-    if let data = await redditAPI.fetchSubRules(data?.display_name ?? id) {
+    if let data = await RedditAPI.shared.fetchSubRules(data?.display_name ?? id) {
       return data
     }
     return nil
   }
   
-  func fetchPosts(sort: SubListingSortOption = .best, after: String? = nil, searchText: String? = nil) async -> ([Post]?, String?)? {
-    if let response = await redditAPI.fetchSubPosts(data?.url ?? (id == "home" ? "" : id), sort: sort, after: after, searchText: searchText), let data = response.0 {
-      return (Post.initMultiple(datas: data.compactMap { $0.data }, api: redditAPI), response.1)
+  func fetchPosts(sort: SubListingSortOption = .best, after: String? = nil, searchText: String? = nil, contentWidth: CGFloat = UIScreen.screenWidth) async -> ([Post]?, String?)? {
+    if let response = await RedditAPI.shared.fetchSubPosts(data?.url ?? (id == "home" ? "" : id), sort: sort, after: after, searchText: searchText), let data = response.0 {
+      return (Post.initMultiple(datas: data.compactMap { $0.data }, api: RedditAPI.shared, contentWidth: contentWidth), response.1)
+    }
+    
+    return nil
+  }
+  
+  func fetchSavedMixedMedia(after: String? = nil, searchText: String? = nil, contentWidth: CGFloat = UIScreen.screenWidth) async -> [Either<Post, Comment>]? {
+    // saved feed is a mix of posts and comments - logic needs to be handled separately
+    if let savedMediaData = await RedditAPI.shared.fetchSavedPosts("saved", after: after, searchText: searchText) {
+      await MainActor.run {
+        self.loading = false
+      }
+      
+      return savedMediaData.map {
+        switch $0 {
+        case .first(let postData):
+          return .first(Post(data: postData, api: RedditAPI.shared))
+        case .second(let commentData):
+          return .second(Comment(data: commentData, api: RedditAPI.shared))
+        }
+      }
     }
     return nil
   }
@@ -189,7 +218,7 @@ struct SubredditData: Codable, GenericRedditEntityDataType, Defaults.Serializabl
   var banner_background_image: String? = nil
   var original_content_tag_enabled: Bool? = nil
   var community_reviewed: Bool? = nil
-  var over_18: Bool? = nil
+  var over18: Bool? = nil
   var submit_text: String? = nil
   var description_html: String? = nil
   var spoilers_enabled: Bool? = nil
@@ -249,7 +278,7 @@ struct SubredditData: Codable, GenericRedditEntityDataType, Defaults.Serializabl
   //  let user_sr_theme_enabled: Bool?
   //  let link_flair_enabled: Bool?
   //  let disable_contributor_requests: Bool?
-    let subreddit_type: String?
+  let subreddit_type: String?
   //  let suggested_comment_sort: String?
   //  let over18: Bool?
   //  let header_title: String?
@@ -259,9 +288,19 @@ struct SubredditData: Codable, GenericRedditEntityDataType, Defaults.Serializabl
   //  let mobile_banner_image: String?
   //  let allow_predictions_tournament: Bool?
   
+  var subredditIconKit: SubredditIconKit {
+    let communityIconArr = community_icon?.split(separator: "?") ?? []
+    let iconRaw = icon_img == "" || icon_img == nil ? communityIconArr.count > 0 ? String(communityIconArr[0]) : "" : icon_img
+    let name = display_name ?? ""
+    let iconURLStr = iconRaw == "" ? nil : iconRaw
+    let color = firstNonEmptyString(key_color, primary_color, "#828282") ?? ""
+    
+    return SubredditIconKit(url: iconURLStr, initialLetter: String((name).prefix(1)).uppercased(), color: String((firstNonEmptyString(color, "#828282") ?? "").dropFirst(1)))
+  }
+  
   
   enum CodingKeys: String, CodingKey {
-    case user_flair_background_color, submit_text_html, restrict_posting, user_is_banned, free_form_reports, wiki_enabled, user_is_muted, user_can_flair_in_sr, display_name, header_img, title, allow_galleries, icon_size, primary_color, active_user_count, icon_img, display_name_prefixed, accounts_active, public_traffic, subscribers, name, quarantine, hide_ads, prediction_leaderboard_entry_type, emojis_enabled, advertiser_category, public_description, comment_score_hide_mins, allow_predictions, user_has_favorited, user_flair_template_id, community_icon, banner_background_image, original_content_tag_enabled, community_reviewed, submit_text, description_html, spoilers_enabled, allow_talks, is_enrolled_in_new_modmail, key_color, can_assign_user_flair, created, show_media_preview, user_is_subscriber, allow_videogifs, should_archive_posts, user_flair_type, allow_polls, public_description_html, allow_videos, banner_img, user_flair_text, banner_background_color, show_media, id, user_is_moderator, description, is_chat_post_feature_enabled, submit_link_label, user_flair_text_color, restrict_commenting, user_flair_css_class, allow_images, url, created_utc, user_is_contributor, winstonFlairs, subreddit_type
+    case user_flair_background_color, submit_text_html, restrict_posting, user_is_banned, free_form_reports, wiki_enabled, user_is_muted, user_can_flair_in_sr, display_name, header_img, title, allow_galleries, icon_size, primary_color, active_user_count, icon_img, display_name_prefixed, accounts_active, public_traffic, subscribers, name, quarantine, hide_ads, prediction_leaderboard_entry_type, emojis_enabled, advertiser_category, public_description, comment_score_hide_mins, allow_predictions, user_has_favorited, user_flair_template_id, community_icon, banner_background_image, original_content_tag_enabled, community_reviewed, submit_text, description_html, spoilers_enabled, allow_talks, is_enrolled_in_new_modmail, key_color, can_assign_user_flair, created, show_media_preview, user_is_subscriber, allow_videogifs, should_archive_posts, user_flair_type, allow_polls, public_description_html, allow_videos, banner_img, user_flair_text, banner_background_color, show_media, id, user_is_moderator, description, is_chat_post_feature_enabled, submit_link_label, user_flair_text_color, restrict_commenting, user_flair_css_class, allow_images, url, created_utc, user_is_contributor, winstonFlairs, subreddit_type, over18
   }
   
   
@@ -299,7 +338,7 @@ struct SubredditData: Codable, GenericRedditEntityDataType, Defaults.Serializabl
     self.banner_background_image = nil
     self.original_content_tag_enabled = nil
     self.community_reviewed = nil
-    self.over_18 = nil
+    self.over18 = nil
     self.submit_text = nil
     self.description_html = nil
     self.spoilers_enabled = nil
@@ -336,12 +375,11 @@ struct SubredditData: Codable, GenericRedditEntityDataType, Defaults.Serializabl
     self.title = nil
     
     
-    
     let x = entity
     self.allow_galleries = x.allow_galleries
     self.allow_images = x.allow_images
     self.allow_videos = x.allow_videos
-    self.over_18 = x.over_18
+    self.over18 = x.over18
     self.restrict_commenting = x.restrict_commenting
     self.user_has_favorited = x.user_has_favorited
     self.user_is_banned = x.user_is_banned
@@ -452,6 +490,7 @@ struct SubredditData: Codable, GenericRedditEntityDataType, Defaults.Serializabl
     self.created_utc = try container.decodeIfPresent(Double.self, forKey: .created_utc)
     self.user_is_contributor = try container.decodeIfPresent(Bool.self, forKey: .user_is_contributor)
     self.winstonFlairs = try container.decodeIfPresent([Flair].self, forKey: .winstonFlairs)
+    self.over18 = try container.decodeIfPresent(Bool.self, forKey: .over18)
   }
 }
 
@@ -475,6 +514,7 @@ enum SubListingSortOption: Codable, Identifiable, Defaults.Serializable, Hashabl
   case best
   case hot
   case new
+  case controversial
   case top(TopListingSortOption)
   
   enum TopListingSortOption: String, Codable, CaseIterable, Hashable {
@@ -484,36 +524,38 @@ enum SubListingSortOption: Codable, Identifiable, Defaults.Serializable, Hashabl
     case month
     case year
     case all
+  
     
     var icon: String {
       switch self {
-        case .hour: return "clock"
-        case .day: return "sun.max"
-        case .week: return "clock.arrow.2.circlepath"
-        case .month: return "calendar"
-        case .year: return "globe.americas.fill"
-        case .all: return "arrow.up.circle.badge.clock"
+      case .hour: return "clock"
+      case .day: return "sun.max"
+      case .week: return "clock.arrow.2.circlepath"
+      case .month: return "calendar"
+      case .year: return "globe.americas.fill"
+      case .all: return "arrow.up.circle.badge.clock"
       }
     }
   }
   
   var rawVal: SubListingSort {
     switch self {
-      case .best: return SubListingSort(icon: "trophy", value: "best")
-      case .hot: return SubListingSort(icon: "flame", value: "hot")
-      case .new: return SubListingSort(icon: "newspaper", value: "new")
-      case .top(let subOption):
-        if subOption == .all {
-          return SubListingSort(icon: subOption.icon, value: "top")
-        } else {
-          return SubListingSort(icon: subOption.icon, value: "top/\(subOption.rawValue)")
-        }
+    case .best: return SubListingSort(icon: "trophy", value: "best")
+    case .controversial: return SubListingSort(icon: "figure.fencing", value: "controversial")
+    case .hot: return SubListingSort(icon: "flame", value: "hot")
+    case .new: return SubListingSort(icon: "newspaper", value: "new")
+    case .top(let subOption):
+      if subOption == .all {
+        return SubListingSort(icon: subOption.icon, value: "top")
+      } else {
+        return SubListingSort(icon: subOption.icon, value: "top/\(subOption.rawValue)")
+      }
     }
   }
 }
 
 extension SubListingSortOption: CaseIterable {
   static var allCases: [SubListingSortOption] {
-    return [.best, .hot, .new, .top(.all)]
+    return [.best, .hot, .new, .controversial, .top(.all)]
   }
 }

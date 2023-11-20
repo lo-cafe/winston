@@ -16,7 +16,7 @@ struct SmallStep<Content: View>: View {
       .padding(.vertical, 12)
       .padding(.horizontal, 16)
       .frame(maxWidth: .infinity, alignment: .leading)
-      .background(RR(16, .black.opacity(0.1)))
+      .background(RR(16, Color.black.opacity(0.1)))
       .padding(.horizontal, -8)
       .fontSize(15)
     }
@@ -98,7 +98,7 @@ struct CopiableValue: View {
         : Text("Copied!")
           .foregroundColor(.white)
           .frame(maxWidth: .infinity, maxHeight: .infinity)
-          .background(RR(16, .black.opacity(0.5)))
+          .background(RR(16, Color.black.opacity(0.5)))
       )
       .fontSize(15)
       .onTapGesture {
@@ -106,7 +106,7 @@ struct CopiableValue: View {
         withAnimation {
           copied = true
         }
-        doThisAfter(1) {
+        doThisAfter(1.0) {
           withAnimation {
             copied = false
           }
@@ -122,7 +122,7 @@ struct ChangeAuthAPIKey: View {
   @State var appSecret: String = ""
   @State var step = 1
   @State var loadingCallback = false
-  @EnvironmentObject var redditAPI: RedditAPI
+  
   
   var body: some View {
     ScrollView {
@@ -153,7 +153,7 @@ struct ChangeAuthAPIKey: View {
                       .resizable()
                       .scaledToFit()
                       .frame(maxWidth: .infinity)
-                      .mask(RR(12, .black))
+                      .mask(RR(12, Color.black))
                     
                   }
                 }
@@ -165,15 +165,15 @@ struct ChangeAuthAPIKey: View {
                       .resizable()
                       .scaledToFill()
                       .frame(maxWidth: .infinity, maxHeight: 72, alignment: .top)
-                      .mask(RR(12, .black))
+                      .mask(RR(12, Color.black))
                   }
                 }
               .fixedSize(horizontal: false, vertical: true)
               
               SmallStep {
                 VStack (alignment: .leading) {
-                  Text("Tap below's URL to copy and paste it in the \"redirect uri\" field:")
-                  CopiableValue(value: "https://app.winston.lo.cafe/auth-success")
+                  Text("Tap the URL below to copy and paste it in the \"redirect uri\" field:")
+                  CopiableValue(value: "https://winston.cafe/auth-success")
                 }
               }
               .fixedSize(horizontal: false, vertical: true)
@@ -185,7 +185,7 @@ struct ChangeAuthAPIKey: View {
                     .resizable()
                     .scaledToFill()
                     .frame(maxWidth: 150)
-                    .mask(RR(12, .black))
+                    .mask(RR(12, Color.black))
                 }
               }
               .fixedSize(horizontal: false, vertical: true)
@@ -207,7 +207,7 @@ struct ChangeAuthAPIKey: View {
                     .resizable()
                     .scaledToFill()
                     .frame(maxWidth: .infinity, maxHeight: 72)
-                    .mask(RR(12, .black))
+                    .mask(RR(12, Color.black))
                     .frame(maxWidth: .infinity)
                     Text("In the new app you created, find the app ID and paste it below:")
 //                  }
@@ -226,7 +226,7 @@ struct ChangeAuthAPIKey: View {
               }
               .fixedSize(horizontal: false, vertical: true)
               
-              Text("Now click below's button and grant full access to the app you created:")
+              Text("Now click the button below and grant full access to the app you created:")
               HStack {
                 MasterButton(label: "Back", mode: .soft, color: .gray, height: 44, fullWidth: true) {
                   withAnimation(spring) {
@@ -235,9 +235,9 @@ struct ChangeAuthAPIKey: View {
                 }
                 MasterButton(label: "Grant access", height: 44, fullWidth: true) {
                   dismissKeyboard()
-                  redditAPI.loggedUser.apiAppID = appID.trimmingCharacters(in: .whitespaces)
-                  redditAPI.loggedUser.apiAppSecret = appSecret.trimmingCharacters(in: .whitespaces)
-                  openURL(redditAPI.getAuthorizationCodeURL(appID))
+                  RedditAPI.shared.loggedUser.apiAppID = appID.trimmingCharacters(in: .whitespaces)
+                  RedditAPI.shared.loggedUser.apiAppSecret = appSecret.trimmingCharacters(in: .whitespaces)
+                  openURL(RedditAPI.shared.getAuthorizationCodeURL(appID))
                 }
               }
             }
@@ -257,7 +257,7 @@ struct ChangeAuthAPIKey: View {
             withAnimation(spring) {
               loadingCallback = true
             }
-            redditAPI.monitorAuthCallback(url) { success in
+            RedditAPI.shared.monitorAuthCallback(url) { success in
               withAnimation(spring) {
                 loadingCallback = false
                 if success {

@@ -6,6 +6,8 @@
 //
 
 import SwiftUI
+import NukeUI
+import Defaults
 
 enum SearchType: String {
   case subreddit = "Subreddit"
@@ -21,7 +23,7 @@ struct SearchOption: View {
     Text(searchType.rawValue)
       .padding(.horizontal, 16)
       .padding(.vertical, 12)
-      .background(Capsule(style: .continuous).fill(active ? .blue : .secondary.opacity(0.1)))
+      .background(Capsule(style: .continuous).fill(active ? Color.accentColor : .secondary.opacity(0.15)))
       .foregroundColor(active ? .white : .primary)
       .overlay(RoundedRectangle(cornerRadius: 12, style: .continuous).stroke((active ? Color.white : .primary).opacity(0.01), lineWidth: 1))
       .contentShape(Capsule())
@@ -42,7 +44,7 @@ enum SearchTypeArr {
 
 struct Search: View {
   var reset: Bool
-  @ObservedObject var router: Router
+  @StateObject var router: Router
   @State private var searchType: SearchType = .subreddit
   @StateObject private var resultsSubs = ObservableArray<Subreddit>()
   @StateObject private var resultsUsers = ObservableArray<User>()
@@ -50,9 +52,36 @@ struct Search: View {
   @State private var loading = false
   @State private var hideSpinner = false
   @StateObject var searchQuery = DebouncedText(delay: 0.25)
-  @EnvironmentObject private var redditAPI: RedditAPI
+  
   @State private var dummyAllSub: Subreddit? = nil
   @State private var searchViewLoaded: Bool = false
+  
+  @Environment(\.useTheme) private var theme
+  
+  @Default(.blurPostLinkNSFW) private var blurPostLinkNSFW
+  @Default(.postSwipeActions) private var postSwipeActions
+  @Default(.compactMode) private var compactMode
+  @Default(.showVotes) private var showVotes
+  @Default(.showSelfText) private var showSelfText
+  @Default(.thumbnailPositionRight) private var thumbnailPositionRight
+  @Default(.voteButtonPositionRight) private var voteButtonPositionRight
+  @Default(.readPostOnScroll) private var readPostOnScroll
+  @Default(.hideReadPosts) private var hideReadPosts
+  @Default(.showUpvoteRatio) private var showUpvoteRatio
+  @Default(.showSubsAtTop) private var showSubsAtTop
+  @Default(.showTitleAtTop) private var showTitleAtTop
+  @Default(.showSelfPostThumbnails) private var showSelfPostThumbnails
+  
+  @ObservedObject var avatarCache = Caches.avatars
+  @Environment(\.colorScheme) private var cs
+  @Environment(\.contentWidth) private var contentWidth
+  
+  func getRepostAvatarRequest(_ post: Post?) -> ImageRequest? {
+    if let post = post, case .repost(let repost) = post.winstonData?.extractedMedia, let repostAuthorFullname = repost.data?.author_fullname {
+      return avatarCache.cache[repostAuthorFullname]?.data
+    }
+    return nil
+  }
   
   func fetch() {
     if searchQuery.text == "" { return }
@@ -63,7 +92,7 @@ struct Search: View {
     case .subreddit:
       resultsSubs.data.removeAll()
       Task(priority: .background) {
-        if let subs = await redditAPI.searchSubreddits(searchQuery.text)?.map({ Subreddit(data: $0, api: redditAPI) }) {
+        if let subs = await RedditAPI.shared.searchSubreddits(searchQuery.text)?.map({ Subreddit(data: $0, api: RedditAPI.shared) }) {
           await MainActor.run {
             withAnimation {
               resultsSubs.data = subs
@@ -77,7 +106,7 @@ struct Search: View {
     case .user:
       resultsUsers.data.removeAll()
       Task(priority: .background) {
-        if let users = await redditAPI.searchUsers(searchQuery.text)?.map({ User(data: $0, api: redditAPI) }) {
+        if let users = await RedditAPI.shared.searchUsers(searchQuery.text)?.map({ User(data: $0, api: RedditAPI.shared) }) {
           await MainActor.run {
             withAnimation {
               resultsUsers.data = users
@@ -107,7 +136,7 @@ struct Search: View {
   
   var body: some View {
     NavigationStack(path: $router.path) {
-      DefaultDestinationInjector(routerProxy: RouterProxy(router)) {
+      DefaultDestinationInjector(routerProxy: RouterProxy(router)) { routerProxy in
         List {
           Group {
             Section {
@@ -132,10 +161,41 @@ struct Search: View {
               case .post:
                 if let dummyAllSub = dummyAllSub {
                   ForEach(resultPosts.data) { post in
-                    PostLink(post: post, sub: dummyAllSub)
-                      .equatable()
+                    if let postData = post.data, let winstonData = post.winstonData {
+//                      SwipeRevolution(size: winstonData.postDimensions.size, actionsSet: postSwipeActions, entity: post) { controller in
+                        PostLink(
+                          id: post.id,
+                          controller: nil,
+                          //                controller: nil,
+                          avatarRequest: avatarCache.cache[postData.author_fullname ?? ""]?.data,
+                          repostAvatarRequest: getRepostAvatarRequest(post),
+                          theme: theme.postLinks,
+                          showSub: true,
+                          routerProxy: routerProxy,
+                          contentWidth: contentWidth,
+                          blurPostLinkNSFW: blurPostLinkNSFW,
+                          postSwipeActions: postSwipeActions,
+                          showVotes: showVotes,
+                          showSelfText: showSelfText,
+                          readPostOnScroll: readPostOnScroll,
+                          hideReadPosts: hideReadPosts,
+                          showUpvoteRatio: showUpvoteRatio,
+                          showSubsAtTop: showSubsAtTop,
+                          showTitleAtTop: showTitleAtTop,
+                          compact: compactMode,
+                          thumbnailPositionRight: thumbnailPositionRight,
+                          voteButtonPositionRight: voteButtonPositionRight,
+                          showSelfPostThumbnails: showSelfPostThumbnails,
+                          cs: cs
+                        )
+                        .swipyRev(size: winstonData.postDimensions.size, actionsSet: postSwipeActions, entity: post)
+//                      }
                       .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
                       .animation(.default, value: resultPosts.data)
+                      .environmentObject(post)
+                      .environmentObject(dummyAllSub)
+                      .environmentObject(winstonData)
+                    }
                   }
                 }
               }
@@ -145,6 +205,7 @@ struct Search: View {
           .listRowBackground(Color.clear)
           .listRowInsets(EdgeInsets(top: 6, leading: 16, bottom: 6, trailing: 16))
         }
+        .themedListBG(theme.lists.bg)
         .listStyle(.plain)
         .background(Color(UIColor.systemGroupedBackground))
         .scrollContentBackground(.hidden)
@@ -168,13 +229,13 @@ struct Search: View {
       .navigationTitle("Search")
       .onAppear() {
         if !searchViewLoaded {
-          dummyAllSub = Subreddit(id: "all", api: redditAPI)
+          dummyAllSub = Subreddit(id: "all", api: RedditAPI.shared)
           searchViewLoaded = true
         }
       }
 //      .defaultNavDestinations(router)
     }
-    .swipeAnywhere(routerProxy: RouterProxy(router))
+    .swipeAnywhere(routerProxy: RouterProxy(router), routerContainer: router.isRootWrapper)
   }
 }
 

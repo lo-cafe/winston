@@ -29,18 +29,19 @@ struct SubredditInfo: View {
   @State private var myPostsLoaded = false
   @State private var addedToFavs = false
   @Default(.likedButNotSubbed) var likedButNotSubbed
+  @Environment(\.useTheme) private var theme
   var body: some View {
     let isliked = likedButNotSubbed.contains(subreddit)
     List {
       Group {
         if let data = subreddit.data {
           VStack(spacing: 12) {
-            SubredditIcon(data: data, size: 125)
+            SubredditIcon(subredditIconKit: data.subredditIconKit, size: 125)
             
             VStack {
               Text("r/\(data.display_name ?? "")")
                 .fontSize(22, .bold)
-              Text("Created \(data.created.isNil ? "at some point" : Date(timeIntervalSince1970: TimeInterval(data.created!)).toFormat("MMM dd, yyyy"))")
+              Text("Created \(data.created == nil ? "at some point" : Date(timeIntervalSince1970: TimeInterval(data.created!)).toFormat("MMM dd, yyyy"))")
                 .fontSize(16, .medium)
                 .opacity(0.5)
               HStack{
@@ -48,9 +49,9 @@ struct SubredditInfo: View {
                 
               }
             }
-            .toast(isPresenting: $addedToFavs){
-              AlertToast(displayMode: .hud, type: .systemImage("star.fill", Color.blue), title: "Added to Favorites")
-            }
+//            .toast(isPresenting: $addedToFavs){
+//              AlertToast(displayMode: .hud, type: .systemImage("star.fill", Color.blue), title: "Added to Favorites")
+//            }
             
             Picker("", selection: $selectedTab) {
               ForEach(SubInfoTabs.allCases) { tab in
@@ -98,6 +99,7 @@ struct SubredditInfo: View {
       }
       .listRowSeparator(.hidden)
     }
+    .themedListBG(theme.lists.bg)
     .navigationBarTitleDisplayMode(.inline)
   }
 }

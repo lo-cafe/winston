@@ -10,7 +10,6 @@ import SwiftUI
 struct Onboarding2CreateApp: View {
   var prevStep: ()->()
   var nextStep: ()->()
-  @Environment(\.openURL) var openURL
   var body: some View {
     VStack(spacing: 16) {
       OnboardingBigStep(step: 2)
@@ -23,7 +22,7 @@ struct Onboarding2CreateApp: View {
         .resizable()
         .scaledToFit()
         .frame(maxWidth: UIScreen.screenWidth * 0.75)
-        .mask(RR(12, .black))
+        .mask(RR(12, Color.black))
       
       Text("Then, come back here!")
       

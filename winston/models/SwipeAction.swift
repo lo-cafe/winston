@@ -9,7 +9,7 @@ import Foundation
 import Defaults
 import SwiftUI
 
-struct SwipeActionItem: Codable, Defaults.Serializable {
+struct SwipeActionItem: Codable, Hashable, Defaults.Serializable {
   var normal: String
   var active: String
   
@@ -24,10 +24,11 @@ struct SwipeActionItem: Codable, Defaults.Serializable {
   }
 }
 
-struct SwipeActionsSet: Codable, Defaults.Serializable, Equatable {
+struct SwipeActionsSet: Codable, Defaults.Serializable, Equatable, Hashable, Identifiable {
   static func == (prev: SwipeActionsSet, next: SwipeActionsSet) -> Bool {
-    return prev.leftFirst == next.leftFirst && prev.leftSecond == next.leftSecond && prev.rightFirst == next.rightFirst && prev.rightSecond == next.rightSecond
+    return prev.id == next.id && prev.leftFirst == next.leftFirst && prev.leftSecond == next.leftSecond && prev.rightFirst == next.rightFirst && prev.rightSecond == next.rightSecond
   }
+  var id: String
   var leftFirst: AnySwipeAction
   var leftSecond: AnySwipeAction
   var rightFirst: AnySwipeAction
@@ -35,14 +36,14 @@ struct SwipeActionsSet: Codable, Defaults.Serializable, Equatable {
 }
 
 
-let allPostSwipeActions: [AnySwipeAction] = [AnySwipeAction(UpvotePostAction()), AnySwipeAction(DownvotePostAction()), AnySwipeAction(SavePostAction()), AnySwipeAction(ReplyPostAction()), AnySwipeAction(SeenPostAction())/**, AnySwipeAction(SharePostAction()) **/, AnySwipeAction(NoneAction())]
+let allPostSwipeActions: [AnySwipeAction] = [AnySwipeAction(UpvotePostAction()), AnySwipeAction(DownvotePostAction()), AnySwipeAction(SavePostAction()), AnySwipeAction(ReplyPostAction()), AnySwipeAction(SeenPostAction()), AnySwipeAction(FilterSubredditAction())/**, AnySwipeAction(SharePostAction()) **/, AnySwipeAction(NoneAction())]
 
 let allCommentSwipeActions: [AnySwipeAction] = [
   AnySwipeAction(UpvoteCommentAction()), AnySwipeAction(DownvoteCommentAction()), AnySwipeAction(EditCommentAction()), AnySwipeAction(ReplyCommentAction()), AnySwipeAction(SaveCommentAction()), AnySwipeAction(SelectTextCommentAction())/**, AnySwipeAction(ShareCommentAction())**/, AnySwipeAction(CopyCommentAction()), AnySwipeAction(DeleteCommentAction()), AnySwipeAction(NoneAction())]
 
 let allSwipeActions = allPostSwipeActions + allCommentSwipeActions
 
-struct AnySwipeAction: Codable, Defaults.Serializable, Identifiable, Hashable {
+struct AnySwipeAction: Codable, Defaults.Serializable, Identifiable, Hashable, Equatable {
   static func == (lhs: AnySwipeAction, rhs: AnySwipeAction) -> Bool {
     lhs.id == rhs.id
   }
@@ -66,15 +67,15 @@ struct AnySwipeAction: Codable, Defaults.Serializable, Identifiable, Hashable {
   init<T: SwipeAction>(_ base: T) where T: Codable {
     self.base = Base(base)
     self.actionClosure = { entity in
-      guard let entity = entity as? GenericRedditEntity<T.EntityType> else { return }
+      guard let entity = entity as? GenericRedditEntity<T.EntityType, T.EntityWinstonDataType> else { return }
       await base.action(entity)
     }
     self.activeClosure = { entity in
-      guard let entity = entity as? GenericRedditEntity<T.EntityType> else { return false }
+      guard let entity = entity as? GenericRedditEntity<T.EntityType, T.EntityWinstonDataType> else { return false }
       return base.active(entity)
     }
     self.enabledClosure = { entity in
-      guard let entity = entity as? GenericRedditEntity<T.EntityType> else { return false }
+      guard let entity = entity as? GenericRedditEntity<T.EntityType, T.EntityWinstonDataType> else { return false }
       return base.enabled(entity)
     }
   }
@@ -141,9 +142,10 @@ protocol SwipeAction: Codable, Identifiable, Defaults.Serializable {
   var color: SwipeActionItem { get }
   var bgColor: SwipeActionItem { get }
   associatedtype EntityType: GenericRedditEntityDataType
-  func action(_ entity: GenericRedditEntity<EntityType>) async
-  func active(_ entity: GenericRedditEntity<EntityType>) -> Bool
-  func enabled(_ entity: GenericRedditEntity<EntityType>) -> Bool
+  associatedtype EntityWinstonDataType: Hashable
+  func action(_ entity: GenericRedditEntity<EntityType, EntityWinstonDataType>) async
+  func active(_ entity: GenericRedditEntity<EntityType, EntityWinstonDataType>) -> Bool
+  func enabled(_ entity: GenericRedditEntity<EntityType, EntityWinstonDataType>) -> Bool
 }
 
 struct UpvotePostAction: SwipeAction {
@@ -152,7 +154,7 @@ struct UpvotePostAction: SwipeAction {
   var icon = SwipeActionItem(normal: "arrow.up")
   var color = SwipeActionItem(normal: "FFFFFF")
   var bgColor = SwipeActionItem(normal: "FEA00A", active: "FF463B")
-  func action(_ entity: Post) async { _ = await entity.vote(action: .up) }
+  func action(_ entity: Post) async { _ = await entity.vote(.up) }
   func active(_ entity: Post) -> Bool { entity.data?.likes == true }
   func enabled(_ entity: Post) -> Bool { true }
 }
@@ -163,7 +165,7 @@ struct DownvotePostAction: SwipeAction {
   var icon = SwipeActionItem(normal: "arrow.down")
   var color = SwipeActionItem(normal: "FFFFFF")
   var bgColor = SwipeActionItem(normal: "0B84FE", active: "FF463B")
-  func action(_ entity: Post) async { _ = await entity.vote(action: .down) }
+  func action(_ entity: Post) async { _ = await entity.vote(.down) }
   func active(_ entity: Post) -> Bool { entity.data?.likes == false }
   func enabled(_ entity: Post) -> Bool { true }
 }
@@ -207,6 +209,29 @@ struct SeenPostAction: SwipeAction {
     await entity.toggleSeen(optimistic: true)
   }
   func active(_ entity: Post) -> Bool { entity.data?.winstonSeen ?? false }
+  func enabled(_ entity: Post) -> Bool { true }
+}
+
+struct FilterSubredditAction: SwipeAction {
+  var id = "filter-subreddit-swipe-action"
+  var label = "Filter Subreddit"
+  var icon = SwipeActionItem(normal: "hand.raised.fill", active: "hand.raised.slash.fill")
+  var color = SwipeActionItem(normal: "0B84FE")
+  var bgColor = SwipeActionItem(normal: "353439")
+  func action(_ entity: Post) async {
+    if let subreddit = entity.data?.subreddit {
+      Task(priority: .background) {
+        await entity.toggleFilterSubreddit(subreddit)
+      }
+    }
+  }
+  func active(_ entity: Post) -> Bool {
+    if let subreddit = entity.data?.subreddit {
+      return Defaults[.filteredSubreddits].contains(subreddit)
+    }
+    
+    return false
+  }
   func enabled(_ entity: Post) -> Bool { true }
 }
 

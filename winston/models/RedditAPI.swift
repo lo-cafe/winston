@@ -12,42 +12,13 @@ import SwiftUI
 import Defaults
 import Combine
 
-//class AvatarCache: ObservableObject {
-//  static var shared = AvatarCache()
-//  @Published var data: [String:String] = [:]
-//}
-
-class AvatarCache: ObservableObject {
-  
-  static let shared = AvatarCache()
-  private init() {}
-  
-  private let _objectWillChange = PassthroughSubject<Void, Never>()
-  var data = [String:String]()
-  
-  var objectWillChange: AnyPublisher<Void, Never> { _objectWillChange.eraseToAnyPublisher() }
-  
-  subscript(key: String) -> String? {
-    get { data[key] }
-    set {
-      data[key] = newValue
-      _objectWillChange.send()
-    }
-  }
-  
-  func merge(_ dict: [String:String]) {
-    data.merge(dict) { (_, new) in new }
-    _objectWillChange.send()
-  }
-}
-
-
 class RedditAPI: ObservableObject {
+  static let shared = RedditAPI()
   static let winstonAPIBase = "https://winston.lo.cafe/api"
   static let redditApiURLBase = "https://oauth.reddit.com"
   static let redditWWWApiURLBase = "https://www.reddit.com"
   static let appClientID: String = "slCYQaTCGfV7FE38BxOeJw"
-  static let appRedirectURI: String = "https://app.winston.lo.cafe/auth-success"
+  static let appRedirectURI: String = "https://winston.cafe/auth-success"
   
   @Published var loggedUser: UserCredential = UserCredential()
   @Published var lastAuthState: String?
@@ -64,7 +35,7 @@ class RedditAPI: ObservableObject {
   }
   
   func refreshToken(_ force: Bool = false, count: Int = 0) async -> Void {
-    if force || loggedUser.lastRefresh.isNil {
+    if force || loggedUser.lastRefresh == nil {
       await MainActor.run {
         loggedUser.lastRefresh = Date(seconds: Date().timeIntervalSince1970 - Double(loggedUser.expiration ?? 86400 * 10))
       }
@@ -152,7 +123,7 @@ class RedditAPI: ObservableObject {
   }
   
   func monitorAuthCallback(_ rawUrl: URL, callback: ((Bool) -> Void)? = nil) {
-    if let url = URL(string: rawUrl.absoluteString.replacingOccurrences(of: "winstonapp://", with: "https://app.winston.lo.cafe/")), url.lastPathComponent == "auth-success", let query = URLComponents(url: url, resolvingAgainstBaseURL: false), let state = query.queryItems?.first(where: { $0.name == "state" })?.value, let code = query.queryItems?.first(where: { $0.name == "code" })?.value, state == lastAuthState {
+    if let url = URL(string: rawUrl.absoluteString.replacingOccurrences(of: "winstonapp://", with: "https://winston.cafe/")), url.lastPathComponent == "auth-success", let query = URLComponents(url: url, resolvingAgainstBaseURL: false), let state = query.queryItems?.first(where: { $0.name == "state" })?.value, let code = query.queryItems?.first(where: { $0.name == "code" })?.value, state == lastAuthState {
       getAccessToken(authCode: code, callback: callback)
       lastAuthState = nil
     } else {
@@ -195,7 +166,7 @@ class RedditAPI: ObservableObject {
   struct GetAccessTokenPayload: Encodable {
     let grant_type = "authorization_code"
     let code: String
-    let redirect_uri = "https://app.winston.lo.cafe/auth-success"
+    let redirect_uri = "https://winston.cafe/auth-success"
   }
   
   struct UserCredential: Hashable {
@@ -203,7 +174,7 @@ class RedditAPI: ObservableObject {
       lhs.hashValue == rhs.hashValue
     }
     
-    let credentialsKeychain = Keychain(service: "lo.cafe.winston.reddit-credentials")
+    let credentialsKeychain = Keychain(service: "lo.cafe.winston.reddit-credentials").synchronizable(Defaults[.syncKeyChainAndSettings])
     
     func hash(into hasher: inout Hasher) {
       hasher.combine(modhash)

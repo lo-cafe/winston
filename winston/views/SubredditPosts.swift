@@ -8,138 +8,162 @@
 import SwiftUI
 import Defaults
 import SwiftUIIntrospect
-import WaterfallGrid
+import CoreData
 
 enum SubViewType: Hashable {
   case posts(Subreddit)
   case info(Subreddit)
 }
 
-struct SubredditPosts: View {
-  @Default(.preferenceShowPostsCards) private var preferenceShowPostsCards
+struct SubredditPosts: View, Equatable {
+  static func == (lhs: SubredditPosts, rhs: SubredditPosts) -> Bool {
+    lhs.subreddit == rhs.subreddit
+  }
+  
+  @ObservedObject var redditAPI = RedditAPI.shared
   @ObservedObject var subreddit: Subreddit
-  @Environment(\.openURL) private var openURL
+  @Default(.filteredSubreddits) private var filteredSubreddits
   @State private var loading = true
-  @State private var posts: [Post] = []
+  @StateObject private var posts = NonObservableArray<Post>()
   @State private var loadedPosts: Set<String> = []
   @State private var lastPostAfter: String?
   @State private var searchText: String = ""
-  @State private var sort: SubListingSortOption = Defaults[.preferredSort]
+  @State private var sort: SubListingSortOption
   @State private var newPost = false
-  @EnvironmentObject private var redditAPI: RedditAPI
-  @EnvironmentObject private var routerProxy: RouterProxy
   
-  func asyncFetch(force: Bool = false, loadMore: Bool = false, searchText: String? = nil) async {
-    if (subreddit.data == nil || force) && !feedsAndSuch.contains(subreddit.id) {
+  @State private var savedMixedMediaLinks: [Either<Post, Comment>]?
+  @State private var loadNextSavedData: Bool = false
+  @State private var isSavedSubreddit: Bool = false
+  @State private var hasViewLoaded: Bool = false
+  
+  @EnvironmentObject private var routerProxy: RouterProxy
+  @Environment(\.useTheme) private var selectedTheme
+  @Environment(\.colorScheme) private var cs
+  @Environment(\.contentWidth) private var contentWidth
+  
+  let context = PersistenceController.shared.container.newBackgroundContext()
+  let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "SeenPost")
+  
+  init(subreddit: Subreddit) {
+    self.subreddit = subreddit;
+    _sort = State(initialValue: Defaults[.perSubredditSort] ? (Defaults[.subredditSorts][subreddit.id] ?? Defaults[.preferredSort]) : Defaults[.preferredSort]);
+  }
+  
+  var isFeedsAndSuch: Bool { feedsAndSuch.contains(subreddit.id) }
+  
+  func asyncFetch(force: Bool = false, loadMore: Bool = false, searchText: String? = nil) async throws {
+    if (subreddit.data == nil || force) && !isFeedsAndSuch {
       await subreddit.refreshSubreddit()
     }
-    if posts.count > 0 && lastPostAfter == nil && !force {
+    if posts.data.count > 0 && lastPostAfter == nil && !force {
       return
     }
-    if let result = await subreddit.fetchPosts(sort: sort, after: loadMore ? lastPostAfter : nil, searchText: searchText), let newPosts = result.0 {
-      withAnimation {
-        if loadMore {
-          let newPostsFiltered = newPosts.filter { !loadedPosts.contains($0.id) }
-          posts.append(contentsOf: newPostsFiltered)
+    withAnimation {
+      loading = true
+    }
+    
+    if subreddit.id != "saved" {
+      if let result = await subreddit.fetchPosts(sort: sort, after: loadMore ? lastPostAfter : nil, searchText: searchText, contentWidth: contentWidth), let newPosts = result.0 {
+        await RedditAPI.shared.updatePostsWithAvatar(posts: newPosts, avatarSize: selectedTheme.postLinks.theme.badge.avatar.size)
+        withAnimation {
+          let newPostsFiltered = newPosts.filter { !loadedPosts.contains($0.id) && !filteredSubreddits.contains($0.data?.subreddit ?? "") }
+          
+          if loadMore {
+            posts.data.append(contentsOf: newPostsFiltered)
+          } else {
+            posts.data = newPostsFiltered
+          }
+          
           newPostsFiltered.forEach { loadedPosts.insert($0.id) }
-        } else {
-          let newPostsFiltered = newPosts.filter { !loadedPosts.contains($0.id) }
-          posts = newPostsFiltered
-          newPostsFiltered.forEach { loadedPosts.insert($0.id) }
+          
+          loading = false
+          lastPostAfter = result.1
         }
-        loading = false
-        lastPostAfter = result.1
       }
-      Task(priority: .background) {
-        await redditAPI.updateAvatarURLCacheFromPosts(posts: newPosts)
+    } else {
+      if let result = await subreddit.fetchSavedMixedMedia(after: loadMore ? lastPostAfter : nil, searchText: searchText, contentWidth: contentWidth) {
+        withAnimation {
+          if loadMore {
+            savedMixedMediaLinks?.append(contentsOf: result)
+          } else {
+            savedMixedMediaLinks = result
+          }
+          
+          loading = false
+          if let lastItem = result.last {
+            lastPostAfter = getItemId(for: lastItem)
+          }
+        }
       }
     }
   }
   
-  func fetch(loadMore: Bool = false, searchText: String? = nil) {
+  func fetch(_ loadMore: Bool = false, _ searchText: String? = nil) {
     Task(priority: .background) {
-      await asyncFetch(loadMore: loadMore, searchText: searchText)
+      do {
+        try await asyncFetch(loadMore: loadMore, searchText: searchText)
+      } catch {
+        print(error)
+      }
     }
   }
   
   func clearAndLoadData(withSearchText searchText: String? = nil) {
     withAnimation {
-      posts.removeAll()
+      posts.data.removeAll()
       loadedPosts.removeAll()
+      
+      if isSavedSubreddit {
+        savedMixedMediaLinks?.removeAll()
+      }
     }
     
     if let searchText = searchText, !searchText.isEmpty {
-      fetch(searchText: searchText)
+      fetch(false, searchText)
     } else {
       fetch()
     }
     
-    Defaults[.preferredSort] = sort
   }
   
   var body: some View {
     Group {
-      //      if IPAD {
-      //        ScrollView(.vertical) {
-      //          WaterfallGrid(posts, id: \.self.id) { el in
-      //            PostLink(post: el, sub: subreddit)
-      //          }
-      //          .gridStyle(columns: 2, spacing: 16, animation: .easeInOut(duration: 0.5))
-      //          .scrollOptions(direction: .vertical)
-      //          .padding(.horizontal, 16)
-      //        }
-      //        .introspect(.scrollView, on: .iOS(.v13, .v14, .v15, .v16, .v17)) { scrollView in
-      //          scrollView.backgroundColor = UIColor.systemGroupedBackground
-      //        }
-      //      } else {
-      List {
-        Section {
-          ForEach(Array(posts.enumerated()), id: \.self.element.id) { i, post in
-
-            PostLink(post: post, sub: subreddit)
-              .equatable()
-              .onAppear {
-                if(Int(Double(posts.count) * 0.75) == i) {
-                  if !searchText.isEmpty {
-                    fetch(loadMore: true, searchText: searchText)
-                  } else {
-                    fetch(loadMore: true)
-                  }
-                }
-              }
-              .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
-              .animation(.default, value: posts)
-
-            if !preferenceShowPostsCards && i != (posts.count - 1) {
-              VStack(spacing: 0) {
-                Divider()
-                Color.listBG
-                  .frame(maxWidth: .infinity, minHeight: 6, maxHeight: 6)
-                Divider()
-              }
-              .id("\(post.id)-divider")
-              .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
-            }
-
-          }
-          if !lastPostAfter.isNil {
-            ProgressView()
-              .progressViewStyle(.circular)
-              .frame(maxWidth: .infinity, minHeight: posts.count > 0 ? 100 : UIScreen.screenHeight - 200 )
-              .id("post-loading")
+      if !isSavedSubreddit {
+        Group {
+          if IPAD {
+            SubredditPostsIPAD(showSub: isFeedsAndSuch, subreddit: subreddit, posts: posts.data, searchText: searchText, fetch: fetch, selectedTheme: selectedTheme)
+          } else {
+            SubredditPostsIOS(showSub: isFeedsAndSuch, lastPostAfter: lastPostAfter, subreddit: subreddit, posts: posts.data, searchText: searchText, fetch: fetch, selectedTheme: selectedTheme)
           }
         }
-        .listRowSeparator(.hidden)
-        .listRowBackground(Color.clear)
+        .searchable(text: $searchText, prompt: "Search r/\(subreddit.data?.display_name ?? subreddit.id)")
+      } else {
+        if let savedMixedMediaLinks = savedMixedMediaLinks, let user = redditAPI.me {
+          List {
+            MixedMediaFeedLinksView(mixedMediaLinks: savedMixedMediaLinks, loadNextData: $loadNextSavedData, user: user)
+              .onChange(of: loadNextSavedData) { shouldLoad in
+                if shouldLoad {
+                  fetch(shouldLoad)
+                  loadNextSavedData = false
+                }
+              }
+          }
+          .themedListBG(selectedTheme.lists.bg)
+          .scrollContentBackground(.hidden)
+          .listStyle(.plain)
+        }
       }
-      .background(Color(UIColor.systemGroupedBackground))
-      .scrollContentBackground(.hidden)
-      .listStyle(.plain)
-      .environment(\.defaultMinListRowHeight, 1)
     }
-    .loader(loading && posts.count == 0)
+    .onAppear {
+      if !hasViewLoaded {
+        isSavedSubreddit = subreddit.id == "saved" // detect unique saved subreddit (saved posts and comments require unique logic)
+        hasViewLoaded = true
+      }
+    }
+    .environment(\.defaultMinListRowHeight, 1)
+    .loader(loading && posts.data.count == 0)
     .overlay(
-      feedsAndSuch.contains(subreddit.id)
+      isFeedsAndSuch
       ? nil
       : Button {
         newPost = true
@@ -147,7 +171,7 @@ struct SubredditPosts: View {
         Image(systemName: "newspaper.fill")
           .fontSize(22, .bold)
           .frame(width: 64, height: 64)
-          .foregroundColor(.blue)
+          .foregroundColor(Color.accentColor)
           .floating()
           .contentShape(Circle())
       }
@@ -156,98 +180,106 @@ struct SubredditPosts: View {
         .padding(.all, 12)
       , alignment: .bottomTrailing
     )
-    .sheet(isPresented: $newPost, content: {
-      NewPostModal(subreddit: subreddit)
-    })
-    .navigationBarItems(
-      trailing:
-        HStack {
-          Menu {
-            ForEach(SubListingSortOption.allCases) { opt in
-              if case .top(_) = opt {
-                Menu {
-                  ForEach(SubListingSortOption.TopListingSortOption.allCases, id: \.self) { topOpt in
-                    Button {
-                      sort = .top(topOpt)
-                    } label: {
-                      HStack {
-                        Text(topOpt.rawValue.capitalized)
-                        Spacer()
-                        Image(systemName: topOpt.icon)
-                          .foregroundColor(.blue)
-                          .font(.system(size: 17, weight: .bold))
-                      }
-                    }
-                  }
-                } label: {
-                  Label(opt.rawVal.value.capitalized, systemImage: opt.rawVal.icon)
-                    .foregroundColor(.blue)
-                    .font(.system(size: 17, weight: .bold))
-                }
-              } else {
-                Button {
-                  sort = opt
-                } label: {
-                  HStack {
-                    Text(opt.rawVal.value.capitalized)
-                    Spacer()
-                    Image(systemName: opt.rawVal.icon)
-                      .foregroundColor(.blue)
-                      .font(.system(size: 17, weight: .bold))
-                  }
-                }
-              }
-            }
-          } label: {
-            Button { } label: {
-              Image(systemName: sort.rawVal.icon)
-                .foregroundColor(.blue)
-                .fontSize(17, .bold)
-            }
-          }
-          
-          Button{
-            routerProxy.tryToNavBack()
-          } label: {
-            Label("Go Back", systemImage: "arrowshape.backward")
-          }
-
-          if let data = subreddit.data {
-            Button {
-              routerProxy.router.path.append(SubViewType.info(subreddit))
-            } label: {
-              SubredditIcon(data: data)
-            }
-          }
-        }
-        .animation(nil, value: sort)
-    )
-    .onAppear {
-      //      sort = Defaults[.preferredSort]
-      if posts.count == 0 {
-        doThisAfter(0) {
-          fetch()
+    //    .sheet(isPresented: $newPost, content: {
+    //      NewPostModal(subreddit: subreddit)
+    //    })
+    .navigationBarItems(trailing: SubredditPostsNavBtns(sort: $sort, subreddit: subreddit, routerProxy: routerProxy))
+    .onSubmit(of: .search) {
+      clearAndLoadData(withSearchText: searchText)
+    }
+    .refreshable {
+      clearAndLoadData()
+    }
+    .navigationTitle("\(isFeedsAndSuch ? subreddit.id.capitalized : "r/\(subreddit.data?.display_name ?? subreddit.id)")")
+    .task(priority: .background) {
+      if posts.data.count == 0 {
+        do {
+          try await asyncFetch()
+        } catch {
+          print(error)
         }
       }
     }
     .onChange(of: sort) { val in
       clearAndLoadData()
     }
-    .searchable(text: $searchText, prompt: "Search r/\(subreddit.data?.display_name ?? subreddit.id)")
-    .onSubmit(of: .search) {
-      clearAndLoadData(withSearchText: searchText)
+    .onChange(of: cs) { _ in
+      Task(priority: .background) {
+        posts.data.forEach { $0.setupWinstonData(data: $0.data, winstonData: $0.winstonData, theme: selectedTheme, fetchAvatar: false) }
+      }
     }
     .onChange(of: searchText) { val in
       if searchText.isEmpty {
         clearAndLoadData()
       }
     }
-    .refreshable {
-      loadedPosts.removeAll()
-      await asyncFetch(force: true)
-    }
-    .navigationTitle("\(feedsAndSuch.contains(subreddit.id) ? subreddit.id.capitalized : "r/\(subreddit.data?.display_name ?? subreddit.id)")")
-    .background(.thinMaterial)
   }
   
+}
+
+
+struct SubredditPostsNavBtns: View, Equatable {
+  static func == (lhs: SubredditPostsNavBtns, rhs: SubredditPostsNavBtns) -> Bool {
+    lhs.sort == rhs.sort && (lhs.subreddit.data == nil) == (rhs.subreddit.data == nil)
+  }
+  @Binding var sort: SubListingSortOption
+  @ObservedObject var subreddit: Subreddit
+  var routerProxy: RouterProxy
+  var body: some View {
+    HStack {
+      Menu {
+        ForEach(SubListingSortOption.allCases) { opt in
+          if case .top(_) = opt {
+            Menu {
+              ForEach(SubListingSortOption.TopListingSortOption.allCases, id: \.self) { topOpt in
+                Button {
+                  sort = .top(topOpt)
+                  Defaults[.subredditSorts][subreddit.id] = .top(topOpt)
+                } label: {
+                  HStack {
+                    Text(topOpt.rawValue.capitalized)
+                    Spacer()
+                    Image(systemName: topOpt.icon)
+                      .foregroundColor(Color.accentColor)
+                      .font(.system(size: 17, weight: .bold))
+                  }
+                }
+              }
+            } label: {
+              Label(opt.rawVal.value.capitalized, systemImage: opt.rawVal.icon)
+                .foregroundColor(Color.accentColor)
+                .font(.system(size: 17, weight: .bold))
+            }
+          } else {
+            Button {
+              sort = opt
+              Defaults[.subredditSorts][subreddit.id] = opt
+            } label: {
+              HStack {
+                Text(opt.rawVal.value.capitalized)
+                Spacer()
+                Image(systemName: opt.rawVal.icon)
+                  .foregroundColor(Color.accentColor)
+                  .font(.system(size: 17, weight: .bold))
+              }
+            }
+          }
+        }
+      } label: {
+        Image(systemName: sort.rawVal.icon)
+          .foregroundColor(Color.accentColor)
+          .fontSize(17, .bold)
+      }
+      .disabled(subreddit.id == "saved")
+      
+      if let data = subreddit.data {
+        Button {
+          routerProxy.router.path.append(SubViewType.info(subreddit))
+        } label: {
+          SubredditIcon(subredditIconKit: data.subredditIconKit)
+        }
+      }
+    }
+    .animation(nil, value: sort)
+  }
 }

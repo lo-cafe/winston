@@ -18,11 +18,8 @@ private class HideDebouncer {
 
 extension RedditAPI {
   func hidePost(_ hide: Bool, fullnames: [String]) async -> () {
-    if !HideDebouncer.shared.workItem.isNil {
-      HideDebouncer.shared.workItem?.cancel()
-      HideDebouncer.shared.workItem = nil
-    }
     HideDebouncer.shared.names += fullnames
+    if HideDebouncer.shared.workItem != nil { return }
     HideDebouncer.shared.workItem = DispatchWorkItem {
       HideDebouncer.shared.workItem = nil
       let names = HideDebouncer.shared.names
@@ -41,7 +38,6 @@ extension RedditAPI {
           let result = await dataTask.result
           switch result {
           case .success:
-//            print("foi")
             //          return true
             break
           case .failure:
@@ -54,7 +50,9 @@ extension RedditAPI {
         }
       }
     }
-    DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: HideDebouncer.shared.workItem!) // delay of 5 seconds
+    if let workItem = HideDebouncer.shared.workItem {
+      DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: workItem)
+    }
   }
   
   struct HidePayload: Codable {

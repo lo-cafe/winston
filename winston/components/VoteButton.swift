@@ -7,32 +7,54 @@
 
 import SwiftUI
 
-struct VoteButton: View {
-  var color: Color
-  var voteAction: RedditAPI.VoteAction
-  var image: String
-  var post: Post
-  @State private var animate = true
-
-  var body: some View {
-    Button {
-      let medium = UIImpactFeedbackGenerator(style: .medium)
-      medium.prepare()
-      medium.impactOccurred()
-//      try? haptics.fire(intensity:  0.45, sharpness: 0.65)
-      animate = false
-      withAnimation(.spring(response: 0.3, dampingFraction: 0.5)){
-        animate = true
-      }
-      Task(priority: .background) {
-        await post.vote(action: voteAction)
-      }
-    } label: {
-      Image(systemName: image)
-    }
-    .onTapGesture {}
-    .buttonStyle(ScaleButtonStyle(scaleDepressed: 1, scalePressed: 1.2))
-    .foregroundColor(color)
-    .scaleEffect(animate ? 1 : 1.3)
-    }
+@available(iOS 17.0, *)
+struct VoteButton: View, Equatable {
+  static func == (lhs: VoteButton, rhs: VoteButton) -> Bool {
+    return lhs.active == rhs.active
   }
+  
+  var active: Bool
+  var color: Color
+//  var voteAction: () -> ()
+  var image: String
+  
+  var body: some View {
+    Image(systemName: image)
+      .symbolEffect(active ? .bounce.up : .bounce.down, options: .speed(2.75), value: active)
+      .frame(37)
+      .background(Color.clear)
+      .contentShape(Rectangle())
+      .frame(21)
+      .foregroundColor(active ? color : .gray)
+  }
+}
+
+@available(iOS, deprecated: 17.0)
+struct VoteButtonFallback: View, Equatable {
+  static func == (lhs: VoteButtonFallback, rhs: VoteButtonFallback) -> Bool {
+    return lhs.color == rhs.color && lhs.image == rhs.image
+  }
+  
+  var color: Color
+  var voteAction: () -> ()
+  var image: String
+  @State private var animate = true
+  
+  func action() {
+    animate = false
+    withAnimation(.spring(response: 0.3, dampingFraction: 0.5)){
+      animate = true
+    }
+    voteAction()
+  }
+  
+  var body: some View {
+    Image(systemName: image)
+      .frame(21)
+      .background(Color.clear)
+      .contentShape(Circle())
+      .highPriorityGesture(TapGesture().onEnded(action))
+      .foregroundColor(color)
+      .scaleEffect(animate ? 1 : 1.3)
+  }
+}

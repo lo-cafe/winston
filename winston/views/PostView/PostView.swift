@@ -9,6 +9,7 @@ import SwiftUI
 import Defaults
 import AVFoundation
 import AlertToast
+
 struct PostViewPayload: Hashable {
   let post: Post
   var postSelfAttr: AttributedString? = nil
@@ -16,51 +17,100 @@ struct PostViewPayload: Hashable {
   var highlightID: String? = nil
 }
 
-struct PostView: View {
-  var post: Post
+struct PostView: View, Equatable {
+  static func == (lhs: PostView, rhs: PostView) -> Bool {
+    lhs.post.id == rhs.post.id && lhs.subreddit.id == rhs.subreddit.id
+  }
+  
+  @ObservedObject var post: Post
   var selfAttr: AttributedString? = nil
-  @ObservedObject var subreddit: Subreddit
+  var subreddit: Subreddit
   var highlightID: String?
   var forceCollapse: Bool = false
-  @Default(.preferenceShowCommentsCards) private var preferenceShowCommentsCards
+  @Environment(\.useTheme) private var selectedTheme
+  @Environment(\.colorScheme) private var cs
   @State private var ignoreSpecificComment = false
+  @State private var hideElements = true
   @State private var sort: CommentSortOption = Defaults[.preferredCommentSort]
-  @EnvironmentObject private var redditAPI: RedditAPI
+  //  @State private var sort: CommentSortOption = .confidence
+  
   @EnvironmentObject private var routerProxy: RouterProxy
   @State var update = false
-
+    
+  init(post: Post, subreddit: Subreddit) {
+    self.post = post
+    self.subreddit = subreddit
+    
+    _sort = State(initialValue: Defaults[.perPostSort] ? (Defaults[.postSorts][post.id] ?? Defaults[.preferredCommentSort]) : Defaults[.preferredCommentSort]);
+  }
+  
+  init(post: Post, subreddit: Subreddit, forceCollapse: Bool) {
+    self.post = post
+    self.subreddit = subreddit
+    self.forceCollapse = forceCollapse
+    
+    _sort = State(initialValue: Defaults[.perPostSort] ? (Defaults[.postSorts][post.id] ?? Defaults[.preferredCommentSort]) : Defaults[.preferredCommentSort]);
+  }
+  
+  init(post: Post, subreddit: Subreddit, highlightID: String?) {
+    self.post = post
+    self.subreddit = subreddit
+    self.highlightID = highlightID
+    
+    _sort = State(initialValue: Defaults[.perPostSort] ? (Defaults[.postSorts][post.id] ?? Defaults[.preferredCommentSort]) : Defaults[.preferredCommentSort]);
+  }
+  
+  init(post: Post, selfAttr: AttributedString?, subreddit: Subreddit, highlightID: String?) {
+    self.post = post
+    self.selfAttr = selfAttr
+    self.subreddit = subreddit
+    self.highlightID = highlightID
+    
+    _sort = State(initialValue: Defaults[.perPostSort] ? (Defaults[.postSorts][post.id] ?? Defaults[.preferredCommentSort]) : Defaults[.preferredCommentSort]);
+  }
+  
   func asyncFetch(_ full: Bool = true) async {
     if full {
-        update.toggle()
+      update.toggle()
     }
     if let result = await post.refreshPost(commentID: ignoreSpecificComment ? nil : highlightID, sort: sort, after: nil, subreddit: subreddit.data?.display_name ?? subreddit.id, full: full), let newComments = result.0 {
-      Task {
-        await redditAPI.updateAvatarURLCacheFromComments(comments: newComments)
+      Task(priority: .background) {
+        await RedditAPI.shared.updateCommentsWithAvatar(comments: newComments, avatarSize: selectedTheme.comments.theme.badge.avatar.size)
       }
     }
   }
   
-  func updateComments() {
-    Task { await asyncFetch(true) }
+  func updatePost() {
+    Task(priority: .background) { await asyncFetch(true) }
   }
   
   var body: some View {
-    ScrollViewReader{ proxy in
+    let commentsHPad = selectedTheme.comments.theme.outerHPadding > 0 ? selectedTheme.comments.theme.outerHPadding : selectedTheme.comments.theme.innerPadding.horizontal
+    ScrollViewReader { proxy in
       List {
         Group {
           Section {
-            PostContent(post: post, selfAttr: selfAttr, sub: subreddit, forceCollapse: forceCollapse)
+            if let winstonData = post.winstonData {
+              PostContent(post: post, winstonData: winstonData, sub: subreddit, forceCollapse: forceCollapse)
+            }
+            //              .equatable()
+            
+            if selectedTheme.posts.inlineFloatingPill {
+              PostFloatingPill(post: post, subreddit: subreddit)
+                    .padding(-10)
+            }
             
             Text("Comments")
               .fontSize(20, .bold)
               .frame(maxWidth: .infinity, alignment: .leading)
               .id("comments-header")
-              .listRowInsets(EdgeInsets(top: 8, leading: 8, bottom: 8, trailing: 8))
+              .listRowInsets(EdgeInsets(top: selectedTheme.posts.commentsDistance / 2, leading:commentsHPad, bottom: 8, trailing: commentsHPad))
           }
           .listRowBackground(Color.clear)
           
-          PostReplies(update: update, post: post, subreddit: subreddit, ignoreSpecificComment: ignoreSpecificComment, highlightID: highlightID, sort: sort, proxy: proxy)
-          
+          if !hideElements {
+            PostReplies(update: update, post: post, subreddit: subreddit, ignoreSpecificComment: ignoreSpecificComment, highlightID: highlightID, sort: sort, proxy: proxy)
+          }
           
           if !ignoreSpecificComment && highlightID != nil {
             Section {
@@ -76,6 +126,7 @@ struct PostView: View {
                 }
               }
             }
+            .listRowBackground(Color.primary.opacity(0.1))
           }
           
           Section {
@@ -87,71 +138,86 @@ struct PostView: View {
         }
         .listRowSeparator(.hidden)
       }
-      .background(Color(UIColor.systemGroupedBackground))
+      .scrollIndicators(.never)
+      .themedListBG(selectedTheme.posts.bg)
       .scrollContentBackground(.hidden)
       .transition(.opacity)
       .environment(\.defaultMinListRowHeight, 1)
       .listStyle(.plain)
       .refreshable {
+        withAnimation { update.toggle() }
         await asyncFetch(true)
       }
-      .overlay(
-        PostFloatingPill(post: post, subreddit: subreddit)
-        , alignment: .bottomTrailing)
+      .overlay(alignment: .bottomTrailing) {
+        if !selectedTheme.posts.inlineFloatingPill {
+          PostFloatingPill(post: post, subreddit: subreddit)
+        }
+      }
       .navigationBarTitle("\(post.data?.num_comments ?? 0) comments", displayMode: .inline)
-      .navigationBarItems(
-        trailing:
-          HStack {
-            Menu {
-              ForEach(CommentSortOption.allCases) { opt in
-                Button {
-                  sort = opt
-                } label: {
-                  HStack {
-                    Text(opt.rawVal.value.capitalized)
-                    Spacer()
-                    Image(systemName: opt.rawVal.icon)
-                      .foregroundColor(.blue)
-                      .fontSize(17, .bold)
-                  }
-                }
-              }
-            } label: {
-              Button { } label: {
-                Image(systemName: sort.rawVal.icon)
-                  .foregroundColor(.blue)
-                  .fontSize(17, .bold)
-              }
-            }
-            
-            if let data = subreddit.data, !feedsAndSuch.contains(subreddit.id) {
-              Button {
-                routerProxy.router.path.append(SubViewType.info(subreddit))
-              } label: {
-                SubredditIcon(data: data)
-              }
-            }
-          }
-          .animation(nil, value: sort)
-      )
+      .toolbar { Toolbar(hideElements: hideElements, subreddit: subreddit, post: post, routerProxy: routerProxy, sort: $sort) }
       .onChange(of: sort) { val in
-        updateComments()
+        updatePost()
+      }
+      .onChange(of: cs) { _ in
+        Task(priority: .background) {
+          post.setupWinstonData(data: post.data, winstonData: post.winstonData, theme: selectedTheme, fetchAvatar: false)
+        }
       }
       .onAppear {
+        if post.data == nil {
+          updatePost()
+        }
         Task(priority: .background) {
+          doThisAfter(0.5) {
+            hideElements = false
+          }
           if subreddit.data == nil && subreddit.id != "home" {
             await subreddit.refreshSubreddit()
           }
         }
       }
     }
-    .capturePoppedView(view: PostViewPayload(post: post, postSelfAttr: selfAttr, sub: subreddit), in: routerProxy.router)
-
+    
   }
+    .capturePoppedView(view: PostViewPayload(post: post, postSelfAttr: selfAttr, sub: subreddit), in: routerProxy.router)
 }
 
-//struct Post_Previews: PreviewProvider {
-//    static var previews: some View {
-//        PostLink()
-//    }
-//}
+private struct Toolbar: View {
+  var hideElements: Bool
+  var subreddit: Subreddit
+  var post: Post
+  var routerProxy: RouterProxy
+  @Binding var sort: CommentSortOption
+  var body: some View {
+    HStack {
+      Menu {
+        if !hideElements {
+          ForEach(CommentSortOption.allCases) { opt in
+            Button {
+              sort = opt
+              Defaults[.postSorts][post.id] = opt
+            } label: {
+              HStack {
+                Text(opt.rawVal.value.capitalized)
+                Spacer()
+                Image(systemName: opt.rawVal.icon)
+                  .foregroundColor(Color.accentColor)
+                  .fontSize(17, .bold)
+              }
+            }
+          }
+        }
+      } label: {
+        Image(systemName: sort.rawVal.icon)
+          .foregroundColor(Color.accentColor)
+          .fontSize(17, .bold)
+      }
+      
+      if let data = subreddit.data, !feedsAndSuch.contains(subreddit.id) {
+        SubredditIcon(subredditIconKit: data.subredditIconKit)
+          .onTapGesture { routerProxy.router.path.append(SubViewType.info(subreddit)) }
+      }
+    }
+    .animation(nil, value: sort)
+  }
+}

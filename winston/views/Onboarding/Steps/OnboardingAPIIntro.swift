@@ -31,7 +31,7 @@ private struct Feature: View {
     .padding(.vertical, 12)
     .padding(.trailing, 16)
     .frame(maxWidth: .infinity, alignment: .leading)
-    .background(RR(16, .black.opacity(colorScheme == .dark ? 0.2 : 0.05)))
+    .background(RR(16, Color.black.opacity(colorScheme == .dark ? 0.2 : 0.05)))
   }
 }
 

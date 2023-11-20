@@ -7,6 +7,7 @@
 
 import SwiftUI
 import Defaults
+import Combine
 
 struct SwipeAywhereState {
   var activated = false
@@ -15,8 +16,27 @@ struct SwipeAywhereState {
   var draggingLeft: Bool? = nil
 }
 
+class SwipeAnywhereRouterContainer: ObservableObject {
+  @Published var isRoot: Bool = false
+  
+  let router: Router
+  var cancellable: AnyCancellable? = nil
+  
+  init(_ router: Router) {
+    self.router = router
+    doThisAfter(0.0) {
+      self.cancellable = self.router.objectWillChange.sink { [weak self] val in
+        let isIt = self?.router.path.count == 0
+        if self?.isRoot != isIt { self?.isRoot = isIt }
+      }
+    }
+  }
+}
+
+
 struct SwipeAnywhere: ViewModifier {
   @StateObject var routerProxy: RouterProxy
+  @StateObject var routerContainer: RouterIsRoot
   var forceEnable: Bool = false
   
   @Default(.enableSwipeAnywhere) private var enableSwipeAnywhere
@@ -27,7 +47,7 @@ struct SwipeAnywhere: ViewModifier {
   @State private var soft = UIImpactFeedbackGenerator(style: .soft)
   
   func body(content: Content) -> some View {
-    let enabled = routerProxy.router.path.count > 0 && (enableSwipeAnywhere || forceEnable)
+    let enabled = !routerContainer.isRoot && (enableSwipeAnywhere || forceEnable)
     let finalOffset = dragState.offset + staticOffset
     let interpolate = interpolatorBuilder([0, activatedAmount], value: (abs(finalOffset.width) + abs(finalOffset.height)) / 2)
     content
@@ -37,8 +57,8 @@ struct SwipeAnywhere: ViewModifier {
         ? nil
         : DragGesture()
           .updating($dragState) { val, state, trans in
-            if state.draggingRight.isNil { state.draggingRight = abs(val.translation.width) > abs(val.translation.height) }
-            guard let dragging = state.draggingRight, dragging else { return }
+            if state.dragging == nil { state.dragging = abs(val.translation.width) > abs(val.translation.height) }
+            guard let dragging = state.dragging, dragging else { return }
             let translation = val.translation
             trans.isContinuous = true
             var newDragState = state
@@ -59,7 +79,7 @@ struct SwipeAnywhere: ViewModifier {
             withAnimation(.interpolatingSpring(stiffness: 125, damping: 15, initialVelocity: -initialVel)) {
               staticOffset = .zero
             }
-            if routerProxy.router.path.count > 0 && val.translation.width > 0 && ((abs(val.translation.width) + abs(val.translation.height)) / 2) >= activatedAmount {
+            if !routerContainer.isRoot && val.translation.width > 0 && ((abs(val.translation.width) + abs(val.translation.height)) / 2) >= activatedAmount {
               routerProxy.router.path.removeLast(1)
             }
           }
@@ -137,8 +157,8 @@ struct SwipeAnywhere: ViewModifier {
 }
 
 extension View {
-  func swipeAnywhere(routerProxy: RouterProxy, forceEnable: Bool = false) -> some View {
-    self.modifier(SwipeAnywhere(routerProxy: routerProxy, forceEnable: forceEnable))
+  func swipeAnywhere(routerProxy: RouterProxy, routerContainer: RouterIsRoot, forceEnable: Bool = false) -> some View {
+    self.modifier(SwipeAnywhere(routerProxy: routerProxy, routerContainer: routerContainer, forceEnable: forceEnable))
   }
 }
 

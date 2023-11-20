@@ -10,9 +10,10 @@ import Defaults
 
 struct AccountPanel: View {
   @Default(.redditAPIUserAgent) var redditAPIUserAgent
-  @Environment(\.openURL) var openURL
-  @EnvironmentObject var redditAPI: RedditAPI
+  
   @State private var isPresentingConfirm: Bool = false
+  
+  @Environment(\.useTheme) private var theme
   
   var body: some View {
     List {
@@ -27,52 +28,52 @@ struct AccountPanel: View {
             Text("Your API credentials are 👌")
           }
         }
+        .themedListRowBG(enablePadding: true)
         
-        if let accessToken = redditAPI.loggedUser.accessToken {
-          Button("Copy Current Access Token") {
+        if let accessToken = RedditAPI.shared.loggedUser.accessToken {
+          WSListButton("Copy Current Access Token", icon: "clipboard") {
             UIPasteboard.general.string = accessToken
           }
-          Button("Refresh Access Token") {
+          
+          WSListButton("Refresh Access Token", icon: "arrow.clockwise") {
             Task(priority: .background) {
-              await redditAPI.refreshToken(true)
+              await RedditAPI.shared.refreshToken(true)
             }
           }
         }
         
         Text("If Reddit ban the user-agent this app uses, you can change it to a custom one here:")
+          .themedListRowBG(enablePadding: true)
+        
         HStack {
           Image(systemName: "person.crop.circle.fill")
           TextField("User Agent", text: $redditAPIUserAgent)
         }
+        .themedListRowBG(enablePadding: true)
       }
+      .themedListDividers()
       
       Section {
-        Button("Logout") {
+        WSListButton("Logout", icon: "door.right.hand.open") {
           isPresentingConfirm = true
         }
         .foregroundColor(.red)
         .confirmationDialog("Are you sure you wanna logoff?", isPresented: $isPresentingConfirm, actions: {
           Button("Reset winston", role: .destructive) {
             resetApp()
-            redditAPI.loggedUser.accessToken = nil
-            redditAPI.loggedUser.refreshToken = nil
-            redditAPI.loggedUser.expiration = nil
-            redditAPI.loggedUser.lastRefresh = nil
-            redditAPI.loggedUser.apiAppID = nil
-            redditAPI.loggedUser.apiAppSecret = nil
+            RedditAPI.shared.loggedUser.accessToken = nil
+            RedditAPI.shared.loggedUser.refreshToken = nil
+            RedditAPI.shared.loggedUser.expiration = nil
+            RedditAPI.shared.loggedUser.lastRefresh = nil
+            RedditAPI.shared.loggedUser.apiAppID = nil
+            RedditAPI.shared.loggedUser.apiAppSecret = nil
           }
         }, message: { Text("This will clear everything in the app (your Reddit account is safe).") })
       }
-      
-      
+      .themedListDividers()      
     }
+    .themedListBG(theme.lists.bg)
     .navigationTitle("Account")
     .navigationBarTitleDisplayMode(.inline)
-  }
-}
-
-struct AccountPanel_Previews: PreviewProvider {
-  static var previews: some View {
-    AccountPanel()
   }
 }
