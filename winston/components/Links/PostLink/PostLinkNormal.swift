@@ -169,8 +169,6 @@ struct PostLinkNormal: View, Equatable, Identifiable {
       //      .scrollSwipe(size: winstonData.postDimensions.size, actionsSet: postSwipeActions, entity: post)
       .swipyUI(onTap: openPost, actionsSet: postSwipeActions, entity: post, secondary: secondary)
       //      .onChange(of: selectedTheme) { x in post.setupWinstonData(data: post.data, winstonData: winstonData, theme: x) }
-      .frame(width: winstonData.postDimensions.size.width, height: winstonData.postDimensions.size.height)
-      .fixedSize()
     }
   }
 }
