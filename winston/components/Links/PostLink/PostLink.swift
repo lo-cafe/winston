@@ -117,7 +117,7 @@ extension View {
       .fixedSize()
       .background(PostLinkBG(theme: theme, stickied: post.data?.stickied, secondary: secondary, cs: cs).equatable())
       .mask(RR(theme.theme.cornerRadius, Color.black).equatable())
-      .overlay(PostLinkGlowDot(unseenType: theme.theme.unseenType, seen: seen, cs: cs).equatable(), alignment: .topTrailing)
+      .overlay(PostLinkGlowDot(unseenType: theme.theme.unseenType, seen: seen, cs: cs, badge: false).equatable(), alignment: .topTrailing)
       .scaleEffect(1)
       .contentShape(Rectangle())
 //      .gesture(TapGesture().onEnded(openPost))
@@ -148,13 +148,15 @@ struct PostLinkGlowDot: View, Equatable {
   let unseenType: UnseenType
   let seen: Bool
   let cs: ColorScheme
+  let badge: Bool
+  
   var body: some View {
     ZStack {
       switch unseenType {
       case .dot(let color):
         ZStack {
           Circle()
-            .fill(Color.hex("CFFFDE"))
+            .fill(badge ? color.cs(cs).color() : Color.hex("CFFFDE"))
             .frame(width: 5, height: 5)
           Circle()
             .fill(color.cs(cs).color())
@@ -165,7 +167,7 @@ struct PostLinkGlowDot: View, Equatable {
         EmptyView()
       }
     }
-    .padding(.all, 11)
+    .padding(badge ? .horizontal : .all, badge ? 6 : 11)
     .scaleEffect(seen ? 0.1 : 1)
     .opacity(seen ? 0 : 1)
     .allowsHitTesting(false)

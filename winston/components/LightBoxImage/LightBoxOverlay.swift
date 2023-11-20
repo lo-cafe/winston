@@ -29,7 +29,7 @@ struct LightBoxOverlay: View {
         Text(postTitle)
           .fontSize(20, .semibold)
           .allowsHitTesting(false)
-        BadgeView(avatarRequest: avatarImageRequest, saved: false, usernameColor: nil, author: badgeKit.author, fullname: badgeKit.authorFullname, created: badgeKit.created, avatarURL: nil, theme: selectedTheme.postLinks.theme.badge, cs: cs)
+        BadgeView(avatarRequest: avatarImageRequest, saved: false, usernameColor: nil, author: badgeKit.author, fullname: badgeKit.authorFullname, userFlair: badgeKit.userFlair, created: badgeKit.created, avatarURL: nil, theme: selectedTheme.postLinks.theme.badge, cs: cs)
       }
       
       Spacer()

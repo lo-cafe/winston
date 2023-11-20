@@ -43,7 +43,7 @@ struct CommentLinkContent: View {
   var disableBG = false
   var highlightID: String?
   //  @Default(.commentSwipeActions) private var commentSwipeActions
-  // var seenComments: String?
+  var seenComments: String?
   var forcedBodySize: CGSize?
   var showReplies = true
   var arrowKinds: [ArrowKind]
@@ -94,7 +94,7 @@ struct CommentLinkContent: View {
           }
           HStack(spacing: 8) {
             if let author = data.author {
-              BadgeView(avatarRequest: winstonData.avatarImageRequest, saved: data.badgeKit.saved, usernameColor: (post?.data?.author ?? "") == author ? Color.green : nil, author: data.badgeKit.author, fullname: data.badgeKit.authorFullname, created: data.badgeKit.created, theme: theme.theme.badge, routerProxy: routerProxy, cs: cs)
+              BadgeView(avatarRequest: winstonData.avatarImageRequest, saved: data.badgeKit.saved, unseen: seenComments == nil ? false : !seenComments!.contains(data.id), usernameColor: (post?.data?.author ?? "") == author ? Color.green : nil, author: data.badgeKit.author,fullname: data.badgeKit.authorFullname, userFlair: data.badgeKit.userFlair, created: data.badgeKit.created, theme: theme.theme.badge, commentTheme: theme.theme, routerProxy: routerProxy, cs: cs)
               //              BadgeComment(badgeKit: data.badgeKit, cs: cs, routerProxy: routerProxy, showVotes: false, usernameColor:  , theme: theme.theme.badge)
             }
             
