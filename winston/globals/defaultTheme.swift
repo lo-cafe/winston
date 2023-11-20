@@ -9,7 +9,7 @@ import Foundation
 import SwiftUI
 
 let defaultAvatarTheme = AvatarTheme(size: 30, cornerRadius: 15, visible: true)
-let themeFontPrimary: ColorSchemes<ThemeColor> = .init(light: .init(hex: "000000"), dark: .init(hex: "ffffff"))
+let themeFontPrimary: ColorSchemes<ThemeColor> = .init(light: .init(hex: "000000", alpha: 0.5), dark: .init(hex: "ffffff", alpha: 0.5))
 private let themeFontPrimaryInverted: ColorSchemes<ThemeColor> = .init(light: .init(hex: "ffffff"), dark: .init(hex: "000000"))
 let listSectionBGTheme: ColorSchemes<ThemeColor> = .init(light: .init(hex: "ffffff"), dark: .init(hex: "1C1C1E"))
 let defaultBG: ColorSchemes<ThemeColor> = .init(light: .init(hex: "F2F2F7"), dark: .init(hex: "000000"))
@@ -20,8 +20,8 @@ let defaultFancyDivider: LineTheme = .init(style: .fancy, thickness: 6, color: .
 let defaultThemeBG: ThemeBG = .color(defaultBG)
 
 let badgeTheme: BadgeTheme = .init(
-  avatar: AvatarTheme(size: 30, cornerRadius: 15, visible: true),
-  authorText: .init(size: 13, color: themeFontPrimary, weight: .semibold),
+  avatar: AvatarTheme(size: 32, cornerRadius: 15, visible: true),
+  authorText: .init(size: 12, color: themeFontPrimary, weight: .semibold),
   subColor: .init(light: .init(hex: "0B84FE"), dark: .init(hex: "0B84FE")),
   flairText: .init(size: 12, color: .init(light: .init(hex: "999999"), dark: .init(hex: "767676")), weight: .bold),
   flairBackground: .init(light: .init(hex: "EEEEEE"), dark: .init(hex: "2C2C2C")),
