@@ -15,6 +15,7 @@ class RouterIsRoot: ObservableObject {
 
 class Router: ObservableObject {
   let id: String
+  @Published var firstSelected: FirstSelectable?
   @Published var path = NavigationPath() {
     willSet {
       objectWillChange.send()

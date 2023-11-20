@@ -364,6 +364,7 @@ extension Post {
             await MainActor.run {
               let newData = actualData.data?.children?[0].data
               self.data = newData
+              setupWinstonData(data: newData, secondary: false, theme: getEnabledTheme())
             }
           }
         case .second(_):

@@ -16,6 +16,7 @@ enum FirstSelectable: Equatable, Hashable {
   case sub(Subreddit)
   case multi(Multi)
   case post(PostViewPayload)
+  case user(User)
 }
 
 struct Subreddits: View, Equatable {

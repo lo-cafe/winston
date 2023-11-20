@@ -11,7 +11,6 @@ import Defaults
 struct SubredditsStack: View {
   var reset: Bool
   @StateObject var router: Router
-  @State var selectedSub: FirstSelectable?
   @Default(.preferenceDefaultFeed) private var preferenceDefaultFeed // handle default feed selection routing
   @State private var columnVisibility: NavigationSplitViewVisibility = .automatic
   @State private var sidebarSize: CGSize = .zero
@@ -21,22 +20,25 @@ struct SubredditsStack: View {
   @State private var loaded = false
   var body: some View {
     NavigationSplitView(columnVisibility: $columnVisibility) {
-      Subreddits(selectedSub: $selectedSub, loaded: loaded, routerProxy: RouterProxy(router))
+      Subreddits(selectedSub: $router.firstSelected, loaded: loaded, routerProxy: RouterProxy(router))
         .measure($sidebarSize)
     } detail: {
       NavigationStack(path: $router.path) {
         DefaultDestinationInjector(routerProxy: RouterProxy(router)) { _ in
-          if let selectedSub = selectedSub {
-            switch selectedSub {
+          if let firstSelected = router.firstSelected {
+            switch firstSelected {
             case .multi(let multi):
               MultiPostsView(multi: multi)
-                .id(multi.id)
+                .id("\(multi.id)-first-tab")
             case .sub(let sub):
               SubredditPosts(subreddit: sub)
-                .id(sub.id)
+                .id("\(sub.id)-first-tab")
             case .post(let payload):
               PostView(post: payload.post, subreddit: payload.sub)
-                .id(payload.post.id)
+                .id("\(payload.post.id)-first-tab")
+            case .user(let user):
+              UserView(user: user)
+                .id("\(user.id)-first-tab")
             }
           } else {
             VStack(spacing: 24) {
@@ -77,7 +79,7 @@ struct SubredditsStack: View {
     .onChange(of: reset) { _ in
       withAnimation {
         router.path.removeLast(router.path.count)
-        selectedSub = nil
+        router.firstSelected = nil
       }
     }
   }
