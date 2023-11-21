@@ -111,8 +111,9 @@ struct BadgeView: View, Equatable {
               .onTapGesture(perform: openUser)
             
             if let openSub = openSub, let subName = subName, theme.forceSubsAsTags {
-              Tag(subredditIconKit: nil, text: "r/\(subName)", color: theme.subColor.cs(cs).color(), fontSize: theme.authorText.size)
-                .onTapGesture(perform: openSub)
+              Tag(subredditIconKit: nil, text: "r/\(subName)", color: theme.subColor.cs(cs).color(), fontSize: theme.authorText.size, backgroundColor: theme.subColor.cs(cs).color())
+              .onTapGesture(perform: openSub
+
             }
             
             if let openSub = openSub, let subName = subName, !theme.forceSubsAsTags {
@@ -143,7 +144,7 @@ struct BadgeView: View, Equatable {
         HStack(alignment: .center, spacing: theme.statsText.size * 0.416666667 /* Yes, absurd number, I thought it was funny */) {
           
           if let openSub = openSub, let subName = subName, !showAuthorOnPostLinks {
-            Tag(subredditIconKit: nil, text: "r/\(subName)", color: theme.subColor.cs(cs).color(), fontSize: theme.statsText.size)
+            Tag(subredditIconKit: nil, text: "r/\(subName)", color: theme.subColor.cs(cs).color(), fontSize: theme.statsText.size, backgroundColor: theme.subColor.cs(cs).color())
               .highPriorityGesture(TapGesture().onEnded(openSub))
           }
           
