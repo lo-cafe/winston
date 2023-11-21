@@ -74,6 +74,17 @@ struct MediaPresenter: View, Equatable {
         VideoPlayerPost(controller: controller, cachedVideo: sharedVideo, markAsSeen: markAsSeen, compact: compact, overrideWidth: contentWidth, url: sharedVideo.url)
           .nsfw(over18 && blurPostLinkNSFW, smallIcon: compact, size: postDimensions.mediaSize)
       }
+      
+    case .streamable(_):
+      if !showURLInstead {
+        ProgressView()
+        .progressViewStyle(.circular)
+        .frame(maxWidth: .infinity, minHeight: 100)
+        .id("streamable-loading")
+        .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
+        .listRowSeparator(.hidden)
+        .listRowBackground(Color.clear)
+      }
     case .yt(let ytMediaExtracted):
       if !showURLInstead {
         YTMediaPostPlayer(compact: compact, player: ytMediaExtracted.player, ytMediaExtracted: ytMediaExtracted, contentWidth: contentWidth)

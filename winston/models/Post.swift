@@ -11,6 +11,7 @@ import SwiftUI
 import Nuke
 import CoreData
 import YouTubePlayerKit
+import Alamofire
 
 typealias Post = GenericRedditEntity<PostData, PostWinstonData>
 
@@ -46,13 +47,37 @@ extension Post {
       let compact = Defaults[.compactMode]
       if self.winstonData == nil { self.winstonData = PostWinstonData() }
       self.winstonData?.permaURL = URL(string: "https://reddit.com\(data.permalink.escape.urlEncoded)")
+      
       let extractedMedia = mediaExtractor(compact: compact, contentWidth: contentWidth, data, theme: theme)
       let extractedMediaForcedNormal = mediaExtractor(compact: false, contentWidth: contentWidth, data, theme: theme)
+      
       self.winstonData?.extractedMedia = extractedMedia
       self.winstonData?.extractedMediaForcedNormal = extractedMediaForcedNormal
+      
       self.winstonData?.postDimensions = getPostDimensions(post: self, winstonData: self.winstonData, columnWidth: contentWidth, secondary: secondary, rawTheme: theme)
       self.winstonData?.postDimensionsForcedNormal = getPostDimensions(post: self, winstonData: self.winstonData, columnWidth: contentWidth, secondary: secondary, rawTheme: theme, compact: false)
+      
+      switch extractedMedia {
+      case .streamable(let streamable):
+        Task(priority: .background) {
+          if let video = await loadStreamableMedia(streamable: streamable) {
+            DispatchQueue.main.async {
+              withAnimation {
+                self.winstonData?.extractedMedia = .video(video)
+                self.winstonData?.extractedMediaForcedNormal = .video(video)
+                
+                self.winstonData?.postDimensions = getPostDimensions(post: self, winstonData: self.winstonData, columnWidth: contentWidth, secondary: secondary, rawTheme: theme)
+                self.winstonData?.postDimensionsForcedNormal = getPostDimensions(post: self, winstonData: self.winstonData, columnWidth: contentWidth, secondary: secondary, rawTheme: theme, compact: false)
+              }
+            }
+          }
+        }
+      default:
+        break
+      }
+      
       self.winstonData?.titleAttr = createTitleTagsAttrString(titleTheme: theme.postLinks.theme.titleText, postData: data, textColor: theme.postLinks.theme.titleText.color.cs(cs).color())
+      
       if fetchSub {
         self.winstonData?.subreddit = Subreddit(id: data.subreddit, api: RedditAPI.shared)
       }
@@ -123,6 +148,26 @@ extension Post {
       return posts
     }
     return []
+  }
+  
+  func loadStreamableMedia(streamable: StreamableExtracted) async -> SharedVideo? {
+    let response = await AF.request(
+      "https://api.streamable.com/videos/\(streamable.shortCode)"
+    ).serializingDecodable(StreamableAPIResponse.self).response
+    
+    switch response.result {
+    case .success(let data):
+      if let mp4 = data.files?.mp4Mobile ?? data.files?.mp4 {
+        if let videoURL = URL(string: mp4.url) {
+          let size =  CGSize(width: mp4.width, height: mp4.height)
+          return SharedVideo(url: videoURL, size: size)
+        }
+      }
+    case .failure:
+      return nil
+    }
+    
+    return nil
   }
   
   func toggleSeen(_ seen: Bool? = nil, optimistic: Bool = false) async -> Void {
