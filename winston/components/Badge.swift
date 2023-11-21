@@ -112,7 +112,7 @@ struct BadgeView: View, Equatable {
             
             if let openSub = openSub, let subName = subName, theme.forceSubsAsTags {
               Tag(subredditIconKit: nil, text: "r/\(subName)", color: theme.subColor.cs(cs).color(), fontSize: theme.authorText.size, backgroundColor: theme.subColor.cs(cs).color())
-              .onTapGesture(perform: openSub
+              .onTapGesture(perform: openSub)
 
             }
             
