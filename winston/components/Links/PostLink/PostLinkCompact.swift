@@ -148,7 +148,7 @@ struct PostLinkCompact: View, Equatable, Identifiable {
             
             if showSub && theme.theme.badge.avatar.visible {
               let subName = data.subreddit
-              Tag(subredditIconKit: nil, text: "r/\(subName)", color: .blue)
+              Tag(subredditIconKit: nil, text: "r/\(subName)", color: theme.theme.badge.subColor.cs(cs).color())
                 .highPriorityGesture(TapGesture().onEnded(openSubreddit))
             }
                       
