@@ -23,7 +23,6 @@ struct PostView: View, Equatable {
   }
   
   @ObservedObject var post: Post
-  @ObservedObject private var cachesPostsAttrStr = Caches.postsAttrStr
   var selfAttr: AttributedString? = nil
   var subreddit: Subreddit
   var highlightID: String?
@@ -76,7 +75,7 @@ struct PostView: View, Equatable {
     }
     if let result = await post.refreshPost(commentID: ignoreSpecificComment ? nil : highlightID, sort: sort, after: nil, subreddit: subreddit.data?.display_name ?? subreddit.id, full: full), let newComments = result.0 {
       Task(priority: .background) {
-        await RedditAPI.shared.updateAvatarURLCacheFromComments(comments: newComments, avatarSize: selectedTheme.comments.theme.badge.avatar.size)
+        await RedditAPI.shared.updateCommentsWithAvatar(comments: newComments, avatarSize: selectedTheme.comments.theme.badge.avatar.size)
       }
     }
   }
@@ -91,8 +90,15 @@ struct PostView: View, Equatable {
       List {
         Group {
           Section {
-            PostContent(post: post, selfAttr: cachesPostsAttrStr.cache[post.id]?.data ?? selfAttr, sub: subreddit, forceCollapse: forceCollapse)
+            if let winstonData = post.winstonData {
+              PostContent(post: post, winstonData: winstonData, sub: subreddit, forceCollapse: forceCollapse)
+            }
             //              .equatable()
+            
+            if selectedTheme.posts.inlineFloatingPill {
+              PostFloatingPill(post: post, subreddit: subreddit)
+                    .padding(-10)
+            }
             
             Text("Comments")
               .fontSize(20, .bold)
@@ -142,14 +148,20 @@ struct PostView: View, Equatable {
         withAnimation { update.toggle() }
         await asyncFetch(true)
       }
-      .overlay(
-        PostFloatingPill(post: post, subreddit: subreddit)
-        , alignment: .bottomTrailing
-      )
+      .overlay(alignment: .bottomTrailing) {
+        if !selectedTheme.posts.inlineFloatingPill {
+          PostFloatingPill(post: post, subreddit: subreddit)
+        }
+      }
       .navigationBarTitle("\(post.data?.num_comments ?? 0) comments", displayMode: .inline)
       .toolbar { Toolbar(hideElements: hideElements, subreddit: subreddit, post: post, routerProxy: routerProxy, sort: $sort) }
       .onChange(of: sort) { val in
         updatePost()
+      }
+      .onChange(of: cs) { _ in
+        Task(priority: .background) {
+          post.setupWinstonData(data: post.data, winstonData: post.winstonData, theme: selectedTheme, fetchAvatar: false)
+        }
       }
       .onAppear {
         if post.data == nil {
@@ -201,7 +213,7 @@ private struct Toolbar: View {
       }
       
       if let data = subreddit.data, !feedsAndSuch.contains(subreddit.id) {
-        SubredditIcon(data: data)
+        SubredditIcon(subredditIconKit: data.subredditIconKit)
           .onTapGesture { routerProxy.router.path.append(SubViewType.info(subreddit)) }
       }
     }

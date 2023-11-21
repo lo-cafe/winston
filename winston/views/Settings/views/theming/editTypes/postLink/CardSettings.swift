@@ -9,7 +9,6 @@ import SwiftUI
 
 struct CardSettings: View {
   @Binding var theme: PostLinkTheme
-  @State var asas = "askmo"
   var body: some View {
     Group {
       
@@ -25,7 +24,52 @@ struct CardSettings: View {
         Divider()
         LabeledSlider(label: "Elements distance", value: $theme.verticalElementsSpacing, range: 0...64)
           .resetter($theme.verticalElementsSpacing, defaultTheme.postLinks.theme.verticalElementsSpacing)
+        Divider()
       }
+      
+      FakeSection("Media") {
+        
+        LabeledSlider(label: "Media corner radius", value: $theme.mediaCornerRadius, range: 0...64)
+          .resetter($theme.mediaCornerRadius, defaultTheme.postLinks.theme.mediaCornerRadius)
+        
+        Divider()
+        
+        VStack(alignment: .leading, spacing: 8) {
+          Text("Placeholder image")
+          
+          HStack(spacing: 2) {
+            Image(.winstonFlat)
+              .resizable()
+              .aspectRatio(1, contentMode: .fit)
+              .frame(height: 24)
+              .frame(maxWidth: .infinity, maxHeight: .infinity)
+              .background(RR(8, .primary.opacity(theme.compactSelftextPostLinkPlaceholderImg.type == .winston ? 0.1 : 0)))
+              .contentShape(Rectangle())
+              .onTapGesture {
+                withAnimation(.default.speed(2)) {
+                  theme.compactSelftextPostLinkPlaceholderImg.type = .winston
+                }
+              }
+            Image(systemName: "square.text.square")
+              .fontSize(24)
+              .frame(maxWidth: .infinity, maxHeight: .infinity)
+              .background(RR(8, .primary.opacity(theme.compactSelftextPostLinkPlaceholderImg.type == .icon ? 0.1 : 0)))
+              .contentShape(Rectangle())
+              .onTapGesture {
+                withAnimation(.default.speed(2)) {
+                  theme.compactSelftextPostLinkPlaceholderImg.type = .icon
+                }
+              }
+          }
+          .foregroundStyle(.primary.opacity(0.5))
+          .frame(height: 48)
+          .resetter($theme.compactSelftextPostLinkPlaceholderImg.type, defaultTheme.postLinks.theme.compactSelftextPostLinkPlaceholderImg.type)
+          
+          SchemesColorPicker(theme: $theme.compactSelftextPostLinkPlaceholderImg.color, defaultVal: defaultTheme.postLinks.theme.compactSelftextPostLinkPlaceholderImg.color)
+        }
+        .padding(.horizontal, 16)
+      }
+      
       
       FakeSection("Card") {
         LabeledSlider(label: "Corner radius", value: $theme.cornerRadius, range: 0...64)
@@ -33,21 +77,16 @@ struct CardSettings: View {
         
         Divider()
         
-        LabeledSlider(label: "Media corner radius", value: $theme.mediaCornerRadius, range: 0...64)
-          .resetter($theme.mediaCornerRadius, defaultTheme.postLinks.theme.mediaCornerRadius)
-
-        Divider()
-
         ThemeForegroundEdit(theme: $theme.bg, defaultVal: defaultTheme.postLinks.theme.bg)
-
+        
         Divider()
-
+        
         VStack {
           HStack {
             Text("Unseen type")
-
+            
             Spacer()
-
+            
             TagsOptions(
               $theme.unseenType,
               options: [
@@ -73,10 +112,10 @@ struct CardSettings: View {
             LabeledSlider(label: "Fade Opacity", value: $theme.unseenFadeOpacity, range: 0...1, step: 0.01)
               .resetter($theme.unseenFadeOpacity, defaultTheme.postLinks.theme.unseenFadeOpacity)
           }
-
+          
         }
         .mask(Rectangle().fill(.black))
-
+        
       }
       
       FakeSection("Sticky posts") {

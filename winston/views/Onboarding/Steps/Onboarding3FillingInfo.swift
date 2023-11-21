@@ -31,7 +31,7 @@ struct Onboarding3FillingInfo: View {
         
         VStack {
           CopiableValue(value: "https://lo.cafe")
-          CopiableValue(value: "https://app.winston.lo.cafe/auth-success")
+          CopiableValue(value: "https://winston.cafe/auth-success")
         }
         
       }

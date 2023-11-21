@@ -16,11 +16,12 @@ enum FirstSelectable: Equatable, Hashable {
   case sub(Subreddit)
   case multi(Multi)
   case post(PostViewPayload)
+  case user(User)
 }
 
 struct Subreddits: View, Equatable {
   static func == (lhs: Subreddits, rhs: Subreddits) -> Bool {
-    return lhs.loaded == rhs.loaded
+    return lhs.loaded == rhs.loaded && lhs.selectedSub == rhs.selectedSub
   }
   @Binding var selectedSub: FirstSelectable?
   var loaded: Bool
@@ -57,7 +58,6 @@ struct Subreddits: View, Equatable {
               ListBigBtn(selectedSub: $selectedSub, icon: "signpost.right.and.left.circle.fill", iconColor: .orange, label: "All", destination: Subreddit(id: "all", api: RedditAPI.shared))
               
               ListBigBtn(selectedSub: $selectedSub, icon: "bookmark.circle.fill", iconColor: .green, label: "Saved", destination: Subreddit(id: "saved", api: RedditAPI.shared))
-                .opacity(0.5).allowsHitTesting(false)
             }
           }
           .frame(maxWidth: .infinity)
@@ -69,7 +69,7 @@ struct Subreddits: View, Equatable {
           
           PostsInBoxView(selectedSub: $selectedSub)
             .scrollIndicators(.hidden)
-            .listRowInsets(EdgeInsets(top: 0, leading: 16, bottom: 0, trailing: 16))
+//            .listRowInsets(EdgeInsets(top: 0, leading: 16, bottom: 0, trailing: 16))
             .listRowBackground(Color.clear)
           
           if multis.count > 0 {
@@ -82,9 +82,9 @@ struct Subreddits: View, Equatable {
                 }
                 .padding(.horizontal, 16)
               }
-              .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
             }
             .listRowBackground(Color.clear)
+            .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
           }
         }
         
@@ -94,7 +94,6 @@ struct Subreddits: View, Equatable {
               let foundSubs = Array(Array(subreddits.filter { ($0.display_name ?? "").lowercased().contains(searchText.lowercased()) }).enumerated())
               ForEach(foundSubs, id: \.self.element.uuid) { i, cachedSub in
                 SubItem(forcedMaskType: CommentBGSide.getFromArray(count: foundSubs.count, i: i), selectedSub: $selectedSub, sub: Subreddit(data: SubredditData(entity: cachedSub), api: RedditAPI.shared), cachedSub: cachedSub)
-//                  .equatable()
               }
             }
           } else {
@@ -107,7 +106,7 @@ struct Subreddits: View, Equatable {
 //                    .equatable()
                     .id("\(cachedSub.uuid ?? "")-fav")
                     .onAppear{
-                      print("Adding" + cachedSub.display_name)
+//                      print("Adding" + cachedSub.display_name)
                       UIApplication.shared.shortcutItems?.append(UIApplicationShortcutItem(type: "subFav", localizedTitle: cachedSub.display_name ?? "Test", localizedSubtitle: "", icon: UIApplicationShortcutIcon(type: .love), userInfo: ["name" : "sub" as NSSecureCoding]))
                     }
                 }

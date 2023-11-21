@@ -26,7 +26,10 @@ struct PostInBoxLink: View {
     //    } label: {
     VStack(alignment: .leading, spacing: 4) {
       HStack {
-        SubredditBaseIcon(name: postInBox.subredditName, iconURLStr: postInBox.subredditIconURL, id: postInBox.id, size: 20, color: postInBox.subColor)
+        if let subredditIconKit = sub.data?.subredditIconKit {
+          SubredditIcon(subredditIconKit: subredditIconKit, size: 20)
+        }
+//        SubredditBaseIcon(name: postInBox.subredditName, iconURLStr: postInBox.subredditIconURL, id: postInBox.id, size: 20, color: postInBox.subColor)
 //          .equatable()
         Text(postInBox.subredditName)
           .fontSize(13,.medium)
@@ -48,6 +51,13 @@ struct PostInBoxLink: View {
             Image(systemName: "message.fill")
             Text(formatBigNumber(postInBox.commentsCount ?? 0))
               .contentTransition(.numericText())
+            
+            if let seenComments = post.data?.winstonSeenCommentCount {
+              let unseenComments = Int(postInBox.commentsCount ?? 0) - seenComments
+              if unseenComments > 0 {
+                Text("(\(Int(unseenComments)))").foregroundColor(.accentColor)
+              }
+            }
           }
           
           if let createdAt = postInBox.createdAt {

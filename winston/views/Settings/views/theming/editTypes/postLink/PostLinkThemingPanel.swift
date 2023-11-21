@@ -15,13 +15,28 @@ private enum Category: String, CaseIterable {
 struct PostLinkThemingPanel: View {
   @Binding var theme: WinstonTheme
   @State private var selectedCategory = "card"
-  @StateObject private var previewPostSample = Post(data: postSampleData, api: RedditAPI.shared)
+  @StateObject var previewPostSample: Post
   @StateObject private var previewPostSubSample = Subreddit(id: postSampleData.subreddit, api: RedditAPI.shared)
   @Default(.themesPresets) private var themesPresets
   @ObservedObject var tempGlobalState = TempGlobalState.shared
   @Environment(\.colorScheme) private var cs
   @StateObject private var routerProxy = RouterProxy(Router(id: "PostLinkThemingPanelRouter"))
   
+  @Default(.blurPostLinkNSFW) private var blurPostLinkNSFW
+  @Default(.postSwipeActions) private var postSwipeActions
+  @Default(.compactMode) private var compactMode
+  @Default(.showVotes) private var showVotes
+  @Default(.showSelfText) private var showSelfText
+  @Default(.thumbnailPositionRight) private var thumbnailPositionRight
+  @Default(.voteButtonPositionRight) private var voteButtonPositionRight
+  @Default(.readPostOnScroll) private var readPostOnScroll
+  @Default(.hideReadPosts) private var hideReadPosts
+  @Default(.showUpvoteRatio) private var showUpvoteRatio
+  @Default(.showSubsAtTop) private var showSubsAtTop
+  @Default(.showTitleAtTop) private var showTitleAtTop
+  @Default(.showSelfPostThumbnails) private var showSelfPostThumbnails
+  
+  @Environment(\.contentWidth) private var contentWidth
   
   var body: some View {
     
@@ -36,7 +51,7 @@ struct PostLinkThemingPanel: View {
         case "texts":
           TextsSettings(theme: $theme.postLinks.theme)
         case "badge":
-          BadgeSettings(theme: $theme.postLinks.theme.badge, defaultVal: defaultTheme.postLinks.theme.badge)
+          BadgeSettings(theme: $theme.postLinks.theme.badge, defaultVal: defaultTheme.postLinks.theme.badge, showSub: true)
         default:
           EmptyView()
         }
@@ -48,11 +63,37 @@ struct PostLinkThemingPanel: View {
     } preview: {
       
       VStack {
-        PostLink(disableOuterVSpacing: true, post: previewPostSample, sub: previewPostSubSample)
-          .equatable()
-          .environment(\.useTheme, theme)
-          .environmentObject(routerProxy)
+        if let winstonData = previewPostSample.winstonData {
+          PostLink(
+            id: previewPostSample.id,
+            controller: nil,
+            theme: theme.postLinks,
+            showSub: true,
+            secondary: false,
+            routerProxy: routerProxy,
+            contentWidth: contentWidth,
+            blurPostLinkNSFW: blurPostLinkNSFW,
+            postSwipeActions: postSwipeActions,
+            showVotes: showVotes,
+            showSelfText: showSelfText,
+            readPostOnScroll: readPostOnScroll,
+            hideReadPosts: hideReadPosts,
+            showUpvoteRatio: showUpvoteRatio,
+            showSubsAtTop: showSubsAtTop,
+            showTitleAtTop: showTitleAtTop,
+            compact: compactMode,
+            thumbnailPositionRight: nil,
+            voteButtonPositionRight: nil,
+            showSelfPostThumbnails: showSelfPostThumbnails,
+            cs: cs
+          )
+//          .equatable()
+          .environmentObject(previewPostSample)
+          .environmentObject(previewPostSubSample)
+          .environmentObject(winstonData)
+//          .environment(\.useTheme, theme)
           .allowsHitTesting(false)
+        }
       }
       .fixedSize(horizontal: false, vertical: true)
       
@@ -77,6 +118,8 @@ struct PostLinkThemingPanel: View {
       
       
     }
+    .onAppear { previewPostSample.setupWinstonData(winstonData: previewPostSample.winstonData, theme: theme) }
+    .onChange(of: theme) { x in previewPostSample.setupWinstonData(winstonData: previewPostSample.winstonData, theme: x) }
     .themedListBG(theme.lists.bg)
     .scrollContentBackground(.hidden)
     .listStyle(.plain)

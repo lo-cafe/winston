@@ -26,7 +26,9 @@ struct AppearancePanel: View {
   @Default(.voteButtonPositionRight) var voteButtonPositionRight
   @Default(.showSelfPostThumbnails) var showSelfPostThumbnails
   @Default(.disableAlphabetLettersSectionsInSubsList) var disableAlphabetLettersSectionsInSubsList
+  //  @Default(.preferInlineTags) var preferInlineTags
   @Default(.themeStoreTint) var themeStoreTint
+  @Default(.showAuthorOnPostLinks) var showAuthorOnPostLinks
   @Environment(\.useTheme) private var theme
   
   var body: some View {
@@ -38,83 +40,83 @@ struct AppearancePanel: View {
           Toggle("Theme Store Tint", isOn: $themeStoreTint)
         }
         .themedListRowBG(enablePadding: true)
+        .themedListDividers()
       }
-      .themedListDividers()
       
-      Section{
-        WNavigationLink(value: SettingsPages.themes) {
-          Label("Themes", systemImage: "paintbrush.fill")
+      Section("Theming") {
+        Group {
+          WNavigationLink(value: SettingsPages.themes) {
+            Label("Themes", systemImage: "paintbrush.fill")
+          }
+          WNavigationLink(value: SettingsPages.appIcon) {
+            Label("App icon", systemImage: "appclip")
+          }
+          WNavigationLink(value: SettingsPages.themeStore){
+            Label("Theme Store (alpha)", systemImage: "giftcard.fill")
+          }
         }
-        WNavigationLink(value: SettingsPages.appIcon) {
-          Label("App icon", systemImage: "appclip")
-        }
-        WNavigationLink(value: SettingsPages.themeStore){
-          Label("Theme Store (alpha)", systemImage: "giftcard.fill")
-        }
-      } header: {
-        Text("Themeing")
-      } footer: {
-        Text("This is a special menu because in Winston you can change 90% of what you see. Enjoy the theming system!")
+        .themedListDividers()
       }
-      .themedListDividers()
       
       Section("Posts") {
         Group {
-        Toggle("Show Upvote Ratio", isOn: $showUpvoteRatio)
-        Toggle("Show Voting Buttons", isOn: $showVotes)
-        Toggle("Show Self Text", isOn: $showSelfText)
-        Toggle("Show Subreddit at Top", isOn: $showSubsAtTop)
-        Toggle("Show Title at Top", isOn: $showTitleAtTop)
+          Toggle("Show Upvote Ratio", isOn: $showUpvoteRatio)
+          Toggle("Show Voting Buttons", isOn: $showVotes)
+          Toggle("Show Self Text", isOn: $showSelfText)
+          Toggle("Show Subreddit at Top", isOn: $showSubsAtTop)
+          Toggle("Show Title at Top", isOn: $showTitleAtTop)
+          Toggle("Show Author", isOn: $showAuthorOnPostLinks)
+          //        Toggle("Prefer inline tags", isOn: $preferInlineTags)
         }
         .themedListRowBG(enablePadding: true)
+        .themedListDividers()
       }
-      .themedListDividers()
       
-      Section("Compact Posts"){
+      Section("Compact Posts") {
         Group {
-        Toggle("Compact Mode", isOn: $compactMode)
-        Toggle("Show Self Post Thumbnails", isOn: $showSelfPostThumbnails)
-        Picker("Thumbnail Position", selection: Binding(get: {
-          thumbnailPositionRight ? "Right" : "Left"
-        }, set: {val, _ in
-          thumbnailPositionRight = val == "Right"
-        })){
-          Text("Left").tag("Left")
-          Text("Right").tag("Right")
-        }
-        
-        Picker("Thumbnail Size", selection: Binding(get: {
-          compThumbnailSize
-        }, set: { val, _ in
-          compThumbnailSize = val
-          // This is a bit of a hacky way of refreshing the images, but it works
-          compactMode = false
-          compactMode = true
-        })){
-          Text("Hidden").tag(ThumbnailSizeModifier.hidden)
-          Text("Small").tag(ThumbnailSizeModifier.small)
-          Text("Medium").tag(ThumbnailSizeModifier.medium)
-          Text("Large").tag(ThumbnailSizeModifier.large)
-        }
-        
-        Picker("Voting Buttons Position", selection: Binding(get: {
-          voteButtonPositionRight ? "Right" : "Left"
-        }, set: {val, _ in
-          voteButtonPositionRight = val == "Right"
-        })){
-          Text("Left").tag("Left")
-          Text("Right").tag("Right")
-        }
+          Toggle("Compact Mode", isOn: $compactMode)
+          Toggle("Show Thumbnail Placeholder", isOn: $showSelfPostThumbnails)
+          Picker("Thumbnail Position", selection: Binding(get: {
+            thumbnailPositionRight ? "Right" : "Left"
+          }, set: {val, _ in
+            thumbnailPositionRight = val == "Right"
+          })){
+            Text("Left").tag("Left")
+            Text("Right").tag("Right")
+          }
+          
+          Picker("Thumbnail Size", selection: Binding(get: {
+            compThumbnailSize
+          }, set: { val, _ in
+            compThumbnailSize = val
+            // This is a bit of a hacky way of refreshing the images, but it works
+            compactMode = false
+            compactMode = true
+          })){
+            Text("Hidden").tag(ThumbnailSizeModifier.hidden)
+            Text("Small").tag(ThumbnailSizeModifier.small)
+            Text("Medium").tag(ThumbnailSizeModifier.medium)
+            Text("Large").tag(ThumbnailSizeModifier.large)
+          }
+          
+          Picker("Voting Buttons Position", selection: Binding(get: {
+            voteButtonPositionRight ? "Right" : "Left"
+          }, set: {val, _ in
+            voteButtonPositionRight = val == "Right"
+          })){
+            Text("Left").tag("Left")
+            Text("Right").tag("Right")
+          }
         }
         .themedListRowBG(enablePadding: true)
+        .themedListDividers()
       }
-      .themedListDividers()
       
       Section("Comments") {
         Toggle("Colored Usernames", isOn: $coloredCommentNames)
           .themedListRowBG(enablePadding: true)
+          .themedListDividers()
       }
-      .themedListDividers()
       //      .alert(isPresented: $compThumbnailSize){
       //        Alert(title: "Please refresh your Home Feed.")
       //      }

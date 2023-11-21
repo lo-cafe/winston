@@ -183,7 +183,7 @@ struct ThemeItemDownloadButton: View {
       if let theme_id = theme.file_name {
         themeStore.getDownloadedFilePath(filename: theme_id, completion: { path in
           if let path{
-            print(path)
+//            print(path)
             showingImportError = !importTheme(at: path)
           }
           downloading = false

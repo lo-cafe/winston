@@ -18,7 +18,7 @@ func resetApp() {
 }
 
 func resetCredentials() {
-  let credentialsKeychain = Keychain(service: "lo.cafe.winston.reddit-credentials")
+  let credentialsKeychain = Keychain(service: "lo.cafe.winston.reddit-credentials").synchronizable(Defaults[.syncKeyChainAndSettings])
   
   credentialsKeychain["apiAppID"] = nil
   credentialsKeychain["apiAppSecret"] = nil
@@ -34,9 +34,8 @@ func resetCaches() {
   Caches.ytPlayers.cache.removeAll()
   Caches.postsAttrStr.cache.removeAll()
   Caches.postsPreviewModels.cache.removeAll()
-  ThingEntityCache.shared.thingEntities.removeAll()
-  SharedVideoCache.shared.cache.removeAll()
-  AvatarCache.shared.data.removeAll()
+  Caches.avatars.cache.removeAll()
+  Caches.videos.cache.removeAll()
 }
 
 func resetCoreData() {

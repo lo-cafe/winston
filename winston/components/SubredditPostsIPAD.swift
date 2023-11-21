@@ -8,6 +8,7 @@
 import SwiftUI
 import Defaults
 import SwiftUIIntrospect
+import NukeUI
 
 struct SubredditPostsIPAD: View, Equatable {
   static func == (lhs: SubredditPostsIPAD, rhs: SubredditPostsIPAD) -> Bool {
@@ -21,30 +22,77 @@ struct SubredditPostsIPAD: View, Equatable {
   var fetch: (Bool, String?) -> ()
   var selectedTheme: WinstonTheme
   @Environment(\.contentWidth) var contentWidth
+  @EnvironmentObject private var routerProxy: RouterProxy
+  
+  @Default(.blurPostLinkNSFW) private var blurPostLinkNSFW
+  
+  @Default(.postSwipeActions) private var postSwipeActions
+  @Default(.compactMode) private var compactMode
+  @Default(.showVotes) private var showVotes
+  @Default(.showSelfText) private var showSelfText
+  @Default(.thumbnailPositionRight) private var thumbnailPositionRight
+  @Default(.voteButtonPositionRight) private var voteButtonPositionRight
+  
+  @Default(.readPostOnScroll) private var readPostOnScroll
+  @Default(.hideReadPosts) private var hideReadPosts
+  
+  @Default(.showUpvoteRatio) private var showUpvoteRatio
+  
+  @Default(.showSubsAtTop) private var showSubsAtTop
+  @Default(.showTitleAtTop) private var showTitleAtTop
+  @Default(.showSelfPostThumbnails) private var showSelfPostThumbnails
+  
+  @Environment(\.colorScheme) private var cs
   
   var body: some View {
         Waterfall(
           collection: posts,
           scrollDirection: .vertical,
           contentSize: .custom({ collectionView, layout, post in
-            post.winstonData?.postDimensions?.size ?? CGSize(width: 300, height: 300)
+            post.winstonData?.postDimensions.size ?? CGSize(width: 300, height: 300)
           }),
 //          itemSpacing: .init(mainAxisSpacing: selectedTheme.postLinks.spacing, crossAxisSpacing: selectedTheme.postLinks.spacing),
 //          itemSpacing: .init(mainAxisSpacing: 0, crossAxisSpacing: 0),
           contentForData: { post, i in
             Group {
-              if let sub = subreddit ?? post.winstonData?.subreddit {
-                PostLink(post: post, sub: sub, showSub: showSub)
-                  .equatable()
-                  .onAppear {
-                    if(posts.count - 15 == i) {
-                      if !searchText.isEmpty {
-                        fetch(true, searchText)
-                      } else {
-                        fetch(true, nil)
-                      }
-                    }
-                  }
+              if let sub = subreddit ?? post.winstonData?.subreddit, let winstonData = post.winstonData {
+//                SwipeRevolution(size: winstonData.postDimensions.size, actionsSet: postSwipeActions, entity: post) { controller in
+                  PostLink(
+                    id: post.id,
+                    controller: nil,
+                    theme: selectedTheme.postLinks,
+                    showSub: showSub,
+                    routerProxy: routerProxy,
+                    contentWidth: contentWidth,
+                    blurPostLinkNSFW: blurPostLinkNSFW,
+                    postSwipeActions: postSwipeActions,
+                    showVotes: showVotes,
+                    showSelfText: showSelfText,
+                    readPostOnScroll: readPostOnScroll,
+                    hideReadPosts: hideReadPosts,
+                    showUpvoteRatio: showUpvoteRatio,
+                    showSubsAtTop: showSubsAtTop,
+                    showTitleAtTop: showTitleAtTop,
+                    compact: compactMode,
+                    thumbnailPositionRight: thumbnailPositionRight,
+                    voteButtonPositionRight: voteButtonPositionRight,
+                    showSelfPostThumbnails: showSelfPostThumbnails,
+                    cs: cs
+                  )
+                  .swipyRev(size: winstonData.postDimensions.size, actionsSet: postSwipeActions, entity: post)
+                  .environmentObject(post)
+                  .environmentObject(sub)
+                  .environmentObject(winstonData)
+									.onAppear {
+										if(posts.count - 7 == i) {
+											if !searchText.isEmpty {
+												fetch(true, searchText)
+											} else {
+												fetch(true, nil)
+											}
+										}
+									}
+//                }
               }
             }
           },

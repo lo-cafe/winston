@@ -7,12 +7,14 @@
 
 import Foundation
 import SwiftUI
+import UIKit
 import NukeUI
 import OpenGraph
 import SkeletonUI
 import YouTubePlayerKit
 import Defaults
 import Combine
+import SafariServices
 
 struct PreviewLinkContent: View {
   var compact: Bool
@@ -42,10 +44,10 @@ struct PreviewLinkContentRaw: View, Equatable {
   var loading: Bool
   var url: URL
   var openURL: OpenURLAction
-  var routerProxy: RouterProxy
+  weak var routerProxy: RouterProxy?
   @Binding var globalURL: URL?
   var openLinksInSafari: Bool
-  
+    
   var body: some View {
     HStack(spacing: 16) {
       
@@ -113,7 +115,7 @@ struct PreviewLinkContentRaw: View, Equatable {
         if openLinksInSafari {
           openURL(newURL)
         } else {
-          globalURL = newURL
+          openInBuiltInBrowser(newURL)
         }
       }
     })

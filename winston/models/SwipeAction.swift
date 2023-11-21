@@ -24,10 +24,11 @@ struct SwipeActionItem: Codable, Hashable, Defaults.Serializable {
   }
 }
 
-struct SwipeActionsSet: Codable, Defaults.Serializable, Equatable {
+struct SwipeActionsSet: Codable, Defaults.Serializable, Equatable, Hashable, Identifiable {
   static func == (prev: SwipeActionsSet, next: SwipeActionsSet) -> Bool {
-    return prev.leftFirst == next.leftFirst && prev.leftSecond == next.leftSecond && prev.rightFirst == next.rightFirst && prev.rightSecond == next.rightSecond
+    return prev.id == next.id && prev.leftFirst == next.leftFirst && prev.leftSecond == next.leftSecond && prev.rightFirst == next.rightFirst && prev.rightSecond == next.rightSecond
   }
+  var id: String
   var leftFirst: AnySwipeAction
   var leftSecond: AnySwipeAction
   var rightFirst: AnySwipeAction
@@ -42,7 +43,7 @@ let allCommentSwipeActions: [AnySwipeAction] = [
 
 let allSwipeActions = allPostSwipeActions + allCommentSwipeActions
 
-struct AnySwipeAction: Codable, Defaults.Serializable, Identifiable, Hashable {
+struct AnySwipeAction: Codable, Defaults.Serializable, Identifiable, Hashable, Equatable {
   static func == (lhs: AnySwipeAction, rhs: AnySwipeAction) -> Bool {
     lhs.id == rhs.id
   }
@@ -153,7 +154,7 @@ struct UpvotePostAction: SwipeAction {
   var icon = SwipeActionItem(normal: "arrow.up")
   var color = SwipeActionItem(normal: "FFFFFF")
   var bgColor = SwipeActionItem(normal: "FEA00A", active: "FF463B")
-  func action(_ entity: Post) async { _ = await entity.vote(action: .up) }
+  func action(_ entity: Post) async { _ = await entity.vote(.up) }
   func active(_ entity: Post) -> Bool { entity.data?.likes == true }
   func enabled(_ entity: Post) -> Bool { true }
 }
@@ -164,7 +165,7 @@ struct DownvotePostAction: SwipeAction {
   var icon = SwipeActionItem(normal: "arrow.down")
   var color = SwipeActionItem(normal: "FFFFFF")
   var bgColor = SwipeActionItem(normal: "0B84FE", active: "FF463B")
-  func action(_ entity: Post) async { _ = await entity.vote(action: .down) }
+  func action(_ entity: Post) async { _ = await entity.vote(.down) }
   func active(_ entity: Post) -> Bool { entity.data?.likes == false }
   func enabled(_ entity: Post) -> Bool { true }
 }

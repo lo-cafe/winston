@@ -9,18 +9,6 @@ import SwiftUI
 import Defaults
 import SpriteKit
 
-class Oops: ObservableObject {
-  static var shared = Oops()
-  @Published var asking = false
-  @Published var error: String?
-  
-  func sendError(_ error: Any) {
-    DispatchQueue.main.async {
-      Oops.shared.asking = true
-      Oops.shared.error = String(reflecting: error)
-    }
-  }
-}
 
 class TempGlobalState: ObservableObject {
   static var shared = TempGlobalState()
@@ -43,10 +31,13 @@ class TabPayload: ObservableObject {
   }
 }
 
+class GlobalNavPathWrapper: ObservableObject {
+  @Published var path = NavigationPath()
+}
+
 struct Tabber: View {
   @ObservedObject var tempGlobalState = TempGlobalState.shared
-  @ObservedObject var errorAlert = Oops.shared
-  @State var activeTab: TabIdentifier
+  @State var activeTab: TabIdentifier = .posts
   
   @State var credModalOpen = false
   @State var importedThemeAlert = false
@@ -83,8 +74,9 @@ struct Tabber: View {
     }
   }
   
-  init(theme: WinstonTheme, cs: ColorScheme, activeTab: TabIdentifier) {
-    _activeTab = State(initialValue: activeTab) // Initialize activeTab
+  init(theme: WinstonTheme, cs: ColorScheme) {
+    // MANDRAKE
+    // _activeTab = State(initialValue: activeTab) // Initialize activeTab
     Tabber.updateTabAndNavBar(tabTheme: theme.general.tabBarBG, navTheme: theme.general.navPanelBG, cs)
   }
   
@@ -198,21 +190,6 @@ struct Tabber: View {
       }
     }
     .environmentObject(tempGlobalState)
-    .alert("OMG! Winston found a squirky bug!", isPresented: $errorAlert.asking) {
-      Button("Gratefully accept the weird gift") {
-        if let error = errorAlert.error {
-          sendEmail(error)
-        }
-        errorAlert.error = nil
-        errorAlert.asking = false
-      }
-      Button("Ignore the cat", role: .cancel) {
-        errorAlert.error = nil
-        errorAlert.asking = false
-      }
-    } message: {
-      Text("Something went wrong, but winston's is a fast cat, got the bug in his fangs and brought it to you. What do you wanna do?")
-    }
     .alert("Success!", isPresented: $importedThemeAlert) {
       Button("Nice!", role: .cancel) {
         importedThemeAlert = false
@@ -233,8 +210,12 @@ struct Tabber: View {
         }
       } else if RedditAPI.shared.loggedUser.accessToken != nil && RedditAPI.shared.loggedUser.refreshToken != nil {
         Task(priority: .background) {
+          print("Fetching 'me' user variable...")
           await RedditAPI.shared.fetchMe(force: true)
+          print("\(RedditAPI.shared.me?.data?.name ?? "---USER FETCH FAILED---") username registered.")
         }
+        
+        
       }
     }
     .onChange(of: RedditAPI.shared.loggedUser) { user in

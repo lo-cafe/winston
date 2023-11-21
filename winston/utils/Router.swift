@@ -15,6 +15,7 @@ class RouterIsRoot: ObservableObject {
 
 class Router: ObservableObject {
   let id: String
+  @Published var firstSelected: FirstSelectable?
   @Published var path = NavigationPath() {
     willSet {
       objectWillChange.send()
@@ -38,6 +39,6 @@ class RouterProxy: ObservableObject, Equatable, Identifiable {
     self.router.id
   }
   var router: Router
-  var lol: String
-  init(_ router: Router) {self.router = router; lol = UUID().uuidString }
+  var PODFix: String
+  init(_ router: Router) {self.router = router; self.PODFix = "PODFix" }
 }

@@ -25,7 +25,7 @@ struct SubredditLink: View {
     if var data = sub.data {
       @State var isSubbed = data.user_is_subscriber ?? false
       HStack(spacing: 12) {
-        SubredditIcon(data: data, size: 64)
+        SubredditIcon(subredditIconKit: data.subredditIconKit, size: 64)
           .nsfw(Defaults[.blurPostLinkNSFW] ? data.over18 ?? false : false, smallIcon: true)
         
         VStack(alignment: .leading) {

@@ -17,9 +17,10 @@ enum SubViewType: Hashable {
 
 struct SubredditPosts: View, Equatable {
   static func == (lhs: SubredditPosts, rhs: SubredditPosts) -> Bool {
-    lhs.subreddit.id == rhs.subreddit.id
+    lhs.subreddit == rhs.subreddit
   }
   
+  @ObservedObject var redditAPI = RedditAPI.shared
   @ObservedObject var subreddit: Subreddit
   @Default(.filteredSubreddits) private var filteredSubreddits
   @State private var loading = true
@@ -30,6 +31,11 @@ struct SubredditPosts: View, Equatable {
   @State private var sort: SubListingSortOption
   @State private var newPost = false
   
+  @State private var savedMixedMediaLinks: [Either<Post, Comment>]?
+  @State private var loadNextSavedData: Bool = false
+  @State private var isSavedSubreddit: Bool = false
+  @State private var hasViewLoaded: Bool = false
+  
   @EnvironmentObject private var routerProxy: RouterProxy
   @Environment(\.useTheme) private var selectedTheme
   @Environment(\.colorScheme) private var cs
@@ -37,14 +43,16 @@ struct SubredditPosts: View, Equatable {
   
   let context = PersistenceController.shared.container.newBackgroundContext()
   let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "SeenPost")
-
+  
   init(subreddit: Subreddit) {
     self.subreddit = subreddit;
     _sort = State(initialValue: Defaults[.perSubredditSort] ? (Defaults[.subredditSorts][subreddit.id] ?? Defaults[.preferredSort]) : Defaults[.preferredSort]);
   }
   
-    func asyncFetch(force: Bool = false, loadMore: Bool = false, searchText: String? = nil) async throws {
-    if (subreddit.data == nil || force) && !feedsAndSuch.contains(subreddit.id) {
+  var isFeedsAndSuch: Bool { feedsAndSuch.contains(subreddit.id) }
+  
+  func asyncFetch(force: Bool = false, loadMore: Bool = false, searchText: String? = nil) async throws {
+    if (subreddit.data == nil || force) && !isFeedsAndSuch {
       await subreddit.refreshSubreddit()
     }
     if posts.data.count > 0 && lastPostAfter == nil && !force {
@@ -53,44 +61,50 @@ struct SubredditPosts: View, Equatable {
     withAnimation {
       loading = true
     }
-    if let result = await subreddit.fetchPosts(sort: sort, after: loadMore ? lastPostAfter : nil, searchText: searchText, contentWidth: contentWidth), let newPosts = result.0 {
-      
-      await waitForPostsToLoadMediaInfo(posts: newPosts)
-      withAnimation {
-                let newPostsFiltered = newPosts.filter { !loadedPosts.contains($0.id) && !filteredSubreddits.contains($0.data?.subreddit ?? "") }
-        
-        if loadMore {
-                    posts.data.append(contentsOf: newPostsFiltered)
-//          posts.data.append(contentsOf: newPosts)
-        } else {
-                    posts.data = newPostsFiltered
-//          posts.data = newPosts
+    
+    if subreddit.id != "saved" {
+      if let result = await subreddit.fetchPosts(sort: sort, after: loadMore ? lastPostAfter : nil, searchText: searchText, contentWidth: contentWidth), let newPosts = result.0 {
+        await RedditAPI.shared.updatePostsWithAvatar(posts: newPosts, avatarSize: selectedTheme.postLinks.theme.badge.avatar.size)
+        withAnimation {
+          let newPostsFiltered = newPosts.filter { !loadedPosts.contains($0.id) && !filteredSubreddits.contains($0.data?.subreddit ?? "") }
+          
+          if loadMore {
+            posts.data.append(contentsOf: newPostsFiltered)
+          } else {
+            posts.data = newPostsFiltered
+          }
+          
+          newPostsFiltered.forEach { loadedPosts.insert($0.id) }
+          
+          loading = false
+          lastPostAfter = result.1
         }
-        
-                newPostsFiltered.forEach { loadedPosts.insert($0.id) }
-        
-        loading = false
-        lastPostAfter = result.1
       }
-      Task(priority: .background) {
-        await RedditAPI.shared.updateAvatarURLCacheFromPosts(posts: newPosts, avatarSize: selectedTheme.postLinks.theme.badge.avatar.size)
+    } else {
+      if let result = await subreddit.fetchSavedMixedMedia(after: loadMore ? lastPostAfter : nil, searchText: searchText, contentWidth: contentWidth) {
+        withAnimation {
+          if loadMore {
+            savedMixedMediaLinks?.append(contentsOf: result)
+          } else {
+            savedMixedMediaLinks = result
+          }
+          
+          loading = false
+          if let lastItem = result.last {
+            lastPostAfter = getItemId(for: lastItem)
+          }
+        }
       }
-    }
-  }
-  
-  func waitForPostsToLoadMediaInfo(posts: [Post]) async {
-    for i in 0...posts.count - 1 {
-      await posts[i].waitForMediaToLoad()
     }
   }
   
   func fetch(_ loadMore: Bool = false, _ searchText: String? = nil) {
     Task(priority: .background) {
-        do {
-            try await asyncFetch(loadMore: loadMore, searchText: searchText)
-        } catch {
-            print(error)
-        }
+      do {
+        try await asyncFetch(loadMore: loadMore, searchText: searchText)
+      } catch {
+        print(error)
+      }
     }
   }
   
@@ -98,6 +112,10 @@ struct SubredditPosts: View, Equatable {
     withAnimation {
       posts.data.removeAll()
       loadedPosts.removeAll()
+      
+      if isSavedSubreddit {
+        savedMixedMediaLinks?.removeAll()
+      }
     }
     
     if let searchText = searchText, !searchText.isEmpty {
@@ -105,20 +123,45 @@ struct SubredditPosts: View, Equatable {
     } else {
       fetch()
     }
-    
   }
-
+  
+  func updatePostsCalcs(_ newTheme: WinstonTheme) {
+    Task(priority: .background) { posts.data.forEach { $0.setupWinstonData(data: $0.data, winstonData: $0.winstonData, theme: newTheme, fetchAvatar: false) } }
+  }
+  
   var body: some View {
     Group {
-      if IPAD {
-        SubredditPostsIPAD(subreddit: subreddit, posts: posts.data, searchText: searchText, fetch: fetch, selectedTheme: selectedTheme)
+      if !isSavedSubreddit {
+        Group {
+          if IPAD {
+            SubredditPostsIPAD(showSub: isFeedsAndSuch, subreddit: subreddit, posts: posts.data, searchText: searchText, fetch: fetch, selectedTheme: selectedTheme)
+          } else {
+            SubredditPostsIOS(showSub: isFeedsAndSuch, lastPostAfter: lastPostAfter, subreddit: subreddit, posts: posts.data, searchText: searchText, fetch: fetch, selectedTheme: selectedTheme)
+          }
+        }
+        .searchable(text: $searchText, prompt: "Search r/\(subreddit.data?.display_name ?? subreddit.id)")
       } else {
-        SubredditPostsIOS(lastPostAfter: lastPostAfter, subreddit: subreddit, posts: posts.data, searchText: searchText, fetch: fetch, selectedTheme: selectedTheme)
+        if let savedMixedMediaLinks = savedMixedMediaLinks, let user = redditAPI.me {
+          MixedContentFeedView(mixedMediaLinks: savedMixedMediaLinks, loadNextData: $loadNextSavedData, user: user)
+            .onChange(of: loadNextSavedData) { shouldLoad in
+              if shouldLoad {
+                fetch(shouldLoad)
+                loadNextSavedData = false
+              }
+            }
+        }
       }
     }
+    .onAppear {
+      if !hasViewLoaded {
+        isSavedSubreddit = subreddit.id == "saved" // detect unique saved subreddit (saved posts and comments require unique logic)
+        hasViewLoaded = true
+      }
+    }
+    .environment(\.defaultMinListRowHeight, 1)
     .loader(loading && posts.data.count == 0)
     .overlay(
-      feedsAndSuch.contains(subreddit.id)
+      isFeedsAndSuch
       ? nil
       : Button {
         newPost = true
@@ -135,35 +178,33 @@ struct SubredditPosts: View, Equatable {
         .padding(.all, 12)
       , alignment: .bottomTrailing
     )
-    .sheet(isPresented: $newPost, content: {
-      NewPostModal(subreddit: subreddit)
-    })
+    //    .sheet(isPresented: $newPost, content: {
+    //      NewPostModal(subreddit: subreddit)
+    //    })
     .navigationBarItems(trailing: SubredditPostsNavBtns(sort: $sort, subreddit: subreddit, routerProxy: routerProxy))
-    .searchable(text: $searchText, prompt: "Search r/\(subreddit.data?.display_name ?? subreddit.id)")
     .onSubmit(of: .search) {
       clearAndLoadData(withSearchText: searchText)
     }
     .refreshable {
-      loadedPosts.removeAll()
-        do {
-            try await asyncFetch(force: true)
-        } catch {
-            print(error)
-        }
+      clearAndLoadData()
     }
-    .navigationTitle("\(feedsAndSuch.contains(subreddit.id) ? subreddit.id.capitalized : "r/\(subreddit.data?.display_name ?? subreddit.id)")")
+    .navigationTitle("\(isFeedsAndSuch ? subreddit.id.capitalized : "r/\(subreddit.data?.display_name ?? subreddit.id)")")
     .task(priority: .background) {
-      if posts.data.count == 0 {
-          do {
-              try await asyncFetch()
-          } catch {
-              print(error)
-          }
+      if posts.data.count == 0 && (savedMixedMediaLinks?.count == 0 || savedMixedMediaLinks == nil) {
+        do {
+          try await asyncFetch()
+        } catch {
+          print(error)
+        }
       }
     }
     .onChange(of: sort) { val in
       clearAndLoadData()
     }
+    .onChange(of: cs) { _ in
+      updatePostsCalcs(selectedTheme)
+    }
+    .onChange(of: selectedTheme, perform: updatePostsCalcs)
     .onChange(of: searchText) { val in
       if searchText.isEmpty {
         clearAndLoadData()
@@ -176,7 +217,7 @@ struct SubredditPosts: View, Equatable {
 
 struct SubredditPostsNavBtns: View, Equatable {
   static func == (lhs: SubredditPostsNavBtns, rhs: SubredditPostsNavBtns) -> Bool {
-    lhs.sort == rhs.sort && lhs.subreddit.data == nil && rhs.subreddit.data == nil
+    lhs.sort == rhs.sort && (lhs.subreddit.data == nil) == (rhs.subreddit.data == nil)
   }
   @Binding var sort: SubListingSortOption
   @ObservedObject var subreddit: Subreddit
@@ -205,9 +246,6 @@ struct SubredditPostsNavBtns: View, Equatable {
               Label(opt.rawVal.value.capitalized, systemImage: opt.rawVal.icon)
                 .foregroundColor(Color.accentColor)
                 .font(.system(size: 17, weight: .bold))
-                .onAppear{
-                  print(opt.rawVal)
-                }
             }
           } else {
             Button {
@@ -229,12 +267,13 @@ struct SubredditPostsNavBtns: View, Equatable {
           .foregroundColor(Color.accentColor)
           .fontSize(17, .bold)
       }
+      .disabled(subreddit.id == "saved")
       
       if let data = subreddit.data {
         Button {
           routerProxy.router.path.append(SubViewType.info(subreddit))
         } label: {
-          SubredditIcon(data: data)
+          SubredditIcon(subredditIconKit: data.subredditIconKit)
         }
       }
     }

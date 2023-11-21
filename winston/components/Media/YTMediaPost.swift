@@ -11,29 +11,29 @@ import YouTubePlayerKit
 import Defaults
 import Combine
 
-struct YTMediaPost: View, Equatable {
-  static func == (lhs: YTMediaPost, rhs: YTMediaPost) -> Bool {
-    lhs.videoID == rhs.videoID
-  }
-  
-  @ObservedObject private var playersCache = Caches.ytPlayers
-  var compact: Bool
-  var videoID: String
-  var size: CGSize
-  var contentWidth: CGFloat
-  @Default(.openYoutubeApp) private var openYoutubeApp
-  @Environment(\.openURL) private var openURL
-  
-  var body: some View {
-    let actualHeight = (contentWidth * CGFloat(size.height)) / CGFloat(size.width)
-    if let cached = playersCache.cache[videoID]?.data {
-      YTMediaPostPlayer(compact: compact, player: cached.player, ytMediaExtracted: cached, contentWidth: contentWidth, openYoutubeApp: openYoutubeApp, openURL: openURL)
-    } else {
-      ProgressView()
-        .frame(width: contentWidth, height: actualHeight)
-    }
-  }
-}
+//struct YTMediaPost: View, Equatable {
+//  static func == (lhs: YTMediaPost, rhs: YTMediaPost) -> Bool {
+//    lhs.videoID == rhs.videoID
+//  }
+//  
+//  @ObservedObject private var playersCache = Caches.ytPlayers
+//  var compact: Bool
+//  var videoID: String
+//  var size: CGSize
+//  var contentWidth: CGFloat
+//  @Default(.openYoutubeApp) private var openYoutubeApp
+//  @Environment(\.openURL) private var openURL
+//  
+//  var body: some View {
+//    let actualHeight = (contentWidth * CGFloat(size.height)) / CGFloat(size.width)
+//    if let cached = playersCache.cache[videoID]?.data {
+//      YTMediaPostPlayer(compact: compact, player: cached.player, ytMediaExtracted: cached, contentWidth: contentWidth, openYoutubeApp: openYoutubeApp, openURL: openURL)
+//    } else {
+//      ProgressView()
+//        .frame(width: contentWidth, height: actualHeight)
+//    }
+//  }
+//}
 
 struct YTMediaPostPlayer: View, Equatable {
   static func == (lhs: YTMediaPostPlayer, rhs: YTMediaPostPlayer) -> Bool {
@@ -43,8 +43,8 @@ struct YTMediaPostPlayer: View, Equatable {
   var player: YouTubePlayer
   var ytMediaExtracted: YTMediaExtracted
   var contentWidth: CGFloat
-  var openYoutubeApp: Bool
-  var openURL: OpenURLAction
+  @Default(.openYoutubeApp) private var openYoutubeApp
+  @Environment(\.openURL) private var openURL
   @State private var showPlayer = false
   
   var body: some View {

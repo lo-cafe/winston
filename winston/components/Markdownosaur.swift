@@ -32,7 +32,7 @@ public struct Markdownosaur: MarkupVisitor {
     let plainText = text.plainText
     let textRange = NSRange(location: 0, length: plainText.utf16.count)
     let attributedString = NSMutableAttributedString(string: plainText, attributes: [.font: UIFont.systemFont(ofSize: baseFontSize, weight: .regular)])
-
+    attributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.label, range: NSRange(location: 0, length: attributedString.length))
     applyUsernameRegex(attributedString: attributedString, text: plainText, range: textRange)
     applySubredditRegex(attributedString: attributedString, text: plainText, range: textRange)
     applyUrlDetector(attributedString: attributedString, text: plainText, range: textRange)
@@ -269,24 +269,9 @@ public struct Markdownosaur: MarkupVisitor {
     let result = NSMutableAttributedString()
 
     for child in blockQuote.children {
-      var quoteAttributes: [NSAttributedString.Key: Any] = [:]
-
-      let quoteParagraphStyle = NSMutableParagraphStyle()
-
-      let baseLeftMargin: CGFloat = 15.0
-      let leftMarginOffset = baseLeftMargin + (20.0 * CGFloat(blockQuote.quoteDepth))
-
-      quoteParagraphStyle.tabStops = [NSTextTab(textAlignment: .left, location: leftMarginOffset)]
-
-      quoteParagraphStyle.headIndent = leftMarginOffset
-
-      quoteAttributes[.paragraphStyle] = quoteParagraphStyle
-      quoteAttributes[.font] = UIFont.systemFont(ofSize: baseFontSize, weight: .regular)
-      quoteAttributes[.listDepth] = blockQuote.quoteDepth
-
       let quoteAttributedString = visit(child).mutableCopy() as! NSMutableAttributedString
-
       quoteAttributedString.addAttribute(.foregroundColor, value: UIColor.systemGray)
+      quoteAttributedString.addAttribute(.font, value: UIFont.systemFont(ofSize: baseFontSize, weight: .regular))
 
       result.append(quoteAttributedString)
     }
@@ -323,9 +308,13 @@ extension NSMutableAttributedString {
   func applyLink(withURL url: URL?) {
     addAttribute(.foregroundColor, value: UIColor.systemBlue)
 
-    if let url = url {
-      addAttribute(.link, value: url)
-    }
+      if let url = url {
+          if let redditstring = replaceRedditURL(url.absoluteString)  {
+              addAttribute(.link, value: redditstring)
+          } else {
+              addAttribute(.link, value: url)
+          }
+      }
   }
 
   func applyBlockquote() {
@@ -451,23 +440,48 @@ let communityRegex: NSRegularExpression? = try? NSRegularExpression(pattern: "(?
 let urlDetector: NSDataDetector? = try? NSDataDetector(types: NSTextCheckingResult.CheckingType.link.rawValue)
 
 public func applyUrlDetector(attributedString: NSMutableAttributedString, text: String, range: NSRange) {
-  let matches = urlDetector?.matches(in: text, options: [], range: range) ?? []
+    let matches = urlDetector?.matches(in: text, options: [], range: range) ?? []
+    
+    let existingFont: UIFont
+    if attributedString.length > 0 {
+        existingFont = attributedString.attribute(.font, at: 0, effectiveRange: nil) as? UIFont ?? UIFont.systemFont(ofSize: UIFont.systemFontSize)
+    } else {
+        existingFont = UIFont.systemFont(ofSize: UIFont.systemFontSize)
+    }
+    
+    for match in matches {
+        guard let url = match.url else { continue }
+        
+        // Check if the URL is a Reddit URL
+        if let replacedURLString =  replaceRedditURL(url.absoluteString) {
+            let linkAttributes: [NSAttributedString.Key: Any] = [
+                .link: replacedURLString,
+                .font: existingFont
+            ]
+            attributedString.setAttributes(linkAttributes, range: match.range)
+        } else {
+            let linkAttributes: [NSAttributedString.Key: Any] = [
+                .link: url,
+                .font: existingFont
+            ]
+            attributedString.setAttributes(linkAttributes, range: match.range)
+        }
+    }
+}
 
-  let existingFont: UIFont
-  if attributedString.length > 0 {
-    existingFont = attributedString.attribute(.font, at: 0, effectiveRange: nil) as? UIFont ?? UIFont.systemFont(ofSize: UIFont.systemFontSize)
-  } else {
-    existingFont = UIFont.systemFont(ofSize: UIFont.systemFontSize)
-  }
+public func replaceRedditURL(_ urlString: String) -> String? {
 
-  for match in matches {
-    guard let url = match.url else { continue }
-    let linkAttributes: [NSAttributedString.Key: Any] = [
-      .link: url,
-      .font: existingFont
-    ]
-    attributedString.setAttributes(linkAttributes, range: match.range)
-  }
+    var replacedURLString = ""
+    if urlString.starts(with: /http(s)?:\/\/(www\.)?reddit\.com\//) && urlString.contains(/\/wiki\//)==false {
+        if urlString.contains(/\/media\?url=/) {
+            replacedURLString = urlString.replacingOccurrences(of: #"http(s)?:\/\/(www\.)?reddit\.com\/media\?url="#, with: "", options: .regularExpression)
+            replacedURLString = replacedURLString.removingPercentEncoding ?? ""
+        } else {
+            replacedURLString = urlString.replacingOccurrences(of: #"http(s)?:\/\/(www\.)?reddit\.com"#, with: "winstonapp://", options: .regularExpression)
+        }
+    }
+  
+  return replacedURLString.isEmpty ? nil : replacedURLString
 }
 
 

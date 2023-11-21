@@ -10,12 +10,24 @@ import SwiftUI
 struct BadgeSettings: View {
   @Binding var theme: BadgeTheme
   var defaultVal: BadgeTheme
+  var showSub: Bool = false
     var body: some View {
       Group {
         
         FakeSection("General") {
-          LabeledSlider(label: "Distance", value: $theme.spacing, range: 0...40)
+          LabeledSlider(label: "Avatar Distance", value: $theme.spacing, range: 0...40)
             .resetter($theme.spacing, defaultVal.spacing)
+        }
+        
+        FakeSection(footer: "Currently subrredits show inline in a text accent-colored on the right of the author. With this option you can force it to always appear as a accent-colored tag instead.") {
+          Toggle("Force subs as tag", isOn: $theme.forceSubsAsTags)
+            .padding(.horizontal, 16)
+        }
+        
+        if (showSub) {
+          FakeSection("Subreddit Color") {
+            SchemesColorPicker(theme: $theme.subColor, defaultVal: defaultVal.subColor)
+          }
         }
         
         FakeSection("Avatar") {
@@ -32,6 +44,8 @@ struct BadgeSettings: View {
         FakeSection("Author font") {
           FontSelector(theme: $theme.authorText, defaultVal: defaultVal.authorText)
         }
+        
+
           
         FakeSection("Flair font") {
           FontSelector(theme: $theme.flairText, defaultVal: defaultVal.flairText)
