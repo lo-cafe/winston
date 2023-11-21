@@ -10,14 +10,18 @@ import UIKit
 import SafariServices
 
 func openInBuiltInBrowser(_ url: URL) {
-  let vc = SFSafariViewController(url: url)
-  UIApplication.shared.firstKeyWindow?.rootViewController?.present(vc, animated: true)
+	if url.scheme?.lowercased().contains(/http(s)?/) == true {
+		let vc = SFSafariViewController(url: url)
+		UIApplication.shared.firstKeyWindow?.rootViewController?.present(vc, animated: true)
+	}
 }
 
 
 func openInBuiltInBrowser(_ urlStr: String) {
-  if let url = URL(string: "https://sarunw.com") {
-    let vc = SFSafariViewController(url: url)
-    UIApplication.shared.firstKeyWindow?.rootViewController?.present(vc, animated: true)
-  }
+	if let url = URL(string: urlStr)  {
+		if url.scheme?.lowercased().contains(/http(s)?/) == true {
+			let vc = SFSafariViewController(url: url)
+			UIApplication.shared.firstKeyWindow?.rootViewController?.present(vc, animated: true)
+		}
+	}
 }
