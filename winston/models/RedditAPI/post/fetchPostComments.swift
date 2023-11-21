@@ -10,29 +10,16 @@ import Alamofire
 
 extension RedditAPI {
   func fetchPost(subreddit: String, postID: String, commentID: String? = nil, sort: CommentSortOption = .confidence) async -> FetchPostCommentsResponse? {
-    await refreshToken()
-    if let headers = self.getRequestHeaders() {
-      let params = FetchPostCommentsPayload(sort: sort.rawVal.value, limit: 35, depth: 15)
-      var specificComment = ""
-      if let commentID = commentID {
-        specificComment = "/comment/\(commentID.hasPrefix("t1_") ? String(commentID.dropFirst(3)) : commentID)"
-      }
-      let response = await AF.request(
-        "\(RedditAPI.redditApiURLBase)/r/\(subreddit)/comments/\(postID.hasPrefix("t3_") ? String(postID.dropFirst(3)) : postID)\(specificComment).json",
-        method: .get,
-        parameters: params,
-        encoder: URLEncodedFormParameterEncoder(destination: .queryString),
-        headers: headers
-      )
-        .serializingDecodable(FetchPostCommentsResponse.self).response
-      switch response.result {
-      case .success(let data):
-        return data
-      case .failure(let error):
-        print(error)
-        return nil
-      }
-    } else {
+    let params = FetchPostCommentsPayload(sort: sort.rawVal.value, limit: 35, depth: 15)
+    var specificComment = ""
+    if let commentID = commentID {
+      specificComment = "/comment/\(commentID.hasPrefix("t1_") ? String(commentID.dropFirst(3)) : commentID)"
+    }
+    switch await self.doRequest("\(RedditAPI.redditApiURLBase)/r/\(subreddit)/comments/\(postID.hasPrefix("t3_") ? String(postID.dropFirst(3)) : postID)\(specificComment).json", method: .get, params: params, paramsLocation: .queryString, decodable: FetchPostCommentsResponse.self)  {
+    case .success(let data):
+      return data
+    case .failure(let error):
+      print(error)
       return nil
     }
   }

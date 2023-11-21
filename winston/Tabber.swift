@@ -36,11 +36,12 @@ class GlobalNavPathWrapper: ObservableObject {
 }
 
 struct Tabber: View {
-  @ObservedObject var tempGlobalState = TempGlobalState.shared
-  @State var activeTab: TabIdentifier = .posts
+  @ObservedObject private var tempGlobalState = TempGlobalState.shared
+  @ObservedObject private var redditCredentialsManager = RedditCredentialsManager.shared
+  @State private var activeTab: TabIdentifier = .posts
   
-  @State var credModalOpen = false
-  @State var importedThemeAlert = false
+  @State private var credModalOpen = false
+  @State private var importedThemeAlert = false
   
   //  @State var tabBarHeight: CGFloat?
   @StateObject private var inboxPayload = TabPayload("inboxRouter")
@@ -204,22 +205,22 @@ struct Tabber: View {
         Defaults[.subreddits] = []
       }
       Task(priority: .background) { await updatePostsInBox(RedditAPI.shared) }
-      if RedditAPI.shared.loggedUser.apiAppID == nil || RedditAPI.shared.loggedUser.apiAppSecret == nil {
+      if redditCredentialsManager.credentials.count == 0 {
         withAnimation(spring) {
           credModalOpen = true
         }
-      } else if RedditAPI.shared.loggedUser.accessToken != nil && RedditAPI.shared.loggedUser.refreshToken != nil {
+      } else if redditCredentialsManager.selectedCredential != nil {
         Task(priority: .background) {
-          print("Fetching 'me' user variable...")
+//          print("Fetching 'me' user variable...")
           await RedditAPI.shared.fetchMe(force: true)
-          print("\(RedditAPI.shared.me?.data?.name ?? "---USER FETCH FAILED---") username registered.")
+//          print("\(RedditAPI.shared.me?.data?.name ?? "---USER FETCH FAILED---") username registered.")
         }
         
         
       }
     }
-    .onChange(of: RedditAPI.shared.loggedUser) { user in
-      if user.apiAppID == nil || user.apiAppSecret == nil {
+    .onChange(of: redditCredentialsManager.credentials) { creds in
+      if creds.count == 0 {
         withAnimation(spring) {
           credModalOpen = true
         }

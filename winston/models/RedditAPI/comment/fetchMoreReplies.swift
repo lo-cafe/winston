@@ -10,18 +10,8 @@ import Alamofire
 
 extension RedditAPI {
   func fetchMoreReplies(comments: [String], moreID: String, postFullname: String, sort: CommentSortOption = .confidence, dropFirst: Bool = false) async -> [ListingChild<CommentData>]? {
-    await refreshToken()
-    //    await getModHash()
-    if let headers = self.getRequestHeaders() {
       let params = MoreRepliesPayload(children: comments.joined(separator: ","), link_id: postFullname, sort: sort.rawVal.value, id: moreID)
-      let response = await AF.request(
-        "\(RedditAPI.redditApiURLBase)/api/morechildren.json",
-        method: .get,
-        parameters: params,
-        encoder: URLEncodedFormParameterEncoder(destination: .queryString),
-        headers: headers
-      ).serializingDecodable(MoreRepliesResponse.self).response
-      switch response.result {
+      switch await self.doRequest("\(RedditAPI.redditApiURLBase)/api/morechildren.json", method: .get, params: params, paramsLocation: .queryString, decodable: MoreRepliesResponse.self) {
       case .success(let data):
         return data.json.data?.things
       case .failure(let err):
@@ -35,9 +25,6 @@ extension RedditAPI {
 //        print(errorString)
         return nil
       }
-    } else {
-      return nil
-    }
   }
   
   struct MoreRepliesPayload: Codable {

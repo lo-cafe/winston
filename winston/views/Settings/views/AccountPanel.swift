@@ -30,14 +30,14 @@ struct AccountPanel: View {
         }
         .themedListRowBG(enablePadding: true)
         
-        if let accessToken = RedditAPI.shared.loggedUser.accessToken {
+        if let accessToken = RedditCredentialsManager.shared.selectedCredential?.secretToken?.token {
           WSListButton("Copy Current Access Token", icon: "clipboard") {
             UIPasteboard.general.string = accessToken
           }
           
           WSListButton("Refresh Access Token", icon: "arrow.clockwise") {
             Task(priority: .background) {
-              await RedditAPI.shared.refreshToken(true)
+              _ = await RedditCredentialsManager.shared.selectedCredential?.getUpToDateToken(forceRenew: true)
             }
           }
         }
@@ -61,12 +61,7 @@ struct AccountPanel: View {
         .confirmationDialog("Are you sure you wanna logoff?", isPresented: $isPresentingConfirm, actions: {
           Button("Reset winston", role: .destructive) {
             resetApp()
-            RedditAPI.shared.loggedUser.accessToken = nil
-            RedditAPI.shared.loggedUser.refreshToken = nil
-            RedditAPI.shared.loggedUser.expiration = nil
-            RedditAPI.shared.loggedUser.lastRefresh = nil
-            RedditAPI.shared.loggedUser.apiAppID = nil
-            RedditAPI.shared.loggedUser.apiAppSecret = nil
+            RedditCredentialsManager.shared.reset()
           }
         }, message: { Text("This will clear everything in the app (your Reddit account is safe).") })
       }

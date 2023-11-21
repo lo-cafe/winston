@@ -14,25 +14,12 @@ import Defaults
 
 extension RedditAPI {
   func fetchUsers(_ ids: [String]) async -> MultipleUsersDictionary? {
-    await refreshToken()
-    if let headers = self.getRequestHeaders() {
-      let payload = FetchUsersByIDPayload(ids: String(ids.joined(separator: ",")))
-      let response = await AF.request(
-        "\(RedditAPI.redditApiURLBase)/api/user_data_by_account_ids",
-        method: .get,
-        parameters: payload,
-        encoder: URLEncodedFormParameterEncoder(destination: .queryString),
-        headers: headers
-      )
-        .serializingDecodable(MultipleUsersDictionary.self).response
-      switch response.result {
-      case .success(let data):
-        return data
-      case .failure(let error):
-        print(error)
-        return nil
-      }
-    } else {
+    let payload = FetchUsersByIDPayload(ids: String(ids.joined(separator: ",")))
+    switch await self.doRequest("\(RedditAPI.redditApiURLBase)/api/user_data_by_account_ids", method: .get, params: payload, paramsLocation: .queryString, decodable: MultipleUsersDictionary.self)  {
+    case .success(let data):
+      return data
+    case .failure(let error):
+      print(error)
       return nil
     }
   }
@@ -102,7 +89,7 @@ extension RedditAPI {
     let nonWinstonAppNames = names.filter { $0 != SAMPLE_USER_AVATAR }
     var returnDict: [String:ImageRequest] = [:]
     returnDict[SAMPLE_USER_AVATAR] = ImageRequest(stringLiteral: "https://winston.cafe/icons/iconExplode.png")
-
+    
     if !nonWinstonAppNames.isEmpty, let data = await self.fetchUsers(nonWinstonAppNames) {
       //      let avatarSize = Defaults[]
       var reqs: [ImageRequest] = []

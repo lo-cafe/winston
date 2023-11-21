@@ -10,26 +10,12 @@ import Alamofire
 
 extension RedditAPI {
   func vote(_ action: VoteAction, id: String) async -> Bool? {
-    await refreshToken()
-    //    await getModHash()
-    if var headers = self.getRequestHeaders() {
-      let params = VotePayload(dir: action.rawValue, id: id)
-      let dataTask = AF.request(
-        "\(RedditAPI.redditApiURLBase)/api/vote?redditWebClient=2x&app=desktop2x-client-production&raw_json=1&gilding_detail=1",
-        method: .post,
-        parameters: params,
-        encoder: URLEncodedFormParameterEncoder(destination: .httpBody),
-        headers: headers
-      ).serializingString()
-      let result = await dataTask.result
-      switch result {
-      case .success:
-        return true
-      case .failure:
-        //        print(error)
-        return nil
-      }
-    } else {
+    let params = VotePayload(dir: action.rawValue, id: id)
+    switch await self.doRequest("\(RedditAPI.redditApiURLBase)/api/vote?redditWebClient=2x&app=desktop2x-client-production&raw_json=1&gilding_detail=1", method: .post, params: params)  {
+    case .success:
+      return true
+    case .failure:
+      //        print(error)
       return nil
     }
   }
