@@ -23,8 +23,6 @@ struct SubredditPostsIOS: View, Equatable {
   var selectedTheme: WinstonTheme
   
   @EnvironmentObject private var routerProxy: RouterProxy
-  @ObservedObject var avatarCache = Caches.avatars
-  @ObservedObject private var videosCache = Caches.videos
   
   @Default(.blurPostLinkNSFW) private var blurPostLinkNSFW
   
@@ -49,29 +47,19 @@ struct SubredditPostsIOS: View, Equatable {
   //  @Environment(\.useTheme) private var selectedTheme
   @Environment(\.contentWidth) private var contentWidth
   
-  func getRepostAvatarRequest(_ post: Post?) -> ImageRequest? {
-    if let post = post, case .repost(let repost) = post.winstonData?.extractedMedia, let repostAuthorFullname = repost.data?.author_fullname {
-      return avatarCache.cache[repostAuthorFullname]?.data
-    }
-    return nil
-  }
-  
   var body: some View {
     let isThereDivider = selectedTheme.postLinks.divider.style != .no
     let paddingH = selectedTheme.postLinks.theme.outerHPadding
     let paddingV = selectedTheme.postLinks.spacing / (isThereDivider ? 4 : 2)
     List {
+      
       Section {
-        
         ForEach(Array(posts.enumerated()), id: \.self.element.id) { i, post in
           
-          if let sub = subreddit ?? post.winstonData?.subreddit, let postData = post.data, let winstonData = post.winstonData {
+          if let sub = subreddit ?? post.winstonData?.subreddit, let winstonData = post.winstonData {
             PostLink(
               id: post.id,
               controller: nil,
-              avatarRequest: avatarCache.cache[postData.author_fullname ?? ""]?.data,
-              cachedVideo: videosCache.cache[post.id]?.data,
-              repostAvatarRequest: getRepostAvatarRequest(post),
               theme: selectedTheme.postLinks,
               showSub: showSub,
               routerProxy: routerProxy,

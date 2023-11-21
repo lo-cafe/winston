@@ -16,14 +16,12 @@ let POSTLINK_INNER_H_PAD: CGFloat = 16
 
 struct PostLink: View, Equatable, Identifiable {
   static func == (lhs: PostLink, rhs: PostLink) -> Bool {
-    return lhs.id == rhs.id && lhs.avatarRequest?.url == rhs.avatarRequest?.url && lhs.cachedVideo == rhs.cachedVideo && lhs.repostAvatarRequest?.url == rhs.repostAvatarRequest?.url && lhs.theme == rhs.theme && lhs.cs == rhs.cs
+    return lhs.id == rhs.id && lhs.repostAvatarRequest?.url == rhs.repostAvatarRequest?.url && lhs.theme == rhs.theme && lhs.cs == rhs.cs
   }
   
   //  var disableOuterVSpacing = false
   var id: String
   weak var controller: UIViewController?
-  var avatarRequest: ImageRequest?
-  var cachedVideo: SharedVideo?
   var repostAvatarRequest: ImageRequest?
   var theme: SubPostsListTheme
   var showSub = false
@@ -52,10 +50,6 @@ struct PostLink: View, Equatable, Identifiable {
         PostLinkCompact(
           id: id,
           controller: controller,
-          //                controller: nil,
-          avatarRequest: avatarRequest,
-          cachedVideo: cachedVideo,
-          repostAvatarRequest: repostAvatarRequest,
           theme: theme,
           showSub: showSub,
           secondary: secondary,
@@ -80,10 +74,6 @@ struct PostLink: View, Equatable, Identifiable {
         PostLinkNormal(
           id: id,
           controller: controller,
-          //                controller: nil,
-          avatarRequest: avatarRequest,
-          cachedVideo: cachedVideo,
-          repostAvatarRequest: repostAvatarRequest,
           theme: theme,
           showSub: showSub,
           secondary: secondary,

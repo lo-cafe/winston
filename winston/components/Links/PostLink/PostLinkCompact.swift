@@ -33,16 +33,13 @@ struct PostLinkCompactThumbPlaceholder: View, Equatable {
 
 struct PostLinkCompact: View, Equatable, Identifiable {
   static func == (lhs: PostLinkCompact, rhs: PostLinkCompact) -> Bool {
-    return lhs.id == rhs.id && lhs.theme == rhs.theme && lhs.cs == rhs.cs && lhs.contentWidth == rhs.contentWidth && lhs.avatarRequest?.url == rhs.avatarRequest?.url && lhs.cachedVideo == rhs.cachedVideo && lhs.repostAvatarRequest?.url == rhs.repostAvatarRequest?.url
+    return lhs.id == rhs.id && lhs.theme == rhs.theme && lhs.cs == rhs.cs && lhs.contentWidth == rhs.contentWidth
   }
   var id: String
   @EnvironmentObject var post: Post
   @EnvironmentObject var winstonData: PostWinstonData
   @EnvironmentObject var sub: Subreddit
   weak var controller: UIViewController?
-  var avatarRequest: ImageRequest?
-  var cachedVideo: SharedVideo?
-  var repostAvatarRequest: ImageRequest?
   var theme: SubPostsListTheme
   var showSub = false
   var secondary: Bool

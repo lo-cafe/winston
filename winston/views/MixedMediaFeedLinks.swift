@@ -36,76 +36,100 @@ struct MixedMediaFeedLinksView: View {
   @Default(.showTitleAtTop) private var showTitleAtTop
   @Default(.showSelfPostThumbnails) private var showSelfPostThumbnails
   
-  @ObservedObject var avatarCache = Caches.avatars
   @Environment(\.colorScheme) private var cs
-
-  var body: some View {
-    let isThereDivider = selectedTheme.postLinks.divider.style != .no
-    let paddingH = selectedTheme.postLinks.theme.outerHPadding
-    let paddingV = selectedTheme.postLinks.spacing / (isThereDivider ? 4 : 2)
-    
-    ForEach(Array(mixedMediaLinks.enumerated()), id: \.self.element.hashValue) { i, item in
-      VStack(spacing: 0) {
-        switch item {
+  
+  func updateContentsCalcs(_ newTheme: WinstonTheme) {
+    Task(priority: .background) {
+      mixedMediaLinks.forEach {
+        switch $0 {
         case .first(let post):
-          if let postData = post.data, let winstonData = post.winstonData {
-            PostLink(
-              id: post.id,
-              controller: nil,
-              avatarRequest: avatarCache.cache[postData.author_fullname ?? ""]?.data,
-//              repostAvatarRequest: getRepostAvatarRequest(post),
-              theme: selectedTheme.postLinks,
-              showSub: true,
-              routerProxy: routerProxy,
-              contentWidth: contentWidth,
-              blurPostLinkNSFW: blurPostLinkNSFW,
-              postSwipeActions: postSwipeActions,
-              showVotes: showVotes,
-              showSelfText: showSelfText,
-              readPostOnScroll: readPostOnScroll,
-              hideReadPosts: hideReadPosts,
-              showUpvoteRatio: showUpvoteRatio,
-              showSubsAtTop: showSubsAtTop,
-              showTitleAtTop: showTitleAtTop,
-              compact: compactMode,
-              thumbnailPositionRight: thumbnailPositionRight,
-              voteButtonPositionRight: voteButtonPositionRight,
-              showSelfPostThumbnails: showSelfPostThumbnails,
-              cs: cs
-            )
-            .swipyRev(size: winstonData.postDimensions.size, actionsSet: postSwipeActions, entity: post)
-            .environmentObject(post)
-            .environmentObject(Subreddit(id: postData.subreddit, api: user.redditAPI))
-            .environmentObject(winstonData)
-            .listRowInsets(EdgeInsets(top: paddingV, leading: paddingH, bottom: paddingV, trailing: paddingH))
-          }
+          post.setupWinstonData(data: post.data, winstonData: post.winstonData, theme: newTheme, fetchAvatar: false)
         case .second(let comment):
-          VStack {
-            ShortCommentPostLink(comment: comment)
-            if let commentWinstonData = comment.winstonData {
-              CommentLink(lineLimit: 3, showReplies: false, comment: comment, commentWinstonData: commentWinstonData, children: comment.childrenWinston)
-                .allowsHitTesting(false)
-            }
-          }
-          .padding(.horizontal, 12)
-          .padding(.top, 12)
-          .padding(.bottom, 10)
-          .themedListRowBG()
-          .mask(RoundedRectangle(cornerRadius: 20, style: .continuous))
+          comment.setupWinstonData()
+          break
         }
-      }
-      .onAppear {
-        if mixedMediaLinks.count > 0 && (Int(Double(mixedMediaLinks.count) * 0.75) == i) {
-          loadNextData = true
-        }
-      }
-      
-      if selectedTheme.postLinks.divider.style != .no && i != (mixedMediaLinks.count - 1) {
-        NiceDivider(divider: selectedTheme.postLinks.divider)
-          .id("mixed-media-\(i)-divider")
-          .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
       }
     }
-    .environment(\.defaultMinListRowHeight, 1)
+  }
+  
+  var body: some View {
+    let postLinksTheme = selectedTheme.postLinks
+    let isThereDivider = selectedTheme.postLinks.divider.style != .no
+    let paddingH = postLinksTheme.theme.outerHPadding
+    let paddingV = postLinksTheme.spacing / (isThereDivider ? 4 : 2)
+    
+    List {
+      Section {
+        ForEach(Array(mixedMediaLinks.enumerated()), id: \.self.element.hashValue) { i, item in
+          Group {
+            switch item {
+            case .first(let post):
+              if let postData = post.data, let winstonData = post.winstonData {
+                PostLink(
+                  id: post.id,
+                  controller: nil,
+                  theme: selectedTheme.postLinks,
+                  showSub: true,
+                  routerProxy: routerProxy,
+                  contentWidth: contentWidth,
+                  blurPostLinkNSFW: blurPostLinkNSFW,
+                  postSwipeActions: postSwipeActions,
+                  showVotes: showVotes,
+                  showSelfText: showSelfText,
+                  readPostOnScroll: readPostOnScroll,
+                  hideReadPosts: hideReadPosts,
+                  showUpvoteRatio: showUpvoteRatio,
+                  showSubsAtTop: showSubsAtTop,
+                  showTitleAtTop: showTitleAtTop,
+                  compact: compactMode,
+                  thumbnailPositionRight: thumbnailPositionRight,
+                  voteButtonPositionRight: voteButtonPositionRight,
+                  showSelfPostThumbnails: showSelfPostThumbnails,
+                  cs: cs
+                )
+                .environmentObject(post)
+                .environmentObject(Subreddit(id: postData.subreddit, api: user.redditAPI))
+                .environmentObject(winstonData)
+              }
+            case .second(let comment):
+              VStack {
+                ShortCommentPostLink(comment: comment)
+                if let commentWinstonData = comment.winstonData {
+                  CommentLink(lineLimit: 3, showReplies: false, comment: comment, commentWinstonData: commentWinstonData, children: comment.childrenWinston)
+                }
+              }
+              .padding(.horizontal, 12)
+              .padding(.top, 12)
+              .padding(.bottom, 10)
+              .background(PostLinkBG(theme: postLinksTheme, stickied: false, secondary: false, cs: cs).equatable())
+              .mask(RR(postLinksTheme.theme.cornerRadius, Color.black).equatable())
+            }
+          }
+          .listRowInsets(EdgeInsets(top: paddingV, leading: paddingH, bottom: paddingV, trailing: paddingH))
+          .onAppear {
+            if mixedMediaLinks.count > 0 && (Int(Double(mixedMediaLinks.count) * 0.75) == i) {
+              loadNextData = true
+            }
+          }
+          
+          if selectedTheme.postLinks.divider.style != .no && i != (mixedMediaLinks.count - 1) {
+            NiceDivider(divider: selectedTheme.postLinks.divider)
+              .id("mixed-media-\(i)-divider")
+              .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
+          }
+        }
+      }
+      .listRowSeparator(.hidden)
+      .listRowBackground(Color.clear)
+      .environment(\.defaultMinListRowHeight, 1)
+    }
+    .onChange(of: cs) { _ in
+      updateContentsCalcs(selectedTheme)
+    }
+    .onChange(of: selectedTheme, perform: updateContentsCalcs)
+    .themedListBG(selectedTheme.postLinks.bg)
+    .scrollContentBackground(.hidden)
+    .scrollIndicators(.never)
+    .listStyle(.plain)
   }
 }

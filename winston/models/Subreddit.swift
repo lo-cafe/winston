@@ -165,14 +165,26 @@ extension Subreddit {
         self.loading = false
       }
       
-      return savedMediaData.map {
+      var comments: [Comment] = []
+      
+      let selectedTheme = getEnabledTheme()
+      
+      let returnData: [Either<Post, Comment>]? = savedMediaData.map {
         switch $0 {
         case .first(let postData):
           return .first(Post(data: postData, api: RedditAPI.shared))
         case .second(let commentData):
-          return .second(Comment(data: commentData, api: RedditAPI.shared))
+          let comment = Comment(data: commentData, api: RedditAPI.shared)
+          comments.append(comment)
+          return .second(comment)
         }
       }
+      
+      Task(priority: .background) { [comments] in
+        _ = await RedditAPI.shared.updateCommentsWithAvatar(comments: comments, avatarSize: selectedTheme.comments.theme.badge.avatar.size)
+      }
+      
+      return returnData
     }
     return nil
   }
