@@ -30,7 +30,7 @@ extension User {
       return overviewData.map {
         switch $0 {
         case .first(let postData):
-          return .first(Post(data: postData, api: RedditAPI.shared))
+          return .first(Post(data: postData, api: RedditAPI.shared, fetchSub: true))
         case .second(let commentData):
           return .second(Comment(data: commentData, api: RedditAPI.shared))
         }

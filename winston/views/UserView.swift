@@ -31,7 +31,7 @@ struct UserView: View {
   
   @ObservedObject var avatarCache = Caches.avatars
   @Environment(\.colorScheme) private var cs
-//  @Environment(\.contentWidth) private var contentWidth
+  //  @Environment(\.contentWidth) private var contentWidth
   
   func refresh() async {
     await user.refetchUser()
@@ -59,6 +59,8 @@ struct UserView: View {
             lastActivities?.append(contentsOf: overviewData)
           }
         }
+        
+        await user.redditAPI.updateOverviewSubjectsWithAvatar(subjects: overviewData, avatarSize: selectedTheme.postLinks.theme.badge.avatar.size)
         
         if let lastItem = overviewData.last {
           lastItemId = getItemId(for: lastItem)
@@ -113,21 +115,21 @@ struct UserView: View {
                 if let postKarma = data.link_karma {
                   DataBlock(icon: "highlighter", label: "Post karma",
                             value: "\(formatBigNumber(postKarma))") // maybe switch this to use the theme colors?
-                    .transition(.opacity)
-                    .onTapGesture {
-                      withAnimation(.easeInOut(duration: 0.2)) {
-                        if dataTypeFilter == "posts" {
-                          dataTypeFilter = ""
-                        } else {
-                          dataTypeFilter = "posts"
-                        }
+                  .transition(.opacity)
+                  .onTapGesture {
+                    withAnimation(.easeInOut(duration: 0.2)) {
+                      if dataTypeFilter == "posts" {
+                        dataTypeFilter = ""
+                      } else {
+                        dataTypeFilter = "posts"
                       }
                     }
-                    .overlay(dataTypeFilter == "posts" ?
-                                Color.accentColor.opacity(0.2)
-                                  .clipShape(RoundedRectangle(cornerRadius: 20))
-                                  .allowsHitTesting(false)
-                                : nil)
+                  }
+                  .overlay(dataTypeFilter == "posts" ?
+                           Color.accentColor.opacity(0.2)
+                    .clipShape(RoundedRectangle(cornerRadius: 20))
+                    .allowsHitTesting(false)
+                           : nil)
                 }
                 
                 if let commentKarma = data.comment_karma {
@@ -143,10 +145,10 @@ struct UserView: View {
                       }
                     }
                     .overlay(dataTypeFilter == "comments" ?
-                                Color.accentColor.opacity(0.2)
-                                  .clipShape(RoundedRectangle(cornerRadius: 20))
-                                  .allowsHitTesting(false)
-                                : nil)
+                             Color.accentColor.opacity(0.2)
+                      .clipShape(RoundedRectangle(cornerRadius: 20))
+                      .allowsHitTesting(false)
+                             : nil)
                 }
               }
               if let created = data.created {
@@ -165,13 +167,20 @@ struct UserView: View {
             .padding(.horizontal, 16)
           
           if let lastActivities = lastActivities {
-            MixedMediaFeedLinksView(mixedMediaLinks: lastActivities, loadNextData: $loadNextData, user: user)
-              .onChange(of: loadNextData) { shouldLoad in
-                if shouldLoad {
-                  getNextData()
-                  loadNextData = false
+            ForEach(Array(lastActivities.enumerated()), id: \.element) { i, item in
+              MixedContentLink(content: item, theme: selectedTheme.postLinks, routerProxy: routerProxy)
+                .onAppear {
+                  if(lastActivities.count - 7 == i) {
+                    getNextData()
+                  }
                 }
+              
+              if selectedTheme.postLinks.divider.style != .no && i != (lastActivities.count - 1) {
+                NiceDivider(divider: selectedTheme.postLinks.divider)
+                  .id("user-view-\(i)-divider")
+                  .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
               }
+            }
           }
           
           if lastItemId != nil || loadingOverview {

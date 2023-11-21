@@ -172,7 +172,7 @@ extension Subreddit {
       let returnData: [Either<Post, Comment>]? = savedMediaData.map {
         switch $0 {
         case .first(let postData):
-          return .first(Post(data: postData, api: RedditAPI.shared))
+          return .first(Post(data: postData, api: RedditAPI.shared, fetchSub: true))
         case .second(let commentData):
           let comment = Comment(data: commentData, api: RedditAPI.shared)
           comments.append(comment)

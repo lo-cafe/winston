@@ -142,13 +142,13 @@ struct SubredditPosts: View, Equatable {
         .searchable(text: $searchText, prompt: "Search r/\(subreddit.data?.display_name ?? subreddit.id)")
       } else {
         if let savedMixedMediaLinks = savedMixedMediaLinks, let user = redditAPI.me {
-            MixedMediaFeedLinksView(mixedMediaLinks: savedMixedMediaLinks, loadNextData: $loadNextSavedData, user: user)
-              .onChange(of: loadNextSavedData) { shouldLoad in
-                if shouldLoad {
-                  fetch(shouldLoad)
-                  loadNextSavedData = false
-                }
+          MixedContentFeedView(mixedMediaLinks: savedMixedMediaLinks, loadNextData: $loadNextSavedData, user: user)
+            .onChange(of: loadNextSavedData) { shouldLoad in
+              if shouldLoad {
+                fetch(shouldLoad)
+                loadNextSavedData = false
               }
+            }
         }
       }
     }
