@@ -148,7 +148,7 @@ func mediaExtractor(compact: Bool, contentWidth: Double = UIScreen.screenWidth, 
     return .video(SharedVideo(url: url, size: CGSize(width: 0, height: 0)))
   }
   
-  if data.url.contains("streamable") {
+  if data.url.contains("streamable.com") {
     return .streamable(StreamableExtracted(url: data.url))
   }
   
