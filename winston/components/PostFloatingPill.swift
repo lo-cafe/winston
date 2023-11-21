@@ -125,18 +125,37 @@ struct PostFloatingPill: View {
                             }
                             
                             // LightBoxButton for pinned post
-                            LightBoxButton(icon: !thisPinnedPost ? "shippingbox" : "shippingbox.and.arrow.backward.fill") {
-                                if thisPinnedPost {
-                                    withAnimation(spring) {
-                                        postsInBox = postsInBox.filter({ $0.id != post.id })
-                                    }
-                                    withAnimation(nil){
-                                        showRemovedToast.toggle()
-                                    }
-                                } else {
-                                    // Add logic for adding post to box
-                                }
-                            }
+                          LightBoxButton(icon: !thisPinnedPost ? "shippingbox" : "shippingbox.and.arrow.backward.fill") {
+                              if thisPinnedPost {
+                                  withAnimation(spring) {
+                                      postsInBox = postsInBox.filter({ $0.id != post.id })
+                                  }
+                                  withAnimation(nil){
+                                      showRemovedToast.toggle()
+                                  }
+                              } else {
+                                  var subIcon: String?
+                                  if let subData = subreddit.data {
+                                      let communityIcon = subData.community_icon?.split(separator: "?") ?? []
+                                      subIcon = subData.icon_img == "" || subData.icon_img == nil ? communityIcon.count > 0 ? String(communityIcon[0]) : "" : subData.icon_img
+                                  }
+                                  let newPostInBox = PostInBox(
+                                      id: data.id, fullname: data.name,
+                                      title: data.title, body: data.selftext,
+                                      subredditIconURL: subIcon, img: data.url,
+                                      subredditName: data.subreddit, authorName: data.author,
+                                      score: data.ups, commentsCount: data.num_comments,
+                                      createdAt: data.created, lastUpdatedAt: Date().timeIntervalSince1970
+                                  )
+                                  withAnimation(spring){
+                                      postsInBox.append(newPostInBox)
+                                      
+                                  }
+                                  withAnimation(nil){
+                                      showAddedToast.toggle()
+                                  }
+                              }
+                          }
                             .padding(.vertical, -2)
                             
                             Spacer()
