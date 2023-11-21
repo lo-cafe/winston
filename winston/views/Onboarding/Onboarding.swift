@@ -39,7 +39,7 @@ struct Onboarding: View {
   var body: some View {
     let BG_GRAD = colorScheme == .dark ? BG_GRAD_DARK : BG_GRAD_LIGHT
     TabView(selection: $currentTab) {
-      OnboardingWelcome(nextStep: nextStep)
+      OnboardingWelcomeWrapper(nextStep: nextStep)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .contentShape(Rectangle())
         .simultaneousGesture(DragGesture())
