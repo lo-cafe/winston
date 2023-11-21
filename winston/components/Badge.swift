@@ -34,7 +34,7 @@ struct UserFlair: View, Equatable {
 struct BadgeView: View, Equatable {
   static let authorStatsSpacing: Double = 2
   static func == (lhs: BadgeView, rhs: BadgeView) -> Bool {
-    return lhs.cs == rhs.cs && lhs.avatarURL == rhs.avatarURL && lhs.saved == rhs.saved && lhs.avatarRequest?.url == rhs.avatarRequest?.url && lhs.theme == rhs.theme && lhs.commentsCount == rhs.commentsCount && lhs.votesCount == rhs.votesCount
+    return lhs.cs == rhs.cs && lhs.avatarURL == rhs.avatarURL && lhs.saved == rhs.saved && lhs.avatarRequest?.url == rhs.avatarRequest?.url && lhs.theme == rhs.theme && lhs.commentsCount == rhs.commentsCount && lhs.votesCount == rhs.votesCount && lhs.likes == rhs.likes
   }
   
   var avatarRequest: ImageRequest?
@@ -49,16 +49,16 @@ struct BadgeView: View, Equatable {
   var avatarURL: String?
   var theme: BadgeTheme
   var commentTheme: CommentTheme?
-  //  var extraInfo: [BadgeExtraInfo] = []
   var commentsCount: String?
   var seenCommentsCount: Int?
   var numComments: Int?
   var votesCount: String?
+  var likes: Bool? = nil
   weak var routerProxy: RouterProxy?
   var cs: ColorScheme
   var openSub: (() -> ())? = nil
   var subName: String? = nil
-  
+    
   nonisolated func openUser() {
     routerProxy?.router.path.append(User(id: author, api: RedditAPI.shared))
   }
@@ -95,81 +95,28 @@ struct BadgeView: View, Equatable {
           .drawingGroup()
       }
       
-      
+      if showAvatar {
+        AvatarRaw(saved: saved, avatarImgRequest: avatarRequest, userID: author, fullname: fullname, theme: theme.avatar)
+          .equatable()
+        //          .drawingGroup()
+          .highPriorityGesture(TapGesture().onEnded(openUser))
+      }
       
       VStack(alignment: .leading, spacing: BadgeView.authorStatsSpacing) {
+        
         if showAuthorOnPostLinks {
           HStack(alignment: .center, spacing: 4) {
             
-            if showAvatar {
-              AvatarRaw(saved: saved, avatarImgRequest: avatarRequest, userID: author, fullname: fullname, theme: theme.avatar)
-                .equatable()
-              //          .drawingGroup()
-                .highPriorityGesture(TapGesture().onEnded(openUser))
-            }
+            Text(author).font(.system(size: theme.authorText.size, weight: theme.authorText.weight.t)).foregroundStyle(author == "[deleted]" ? .red : usernameColor ?? theme.authorText.color.cs(cs).color()).lineLimit(1)
+              .onTapGesture(perform: openUser)
             
-            VStack{
-              
-              
-              if let openSub = openSub, let subName = subName {
-                //                                Text("·")
-                //                                    .fontSize(theme.authorText.size * 2)
-                //                                    .foregroundColor(.secondary)
-                HStack{
-                  
-                  Text("r/\(subName)")
-                    .fontSize(theme.authorText.size, .semibold).lineLimit(1)
-                    .foregroundStyle(theme.subColor.cs(cs).color())
-                    .highPriorityGesture(TapGesture().onEnded(openSub))
-                  Spacer()
-                }
-              }
-              
-              
-              
-              HStack{
-                Text(author).font(.system(size: theme.authorText.size, weight: theme.authorText.weight.t)).foregroundColor(author == "[deleted]" ? .red : usernameColor ?? theme.authorText.color.cs(cs).color()).lineLimit(1)
-                  .onTapGesture(perform: openUser)
-                Spacer()
-              }
-              
-              HStack(spacing:theme.statsText.size * 0.416666667){
-                if let openSub = openSub, let subName = subName, !showAuthorOnPostLinks {
-                  Tag(subredditIconKit: nil, text: "r/\(subName)", color: .blue, fontSize: theme.statsText.size)
-                    .highPriorityGesture(TapGesture().onEnded(openSub))
-                }
-                
-                if let commentsCount = commentsCount {
-                  HStack(alignment: .center, spacing: 2) {
-                    Image(systemName: "message.fill")
-                    Text(commentsCount)
-                  }
-                }
-                
-                if let seenComments = seenCommentsCount, let total = numComments {
-                  let newComments = total - seenComments
-                  if newComments > 0 {
-                    Text("(\(newComments))").foregroundColor(.accentColor)
-                  }
-                }
-                
-                if let votesCount = votesCount {
-                  HStack(alignment: .center, spacing: 2) {
-                    Image(systemName: "arrow.up")
-                    Text(votesCount)
-                  }
-                }
-                
-                HStack(alignment: .center, spacing: 2) {
-                  Image(systemName: "hourglass.bottomhalf.filled")
-                  Text(timeSince(Int(created)))
-                }
-                Spacer()
-              }
-              .foregroundStyle(defaultIconColor)
-              .font(.system(size: theme.statsText.size, weight: theme.statsText.weight.t))
-              
-              
+            if let openSub = openSub, let subName = subName {
+              Image(systemName: "arrowshape.right.fill")
+                .fontSize(theme.authorText.size * 0.75)
+                .foregroundStyle(theme.authorText.color.cs(cs).color())
+              Text(subName).foregroundStyle(theme.subColor.cs(cs).color())
+                .fontSize(theme.authorText.size, .semibold).lineLimit(1)
+                .highPriorityGesture(TapGesture().onEnded(openSub))
             }
             
             if unseen {
@@ -188,13 +135,44 @@ struct BadgeView: View, Equatable {
         }
         
         
-        //                HStack(alignment: .center, spacing: theme.statsText.size * 0.416666667 /* Yes, absurd number, I thought it was funny */) {
-        //
-        //
-        //
-        //                }
-        //                .fixedSize(horizontal: true, vertical: false)
-        
+        HStack(alignment: .center, spacing: theme.statsText.size * 0.416666667 /* Yes, absurd number, I thought it was funny */) {
+          
+          if let openSub = openSub, let subName = subName, !showAuthorOnPostLinks {
+            Tag(subredditIconKit: nil, text: "r/\(subName)", color: .blue, fontSize: theme.statsText.size)
+              .highPriorityGesture(TapGesture().onEnded(openSub))
+          }
+          
+          if let commentsCount = commentsCount {
+            HStack(alignment: .center, spacing: 2) {
+              Image(systemName: "message.fill")
+              Text(commentsCount).contentTransition(.numericText())
+            }
+          }
+          
+          if let seenComments = seenCommentsCount, let total = numComments {
+            let newComments = total - seenComments
+            if newComments > 0 {
+              Text("(\(newComments))").foregroundColor(.accentColor)
+            }
+          }
+          
+          if let votesCount = votesCount {
+            HStack(alignment: .center, spacing: 2) {
+              Image(systemName: "arrow.up")
+              Text(votesCount).contentTransition(.numericText())
+            }
+            .foregroundStyle(likes == nil ? defaultIconColor : likes == true ? .orange : .blue)
+          }
+          
+          HStack(alignment: .center, spacing: 2) {
+            Image(systemName: "hourglass.bottomhalf.filled")
+            Text(timeSince(Int(created)))
+          }
+          
+        }
+        .fixedSize(horizontal: true, vertical: false)
+        .foregroundStyle(defaultIconColor)
+        .font(.system(size: theme.statsText.size, weight: theme.statsText.weight.t))
       }
       .drawingGroup()
     }

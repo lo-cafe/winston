@@ -138,7 +138,7 @@ struct PostLinkCompact: View, Equatable, Identifiable {
               }
             }
             
-            BadgeView(avatarRequest: winstonData.avatarImageRequest, showAuthorOnPostLinks: showAuthorOnPostLinks, saved: data.badgeKit.saved, usernameColor: nil, author: data.badgeKit.author, fullname: data.badgeKit.authorFullname, userFlair: data.badgeKit.userFlair, created: data.badgeKit.created, avatarURL: nil, theme: theme.theme.badge, commentsCount: formatBigNumber(data.badgeKit.numComments), seenCommentsCount: post.data?.winstonSeenCommentCount, numComments: data.num_comments, votesCount: formatBigNumber(data.badgeKit.ups), routerProxy: routerProxy, cs: cs)
+            BadgeView(avatarRequest: winstonData.avatarImageRequest, showAuthorOnPostLinks: showAuthorOnPostLinks, saved: data.badgeKit.saved, usernameColor: nil, author: data.badgeKit.author, fullname: data.badgeKit.authorFullname, userFlair: data.badgeKit.userFlair, created: data.badgeKit.created, avatarURL: nil, theme: theme.theme.badge, commentsCount: formatBigNumber(data.badgeKit.numComments), seenCommentsCount: post.data?.winstonSeenCommentCount, numComments: data.num_comments, votesCount: formatBigNumber(data.badgeKit.ups), likes: data.likes, routerProxy: routerProxy, cs: cs)
             
             if showSub && theme.theme.badge.avatar.visible {
               let subName = data.subreddit
