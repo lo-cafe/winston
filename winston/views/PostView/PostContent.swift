@@ -32,6 +32,12 @@ struct PostContent: View, Equatable {
   
   var contentWidth: CGFloat { UIScreen.screenWidth - (selectedTheme.posts.padding.horizontal * 2) }
   
+  func openSubreddit() {
+    if let subName = post.data?.subreddit {
+      routerProxy.router.path.append(SubViewType.posts(Subreddit(id: subName, api: RedditAPI.shared)))
+    }
+  }
+  
   var body: some View {
     let postsTheme = selectedTheme.posts
     let isCollapsed = forceCollapse || collapsed
@@ -106,7 +112,8 @@ struct PostContent: View, Equatable {
       .id("post-content")
       .listRowInsets(EdgeInsets(top: postsTheme.spacing / 2, leading: postsTheme.padding.horizontal, bottom: postsTheme.spacing / 2, trailing: postsTheme.spacing / 2))
       
-      BadgeOpt(avatarRequest: winstonData.avatarImageRequest, badgeKit: data.badgeKit, cs: cs, routerProxy: routerProxy, showVotes: false, theme: postsTheme.badge)
+      BadgeOpt(avatarRequest: winstonData.avatarImageRequest, badgeKit: data.badgeKit, cs: cs, routerProxy: routerProxy, showVotes: false, theme: postsTheme.badge,
+               openSub: openSubreddit, subName: data.subreddit)
         .id("post-badge")
         .listRowInsets(EdgeInsets(top: postsTheme.spacing / 2, leading: postsTheme.padding.horizontal, bottom: postsTheme.spacing * 0.75, trailing: postsTheme.padding.horizontal))
       

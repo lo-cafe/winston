@@ -112,7 +112,8 @@ struct BadgeView: View, Equatable {
             
             if let openSub = openSub, let subName = subName, theme.forceSubsAsTags {
               Tag(subredditIconKit: nil, text: "r/\(subName)", color: theme.subColor.cs(cs).color(), fontSize: theme.authorText.size, backgroundColor: theme.subColor.cs(cs).color())
-                .highPriorityGesture(TapGesture().onEnded(openSub))
+              .onTapGesture(perform: openSub
+
             }
             
             if let openSub = openSub, let subName = subName, !theme.forceSubsAsTags {
@@ -229,11 +230,11 @@ struct BadgeOpt: View, Equatable {
   var usernameColor: Color?
   var avatarURL: String?
   var theme: BadgeTheme
-  //  var extraInfo: [BadgeExtraInfo] = []
-  
+  var openSub: (() -> ())? = nil
+  var subName: String? = nil
   
   var body: some View {
-    BadgeView(avatarRequest: avatarRequest ?? Caches.avatars.cache[badgeKit.authorFullname]?.data, saved: badgeKit.saved, usernameColor: usernameColor, author: badgeKit.author, fullname: badgeKit.authorFullname, userFlair: badgeKit.userFlair, created: badgeKit.created, avatarURL: avatarURL, theme: theme, commentsCount: formatBigNumber(badgeKit.numComments), votesCount: !showVotes ? nil : formatBigNumber(badgeKit.ups), routerProxy: routerProxy, cs: cs)
+      BadgeView(avatarRequest: avatarRequest ?? Caches.avatars.cache[badgeKit.authorFullname]?.data, saved: badgeKit.saved, usernameColor: usernameColor, author: badgeKit.author, fullname: badgeKit.authorFullname, userFlair: badgeKit.userFlair, created: badgeKit.created, avatarURL: avatarURL, theme: theme, commentsCount: formatBigNumber(badgeKit.numComments), votesCount: !showVotes ? nil : formatBigNumber(badgeKit.ups), routerProxy: routerProxy, cs: cs, openSub: openSub, subName: subName)
   }
 }
 
