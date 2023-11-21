@@ -110,10 +110,15 @@ struct BadgeView: View, Equatable {
             Text(author).font(.system(size: theme.authorText.size, weight: theme.authorText.weight.t)).foregroundStyle(author == "[deleted]" ? .red : usernameColor ?? theme.authorText.color.cs(cs).color()).lineLimit(1)
               .onTapGesture(perform: openUser)
             
-            if let openSub = openSub, let subName = subName {
+            if let openSub = openSub, let subName = subName, theme.forceSubsAsTags {
+              Tag(subredditIconKit: nil, text: "r/\(subName)", color: .blue, fontSize: theme.authorText.size)
+                .highPriorityGesture(TapGesture().onEnded(openSub))
+            }
+            
+            if let openSub = openSub, let subName = subName, !theme.forceSubsAsTags {
               Image(systemName: "arrowshape.right.fill")
                 .fontSize(theme.authorText.size * 0.75)
-                .foregroundStyle(theme.authorText.color.cs(cs).color())
+                .foregroundStyle(theme.authorText.color.cs(cs).color().opacity(0.5))
               Text(subName).foregroundStyle(theme.subColor.cs(cs).color())
                 .fontSize(theme.authorText.size, .semibold).lineLimit(1)
                 .highPriorityGesture(TapGesture().onEnded(openSub))

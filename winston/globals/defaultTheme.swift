@@ -25,7 +25,9 @@ let badgeTheme: BadgeTheme = .init(
   subColor: .init(light: .init(hex: "0B84FE"), dark: .init(hex: "0B84FE")),
   flairText: .init(size: 12, color: .init(light: .init(hex: "999999"), dark: .init(hex: "767676")), weight: .bold),
   flairBackground: .init(light: .init(hex: "EEEEEE"), dark: .init(hex: "2C2C2C")),
-  statsText: .init(size: 12, color: .init(light: .init(hex: "000000", alpha: 0.5), dark: .init(hex: "ffffff", alpha: 0.5)), weight: .medium), spacing: 5)
+  statsText: .init(size: 12, color: .init(light: .init(hex: "000000", alpha: 0.5), dark: .init(hex: "ffffff", alpha: 0.5)), weight: .medium), spacing: 5,
+  forceSubsAsTags: false
+)
 
 let defaultTheme = WinstonTheme(
   metadata: .init(
@@ -50,7 +52,8 @@ let defaultTheme = WinstonTheme(
       verticalElementsSpacing: 8,
       bg: .init(blurry: false, color: listSectionBGTheme),
       unseenType: .dot(.init(light: .init(hex: "4FFF85"), dark: .init(hex: "4FFF85"))),
-      unseenFadeOpacity : 0.6
+      unseenFadeOpacity : 0.6,
+      compactSelftextPostLinkPlaceholderImg: .init(type: .winston, color: .init(light: .init(hex: "000000", alpha: 0.2), dark: .init(hex: "ffffff", alpha: 0.2)))
     ),
     spacing: 16,
     divider: .init(style: .no, thickness: 6, color: listSectionBGTheme),

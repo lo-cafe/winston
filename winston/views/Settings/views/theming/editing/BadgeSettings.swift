@@ -17,6 +17,13 @@ struct BadgeSettings: View {
         FakeSection("General") {
           LabeledSlider(label: "Avatar Distance", value: $theme.spacing, range: 0...40)
             .resetter($theme.spacing, defaultVal.spacing)
+          Toggle("Show avatar", isOn: $theme.forceSubsAsTags)
+            .padding(.horizontal, 16)
+        }
+        
+        FakeSection(footer: "Currently subrredits show inline in a text accent-colored on the right of the author. With this option you can force it to always appear as a accent-colored tag instead.") {
+          Toggle("Force subs as tag", isOn: $theme.forceSubsAsTags)
+            .padding(.horizontal, 16)
         }
         
         FakeSection("Avatar") {
