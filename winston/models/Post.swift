@@ -69,7 +69,7 @@ extension Post {
       bodyAttr.addAttribute(.paragraphStyle, value: style, range: NSRange(location: 0, length: bodyAttr.length))
       bodyAttr.addAttribute(.foregroundColor, value: UIColor(theme.posts.bodyText.color.cs(cs).color()), range: NSRange(location: 0, length: bodyAttr.length))
       self.winstonData?.postBodyAttr = bodyAttr
-      let postViewBodyMaxWidth = UIScreen.screenWidth - (theme.posts.padding.horizontal * 2)
+			let postViewBodyMaxWidth = UIScreen.screenWidth - (!IPAD ? 0 : (UIScreen.screenWidth / 3)) - (theme.posts.padding.horizontal * 2)
       
       let postViewBodyHeight = bodyAttr.boundingRect(with: CGSize(width: postViewBodyMaxWidth, height: .infinity), options: [.usesLineFragmentOrigin], context: nil).height
       self.winstonData?.postViewBodySize = .init(width: postViewBodyMaxWidth, height: postViewBodyHeight)

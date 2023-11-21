@@ -64,7 +64,7 @@ struct MultiPostsView: View {
         SubredditPostsIOS(showSub: true, lastPostAfter: lastPostAfter, posts: posts.data, searchText: searchText, fetch: fetch, selectedTheme: selectedTheme)
       }
     }
-    .themedListBG(selectedTheme.postLinks.bg)
+    //.themedListBG(selectedTheme.postLinks.bg)
     .listStyle(.plain)
     .environment(\.defaultMinListRowHeight, 1)
     .loader(loading && posts.data.count == 0)
@@ -85,7 +85,8 @@ struct MultiPostsView: View {
                 }
               }
             }
-          } label: {
+          }
+        label: {
             Image(systemName: sort.rawVal.icon)
               .foregroundColor(Color.accentColor)
               .fontSize(17, .bold)
@@ -122,7 +123,8 @@ struct MultiPostsView: View {
 //    .searchable(text: $searchText, prompt: "Search r/\(subreddit.data?.display_name ?? subreddit.id)")
     .refreshable { await asyncFetch(force: true) }
     .navigationTitle(multi.data?.name ?? "MultiZ")
-    .background(.thinMaterial)
+    .scrollContentBackground(.hidden)
+    //.background(.thinMaterial)
   }
   
 }
