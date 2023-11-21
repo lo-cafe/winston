@@ -110,31 +110,28 @@ struct BadgeView: View, Equatable {
             Text(author).font(.system(size: theme.authorText.size, weight: theme.authorText.weight.t)).foregroundStyle(author == "[deleted]" ? .red : usernameColor ?? theme.authorText.color.cs(cs).color()).lineLimit(1)
               .onTapGesture(perform: openUser)
             
-            if let openSub = openSub, let subName = subName, theme.forceSubsAsTags {
-              Tag(subredditIconKit: nil, text: "r/\(subName)", color: theme.subColor.cs(cs).color(), fontSize: theme.authorText.size, backgroundColor: theme.subColor.cs(cs).color())
-              .onTapGesture(perform: openSub)
-
-            }
-            
-            if let openSub = openSub, let subName = subName, !theme.forceSubsAsTags {
-              Image(systemName: "arrowshape.right.fill")
-                .fontSize(theme.authorText.size * 0.75)
-                .foregroundStyle(theme.authorText.color.cs(cs).color().opacity(0.5))
-              Text(subName).foregroundStyle(theme.subColor.cs(cs).color())
-                .fontSize(theme.authorText.size, .semibold).lineLimit(1)
-                .highPriorityGesture(TapGesture().onEnded(openSub))
-            }
-            
             if unseen {
               PostLinkGlowDot(unseenType: .dot(commentTheme?.unseenDot ?? ColorSchemes<ThemeColor>(light: .init(hex: "FF0000"), dark: .init(hex: "FF0000"))), seen: false, cs: cs, badge: true).equatable()
             }
             
-            if openSub == nil {
-              if let flairs = flairWithoutEmojis(str: userFlair) {
-                // TODO Load flair emojis via GET /api/v1/{subreddit}/emojis/{emoji_name}
-                ForEach(flairs, id: \.self) {
-                  UserFlair(flair: $0, flairText: theme.flairText, flairBackground: theme.flairBackground, cs: cs).equatable()
-                }
+            if let flairs = flairWithoutEmojis(str: userFlair) {
+              // TODO Load flair emojis via GET /api/v1/{subreddit}/emojis/{emoji_name}
+              ForEach(flairs, id: \.self) {
+                UserFlair(flair: $0, flairText: theme.flairText, flairBackground: theme.flairBackground, cs: cs).equatable()
+              }
+            }
+            
+            if let openSub = openSub, let subName = subName {
+              if theme.forceSubsAsTags {
+                Tag(subredditIconKit: nil, text: "r/\(subName)", color: theme.subColor.cs(cs).color(), fontSize: theme.authorText.size, backgroundColor: theme.subColor.cs(cs).color())
+                .onTapGesture(perform: openSub)
+              } else {
+                Image(systemName: "arrowshape.right.fill")
+                  .fontSize(theme.authorText.size * 0.75)
+                  .foregroundStyle(theme.authorText.color.cs(cs).color().opacity(0.5))
+                Text(subName).foregroundStyle(theme.subColor.cs(cs).color())
+                  .fontSize(theme.authorText.size, .semibold).lineLimit(1)
+                  .highPriorityGesture(TapGesture().onEnded(openSub))
               }
             }
           }
