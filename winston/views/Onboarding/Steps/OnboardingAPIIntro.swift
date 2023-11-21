@@ -41,12 +41,7 @@ struct OnboardingAPIIntro: View {
   var body: some View {
     ScrollView {
       VStack(spacing: 24) {
-        //        Image("winstonNoBG")
-        //          .resizable()
-        //          .scaledToFit()
-        //          .frame(height: 128)
-        //          .transition(.scale(scale: 1))
-        
+
         VStack {
           Text("First, I need an API key")
             .fontSize(24, .semibold)
