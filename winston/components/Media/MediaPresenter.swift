@@ -13,6 +13,7 @@ import NukeUI
 struct OnlyURL: View {
   static let height: Double = 22
   @Default(.postLinkTitleSize) var postLinkTitleSize
+	@Default(.openLinksInSafari) private var openLinksInSafari
   var url: URL
   @Environment(\.openURL) private var openURL
   var body: some View {
@@ -29,7 +30,11 @@ struct OnlyURL: View {
     .foregroundColor(.white)
     .highPriorityGesture(TapGesture().onEnded {
       if let newURL = URL(string: url.absoluteString.replacingOccurrences(of: "https://reddit.com/", with: "winstonapp://")) {
-        openURL(newURL)
+				if openLinksInSafari {
+					openURL(newURL)
+				} else {
+					openInBuiltInBrowser(newURL)
+				}
       }
     })
   }
