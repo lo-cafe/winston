@@ -3,34 +3,24 @@
     "version": "1.0.0",
     "features": [
         {
-            "subtitle": "We've added a cool new What's New sheet!",
-            "systemImage": "star",
-            "title": "What's New sheet"
+            "subtitle": "Annoyed at having to enter your API key all the time? Not anymore!",
+            "systemImage": "icloud",
+            "title": "iCloud syncing for credentials"
         },
         {
-            "subtitle": "Want to copy text you see in an image? Now you can!",
-            "systemImage": "text.viewfinder",
-            "title": "Live Text"
+            "subtitle": "With the new saved posts feed you can finally look at all the cute cat pics you saved so long ago",
+            "systemImage": "bookmark",
+            "title": "Saved Posts Feed"
         },
         {
-            "subtitle": "You can now lock Winston with a pin or biometrics.",
-            "systemImage": "lock",
-            "title": "Lock Winston"
+            "subtitle": "You can finally look at those spicy opinions.",
+            "systemImage": "figure.fencing",
+            "title": "Add Comtroversial Sort"
         },
         {
-            "subtitle": "Download other peoples themes with the all new Theme Store.",
-            "systemImage": "paintpalette",
-            "title": "Theme Store"
-        },
-        {
-            "subtitle": "Wait didn't I read this already? With new comments indicators you dont need to ask yourself this question anymore!",
-            "systemImage": "person",
-            "title": "New Comments Indicator"
-        },
-        {
-            "subtitle": "Show some flair with...flairs! Winston now displays flairs in comments.",
-            "systemImage": "flag",
-            "title": "User Flairs in Comments"
+            "subtitle": "Winston now displays images from URLs you click in-app",
+            "systemImage": "photo",
+            "title": "In-App image viewer"
         }
     ],
    
