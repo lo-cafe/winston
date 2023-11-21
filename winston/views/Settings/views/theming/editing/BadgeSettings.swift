@@ -24,6 +24,12 @@ struct BadgeSettings: View {
             .padding(.horizontal, 16)
         }
         
+        if (showSub) {
+          FakeSection("Subreddit Color") {
+            SchemesColorPicker(theme: $theme.subColor, defaultVal: defaultVal.subColor)
+          }
+        }
+        
         FakeSection("Avatar") {
           Toggle("Show avatar", isOn: $theme.avatar.visible)
             .padding(.horizontal, 16)
@@ -39,11 +45,7 @@ struct BadgeSettings: View {
           FontSelector(theme: $theme.authorText, defaultVal: defaultVal.authorText)
         }
         
-        if (showSub) {
-          FakeSection("Subreddit Color") {
-            SchemesColorPicker(theme: $theme.subColor, defaultVal: defaultVal.subColor)
-          }
-        }
+
           
         FakeSection("Flair font") {
           FontSelector(theme: $theme.flairText, defaultVal: defaultVal.flairText)

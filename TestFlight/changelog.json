@@ -1,6 +1,6 @@
 {
     "title": "What's new in Winston",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "features": [
         {
             "subtitle": "Annoyed at having to enter your API key all the time? Not anymore!",
@@ -15,7 +15,7 @@
         {
             "subtitle": "You can finally look at those spicy opinions.",
             "systemImage": "figure.fencing",
-            "title": "Add Comtroversial Sort"
+            "title": "Add Controversial Sort"
         },
         {
             "subtitle": "Winston now displays images from URLs you click in-app",
