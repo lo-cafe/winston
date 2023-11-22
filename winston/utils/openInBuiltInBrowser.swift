@@ -13,6 +13,8 @@ func openInBuiltInBrowser(_ url: URL) {
 	if url.scheme?.lowercased().contains(/http(s)?/) == true {
 		let vc = SFSafariViewController(url: url)
 		UIApplication.shared.firstKeyWindow?.rootViewController?.present(vc, animated: true)
+	} else {
+		 UIApplication.shared.open(url)
 	}
 }
 
@@ -22,6 +24,8 @@ func openInBuiltInBrowser(_ urlStr: String) {
 		if url.scheme?.lowercased().contains(/http(s)?/) == true {
 			let vc = SFSafariViewController(url: url)
 			UIApplication.shared.firstKeyWindow?.rootViewController?.present(vc, animated: true)
-		}
+		} else {
+			UIApplication.shared.open(url)
+	  }
 	}
 }
