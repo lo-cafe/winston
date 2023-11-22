@@ -80,10 +80,7 @@ struct SubredditPosts: View, Equatable {
           
           loading = false
           lastPostAfter = result.1
-          
-          if newPostsFiltered.count == 0 {
-            reachedEndOfFeed = true
-          }
+          reachedEndOfFeed = newPostsFiltered.count == 0
         }
       }
     } else {
@@ -101,9 +98,7 @@ struct SubredditPosts: View, Equatable {
           }
         }
         
-        if result.count == 0 {
-          reachedEndOfFeed = true
-        }
+        reachedEndOfFeed = result.count == 0
       }
     }
   }

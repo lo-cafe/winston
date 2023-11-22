@@ -44,10 +44,7 @@ struct MultiPostsView: View {
         }
         loading = false
         lastPostAfter = result.1
-        
-        if newPosts.count == 0 {
-          reachedEndOfFeed = true
-        }
+        reachedEndOfFeed = newPosts.count == 0
       }
       Task(priority: .background) {
         await RedditAPI.shared.updatePostsWithAvatar(posts: newPosts, avatarSize: selectedTheme.postLinks.theme.badge.avatar.size)
