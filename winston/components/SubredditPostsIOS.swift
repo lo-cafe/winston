@@ -22,6 +22,8 @@ struct SubredditPostsIOS: View, Equatable {
   var fetch: (Bool, String?) -> ()
   var selectedTheme: WinstonTheme
   
+  @Binding var reachedEndOfFeed: Bool
+  
   @EnvironmentObject private var routerProxy: RouterProxy
   
   @Default(.blurPostLinkNSFW) private var blurPostLinkNSFW
@@ -101,12 +103,16 @@ struct SubredditPostsIOS: View, Equatable {
           }
           
         }
+        
+        if reachedEndOfFeed {
+          EndOfFeedView()
+        }
       }
       .listRowSeparator(.hidden)
       .listRowBackground(Color.clear)
       
       Section {
-        if lastPostAfter != nil {
+        if lastPostAfter != nil && !reachedEndOfFeed {
           ProgressView()
             .progressViewStyle(.circular)
             .frame(maxWidth: .infinity, minHeight: posts.count > 0 ? 100 : UIScreen.screenHeight - 200 )
