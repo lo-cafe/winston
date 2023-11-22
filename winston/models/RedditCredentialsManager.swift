@@ -17,15 +17,12 @@ struct RedditCredential: Identifiable, Equatable, Hashable, Codable {
   static let refreshTokenKeychainLabel = "refreshToken"
   static let apiAppSecretKeychainLabel = "apiAppSecret"
   var id: String { self.apiAppID }
-  let apiAppID: String
-//    didSet {
-//      RedditCredentialsManager.keychain.allKeys().forEach { key in
-//        if key == RedditCredential.secretTokenKeychainLabel || key == RedditCredential.refreshTokenKeychainLabel {
-//          try? RedditCredentialsManager.keychain.remove(key)
-//        }
-//      }
-//    }
-//  }
+  var apiAppID: String {
+    didSet {
+      self.secretToken = nil
+      self.refreshToken = nil
+    }
+  }
   
   var apiAppSecret: String? { RedditCredentialsManager.keychain["\(self.apiAppID)\(RedditCredentialsManager.keychainEntryDivider)\(RedditCredential.apiAppSecretKeychainLabel)"] }
   

@@ -54,7 +54,6 @@ class RedditAPI: ObservableObject {
     if attempt < 3, case .failure(_) = response.result {
       return await doRequest(url, authenticated: authenticated, method: method, decodable: decodable, attempt: attempt + 1)
     }
-    print(response)
     return response.result
   }
   
