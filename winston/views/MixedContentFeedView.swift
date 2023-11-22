@@ -22,6 +22,8 @@ struct MixedContentFeedView: View {
   
   @State private var dataTypeFilter: String = "" // Handles filtering for only posts or only comments.
   
+  @Binding var reachedEndOfFeed: Bool
+  
   @Environment(\.colorScheme) private var cs
   
   func updateContentsCalcs(_ newTheme: WinstonTheme) {
@@ -60,6 +62,10 @@ struct MixedContentFeedView: View {
               .id("mixed-media-\(i)-divider")
               .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
           }
+        }
+        
+        if reachedEndOfFeed {
+          EndOfFeedView()
         }
       }
       .listRowSeparator(.hidden)
