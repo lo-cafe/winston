@@ -38,7 +38,7 @@ struct PostThemingPanel: View {
         case "texts":
           PostTextsTheming(theme: $theme.posts)
         case "badge":
-          BadgeSettings(theme: $theme.posts.badge, defaultVal: defaultTheme.posts.badge)
+          BadgeSettings(theme: $theme.posts.badge, defaultVal: defaultTheme.posts.badge, showSub: true)
         default:
           EmptyView()
         }

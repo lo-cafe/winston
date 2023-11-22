@@ -29,6 +29,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     return sceneConfiguration
   }
   func applicationDidFinishLaunching(_ application: UIApplication) {
+    do {
+      let audioSession = AVAudioSession.sharedInstance()
+      try audioSession.setCategory(.playback, options: [.mixWithOthers])
+    } catch {
+      print("Error setting audio session to mix with others")
+    }
+    
     let defaultPipeline = ImagePipeline { config in
       config.dataCache = try? DataCache(name: "lo.cafe.winston.datacache")
       let dataLoader: DataLoader = {
