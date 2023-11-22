@@ -36,7 +36,6 @@ struct PostLinkThemingPanel: View {
   @Default(.showTitleAtTop) private var showTitleAtTop
   @Default(.showSelfPostThumbnails) private var showSelfPostThumbnails
   
-  @ObservedObject var avatarCache = Caches.avatars
   @Environment(\.contentWidth) private var contentWidth
   
   var body: some View {
@@ -68,7 +67,6 @@ struct PostLinkThemingPanel: View {
           PostLink(
             id: previewPostSample.id,
             controller: nil,
-            avatarRequest: avatarCache.cache["t2_winston_sample"]?.data,
             theme: theme.postLinks,
             showSub: true,
             secondary: false,

@@ -20,14 +20,14 @@ struct OnboardingWelcome: View {
   var body: some View {
     VStack(spacing: 20) {
       VStack(spacing: 12) {
-          if showCat {
-            Image("winstonNoBG")
-              .resizable()
-              .scaledToFit()
-              .frame(height: 128)
-              .transition(.scaleAndBlur)
-          }
-          
+        if showCat {
+          Image(.winstonNoBG)
+            .resizable()
+            .scaledToFit()
+            .frame(height: 128)
+            .transition(.scaleAndBlur)
+        }
+        
         VStack(spacing: -2) {
           if showMeow || showHello {
             Text(showHello ? "I mean, hello!" : "Meow!")
@@ -43,14 +43,13 @@ struct OnboardingWelcome: View {
           }
         }
         
-      }
-      
         if showText {
           Text("I'm a beautiful beta client (made with A BUNCH of love) for Reddit where you can use your own API key.")
             .fixedSize(horizontal: false, vertical: true)
             .frame(maxWidth: 300)
             .transition(.opacity)
         }
+      }
         
         if showBtn {
           MasterButton(label: "👋 Hi, Winston!", colorHoverEffect: .animated, textSize: 18, height: 48, cornerRadius: 16, action: nextStep)
@@ -64,11 +63,11 @@ struct OnboardingWelcome: View {
     .frame(maxWidth: .infinity)
     .onAppear {
       if !showCat {
-        doThisAfter(0.25) {
+        doThisAfter(0.5) {
           withAnimation(spring) {
             showCat = true
           }
-          doThisAfter(0.65) {
+          doThisAfter(0.85) {
             withAnimation(spring) {
               showMeow = true
             }
@@ -76,7 +75,7 @@ struct OnboardingWelcome: View {
               withAnimation(spring) {
                 showHello = true
               }
-              doThisAfter(1.0) {
+              doThisAfter(1.25) {
                 withAnimation(spring) {
                   showAppName = true
                 }
@@ -95,6 +94,16 @@ struct OnboardingWelcome: View {
           }
         }
       }
+    }
+  }
+}
+
+struct OnboardingWelcomeWrapper: View {
+  var nextStep: ()->()
+
+  var body: some View {
+    VStack {
+      OnboardingWelcome(nextStep: nextStep)
     }
   }
 }

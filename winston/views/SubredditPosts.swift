@@ -123,7 +123,10 @@ struct SubredditPosts: View, Equatable {
     } else {
       fetch()
     }
-    
+  }
+  
+  func updatePostsCalcs(_ newTheme: WinstonTheme) {
+    Task(priority: .background) { posts.data.forEach { $0.setupWinstonData(data: $0.data, winstonData: $0.winstonData, theme: newTheme, fetchAvatar: false) } }
   }
   
   var body: some View {
@@ -139,18 +142,13 @@ struct SubredditPosts: View, Equatable {
         .searchable(text: $searchText, prompt: "Search r/\(subreddit.data?.display_name ?? subreddit.id)")
       } else {
         if let savedMixedMediaLinks = savedMixedMediaLinks, let user = redditAPI.me {
-          List {
-            MixedMediaFeedLinksView(mixedMediaLinks: savedMixedMediaLinks, loadNextData: $loadNextSavedData, user: user)
-              .onChange(of: loadNextSavedData) { shouldLoad in
-                if shouldLoad {
-                  fetch(shouldLoad)
-                  loadNextSavedData = false
-                }
+          MixedContentFeedView(mixedMediaLinks: savedMixedMediaLinks, loadNextData: $loadNextSavedData, user: user)
+            .onChange(of: loadNextSavedData) { shouldLoad in
+              if shouldLoad {
+                fetch(shouldLoad)
+                loadNextSavedData = false
               }
-          }
-          .themedListBG(selectedTheme.lists.bg)
-          .scrollContentBackground(.hidden)
-          .listStyle(.plain)
+            }
         }
       }
     }
@@ -192,7 +190,7 @@ struct SubredditPosts: View, Equatable {
     }
     .navigationTitle("\(isFeedsAndSuch ? subreddit.id.capitalized : "r/\(subreddit.data?.display_name ?? subreddit.id)")")
     .task(priority: .background) {
-      if posts.data.count == 0 {
+      if posts.data.count == 0 && (savedMixedMediaLinks?.count == 0 || savedMixedMediaLinks == nil) {
         do {
           try await asyncFetch()
         } catch {
@@ -204,10 +202,9 @@ struct SubredditPosts: View, Equatable {
       clearAndLoadData()
     }
     .onChange(of: cs) { _ in
-      Task(priority: .background) {
-        posts.data.forEach { $0.setupWinstonData(data: $0.data, winstonData: $0.winstonData, theme: selectedTheme, fetchAvatar: false) }
-      }
+      updatePostsCalcs(selectedTheme)
     }
+    .onChange(of: selectedTheme, perform: updatePostsCalcs)
     .onChange(of: searchText) { val in
       if searchText.isEmpty {
         clearAndLoadData()

@@ -7,65 +7,9 @@
 
 import Foundation
 
-enum UnseenType: Codable, Hashable, Equatable {
-  case dot(ColorSchemes<ThemeColor>), fade
-  
-  func isEqual(_ to: UnseenType) -> Bool {
-    if case .dot(_) = self {
-      switch to {
-      case .dot(_):
-        return true
-      case .fade:
-        return false
-      }
-    } else {
-      switch to {
-      case .dot(_):
-        return false
-      case .fade:
-        return true
-      }
-    }
-  }
-}
-
-struct SubPostsListTheme: Codable, Equatable, Hashable {
-  enum CodingKeys: String, CodingKey {
-    case theme, spacing, divider, bg
-  }
-  var theme: PostLinkTheme
-  var spacing: CGFloat
-  var divider: LineTheme
-  var bg: ThemeBG
-  
-  init(theme: PostLinkTheme, spacing: CGFloat, divider: LineTheme, bg: ThemeBG) {
-    self.theme = theme
-    self.spacing = spacing
-    self.divider = divider
-    self.bg = bg
-  }
-  
-  func encode(to encoder: Encoder) throws {
-    var container = encoder.container(keyedBy: CodingKeys.self)
-    try container.encodeIfPresent(theme, forKey: .theme)
-    try container.encodeIfPresent(spacing, forKey: .spacing)
-    try container.encodeIfPresent(divider, forKey: .divider)
-    try container.encodeIfPresent(bg, forKey: .bg)
-  }
-  
-  init(from decoder: Decoder) throws {
-    let t = defaultTheme.postLinks
-    let container = try decoder.container(keyedBy: CodingKeys.self)
-    self.theme = try container.decodeIfPresent(PostLinkTheme.self, forKey: .theme) ?? t.theme
-    self.spacing = try container.decodeIfPresent(CGFloat.self, forKey: .spacing) ?? t.spacing
-    self.divider = try container.decodeIfPresent(LineTheme.self, forKey: .divider) ?? t.divider
-    self.bg = try container.decodeIfPresent(ThemeBG.self, forKey: .bg) ?? t.bg
-  }
-}
-
 struct PostLinkTheme: Codable, Hashable, Equatable {
   enum CodingKeys: String, CodingKey {
-    case   cornerRadius, mediaCornerRadius, innerPadding, outerHPadding, stickyPostBorderColor, titleText, bodyText, linespacing, badge, verticalElementsSpacing, bg, unseenType, unseenFadeOpacity
+    case cornerRadius, mediaCornerRadius, innerPadding, outerHPadding, stickyPostBorderColor, titleText, bodyText, linespacing, badge, verticalElementsSpacing, bg, unseenType, unseenFadeOpacity, compactSelftextPostLinkPlaceholderImg
   }
   
   var cornerRadius: CGFloat
@@ -81,8 +25,9 @@ struct PostLinkTheme: Codable, Hashable, Equatable {
   var bg: ThemeForegroundBG
   var unseenType: UnseenType
   var unseenFadeOpacity: CGFloat
+  var compactSelftextPostLinkPlaceholderImg: CompactSelftextPostLinkPlaceholderImg
   
-    init(cornerRadius: CGFloat, mediaCornerRadius: CGFloat, innerPadding: ThemePadding, outerHPadding: CGFloat, stickyPostBorderColor: LineTheme, titleText: ThemeText, bodyText: ThemeText, linespacing: CGFloat, badge: BadgeTheme, verticalElementsSpacing: CGFloat, bg: ThemeForegroundBG, unseenType: UnseenType, unseenFadeOpacity: CGFloat) {
+    init(cornerRadius: CGFloat, mediaCornerRadius: CGFloat, innerPadding: ThemePadding, outerHPadding: CGFloat, stickyPostBorderColor: LineTheme, titleText: ThemeText, bodyText: ThemeText, linespacing: CGFloat, badge: BadgeTheme, verticalElementsSpacing: CGFloat, bg: ThemeForegroundBG, unseenType: UnseenType, unseenFadeOpacity: CGFloat, compactSelftextPostLinkPlaceholderImg: CompactSelftextPostLinkPlaceholderImg) {
     self.cornerRadius = cornerRadius
     self.mediaCornerRadius = mediaCornerRadius
     self.innerPadding = innerPadding
@@ -96,6 +41,7 @@ struct PostLinkTheme: Codable, Hashable, Equatable {
     self.bg = bg
     self.unseenType = unseenType
     self.unseenFadeOpacity = unseenFadeOpacity
+    self.compactSelftextPostLinkPlaceholderImg = compactSelftextPostLinkPlaceholderImg
   }
   
   func encode(to encoder: Encoder) throws {
@@ -113,6 +59,7 @@ struct PostLinkTheme: Codable, Hashable, Equatable {
     try container.encodeIfPresent(bg, forKey: .bg)
     try container.encodeIfPresent(unseenType, forKey: .unseenType)
     try container.encodeIfPresent(unseenFadeOpacity, forKey: .unseenFadeOpacity)
+    try container.encodeIfPresent(compactSelftextPostLinkPlaceholderImg, forKey: .compactSelftextPostLinkPlaceholderImg)
   }
   
   init(from decoder: Decoder) throws {
@@ -131,5 +78,14 @@ struct PostLinkTheme: Codable, Hashable, Equatable {
     self.bg = try container.decodeIfPresent(ThemeForegroundBG.self, forKey: .bg) ?? t.bg
     self.unseenType = try container.decodeIfPresent(UnseenType.self, forKey: .unseenType) ?? t.unseenType
     self.unseenFadeOpacity = try container.decodeIfPresent(CGFloat.self, forKey: .unseenFadeOpacity) ?? t.unseenFadeOpacity
+    self.compactSelftextPostLinkPlaceholderImg = try container.decodeIfPresent(CompactSelftextPostLinkPlaceholderImg.self, forKey: .compactSelftextPostLinkPlaceholderImg) ?? t.compactSelftextPostLinkPlaceholderImg
+  }
+  
+  struct CompactSelftextPostLinkPlaceholderImg: Codable, Hashable, Equatable {
+    var type: ImgType
+    var color: ColorSchemes<ThemeColor>
+    enum ImgType: String, Codable, Hashable, Equatable {
+      case winston, icon
+    }
   }
 }

@@ -42,16 +42,7 @@ struct SubredditPostsIPAD: View, Equatable {
   @Default(.showTitleAtTop) private var showTitleAtTop
   @Default(.showSelfPostThumbnails) private var showSelfPostThumbnails
   
-  @ObservedObject var avatarCache = Caches.avatars
-  @ObservedObject private var videosCache = Caches.videos
   @Environment(\.colorScheme) private var cs
-  
-  func getRepostAvatarRequest(_ post: Post?) -> ImageRequest? {
-    if let post = post, case .repost(let repost) = post.winstonData?.extractedMedia, let repostAuthorFullname = repost.data?.author_fullname {
-      return avatarCache.cache[repostAuthorFullname]?.data
-    }
-    return nil
-  }
   
   var body: some View {
         Waterfall(
@@ -64,15 +55,11 @@ struct SubredditPostsIPAD: View, Equatable {
 //          itemSpacing: .init(mainAxisSpacing: 0, crossAxisSpacing: 0),
           contentForData: { post, i in
             Group {
-              if let sub = subreddit ?? post.winstonData?.subreddit, let postData = post.data, let winstonData = post.winstonData {
+              if let sub = subreddit ?? post.winstonData?.subreddit, let winstonData = post.winstonData {
 //                SwipeRevolution(size: winstonData.postDimensions.size, actionsSet: postSwipeActions, entity: post) { controller in
                   PostLink(
                     id: post.id,
                     controller: nil,
-                    //                controller: nil,
-                    avatarRequest: avatarCache.cache[postData.author_fullname ?? ""]?.data,
-                    cachedVideo: videosCache.cache[post.id]?.data,
-                    repostAvatarRequest: getRepostAvatarRequest(post),
                     theme: selectedTheme.postLinks,
                     showSub: showSub,
                     routerProxy: routerProxy,

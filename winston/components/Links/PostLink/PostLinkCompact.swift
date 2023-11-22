@@ -10,30 +10,36 @@ import Defaults
 import NukeUI
 
 struct PostLinkCompactThumbPlaceholder: View, Equatable {
-  static func == (lhs: PostLinkCompactThumbPlaceholder, rhs: PostLinkCompactThumbPlaceholder) -> Bool { true }
+  static func == (lhs: PostLinkCompactThumbPlaceholder, rhs: PostLinkCompactThumbPlaceholder) -> Bool { lhs.theme == rhs.theme }
+  var theme: PostLinkTheme.CompactSelftextPostLinkPlaceholderImg
+  @Environment(\.colorScheme) private var cs
   var body: some View {
     let scaledCompactModeThumbSize = scaledCompactModeThumbSize()
-    Image(.winstonFlat)
-      .resizable()
-      .scaledToFill()
-      .padding(scaledCompactModeThumbSize * 0.075)
-      .frame(scaledCompactModeThumbSize)
-      .foregroundStyle(.primary.opacity(0.2))
+    Group {
+      if theme.type == .winston {
+        Image(.winstonFlat)
+          .resizable()
+      } else {
+        Image(systemName: "square.text.square")
+          .resizable()
+      }
+    }
+    .scaledToFill()
+    .padding(scaledCompactModeThumbSize * 0.075)
+    .frame(scaledCompactModeThumbSize)
+    .foregroundStyle(theme.color.cs(cs).color())
   }
 }
 
 struct PostLinkCompact: View, Equatable, Identifiable {
   static func == (lhs: PostLinkCompact, rhs: PostLinkCompact) -> Bool {
-    return lhs.id == rhs.id && lhs.theme == rhs.theme && lhs.cs == rhs.cs && lhs.contentWidth == rhs.contentWidth && lhs.avatarRequest?.url == rhs.avatarRequest?.url && lhs.cachedVideo == rhs.cachedVideo && lhs.repostAvatarRequest?.url == rhs.repostAvatarRequest?.url
+    return lhs.id == rhs.id && lhs.theme == rhs.theme && lhs.cs == rhs.cs && lhs.contentWidth == rhs.contentWidth
   }
   var id: String
   @EnvironmentObject var post: Post
   @EnvironmentObject var winstonData: PostWinstonData
   @EnvironmentObject var sub: Subreddit
   weak var controller: UIViewController?
-  var avatarRequest: ImageRequest?
-  var cachedVideo: SharedVideo?
-  var repostAvatarRequest: ImageRequest?
   var theme: SubPostsListTheme
   var showSub = false
   var secondary: Bool
@@ -113,7 +119,7 @@ struct PostLinkCompact: View, Equatable, Identifiable {
         mediaComponentCall()
       }
     } else {
-      PostLinkCompactThumbPlaceholder().equatable()
+      PostLinkCompactThumbPlaceholder(theme: theme.theme.compactSelftextPostLinkPlaceholderImg).equatable()
     }
   }
   
@@ -138,11 +144,11 @@ struct PostLinkCompact: View, Equatable, Identifiable {
               }
             }
             
-            BadgeView(avatarRequest: winstonData.avatarImageRequest, showAuthorOnPostLinks: showAuthorOnPostLinks, saved: data.badgeKit.saved, usernameColor: nil, author: data.badgeKit.author, fullname: data.badgeKit.authorFullname, userFlair: data.badgeKit.userFlair, created: data.badgeKit.created, avatarURL: nil, theme: theme.theme.badge, commentsCount: formatBigNumber(data.badgeKit.numComments), seenCommentsCount: post.data?.winstonSeenCommentCount, numComments: data.num_comments, votesCount: formatBigNumber(data.badgeKit.ups), routerProxy: routerProxy, cs: cs)
+            BadgeView(avatarRequest: winstonData.avatarImageRequest, showAuthorOnPostLinks: showAuthorOnPostLinks, saved: data.badgeKit.saved, usernameColor: nil, author: data.badgeKit.author, fullname: data.badgeKit.authorFullname, userFlair: data.badgeKit.userFlair, created: data.badgeKit.created, avatarURL: nil, theme: theme.theme.badge, commentsCount: formatBigNumber(data.badgeKit.numComments), seenCommentsCount: post.data?.winstonSeenCommentCount, numComments: data.num_comments, votesCount: formatBigNumber(data.badgeKit.ups), likes: data.likes, routerProxy: routerProxy, cs: cs, openSub: !theme.theme.badge.avatar.visible && showSub ? openSubreddit : nil, subName: data.subreddit)
             
             if showSub && theme.theme.badge.avatar.visible {
               let subName = data.subreddit
-              Tag(subredditIconKit: nil, text: "r/\(subName)", color: .blue)
+              Tag(subredditIconKit: nil, text: "r/\(subName)", color: theme.theme.badge.subColor.cs(cs).color())
                 .highPriorityGesture(TapGesture().onEnded(openSubreddit))
             }
                       

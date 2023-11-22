@@ -71,7 +71,7 @@ func getPostDimensions(post: Post, winstonData: PostWinstonData? = nil, columnWi
     let extractedMedia = compact ? winstonData?.extractedMedia : winstonData?.extractedMediaForcedNormal
     let compactImgSize = scaledCompactModeThumbSize()
     let theme = selectedTheme.postLinks.theme
-    let postGeneralSpacing = theme.verticalElementsSpacing
+    let postGeneralSpacing = theme.verticalElementsSpacing + theme.linespacing
     let title = data.title
     let body = data.selftext
     
@@ -88,8 +88,9 @@ func getPostDimensions(post: Post, winstonData: PostWinstonData? = nil, columnWi
     var ACC_mediaSize: CGSize = .zero
     let compactMediaSize = CGSize(width: compactImgSize, height: compactImgSize)
     
+    var urlTagHeight: Double? = nil
     if compact { ACC_mediaSize = extractedMedia != nil || showSelfPostThumbnails ? compactMediaSize : .zero } else {
-    if let extractedMedia = extractedMedia {
+      if let extractedMedia = extractedMedia {
         func defaultMediaSize(_ size: CGSize) -> CGSize {
           let sourceHeight = size.height == 0 ? winstonData?.postDimensions.mediaSize?.height ?? 0 : size.height
           let sourceWidth = size.width == 0 ? winstonData?.postDimensions.mediaSize?.width ?? 0 : size.width
@@ -103,7 +104,7 @@ func getPostDimensions(post: Post, winstonData: PostWinstonData? = nil, columnWi
           if mediaExtracted.count == 1 {
             ACC_mediaSize = defaultMediaSize(mediaExtracted[0].size)
           } else if mediaExtracted.count > 1 {
-            let size = compact ? scaledCompactModeThumbSize() : ((contentWidth - 8) / 2)
+            let size = ((contentWidth - 8) / 2)
             ACC_mediaSize = mediaExtracted.count == 2 ? CGSize(width: contentWidth, height: size) : CGSize(width: contentWidth, height: (size * 2) + ImageMediaPost.gallerySpacing)
           }
         case .video(let video):
@@ -115,33 +116,27 @@ func getPostDimensions(post: Post, winstonData: PostWinstonData? = nil, columnWi
         case .link(_):
           ACC_mediaSize = CGSize(width: contentWidth, height: PreviewLinkContentRaw.height)
         case .repost(let repost):
-          if let repostSize = repost.winstonData?.postDimensions {
-            ACC_mediaSize = repostSize.size
-          }
-          //        if let repostSize = getPostDimensions(post: repost, secondary: true) {
-          //          ACC_mediaSize = repostSize.size
-          //        }
+          if let repostSize = repost.winstonData?.postDimensions { ACC_mediaSize = repostSize.size }
         case .post(_):
-          if !compact { ACC_mediaSize = CGSize(width: contentWidth, height: RedditMediaPost.height) }
-          break
+          ACC_mediaSize = CGSize(width: contentWidth, height: RedditMediaPost.height)
         case .comment(_):
-          if !compact { ACC_mediaSize = CGSize(width: contentWidth, height: RedditMediaPost.height) }
-          break
+          ACC_mediaSize = CGSize(width: contentWidth, height: RedditMediaPost.height)
         case .subreddit(_):
-          if !compact { ACC_mediaSize = CGSize(width: contentWidth, height: RedditMediaPost.height) }
-          break
+          ACC_mediaSize = CGSize(width: contentWidth, height: RedditMediaPost.height)
         case .user(_):
-          if !compact { ACC_mediaSize = CGSize(width: contentWidth, height: RedditMediaPost.height) }
-          break
+          ACC_mediaSize = CGSize(width: contentWidth, height: RedditMediaPost.height)
         }
       }
     }
     
-    var urlTagHeight: Double? = nil
-    if compact, let extractedMedia = extractedMedia, case .link(_) = extractedMedia {
-      urlTagHeight = OnlyURL.height
+    if let extractedMedia = extractedMedia {
+      switch extractedMedia {
+      case .link(_), .post(_), .comment(_), .subreddit(_), .user(_):
+        urlTagHeight = OnlyURL.height
+      default:
+        break
+      }
     }
-    
     
     let compactTitleWidth = postGeneralSpacing + VotesCluster.verticalWidth + (showSelfPostThumbnails || extractedMedia != nil ? postGeneralSpacing + compactMediaSize.width : 0)
     
@@ -169,7 +164,7 @@ func getPostDimensions(post: Post, winstonData: PostWinstonData? = nil, columnWi
       ACC_bodyHeight = round(NSString(string: body).boundingRect(with: CGSize(width: contentWidth, height: (theme.bodyText.size * 1.2) * 3), options: [.usesLineFragmentOrigin, .truncatesLastVisibleLine], attributes: [.font: UIFont.systemFont(ofSize: theme.bodyText.size, weight: theme.bodyText.weight.ut)], context: nil).height)
     }
     
-
+    
     
     ACC_mediaSize.width = round(ACC_mediaSize.width)
     ACC_mediaSize.height = round(ACC_mediaSize.height)
@@ -193,9 +188,9 @@ func getPostDimensions(post: Post, winstonData: PostWinstonData? = nil, columnWi
     let elements = [theresTitle, theresSelftext, !compact && theresMedia, theresSubDivider, theresBadge]
     let ACC_allSpacingsHeight = Double(elements.filter { $0 }.count - 1) * postGeneralSpacing
     
-//    let ACC_verticalPadding = theme.innerPadding.vertical * 2
+    //    let ACC_verticalPadding = theme.innerPadding.vertical * 2
     
-//    let totalHeight = ACC_titleHeight + ACC_bodyHeight + ACC_mediaSize.height + ACC_SubDividerHeight + ACC_badgeHeight + ACC_verticalPadding + ACC_allSpacingsHeight
+    //    let totalHeight = ACC_titleHeight + ACC_bodyHeight + ACC_mediaSize.height + ACC_SubDividerHeight + ACC_badgeHeight + ACC_verticalPadding + ACC_allSpacingsHeight
     
     let dimensions = PostDimensions(
       contentWidth: contentWidth,
@@ -209,7 +204,7 @@ func getPostDimensions(post: Post, winstonData: PostWinstonData? = nil, columnWi
       badgeSize: CGSize(width: contentWidth, height: ACC_badgeHeight),
       spacingHeight: ACC_allSpacingsHeight
     )
-
+    
     return dimensions
   }
   return .zero

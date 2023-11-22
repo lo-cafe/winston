@@ -24,6 +24,7 @@ struct FontSelector: View {
             .fontSize(20, weight.t)
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .background(RR(8, .primary.opacity(theme.weight == weight ? 0.1 : 0)))
+            .contentShape(Rectangle())
             .onTapGesture {
               withAnimation(.default.speed(2)) {
                 theme.weight = weight

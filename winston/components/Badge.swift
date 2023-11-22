@@ -34,7 +34,7 @@ struct UserFlair: View, Equatable {
 struct BadgeView: View, Equatable {
   static let authorStatsSpacing: Double = 2
   static func == (lhs: BadgeView, rhs: BadgeView) -> Bool {
-    return lhs.cs == rhs.cs && lhs.avatarURL == rhs.avatarURL && lhs.saved == rhs.saved && lhs.avatarRequest?.url == rhs.avatarRequest?.url && lhs.theme == rhs.theme && lhs.commentsCount == rhs.commentsCount && lhs.votesCount == rhs.votesCount
+    return lhs.cs == rhs.cs && lhs.avatarURL == rhs.avatarURL && lhs.saved == rhs.saved && lhs.avatarRequest?.url == rhs.avatarRequest?.url && lhs.theme == rhs.theme && lhs.commentsCount == rhs.commentsCount && lhs.votesCount == rhs.votesCount && lhs.likes == rhs.likes
   }
   
   var avatarRequest: ImageRequest?
@@ -49,11 +49,11 @@ struct BadgeView: View, Equatable {
   var avatarURL: String?
   var theme: BadgeTheme
   var commentTheme: CommentTheme?
-  //  var extraInfo: [BadgeExtraInfo] = []
   var commentsCount: String?
   var seenCommentsCount: Int?
   var numComments: Int?
   var votesCount: String?
+  var likes: Bool? = nil
   weak var routerProxy: RouterProxy?
   var cs: ColorScheme
   var openSub: (() -> ())? = nil
@@ -107,12 +107,18 @@ struct BadgeView: View, Equatable {
         if showAuthorOnPostLinks {
           HStack(alignment: .center, spacing: 4) {
             
-            Text(author).font(.system(size: theme.authorText.size, weight: theme.authorText.weight.t)).foregroundColor(author == "[deleted]" ? .red : usernameColor ?? theme.authorText.color.cs(cs).color()).lineLimit(1)
+            Text(author).font(.system(size: theme.authorText.size, weight: theme.authorText.weight.t)).foregroundStyle(author == "[deleted]" ? .red : usernameColor ?? theme.authorText.color.cs(cs).color()).lineLimit(1)
               .onTapGesture(perform: openUser)
             
-            if let openSub = openSub, let subName = subName {
+            if let openSub = openSub, let subName = subName, theme.forceSubsAsTags {
+              Tag(subredditIconKit: nil, text: "r/\(subName)", color: theme.subColor.cs(cs).color(), fontSize: theme.authorText.size)
+                .highPriorityGesture(TapGesture().onEnded(openSub))
+            }
+            
+            if let openSub = openSub, let subName = subName, !theme.forceSubsAsTags {
               Image(systemName: "arrowshape.right.fill")
-                .fontSize(theme.authorText.size * 0.9)
+                .fontSize(theme.authorText.size * 0.75)
+                .foregroundStyle(theme.authorText.color.cs(cs).color().opacity(0.5))
               Text(subName).foregroundStyle(theme.subColor.cs(cs).color())
                 .fontSize(theme.authorText.size, .semibold).lineLimit(1)
                 .highPriorityGesture(TapGesture().onEnded(openSub))
@@ -137,14 +143,14 @@ struct BadgeView: View, Equatable {
         HStack(alignment: .center, spacing: theme.statsText.size * 0.416666667 /* Yes, absurd number, I thought it was funny */) {
           
           if let openSub = openSub, let subName = subName, !showAuthorOnPostLinks {
-            Tag(subredditIconKit: nil, text: "r/\(subName)", color: .blue, fontSize: theme.statsText.size)
+            Tag(subredditIconKit: nil, text: "r/\(subName)", color: theme.subColor.cs(cs).color(), fontSize: theme.statsText.size)
               .highPriorityGesture(TapGesture().onEnded(openSub))
           }
           
           if let commentsCount = commentsCount {
             HStack(alignment: .center, spacing: 2) {
               Image(systemName: "message.fill")
-              Text(commentsCount)
+              Text(commentsCount).contentTransition(.numericText())
             }
           }
           
@@ -158,8 +164,9 @@ struct BadgeView: View, Equatable {
           if let votesCount = votesCount {
             HStack(alignment: .center, spacing: 2) {
               Image(systemName: "arrow.up")
-              Text(votesCount)
+              Text(votesCount).contentTransition(.numericText())
             }
+            .foregroundStyle(likes == nil ? defaultIconColor : likes == true ? .orange : .blue)
           }
           
           HStack(alignment: .center, spacing: 2) {

@@ -72,16 +72,8 @@ struct Search: View {
   @Default(.showTitleAtTop) private var showTitleAtTop
   @Default(.showSelfPostThumbnails) private var showSelfPostThumbnails
   
-  @ObservedObject var avatarCache = Caches.avatars
   @Environment(\.colorScheme) private var cs
   @Environment(\.contentWidth) private var contentWidth
-  
-  func getRepostAvatarRequest(_ post: Post?) -> ImageRequest? {
-    if let post = post, case .repost(let repost) = post.winstonData?.extractedMedia, let repostAuthorFullname = repost.data?.author_fullname {
-      return avatarCache.cache[repostAuthorFullname]?.data
-    }
-    return nil
-  }
   
   func fetch() {
     if searchQuery.text == "" { return }
@@ -166,9 +158,6 @@ struct Search: View {
                         PostLink(
                           id: post.id,
                           controller: nil,
-                          //                controller: nil,
-                          avatarRequest: avatarCache.cache[postData.author_fullname ?? ""]?.data,
-                          repostAvatarRequest: getRepostAvatarRequest(post),
                           theme: theme.postLinks,
                           showSub: true,
                           routerProxy: routerProxy,

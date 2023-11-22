@@ -74,9 +74,6 @@ struct SubredditsStack: View {
       }
       .environment(\.contentWidth, postContentWidth)
     }
-    .onChange(of: router.firstSelected) { x in
-      print(x)
-    }
     .swipeAnywhere(routerProxy: RouterProxy(router), routerContainer: router.isRootWrapper)
     .environment(\.contentWidth, postContentWidth)
     .onChange(of: reset) { _ in

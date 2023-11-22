@@ -28,7 +28,7 @@ struct PostLinkNormalSelftext: View, Equatable {
 
 struct PostLinkNormal: View, Equatable, Identifiable {
   static func == (lhs: PostLinkNormal, rhs: PostLinkNormal) -> Bool {
-    return lhs.id == rhs.id && lhs.theme == rhs.theme && lhs.cs == rhs.cs && lhs.contentWidth == rhs.contentWidth && lhs.avatarRequest?.url == rhs.avatarRequest?.url && lhs.cachedVideo == rhs.cachedVideo && lhs.repostAvatarRequest?.url == rhs.repostAvatarRequest?.url && lhs.blurPostLinkNSFW == rhs.blurPostLinkNSFW && lhs.hideReadPosts == rhs.hideReadPosts && lhs.secondary == rhs.secondary
+    return lhs.id == rhs.id && lhs.theme == rhs.theme && lhs.cs == rhs.cs && lhs.contentWidth == rhs.contentWidth && lhs.blurPostLinkNSFW == rhs.blurPostLinkNSFW && lhs.hideReadPosts == rhs.hideReadPosts && lhs.secondary == rhs.secondary
   }
   
   @EnvironmentObject var post: Post
@@ -36,9 +36,6 @@ struct PostLinkNormal: View, Equatable, Identifiable {
   @EnvironmentObject var sub: Subreddit
   var id: String
   weak var controller: UIViewController?
-  var avatarRequest: ImageRequest?
-  var cachedVideo: SharedVideo?
-  var repostAvatarRequest: ImageRequest?
   var theme: SubPostsListTheme
   var showSub = false
   var secondary = false
@@ -102,7 +99,6 @@ struct PostLinkNormal: View, Equatable, Identifiable {
             PostLink(
               id: repost.id,
               controller: controller,
-              avatarRequest: repostAvatarRequest,
               theme: theme,
               showSub: true,
               secondary: true,
@@ -157,7 +153,7 @@ struct PostLinkNormal: View, Equatable, Identifiable {
         
         HStack {
           
-          BadgeView(avatarRequest: winstonData.avatarImageRequest, showAuthorOnPostLinks: showAuthorOnPostLinks, saved: data.badgeKit.saved, usernameColor: nil, author: data.badgeKit.author, fullname: data.badgeKit.authorFullname, userFlair: data.badgeKit.userFlair, created: data.badgeKit.created, avatarURL: nil, theme: theme.theme.badge, commentsCount: formatBigNumber(data.num_comments), seenCommentsCount: post.data?.winstonSeenCommentCount, numComments: data.num_comments, votesCount: showVotes ? nil : formatBigNumber(data.ups), routerProxy: routerProxy, cs: cs, openSub: showSub ? openSub : nil, subName: data.subreddit)
+          BadgeView(avatarRequest: winstonData.avatarImageRequest, showAuthorOnPostLinks: showAuthorOnPostLinks, saved: data.badgeKit.saved, usernameColor: nil, author: data.badgeKit.author, fullname: data.badgeKit.authorFullname, userFlair: data.badgeKit.userFlair, created: data.badgeKit.created, avatarURL: nil, theme: theme.theme.badge, commentsCount: formatBigNumber(data.num_comments), seenCommentsCount: post.data?.winstonSeenCommentCount, numComments: data.num_comments, votesCount: showVotes ? nil : formatBigNumber(data.ups), likes: data.likes, routerProxy: routerProxy, cs: cs, openSub: showSub ? openSub : nil, subName: data.subreddit)
           
           Spacer()
           
