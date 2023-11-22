@@ -35,8 +35,8 @@ extension Post {
     if let seenPost = (context.performAndWait { (try? context.fetch(fetchRequest) as? [SeenPost])?.first }) {
       context.performAndWait {
         self.data?.winstonSeen = true
-        self.data?.winstonSeenCommentCount = Int(seenPost.numComments)
-        self.data?.winstonSeenComments = seenPost.seenComments
+        self.winstonData?.winstonSeenCommentCount = Int(seenPost.numComments)
+        self.winstonData?.winstonSeenComments = seenPost.seenComments
       }
     }
   }
@@ -121,8 +121,8 @@ extension Post {
           
           if (isSeen) {
             let foundPost = results.first(where: { $0.postID == data.id })
-            newPost.data?.winstonSeenCommentCount = Int(foundPost?.numComments ?? 0)
-            newPost.data?.winstonSeenComments = foundPost?.seenComments
+            newPost.winstonData?.winstonSeenCommentCount = Int(foundPost?.numComments ?? 0)
+            newPost.winstonData?.winstonSeenComments = foundPost?.seenComments
           }
           
           return newPost
@@ -239,7 +239,7 @@ extension Post {
           
           DispatchQueue.main.async {
             withAnimation {
-              self.data?.winstonSeenCommentCount = numComments
+              self.winstonData?.winstonSeenCommentCount = numComments
             }
           }
         }
@@ -270,7 +270,7 @@ extension Post {
           
           DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
             withAnimation {
-              self.data?.winstonSeenComments = finalSeen
+              self.winstonData?.winstonSeenComments = finalSeen
             }
           }
         }
@@ -302,7 +302,7 @@ extension Post {
           
           DispatchQueue.main.async {
             withAnimation {
-              self.data?.winstonSeenComments = finalSeen
+              self.winstonData?.winstonSeenComments = finalSeen
             }
           }
         }
@@ -523,6 +523,8 @@ class PostWinstonData: Hashable, ObservableObject {
   @Published var videoMedia: SharedVideo?
   @Published var postBodyAttr: NSAttributedString?
   @Published var media: PostWinstonDataMedia?
+  @Published var winstonSeenCommentCount: Int?
+  @Published var winstonSeenComments: String?
   
   func hash(into hasher: inout Hasher) {
     hasher.combine(permaURL)
@@ -647,9 +649,6 @@ struct PostData: GenericRedditEntityDataType {
   }
   
   var votesKit: VotesKit { VotesKit(ups: ups, ratio: upvote_ratio, likes: likes, id: id) }
-  
-  var winstonSeenCommentCount: Int? = nil
-  var winstonSeenComments: String? = nil
 }
 
 struct GalleryData: Codable, Hashable {

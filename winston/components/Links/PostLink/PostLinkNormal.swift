@@ -119,6 +119,8 @@ struct PostLinkNormal: View, Equatable, Identifiable {
               showSelfPostThumbnails: false,
               cs: cs
             )
+            .background(Color.primary.opacity(0.05))
+            .cornerRadius(theme.theme.mediaCornerRadius)
             //                }
             //            .swipyRev(size: repostWinstonData.postDimensions.size, actionsSet: postSwipeActions, entity: repost)
             .environmentObject(repost)
@@ -135,7 +137,7 @@ struct PostLinkNormal: View, Equatable, Identifiable {
       let over18 = data.over_18 ?? false
       VStack(alignment: .leading, spacing: theme.theme.verticalElementsSpacing) {
         
-        if showSubsAtTop { SubsNStuffLine().equatable() }
+        if theme.theme.showDivider && showSubsAtTop { SubsNStuffLine().equatable() }
         
         if !showTitleAtTop { mediaComponentCall() }
         
@@ -148,12 +150,11 @@ struct PostLinkNormal: View, Equatable, Identifiable {
         
         if showTitleAtTop { mediaComponentCall() }
         
-        
-        if !showSubsAtTop { SubsNStuffLine().equatable() }
+        if theme.theme.showDivider && !showSubsAtTop { SubsNStuffLine().equatable() }
         
         HStack {
           
-          BadgeView(avatarRequest: winstonData.avatarImageRequest, showAuthorOnPostLinks: showAuthorOnPostLinks, saved: data.badgeKit.saved, usernameColor: nil, author: data.badgeKit.author, fullname: data.badgeKit.authorFullname, userFlair: data.badgeKit.userFlair, created: data.badgeKit.created, avatarURL: nil, theme: theme.theme.badge, commentsCount: formatBigNumber(data.num_comments), seenCommentsCount: post.data?.winstonSeenCommentCount, numComments: data.num_comments, votesCount: showVotes ? nil : formatBigNumber(data.ups), likes: data.likes, routerProxy: routerProxy, cs: cs, openSub: showSub ? openSubreddit : nil, subName: data.subreddit)
+          BadgeView(avatarRequest: winstonData.avatarImageRequest, showAuthorOnPostLinks: showAuthorOnPostLinks, saved: data.badgeKit.saved, usernameColor: nil, author: data.badgeKit.author, fullname: data.badgeKit.authorFullname, userFlair: data.badgeKit.userFlair, created: data.badgeKit.created, avatarURL: nil, theme: theme.theme.badge, commentsCount: formatBigNumber(data.num_comments), seenCommentsCount: post.winstonData?.winstonSeenCommentCount, numComments: data.num_comments, votesCount: showVotes ? nil : formatBigNumber(data.ups), likes: data.likes, routerProxy: routerProxy, cs: cs, openSub: showSub ? openSubreddit : nil, subName: data.subreddit)
           
           Spacer()
           

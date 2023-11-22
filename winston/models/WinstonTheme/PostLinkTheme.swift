@@ -9,7 +9,7 @@ import Foundation
 
 struct PostLinkTheme: Codable, Hashable, Equatable {
   enum CodingKeys: String, CodingKey {
-    case cornerRadius, mediaCornerRadius, innerPadding, outerHPadding, stickyPostBorderColor, titleText, bodyText, linespacing, badge, verticalElementsSpacing, bg, unseenType, unseenFadeOpacity, compactSelftextPostLinkPlaceholderImg
+    case cornerRadius, mediaCornerRadius, innerPadding, outerHPadding, stickyPostBorderColor, titleText, bodyText, linespacing, badge, verticalElementsSpacing, bg, unseenType, unseenFadeOpacity, compactSelftextPostLinkPlaceholderImg, showDivider
   }
   
   var cornerRadius: CGFloat
@@ -26,8 +26,9 @@ struct PostLinkTheme: Codable, Hashable, Equatable {
   var unseenType: UnseenType
   var unseenFadeOpacity: CGFloat
   var compactSelftextPostLinkPlaceholderImg: CompactSelftextPostLinkPlaceholderImg
+  var showDivider: Bool
   
-    init(cornerRadius: CGFloat, mediaCornerRadius: CGFloat, innerPadding: ThemePadding, outerHPadding: CGFloat, stickyPostBorderColor: LineTheme, titleText: ThemeText, bodyText: ThemeText, linespacing: CGFloat, badge: BadgeTheme, verticalElementsSpacing: CGFloat, bg: ThemeForegroundBG, unseenType: UnseenType, unseenFadeOpacity: CGFloat, compactSelftextPostLinkPlaceholderImg: CompactSelftextPostLinkPlaceholderImg) {
+  init(cornerRadius: CGFloat, mediaCornerRadius: CGFloat, innerPadding: ThemePadding, outerHPadding: CGFloat, stickyPostBorderColor: LineTheme, titleText: ThemeText, bodyText: ThemeText, linespacing: CGFloat, badge: BadgeTheme, verticalElementsSpacing: CGFloat, bg: ThemeForegroundBG, unseenType: UnseenType, unseenFadeOpacity: CGFloat, compactSelftextPostLinkPlaceholderImg: CompactSelftextPostLinkPlaceholderImg, showDivider: Bool) {
     self.cornerRadius = cornerRadius
     self.mediaCornerRadius = mediaCornerRadius
     self.innerPadding = innerPadding
@@ -42,6 +43,7 @@ struct PostLinkTheme: Codable, Hashable, Equatable {
     self.unseenType = unseenType
     self.unseenFadeOpacity = unseenFadeOpacity
     self.compactSelftextPostLinkPlaceholderImg = compactSelftextPostLinkPlaceholderImg
+    self.showDivider = showDivider
   }
   
   func encode(to encoder: Encoder) throws {
@@ -60,6 +62,7 @@ struct PostLinkTheme: Codable, Hashable, Equatable {
     try container.encodeIfPresent(unseenType, forKey: .unseenType)
     try container.encodeIfPresent(unseenFadeOpacity, forKey: .unseenFadeOpacity)
     try container.encodeIfPresent(compactSelftextPostLinkPlaceholderImg, forKey: .compactSelftextPostLinkPlaceholderImg)
+    try container.encodeIfPresent(showDivider, forKey: .showDivider)
   }
   
   init(from decoder: Decoder) throws {
@@ -79,6 +82,7 @@ struct PostLinkTheme: Codable, Hashable, Equatable {
     self.unseenType = try container.decodeIfPresent(UnseenType.self, forKey: .unseenType) ?? t.unseenType
     self.unseenFadeOpacity = try container.decodeIfPresent(CGFloat.self, forKey: .unseenFadeOpacity) ?? t.unseenFadeOpacity
     self.compactSelftextPostLinkPlaceholderImg = try container.decodeIfPresent(CompactSelftextPostLinkPlaceholderImg.self, forKey: .compactSelftextPostLinkPlaceholderImg) ?? t.compactSelftextPostLinkPlaceholderImg
+    self.showDivider = try container.decodeIfPresent(Bool.self, forKey: .showDivider) ?? t.showDivider
   }
   
   struct CompactSelftextPostLinkPlaceholderImg: Codable, Hashable, Equatable {

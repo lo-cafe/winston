@@ -52,7 +52,7 @@ struct PostInBoxLink: View {
             Text(formatBigNumber(postInBox.commentsCount ?? 0))
               .contentTransition(.numericText())
             
-            if let seenComments = post.data?.winstonSeenCommentCount {
+            if let seenComments = post.winstonData?.winstonSeenCommentCount {
               let unseenComments = Int(postInBox.commentsCount ?? 0) - seenComments
               if unseenComments > 0 {
                 Text("(\(Int(unseenComments)))").foregroundColor(.accentColor)

@@ -185,7 +185,7 @@ func getPostDimensions(post: Post, winstonData: PostWinstonData? = nil, columnWi
     let theresTitle = true
     let theresSelftext = !compact && !data.selftext.isEmpty
     let theresMedia = extractedMedia != nil
-    let theresSubDivider = !compact
+    let theresSubDivider = !compact && theme.showDivider
     let theresBadge = true
     let elements = [theresTitle, theresSelftext, !compact && theresMedia, theresSubDivider, theresBadge]
     let ACC_allSpacingsHeight = Double(elements.filter { $0 }.count - 1) * postGeneralSpacing
