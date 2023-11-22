@@ -142,6 +142,10 @@ extension Defaults.Keys {
   static let doLiveText = Key<Bool>("doLiveText", default: true)
   
   static let syncKeyChainAndSettings = Key<Bool>("syncKeyChainAndSettings", default: true)
+  
+  static let showingUpsellDict = Key<Dictionary<String, Bool>>("showingUpsellDict", default: [
+    "themesUpsell_01": true
+  ])
 }
 
 extension UIScreen {

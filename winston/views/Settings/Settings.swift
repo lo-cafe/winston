@@ -27,6 +27,7 @@ struct Settings: View {
   
   var body: some View {
     NavigationStack(path: $router.path) {
+  
       RouterProxyInjector(routerProxy: RouterProxy(router)) { routerProxy in
         List {
           Group {

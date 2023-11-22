@@ -6,13 +6,44 @@
 //
 
 import SwiftUI
-
-struct UpsellCard: View {
-    var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+import Defaults
+struct UpsellCard<Content: View>: View {
+  var upsellName: String
+  var content: (() -> Content)
+  @Default(.showingUpsellDict) var showingUpsellDict
+  
+  init(upsellName: String, _ content: @escaping () -> Content) {
+    self.upsellName = upsellName
+    self.content = content
+  }
+  
+  var body: some View {
+    ZStack{
+      content()
+        .padding()
+      closeButton
     }
-}
 
-#Preview {
-    UpsellCard()
+  }
+  
+  var closeButton: some View {
+    VStack{
+      HStack{
+        Spacer()
+        Button(action: {
+          showingUpsellDict[upsellName] = false
+        }) {
+          Image(systemName: "xmark.circle.fill")
+            .foregroundColor(.gray)
+            .imageScale(.large)
+        }
+        
+      }
+      Spacer()
+    }
+    .ignoresSafeArea(.all)
+    .opacity(0.5)
+  }
+  
+  
 }

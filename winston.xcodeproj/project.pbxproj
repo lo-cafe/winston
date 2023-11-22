@@ -20,8 +20,12 @@
 		652012042AC322A3005DD899 /* fetchAllThemes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 652012032AC322A3005DD899 /* fetchAllThemes.swift */; };
 		652012062AC322BC005DD899 /* fetchThemeStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 652012052AC322BC005DD899 /* fetchThemeStatus.swift */; };
 		652012082AC327C7005DD899 /* uploadTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 652012072AC327C7005DD899 /* uploadTheme.swift */; };
+		652F24082B0E219700BB95A3 /* Pixelate.metal in Sources */ = {isa = PBXBuildFile; fileRef = 652F24072B0E219700BB95A3 /* Pixelate.metal */; };
+		652F240A2B0E222B00BB95A3 /* SpoilerModifer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 652F24092B0E222B00BB95A3 /* SpoilerModifer.swift */; };
 		653E2DA52A8E278800833556 /* GeneralPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 653E2DA42A8E278800833556 /* GeneralPanel.swift */; };
 		6543D8892A8D10B900A1FFF9 /* scaleEffectButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6543D8882A8D10B900A1FFF9 /* scaleEffectButtonStyle.swift */; };
+		654559042B0E418B0080E27F /* UpsellCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 654559032B0E418B0080E27F /* UpsellCard.swift */; };
+		654559072B0E456A0080E27F /* Shiny in Frameworks */ = {isa = PBXBuildFile; productRef = 654559062B0E456A0080E27F /* Shiny */; };
 		657643782ACF1D2100805641 /* FittiingScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 657643772ACF1D2100805641 /* FittiingScrollView.swift */; };
 		6576437A2ACF1E1A00805641 /* AppDetailScreenshots.swift in Sources */ = {isa = PBXBuildFile; fileRef = 657643792ACF1E1A00805641 /* AppDetailScreenshots.swift */; };
 		6576437C2ACF1E3900805641 /* ScrolViewContentRTLFriendly.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6576437B2ACF1E3900805641 /* ScrolViewContentRTLFriendly.swift */; };
@@ -434,8 +438,11 @@
 		652012032AC322A3005DD899 /* fetchAllThemes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = fetchAllThemes.swift; sourceTree = "<group>"; };
 		652012052AC322BC005DD899 /* fetchThemeStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = fetchThemeStatus.swift; sourceTree = "<group>"; };
 		652012072AC327C7005DD899 /* uploadTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = uploadTheme.swift; sourceTree = "<group>"; };
+		652F24072B0E219700BB95A3 /* Pixelate.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = Pixelate.metal; sourceTree = "<group>"; };
+		652F24092B0E222B00BB95A3 /* SpoilerModifer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpoilerModifer.swift; sourceTree = "<group>"; };
 		653E2DA42A8E278800833556 /* GeneralPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneralPanel.swift; sourceTree = "<group>"; };
 		6543D8882A8D10B900A1FFF9 /* scaleEffectButtonStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = scaleEffectButtonStyle.swift; sourceTree = "<group>"; };
+		654559032B0E418B0080E27F /* UpsellCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpsellCard.swift; sourceTree = "<group>"; };
 		657643772ACF1D2100805641 /* FittiingScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FittiingScrollView.swift; sourceTree = "<group>"; };
 		657643792ACF1E1A00805641 /* AppDetailScreenshots.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDetailScreenshots.swift; sourceTree = "<group>"; };
 		6576437B2ACF1E3900805641 /* ScrolViewContentRTLFriendly.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScrolViewContentRTLFriendly.swift; sourceTree = "<group>"; };
@@ -800,6 +807,7 @@
 				EC828EA72A904E0A009478B1 /* ConfettiSwiftUI in Frameworks */,
 				EC3AC9D22AACC3DB0078EC78 /* DebouncedOnChange in Frameworks */,
 				ECAA8B842A76421000D9D636 /* YouTubePlayerKit in Frameworks */,
+				654559072B0E456A0080E27F /* Shiny in Frameworks */,
 				EC9BB1C22A8B05AA0070CD97 /* NukeExtensions in Frameworks */,
 				EC3188092A91991900CB3738 /* AlertToast in Frameworks */,
 				EC1685312AEF4BF2000DD701 /* Gifu in Frameworks */,
@@ -848,6 +856,15 @@
 				658DB5A32AFBB8230062F8B1 /* fetchThemeByID.swift */,
 			);
 			path = ThemeStore;
+			sourceTree = "<group>";
+		};
+		652F24062B0E217D00BB95A3 /* Spoilers */ = {
+			isa = PBXGroup;
+			children = (
+				652F24072B0E219700BB95A3 /* Pixelate.metal */,
+				652F24092B0E222B00BB95A3 /* SpoilerModifer.swift */,
+			);
+			path = Spoilers;
 			sourceTree = "<group>";
 		};
 		EC051C292ACAEFC500E9D9ED /* Frameworks */ = {
@@ -1459,6 +1476,7 @@
 		ECC10C752A4A8746009124BE /* components */ = {
 			isa = PBXGroup;
 			children = (
+				652F24062B0E217D00BB95A3 /* Spoilers */,
 				EC3188302A9476BE00CB3738 /* Media */,
 				ECE00EE52A8D6A19000A6E21 /* TabBar */,
 				EC8F34952A6F5A5400EB8249 /* Modals */,
@@ -1526,6 +1544,7 @@
 				657643772ACF1D2100805641 /* FittiingScrollView.swift */,
 				65CDA3632ACB0F140001EC44 /* ShareSheet.swift */,
 				65C169E92AFFA578007764D5 /* MD2.swift */,
+				654559032B0E418B0080E27F /* UpsellCard.swift */,
 			);
 			path = components;
 			sourceTree = "<group>";
@@ -1679,6 +1698,7 @@
 				EC1685302AEF4BF2000DD701 /* Gifu */,
 				6514FFEB2AFD01520051D264 /* WhatsNewKit */,
 				EC3E7B232B0542EA004B4F21 /* Pow */,
+				654559062B0E456A0080E27F /* Shiny */,
 			);
 			productName = winston;
 			productReference = EC593AD42A4673B2002D6454 /* winston.app */;
@@ -1753,6 +1773,7 @@
 				EC16852F2AEF4BF2000DD701 /* XCRemoteSwiftPackageReference "Gifu" */,
 				6514FFEA2AFD01520051D264 /* XCRemoteSwiftPackageReference "WhatsNewKit" */,
 				EC3E7B222B0542EA004B4F21 /* XCRemoteSwiftPackageReference "Pow" */,
+				654559052B0E456A0080E27F /* XCRemoteSwiftPackageReference "shiny" */,
 			);
 			productRefGroup = EC593AD52A4673B2002D6454 /* Products */;
 			projectDirPath = "";
@@ -1866,6 +1887,7 @@
 				EC200C882A7795BA00E69543 /* PostContent.swift in Sources */,
 				EC3AC9D72AAD0E300078EC78 /* TagsOptionsCarousel.swift in Sources */,
 				65AA535D2A8BB27900275299 /* FAQPanel.swift in Sources */,
+				654559042B0E418B0080E27F /* UpsellCard.swift in Sources */,
 				657643782ACF1D2100805641 /* FittiingScrollView.swift in Sources */,
 				ECBD8E2D2ABBCECC00C74E87 /* caches.swift in Sources */,
 				EC1E7B6A2A815BF300DB459A /* LightBoxOverlay.swift in Sources */,
@@ -1991,6 +2013,7 @@
 				EC1906EF2A552A3100A0300E /* AccountPanel.swift in Sources */,
 				EC5EDA772A4EA03800140A08 /* subscribeSubs.swift in Sources */,
 				ECAA8B8D2A76709500D9D636 /* OFWOpener.swift in Sources */,
+				652F24082B0E219700BB95A3 /* Pixelate.metal in Sources */,
 				ECF2C4492AE81C4D004FCA79 /* CustomPresenter.swift in Sources */,
 				EC593AD82A4673B2002D6454 /* winstonApp.swift in Sources */,
 				EC9BB1BD2A8ACD300070CD97 /* AlphabetJumper.swift in Sources */,
@@ -2126,6 +2149,7 @@
 				EC15F3C02B059E3300D5B5D7 /* openInBuiltInBrowser.swift in Sources */,
 				EC9ECA0A2A88602F00470F89 /* debounce.swift in Sources */,
 				ECE449832A68A22200E2A3B7 /* favorite.swift in Sources */,
+				652F240A2B0E222B00BB95A3 /* SpoilerModifer.swift in Sources */,
 				ECDBA8C52A4A835800FB42DB /* Subreddit.swift in Sources */,
 				EC0854242A4BFF6E00E88389 /* fetchPostComments.swift in Sources */,
 				ECD2A3772A69C26900EDD02D /* consts.swift in Sources */,
@@ -2480,6 +2504,14 @@
 				minimumVersion = 2.1.0;
 			};
 		};
+		654559052B0E456A0080E27F /* XCRemoteSwiftPackageReference "shiny" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/maustinstar/shiny.git";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
 		EC08543B2A4CFE1C00E88389 /* XCRemoteSwiftPackageReference "swiftui-introspect" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/siteline/swiftui-introspect";
@@ -2647,6 +2679,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 6514FFEA2AFD01520051D264 /* XCRemoteSwiftPackageReference "WhatsNewKit" */;
 			productName = WhatsNewKit;
+		};
+		654559062B0E456A0080E27F /* Shiny */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 654559052B0E456A0080E27F /* XCRemoteSwiftPackageReference "shiny" */;
+			productName = Shiny;
 		};
 		EC08543C2A4CFE1C00E88389 /* SwiftUIIntrospect */ = {
 			isa = XCSwiftPackageProductDependency;

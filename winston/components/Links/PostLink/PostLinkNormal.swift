@@ -140,6 +140,7 @@ struct PostLinkNormal: View, Equatable, Identifiable {
         if !showTitleAtTop { mediaComponentCall() }
         
         PostLinkTitle(attrString: winstonData.titleAttr, label: data.title.escape, theme: theme.theme.titleText, cs: cs, size: winstonData.postDimensions.titleSize, nsfw: over18, flair: data.link_flair_text)
+          .padding(.bottom, 5)
         
         if !data.selftext.isEmpty && showSelfText {
           PostLinkNormalSelftext(selftext: data.selftext, theme: theme.theme.bodyText, cs: cs)

@@ -78,6 +78,7 @@ struct OnlineThemeItem: View {
   
   
   var showShareButton: Bool = false
+  var showDownloadButton: Bool = true
   
   var body: some View {
     HStack(spacing: 8){
@@ -102,8 +103,10 @@ struct OnlineThemeItem: View {
           .fixedSize(horizontal: true, vertical: true)
       }
       Spacer()
-      ThemeItemDownloadButton(theme: theme)
-        .accentColor(accentColor)
+      if showDownloadButton {
+        ThemeItemDownloadButton(theme: theme)
+          .accentColor(accentColor)
+      }
       if showShareButton {
         ThemeItemShareButton(theme: theme)
           .accentColor(accentColor)

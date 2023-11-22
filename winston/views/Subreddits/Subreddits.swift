@@ -9,6 +9,7 @@ import SwiftUI
 import Defaults
 import Combine
 import SwiftDate
+import Shiny
 
 let alphabetLetters = Array("ABCDEFGHIJKLMNOPQRSTUVWXYZ").map { String($0) }
 
@@ -38,6 +39,8 @@ struct Subreddits: View, Equatable {
   @Environment(\.useTheme) private var selectedTheme
   @Environment(\.colorScheme) private var cs
   
+  @Default(.showingUpsellDict) var showingUpsellDict
+  
   var sections: [String:[CachedSub]] {
     return Dictionary(grouping: subreddits.filter({ $0.user_is_subscriber })) { sub in
       return String((sub.display_name ?? "a").first!.uppercased())
@@ -65,6 +68,22 @@ struct Subreddits: View, Equatable {
           .listRowSeparator(.hidden)
           .listRowBackground(Color.clear)
           .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
+          
+          if showingUpsellDict["themesUpsell_01"] ?? true {
+            Section{
+              UpsellCard(upsellName: "themesUpsell_01", {
+                  Text("Tired of Winstons current look? Try the theme editor in settings now!")
+                    .shiny()
+                .fontWeight(.semibold)
+                .font(.system(size: 15))
+              })
+              .padding()
+
+            }
+            .listRowSeparator(.hidden)
+//            .listRowBackground(Color.clear)
+            .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
+          }
           
           
           PostsInBoxView(selectedSub: $selectedSub)
