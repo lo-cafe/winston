@@ -89,7 +89,7 @@ private func quirkyGoAwayMessage() -> String {
     "This is not the tap you're looking for.",
     "Go away, or I will taunt you a second time!",
     "The more you tap, the less you find. Strange, isn't it?",
-    "The post is a lie."
+    "The secret is a lie."
   ]
 
   return quirkyResponse.randomElement() ?? "Go away!"
