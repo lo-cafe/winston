@@ -101,7 +101,7 @@ struct Settings: View {
             case .appearance:
               AppearancePanel()
             case .account:
-              AccountPanel()
+              AccountsPanel()
             case .about:
               AboutPanel()
             case .commentSwipe:

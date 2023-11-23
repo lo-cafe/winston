@@ -13,86 +13,120 @@ import Defaults
 import Combine
 
 struct RedditCredential: Identifiable, Equatable, Hashable, Codable {
-  static let secretTokenKeychainLabel = "secretToken"
-  static let refreshTokenKeychainLabel = "refreshToken"
-  static let apiAppSecretKeychainLabel = "apiAppSecret"
-  var id: String { self.apiAppID }
-  var apiAppID: String {
-    didSet {
-      self.secretToken = nil
-      self.refreshToken = nil
-    }
-  }
+  enum CodingKeys: String, CodingKey { case id, apiAppID, keychainApiAppSecret, accessToken, refreshToken, userName, profilePicture }
+
+  var id: UUID
+  var apiAppID: String? = nil
   
-  var apiAppSecret: String? { RedditCredentialsManager.keychain["\(self.apiAppID)\(RedditCredentialsManager.keychainEntryDivider)\(RedditCredential.apiAppSecretKeychainLabel)"] }
+  private var keychainApiAppSecret: String? = nil
   
-  var secretToken: SecretToken? = nil {
-    didSet {
-      if let secretToken = secretToken {
-        let keychainKey = "\(self.apiAppID)\(RedditCredentialsManager.keychainEntryDivider)\(RedditCredential.secretTokenKeychainLabel)"
-        let encoder = JSONEncoder()
-        if let encoded = try? encoder.encode(secretToken) {
-          RedditCredentialsManager.keychain[keychainKey] = String(decoding: encoded, as: UTF8.self)
-        }
+  var apiAppSecret: String? {
+    get {
+      if let keychainApiAppSecret = self.keychainApiAppSecret { return keychainApiAppSecret }
+      if let stringFromKeychain = getStringFromKeychain(), let data = stringFromKeychain.data(using: .utf8) {
+        let decoder = JSONDecoder()
+        return (try? decoder.decode(Self.self, from: data))?.keychainApiAppSecret
       }
+      return nil
     }
-  }
-  var refreshToken: String? = nil {
-    didSet {
-      if let refreshToken = refreshToken {
-        let keychainKey = "\(self.apiAppID)\(RedditCredentialsManager.keychainEntryDivider)\(RedditCredential.refreshTokenKeychainLabel)"
-        RedditCredentialsManager.keychain[keychainKey] = refreshToken
-      }
+    set {
+      keychainApiAppSecret = newValue
     }
   }
   
-  init(apiAppID: String, secretToken: SecretToken? = nil, refreshToken: String? = nil) {
+  var accessToken: AccessToken? = nil
+  var refreshToken: String? = nil
+  var userName: String? = nil
+  var profilePicture: String? = nil
+  
+  init(apiAppID: String? = nil, apiAppSecret: String? = nil, accessToken: String? = nil, refreshToken: String? = nil, expiration: Int? = nil, lastRefresh: Date? = nil, userName: String? = nil, profilePicture: String? = nil) {
+    self.id = UUID()
     self.apiAppID = apiAppID
-    self.secretToken = secretToken
+    self.apiAppSecret = apiAppSecret
+    if let accessToken = accessToken {
+      var newAccessToken = AccessToken(token: accessToken)
+      newAccessToken.expiration = expiration
+      newAccessToken.lastRefresh = lastRefresh
+      self.accessToken = newAccessToken
+    }
     self.refreshToken = refreshToken
+    self.userName = userName
+    self.profilePicture = profilePicture
   }
-  
-  enum CodingKeys: String, CodingKey { case apiAppID, secretToken, refreshToken }
   
   init(from decoder: Decoder) throws {
     let values = try decoder.container(keyedBy: CodingKeys.self)
-    apiAppID = try values.decode(String.self, forKey: .apiAppID)
-    secretToken = try values.decodeIfPresent(SecretToken.self, forKey: .secretToken)
+    id = try values.decode(UUID.self, forKey: .id)
+    apiAppID = try values.decodeIfPresent(String.self, forKey: .apiAppID)
+    accessToken = try values.decodeIfPresent(AccessToken.self, forKey: .accessToken)
     refreshToken = try values.decodeIfPresent(String.self, forKey: .refreshToken)
+    keychainApiAppSecret = try values.decodeIfPresent(String.self, forKey: .keychainApiAppSecret)
+    userName = try values.decodeIfPresent(String.self, forKey: .userName)
+    profilePicture = try values.decodeIfPresent(String.self, forKey: .profilePicture)
   }
   
   func encode(to encoder: Encoder) throws {
     var container = encoder.container(keyedBy: CodingKeys.self)
     
-    try container.encode(apiAppID, forKey: .apiAppID)
-    try container.encodeIfPresent(secretToken, forKey: .secretToken)
+    try container.encode(id, forKey: .id)
+    try container.encodeIfPresent(apiAppID, forKey: .apiAppID)
+    try container.encodeIfPresent(keychainApiAppSecret, forKey: .keychainApiAppSecret)
+    try container.encodeIfPresent(accessToken, forKey: .accessToken)
     try container.encodeIfPresent(refreshToken, forKey: .refreshToken)
+    try container.encodeIfPresent(userName, forKey: .userName)
+    try container.encodeIfPresent(profilePicture, forKey: .profilePicture)
   }
   
+  mutating func save() {
+    self.refreshToken = nil
+    self.accessToken = nil
+    RedditCredentialsManager.shared.saveCred(self)
+  }
+  
+  private func getStringFromKeychain() -> String? { return RedditCredentialsManager.keychain[self.id.uuidString] }
+  
+  private func getFromKeychain() -> Self? {
+    if let str = getStringFromKeychain() {
+      return Self.decodeString(str)
+    }
+    return nil
+  }
+  
+  static func decodeString(_ str: String) -> Self? {
+    if let data = str.data(using: .utf8) {
+      let decoder = JSONDecoder()
+      var decoded = try? decoder.decode(Self.self, from: data)
+      decoded?.keychainApiAppSecret = nil
+      return decoded
+    }
+    return nil
+  }
   
   func getUpToDateToken(forceRenew: Bool = false, count: Int = 0) async -> String? {
     if
+      let apiAppID = apiAppID,
       let refreshToken = self.refreshToken,
       let apiAppSecret = self.apiAppSecret,
-      forceRenew ||
-        Double(Date().timeIntervalSince1970 - ((self.secretToken?.lastRefresh ?? Date()).timeIntervalSince1970 - Double(self.secretToken?.expiration ?? 86400 * 10))) > Double(max(0, (self.secretToken?.expiration ?? 0) - 100))
+        forceRenew ||
+        Double(Date().timeIntervalSince1970 - ((self.accessToken?.lastRefresh ?? Date()).timeIntervalSince1970 - Double(self.accessToken?.expiration ?? 86400 * 10))) > Double(max(0, (self.accessToken?.expiration ?? 0) - 100))
     {
+      let headers = await RedditAPI.shared.fetchRequestHeaders(includeAuth: false)
       let payload = RedditAPI.RefreshAccessTokenPayload(refresh_token: refreshToken)
-      let response = await AF.request(
+      let result = await AF.request(
         "\(RedditAPI.redditWWWApiURLBase)/api/v1/access_token",
         method: .post,
         parameters: payload,
         encoder: URLEncodedFormParameterEncoder(destination: .httpBody),
-        headers: RedditAPI.shared.fetchRequestHeaders(includeAuth: false))
-        .authenticate(username: self.apiAppID, password: apiAppSecret)
-        .serializingDecodable(RedditAPI.RefreshAccessTokenResponse.self).response
-      switch response.result {
+        headers: headers)
+        .authenticate(username: apiAppID, password: apiAppSecret)
+        .serializingDecodable(RedditAPI.RefreshAccessTokenResponse.self).response.result
+      switch result {
       case .success(let data):
         var selfCopy = self
-        selfCopy.secretToken = .init(token: data.access_token, expiration: data.expires_in, lastRefresh: Date())
+        selfCopy.accessToken = .init(token: data.access_token, expiration: data.expires_in, lastRefresh: Date())
         if let myIndex = RedditCredentialsManager.shared.credentials.firstIndex(where: { $0.id == self.id }) {
           await MainActor.run { [selfCopy] in
-            RedditCredentialsManager.shared.credentials[myIndex] = selfCopy
+            RedditCredentialsManager.shared.saveCred(selfCopy)
           }
         }
         return data.access_token
@@ -107,7 +141,7 @@ struct RedditCredential: Identifiable, Equatable, Hashable, Codable {
     return nil
   }
   
-  struct SecretToken: Equatable, Hashable, Codable, Defaults.Serializable {
+  struct AccessToken: Equatable, Hashable, Codable, Defaults.Serializable {
     let token: String
     var expiration: Int? = nil
     var lastRefresh: Date? = nil
@@ -118,9 +152,10 @@ struct RedditCredential: Identifiable, Equatable, Hashable, Codable {
 class RedditCredentialsManager: ObservableObject {
   static let shared = RedditCredentialsManager()
   static let keychainEntryDivider = "\\--(*.*)--/"
-  static let keychainService = "lo.cafe.winston.reddit-credentials"
-  static let keychain = Keychain(service: RedditCredentialsManager.keychainService).synchronizable(Defaults[.syncKeyChainAndSettings])
-  @Published var credentials: [RedditCredential]
+  static let oldKeychainServiceString = "lo.cafe.winston.reddit-credentials"
+  static let keychainServiceString = "lo.cafe.winston.reddit-multi-credentials"
+  static let keychain = Keychain(service: RedditCredentialsManager.keychainServiceString).synchronizable(Defaults[.syncKeyChainAndSettings])
+  @Published private(set) var credentials: [RedditCredential] = []
   var cancelables: [Defaults.Observation] = []
   
   var selectedCredential: RedditCredential? {
@@ -130,73 +165,72 @@ class RedditCredentialsManager: ObservableObject {
     return nil
   }
   
-  convenience init() {
-    let kc = RedditCredentialsManager.keychain
-    
-    if let oldApiAppID = kc["apiAppID"], let oldApiAppSecret = kc["apiAppSecret"] {
-      kc["\(oldApiAppID)\(Self.keychainEntryDivider)\(RedditCredential.apiAppSecretKeychainLabel)"] = oldApiAppSecret
-      if let oldRefreshToken = kc["refreshToken"] {
-        kc["\(oldApiAppID)\(Self.keychainEntryDivider)\(RedditCredential.refreshTokenKeychainLabel)"] = oldRefreshToken
+  func syncCredentialsWithKeychain() {
+    Self.keychain.allKeys().forEach { keychainCredID in
+      if self.credentials.first(where: { $0.id.uuidString == keychainCredID }) == nil {
+        try? Self.keychain.remove(keychainCredID)
       }
     }
-    try? kc.remove("apiAppID")
-    try? kc.remove("apiAppSecret")
-    try? kc.remove("refreshToken")
-    try? kc.remove("accessToken")
+    self.credentials.forEach { cred in
+      let encoder = JSONEncoder()
+      if let encoded = try? encoder.encode(cred) {
+        RedditCredentialsManager.keychain[cred.id.uuidString] = String(decoding: encoded, as: UTF8.self)
+      }
+    }
+  }
+  
+  init() {
+    let okc = Keychain(service: Self.oldKeychainServiceString)
+    let kc = Self.keychain
+    
+    let oldApiAppID = okc["apiAppID"]
+    let oldApiAppSecret = okc["apiAppSecret"]
+    let oldRefreshToken = okc["refreshToken"]
+    
+    var importedCredential: RedditCredential? = nil
+    if oldApiAppID != nil || oldApiAppSecret != nil || oldRefreshToken != nil {
+      importedCredential = .init(apiAppID: oldApiAppID, apiAppSecret: oldApiAppSecret, refreshToken: oldRefreshToken)
+    }
+    
+    if let importedCredential = importedCredential {
+      credentials.append(importedCredential)
+    }
+
+    try? okc.remove("apiAppID")
+    try? okc.remove("apiAppSecret")
+    try? okc.remove("refreshToken")
+    try? okc.remove("accessToken")
     
     let keychainKeys = kc.allKeys()
-    var newCredentials: [String:RedditCredential] = [:]
     
     keychainKeys.forEach { key in
-      let parts = key.split(separator: Self.keychainEntryDivider)
-      if parts.count < 2 {
-        try? kc.remove(key)
-        return
-      }
-      let apiAppID = String(parts[0])
-      let entryType = String(parts[1])
-      if let entryValue = Self.keychain[key] {
-        var cred = newCredentials[apiAppID] ?? RedditCredential(apiAppID: apiAppID)
-        if entryType == RedditCredential.secretTokenKeychainLabel {
-          let decoder = JSONDecoder()
-          if let secretToken = try? decoder.decode(RedditCredential.SecretToken.self, from: entryValue.data(using: .utf8)!) {
-            cred.secretToken = secretToken
-          }
-        } else if entryType == RedditCredential.refreshTokenKeychainLabel {
-          cred.refreshToken = entryValue
-        }
-        newCredentials[apiAppID] = cred
+      if let credStr = kc[key], let decodedCred = RedditCredential.decodeString(credStr) {
+        credentials.append(decodedCred)
       }
     }
-    
-    self.init(Array(newCredentials.values))
-    
+      
     self.cancelables.append(Defaults.observe(.redditCredentialSelectedID) { _ in
       self.objectWillChange.send()
     })
   }
-    
-  func setCredential(apiAppID: String, apiAppSecret: String? = nil, accessToken: String? = nil, refreshToken: String? = nil, expiration: Int? = nil, lastRefresh: Date? = nil) {
-    let prefix = "\(apiAppID)\(Self.keychainEntryDivider)"
-    let kc = RedditCredentialsManager.keychain
-    if let apiAppSecret = apiAppSecret { kc["\(prefix)\(RedditCredential.apiAppSecretKeychainLabel)"] = apiAppSecret }
-    var credential = RedditCredentialsManager.shared.credentials.first { $0.id == apiAppID } ?? RedditCredential(apiAppID: apiAppID)
-    if let accessToken = credential.secretToken?.token ?? accessToken {
-      var newSecretToken = credential.secretToken ?? .init(token: accessToken)
-      if let expiration = expiration { newSecretToken.expiration = expiration }
-      if let lastRefresh = lastRefresh { newSecretToken.lastRefresh = lastRefresh }
-      credential.secretToken = newSecretToken
+  
+  func saveCred(_ cred: RedditCredential) {
+    if let i = self.credentials.firstIndex(where: { $0.id == cred.id }) {
+      self.credentials[i] = cred
+    } else {
+      self.credentials.append(cred)
     }
-    if let refreshToken = refreshToken { kc["\(prefix)\(RedditCredential.refreshTokenKeychainLabel)"] = refreshToken }
+    syncCredentialsWithKeychain()
   }
   
-  private init(_ credentials: [RedditCredential]) {
-    self.credentials = credentials
+  func deleteCred(_ cred: RedditCredential) {
+    self.credentials = self.credentials.filter { $0.id != cred.id }
+    syncCredentialsWithKeychain()
   }
   
   deinit { self.cancelables.forEach { obs in obs.invalidate() } }
   
-  func reset() {
+  func wipeAllCredentials() {
     self.credentials.removeAll()
     try? Self.keychain.removeAll()
   }

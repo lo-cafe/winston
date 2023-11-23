@@ -34,7 +34,6 @@ struct Onboarding6Auth: View {
         })
         MasterButton(icon: "flag.checkered", label: "Authorize API key", colorHoverEffect: .animated, textSize: 18, height: 48, fullWidth: true, cornerRadius: 16, action: {
           withAnimation {
-            RedditCredentialsManager.shared.setCredential(apiAppID: appID.trimmingCharacters(in: .whitespaces), apiAppSecret: appSecret.trimmingCharacters(in: .whitespaces))
             loading = true
           }
           openURL(RedditAPI.shared.getAuthorizationCodeURL(appID))
@@ -65,18 +64,18 @@ struct Onboarding6Auth: View {
     )
     .onOpenURL { url in
       Task(priority: .background) {
-        await RedditAPI.shared.monitorAuthCallback(appID, appSecret, url) { success in
-          DispatchQueue.main.async {
-            if success {
-              nextStep()
-            } else {
-              withAnimation {
-                loading = false
-                error = true
-              }
-            }
-          }
-        }
+//        await RedditAPI.shared.monitorAuthCallback(appID, appSecret, url) { success in
+//          DispatchQueue.main.async {
+//            if success {
+//              nextStep()
+//            } else {
+//              withAnimation {
+//                loading = false
+//                error = true
+//              }
+//            }
+//          }
+//        }
       }
     }
   }

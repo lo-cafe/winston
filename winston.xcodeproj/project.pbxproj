@@ -83,10 +83,11 @@
 		EC1884482A8D7C1C00CAFB7A /* SwipeAnywhere.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC1884472A8D7C1C00CAFB7A /* SwipeAnywhere.swift */; };
 		EC1906E92A55240600A0300E /* cancelableTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC1906E82A55240600A0300E /* cancelableTimer.swift */; };
 		EC1906ED2A55293500A0300E /* AppearancePanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC1906EC2A55293500A0300E /* AppearancePanel.swift */; };
-		EC1906EF2A552A3100A0300E /* AccountPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC1906EE2A552A3100A0300E /* AccountPanel.swift */; };
+		EC1906EF2A552A3100A0300E /* AccountsPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC1906EE2A552A3100A0300E /* AccountsPanel.swift */; };
 		EC1906F12A552A6800A0300E /* BehaviorPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC1906F02A552A6800A0300E /* BehaviorPanel.swift */; };
 		EC1906F32A55AC6E00A0300E /* fetchMoreReplies.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC1906F22A55AC6E00A0300E /* fetchMoreReplies.swift */; };
 		EC1906F52A55B88500A0300E /* nestComments.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC1906F42A55B88500A0300E /* nestComments.swift */; };
+		EC1AB2CC2B0EF23100247971 /* CredentialView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC1AB2CB2B0EF23100247971 /* CredentialView.swift */; };
 		EC1E7B642A81507B00DB459A /* UIShortTapGestureRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC1E7B632A81507B00DB459A /* UIShortTapGestureRecognizer.swift */; };
 		EC1E7B662A815BC100DB459A /* LightBoxElementView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC1E7B652A815BC100DB459A /* LightBoxElementView.swift */; };
 		EC1E7B682A815BE100DB459A /* LightboxButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC1E7B672A815BE100DB459A /* LightboxButton.swift */; };
@@ -496,10 +497,11 @@
 		EC1884472A8D7C1C00CAFB7A /* SwipeAnywhere.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwipeAnywhere.swift; sourceTree = "<group>"; };
 		EC1906E82A55240600A0300E /* cancelableTimer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = cancelableTimer.swift; sourceTree = "<group>"; };
 		EC1906EC2A55293500A0300E /* AppearancePanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppearancePanel.swift; sourceTree = "<group>"; };
-		EC1906EE2A552A3100A0300E /* AccountPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountPanel.swift; sourceTree = "<group>"; };
+		EC1906EE2A552A3100A0300E /* AccountsPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountsPanel.swift; sourceTree = "<group>"; };
 		EC1906F02A552A6800A0300E /* BehaviorPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BehaviorPanel.swift; sourceTree = "<group>"; };
 		EC1906F22A55AC6E00A0300E /* fetchMoreReplies.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = fetchMoreReplies.swift; sourceTree = "<group>"; };
 		EC1906F42A55B88500A0300E /* nestComments.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = nestComments.swift; sourceTree = "<group>"; };
+		EC1AB2CB2B0EF23100247971 /* CredentialView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CredentialView.swift; sourceTree = "<group>"; };
 		EC1E7B632A81507B00DB459A /* UIShortTapGestureRecognizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIShortTapGestureRecognizer.swift; sourceTree = "<group>"; };
 		EC1E7B652A815BC100DB459A /* LightBoxElementView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightBoxElementView.swift; sourceTree = "<group>"; };
 		EC1E7B672A815BE100DB459A /* LightboxButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightboxButton.swift; sourceTree = "<group>"; };
@@ -909,10 +911,10 @@
 		EC1906EB2A55291F00A0300E /* views */ = {
 			isa = PBXGroup;
 			children = (
+				EC1AB2CA2B0EF17600247971 /* Accounts */,
 				ECE08B6E2AA9F5B000F84DC9 /* theming */,
 				651D19C62A90B7D6003867A9 /* PostFontSettings.swift */,
 				EC1906EC2A55293500A0300E /* AppearancePanel.swift */,
-				EC1906EE2A552A3100A0300E /* AccountPanel.swift */,
 				EC1906F02A552A6800A0300E /* BehaviorPanel.swift */,
 				EC6373622A7934F8000A03A3 /* AboutPanel.swift */,
 				EC7DBDF02A86C91A00D7C123 /* CommentSwipePanel.swift */,
@@ -924,6 +926,15 @@
 				ECF5B3082AC83C8E00355589 /* AppIconSetting.swift */,
 			);
 			path = views;
+			sourceTree = "<group>";
+		};
+		EC1AB2CA2B0EF17600247971 /* Accounts */ = {
+			isa = PBXGroup;
+			children = (
+				EC1AB2CB2B0EF23100247971 /* CredentialView.swift */,
+				EC1906EE2A552A3100A0300E /* AccountsPanel.swift */,
+			);
+			path = Accounts;
 			sourceTree = "<group>";
 		};
 		EC200C842A7795A800E69543 /* PostView */ = {
@@ -1829,6 +1840,7 @@
 				EC0854262A4C013B00E88389 /* Avatar.swift in Sources */,
 				ECE285A82A513342009CF9DD /* ReplyModal.swift in Sources */,
 				EC620EDC2B0CD4BE00206A66 /* SubPostsListTheme.swift in Sources */,
+				EC1AB2CC2B0EF23100247971 /* CredentialView.swift in Sources */,
 				ECEFC2652A5DE5910003C6C4 /* SubredditLink.swift in Sources */,
 				EC46E92E2ABA7FC1001BC068 /* BuiltInBrowser.swift in Sources */,
 				EC8F34662A6A348F00EB8249 /* SwipeActions.swift in Sources */,
@@ -1992,7 +2004,7 @@
 				EC2D27592A4F7830006444D6 /* GoodNavigator.swift in Sources */,
 				EC8F349B2A6F92DC00EB8249 /* PillTab.swift in Sources */,
 				EC620EE42B0CD53E00206A66 /* CodableFontWeight.swift in Sources */,
-				EC1906EF2A552A3100A0300E /* AccountPanel.swift in Sources */,
+				EC1906EF2A552A3100A0300E /* AccountsPanel.swift in Sources */,
 				EC5EDA772A4EA03800140A08 /* subscribeSubs.swift in Sources */,
 				ECAA8B8D2A76709500D9D636 /* OFWOpener.swift in Sources */,
 				ECF2C4492AE81C4D004FCA79 /* CustomPresenter.swift in Sources */,

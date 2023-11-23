@@ -43,7 +43,7 @@ let DEFAULT_COMMENT_SWIPE_ACTIONS = SwipeActionsSet(
 )
 
 extension Defaults.Keys {
-  static let redditCredentialSelectedID = Key<String?>("redditCredentialSelectedID", default: nil)
+  static let redditCredentialSelectedID = Key<UUID?>("redditCredentialSelectedID", default: nil)
   static let redditAPILastTokenRefreshDate = Key<Date?>("redditAPILastTokenRefreshDate", default: nil)
   static let redditAPITokenExpiration = Key<Int?>("redditAPITokenExpiration", default: nil)
   static let multis = Key<[MultiData]>("multis", default: [])
