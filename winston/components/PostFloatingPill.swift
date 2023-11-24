@@ -55,7 +55,7 @@ struct PostFloatingPill: View {
                                             let newPostInBox = PostInBox(
                                                 id: data.id, fullname: data.name,
                                                 title: data.title, body: data.selftext,
-                                                subredditIconURL: subIcon, img: data.url,
+                                                subredditIconURL: subIcon, img: nil,
                                                 subredditName: data.subreddit, authorName: data.author,
                                                 score: data.ups, commentsCount: data.num_comments,
                                                 createdAt: data.created, lastUpdatedAt: Date().timeIntervalSince1970
@@ -142,7 +142,7 @@ struct PostFloatingPill: View {
                                   let newPostInBox = PostInBox(
                                       id: data.id, fullname: data.name,
                                       title: data.title, body: data.selftext,
-                                      subredditIconURL: subIcon, img: data.url,
+                                      subredditIconURL: subIcon, img: nil,
                                       subredditName: data.subreddit, authorName: data.author,
                                       score: data.ups, commentsCount: data.num_comments,
                                       createdAt: data.created, lastUpdatedAt: Date().timeIntervalSince1970

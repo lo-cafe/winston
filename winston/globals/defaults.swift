@@ -22,6 +22,7 @@ struct PostInBox: Codable, Identifiable, Hashable, Defaults.Serializable {
   var subColor: String?
   var score: Int?
   var commentsCount: Int?
+  var newCommentsCount: Int?
   var createdAt: Double?
   var lastUpdatedAt: Double?
 }

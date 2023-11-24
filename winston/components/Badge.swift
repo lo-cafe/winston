@@ -34,7 +34,7 @@ struct UserFlair: View, Equatable {
 struct BadgeView: View, Equatable {
   static let authorStatsSpacing: Double = 2
   static func == (lhs: BadgeView, rhs: BadgeView) -> Bool {
-    return lhs.cs == rhs.cs && lhs.avatarURL == rhs.avatarURL && lhs.saved == rhs.saved && lhs.avatarRequest?.url == rhs.avatarRequest?.url && lhs.theme == rhs.theme && lhs.commentsCount == rhs.commentsCount && lhs.votesCount == rhs.votesCount && lhs.likes == rhs.likes
+    return lhs.cs == rhs.cs && lhs.avatarURL == rhs.avatarURL && lhs.saved == rhs.saved && lhs.avatarRequest?.url == rhs.avatarRequest?.url && lhs.theme == rhs.theme && lhs.commentsCount == rhs.commentsCount && lhs.newCommentsCount == rhs.newCommentsCount && lhs.votesCount == rhs.votesCount && lhs.likes == rhs.likes
   }
   
   var avatarRequest: ImageRequest?
@@ -50,8 +50,7 @@ struct BadgeView: View, Equatable {
   var theme: BadgeTheme
   var commentTheme: CommentTheme?
   var commentsCount: String?
-  var seenCommentsCount: Int?
-  var numComments: Int?
+  var newCommentsCount: Int?
   var votesCount: String?
   var likes: Bool? = nil
   weak var routerProxy: RouterProxy?
@@ -152,8 +151,7 @@ struct BadgeView: View, Equatable {
             }
           }
           
-          if let seenComments = seenCommentsCount, let total = numComments {
-            let newComments = total - seenComments
+          if let newComments = newCommentsCount {
             if newComments > 0 {
               Text("(\(newComments))").foregroundColor(.accentColor)
             }

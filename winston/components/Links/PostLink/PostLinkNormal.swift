@@ -153,8 +153,8 @@ struct PostLinkNormal: View, Equatable, Identifiable {
         if theme.theme.showDivider && !showSubsAtTop { SubsNStuffLine().equatable() }
         
         HStack {
-          
-          BadgeView(avatarRequest: winstonData.avatarImageRequest, showAuthorOnPostLinks: showAuthorOnPostLinks, saved: data.badgeKit.saved, usernameColor: nil, author: data.badgeKit.author, fullname: data.badgeKit.authorFullname, userFlair: data.badgeKit.userFlair, created: data.badgeKit.created, avatarURL: nil, theme: theme.theme.badge, commentsCount: formatBigNumber(data.num_comments), seenCommentsCount: post.winstonData?.winstonSeenCommentCount, numComments: data.num_comments, votesCount: showVotes ? nil : formatBigNumber(data.ups), likes: data.likes, routerProxy: routerProxy, cs: cs, openSub: showSub ? openSubreddit : nil, subName: data.subreddit)
+          let newCommentsCount = winstonData.seenCommentsCount == nil ? nil : data.num_comments - winstonData.seenCommentsCount!
+          BadgeView(avatarRequest: winstonData.avatarImageRequest, showAuthorOnPostLinks: showAuthorOnPostLinks, saved: data.badgeKit.saved, usernameColor: nil, author: data.badgeKit.author, fullname: data.badgeKit.authorFullname, userFlair: data.badgeKit.userFlair, created: data.badgeKit.created, avatarURL: nil, theme: theme.theme.badge, commentsCount: formatBigNumber(data.num_comments), newCommentsCount: newCommentsCount, votesCount: showVotes ? nil : formatBigNumber(data.ups), likes: data.likes, routerProxy: routerProxy, cs: cs, openSub: showSub ? openSubreddit : nil, subName: data.subreddit)
           
           Spacer()
           

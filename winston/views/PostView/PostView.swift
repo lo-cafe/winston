@@ -77,6 +77,12 @@ struct PostView: View, Equatable {
       Task(priority: .background) {
         await RedditAPI.shared.updateCommentsWithAvatar(comments: newComments, avatarSize: selectedTheme.comments.theme.badge.avatar.size)
       }
+      
+      Task(priority: .background) {
+        if let numComments = post.data?.num_comments {
+          await post.saveCommentsCount(numComments: numComments)
+        }
+      }
     }
   }
   
@@ -167,6 +173,13 @@ struct PostView: View, Equatable {
         if post.data == nil {
           updatePost()
         }
+        
+        Task(priority: .background) {          
+          if let numComments = post.data?.num_comments {
+            await post.saveCommentsCount(numComments: numComments)
+          }
+        }
+        
         Task(priority: .background) {
           doThisAfter(0.5) {
             hideElements = false

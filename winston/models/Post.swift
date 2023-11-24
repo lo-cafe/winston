@@ -28,17 +28,6 @@ extension Post {
   
   convenience init(id: String, api: RedditAPI) {
     self.init(id: id, api: api, typePrefix: "\(Post.prefix)_")
-    
-    let context = PersistenceController.shared.container.newBackgroundContext()
-    let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "SeenPost")
-    fetchRequest.predicate = NSPredicate(format: "postID == %@", id)
-    if let seenPost = (context.performAndWait { (try? context.fetch(fetchRequest) as? [SeenPost])?.first }) {
-      context.performAndWait {
-        self.data?.winstonSeen = true
-        self.winstonData?.winstonSeenCommentCount = Int(seenPost.numComments)
-        self.winstonData?.winstonSeenComments = seenPost.seenComments
-      }
-    }
   }
   
   func setupWinstonData(data: PostData? = nil, winstonData: PostWinstonData? = nil, contentWidth: Double = UIScreen.screenWidth, secondary: Bool = false, theme: WinstonTheme, fetchSub: Bool = false, fetchAvatar: Bool = true) {
@@ -121,8 +110,8 @@ extension Post {
           
           if (isSeen) {
             let foundPost = results.first(where: { $0.postID == data.id })
-            newPost.winstonData?.winstonSeenCommentCount = Int(foundPost?.numComments ?? 0)
-            newPost.winstonData?.winstonSeenComments = foundPost?.seenComments
+            newPost.winstonData?.seenCommentsCount = Int(foundPost?.numComments ?? 0)
+            newPost.winstonData?.seenComments = foundPost?.seenComments
           }
           
           return newPost
@@ -225,7 +214,7 @@ extension Post {
     Defaults[.filteredSubreddits] = filteredSubreddits
   }
   
-  func saveCommentCount(numComments: Int) async -> Void {
+  func saveCommentsCount(numComments: Int) async -> Void {
     let context = PersistenceController.shared.container.viewContext
     
     let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "SeenPost")
@@ -239,7 +228,19 @@ extension Post {
           
           DispatchQueue.main.async {
             withAnimation {
-              self.winstonData?.winstonSeenCommentCount = numComments
+              self.winstonData?.seenCommentsCount = numComments
+            }
+          }
+        } else {
+          let newSeenPost = SeenPost(context: context)
+          newSeenPost.postID = self.id
+          newSeenPost.numComments = Int32(numComments)
+          try? context.save()
+      
+          DispatchQueue.main.async {
+            withAnimation {
+              self.data?.winstonSeen = true
+              self.winstonData?.seenCommentsCount = numComments
             }
           }
         }
@@ -270,7 +271,7 @@ extension Post {
           
           DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
             withAnimation {
-              self.winstonData?.winstonSeenComments = finalSeen
+              self.winstonData?.seenComments = finalSeen
             }
           }
         }
@@ -302,7 +303,7 @@ extension Post {
           
           DispatchQueue.main.async {
             withAnimation {
-              self.winstonData?.winstonSeenComments = finalSeen
+              self.winstonData?.seenComments = finalSeen
             }
           }
         }
@@ -401,10 +402,6 @@ extension Post {
       if let post = response[0] {
         switch post {
         case .first(let actualData):
-          if let numComments = actualData.data?.children?[0].data?.num_comments {
-            await saveCommentCount(numComments: numComments)
-          }
-          
           if full {
             await MainActor.run {
               let newData = actualData.data?.children?[0].data
@@ -523,8 +520,8 @@ class PostWinstonData: Hashable, ObservableObject {
   @Published var videoMedia: SharedVideo?
   @Published var postBodyAttr: NSAttributedString?
   @Published var media: PostWinstonDataMedia?
-  @Published var winstonSeenCommentCount: Int?
-  @Published var winstonSeenComments: String?
+  @Published var seenCommentsCount: Int? = nil
+  @Published var seenComments: String? = nil
   
   func hash(into hasher: inout Hasher) {
     hasher.combine(permaURL)

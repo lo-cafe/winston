@@ -52,10 +52,9 @@ struct PostInBoxLink: View {
             Text(formatBigNumber(postInBox.commentsCount ?? 0))
               .contentTransition(.numericText())
             
-            if let seenComments = post.winstonData?.winstonSeenCommentCount {
-              let unseenComments = Int(postInBox.commentsCount ?? 0) - seenComments
-              if unseenComments > 0 {
-                Text("(\(Int(unseenComments)))").foregroundColor(.accentColor)
+            if let newComments = postInBox.newCommentsCount {
+              if newComments > 0 {
+                Text("(\(Int(newComments)))").foregroundColor(.accentColor)
               }
             }
           }
@@ -76,10 +75,10 @@ struct PostInBoxLink: View {
         HStack(alignment: .center, spacing: 4) {
           
           Image(systemName: "arrow.up")
-            .foregroundColor(.orange)
+            .foregroundColor(.gray)
           
           Text(formatBigNumber(postInBox.score ?? 0))
-            .foregroundColor((postInBox.score ?? 0) > 0 ? .orange : postInBox.score == 0 ? .gray : .blue)
+            .foregroundColor(.gray)
             .fontSize(13, .semibold)
             .transition(.asymmetric(insertion: .offset(y: 16), removal: .offset(y: -16)).combined(with: .opacity))
 //            .id(post.score)
