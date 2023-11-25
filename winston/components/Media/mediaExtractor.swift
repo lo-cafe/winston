@@ -60,6 +60,20 @@ struct StreamableExtracted: Equatable {
   }
 }
 
+struct StreamableCached: Equatable {
+  static func == (lhs: StreamableCached, rhs: StreamableCached) -> Bool {
+    lhs.url == rhs.url && lhs.size == rhs.size
+  }
+  
+  let url: URL
+  let size: CGSize
+  
+  init(url: URL, size: CGSize) {
+    self.url = url
+    self.size = size
+  }
+}
+
 enum MediaExtractedType: Equatable {
   case link(PreviewModel)
   case video(SharedVideo)
@@ -96,11 +110,11 @@ func mediaExtractor(compact: Bool, contentWidth: Double = UIScreen.screenWidth, 
   }
   
   if let videoPreview = data.preview?.reddit_video_preview, let url = videoPreview.hls_url, let videoURL = URL(string: url), let width = videoPreview.width, let height = videoPreview.height  {
-    return .video(SharedVideo(url: videoURL, size: CGSize(width: CGFloat(width), height: CGFloat(height))))
+    return .video(SharedVideo.get(url: videoURL, size: CGSize(width: CGFloat(width), height: CGFloat(height))))
   }
   
   if let redditVideo = data.media?.reddit_video, let url = redditVideo.hls_url, let videoURL = URL(string: url), let width = redditVideo.width, let height = redditVideo.height {
-    return .video(SharedVideo(url: videoURL, size: CGSize(width: CGFloat(width), height: CGFloat(height))))
+    return .video(SharedVideo.get(url: videoURL, size: CGSize(width: CGFloat(width), height: CGFloat(height))))
   }
   
   if data.media?.type == "youtube.com", let oembed = data.media?.oembed, let html = oembed.html, let ytID = extractYoutubeIdFromOEmbed(html), let width = oembed.width, let height = oembed.height, let author_name = oembed.author_name, let author_url = oembed.author_url, let authorURL = URL(string: author_url), let thumb = oembed.thumbnail_url, let thumbURL = URL(string: thumb) {
@@ -145,7 +159,7 @@ func mediaExtractor(compact: Bool, contentWidth: Double = UIScreen.screenWidth, 
   }
   
   if VIDEOS_FORMATS.contains(where: { data.url.hasSuffix($0) }), let url = URL(string: data.url) {
-    return .video(SharedVideo(url: url, size: CGSize(width: 0, height: 0)))
+    return .video(SharedVideo.get(url: url, size: CGSize(width: 0, height: 0)))
   }
   
   if data.url.contains("streamable.com") {

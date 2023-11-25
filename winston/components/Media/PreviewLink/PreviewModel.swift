@@ -32,7 +32,7 @@ final class PreviewModel: ObservableObject, Equatable {
   }
   
   static func get(_ url: URL) -> PreviewModel {
-    if let cachedValue = Caches.postsPreviewModels.get(key: url.absoluteString), let previewModel = cachedValue as? PreviewModel {
+    if let previewModel = Caches.postsPreviewModels.get(key: url.absoluteString) {
       return previewModel
     } else {
       let previewModel = PreviewModel(url)
