@@ -1,5 +1,1210 @@
 {
   "sourceLanguage" : "en",
-  "strings" : {},
+  "strings" : {
+    "" : {
+
+    },
+    " " : {
+
+    },
+    " testers! (but it needs help)" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tester! (Aber es braucht Hilfe)"
+          }
+        }
+      }
+    },
+    "..." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "..."
+          }
+        }
+      }
+    },
+    "...unfortunately, lo.cafe (the team/group of friends behind Winston) isn't self sustainable yet.\nEven though we have other software for sale, we still have dayjobs." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "...leider ist lo.cafe (das Team/die Gruppe von Freunden hinter Winston) noch nicht selbsttragend.\nAuch wenn wir andere Software zum Verkauf haben, haben wir immer noch Jobs."
+          }
+        }
+      }
+    },
+    "\"Shiny\" Text and Buttons" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "\"Glänziger\" Text und Knöpfe"
+          }
+        }
+      }
+    },
+    "(%lld)" : {
+
+    },
+    "**u/%@** %@ in **r/%@**" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "**u/%1$@** %2$@ in **r/%3$@**"
+          }
+        }
+      }
+    },
+    "*No results found*" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "*Kein Resultat gefunden*"
+          }
+        }
+      }
+    },
+    "%@" : {
+
+    },
+    "%@ karma" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ Kara"
+          }
+        }
+      }
+    },
+    "%@ subscribers" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ Abbonenten"
+          }
+        }
+      }
+    },
+    "%lld" : {
+
+    },
+    "%lld comments" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld Kommentare"
+          }
+        }
+      }
+    },
+    "%lld/%lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$lld/%2$lld"
+          }
+        }
+      }
+    },
+    "%lld%%" : {
+
+    },
+    "%lld+" : {
+
+    },
+    "+%lld" : {
+
+    },
+    "🥳" : {
+
+    },
+    "7000" : {
+
+    },
+    "aA" : {
+
+    },
+    "About" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Über"
+          }
+        }
+      }
+    },
+    "Accessibility" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Barrierefreiheit"
+          }
+        }
+      }
+    },
+    "Account" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Konto"
+          }
+        }
+      }
+    },
+    "Account switcher\ncoming soon..." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kontoauswahlschalter\nDemnächst verfügbar..."
+          }
+        }
+      }
+    },
+    "Advanced" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Erweitert"
+          }
+        }
+      }
+    },
+    "All" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alle"
+          }
+        }
+      }
+    },
+    "Announcements" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ankündigungen"
+          }
+        }
+      }
+    },
+    "API Credentials Setup" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Einrichtung von API-Anmeldeinformationen"
+          }
+        }
+      }
+    },
+    "App icon" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "App Icon"
+          }
+        }
+      }
+    },
+    "App ID" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "App ID"
+          }
+        }
+      }
+    },
+    "App secret" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "App Geheimnis"
+          }
+        }
+      }
+    },
+    "Appearance" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Erscheinungsbild"
+          }
+        }
+      }
+    },
+    "Are you sure you wanna discard?" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sind Sie sicher, dass Sie verwerfen möchten?"
+          }
+        }
+      }
+    },
+    "Are you sure you wanna logoff?" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sind Sie sicher, dass Sie sich abmelden möchten?"
+          }
+        }
+      }
+    },
+    "Autoplay videos (muted)" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Automatische Wiedergabe von Videos (stummgeschaltet)"
+          }
+        }
+      }
+    },
+    "Backup" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Backup"
+          }
+        }
+      }
+    },
+    "Behavior" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Verhalten"
+          }
+        }
+      }
+    },
+    "BG type" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hintergrund Typ"
+          }
+        }
+      }
+    },
+    "Blur background" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hintergrund unscharf"
+          }
+        }
+      }
+    },
+    "Blur NSFW" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "NSFW unscharf"
+          }
+        }
+      }
+    },
+    "Blur NSFW in opened posts" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "NSFW unscharf in geöffneten Posts"
+          }
+        }
+      }
+    },
+    "by %@" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "von %@"
+          }
+        }
+      }
+    },
+    "Cancel" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abbrechen"
+          }
+        }
+      }
+    },
+    "Check \"web app\":" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Überprüfe \"Web-App\":"
+          }
+        }
+      }
+    },
+    "Check out Winston's Source Code" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wirf einen Blick auf Winstons Quellcode"
+          }
+        }
+      }
+    },
+    "Collapse AutoModerator comments" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zusammenklappen von AutoModerator-Kommentaren"
+          }
+        }
+      }
+    },
+    "Colored Usernames" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Farbige Benutzernamen"
+          }
+        }
+      }
+    },
+    "Comments" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kommentare"
+          }
+        }
+      }
+    },
+    "Comments Sorting" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sortierung von Kommentaren"
+          }
+        }
+      }
+    },
+    "Comments Swipe Settings" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Einstellungen für das Wischen von Kommentaren"
+          }
+        }
+      }
+    },
+    "Compact Mode" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kompakter Modus"
+          }
+        }
+      }
+    },
+    "Compact Posts" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kompakte Posts"
+          }
+        }
+      }
+    },
+    "Copied!" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kopiert!"
+          }
+        }
+      }
+    },
+    "Copy URL" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kopiere URL"
+          }
+        }
+      }
+    },
+    "Created %@" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Erschaffen %@"
+          }
+        }
+      }
+    },
+    "Current Theme" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aktuelles Theme"
+          }
+        }
+      }
+    },
+    "Default Launch Feed" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Standard Start Feed"
+          }
+        }
+      }
+    },
+    "Default post sorting" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Standardmäßige Sortierung der Beiträge"
+          }
+        }
+      }
+    },
+    "Default search sorting" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Standard Such "
+          }
+        }
+      }
+    },
+    "default theme by tapping" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Standardmäßige Sortierung der Suche"
+          }
+        }
+      }
+    },
+    "Depressive load full :(" : {
+
+    },
+    "Depressive load more :(" : {
+
+    },
+    "Description" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Beschreibung"
+          }
+        }
+      }
+    },
+    "Description:" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Beschreibung:"
+          }
+        }
+      }
+    },
+    "Disable subs list letter sections" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deaktiviere die Buchstabenabschnitte in der Abonnementliste für Subreddits."
+          }
+        }
+      }
+    },
+    "DISCARD" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "VERWERFEN"
+          }
+        }
+      }
+    },
+    "Do you wanna reset this property?" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Möchten Sie diese Eigenschaft zurücksetzen?"
+          }
+        }
+      }
+    },
+    "Don't worry if you can't or simply don't wanna donate, we're gonna keep developing Winston anyway and we already love you for being using it ❤️" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keine Sorge, wenn du nicht spenden kannst oder einfach nicht möchtest. Wir werden Winston trotzdem weiterentwickeln, und wir lieben Dich bereits dafür, dass du Winston verwendest. ❤️"
+          }
+        }
+      }
+    },
+    "Don't worry, there will be no costs, there's a free tier of 100 requests/minute and it's kinda impossible for you to go beyond that." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keine Sorge, es entstehen keine Kosten. Es gibt eine kostenlose Stufe mit 100 Anfragen pro Minute, und es ist ziemlich unmöglich, dass du darüber hinausgehst."
+          }
+        }
+      }
+    },
+    "Drag Left" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ziehe nach Links"
+          }
+        }
+      }
+    },
+    "Drag Right" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ziehe nach Rechts"
+          }
+        }
+      }
+    },
+    "Duplicate" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Duplizieren"
+          }
+        }
+      }
+    },
+    "Enter a subreddit" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Subreddit betreten"
+          }
+        }
+      }
+    },
+    "Enter a subreddit you wish to filter (case-sensitive)." : {
+
+    },
+    "Error" : {
+
+    },
+    "Everything Amazing!" : {
+
+    },
+    "Export" : {
+
+    },
+    "Export Settings" : {
+
+    },
+    "FAQ" : {
+
+    },
+    "Favorites" : {
+
+    },
+    "Fill the other fields however you want and click:" : {
+
+    },
+    "Filtered Subreddits" : {
+
+    },
+    "First, I need an API key" : {
+
+    },
+    "For that, just click the button below, scroll down the page and click \"Accept\"." : {
+
+    },
+    "Force subs as tag" : {
+
+    },
+    "Found subs" : {
+
+    },
+    "Frequently Asked Questions" : {
+
+    },
+    "General" : {
+
+    },
+    "Go back to Safari and copy your new \"app\"'s ID that's probably somewhere like this:" : {
+
+    },
+    "Go back to Safari and create a new \"app\" (it's a name for a kind of API key) by clicking the button on the site that look just like this one:" : {
+
+    },
+    "Go back to Safari and fill the form like below and click the \"create app\" button." : {
+
+    },
+    "Go back to Safari and now copy your new \"app\"'s **secret** that's probably somewhere like this:" : {
+
+    },
+    "Gotcha!" : {
+
+    },
+    "Hello, World!" : {
+
+    },
+    "Here are the values if you wanna quick copy them:" : {
+
+    },
+    "Hidden" : {
+
+    },
+    "Hide read posts" : {
+
+    },
+    "Hold up, we're getting your access token!" : {
+
+    },
+    "Home" : {
+
+    },
+    "However..." : {
+
+    },
+    "I mean, hello!" : {
+
+    },
+    "I'm " : {
+
+    },
+    "I'm a beautiful beta client (made with A BUNCH of love) for Reddit where you can use your own API key." : {
+
+    },
+    "Icon" : {
+
+    },
+    "If Reddit ban the user-agent this app uses, you can change it to a custom one here:" : {
+
+    },
+    "Import Settings" : {
+
+    },
+    "In order to be able to use Reddit, you'll need to provide your own API credentials." : {
+
+    },
+    "In the new app you created, find the app ID and paste it below:" : {
+
+    },
+    "Inbox" : {
+
+    },
+    "Information" : {
+
+    },
+    "ing" : {
+
+    },
+    "Inline upvote toolbar" : {
+
+    },
+    "It worked!" : {
+
+    },
+    "It's a long text, we won't spam you with that without your consent." : {
+
+    },
+    "It's also always available in the Settings tab :)" : {
+
+    },
+    "Join the Discord Server" : {
+
+    },
+    "Just a sec..." : {
+
+    },
+    "Know more about winston" : {
+
+    },
+    "Large" : {
+
+    },
+    "Last step, now you need to allow the new API key to access your account (yes, it's confusing)." : {
+
+    },
+    "Left" : {
+
+    },
+    "Live Text Analyzer" : {
+
+    },
+    "Load" : {
+
+    },
+    "Lock Winston With %@" : {
+
+    },
+    "Long Drag Left" : {
+
+    },
+    "Long Drag Right" : {
+
+    },
+    "Loop videos" : {
+
+    },
+    "Many of you is not aware about our patreon, which has a 1U$ tier. If each of our testers would donate 1U$/month, it'd be more than enough to allow us to focus all our time on Winston and other amazing projects." : {
+
+    },
+    "Many users wanted to be able to support the project without a monthly subscription (like Patreon), so now we got a tip jar!" : {
+
+    },
+    "Max Posts Image Height" : {
+
+    },
+    "Me" : {
+
+    },
+    "Medium" : {
+
+    },
+    "Meow" : {
+
+    },
+    "Meow, I mean..." : {
+
+    },
+    "Meow!" : {
+
+    },
+    "Metadatas" : {
+
+    },
+    "more" : {
+
+    },
+    "Multis" : {
+
+    },
+    "Navigation everywhere" : {
+
+    },
+    "New post" : {
+
+    },
+    "Nice!" : {
+
+    },
+    "No comments around..." : {
+
+    },
+    "Now click the button below and grant full access to the app you created:" : {
+
+    },
+    "Now paste it here:" : {
+
+    },
+    "Now we got a tip jar!" : {
+
+    },
+    "Now, your \"secret\" (don't worry, it'll be saved locally in your keychain):" : {
+
+    },
+    "NSFW" : {
+
+    },
+    "OK" : {
+
+    },
+    "on " : {
+
+    },
+    "oops" : {
+
+    },
+    "Oops" : {
+
+    },
+    "Open links in Safari" : {
+
+    },
+    "Open Reddit API settings in Safari by clicking the button below, then switch back to Winston." : {
+
+    },
+    "Open Reddit's apps settings by clicking this button:" : {
+
+    },
+    "Open Youtube Videos Externally" : {
+
+    },
+    "Original" : {
+
+    },
+    "Paste here the app ID" : {
+
+    },
+    "Paste the secret key here" : {
+
+    },
+    "Placeholder image" : {
+
+    },
+    "Please go into \"My Theme\" and create a new one if you want to edit it" : {
+
+    },
+    "Popular" : {
+
+    },
+    "Post Link Body Size" : {
+
+    },
+    "Post Link Title Size" : {
+
+    },
+    "Post page" : {
+
+    },
+    "Post Page Body Size" : {
+
+    },
+    "Post Page Title Size" : {
+
+    },
+    "Post title" : {
+
+    },
+    "Posts" : {
+
+    },
+    "Posts Box" : {
+
+    },
+    "Posts feed" : {
+
+    },
+    "Posts links" : {
+
+    },
+    "Posts Swipe Settings" : {
+
+    },
+    "r/%@" : {
+
+    },
+    "Read on preview media" : {
+
+    },
+    "Read on scroll" : {
+
+    },
+    "Reset preferences" : {
+
+    },
+    "Reset winston" : {
+
+    },
+    "Restart required" : {
+
+    },
+    "Right" : {
+
+    },
+    "Save comment sort per post" : {
+
+    },
+    "Save sort per subreddit" : {
+
+    },
+    "Scroll down and click" : {
+
+    },
+    "Search" : {
+
+    },
+    "Search my subreddits" : {
+
+    },
+    "Search r/%@" : {
+
+    },
+    "Secrets Unveiled" : {
+
+    },
+    "Seen" : {
+
+    },
+    "SELECTING" : {
+
+    },
+    "Sets how many posts to load per chunk (loads more on scroll)" : {
+
+    },
+    "Settings" : {
+
+    },
+    "Settings in this panel requires a restart to take effect. You don't need to do it now though." : {
+
+    },
+    "Share" : {
+
+    },
+    "Show Author" : {
+
+    },
+    "Show avatar" : {
+
+    },
+    "Show Self Text" : {
+
+    },
+    "Show Subreddit at Top" : {
+
+    },
+    "Show Thumbnail Placeholder" : {
+
+    },
+    "Show Title at Top" : {
+
+    },
+    "Show Upvote Ratio" : {
+
+    },
+    "Show Username in Tab Bar" : {
+
+    },
+    "Show Voting Buttons" : {
+
+    },
+    "Small" : {
+
+    },
+    "Something went wrong, you probably didn't enter the correct information in the previous steps." : {
+
+    },
+    "Start duplicating the" : {
+
+    },
+    "Status:" : {
+
+    },
+    "Sticky" : {
+
+    },
+    "Style" : {
+
+    },
+    "Sub" : {
+
+    },
+    "Subs" : {
+
+    },
+    "Subscription List" : {
+
+    },
+    "Success!" : {
+
+    },
+    "Support our Work!" : {
+
+    },
+    "Sync API Key" : {
+
+    },
+    "Tap the URL below to copy and paste it in the \"redirect uri\" field:" : {
+
+    },
+    "Tap to copy" : {
+
+    },
+    "Tap to expand" : {
+
+    },
+    "Tap to read" : {
+
+    },
+    "Tap to unblur" : {
+
+    },
+    "Thank you so much!" : {
+
+    },
+    "That's it! Your API credentials are setup and you don't need to worry about these boring details anymore." : {
+
+    },
+    "The theme was imported successfully. Enable it in \"Themes\" section in the Settings tab." : {
+
+    },
+    "Theme Store Tint" : {
+
+    },
+    "Themes" : {
+
+    },
+    "Theming" : {
+
+    },
+    "Then, come back here!" : {
+
+    },
+    "This is not working yet :(" : {
+
+    },
+    "This sub doesn't have any rules" : {
+
+    },
+    "This theme changes a few settings that requires an app restart to take effect." : {
+
+    },
+    "This will allow you to do go back by swiping anywhere in the screen, but will disable post and comments swipe gestures." : {
+
+    },
+    "This will clear everything in the app (your Reddit account is safe)." : {
+
+    },
+    "Thumbnail Position" : {
+
+    },
+    "Thumbnail Size" : {
+
+    },
+    "Tip jar" : {
+
+    },
+    "Tired of Winstons current look? Try the theme editor in settings now!" : {
+
+    },
+    "Title" : {
+
+    },
+    "To use Reddit, Winston uses a special key you can generate yourself in Reddit's site." : {
+
+    },
+    "u/%@" : {
+
+    },
+    "Unseen type" : {
+
+    },
+    "Upload Error" : {
+
+    },
+    "Upload Theme" : {
+
+    },
+    "User Agent" : {
+
+    },
+    "View full conversation" : {
+
+    },
+    "Visit lo.cafe Website" : {
+
+    },
+    "Voting Buttons Position" : {
+
+    },
+    "Wanna learn more about Winston's situation before donating? Press the button below" : {
+
+    },
+    "We hit 8500 testers on TestFlight and this couldn't make us happier. Thank you so much for using and supporting Winston." : {
+
+    },
+    "Whats New" : {
+
+    },
+    "Where are the subs?" : {
+
+    },
+    "Winston" : {
+
+    },
+    "Winston hit " : {
+
+    },
+    "Winston is a free and open source software, therefore it isn't against Reddit's policies." : {
+
+    },
+    "Winston is developed by the lo.cafe team, a group of friends making amazing software together." : {
+
+    },
+    "Winston is ready to be used!" : {
+
+    },
+    "Yes" : {
+
+    },
+    "Yes, reset" : {
+
+    },
+    "You don't have any local themes" : {
+
+    },
+    "Your API credentials are 👌" : {
+
+    },
+    "Your iPhone does not support Live Text :(" : {
+
+    }
+  },
   "version" : "1.0"
 }
