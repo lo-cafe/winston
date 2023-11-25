@@ -195,13 +195,13 @@ func mediaExtractor(compact: Bool, contentWidth: Double = UIScreen.screenWidth, 
       
     default:
       if !data.is_self, let linkURL = URL(string: data.url) {
-        return .link(PreviewModel(linkURL))
+        return .link(PreviewModel.get(linkURL))
       }
     }
   }
   
   if data.post_hint == "link", let linkURL = URL(string: data.url) {
-    return .link(PreviewModel(linkURL))
+    return .link(PreviewModel.get(linkURL))
   }
   
   return nil

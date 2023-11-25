@@ -71,6 +71,10 @@ class BaseObservableCache<T: ObservableObject>: ObservableObject {
     self.cache = cache
   }
   
+  func get(key: String) -> Any? {
+    return cache[key]?.data
+  }
+  
   func addKeyValue(key: String, data: @escaping () -> T) {
     if cache[key] != nil { return }
     Task(priority: .background) {

@@ -114,7 +114,7 @@ struct PostLinkCompact: View, Equatable, Identifiable {
   func mediaPiece() -> some View {
     if let extractedMedia = post.winstonData?.extractedMedia {
       if case .repost(let repost) = extractedMedia, let repostData = repost.data, let url = URL(string: "https://reddit.com/r/\(repostData.subreddit)/comments/\(repost.id)") {
-        PreviewLink(url: url, compact: true, previewModel: PreviewModel(url))
+        PreviewLink(url: url, compact: true, previewModel: PreviewModel.get(url))
       } else {
         mediaComponentCall()
       }

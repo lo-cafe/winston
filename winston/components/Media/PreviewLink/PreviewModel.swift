@@ -22,11 +22,7 @@ final class PreviewModel: ObservableObject, Equatable {
   @Published var description: String?
   @Published var loading = true
   
-  var previewURL: URL? {
-    didSet {
-      if previewURL != nil { fetchMetadata() }
-    }
-  }
+  var previewURL: URL?
   
   init() {}
   
@@ -35,8 +31,20 @@ final class PreviewModel: ObservableObject, Equatable {
     fetchMetadata()
   }
   
+  static func get(_ url: URL) -> PreviewModel {
+    if let cachedValue = Caches.postsPreviewModels.get(key: url.absoluteString), let previewModel = cachedValue as? PreviewModel {
+      return previewModel
+    } else {
+      let previewModel = PreviewModel(url)
+      Caches.postsPreviewModels.addKeyValue(key: url.absoluteString, data: { previewModel })
+      
+      return previewModel
+    }
+  }
+  
   private func fetchMetadata() {
     guard let previewURL else { return }
+    
     Task(priority: .background) {
       var headers = [String: String]()
       headers["User-Agent"] = "facebookexternalhit/1.1"
