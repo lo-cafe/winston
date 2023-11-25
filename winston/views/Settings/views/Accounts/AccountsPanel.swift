@@ -46,37 +46,7 @@ struct AccountsPanel: View {
           }
           .contextMenu(ContextMenu(menuItems: {
             if let accessToken = cred.accessToken?.token {
-              Button("Copy access token", systemImage: "doc.on.clipboard"
-              
-              
-              
-              
-              
-              
-              
-              
-              
-              
-              
-              
-              
-              
-              
-                     
-                     
-                     
-                     
-                     
-                     
-                     
-                     
-                     
-                     
-                     
-                     
-                     
-                     '       [';;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;'
-                               ''']  {
+              Button("Copy access token", systemImage: "doc.on.clipboard") {
                 UIPasteboard.general.string = accessToken
               }
             }
