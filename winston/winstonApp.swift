@@ -61,6 +61,7 @@ struct winstonApp: App {
 
 struct AppContent: View {
   @ObservedObject private var redditAPI = RedditAPI.shared
+  @ObservedObject private var winstonAPI = WinstonAPI()
   var selectedTheme: WinstonTheme
   @StateObject private var themeStore = ThemeStoreAPI()
   @Environment(\.colorScheme) private var cs
@@ -73,6 +74,7 @@ struct AppContent: View {
   var body: some View {
     Tabber(theme: selectedTheme, cs: cs)
       .whatsNewSheet()
+      .environmentObject(winstonAPI)
       .environmentObject(themeStore)
     //        .alertToastRoot()
     //        .tint(selectedTheme.general.accentColor.cs(cs).color())

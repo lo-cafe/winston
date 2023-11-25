@@ -13,6 +13,9 @@ class WinstonAPI: ObservableObject {
   static let baseURL = "http://localhost:3000"
 //  static let bearerToken = "2cYk@dXT!ZjXagF_-h6x"
   
+  
+  @Published var announcement: Announcement? = nil
+  
   func getRequestHeaders(includeAuth: Bool = true) -> HTTPHeaders? {
     var headers: HTTPHeaders = []
 //    headers["Authorization"] = "Bearer \(ThemeStoreAPI.bearerToken)"

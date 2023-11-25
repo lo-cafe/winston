@@ -24,8 +24,9 @@ struct Settings: View {
   @State private var id = UUID().uuidString
   
   
-  @State var announcement: Announcement? = nil
   
+  @EnvironmentObject var winstonAPI: WinstonAPI
+
   @State var presentingWhatsNew: Bool = false
   @State var presentingAnnouncement: Bool = false
   var body: some View {
@@ -65,6 +66,7 @@ struct Settings: View {
               .disabled(getCurrentChangelog().isEmpty)
               
               WListButton {
+               
                 presentingAnnouncement.toggle()
               } label: {
                 Label("Announcements", systemImage: "newspaper")
@@ -100,13 +102,19 @@ struct Settings: View {
           }
         }
         .sheet(isPresented: $presentingAnnouncement){
-          AnnouncementSheet(showingAnnouncement: $presentingAnnouncement, announcement: announcement)
+          
+          if let announcement = winstonAPI.announcement {
+            AnnouncementSheet(showingAnnouncement: $presentingAnnouncement, announcement: announcement)
+          } else {
+            ProgressView()
+              .onAppear{
+                Task(priority: .userInitiated){
+                  winstonAPI.announcement = await winstonAPI.getAnnouncement()
+                }
+              }
+          }
         }
-        .onAppear{
-          Task(priority: .background, operation: {
-            announcement = await WinstonAPI().getAnnouncement()
-          })
-        }
+        
         
         .themedListBG(selectedTheme.lists.bg)
         .scrollContentBackground(.hidden)
