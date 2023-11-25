@@ -58,6 +58,9 @@ struct Tabber: View {
   @State var sharedTheme: ThemeData? = nil
   @State var showingSharedThemeSheet: Bool = false
   
+  @State var showingAnnouncement: Bool = false
+  @EnvironmentObject var winstonAPI: WinstonAPI
+  
   var payload: [TabIdentifier:TabPayload] { [
     .inbox: inboxPayload,
     .me: mePayload,
@@ -214,9 +217,18 @@ struct Tabber: View {
           await RedditAPI.shared.fetchMe(force: true)
           print("\(RedditAPI.shared.me?.data?.name ?? "---USER FETCH FAILED---") username registered.")
         }
-        
-        
       }
+      
+      //Check for announcements
+      Task(priority: .background){
+        winstonAPI.announcement = await winstonAPI.getAnnouncement()
+        if let announcement = winstonAPI.announcement{
+          showingAnnouncement = announcement.timestamp != Defaults[.lastSeenAnnouncementTimeStamp]
+        } else {
+          showingAnnouncement = false
+        }
+      }
+      
     }
     .onChange(of: RedditAPI.shared.loggedUser) { user in
       if user.apiAppID == nil || user.apiAppSecret == nil {
@@ -225,9 +237,18 @@ struct Tabber: View {
         }
       }
     }
+    .sheet(isPresented: $showingAnnouncement, content: {
+      AnnouncementSheet(showingAnnouncement: $showingAnnouncement,announcement: winstonAPI.announcement)
+    })
     .sheet(isPresented: $showingSharedThemeSheet, content: {
       if let theme = sharedTheme {
         ThemeStoreDetailsView(themeData: theme)
+      } else {
+        HStack {
+          VStack{
+            ProgressView()
+          }
+        }
       }
     })
     .onOpenURL { url in

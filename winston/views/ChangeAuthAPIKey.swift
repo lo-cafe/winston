@@ -219,7 +219,7 @@ struct ChangeAuthAPIKey: View {
               SmallStep {
                 VStack (alignment: .leading) {
                   HStack {
-                    Text("Now, your \"secret\" (don't worry, it'll be saved in your keychain):")
+                    Text("Now, your \"secret\" (don't worry, it'll be saved locally in your keychain):")
                   }
                   TextField("App secret", text: $appSecret)
                 }

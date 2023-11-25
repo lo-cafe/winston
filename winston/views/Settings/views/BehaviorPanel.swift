@@ -93,6 +93,7 @@ struct BehaviorPanel: View {
           .themedListRowBG(enablePadding: true)
       } footer: {
         Text("This will allow you to do go back by swiping anywhere in the screen, but will disable post and comments swipe gestures.")
+          .padding(.bottom)
       }
       .themedListDividers()
       
