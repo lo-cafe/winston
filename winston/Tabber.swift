@@ -204,21 +204,19 @@ struct Tabber: View {
         Defaults[.multis] = []
         Defaults[.subreddits] = []
       }
-      Task(priority: .background) { await updatePostsInBox(RedditAPI.shared) }
-      print(redditCredentialsManager.credentials.count)
-      if redditCredentialsManager.credentials.count == 0 {
-        withAnimation(spring) {
-          credModalOpen = true
-        }
-      } else if redditCredentialsManager.selectedCredential != nil {
-        Task(priority: .background) {
-//          print("Fetching 'me' user variable...")
-          await RedditAPI.shared.fetchMe(force: true)
-//          print("\(RedditAPI.shared.me?.data?.name ?? "---USER FETCH FAILED---") username registered.")
-        }
-        
-        
-      }
+//      Task(priority: .background) { await updatePostsInBox(RedditAPI.shared) }
+//      print(redditCredentialsManager.credentials.count)
+//      if redditCredentialsManager.credentials.count == 0 {
+//        withAnimation(spring) {
+//          credModalOpen = true
+//        }
+//      } else if redditCredentialsManager.selectedCredential != nil {
+//        Task(priority: .background) {
+////          print("Fetching 'me' user variable...")
+//          await RedditAPI.shared.fetchMe(force: true)
+////          print("\(RedditAPI.shared.me?.data?.name ?? "---USER FETCH FAILED---") username registered.")
+//        }
+//      }
     }
     .onChange(of: redditCredentialsManager.credentials) { creds in
       if creds.count == 0 {

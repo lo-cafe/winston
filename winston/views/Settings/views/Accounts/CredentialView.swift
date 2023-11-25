@@ -10,33 +10,35 @@ import NukeUI
 
 struct CredentialView: View {
   var credential: RedditCredential
-  @State private var modifiableCredential: RedditCredential? = nil
-  @State private var draftAppID = ""
-  @State private var draftAppSecret = ""
-  @State private var draftAccessToken: RedditCredential.AccessToken? = nil
-  @State private var draftRefreshToken: String? = nil
-  @State private var draftUserName: String? = nil
-  @State private var draftProfilePicture: String? = nil
+  @State private var draftCredential = RedditCredential()
+  //  @State private var draftAppID = ""
+  //  @State private var draftAppSecret = ""
+  //  @State private var draftAccessToken: RedditCredential.AccessToken? = nil
+  //  @State private var draftRefreshToken: String? = nil
+  //  @State private var draftUserName: String? = nil
+  //  @State private var draftProfilePicture: String? = nil
   @State private var waitingForCallback: Bool? = nil
   
   @Environment(\.useTheme) private var theme
   @Environment(\.dismiss) private var dismiss
   @Environment(\.openURL) var openURL
+  
+  func renewAccessToken() async {
+    let newToken = await draftCredential.getUpToDateToken(forceRenew: true)
+    draftCredential.accessToken = newToken
+  }
+  
   var body: some View {
-    let verified = draftRefreshToken != nil && draftAccessToken != nil
-    let anyChanges = credential.apiAppID != draftAppID || credential.apiAppSecret != draftAppSecret || credential.refreshToken != draftRefreshToken || credential.accessToken != draftAccessToken
+    let verified = draftCredential.refreshToken != nil
+    //    let anyChanges = credential.apiAppID != draftAppID || credential.apiAppSecret != draftAppSecret || credential.refreshToken != draftRefreshToken || credential.accessToken != draftAccessToken
+    let anyChanges = credential != draftCredential
     NavigationStack {
       ScrollView {
-        VStack(spacing: 24) {
+        VStack(spacing: 20) {
           VStack {
-            if let profilePicture = credential.profilePicture, let url = URL(string: profilePicture) {
-              LazyImage(url: url) { result in
-                if case .success(let imgResponse) = result.result {
-                  Image(uiImage: imgResponse.image).resizable()
-                }
-              }
+            if let profilePicture = draftCredential.profilePicture, let url = URL(string: profilePicture) {
+              URLImage(url: url)
               .scaledToFill()
-              .padding(12)
               .frame(72)
               .mask(Circle().fill(.black))
             } else {
@@ -52,17 +54,17 @@ struct CredentialView: View {
           .listRowBackground(Color.clear)
           
           HStack {
-            HStack(spacing: 8) {
+            HStack(spacing: 4) {
               Image(systemName: verified ? "checkmark.circle.fill" : "exclamationmark.triangle.fill")
                 .fontSize(38)
-                .foregroundStyle(verified ? .green : .yellow)
+                .foregroundStyle(verified ? .green : .orange)
                 .transition(.scaleAndBlur)
                 .id("verified-icon-\(verified ? "1" : "0")")
-              VStack(alignment: .leading, spacing: 0) {
+              VStack(alignment: .leading, spacing: -1) {
                 Text("Status").fontSize(13, .medium).opacity(0.75)
                 Text(verified ? "Authorized" : "Unauthorized")
                   .fontSize(17, .semibold)
-                  .foregroundStyle(verified ? .green : .yellow)
+                  .foregroundStyle(verified ? .green : .orange)
                   .transition(.scaleAndBlur)
                   .id("verified-icon-\(verified ? "1" : "0")")
               }
@@ -71,10 +73,12 @@ struct CredentialView: View {
             Spacer()
             
             Button {
-              if waitingForCallback == true { return withAnimation(.spring) { waitingForCallback = false } }
-              if waitingForCallback == false { return withAnimation(.spring) { waitingForCallback = nil } }
-              withAnimation(.spring) { waitingForCallback = true }
-              openURL(RedditAPI.shared.getAuthorizationCodeURL(draftAppID))
+              if !draftCredential.apiAppID.isEmpty {
+                if waitingForCallback == true { return withAnimation(.spring) { waitingForCallback = false } }
+                if waitingForCallback == false { return withAnimation(.spring) { waitingForCallback = nil } }
+                withAnimation(.spring) { waitingForCallback = true }
+                openURL(RedditAPI.shared.getAuthorizationCodeURL(draftCredential.apiAppID))
+              }
             } label: {
               HStack(spacing: 4) {
                 if waitingForCallback == true {
@@ -92,22 +96,26 @@ struct CredentialView: View {
               .fontSize(16, .semibold)
               .padding(.horizontal, 14)
               .padding(.vertical, 10)
-              .background(RR(12, waitingForCallback == true ? .gray : waitingForCallback == false ? .red : verified ? .blue : .green))
-              .foregroundStyle(.white)
+              .background(RR(12, waitingForCallback == true ? .gray : waitingForCallback == false ? .red : verified ? Color("acceptablePrimary") : .green))
+              .foregroundStyle(waitingForCallback == true ? Color.primary : Color.white)
             }
             .buttonStyle(.plain)
             .fixedSize(horizontal: true, vertical: false)
-            .disabled(draftAppID.isEmpty || draftAppSecret.isEmpty)
+            .disabled(draftCredential.apiAppID.isEmpty || draftCredential.apiAppSecret.isEmpty)
           }
           
-          VStack(alignment: .leading, spacing: 6) {
-            Text("App ID").fontSize(16, .medium).padding(.horizontal, 12)
-            BigInput(t: $draftAppID, placeholder: "Ex: aijsd78_UN4iuq8dm7m@mr")
+          NiceCredentialSection("Credentials") {
+            VStack(alignment: .leading, spacing: 16) {
+              BigInput(l: "App ID", t: $draftCredential.apiAppID, placeholder: "Ex: aijsd78_UN4iuq8dm7m@mr")
+              BigInput(l: "App Secret", t: $draftCredential.apiAppSecret, placeholder: "Ex: JS9amd9imaims98ajmsi-_000_md2")
+            }
           }
           
-          VStack(alignment: .leading, spacing: 6) {
-            Text("App Secret").fontSize(16, .medium).padding(.horizontal, 12)
-            BigInput(t: $draftAppSecret, placeholder: "Ex: JS9amd9imaims98ajmsi-_000_md2")
+          NiceCredentialSection("Tokens") {
+            HStack {
+              BigInfoCredential(label: "Refresh", value: draftCredential.refreshToken)
+              BigInfoCredential(label: "Access", value: draftCredential.accessToken?.token, refresh: renewAccessToken)
+            }.frame(height: 108)
           }
           
           Button {
@@ -139,39 +147,27 @@ struct CredentialView: View {
         }
         ToolbarItem(placement: .topBarTrailing) {
           Button("Save") {
-            modifiableCredential?.apiAppID = draftAppID
-            modifiableCredential?.apiAppSecret = draftAppSecret
-            modifiableCredential?.refreshToken = draftRefreshToken
-            modifiableCredential?.accessToken = draftAccessToken
-            modifiableCredential?.userName = draftUserName
-            modifiableCredential?.profilePicture = draftProfilePicture
-            modifiableCredential?.save()
+            draftCredential.save()
             dismiss()
           }
           .disabled(!anyChanges)
         }
       }
       .onAppear {
-        modifiableCredential = credential
-        draftRefreshToken = credential.refreshToken
-        draftAppID = credential.apiAppID ?? ""
-        draftAppSecret = credential.apiAppSecret ?? ""
-        draftUserName = credential.userName
-        draftProfilePicture = credential.profilePicture
+        draftCredential = credential
       }
       .onOpenURL { url in
         if waitingForCallback == true {
           Task(priority: .background) {
-            if let (accessData, meData) = await RedditAPI.shared.monitorAuthCallback(draftAppID, draftAppSecret, url) {
-              DispatchQueue.main.async {
-                waitingForCallback = nil
-                draftAccessToken = .init(token: accessData.access_token, expiration: accessData.expires_in, lastRefresh: Date())
-                draftRefreshToken = accessData.refresh_token
-                draftUserName = meData.name
-                draftProfilePicture = meData.icon_img
+            var tempCred = draftCredential
+            let success = await RedditAPI.shared.monitorAuthCallback(credential: &tempCred, url)
+            await MainActor.run {
+              if success {
+                withAnimation { draftCredential = tempCred }
               }
-            } else {
-              waitingForCallback = false
+              withAnimation {
+                waitingForCallback = success ? nil : false
+              }
             }
           }
         }
@@ -182,17 +178,123 @@ struct CredentialView: View {
 }
 
 
-struct BigInput: View {
-  @Binding var t: String
-  var placeholder: String? = nil
+struct BigInfoCredential: View {
+  var label: String
+  var value: String?
+  var refresh: (() async -> ())? = nil
+  @State private var copied = false
+  @State private var refreshed = false
+  @State private var bounce = 0
+  @State private var spin = false
+  @State private var loading = false
   var body: some View {
-    TextField("", text: $t, prompt: placeholder == nil ? nil : Text(placeholder!))
-      .autocorrectionDisabled(true)
-      .textInputAutocapitalization(.none)
-      .fontSize(16, .medium)
-      .frame(maxWidth: .infinity)
-      .padding(.vertical, 16)
-      .padding(.horizontal, 12)
-      .background(RR(16, Color.gray.opacity(0.25)))
+    let empty = value == nil || (value?.isEmpty ?? false)
+    VStack(alignment: .leading, spacing: 6) {
+      HStack(alignment: .bottom) {
+        Text(label).fontSize(20, .semibold)
+        
+        Spacer()
+        
+        HStack(spacing: 12) {
+          
+          Button {
+            UIPasteboard.general.string = value
+            withAnimation(.bouncy) { copied = true; bounce += 1 }
+            doThisAfter(0.3) { withAnimation { copied = false } }
+          } label: {
+            Image(systemName: "doc.on.clipboard")
+              .symbolRenderingMode(.hierarchical)
+              .brightness(copied ? 0.2 : 0)
+              .ifIOS17({ img in
+                if #available(iOS 17, *) {
+                  img
+                    .symbolEffect(.bounce, value: bounce)
+                }
+              })
+          }
+          
+          if let refresh = refresh {
+            Button {
+              withAnimation(.bouncy) { refreshed = true; spin = true }
+              doThisAfter(0.3) { refreshed = false }
+              doThisAfter(0.5) { spin = false }
+              withAnimation { loading = true }
+              Task(priority: .background) {
+                await refresh()
+                await MainActor.run { withAnimation { loading = false } }
+              }
+            } label: {
+              Image(systemName: "arrow.clockwise")
+                .brightness(copied ? 0.2 : 0)
+                .rotationEffect(.degrees(spin ? 360 : 0))
+            }
+          }
+          
+        }
+        .fontSize(16, .semibold)
+        .foregroundStyle(Color.accentColor)
+        .allowsHitTesting(!empty)
+        .saturation(empty ? 0 : 1)
+      }
+      Text(empty ? "Empty" : value).opacity(0.5)
+        .fontSize(12, .medium, design: .monospaced)
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+        .blur(radius: loading ? 24 : 0)
+        .overlay {
+          !loading
+          ? nil
+          : ProgressView()
+        }
+    }
+    .padding(.horizontal, 12)
+    .padding(.vertical, 8)
+    .frame(maxWidth: .infinity, maxHeight: .infinity)
+    .mask(RR(16, .black))
+    .background(RR(16, Color("acceptableBlack")))
+    .scrollDismissesKeyboard(.interactively)
+  }
+}
+
+
+struct BigInput: View {
+  var l: String
+  @Binding var t: String
+  @FocusState var focused: Bool
+  var placeholder: String? = nil
+  @Environment(\.colorScheme) private var cs
+  var body: some View {
+    VStack(alignment: .leading, spacing: 5) {
+      Text(l.uppercased()).fontSize(13, .semibold).padding(.horizontal, 12).opacity(0.5)
+      TextField(l, text: $t, prompt: placeholder == nil ? nil : Text(placeholder!))
+        .focused($focused)
+        .autocorrectionDisabled(true)
+        .textInputAutocapitalization(.none)
+        .fontSize(16, .medium, design: .monospaced)
+        .padding(.vertical, 16)
+        .padding(.horizontal, 12)
+        .frame(maxWidth: .infinity)
+        .background(
+          RR(16, Color("acceptableBlack"))
+            .brightness(focused ? cs == .dark ? 0.1 : 0.1 : 0)
+            .shadow(color: .black.opacity(focused ? cs == .dark ? 0.25 : 0.15 : 0), radius: focused ? 12 : 0, y: focused ? 6 : 0)
+            .animation(.easeOut.speed(2.5), value: focused)
+        )
+    }
+  }
+}
+
+struct NiceCredentialSection<Content: View>: View {
+  var label: String
+  var content: () -> Content
+  
+  init(_ label: String, @ViewBuilder _ content: @escaping () -> Content) {
+    self.label = label
+    self.content = content
+  }
+  var body: some View {
+    VStack(alignment: .leading, spacing: 6) {
+      Text(label).fontSize(20, .bold).padding(.horizontal, 4)
+      content()
+    }
   }
 }

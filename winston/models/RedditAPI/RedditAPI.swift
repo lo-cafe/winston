@@ -17,7 +17,6 @@ class RedditAPI: ObservableObject {
   static let winstonAPIBase = "https://winston.lo.cafe/api"
   static let redditApiURLBase = "https://oauth.reddit.com"
   static let redditWWWApiURLBase = "https://www.reddit.com"
-  static let appClientID: String = "slCYQaTCGfV7FE38BxOeJw"
   static let appRedirectURI: String = "https://winston.cafe/auth-success"
   
   @Published var loggedUser: UserCredential = UserCredential()
@@ -25,95 +24,124 @@ class RedditAPI: ObservableObject {
   @Published var me: User?
   
   // This is a replacement for getRequestHeader. We need to replace every instance of the former by this one
-  func fetchRequestHeaders(force: Bool = false, includeAuth: Bool = true, altCredential: RedditCredential? = nil) async -> HTTPHeaders {
+  func fetchRequestHeaders(force: Bool = false, includeAuth: Bool = true, altCredential: RedditCredential? = nil, saveToken: Bool = true) async -> HTTPHeaders {
     var headers: HTTPHeaders = [
       "User-Agent": Defaults[.redditAPIUserAgent]
     ]
-    if includeAuth, let selectedCredential = altCredential ?? RedditCredentialsManager.shared.selectedCredential, let accessToken = await selectedCredential.getUpToDateToken(forceRenew: force) {
-      headers["Authorization"] = "Bearer \(accessToken)"
+    if includeAuth, let selectedCredential = altCredential ?? RedditCredentialsManager.shared.selectedCredential, let accessToken = await selectedCredential.getUpToDateToken(forceRenew: force, saveToken: saveToken) {
+      headers["Authorization"] = "Bearer \(accessToken.token)"
     }
+  
+    for (protectionSpace, credentials) in URLCredentialStorage.shared.allCredentials {
+        for (_, credential) in credentials {
+          URLCredentialStorage.shared.remove(credential, for: protectionSpace)
+        }
+    }
+    HTTPCookieStorage.shared.cookies?.forEach(HTTPCookieStorage.shared.deleteCookie)    
+    
     return headers
   }
   
-  func doRequest<D: Decodable, P: Encodable>(_ url: String, authenticated: Bool = true, method: HTTPMethod, params: P? = nil, paramsLocation: URLEncodedFormParameterEncoder.Destination = .httpBody, decodable: D.Type, altCredential: RedditCredential? = nil, attempt: Int = 0) async -> Result<D, AFError> {
-    let headers = await fetchRequestHeaders(includeAuth: authenticated, altCredential: altCredential)
-    let req = AF.request(url, method: method, parameters: params, encoder: URLEncodedFormParameterEncoder(destination: paramsLocation), headers: headers, interceptor: nil, requestModifier: nil)
+  private let reqAttempts = 2
+  
+  private let reqModifier: Session.RequestModifier = { urlReq in
+    urlReq.cachePolicy = .reloadIgnoringLocalAndRemoteCacheData
+  }
+  
+  func doRequest<D: Decodable, P: Encodable>(_ url: String, authenticated: Bool = true, method: HTTPMethod, params: P? = nil, paramsLocation: URLEncodedFormParameterEncoder.Destination = .httpBody, decodable: D.Type, altCredential: RedditCredential? = nil, attempt: Int = 0, saveToken: Bool = true) async -> Result<D, AFError> {
+
+    let headers = await fetchRequestHeaders(includeAuth: authenticated, altCredential: altCredential, saveToken: saveToken)
+    let req = AF.request(url, method: method, parameters: params, encoder: URLEncodedFormParameterEncoder(destination: paramsLocation), headers: headers, requestModifier: reqModifier)
     
     let response = await req.serializingDecodable(decodable).response
-    if attempt < 3, case .failure(_) = response.result {
-      return await doRequest(url, authenticated: authenticated, method: method, params: params, paramsLocation: paramsLocation, decodable: decodable, attempt: attempt + 1)
+    if attempt < reqAttempts, case .failure(_) = response.result {
+      try? await Task.sleep(until: .now + .seconds(0.1), clock: .continuous)
+      return await doRequest(url, authenticated: authenticated, method: method, params: params, paramsLocation: paramsLocation, decodable: decodable, altCredential: altCredential, attempt: attempt + 1, saveToken: saveToken)
     }
     return response.result
   }
   
-  func doRequest<D: Decodable>(_ url: String, authenticated: Bool = true, method: HTTPMethod, decodable: D.Type, altCredential: RedditCredential? = nil, attempt: Int = 0) async -> Result<D, AFError> {
-    let headers = await fetchRequestHeaders(includeAuth: authenticated, altCredential: altCredential)
-    let req = AF.request(url, method: method, headers: headers, interceptor: nil, requestModifier: nil)
-    
+  func doRequest<D: Decodable>(_ url: String, authenticated: Bool = true, method: HTTPMethod, decodable: D.Type, altCredential: RedditCredential? = nil, attempt: Int = 0, saveToken: Bool = true) async -> Result<D, AFError> {
+    let headers = await fetchRequestHeaders(includeAuth: authenticated, altCredential: altCredential, saveToken: saveToken)
+    let req = AF.request(url, method: method, headers: headers, requestModifier: reqModifier)
+
     let response = await req.serializingDecodable(decodable).response
-    if attempt < 3, case .failure(_) = response.result {
-      return await doRequest(url, authenticated: authenticated, method: method, decodable: decodable, attempt: attempt + 1)
+    if attempt < reqAttempts, case .failure(_) = response.result {
+      try? await Task.sleep(until: .now + .seconds(0.1), clock: .continuous)
+      return await doRequest(url, authenticated: authenticated, method: method, decodable: decodable, altCredential: altCredential, attempt: attempt + 1, saveToken: saveToken)
     }
     return response.result
   }
   
-  func doRequest<P: Encodable>(_ url: String, authenticated: Bool = true, method: HTTPMethod, params: P, paramsLocation: URLEncodedFormParameterEncoder.Destination = .httpBody, altCredential: RedditCredential? = nil, attempt: Int = 0) async -> Result<String, AFError> {
-    let req = await AF.request(url, method: method, parameters: params, encoder: URLEncodedFormParameterEncoder(destination: paramsLocation), headers: fetchRequestHeaders(includeAuth: authenticated, altCredential: altCredential))
+  func doRequest<P: Encodable>(_ url: String, authenticated: Bool = true, method: HTTPMethod, params: P, paramsLocation: URLEncodedFormParameterEncoder.Destination = .httpBody, altCredential: RedditCredential? = nil, attempt: Int = 0, saveToken: Bool = true) async -> Result<String, AFError> {
+    let headers = await fetchRequestHeaders(includeAuth: authenticated, altCredential: altCredential, saveToken: saveToken)
+    let req = AF.request(url, method: method, parameters: params, encoder: URLEncodedFormParameterEncoder(destination: paramsLocation), headers: headers, requestModifier: reqModifier)
     let result = await req.serializingString().result
-    if attempt < 3, case .failure(_) = result {
-      return await doRequest(url, authenticated: authenticated, method: method, params: params, paramsLocation: paramsLocation, attempt: attempt + 1)
+    if attempt < reqAttempts, case .failure(_) = result {
+      return await doRequest(url, authenticated: authenticated, method: method, params: params, paramsLocation: paramsLocation, altCredential: altCredential, attempt: attempt + 1, saveToken: saveToken)
     }
     return result
   }
   
-  func doRequest(_ url: String, authenticated: Bool = true, method: HTTPMethod, paramsLocation: URLEncodedFormParameterEncoder.Destination = .httpBody, altCredential: RedditCredential? = nil, attempt: Int = 0) async -> Result<String, AFError> {
-    let req = await AF.request(url, method: method, headers: fetchRequestHeaders(includeAuth: authenticated, altCredential: altCredential))
+  func doRequest(_ url: String, authenticated: Bool = true, method: HTTPMethod, paramsLocation: URLEncodedFormParameterEncoder.Destination = .httpBody, altCredential: RedditCredential? = nil, attempt: Int = 0, saveToken: Bool = true) async -> Result<String, AFError> {
+    let headers = await fetchRequestHeaders(includeAuth: authenticated, altCredential: altCredential, saveToken: saveToken)
+    let req = AF.request(url, method: method, headers: headers)
     let result = await req.serializingString().result
-    if attempt < 3, case .failure(_) = result {
-      return await doRequest(url, authenticated: authenticated, method: method, attempt: attempt + 1)
+    if attempt < reqAttempts, case .failure(_) = result {
+      return await doRequest(url, authenticated: authenticated, method: method, paramsLocation: paramsLocation, altCredential: altCredential, attempt: attempt + 1, saveToken: saveToken)
     }
     return result
   }
   
-  func getAccessToken(_ apiAppID: String, _ apiAppSecret: String, authCode: String, callback: ((Bool) -> Void)? = nil, altCredential: RedditCredential? = nil) async -> (GetAccessTokenResponse, UserData)? {
-    let headers = await fetchRequestHeaders(includeAuth: false, altCredential: altCredential)
-    var code = authCode
-    if code.hasSuffix("#_") {
-      code = "\(code.dropLast(2))"
-    }
-    let payload = GetAccessTokenPayload(code: authCode)
-    let response = await AF.request(
-      "\(RedditAPI.redditWWWApiURLBase)/api/v1/access_token",
-      method: .post,
-      parameters: payload,
-      encoder: URLEncodedFormParameterEncoder(destination: .httpBody),
-      headers: headers)
-      .authenticate(username: apiAppID, password: apiAppSecret)
-      .serializingDecodable(GetAccessTokenResponse.self
-      ).response
-    switch response.result {
-    case .success(let data):
-      if let meData = await self.fetchMe(force: true, altCredential: altCredential) {
-        return (data, meData)
+  func injectFirstAccessTokenInto(_ credential: inout RedditCredential, authCode: String) async -> Bool {
+    if !credential.apiAppID.isEmpty && !credential.apiAppSecret.isEmpty {
+      let headers = await fetchRequestHeaders(includeAuth: false)
+      var code = authCode
+      if code.hasSuffix("#_") {
+        code = "\(code.dropLast(2))"
       }
-      return nil
-//      Task(priority: .low) {
-//        _ = await self.fetchSubs()
-//        _ = await self.fetchMyMultis()
-//      }
-    case .failure(let error):
-      print(error)
-      return nil
+      let payload = GetAccessTokenPayload(code: authCode)
+      let response = await AF.request(
+        "\(RedditAPI.redditWWWApiURLBase)/api/v1/access_token",
+        method: .post,
+        parameters: payload,
+        encoder: URLEncodedFormParameterEncoder(destination: .httpBody),
+        headers: headers
+      )
+        .authenticate(username: credential.apiAppID, password: credential.apiAppSecret, persistence: .none)
+        .serializingDecodable(GetAccessTokenResponse.self).response
+      switch response.result {
+      case .success(let data):
+        let newAcessToken = RedditCredential.AccessToken(token: data.access_token, expiration: data.expires_in, lastRefresh: Date())
+        credential.refreshToken = data.refresh_token
+        credential.accessToken = newAcessToken
+        if let meData = await self.fetchMe(force: true, altCredential: credential, saveToken: false) {
+          credential.userName = meData.name
+          if let avatar = (meData.subreddit?.icon_img ?? meData.icon_img ?? meData.snoovatar_img), let rootAvatar = rootURL(avatar)?.absoluteString {
+            credential.profilePicture = rootAvatar
+          }
+          return true
+        }
+//              Task(priority: .low) {
+//                _ = await self.fetchSubs()
+//                _ = await self.fetchMyMultis()
+//              }
+        return true
+      case .failure(let error):
+        print(error)
+        return false
+      }
     }
+    return false
   }
   
-  func monitorAuthCallback(_ apiAppID: String, _ apiAppSecret: String, _ rawUrl: URL, callback: ((Bool) -> Void)? = nil, altCredential: RedditCredential? = nil) async -> (GetAccessTokenResponse, UserData)? {
+  func monitorAuthCallback( credential: inout RedditCredential, _ rawUrl: URL) async -> Bool {
     if let url = URL(string: rawUrl.absoluteString.replacingOccurrences(of: "winstonapp://", with: "https://winston.cafe/")), url.lastPathComponent == "auth-success", let query = URLComponents(url: url, resolvingAgainstBaseURL: false), let state = query.queryItems?.first(where: { $0.name == "state" })?.value, let code = query.queryItems?.first(where: { $0.name == "code" })?.value, state == lastAuthState {
-      let res = await getAccessToken(apiAppID, apiAppSecret, authCode: code, callback: callback, altCredential: altCredential)
+      let res = await injectFirstAccessTokenInto(&credential, authCode: code)
       lastAuthState = nil
       return res
     } else {
-      return nil
+      return false
     }
   }
   
@@ -122,11 +150,11 @@ class RedditAPI: ObservableObject {
     let state: String = UUID().uuidString
     let redirect_uri: String = RedditAPI.appRedirectURI
     let duration: String = "permanent"
-    let scope: String = "identity edit flair history modconfig modflair modlog modposts modwiki mysubreddits privatemessages read report save submit subscribe vote wikiedit wikiread"
+    let scope: String = "identity,edit,flair,history,modconfig,modflair,modlog,modposts,modwiki,mysubreddits,privatemessages,read,report,save,submit,subscribe,vote,wikiedit,wikiread"
     
     lastAuthState = state
     
-    return URL(string: "https://www.reddit.com/api/v1/authorize?client_id=\(appID.trimmingCharacters(in: .whitespaces))&response_type=\(response_type)&state=\(state)&redirect_uri=\(redirect_uri)&duration=\(duration)&scope=\(scope)".addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!)!
+    return URL(string: "https://www.reddit.com/api/v1/authorize.compact?client_id=\(appID.trimmingCharacters(in: .whitespaces))&response_type=\(response_type)&state=\(state)&redirect_uri=\(redirect_uri)&duration=\(duration)&scope=\(scope)".addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!)!
   }
   
   struct RefreshAccessTokenResponse: Decodable {
