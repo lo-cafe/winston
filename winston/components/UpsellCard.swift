@@ -18,12 +18,13 @@ struct UpsellCard<Content: View>: View {
   }
   
   var body: some View {
-    ZStack{
-      content()
-        .padding()
-      closeButton
+    if showingUpsellDict[upsellName] ?? true {
+      ZStack{
+        content()
+          .padding()
+        closeButton
+      }
     }
-
   }
   
   var closeButton: some View {

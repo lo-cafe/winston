@@ -143,6 +143,9 @@ extension Defaults.Keys {
   
   static let syncKeyChainAndSettings = Key<Bool>("syncKeyChainAndSettings", default: true)
   
+  static let shinyTextAndButtons = Key<Bool>("shinyTextAndButtons", default: true)
+  
+  static let lastSeenAnnouncementTimeStamp = Key<Int>("lastSeenAnnouncementTimeStamp", default: 0)
   static let showingUpsellDict = Key<Dictionary<String, Bool>>("showingUpsellDict", default: [
     "themesUpsell_01": true
   ])

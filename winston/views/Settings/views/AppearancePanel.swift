@@ -12,6 +12,7 @@ struct AppearancePanel: View {
   @Default(.preferenceShowPostsAvatars) var preferenceShowPostsAvatars
   @Default(.preferenceShowCommentsAvatars) var preferenceShowCommentsAvatars
   @Default(.showUsernameInTabBar) var showUsernameInTabBar
+  @Default(.shinyTextAndButtons) var shinyTextAndButtons
   
   @Default(.coloredCommentNames) var coloredCommentNames
   @Default(.showUpvoteRatio) var showUpvoteRatio
@@ -39,7 +40,7 @@ struct AppearancePanel: View {
       
       Section{
         WNavigationLink(value: theme){
-            OnlineThemeItem(theme: ThemeData(theme_name: theme.metadata.name, theme_author:theme.metadata.author, theme_description: theme.metadata.description, icon: theme.metadata.icon), showDownloadButton: false)
+          OnlineThemeItem(theme: ThemeData(theme_name: theme.metadata.name, theme_author:theme.metadata.author, theme_description: theme.metadata.description,color:theme.metadata.color, icon: theme.metadata.icon), showDownloadButton: false)
         }
         .navigationDestination(for: WinstonTheme.self) { theme in
           ThemeEditPanel(themeEditedInstance: ThemeEditedInstance(theme))
@@ -86,8 +87,8 @@ struct AppearancePanel: View {
       
       Section {
         HStack(spacing: 12){
-          ListBigNavLink(value: SettingsPages.themes, iconColor: Color.blue, label: "My Themes", icon: "paintbrush.fill")
-          ListBigNavLink(value: SettingsPages.themeStore, iconColor: Color.orange, label: "Theme Store", icon: "giftcard.fill")
+          ListBigBtn(value: SettingsPages.themes,icon: "paintbrush.fill", iconColor: Color.blue, label: "My Themes")
+          ListBigBtn(value: SettingsPages.themeStore, icon: "basket.fill", iconColor: Color.orange, label: "Theme Store")
         }
       } footer: {
         if theme.id == "default" {
@@ -108,7 +109,6 @@ struct AppearancePanel: View {
         Group {
           Toggle("Show Username in Tab Bar", isOn: $showUsernameInTabBar)
           Toggle("Disable subs list letter sections", isOn: $disableAlphabetLettersSectionsInSubsList)
-          Toggle("Theme Store Tint", isOn: $themeStoreTint)
         }
         .themedListRowBG(enablePadding: true)
         .themedListDividers()
@@ -187,6 +187,11 @@ struct AppearancePanel: View {
         Toggle("Colored Usernames", isOn: $coloredCommentNames)
           .themedListRowBG(enablePadding: true)
           .themedListDividers()
+      }
+      
+      Section("Accessibility"){
+          Toggle("Theme Store Tint", isOn: $themeStoreTint)
+        Toggle("\"Shiny\" Text and Buttons", isOn: $shinyTextAndButtons)
       }
       //      .alert(isPresented: $compThumbnailSize){
       //        Alert(title: "Please refresh your Home Feed.")
