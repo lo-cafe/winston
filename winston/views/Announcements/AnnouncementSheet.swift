@@ -30,7 +30,7 @@ struct AnnouncementSheet: View {
           Divider()
           
           Section{
-            MD2(.str(announcement.description ?? ""))
+            MD(.str(announcement.description ?? ""))
           }
           
           
