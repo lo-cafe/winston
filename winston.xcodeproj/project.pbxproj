@@ -89,6 +89,7 @@
 		EC1906F52A55B88500A0300E /* nestComments.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC1906F42A55B88500A0300E /* nestComments.swift */; };
 		EC1AB2CC2B0EF23100247971 /* CredentialView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC1AB2CB2B0EF23100247971 /* CredentialView.swift */; };
 		EC1AB2CE2B0FE20800247971 /* JSONCoding.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC1AB2CD2B0FE20800247971 /* JSONCoding.swift */; };
+		EC1D0F0A2B13431B00A4FEA5 /* AccountSwitcherTarget.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC1D0F092B13431B00A4FEA5 /* AccountSwitcherTarget.swift */; };
 		EC1E7B642A81507B00DB459A /* UIShortTapGestureRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC1E7B632A81507B00DB459A /* UIShortTapGestureRecognizer.swift */; };
 		EC1E7B662A815BC100DB459A /* LightBoxElementView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC1E7B652A815BC100DB459A /* LightBoxElementView.swift */; };
 		EC1E7B682A815BE100DB459A /* LightboxButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC1E7B672A815BE100DB459A /* LightboxButton.swift */; };
@@ -129,6 +130,8 @@
 		EC31882B2A94439D00CB3738 /* mediaExtractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC31882A2A94439D00CB3738 /* mediaExtractor.swift */; };
 		EC31882D2A94736E00CB3738 /* MediaPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC31882C2A94736E00CB3738 /* MediaPresenter.swift */; };
 		EC3188322A94770700CB3738 /* GalleryThumb.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC3188312A94770700CB3738 /* GalleryThumb.swift */; };
+		EC31DB182B12F0EB00A777ED /* CircleWave.metal in Sources */ = {isa = PBXBuildFile; fileRef = EC31DB172B12F0EB00A777ED /* CircleWave.metal */; };
+		EC31DB1A2B12F11C00A777ED /* Water.metal in Sources */ = {isa = PBXBuildFile; fileRef = EC31DB192B12F11C00A777ED /* Water.metal */; };
 		EC3AC9CD2AAC9A970078EC78 /* SubredditSample.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC3AC9CC2AAC9A970078EC78 /* SubredditSample.swift */; };
 		EC3AC9CF2AACB2A30078EC78 /* LabeledSlider.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC3AC9CE2AACB2A30078EC78 /* LabeledSlider.swift */; };
 		EC3AC9D22AACC3DB0078EC78 /* DebouncedOnChange in Frameworks */ = {isa = PBXBuildFile; productRef = EC3AC9D12AACC3DB0078EC78 /* DebouncedOnChange */; };
@@ -316,6 +319,10 @@
 		ECD1FC072A56D46D00723016 /* ObservableArray.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECD1FC062A56D46D00723016 /* ObservableArray.swift */; };
 		ECD1FC092A570B4F00723016 /* PostFloatingPill.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECD1FC082A570B4F00723016 /* PostFloatingPill.swift */; };
 		ECD2A3772A69C26900EDD02D /* consts.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECD2A3762A69C26900EDD02D /* consts.swift */; };
+		ECD5EE932B11D564002CA158 /* AccountSwitcherGradientBackground.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECD5EE922B11D564002CA158 /* AccountSwitcherGradientBackground.swift */; };
+		ECD5EE952B11D585002CA158 /* AccountSwitcherFingerLight.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECD5EE942B11D585002CA158 /* AccountSwitcherFingerLight.swift */; };
+		ECD5EE972B11D59F002CA158 /* AccountSwitcherView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECD5EE962B11D59F002CA158 /* AccountSwitcherView.swift */; };
+		ECD5EE992B11E7A1002CA158 /* TakeSnapshotView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECD5EE982B11E7A1002CA158 /* TakeSnapshotView.swift */; };
 		ECDBA8C32A4A820800FB42DB /* Post.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECDBA8C22A4A820800FB42DB /* Post.swift */; };
 		ECDBA8C52A4A835800FB42DB /* Subreddit.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECDBA8C42A4A835800FB42DB /* Subreddit.swift */; };
 		ECDBA8C72A4A83DB00FB42DB /* SubredditPosts.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECDBA8C62A4A83DB00FB42DB /* SubredditPosts.swift */; };
@@ -362,6 +369,10 @@
 		ECE4497F2A6896B700E2A3B7 /* SubscribeButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECE4497E2A6896B700E2A3B7 /* SubscribeButton.swift */; };
 		ECE449812A689C8A00E2A3B7 /* subscribe.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECE449802A689C8A00E2A3B7 /* subscribe.swift */; };
 		ECE449832A68A22200E2A3B7 /* favorite.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECE449822A68A22200E2A3B7 /* favorite.swift */; };
+		ECE5AE122B11F66D00DA2020 /* Wave.metal in Sources */ = {isa = PBXBuildFile; fileRef = ECE5AE112B11F66C00DA2020 /* Wave.metal */; };
+		ECE5AE152B11FD0A00DA2020 /* Dust.sks in Resources */ = {isa = PBXBuildFile; fileRef = ECE5AE132B11FD0A00DA2020 /* Dust.sks */; };
+		ECE5AE162B11FD0A00DA2020 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = ECE5AE142B11FD0A00DA2020 /* Assets.xcassets */; };
+		ECE5AE182B11FE2600DA2020 /* DustScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECE5AE172B11FE2600DA2020 /* DustScene.swift */; };
 		ECE731122AE042DF0059065B /* WinstonCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECE731112AE042DF0059065B /* WinstonCollectionView.swift */; };
 		ECEFC25B2A5DAA970003C6C4 /* searchUsers.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECEFC25A2A5DAA970003C6C4 /* searchUsers.swift */; };
 		ECEFC25D2A5DADDC0003C6C4 /* searchInSubreddit.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECEFC25C2A5DADDC0003C6C4 /* searchInSubreddit.swift */; };
@@ -504,6 +515,7 @@
 		EC1906F42A55B88500A0300E /* nestComments.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = nestComments.swift; sourceTree = "<group>"; };
 		EC1AB2CB2B0EF23100247971 /* CredentialView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CredentialView.swift; sourceTree = "<group>"; };
 		EC1AB2CD2B0FE20800247971 /* JSONCoding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONCoding.swift; sourceTree = "<group>"; };
+		EC1D0F092B13431B00A4FEA5 /* AccountSwitcherTarget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountSwitcherTarget.swift; sourceTree = "<group>"; };
 		EC1E7B632A81507B00DB459A /* UIShortTapGestureRecognizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIShortTapGestureRecognizer.swift; sourceTree = "<group>"; };
 		EC1E7B652A815BC100DB459A /* LightBoxElementView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightBoxElementView.swift; sourceTree = "<group>"; };
 		EC1E7B672A815BE100DB459A /* LightboxButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightboxButton.swift; sourceTree = "<group>"; };
@@ -542,6 +554,8 @@
 		EC31882A2A94439D00CB3738 /* mediaExtractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = mediaExtractor.swift; sourceTree = "<group>"; };
 		EC31882C2A94736E00CB3738 /* MediaPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaPresenter.swift; sourceTree = "<group>"; };
 		EC3188312A94770700CB3738 /* GalleryThumb.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GalleryThumb.swift; sourceTree = "<group>"; };
+		EC31DB172B12F0EB00A777ED /* CircleWave.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = CircleWave.metal; sourceTree = "<group>"; };
+		EC31DB192B12F11C00A777ED /* Water.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = Water.metal; sourceTree = "<group>"; };
 		EC3AC9CC2AAC9A970078EC78 /* SubredditSample.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubredditSample.swift; sourceTree = "<group>"; };
 		EC3AC9CE2AACB2A30078EC78 /* LabeledSlider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LabeledSlider.swift; sourceTree = "<group>"; };
 		EC3AC9D32AACCBE40078EC78 /* LabeledTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LabeledTextField.swift; sourceTree = "<group>"; };
@@ -717,6 +731,10 @@
 		ECD1FC062A56D46D00723016 /* ObservableArray.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObservableArray.swift; sourceTree = "<group>"; };
 		ECD1FC082A570B4F00723016 /* PostFloatingPill.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostFloatingPill.swift; sourceTree = "<group>"; };
 		ECD2A3762A69C26900EDD02D /* consts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = consts.swift; sourceTree = "<group>"; };
+		ECD5EE922B11D564002CA158 /* AccountSwitcherGradientBackground.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountSwitcherGradientBackground.swift; sourceTree = "<group>"; };
+		ECD5EE942B11D585002CA158 /* AccountSwitcherFingerLight.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountSwitcherFingerLight.swift; sourceTree = "<group>"; };
+		ECD5EE962B11D59F002CA158 /* AccountSwitcherView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountSwitcherView.swift; sourceTree = "<group>"; };
+		ECD5EE982B11E7A1002CA158 /* TakeSnapshotView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TakeSnapshotView.swift; sourceTree = "<group>"; };
 		ECDBA8C22A4A820800FB42DB /* Post.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Post.swift; sourceTree = "<group>"; };
 		ECDBA8C42A4A835800FB42DB /* Subreddit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Subreddit.swift; sourceTree = "<group>"; };
 		ECDBA8C62A4A83DB00FB42DB /* SubredditPosts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubredditPosts.swift; sourceTree = "<group>"; };
@@ -759,6 +777,10 @@
 		ECE4497E2A6896B700E2A3B7 /* SubscribeButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscribeButton.swift; sourceTree = "<group>"; };
 		ECE449802A689C8A00E2A3B7 /* subscribe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = subscribe.swift; sourceTree = "<group>"; };
 		ECE449822A68A22200E2A3B7 /* favorite.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = favorite.swift; sourceTree = "<group>"; };
+		ECE5AE112B11F66C00DA2020 /* Wave.metal */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.metal; path = Wave.metal; sourceTree = "<group>"; };
+		ECE5AE132B11FD0A00DA2020 /* Dust.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = Dust.sks; sourceTree = "<group>"; };
+		ECE5AE142B11FD0A00DA2020 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		ECE5AE172B11FE2600DA2020 /* DustScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DustScene.swift; sourceTree = "<group>"; };
 		ECE731112AE042DF0059065B /* WinstonCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WinstonCollectionView.swift; sourceTree = "<group>"; };
 		ECEFC25A2A5DAA970003C6C4 /* searchUsers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = searchUsers.swift; sourceTree = "<group>"; };
 		ECEFC25C2A5DADDC0003C6C4 /* searchInSubreddit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = searchInSubreddit.swift; sourceTree = "<group>"; };
@@ -1086,6 +1108,8 @@
 		EC593ACB2A4673B2002D6454 = {
 			isa = PBXGroup;
 			children = (
+				ECE5AE132B11FD0A00DA2020 /* Dust.sks */,
+				ECE5AE142B11FD0A00DA2020 /* Assets.xcassets */,
 				EC6495AA2A99A52800B1852C /* managed */,
 				ECA30A152A5FA06D00BB19D1 /* TestFlight */,
 				EC22A3152A5B74AC0062A112 /* ci_scripts */,
@@ -1110,6 +1134,7 @@
 		EC593AD62A4673B2002D6454 /* winston */ = {
 			isa = PBXGroup;
 			children = (
+				ECE5AE102B11F66500DA2020 /* shaders */,
 				EC7078F52ACAD93800A83240 /* assets */,
 				EC8B814C2AC96506000DC827 /* extensions */,
 				ECC10C752A4A8746009124BE /* components */,
@@ -1476,6 +1501,7 @@
 		ECC10C752A4A8746009124BE /* components */ = {
 			isa = PBXGroup;
 			children = (
+				ECD5EE8F2B11D523002CA158 /* TabBarOverlay */,
 				EC3188302A9476BE00CB3738 /* Media */,
 				ECE00EE52A8D6A19000A6E21 /* TabBar */,
 				EC8F34952A6F5A5400EB8249 /* Modals */,
@@ -1518,7 +1544,6 @@
 				EC9BB1BC2A8ACD300070CD97 /* AlphabetJumper.swift */,
 				ECAD0F2B2A8B4CD4001C88B5 /* Markdownosaur.swift */,
 				EC3188052A918FF300CB3738 /* URLImage.swift */,
-				EC31880A2A91AE6C00CB3738 /* MorphingGradientCircleScene.swift */,
 				EC50A5A92A9EF59200DE8122 /* EnhancedVideoPlayer.swift */,
 				EC77B1822AA4021D00C482DF /* DefaultDestinationInjector.swift */,
 				ECE08B852AAA43F400F84DC9 /* NiceDivider.swift */,
@@ -1527,7 +1552,6 @@
 				EC3AC9D62AAD0E300078EC78 /* TagsOptionsCarousel.swift */,
 				65CDA3652ACB0F3A0001EC44 /* LiveTextInteraction.swift */,
 				EC8B77A32AB4D89A00875C98 /* Dividers.swift */,
-				EC91C8532AB9601000F2AD30 /* TabBarOverlay.swift */,
 				EC46E9272ABA3B05001BC068 /* WNavigationLink.swift */,
 				EC46E92D2ABA7FC1001BC068 /* BuiltInBrowser.swift */,
 				EC3B32402AC64DDE002C1291 /* Waterfall.swift */,
@@ -1543,6 +1567,7 @@
 				657643772ACF1D2100805641 /* FittiingScrollView.swift */,
 				65CDA3632ACB0F140001EC44 /* ShareSheet.swift */,
 				65C169E92AFFA578007764D5 /* MD2.swift */,
+				ECD5EE982B11E7A1002CA158 /* TakeSnapshotView.swift */,
 			);
 			path = components;
 			sourceTree = "<group>";
@@ -1555,6 +1580,20 @@
 				ECF1478E2AB620A400572352 /* CommentSample.swift */,
 			);
 			path = modelSamples;
+			sourceTree = "<group>";
+		};
+		ECD5EE8F2B11D523002CA158 /* TabBarOverlay */ = {
+			isa = PBXGroup;
+			children = (
+				EC31880A2A91AE6C00CB3738 /* MorphingGradientCircleScene.swift */,
+				ECD5EE942B11D585002CA158 /* AccountSwitcherFingerLight.swift */,
+				ECD5EE922B11D564002CA158 /* AccountSwitcherGradientBackground.swift */,
+				EC1D0F092B13431B00A4FEA5 /* AccountSwitcherTarget.swift */,
+				ECD5EE962B11D59F002CA158 /* AccountSwitcherView.swift */,
+				EC91C8532AB9601000F2AD30 /* TabBarOverlay.swift */,
+				ECE5AE172B11FE2600DA2020 /* DustScene.swift */,
+			);
+			path = TabBarOverlay;
 			sourceTree = "<group>";
 		};
 		ECE00EE52A8D6A19000A6E21 /* TabBar */ = {
@@ -1607,6 +1646,16 @@
 				EC2D27642A4FCE42006444D6 /* SubredditInfo.swift */,
 			);
 			path = SubredditInfo;
+			sourceTree = "<group>";
+		};
+		ECE5AE102B11F66500DA2020 /* shaders */ = {
+			isa = PBXGroup;
+			children = (
+				ECE5AE112B11F66C00DA2020 /* Wave.metal */,
+				EC31DB172B12F0EB00A777ED /* CircleWave.metal */,
+				EC31DB192B12F11C00A777ED /* Water.metal */,
+			);
+			path = shaders;
 			sourceTree = "<group>";
 		};
 		ECEFC26D2A5F300E0003C6C4 /* LightBoxImage */ = {
@@ -1790,7 +1839,9 @@
 				EC593ADC2A4673B3002D6454 /* Assets.xcassets in Resources */,
 				EC6CBE332A7D6BF80089EAA0 /* README.md in Resources */,
 				65E45A6E2AFD3C1D007DBBFC /* changelog.json in Resources */,
+				ECE5AE152B11FD0A00DA2020 /* Dust.sks in Resources */,
 				ECA30A172A5FA08500BB19D1 /* WhatToTest.en-US.txt in Resources */,
+				ECE5AE162B11FD0A00DA2020 /* Assets.xcassets in Resources */,
 				EC051C472ACAF2DC00E9D9ED /* themeFileIcon.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1825,6 +1876,7 @@
 				ECEFC2712A5F489E0003C6C4 /* fullscreenPresent.swift in Sources */,
 				EC1312AB2AB5234000C95D3A /* ThemeForegroundEdit.swift in Sources */,
 				EC620EF02B0CD5A400206A66 /* UnseenType.swift in Sources */,
+				ECD5EE952B11D585002CA158 /* AccountSwitcherFingerLight.swift in Sources */,
 				ECF5B3052AC837F500355589 /* IconManager.swift in Sources */,
 				ECE285A12A50EC9E009CF9DD /* Badge.swift in Sources */,
 				EC0854192A4BFC4600E88389 /* CommentLink.swift in Sources */,
@@ -1845,6 +1897,7 @@
 				EC620EDC2B0CD4BE00206A66 /* SubPostsListTheme.swift in Sources */,
 				EC1AB2CC2B0EF23100247971 /* CredentialView.swift in Sources */,
 				ECEFC2652A5DE5910003C6C4 /* SubredditLink.swift in Sources */,
+				EC1D0F0A2B13431B00A4FEA5 /* AccountSwitcherTarget.swift in Sources */,
 				EC46E92E2ABA7FC1001BC068 /* BuiltInBrowser.swift in Sources */,
 				EC8F34662A6A348F00EB8249 /* SwipeActions.swift in Sources */,
 				EC3188252A92F42800CB3738 /* MultiLink.swift in Sources */,
@@ -1854,6 +1907,7 @@
 				ECC68D412A799CDD005BC7B4 /* SelectableText.swift in Sources */,
 				ECDD515C2A73A90700FD9498 /* PreviewLink.swift in Sources */,
 				652012062AC322BC005DD899 /* fetchThemeStatus.swift in Sources */,
+				ECD5EE972B11D59F002CA158 /* AccountSwitcherView.swift in Sources */,
 				652012022AC31E7C005DD899 /* ThemeStoreUploadSheet.swift in Sources */,
 				EC5EDA712A4DA94A00140A08 /* SwipeActionsOld.swift in Sources */,
 				EC3AC9F02AB39BE50078EC78 /* FeedThemingPanel.swift in Sources */,
@@ -1910,6 +1964,7 @@
 				ECD1FC072A56D46D00723016 /* ObservableArray.swift in Sources */,
 				EC8F34A12A6FC99000EB8249 /* updatePostsInBox.swift in Sources */,
 				6543D8892A8D10B900A1FFF9 /* scaleEffectButtonStyle.swift in Sources */,
+				ECD5EE992B11E7A1002CA158 /* TakeSnapshotView.swift in Sources */,
 				EC3AC9EB2AB34E6A0078EC78 /* closest.swift in Sources */,
 				EC50B0E42A84563C00AB8F72 /* SwipeAction.swift in Sources */,
 				ECA5E6482AA5D36E00F6C7A5 /* resetApp.swift in Sources */,
@@ -1929,6 +1984,7 @@
 				EC8B77A22AB4D5F000875C98 /* LineThemeEditor.swift in Sources */,
 				ECF2C44B2AE81D5F004FCA79 /* DispatchQueue.swift in Sources */,
 				EC3AC9CF2AACB2A30078EC78 /* LabeledSlider.swift in Sources */,
+				ECD5EE932B11D564002CA158 /* AccountSwitcherGradientBackground.swift in Sources */,
 				659F68022A84E32300989300 /* VotesCluster.swift in Sources */,
 				ECA86A812AB94DA200C31EC6 /* SubredditsStack.swift in Sources */,
 				EC63734D2A79133E000A03A3 /* Onboarding1OpeningSettings.swift in Sources */,
@@ -2059,6 +2115,7 @@
 				ECF064EB2A7F2AC50088C2C0 /* Router.swift in Sources */,
 				EC97F0282ACB006A001814A6 /* importTheme.swift in Sources */,
 				ECE2859B2A5010E2009CF9DD /* DataBlock.swift in Sources */,
+				ECE5AE122B11F66D00DA2020 /* Wave.metal in Sources */,
 				EC2218FA2AD380AC001A3261 /* Prepend.swift in Sources */,
 				EC75D7432AC96D0200594250 /* getEnabledTheme.swift in Sources */,
 				ECF974432AA170D300C3BC75 /* TipJar.swift in Sources */,
@@ -2120,6 +2177,7 @@
 				65010D032AC70ADD00A8F611 /* getDownloadURL.swift in Sources */,
 				EC6373572A791A2D000A03A3 /* Onboarding5GettingSecret.swift in Sources */,
 				ECF1478F2AB620A400572352 /* CommentSample.swift in Sources */,
+				EC31DB182B12F0EB00A777ED /* CircleWave.metal in Sources */,
 				ECE08B682AA9E62900F84DC9 /* AvatarTheme.swift in Sources */,
 				EC08541B2A4BFEB300E88389 /* User.swift in Sources */,
 				BB0D15272B0698FD00668448 /* MixedContentFeedView.swift in Sources */,
@@ -2156,6 +2214,7 @@
 				EC6373552A791855000A03A3 /* Onboarding4GettingAppID.swift in Sources */,
 				ECAEFF692A77DE2B0052FCD3 /* StringEmojize.swift in Sources */,
 				EC58D45A2AC02BF500FF5B6B /* SubsNStuffLine.swift in Sources */,
+				ECE5AE182B11FE2600DA2020 /* DustScene.swift in Sources */,
 				ECAA8B8B2A766E3900D9D636 /* ListBigBtn.swift in Sources */,
 				EC2D27652A4FCE42006444D6 /* SubredditInfo.swift in Sources */,
 				EC0854132A4BE13000E88389 /* PostView.swift in Sources */,
@@ -2167,6 +2226,7 @@
 				BB0D15292B069A9700668448 /* getItemId.swift in Sources */,
 				EC0854432A4D6A4800E88389 /* MasterButton.swift in Sources */,
 				ECAA23822A9EC34100874731 /* inlineSymbol.swift in Sources */,
+				EC31DB1A2B12F11C00A777ED /* Water.metal in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

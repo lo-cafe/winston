@@ -200,8 +200,10 @@ class RedditCredentialsManager: ObservableObject {
   
   func deleteCred(_ cred: RedditCredential) {
     DispatchQueue.main.async {
-      self.credentials = self.credentials.filter { $0.id != cred.id }
-      self.syncCredentialsWithKeychain()
+      withAnimation {
+        self.credentials = self.credentials.filter { $0.id != cred.id }
+      }
+      Task(priority: .background) { self.syncCredentialsWithKeychain() }
     }
   }
   
@@ -209,8 +211,8 @@ class RedditCredentialsManager: ObservableObject {
   
   func wipeAllCredentials() {
     DispatchQueue.main.async {
-      self.credentials.removeAll()
-      try? Self.keychain.removeAll()
+      withAnimation { self.credentials.removeAll() }
+      Task(priority: .background) { try? Self.keychain.removeAll() }
     }
   }
 }

@@ -58,7 +58,7 @@ extension Defaults.Keys {
   static let collapseAutoModerator = Key<Bool>("collapseAutoModerator", default: false)
   static let preferredCommentSort = Key<CommentSortOption>("preferredCommentSort", default: .confidence)
   
-  // Compact Mode Settings
+  // CompdismissKeyboardt Mode Settings
   static let compactMode = Key<Bool>("compactMode", default: false)
   static let compThumbnailSize = Key<ThumbnailSizeModifier>("compThumbnailSize", default: .small)
   static let thumbnailPositionRight = Key<Bool>("thumbnailPositionRight", default: true)

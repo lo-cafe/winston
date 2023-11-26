@@ -278,6 +278,9 @@ struct BigInput: View {
             .brightness(focused ? cs == .dark ? 0.1 : 0.1 : 0)
             .shadow(color: .black.opacity(focused ? cs == .dark ? 0.25 : 0.15 : 0), radius: focused ? 12 : 0, y: focused ? 6 : 0)
             .animation(.easeOut.speed(2.5), value: focused)
+            .onTapGesture {
+              focused = true
+            }
         )
     }
   }
