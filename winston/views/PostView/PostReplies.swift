@@ -147,7 +147,7 @@ struct PostReplies: View {
           .id("no-comments-placeholder")
       }
     }.onAppear() {
-      seenComments = post.data?.winstonSeenComments
+      seenComments = post.winstonData?.seenComments
     }
   }
 }

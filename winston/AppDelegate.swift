@@ -14,11 +14,13 @@ import Nuke
 
 class AppDelegate: UIResponder, UIApplicationDelegate {
   func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
-    try? AVAudioSession.sharedInstance().setCategory(.playback, mode: .default, options: [.mixWithOthers])
+    setAudioToMixWithOthers()
     return true
   }
-  
+    
   func application(_ application: UIApplication, configurationForConnecting connectingSceneSession: UISceneSession, options: UIScene.ConnectionOptions) -> UISceneConfiguration {
+    setAudioToMixWithOthers()
+    
     if let shortcutItem = options.shortcutItem {
       shortcutItemToProcess = shortcutItem
     }
@@ -28,13 +30,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     return sceneConfiguration
   }
+  
   func applicationDidFinishLaunching(_ application: UIApplication) {
-    do {
-      let audioSession = AVAudioSession.sharedInstance()
-      try audioSession.setCategory(.playback, options: [.mixWithOthers])
-    } catch {
-      print("Error setting audio session to mix with others")
-    }
+    setAudioToMixWithOthers()
     
     let defaultPipeline = ImagePipeline { config in
       config.dataCache = try? DataCache(name: "lo.cafe.winston.datacache")
@@ -53,6 +51,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 //      config.isRateLimiterEnabled = false
     }
     ImagePipeline.shared = defaultPipeline
+  }
+  
+  func setAudioToMixWithOthers() {
+    do {
+      let audioSession = AVAudioSession.sharedInstance()
+      try audioSession.setCategory(.playback, options: [.mixWithOthers])
+    } catch {
+      print("Error setting audio session to mix with others")
+    }
   }
 }
 

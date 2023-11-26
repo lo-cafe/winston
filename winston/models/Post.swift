@@ -28,17 +28,6 @@ extension Post {
   
   convenience init(id: String, api: RedditAPI) {
     self.init(id: id, api: api, typePrefix: "\(Post.prefix)_")
-    
-    let context = PersistenceController.shared.container.newBackgroundContext()
-    let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "SeenPost")
-    fetchRequest.predicate = NSPredicate(format: "postID == %@", id)
-    if let seenPost = (context.performAndWait { (try? context.fetch(fetchRequest) as? [SeenPost])?.first }) {
-      context.performAndWait {
-        self.data?.winstonSeen = true
-        self.data?.winstonSeenCommentCount = Int(seenPost.numComments)
-        self.data?.winstonSeenComments = seenPost.seenComments
-      }
-    }
   }
   
   func setupWinstonData(data: PostData? = nil, winstonData: PostWinstonData? = nil, contentWidth: Double = UIScreen.screenWidth, secondary: Bool = false, theme: WinstonTheme, fetchSub: Bool = false, fetchAvatar: Bool = true) {
@@ -48,26 +37,29 @@ extension Post {
       if self.winstonData == nil { self.winstonData = PostWinstonData() }
       self.winstonData?.permaURL = URL(string: "https://reddit.com\(data.permalink.escape.urlEncoded)")
       
-      let extractedMedia = mediaExtractor(compact: compact, contentWidth: contentWidth, data, theme: theme)
-      let extractedMediaForcedNormal = mediaExtractor(compact: false, contentWidth: contentWidth, data, theme: theme)
-      
-      self.winstonData?.extractedMedia = extractedMedia
-      self.winstonData?.extractedMediaForcedNormal = extractedMediaForcedNormal
-      
-      self.winstonData?.postDimensions = getPostDimensions(post: self, winstonData: self.winstonData, columnWidth: contentWidth, secondary: secondary, rawTheme: theme)
-      self.winstonData?.postDimensionsForcedNormal = getPostDimensions(post: self, winstonData: self.winstonData, columnWidth: contentWidth, secondary: secondary, rawTheme: theme, compact: false)
+      var extractedMedia = mediaExtractor(compact: compact, contentWidth: contentWidth, data, theme: theme)
+      var extractedMediaForcedNormal = mediaExtractor(compact: false, contentWidth: contentWidth, data, theme: theme)
       
       switch extractedMedia {
       case .streamable(let streamable):
-        Task(priority: .background) {
-          if let video = await loadStreamableMedia(streamable: streamable) {
-            DispatchQueue.main.async {
-              withAnimation {
-                self.winstonData?.extractedMedia = .video(video)
-                self.winstonData?.extractedMediaForcedNormal = .video(video)
-                
-                self.winstonData?.postDimensions = getPostDimensions(post: self, winstonData: self.winstonData, columnWidth: contentWidth, secondary: secondary, rawTheme: theme)
-                self.winstonData?.postDimensionsForcedNormal = getPostDimensions(post: self, winstonData: self.winstonData, columnWidth: contentWidth, secondary: secondary, rawTheme: theme, compact: false)
+        if let streamableCached = Caches.streamable.get(key: streamable.shortCode) {
+          let sharedVideo = SharedVideo.get(url: streamableCached.url, size: streamableCached.size)
+          
+          extractedMedia = .video(sharedVideo)
+          extractedMediaForcedNormal = .video(sharedVideo)
+        } else {
+          Task(priority: .background) {
+            if let video = await loadStreamableMedia(streamable: streamable) {
+              Caches.streamable.addKeyValue(key: streamable.shortCode, data: { StreamableCached(url: video.url, size: video.size) }, expires: Date().dateByAdding(1, .day).date)
+              
+              DispatchQueue.main.async {
+                withAnimation {
+                  self.winstonData?.extractedMedia = .video(video)
+                  self.winstonData?.extractedMediaForcedNormal = .video(video)
+                  
+                  self.winstonData?.postDimensions = getPostDimensions(post: self, winstonData: self.winstonData, columnWidth: contentWidth, secondary: secondary, rawTheme: theme)
+                  self.winstonData?.postDimensionsForcedNormal = getPostDimensions(post: self, winstonData: self.winstonData, columnWidth: contentWidth, secondary: secondary, rawTheme: theme, compact: false)
+                }
               }
             }
           }
@@ -75,6 +67,12 @@ extension Post {
       default:
         break
       }
+      
+      self.winstonData?.extractedMedia = extractedMedia
+      self.winstonData?.extractedMediaForcedNormal = extractedMediaForcedNormal
+      
+      self.winstonData?.postDimensions = getPostDimensions(post: self, winstonData: self.winstonData, columnWidth: contentWidth, secondary: secondary, rawTheme: theme)
+      self.winstonData?.postDimensionsForcedNormal = getPostDimensions(post: self, winstonData: self.winstonData, columnWidth: contentWidth, secondary: secondary, rawTheme: theme, compact: false)
       
       self.winstonData?.titleAttr = createTitleTagsAttrString(titleTheme: theme.postLinks.theme.titleText, postData: data, textColor: theme.postLinks.theme.titleText.color.cs(cs).color())
       
@@ -121,8 +119,8 @@ extension Post {
           
           if (isSeen) {
             let foundPost = results.first(where: { $0.postID == data.id })
-            newPost.data?.winstonSeenCommentCount = Int(foundPost?.numComments ?? 0)
-            newPost.data?.winstonSeenComments = foundPost?.seenComments
+            newPost.winstonData?.seenCommentsCount = Int(foundPost?.numComments ?? 0)
+            newPost.winstonData?.seenComments = foundPost?.seenComments
           }
           
           return newPost
@@ -160,7 +158,7 @@ extension Post {
       if let mp4 = data.files?.mp4Mobile ?? data.files?.mp4 {
         if let videoURL = URL(string: mp4.url) {
           let size =  CGSize(width: mp4.width, height: mp4.height)
-          return SharedVideo(url: videoURL, size: size)
+          return SharedVideo.get(url: videoURL, size: size)
         }
       }
     case .failure:
@@ -225,7 +223,7 @@ extension Post {
     Defaults[.filteredSubreddits] = filteredSubreddits
   }
   
-  func saveCommentCount(numComments: Int) async -> Void {
+  func saveCommentsCount(numComments: Int) async -> Void {
     let context = PersistenceController.shared.container.viewContext
     
     let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "SeenPost")
@@ -239,7 +237,19 @@ extension Post {
           
           DispatchQueue.main.async {
             withAnimation {
-              self.data?.winstonSeenCommentCount = numComments
+              self.winstonData?.seenCommentsCount = numComments
+            }
+          }
+        } else {
+          let newSeenPost = SeenPost(context: context)
+          newSeenPost.postID = self.id
+          newSeenPost.numComments = Int32(numComments)
+          try? context.save()
+      
+          DispatchQueue.main.async {
+            withAnimation {
+              self.data?.winstonSeen = true
+              self.winstonData?.seenCommentsCount = numComments
             }
           }
         }
@@ -270,7 +280,7 @@ extension Post {
           
           DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
             withAnimation {
-              self.data?.winstonSeenComments = finalSeen
+              self.winstonData?.seenComments = finalSeen
             }
           }
         }
@@ -302,7 +312,7 @@ extension Post {
           
           DispatchQueue.main.async {
             withAnimation {
-              self.data?.winstonSeenComments = finalSeen
+              self.winstonData?.seenComments = finalSeen
             }
           }
         }
@@ -401,10 +411,6 @@ extension Post {
       if let post = response[0] {
         switch post {
         case .first(let actualData):
-          if let numComments = actualData.data?.children?[0].data?.num_comments {
-            await saveCommentCount(numComments: numComments)
-          }
-          
           if full {
             await MainActor.run {
               let newData = actualData.data?.children?[0].data
@@ -523,6 +529,8 @@ class PostWinstonData: Hashable, ObservableObject {
   @Published var videoMedia: SharedVideo?
   @Published var postBodyAttr: NSAttributedString?
   @Published var media: PostWinstonDataMedia?
+  @Published var seenCommentsCount: Int? = nil
+  @Published var seenComments: String? = nil
   
   func hash(into hasher: inout Hasher) {
     hasher.combine(permaURL)
@@ -647,9 +655,6 @@ struct PostData: GenericRedditEntityDataType {
   }
   
   var votesKit: VotesKit { VotesKit(ups: ups, ratio: upvote_ratio, likes: likes, id: id) }
-  
-  var winstonSeenCommentCount: Int? = nil
-  var winstonSeenComments: String? = nil
 }
 
 struct GalleryData: Codable, Hashable {

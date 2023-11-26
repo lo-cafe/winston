@@ -14,6 +14,23 @@ struct SharedVideo: Equatable {
   var url: URL
   var size: CGSize
   
+  static func get(url: URL, size: CGSize) -> SharedVideo {
+    let cacheKey =  SharedVideo.cacheKey(url: url, size: size)
+    
+    if let sharedVideo = Caches.videos.get(key: cacheKey) {
+      return sharedVideo
+    } else {
+      let sharedVideo = SharedVideo(url: url, size: size)
+      Caches.videos.addKeyValue(key: cacheKey, data: { sharedVideo }, expires: Date().dateByAdding(1, .day).date)
+      
+      return sharedVideo
+    }
+  }
+  
+  static func cacheKey(url: URL, size: CGSize) -> String {
+    return "\(url.absoluteString):\(size.width)x\(size.height)"
+  }
+  
   init(url: URL, size: CGSize) {
     self.url = url
     self.size = size
