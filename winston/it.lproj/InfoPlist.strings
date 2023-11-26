@@ -1,0 +1,18 @@
+/* Bundle display name */
+"CFBundleDisplayName" = "Winston";
+
+/* Bundle name */
+"CFBundleName" = "winston";
+
+/* Privacy - Documents Folder Usage Description */
+"NSDocumentsFolderUsageDescription" = "A Winston è necessario l'accesso ai tuoi documenti per salvare/importare temi.";
+
+/* Privacy - Face ID Usage Description */
+"NSFaceIDUsageDescription" = "Usa FaceID per bloccare e sbloccare Winston";
+
+/* Privacy - Photo Library Usage Description */
+"NSPhotoLibraryUsageDescription" = "A Winston serve l'accesso alla tua libreria per poter scaricare le immagini.";
+
+/* (No Comment) */
+"Winston theme file" = "File tema di Winston";
+
