@@ -109,6 +109,7 @@ extension Defaults.Keys {
   static let showSavedFeed = Key<Bool>("showSavedFeed", default: true)
   static let enableSwipeAnywhere = Key<Bool>("enableSwipeAnywhere", default: false)
   static let autoPlayVideos = Key<Bool>("autoPlayVideos", default: true)
+	static let muteVideos = Key<Bool>("muteVideos", default: false)
   static let loopVideos = Key<Bool>("loopVideos", default: true)
   static let showSubsAtTop = Key<Bool>("showSubsAtTop", default: false)
   static let showTitleAtTop = Key<Bool>("showTitleAtTop", default: true)
