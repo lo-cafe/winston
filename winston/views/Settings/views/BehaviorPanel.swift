@@ -31,6 +31,7 @@ struct BehaviorPanel: View {
   @Default(.perSubredditSort) private var perSubredditSort
   @Default(.perPostSort) private var perPostSort
   @Default(.doLiveText) var doLiveText
+  @Default(.tappableFeedMedia) var tappableFeedMedia
 
   
   @Environment(\.useTheme) private var theme
@@ -108,6 +109,7 @@ struct BehaviorPanel: View {
           Toggle("Blur NSFW in opened posts", isOn: $blurPostNSFW)
           Toggle("Blur NSFW", isOn: $blurPostLinkNSFW)
           Toggle("Save sort per subreddit", isOn: $perSubredditSort)
+          Toggle("Open media from feed", isOn: $tappableFeedMedia)
           Menu {
             ForEach(SubListingSortOption.allCases) { opt in
               if case .top(_) = opt {

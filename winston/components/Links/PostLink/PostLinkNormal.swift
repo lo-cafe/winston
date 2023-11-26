@@ -53,6 +53,7 @@ struct PostLinkNormal: View, Equatable, Identifiable {
   var cs: ColorScheme
   
   @Default(.showAuthorOnPostLinks) private var showAuthorOnPostLinks
+  @Default(.tappableFeedMedia) private var tappableFeedMedia
   
   //  @Environment(\.useTheme) private var selectedTheme
   
@@ -93,6 +94,7 @@ struct PostLinkNormal: View, Equatable, Identifiable {
     if let data = post.data {
       if let extractedMedia = winstonData.extractedMedia {
         MediaPresenter(postDimensions: $winstonData.postDimensions, controller: controller, postTitle: data.title, badgeKit: data.badgeKit, avatarImageRequest: winstonData.avatarImageRequest, markAsSeen: markAsRead, cornerRadius: theme.theme.mediaCornerRadius, blurPostLinkNSFW: blurPostLinkNSFW, media: extractedMedia, over18: over18, compact: false, contentWidth: winstonData.postDimensions.mediaSize?.width ?? 0, routerProxy: routerProxy)
+          .allowsHitTesting(tappableFeedMedia)
         
         if case .repost(let repost) = extractedMedia {
           if let repostWinstonData = repost.winstonData, let repostSub = repostWinstonData.subreddit {

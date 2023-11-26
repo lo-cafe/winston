@@ -57,6 +57,7 @@ extension Defaults.Keys {
   static let blurPostNSFW = Key<Bool>("blurPostNSFW", default: false)
   static let collapseAutoModerator = Key<Bool>("collapseAutoModerator", default: false)
   static let preferredCommentSort = Key<CommentSortOption>("preferredCommentSort", default: .confidence)
+  static let tappableFeedMedia = Key<Bool>("tappableFeedMedia", default: true)
   
   // Compact Mode Settings
   static let compactMode = Key<Bool>("compactMode", default: false)
