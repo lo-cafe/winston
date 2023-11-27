@@ -62,6 +62,7 @@ struct VideoPlayerPost: View, Equatable {
   @Default(.autoPlayVideos) private var autoPlayVideos
   @Default(.loopVideos) private var loopVideos
   @Default(.lightboxViewsPost) private var lightboxViewsPost
+	@Default(.muteVideos) private var muteVideos
   
   init(controller: UIViewController?, cachedVideo: SharedVideo?, markAsSeen: (() async -> ())?, compact: Bool = false, overrideWidth: CGFloat? = nil, url: URL) {
     self.controller = controller
@@ -124,8 +125,14 @@ struct VideoPlayerPost: View, Equatable {
           .onChange(of: fullscreen) { val in
             if !firstFullscreen {
               firstFullscreen = true
+							sharedVideo.player.isMuted = muteVideos
               sharedVideo.player.play()
             }
+						if !val && !autoPlayVideos {
+							sharedVideo.player.seek(to: .zero)
+							sharedVideo.player.pause()
+							firstFullscreen = false
+						}
             sharedVideo.player.volume = val ? 1.0 : 0.0
           }
           .allowsHitTesting(false)
@@ -161,8 +168,14 @@ struct VideoPlayerPost: View, Equatable {
         .onChange(of: fullscreen) { val in
           if !firstFullscreen {
             firstFullscreen = true
+						sharedVideo.player.isMuted = muteVideos
             sharedVideo.player.play()
-          }
+          } 
+					if !val && !autoPlayVideos {
+						sharedVideo.player.seek(to: .zero)
+						sharedVideo.player.pause()
+						firstFullscreen = false
+					 }
           sharedVideo.player.volume = val ? 1.0 : 0.0
         }
         .fullScreenCover(isPresented: $fullscreen) {
