@@ -94,3 +94,5 @@ iOSInjectionProject/
 /PillBell/.DS_Store
 /PillBell.xcodeproj/project.xcworkspace/xcuserdata
 /xcuserdata
+
+*.DS_Store
