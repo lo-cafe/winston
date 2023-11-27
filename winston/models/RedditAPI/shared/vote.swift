@@ -12,10 +12,10 @@ extension RedditAPI {
   func vote(_ action: VoteAction, id: String) async -> Bool? {
     await refreshToken()
     //    await getModHash()
-    if var headers = self.getRequestHeaders() {
-      let params = VotePayload(dir: action.rawValue, id: id)
+    if let headers = self.getRequestHeaders() {
+      let params = VotePayload(dir: "\(action.rawValue)", id: id)
       let dataTask = AF.request(
-        "\(RedditAPI.redditApiURLBase)/api/vote?redditWebClient=2x&app=desktop2x-client-production&raw_json=1&gilding_detail=1",
+        "\(RedditAPI.redditApiURLBase)/api/vote",
         method: .post,
         parameters: params,
         encoder: URLEncodedFormParameterEncoder(destination: .httpBody),
@@ -35,16 +35,15 @@ extension RedditAPI {
   }
   
   struct VotePayload: Codable {
-    let dir: Int
-    let id: String
-//    var rank = 1
+    var dir: String
+    var id: String
     var api_type = "json"
   }
   
-  enum VoteAction: Int, Codable {
-    case up = 1
-    case none = 0
-    case down = -1
+  enum VoteAction: String, Codable {
+    case up = "1"
+    case none = "0"
+    case down = "-1"
     
     func boolVersion() -> Bool? {
       switch self {

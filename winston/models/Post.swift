@@ -472,7 +472,7 @@ extension Post {
     await MainActor.run { [newAction] in
       withAnimation(.spring()) {
         data?.likes = newAction.boolVersion()
-        data?.ups = oldUps + (action.boolVersion() == oldLikes ? oldLikes == nil ? 0 : -action.rawValue : action.rawValue * (oldLikes == nil ? 1 : 2))
+        data?.ups = oldUps + (action.boolVersion() == oldLikes ? oldLikes == nil ? 0 : -(Int(action.rawValue) ?? 0) : (Int(action.rawValue) ?? 1) * (oldLikes == nil ? 1 : 2))
       }
     }
     let result = await RedditAPI.shared.vote(newAction, id: "\(typePrefix ?? "")\(id)")
