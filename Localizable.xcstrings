@@ -1025,6 +1025,9 @@
         }
       }
     },
+    "Delete" : {
+
+    },
     "Depressive load full :(" : {
       "localizations" : {
         "de" : {
@@ -1174,6 +1177,9 @@
           }
         }
       }
+    },
+    "Download" : {
+
     },
     "Drag Left" : {
       "localizations" : {
@@ -3385,6 +3391,9 @@
         }
       }
     },
+    "Show divider" : {
+
+    },
     "Show Self Text" : {
       "localizations" : {
         "de" : {
@@ -3817,6 +3826,9 @@
         }
       }
     },
+    "Theme Store" : {
+
+    },
     "Theme Store Tint" : {
       "localizations" : {
         "de" : {
@@ -3880,6 +3892,9 @@
           }
         }
       }
+    },
+    "There was an error importing this theme" : {
+
     },
     "This is not working yet :(" : {
       "localizations" : {

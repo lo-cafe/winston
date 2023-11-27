@@ -15,38 +15,48 @@ struct AnnouncementSheet: View {
   @Environment(\.colorScheme) private var cs
   var body: some View {
     if let announcement {
-      ScrollView{
-        VStack{
-          HStack{
+      ZStack{
+        
+        ScrollView{
+          VStack{
             Text(announcement.name)
               .fontSize(24, .bold)
-            Spacer()
-          }
-          HStack{
             Text(Date(timeIntervalSince1970: Double(announcement.timestamp  ?? 0) / 1000), style: .date)
               .opacity(0.5)
-            Spacer()
+            Divider()
+            
+            Section {
+              MD(.str(announcement.description ?? ""))
+            }
+            .padding(.top)
+            
+            Color.clear
+              .frame(height: 100)
+            
           }
-          Divider()
-          
-          Section{
-            MD(.str(announcement.description ?? ""))
-          }
-          
-          
-          
+        }
+        .padding()
+        .ignoresSafeArea(.all)
+        .onAppear{
+//          Defaults[.lastSeenAnnouncementTimeStamp] = announcement.timestamp ?? 0
+        }
+        
+        VStack{
+          Spacer()
+          MasterButton(label: announcement.buttonLabel == "" ? "Close" : announcement.buttonLabel, color: theme.general.accentColor.cs(cs).color(), colorHoverEffect: .animated, textSize: 18, height: 48, cornerRadius: 16, action: {
+            withAnimation(spring) {
+              showingAnnouncement = false
+            }
+          })
+          .padding()
+          .frame(width: UIScreen.screenWidth)
+          .background(
+            Material.ultraThinMaterial
+          )
         }
       }
-      .padding()
-      .onAppear{
-        Defaults[.lastSeenAnnouncementTimeStamp] = announcement.timestamp ?? 0
-      }
-      Spacer()
-      MasterButton(label: announcement.buttonLabel == "" ? "Close" : announcement.buttonLabel, color: theme.general.accentColor.cs(cs).color(), colorHoverEffect: .animated, textSize: 18, height: 48, cornerRadius: 16, action: {
-        withAnimation(spring) {
-          showingAnnouncement = false
-        }
-      })
+      
+      
     }
   }
 }

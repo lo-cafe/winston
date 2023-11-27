@@ -59,6 +59,7 @@ struct Tabber: View {
   @State var showingSharedThemeSheet: Bool = false
   
   @State var showingAnnouncement: Bool = false
+  @State var testAnnouncement: Announcement? = nil
   @EnvironmentObject var winstonAPI: WinstonAPI
   
   var payload: [TabIdentifier:TabPayload] { [
@@ -221,9 +222,9 @@ struct Tabber: View {
       
       //Check for announcements
       Task(priority: .background){
-        winstonAPI.announcement = await winstonAPI.getAnnouncement()
-        if let announcement = winstonAPI.announcement{
-          showingAnnouncement = announcement.timestamp != Defaults[.lastSeenAnnouncementTimeStamp]
+        testAnnouncement = await winstonAPI.getAnnouncement()
+        if let testAnnouncement{
+          showingAnnouncement = testAnnouncement.timestamp != Defaults[.lastSeenAnnouncementTimeStamp]
         } else {
           showingAnnouncement = false
         }
@@ -238,7 +239,14 @@ struct Tabber: View {
       }
     }
     .sheet(isPresented: $showingAnnouncement, content: {
-      AnnouncementSheet(showingAnnouncement: $showingAnnouncement,announcement: winstonAPI.announcement)
+      if let testAnnouncement {
+        AnnouncementSheet(showingAnnouncement: $showingAnnouncement,announcement: testAnnouncement)
+          .onAppear{
+              print(testAnnouncement)
+          }
+      } else {
+        ProgressView()
+      }
     })
     .sheet(isPresented: $showingSharedThemeSheet, content: {
       if let theme = sharedTheme {
