@@ -38,7 +38,7 @@ struct AnnouncementSheet: View {
         .padding()
         .ignoresSafeArea(.all)
         .onAppear{
-//          Defaults[.lastSeenAnnouncementTimeStamp] = announcement.timestamp ?? 0
+          Defaults[.lastSeenAnnouncementTimeStamp] = announcement.timestamp ?? 0
         }
         
         VStack{
