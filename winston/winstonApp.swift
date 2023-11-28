@@ -104,11 +104,12 @@ struct AppContent: View {
             }
           }
         }
+        else if (newPhase != .active) {
+          lockBlur = 50
+        }
         isAuthenticating = false
       }
-      else if (newPhase != .active) {
-        lockBlur = 50
-      }
+      
       
       switch newPhase {
       case .active :
