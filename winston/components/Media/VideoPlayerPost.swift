@@ -7,7 +7,7 @@ import Combine
 
 struct SharedVideo: Equatable {
   static func == (lhs: SharedVideo, rhs: SharedVideo) -> Bool {
-    lhs.url == rhs.url
+    lhs.url == rhs.url && lhs.player.currentItem == rhs.player.currentItem
   }
   
   var player: AVPlayer
@@ -25,6 +25,10 @@ struct SharedVideo: Equatable {
       
       return sharedVideo
     }
+  }
+  
+  func resetPlayer() {
+    player.replaceCurrentItem(with: AVPlayerItem(url: url))
   }
   
   static func cacheKey(url: URL, size: CGSize) -> String {
@@ -196,6 +200,17 @@ struct VideoPlayerPost: View, Equatable {
             sharedVideo.player.play()
           }
         }
+      
+      NotificationCenter.default.addObserver(
+        forName: .AVPlayerItemFailedToPlayToEndTime,
+        object: sharedVideo.player.currentItem,
+        queue: nil) { notif in
+          Task(priority: .background) {
+            DispatchQueue.main.async {
+              sharedVideo.resetPlayer()
+            }
+          }
+        }
     }
   }
   
@@ -204,6 +219,11 @@ struct VideoPlayerPost: View, Equatable {
       NotificationCenter.default.removeObserver(
         self,
         name: .AVPlayerItemDidPlayToEndTime,
+        object: sharedVideo.player.currentItem)
+      
+      NotificationCenter.default.removeObserver(
+        self,
+        name: .AVPlayerItemFailedToPlayToEndTime,
         object: sharedVideo.player.currentItem)
     }
   }

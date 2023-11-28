@@ -56,7 +56,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
   func setAudioToMixWithOthers() {
     do {
       let audioSession = AVAudioSession.sharedInstance()
-      try audioSession.setCategory(.playback, options: [.mixWithOthers])
+      try audioSession.setCategory(.ambient, options: [.mixWithOthers])
     } catch {
       print("Error setting audio session to mix with others")
     }
