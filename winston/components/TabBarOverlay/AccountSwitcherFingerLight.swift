@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import SpriteKit
 
 struct AccountSwitcherFingerLightLayer: View, Equatable {
   var body: some View {
@@ -30,24 +29,7 @@ struct AccountSwitcherFingerLight: View, Equatable {
       AccountSwitcherFingerLightLayer().equatable()
     }
 //    .drawingGroup()
-    .offset(y: 25 - getSafeArea().bottom)
+//    .offset(y: 25 - getSafeArea().bottom)
   }
 }
 
-struct AccountSwitcherParticles: View, Equatable {
-  static func == (lhs: AccountSwitcherParticles, rhs: AccountSwitcherParticles) -> Bool {
-    true
-  }
-  @StateObject private var dustScene = DustScene(size: .init(width: UIScreen.screenWidth, height: UIScreen.screenHeight))
-  var body: some View {
-    SpriteView(scene: dustScene, transition: .fade(withDuration: 1000), preferredFramesPerSecond: UIScreen.main.maximumFramesPerSecond, options: [.allowsTransparency])
-      .frame(width: UIScreen.screenWidth, height: UIScreen.screenHeight, alignment: .bottom)
-      .onAppear {
-        dustScene.isPaused = false
-      }
-      .onDisappear {
-        dustScene.isPaused = true
-      }
-//      .offset(y: 375 - getSafeArea().bottom)
-  }
-}

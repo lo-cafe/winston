@@ -39,6 +39,16 @@ struct AccountsPanel: View {
               
               Spacer()
               
+              if cred.id == credentialsManager.selectedCredential?.id {
+                Text("ACTIVE")
+                  .foregroundStyle(.white)
+                  .shadow(color: .black.opacity(0.5), radius: 8, y: 4)
+                  .fontSize(12, .semibold)
+                  .padding(.vertical, 1)
+                  .padding(.horizontal, 4)
+                  .background(RR(4, Color.accentColor))
+              }
+              
               if cred.refreshToken == nil {
                 Image(systemName: "exclamationmark.triangle.fill").foregroundStyle(.orange)
               }

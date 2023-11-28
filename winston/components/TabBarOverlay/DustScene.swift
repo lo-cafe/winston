@@ -9,35 +9,43 @@ import SwiftUI
 
 import SpriteKit
 
-class DustScene: SKScene, ObservableObject {
+class DustScene: SKScene {
   
-  let dustEmitterNode = SKEmitterNode(fileNamed: "Dust.sks")
   
   override init(size: CGSize) {
     super.init(size: size)
     backgroundColor = .clear
+    self.view?.isAsynchronous = true
+    self.view?.scene?.shouldRasterize = true
+    self.view?.layer.shouldRasterize = true
+    if let dustEmitterNode = SKEmitterNode(fileNamed: "Dust.sks") {
+      dustEmitterNode.name = "dust"
+      dustEmitterNode.advanceSimulationTime(5)
+      dustEmitterNode.speed = 0.5
+      dustEmitterNode.particlePosition = CGPoint(x: size.width/2, y: 0)
+      dustEmitterNode.particlePositionRange = CGVector(dx: size.width, dy: 0)
+      addChild(dustEmitterNode)
+    }
+  }
+  
+  deinit {
+    self.removeAllChildren()
   }
   
   required init?(coder aDecoder: NSCoder) {
     fatalError("init(coder:) has not been implemented")
   }
   
-  override func willMove(from view: SKView) {
-    self.backgroundColor = .clear
-  }
-  
   override func didMove(to view: SKView) {
-    guard let snowEmitterNode = dustEmitterNode else { return }
-    
-    addChild(snowEmitterNode)
-    self.backgroundColor = .clear
-    view.isAsynchronous = true
-    snowEmitterNode.speed = 0.5
+    guard let dustEmitterNode = children.first(where: { $0.name == "dust" }) as? SKEmitterNode else { return }
+    dustEmitterNode.particleBirthRate = 4
+    dustEmitterNode.advanceSimulationTime(5)
+//    view.isAsynchronous = true
   }
     
-  override func didChangeSize(_ oldSize: CGSize) {
-    guard let snowEmitterNode = dustEmitterNode else { return }
-    snowEmitterNode.particlePosition = CGPoint(x: size.width/2, y: 0)
-    snowEmitterNode.particlePositionRange = CGVector(dx: size.width, dy: 0)
-  }
+//  override func didChangeSize(_ oldSize: CGSize) {
+//    guard let dustEmitterNode = children.first(where: { $0.name == "dust" }) as? SKEmitterNode else { return }
+//    dustEmitterNode.particlePosition = CGPoint(x: size.width/2, y: 0)
+//    dustEmitterNode.particlePositionRange = CGVector(dx: size.width, dy: 0)
+//  }
 }

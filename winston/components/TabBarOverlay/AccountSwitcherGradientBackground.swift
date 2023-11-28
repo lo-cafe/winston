@@ -89,64 +89,36 @@ struct AccountSwitcherFlatennedBG: View, Equatable {
   var screenshot: UIImage
   private let date = Date()
   var body: some View {
-    ZStack {
-      TimelineView(.animation) { context in
-        let time = context.date.timeIntervalSince1970 - date.timeIntervalSince1970
+//    ZStack {
+//      TimelineView(.animation) { context in
+//        let time = context.date.timeIntervalSince1970 - date.timeIntervalSince1970
         Image(uiImage: screenshot)
           .frame(width: UIScreen.screenWidth, height: UIScreen.screenHeight, alignment: .bottom)
-          .zIndex(1)
           .transition(.identity)
-          .modifier(ComplexWaveModifierVFX(time: time))
-      }
-    }
+//          .modifier(ComplexWaveModifierVFX(time: time))
+//      }
+//    }
   }
 }
 
 struct AccountSwitcherGradientBackground: View, Equatable {
-  static func == (lhs: AccountSwitcherGradientBackground, rhs: AccountSwitcherGradientBackground) -> Bool {
-    true
-  }
-
-  @State private var screenshot: UIImage? = nil
-  @State private var showOverlay = false
-  @State private var takeScreenshot = false
+  static func == (lhs: AccountSwitcherGradientBackground, rhs: AccountSwitcherGradientBackground) -> Bool { true }
   var body: some View {
     ZStack(alignment: .bottom) {
-      if let screenshot = screenshot {
-        AccountSwitcherFlatennedBG(screenshot: screenshot).equatable()
-          .opacity(showOverlay ? 0.9 : 1.0)
-          .blur(radius: showOverlay ? 2 : 0)
-          .saturation(showOverlay ? 1.5 : 1.0)
-          .onAppear { withAnimation(.smooth) { showOverlay = true } }
-          .background(.black)
-      }
-      if showOverlay {
         ZStack {
           Rectangle().fill(.bar).opacity(0.15)
-          AccountSwitcherGradientBackgroundLayer().equatable()
-            .opacity(0.15)
-          AccountSwitcherGradientBackgroundLayer().equatable()
-            .opacity(0.05).blendMode(.plusLighter)
-          AccountSwitcherGradientBackgroundLayer().equatable()
-            .blendMode(.overlay)
-          AccountSwitcherGradientBackgroundLayer().equatable()
-            .blendMode(.overlay)
+          AccountSwitcherGradientBackgroundLayer().equatable().opacity(0.15)
+          AccountSwitcherGradientBackgroundLayer().equatable().blendMode(.plusLighter).opacity(0.05)
+          AccountSwitcherGradientBackgroundLayer().equatable().blendMode(.overlay)
+          AccountSwitcherGradientBackgroundLayer().equatable().blendMode(.overlay)
         }
         .frame(width: 1500, height: 2500)
         .offset(y: 1250 + 50 - getSafeArea().bottom)
         .zIndex(2)
-      }
     }
-    .onAppear { takeScreenshot = true }
     .frame(width: UIScreen.screenWidth, height: UIScreen.screenHeight, alignment: .bottom)
-    .drawingGroup(colorMode: .extendedLinear)
-    .overlay(
-      !showOverlay
-      ? nil
-      : AccountSwitcherParticles().equatable()
-      , alignment: .bottom
-    )
-    .background(TakeSnapshotView(screenshot: $screenshot, takeScreenshot: takeScreenshot))
+    .fixedSize()
+    .clipped()
   }
 }
 

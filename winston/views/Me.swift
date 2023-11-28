@@ -19,6 +19,7 @@ struct Me: View {
         Group {
           if let user = redditAPI.me {
             UserView(user: user)
+              .id("me-user-view-\(user.id)")
             
           } else {
             ProgressView()

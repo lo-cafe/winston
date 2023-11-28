@@ -35,7 +35,9 @@ class GlobalNavPathWrapper: ObservableObject {
   @Published var path = NavigationPath()
 }
 
-struct Tabber: View {
+struct Tabber: View, Equatable {
+  static func == (lhs: Tabber, rhs: Tabber) -> Bool { true }
+  
   @ObservedObject private var tempGlobalState = TempGlobalState.shared
   @ObservedObject private var redditCredentialsManager = RedditCredentialsManager.shared
   @State private var activeTab: TabIdentifier = .posts

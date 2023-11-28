@@ -22,6 +22,7 @@ struct RedditCredential: Identifiable, Equatable, Hashable, Codable {
   var refreshToken: String? = nil
   var userName: String? = nil
   var profilePicture: String? = nil
+  var isAuthorized: Bool { refreshToken != nil }
   
   init(apiAppID: String = "", apiAppSecret: String = "", accessToken: String? = nil, refreshToken: String? = nil, expiration: Int? = nil, lastRefresh: Date? = nil, userName: String? = nil, profilePicture: String? = nil) {
     self.id = UUID()
@@ -130,8 +131,9 @@ class RedditCredentialsManager: ObservableObject {
   static let keychainServiceString = "lo.cafe.winston.reddit-multi-credentials"
   static let keychain = Keychain(service: RedditCredentialsManager.keychainServiceString).synchronizable(Defaults[.syncKeyChainAndSettings])
   @Published private(set) var credentials: [RedditCredential] = []
+  var validCredentials: [RedditCredential] { credentials.filter { $0.isAuthorized } }
   var cancelables: [Defaults.Observation] = []
-  
+    
   var selectedCredential: RedditCredential? {
     if credentials.count > 0 {
       return credentials.first { $0.id == Defaults[.redditCredentialSelectedID] } ?? credentials[0]
@@ -167,6 +169,7 @@ class RedditCredentialsManager: ObservableObject {
     
     if let importedCredential = importedCredential {
       credentials.append(importedCredential)
+      Defaults[.redditCredentialSelectedID] = importedCredential.id
     }
 
     try? okc.remove("apiAppID")

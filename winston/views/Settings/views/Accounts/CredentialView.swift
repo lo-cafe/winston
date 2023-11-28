@@ -106,8 +106,16 @@ struct CredentialView: View {
           
           NiceCredentialSection("Credentials") {
             VStack(alignment: .leading, spacing: 16) {
-              BigInput(l: "App ID", t: $draftCredential.apiAppID, placeholder: "Ex: aijsd78_UN4iuq8dm7m@mr")
-              BigInput(l: "App Secret", t: $draftCredential.apiAppSecret, placeholder: "Ex: JS9amd9imaims98ajmsi-_000_md2")
+              
+              BigInput(l: "App ID", t: Binding(get: {
+                draftCredential.apiAppID
+              }, set: { draftCredential.apiAppID = $0.replacingOccurrences(of: " ", with: "")
+              }), placeholder: "Ex: aijsd78_UN4iuq8dm7m@mr")
+              
+              BigInput(l: "App Secret", t: Binding(get: {
+                draftCredential.apiAppSecret
+              }, set: { draftCredential.apiAppSecret = $0.replacingOccurrences(of: " ", with: "")
+              }), placeholder: "Ex: JS9amd9imaims98ajmsi-_000_md2")
             }
           }
           
