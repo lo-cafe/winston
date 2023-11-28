@@ -44,6 +44,7 @@ let DEFAULT_COMMENT_SWIPE_ACTIONS = SwipeActionsSet(
 )
 
 extension Defaults.Keys {
+  static let redditCredentialSelectedID = Key<UUID?>("redditCredentialSelectedID", default: nil)
   static let redditAPILastTokenRefreshDate = Key<Date?>("redditAPILastTokenRefreshDate", default: nil)
   static let redditAPITokenExpiration = Key<Int?>("redditAPITokenExpiration", default: nil)
   static let multis = Key<[MultiData]>("multis", default: [])
@@ -59,7 +60,7 @@ extension Defaults.Keys {
   static let preferredCommentSort = Key<CommentSortOption>("preferredCommentSort", default: .confidence)
   static let tappableFeedMedia = Key<Bool>("tappableFeedMedia", default: true)
   
-  // Compact Mode Settings
+  // CompdismissKeyboardt Mode Settings
   static let compactMode = Key<Bool>("compactMode", default: false)
   static let compThumbnailSize = Key<ThumbnailSizeModifier>("compThumbnailSize", default: .small)
   static let thumbnailPositionRight = Key<Bool>("thumbnailPositionRight", default: true)

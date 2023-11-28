@@ -10,26 +10,13 @@ import Alamofire
 
 extension RedditAPI {
   func subscribe(_ action: SubscribeAction, subFullname: String) async -> Bool {
-    await refreshToken()
-    //    await getModHash()
-    if let headers = self.getRequestHeaders() {
-      let params = SubscribePayload(action: action, sr: subFullname)
-      let dataTask = AF.request(
-        "\(RedditAPI.redditApiURLBase)/api/subscribe",
-        method: .post,
-        parameters: params,
-        encoder: URLEncodedFormParameterEncoder(destination: .queryString),
-        headers: headers
-      ).serializingString()
-      let result = await dataTask.result
-      switch result {
-      case .success:
-        return true
-      case .failure:
-        return false
-      }
+    let params = SubscribePayload(action: action, sr: subFullname)
+    switch await self.doRequest("\(RedditAPI.redditApiURLBase)/api/subscribe", method: .post, params: params, paramsLocation: .queryString)  {
+    case .success:
+      return true
+    case .failure:
+      return false
     }
-    return false
   }
   
   struct SubscribePayload: Codable {

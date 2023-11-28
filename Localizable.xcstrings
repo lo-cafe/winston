@@ -422,6 +422,7 @@
       }
     },
     "Account switcher\ncoming soon..." : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -436,6 +437,12 @@
           }
         }
       }
+    },
+    "Accounts" : {
+
+    },
+    "ACTIVE" : {
+
     },
     "Advanced" : {
       "localizations" : {
@@ -486,6 +493,7 @@
       }
     },
     "API Credentials Setup" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -518,6 +526,7 @@
       }
     },
     "App ID" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -534,6 +543,7 @@
       }
     },
     "App secret" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -582,6 +592,7 @@
       }
     },
     "Are you sure you wanna logoff?" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -596,6 +607,9 @@
           }
         }
       }
+    },
+    "Authorized" : {
+
     },
     "Autoplay videos (muted)" : {
       "localizations" : {
@@ -742,6 +756,7 @@
       }
     },
     "Check \"web app\":" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -907,6 +922,9 @@
         }
       }
     },
+    "Copy access token" : {
+
+    },
     "Copy URL" : {
       "localizations" : {
         "de" : {
@@ -977,6 +995,9 @@
         }
       }
     },
+    "Default mute fullscreen videos" : {
+
+    },
     "Default post sorting" : {
       "localizations" : {
         "de" : {
@@ -1024,6 +1045,9 @@
           }
         }
       }
+    },
+    "Delete" : {
+
     },
     "Depressive load full :(" : {
       "localizations" : {
@@ -1160,6 +1184,7 @@
       }
     },
     "Don't worry, there will be no costs, there's a free tier of 100 requests/minute and it's kinda impossible for you to go beyond that." : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -1174,6 +1199,9 @@
           }
         }
       }
+    },
+    "Download" : {
+
     },
     "Drag Left" : {
       "localizations" : {
@@ -1240,6 +1268,9 @@
           }
         }
       }
+    },
+    "Edit credential" : {
+
     },
     "Enter a subreddit" : {
       "localizations" : {
@@ -1308,6 +1339,7 @@
       }
     },
     "Everything Amazing!" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -1418,6 +1450,7 @@
       }
     },
     "Fill the other fields however you want and click:" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -1714,6 +1747,7 @@
       }
     },
     "Hold up, we're getting your access token!" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -1856,6 +1890,7 @@
       }
     },
     "If Reddit ban the user-agent this app uses, you can change it to a custom one here:" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -1900,6 +1935,7 @@
       }
     },
     "In order to be able to use Reddit, you'll need to provide your own API credentials." : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -1922,6 +1958,7 @@
       }
     },
     "In the new app you created, find the app ID and paste it below:" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -2554,6 +2591,7 @@
       }
     },
     "Now click the button below and grant full access to the app you created:" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -2602,6 +2640,7 @@
       }
     },
     "Now, your \"secret\" (don't worry, it'll be saved locally in your keychain):" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -2713,6 +2752,12 @@
         }
       }
     },
+    "Open media from feed" : {
+
+    },
+    "Open Reddit API page" : {
+
+    },
     "Open Reddit API settings in Safari by clicking the button below, then switch back to Winston." : {
       "localizations" : {
         "de" : {
@@ -2730,6 +2775,7 @@
       }
     },
     "Open Reddit's apps settings by clicking this button:" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -3081,6 +3127,9 @@
         }
       }
     },
+    "Refresh access token" : {
+
+    },
     "Reset preferences" : {
       "localizations" : {
         "de" : {
@@ -3098,6 +3147,7 @@
       }
     },
     "Reset winston" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -3145,6 +3195,9 @@
         }
       }
     },
+    "Save" : {
+
+    },
     "Save comment sort per post" : {
       "localizations" : {
         "de" : {
@@ -3178,6 +3231,7 @@
       }
     },
     "Scroll down and click" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -3385,6 +3439,9 @@
         }
       }
     },
+    "Show divider" : {
+
+    },
     "Show Self Text" : {
       "localizations" : {
         "de" : {
@@ -3545,6 +3602,9 @@
         }
       }
     },
+    "Status" : {
+
+    },
     "Status:" : {
       "localizations" : {
         "de" : {
@@ -3690,6 +3750,7 @@
       }
     },
     "Tap the URL below to copy and paste it in the \"redirect uri\" field:" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -3786,6 +3847,7 @@
       }
     },
     "That's it! Your API credentials are setup and you don't need to worry about these boring details anymore." : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -3816,6 +3878,9 @@
           }
         }
       }
+    },
+    "Theme Store" : {
+
     },
     "Theme Store Tint" : {
       "localizations" : {
@@ -3880,6 +3945,9 @@
           }
         }
       }
+    },
+    "There was an error importing this theme" : {
+
     },
     "This is not working yet :(" : {
       "localizations" : {
@@ -3946,6 +4014,7 @@
       }
     },
     "This will clear everything in the app (your Reddit account is safe)." : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -4041,6 +4110,9 @@
         }
       }
     },
+    "To switch accounts, hold the \"me\" (or your username) tab pressed in the bottom bar." : {
+
+    },
     "To use Reddit, Winston uses a special key you can generate yourself in Reddit's site." : {
       "localizations" : {
         "de" : {
@@ -4072,6 +4144,9 @@
           }
         }
       }
+    },
+    "Unauthorized" : {
+
     },
     "Unseen type" : {
       "localizations" : {
@@ -4122,6 +4197,7 @@
       }
     },
     "User Agent" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -4378,6 +4454,7 @@
       }
     },
     "Your API credentials are 👌" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {

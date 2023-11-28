@@ -6,14 +6,14 @@
 //
 
 import Foundation
-import SpriteKit
 import SwiftUI
+import SpriteKit
 
 let offsetVariation = 0.05 / 2
 let scaleVariation: CGFloat = 0.3 / 2
 let duration = 1.0
 
-class MorphingGradientCircleScene: SKScene {
+class MorphingGradientCircleScene: SKScene, ObservableObject {
     var mainAction: SKAction?
     var activeAction: SKAction?
     var texture = SKTexture(imageNamed: "ball")

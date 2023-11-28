@@ -75,10 +75,7 @@ extension Post {
       self.winstonData?.postDimensionsForcedNormal = getPostDimensions(post: self, winstonData: self.winstonData, columnWidth: contentWidth, secondary: secondary, rawTheme: theme, compact: false)
       
       self.winstonData?.titleAttr = createTitleTagsAttrString(titleTheme: theme.postLinks.theme.titleText, postData: data, textColor: theme.postLinks.theme.titleText.color.cs(cs).color())
-      
-      if fetchSub {
-        self.winstonData?.subreddit = Subreddit(id: data.subreddit, api: RedditAPI.shared)
-      }
+      if fetchSub { self.winstonData?.subreddit = Subreddit(id: data.subreddit, api: RedditAPI.shared) }
       
       if fetchAvatar {
         Task(priority: .background) {
