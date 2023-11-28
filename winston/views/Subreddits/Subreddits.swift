@@ -9,6 +9,7 @@ import SwiftUI
 import Defaults
 import Combine
 import SwiftDate
+import Shiny
 
 let alphabetLetters = Array("ABCDEFGHIJKLMNOPQRSTUVWXYZ").map { String($0) }
 
@@ -38,6 +39,8 @@ struct Subreddits: View, Equatable {
   @Environment(\.useTheme) private var selectedTheme
   @Environment(\.colorScheme) private var cs
   
+  @Default(.showingUpsellDict) var showingUpsellDict
+  
   var sections: [String:[CachedSub]] {
     return Dictionary(grouping: subreddits.filter({ $0.user_is_subscriber })) { sub in
       return String((sub.display_name ?? "a").first!.uppercased())
@@ -50,14 +53,15 @@ struct Subreddits: View, Equatable {
         if searchText == "" {
           VStack(spacing: 12) {
             HStack(spacing: 12) {
-              ListBigBtn(selectedSub: $selectedSub, icon: "house.circle.fill", iconColor: .blue, label: "Home", destination: Subreddit(id: "home", api: RedditAPI.shared))
+              //have 'selectedSub:icon:iconColor:label:destination:', expected 'selectedSub:value:destination:iconColor:label:icon:shiny
+              ListBigBtn(selectedSub: $selectedSub, destination: Subreddit(id: "home", api: RedditAPI.shared), icon: "house.circle.fill", iconColor: .blue, label: "Home")
 
-              ListBigBtn(selectedSub: $selectedSub, icon: "chart.line.uptrend.xyaxis.circle.fill", iconColor: .red, label: "Popular", destination: Subreddit(id: "popular", api: RedditAPI.shared))
+              ListBigBtn(selectedSub: $selectedSub, destination: Subreddit(id: "popular", api: RedditAPI.shared), icon: "chart.line.uptrend.xyaxis.circle.fill", iconColor: .red, label: "Popular")
             }
             HStack(spacing: 12) {
-              ListBigBtn(selectedSub: $selectedSub, icon: "signpost.right.and.left.circle.fill", iconColor: .orange, label: "All", destination: Subreddit(id: "all", api: RedditAPI.shared))
+              ListBigBtn(selectedSub: $selectedSub, destination: Subreddit(id: "all", api: RedditAPI.shared), icon: "signpost.right.and.left.circle.fill", iconColor: .orange, label: "All")
               
-              ListBigBtn(selectedSub: $selectedSub, icon: "bookmark.circle.fill", iconColor: .green, label: "Saved", destination: Subreddit(id: "saved", api: RedditAPI.shared))
+              ListBigBtn(selectedSub: $selectedSub, destination: Subreddit(id: "saved", api: RedditAPI.shared), icon: "bookmark.circle.fill", iconColor: .green, label: "Saved")
             }
           }
           .frame(maxWidth: .infinity)
@@ -66,6 +70,19 @@ struct Subreddits: View, Equatable {
           .listRowBackground(Color.clear)
           .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
           
+          Section{
+            UpsellCard(upsellName: "themesUpsell_01", {
+                Text("Tired of Winstons current look? Try the theme editor in settings now!")
+                .winstonShiny()
+              .fontWeight(.semibold)
+              .font(.system(size: 15))
+            })
+            .padding()
+
+          }
+          .listRowSeparator(.hidden)
+//            .listRowBackground(Color.clear)
+          .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
           
           PostsInBoxView(selectedSub: $selectedSub)
             .scrollIndicators(.hidden)

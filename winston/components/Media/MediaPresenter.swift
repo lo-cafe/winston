@@ -13,6 +13,7 @@ import NukeUI
 struct OnlyURL: View {
   static let height: Double = 22
   @Default(.postLinkTitleSize) var postLinkTitleSize
+	@Default(.openLinksInSafari) private var openLinksInSafari
   var url: URL
   @Environment(\.openURL) private var openURL
   var body: some View {
@@ -29,7 +30,11 @@ struct OnlyURL: View {
     .foregroundColor(.white)
     .highPriorityGesture(TapGesture().onEnded {
       if let newURL = URL(string: url.absoluteString.replacingOccurrences(of: "https://reddit.com/", with: "winstonapp://")) {
-        openURL(newURL)
+				if openLinksInSafari {
+					openURL(newURL)
+				} else {
+					openInBuiltInBrowser(newURL)
+				}
       }
     })
   }
@@ -74,6 +79,17 @@ struct MediaPresenter: View, Equatable {
         VideoPlayerPost(controller: controller, cachedVideo: sharedVideo, markAsSeen: markAsSeen, compact: compact, overrideWidth: contentWidth, url: sharedVideo.url)
           .nsfw(over18 && blurPostLinkNSFW, smallIcon: compact, size: postDimensions.mediaSize)
       }
+      
+    case .streamable(_):
+      if !showURLInstead {
+        ProgressView()
+        .progressViewStyle(.circular)
+        .frame(maxWidth: .infinity, minHeight: 100)
+        .id("streamable-loading")
+        .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
+        .listRowSeparator(.hidden)
+        .listRowBackground(Color.clear)
+      }
     case .yt(let ytMediaExtracted):
       if !showURLInstead {
         YTMediaPostPlayer(compact: compact, player: ytMediaExtracted.player, ytMediaExtracted: ytMediaExtracted, contentWidth: contentWidth)
@@ -91,7 +107,7 @@ struct MediaPresenter: View, Equatable {
         if !showURLInstead {
           if compact, let sub = postExtractedEntity.subredditID, let postID = postExtractedEntity.postID {
             if let url = URL(string: "https://reddit.com/r/\(sub)/comments/\(postID)") {
-              PreviewLink(url: url, compact: compact, previewModel: PreviewModel(url))
+              PreviewLink(url: url, compact: compact, previewModel: PreviewModel.get(url))
             }
           } else {
             RedditMediaPost(entity: .post(postExtractedEntity.entity))
@@ -105,7 +121,7 @@ struct MediaPresenter: View, Equatable {
         if !showURLInstead {
           if compact, let sub = commentExtractedEntity.subredditID, let postID = commentExtractedEntity.postID, let commentID = commentExtractedEntity.commentID {
             if let url = URL(string: "https://reddit.com/r/\(sub)/comments/\(postID)/comment/\(commentID)") {
-              PreviewLink(url: url, compact: compact, previewModel: PreviewModel(url))
+              PreviewLink(url: url, compact: compact, previewModel: PreviewModel.get(url))
             }
           } else {
             RedditMediaPost(entity: .comment(commentExtractedEntity.entity))
@@ -119,7 +135,7 @@ struct MediaPresenter: View, Equatable {
         if !showURLInstead {
           if compact {
             if let url = URL(string: "https://reddit.com/r/\(subExtractedEntity.subredditID ?? "")") {
-              PreviewLink(url: url, compact: compact, previewModel: PreviewModel(url))
+              PreviewLink(url: url, compact: compact, previewModel: PreviewModel.get(url))
             }
           } else {
             RedditMediaPost(entity: .subreddit(subExtractedEntity.entity))
@@ -133,7 +149,7 @@ struct MediaPresenter: View, Equatable {
         if !showURLInstead {
           if compact {
             if let url = URL(string: "https://reddit.com/u/\(userExtractedEntity.userID ?? "")") {
-              PreviewLink(url: url, compact: compact, previewModel: PreviewModel(url))
+              PreviewLink(url: url, compact: compact, previewModel: PreviewModel.get(url))
             }
           } else {
             RedditMediaPost(entity: .user(userExtractedEntity.entity))

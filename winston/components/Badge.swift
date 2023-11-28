@@ -34,7 +34,7 @@ struct UserFlair: View, Equatable {
 struct BadgeView: View, Equatable {
   static let authorStatsSpacing: Double = 2
   static func == (lhs: BadgeView, rhs: BadgeView) -> Bool {
-    return lhs.cs == rhs.cs && lhs.avatarURL == rhs.avatarURL && lhs.saved == rhs.saved && lhs.avatarRequest?.url == rhs.avatarRequest?.url && lhs.theme == rhs.theme && lhs.commentsCount == rhs.commentsCount && lhs.votesCount == rhs.votesCount && lhs.likes == rhs.likes
+    return lhs.cs == rhs.cs && lhs.avatarURL == rhs.avatarURL && lhs.saved == rhs.saved && lhs.avatarRequest?.url == rhs.avatarRequest?.url && lhs.theme == rhs.theme && lhs.commentsCount == rhs.commentsCount && lhs.newCommentsCount == rhs.newCommentsCount && lhs.votesCount == rhs.votesCount && lhs.likes == rhs.likes
   }
   
   var avatarRequest: ImageRequest?
@@ -50,8 +50,7 @@ struct BadgeView: View, Equatable {
   var theme: BadgeTheme
   var commentTheme: CommentTheme?
   var commentsCount: String?
-  var seenCommentsCount: Int?
-  var numComments: Int?
+  var newCommentsCount: Int?
   var votesCount: String?
   var likes: Bool? = nil
   weak var routerProxy: RouterProxy?
@@ -110,30 +109,28 @@ struct BadgeView: View, Equatable {
             Text(author).font(.system(size: theme.authorText.size, weight: theme.authorText.weight.t)).foregroundStyle(author == "[deleted]" ? .red : usernameColor ?? theme.authorText.color.cs(cs).color()).lineLimit(1)
               .onTapGesture(perform: openUser)
             
-            if let openSub = openSub, let subName = subName, theme.forceSubsAsTags {
-              Tag(subredditIconKit: nil, text: "r/\(subName)", color: theme.subColor.cs(cs).color(), fontSize: theme.authorText.size)
-                .highPriorityGesture(TapGesture().onEnded(openSub))
-            }
-            
-            if let openSub = openSub, let subName = subName, !theme.forceSubsAsTags {
-              Image(systemName: "arrowshape.right.fill")
-                .fontSize(theme.authorText.size * 0.75)
-                .foregroundStyle(theme.authorText.color.cs(cs).color().opacity(0.5))
-              Text(subName).foregroundStyle(theme.subColor.cs(cs).color())
-                .fontSize(theme.authorText.size, .semibold).lineLimit(1)
-                .highPriorityGesture(TapGesture().onEnded(openSub))
-            }
-            
             if unseen {
               PostLinkGlowDot(unseenType: .dot(commentTheme?.unseenDot ?? ColorSchemes<ThemeColor>(light: .init(hex: "FF0000"), dark: .init(hex: "FF0000"))), seen: false, cs: cs, badge: true).equatable()
             }
             
-            if openSub == nil {
-              if let flairs = flairWithoutEmojis(str: userFlair) {
-                // TODO Load flair emojis via GET /api/v1/{subreddit}/emojis/{emoji_name}
-                ForEach(flairs, id: \.self) {
-                  UserFlair(flair: $0, flairText: theme.flairText, flairBackground: theme.flairBackground, cs: cs).equatable()
-                }
+            if let flairs = flairWithoutEmojis(str: userFlair) {
+              // TODO Load flair emojis via GET /api/v1/{subreddit}/emojis/{emoji_name}
+              ForEach(flairs, id: \.self) {
+                UserFlair(flair: $0, flairText: theme.flairText, flairBackground: theme.flairBackground, cs: cs).equatable()
+              }
+            }
+            
+            if let openSub = openSub, let subName = subName {
+              if theme.forceSubsAsTags {
+                Tag(subredditIconKit: nil, text: "r/\(subName)", color: theme.subColor.cs(cs).color(), fontSize: theme.authorText.size, backgroundColor: theme.subColor.cs(cs).color())
+                .onTapGesture(perform: openSub)
+              } else {
+                Image(systemName: "arrowshape.right.fill")
+                  .fontSize(theme.authorText.size * 0.75)
+                  .foregroundStyle(theme.authorText.color.cs(cs).color().opacity(0.5))
+                Text(subName).foregroundStyle(theme.subColor.cs(cs).color())
+                  .fontSize(theme.authorText.size, .semibold).lineLimit(1)
+                  .highPriorityGesture(TapGesture().onEnded(openSub))
               }
             }
           }
@@ -143,7 +140,7 @@ struct BadgeView: View, Equatable {
         HStack(alignment: .center, spacing: theme.statsText.size * 0.416666667 /* Yes, absurd number, I thought it was funny */) {
           
           if let openSub = openSub, let subName = subName, !showAuthorOnPostLinks {
-            Tag(subredditIconKit: nil, text: "r/\(subName)", color: theme.subColor.cs(cs).color(), fontSize: theme.statsText.size)
+            Tag(subredditIconKit: nil, text: "r/\(subName)", color: theme.subColor.cs(cs).color(), fontSize: theme.statsText.size, backgroundColor: theme.subColor.cs(cs).color())
               .highPriorityGesture(TapGesture().onEnded(openSub))
           }
           
@@ -154,8 +151,7 @@ struct BadgeView: View, Equatable {
             }
           }
           
-          if let seenComments = seenCommentsCount, let total = numComments {
-            let newComments = total - seenComments
+          if let newComments = newCommentsCount {
             if newComments > 0 {
               Text("(\(newComments))").foregroundColor(.accentColor)
             }
@@ -229,11 +225,11 @@ struct BadgeOpt: View, Equatable {
   var usernameColor: Color?
   var avatarURL: String?
   var theme: BadgeTheme
-  //  var extraInfo: [BadgeExtraInfo] = []
-  
+  var openSub: (() -> ())? = nil
+  var subName: String? = nil
   
   var body: some View {
-    BadgeView(avatarRequest: avatarRequest ?? Caches.avatars.cache[badgeKit.authorFullname]?.data, saved: badgeKit.saved, usernameColor: usernameColor, author: badgeKit.author, fullname: badgeKit.authorFullname, userFlair: badgeKit.userFlair, created: badgeKit.created, avatarURL: avatarURL, theme: theme, commentsCount: formatBigNumber(badgeKit.numComments), votesCount: !showVotes ? nil : formatBigNumber(badgeKit.ups), routerProxy: routerProxy, cs: cs)
+      BadgeView(avatarRequest: avatarRequest ?? Caches.avatars.cache[badgeKit.authorFullname]?.data, saved: badgeKit.saved, usernameColor: usernameColor, author: badgeKit.author, fullname: badgeKit.authorFullname, userFlair: badgeKit.userFlair, created: badgeKit.created, avatarURL: avatarURL, theme: theme, commentsCount: formatBigNumber(badgeKit.numComments), votesCount: !showVotes ? nil : formatBigNumber(badgeKit.ups), routerProxy: routerProxy, cs: cs, openSub: openSub, subName: subName)
   }
 }
 

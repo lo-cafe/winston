@@ -22,6 +22,7 @@ struct MultiPostsView: View {
   @State private var searchText: String = ""
   @State private var sort: SubListingSortOption = Defaults[.preferredSort]
   @State private var newPost = false
+  @State private var reachedEndOfFeed: Bool = false
   
   @EnvironmentObject private var routerProxy: RouterProxy
   @Environment(\.useTheme) private var selectedTheme
@@ -43,6 +44,7 @@ struct MultiPostsView: View {
         }
         loading = false
         lastPostAfter = result.1
+        reachedEndOfFeed = newPosts.count == 0
       }
       Task(priority: .background) {
         await RedditAPI.shared.updatePostsWithAvatar(posts: newPosts, avatarSize: selectedTheme.postLinks.theme.badge.avatar.size)
@@ -61,13 +63,13 @@ struct MultiPostsView: View {
       if IPAD {
         SubredditPostsIPAD(showSub: true, posts: posts.data, searchText: searchText, fetch: fetch, selectedTheme: selectedTheme)
       } else {
-        SubredditPostsIOS(showSub: true, lastPostAfter: lastPostAfter, posts: posts.data, searchText: searchText, fetch: fetch, selectedTheme: selectedTheme)
+        SubredditPostsIOS(showSub: true, lastPostAfter: lastPostAfter, posts: posts.data, searchText: searchText, fetch: fetch, selectedTheme: selectedTheme, reachedEndOfFeed: $reachedEndOfFeed)
       }
     }
-    .themedListBG(selectedTheme.postLinks.bg)
+    //.themedListBG(selectedTheme.postLinks.bg)
     .listStyle(.plain)
     .environment(\.defaultMinListRowHeight, 1)
-    .loader(loading && posts.data.count == 0)
+    .loader(loading && posts.data.count == 0 && !reachedEndOfFeed)
     .navigationBarItems(
       trailing:
         HStack {
@@ -85,7 +87,8 @@ struct MultiPostsView: View {
                 }
               }
             }
-          } label: {
+          }
+        label: {
             Image(systemName: sort.rawVal.icon)
               .foregroundColor(Color.accentColor)
               .fontSize(17, .bold)
@@ -115,6 +118,7 @@ struct MultiPostsView: View {
       withAnimation {
         loading = true
         posts.data.removeAll()
+        reachedEndOfFeed = false
       }
       fetch()
       Defaults[.preferredSort] = sort
@@ -122,7 +126,8 @@ struct MultiPostsView: View {
 //    .searchable(text: $searchText, prompt: "Search r/\(subreddit.data?.display_name ?? subreddit.id)")
     .refreshable { await asyncFetch(force: true) }
     .navigationTitle(multi.data?.name ?? "MultiZ")
-    .background(.thinMaterial)
+    .scrollContentBackground(.hidden)
+    //.background(.thinMaterial)
   }
   
 }

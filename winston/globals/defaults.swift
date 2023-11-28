@@ -22,6 +22,7 @@ struct PostInBox: Codable, Identifiable, Hashable, Defaults.Serializable {
   var subColor: String?
   var score: Int?
   var commentsCount: Int?
+  var newCommentsCount: Int?
   var createdAt: Double?
   var lastUpdatedAt: Double?
 }
@@ -57,6 +58,7 @@ extension Defaults.Keys {
   static let blurPostNSFW = Key<Bool>("blurPostNSFW", default: false)
   static let collapseAutoModerator = Key<Bool>("collapseAutoModerator", default: false)
   static let preferredCommentSort = Key<CommentSortOption>("preferredCommentSort", default: .confidence)
+  static let tappableFeedMedia = Key<Bool>("tappableFeedMedia", default: true)
   
   // CompdismissKeyboardt Mode Settings
   static let compactMode = Key<Bool>("compactMode", default: false)
@@ -109,6 +111,7 @@ extension Defaults.Keys {
   static let showSavedFeed = Key<Bool>("showSavedFeed", default: true)
   static let enableSwipeAnywhere = Key<Bool>("enableSwipeAnywhere", default: false)
   static let autoPlayVideos = Key<Bool>("autoPlayVideos", default: true)
+	static let muteVideos = Key<Bool>("muteVideos", default: false)
   static let loopVideos = Key<Bool>("loopVideos", default: true)
   static let showSubsAtTop = Key<Bool>("showSubsAtTop", default: false)
   static let showTitleAtTop = Key<Bool>("showTitleAtTop", default: true)
@@ -143,6 +146,13 @@ extension Defaults.Keys {
   static let doLiveText = Key<Bool>("doLiveText", default: true)
   
   static let syncKeyChainAndSettings = Key<Bool>("syncKeyChainAndSettings", default: true)
+  
+  static let shinyTextAndButtons = Key<Bool>("shinyTextAndButtons", default: true)
+  
+  static let lastSeenAnnouncementTimeStamp = Key<Int>("lastSeenAnnouncementTimeStamp", default: 0)
+  static let showingUpsellDict = Key<Dictionary<String, Bool>>("showingUpsellDict", default: [
+    "themesUpsell_01": true
+  ])
 }
 
 extension UIScreen {

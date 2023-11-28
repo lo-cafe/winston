@@ -49,17 +49,44 @@ struct EntityExtracted<T: GenericRedditEntityDataType, B: Hashable>: Equatable {
   let entity: GenericRedditEntity<T, B>
 }
 
+struct StreamableExtracted: Equatable {
+  static func == (lhs: StreamableExtracted, rhs: StreamableExtracted) -> Bool {
+    lhs.shortCode == rhs.shortCode
+  }
+  
+  let shortCode: String
+  init(url: String) {
+    self.shortCode = String(url[url.index(url.lastIndex(of: "/") ?? url.startIndex, offsetBy: 1)...])
+  }
+}
+
+struct StreamableCached: Equatable {
+  static func == (lhs: StreamableCached, rhs: StreamableCached) -> Bool {
+    lhs.url == rhs.url && lhs.size == rhs.size
+  }
+  
+  let url: URL
+  let size: CGSize
+  
+  init(url: URL, size: CGSize) {
+    self.url = url
+    self.size = size
+  }
+}
+
 enum MediaExtractedType: Equatable {
   case link(PreviewModel)
   case video(SharedVideo)
   case imgs([ImgExtracted])
   case yt(YTMediaExtracted)
+  case streamable(StreamableExtracted)
   case repost(Post)
   case post(EntityExtracted<PostData, PostWinstonData>?)
   case comment(EntityExtracted<CommentData, CommentWinstonData>?)
   case subreddit(EntityExtracted<SubredditData, AnyHashable>?)
   case user(EntityExtracted<UserData, AnyHashable>?)
 }
+
 
 // ORDER MATTERS!
 func mediaExtractor(compact: Bool, contentWidth: Double = UIScreen.screenWidth, _ data: PostData, theme: WinstonTheme? = nil) -> MediaExtractedType? {
@@ -83,11 +110,11 @@ func mediaExtractor(compact: Bool, contentWidth: Double = UIScreen.screenWidth, 
   }
   
   if let videoPreview = data.preview?.reddit_video_preview, let url = videoPreview.hls_url, let videoURL = URL(string: url), let width = videoPreview.width, let height = videoPreview.height  {
-    return .video(SharedVideo(url: videoURL, size: CGSize(width: CGFloat(width), height: CGFloat(height))))
+    return .video(SharedVideo.get(url: videoURL, size: CGSize(width: CGFloat(width), height: CGFloat(height))))
   }
   
   if let redditVideo = data.media?.reddit_video, let url = redditVideo.hls_url, let videoURL = URL(string: url), let width = redditVideo.width, let height = redditVideo.height {
-    return .video(SharedVideo(url: videoURL, size: CGSize(width: CGFloat(width), height: CGFloat(height))))
+    return .video(SharedVideo.get(url: videoURL, size: CGSize(width: CGFloat(width), height: CGFloat(height))))
   }
   
   if data.media?.type == "youtube.com", let oembed = data.media?.oembed, let html = oembed.html, let ytID = extractYoutubeIdFromOEmbed(html), let width = oembed.width, let height = oembed.height, let author_name = oembed.author_name, let author_url = oembed.author_url, let authorURL = URL(string: author_url), let thumb = oembed.thumbnail_url, let thumbURL = URL(string: thumb) {
@@ -132,27 +159,12 @@ func mediaExtractor(compact: Bool, contentWidth: Double = UIScreen.screenWidth, 
   }
   
   if VIDEOS_FORMATS.contains(where: { data.url.hasSuffix($0) }), let url = URL(string: data.url) {
-    return .video(SharedVideo(url: url, size: CGSize(width: 0, height: 0)))
+    return .video(SharedVideo.get(url: url, size: CGSize(width: 0, height: 0)))
   }
   
-  // MANDRAKE
-//  if data.url.contains("streamable") {
-//    let url = data.url;
-//    let shortCode = url[url.index(url.lastIndex(of: "/") ?? url.startIndex, offsetBy: 1)...]
-//
-//    let response = await AF.request(
-//      "https://api.streamable.com/videos/\(shortCode)"
-//    ).serializingDecodable(StreamableAPIResponse.self).response
-//    
-//    switch response.result {
-//    case .success(let data):
-//      if let mp4 = data.files?.mp4Mobile ?? data.files?.mp4 {
-//        return .video(MediaExtracted(url: URL(string: mp4.url)!, size: CGSize(width: mp4.width, height: mp4.height)))
-//      }
-//    case .failure:
-//      return nil
-//    }
-//  }
+  if data.url.contains("streamable.com") {
+    return .streamable(StreamableExtracted(url: data.url))
+  }
   
   let actualURL = data.url.hasPrefix("/r/") || data.url.hasPrefix("/u/") ? "https://reddit.com\(data.url)" : data.url
   guard let urlComponents = URLComponents(string: actualURL) else {
@@ -197,13 +209,13 @@ func mediaExtractor(compact: Bool, contentWidth: Double = UIScreen.screenWidth, 
       
     default:
       if !data.is_self, let linkURL = URL(string: data.url) {
-        return .link(PreviewModel(linkURL))
+        return .link(PreviewModel.get(linkURL))
       }
     }
   }
   
   if data.post_hint == "link", let linkURL = URL(string: data.url) {
-    return .link(PreviewModel(linkURL))
+    return .link(PreviewModel.get(linkURL))
   }
   
   return nil

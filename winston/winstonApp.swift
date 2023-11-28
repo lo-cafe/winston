@@ -19,7 +19,7 @@ struct winstonApp: App {
   @Default(.themesPresets) private var themesPresets
   @Default(.selectedThemeID) private var selectedThemeID
   @Default(.redditCredentialSelectedID) private var redditCredentialSelectedID
-
+  
   
   var selectedTheme: WinstonTheme { themesPresets.first { $0.id == selectedThemeID } ?? defaultTheme }
   
@@ -72,6 +72,7 @@ struct winstonApp: App {
 }
 
 struct AppContent: View {
+  @ObservedObject private var winstonAPI = WinstonAPI()
   var selectedTheme: WinstonTheme
   @StateObject private var themeStore = ThemeStoreAPI()
   @Environment(\.colorScheme) private var cs
@@ -86,7 +87,10 @@ struct AppContent: View {
       Tabber(theme: selectedTheme, cs: cs).equatable()
     }
     .whatsNewSheet()
+    .environmentObject(winstonAPI)
     .environmentObject(themeStore)
+    //        .alertToastRoot()
+    //        .tint(selectedTheme.general.accentColor.cs(cs).color())
     .onChange(of: scenePhase) { newPhase in
       let useAuth = UserDefaults.standard.bool(forKey: "useAuth") // Get fresh value
       
@@ -99,11 +103,11 @@ struct AppContent: View {
               lockBlur = 0
             }
           }
-          isAuthenticating = false
         }
-        else if (newPhase != .active) {
-          lockBlur = 50
-        }
+        isAuthenticating = false
+      }
+      else if (newPhase != .active) {
+        lockBlur = 50
       }
       
       switch newPhase {

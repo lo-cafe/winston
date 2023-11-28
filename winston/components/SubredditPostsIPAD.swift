@@ -83,6 +83,15 @@ struct SubredditPostsIPAD: View, Equatable {
                   .environmentObject(post)
                   .environmentObject(sub)
                   .environmentObject(winstonData)
+									.onAppear {
+										if(posts.count - 7 == i) {
+											if !searchText.isEmpty {
+												fetch(true, searchText)
+											} else {
+												fetch(true, nil)
+											}
+										}
+									}
 //                }
               }
             }

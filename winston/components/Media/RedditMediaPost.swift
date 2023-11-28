@@ -31,6 +31,6 @@ struct RedditMediaPost: View {
     }
     .frame(maxWidth: .infinity, minHeight: RedditMediaPost.height, maxHeight: RedditMediaPost.height)
     .padding(.horizontal, 8)
-    .background(RoundedRectangle(cornerRadius: 12, style: .continuous).fill(.primary.opacity(0.05)))
+    .background(RoundedRectangle(cornerRadius: 12, style: .continuous).fill(.primary.opacity(0.1)))
   }
 }

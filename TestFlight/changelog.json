@@ -1,37 +1,76 @@
 {
     "title": "What's new in Winston",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "features": [
         {
-            "subtitle": "We've added a cool new What's New sheet!",
-            "systemImage": "star",
-            "title": "What's New sheet"
+            "subtitle": "Huge performance upgrade!",
+            "systemImage": "hare",
+            "title": "Performance Upgrade"
         },
         {
-            "subtitle": "Want to copy text you see in an image? Now you can!",
-            "systemImage": "text.viewfinder",
-            "title": "Live Text"
+            "subtitle": "With the new saved posts feed you can finally look at all the cute cat pics you saved so long ago",
+            "systemImage": "bookmark",
+            "title": "Saved Posts Feed"
         },
         {
-            "subtitle": "You can now lock Winston with a pin or biometrics.",
-            "systemImage": "lock",
-            "title": "Lock Winston"
+            "subtitle": "You can finally look at those spicy opinions.",
+            "systemImage": "figure.fencing",
+            "title": "Add Controversial Sort"
         },
         {
-            "subtitle": "Download other peoples themes with the all new Theme Store.",
-            "systemImage": "paintpalette",
-            "title": "Theme Store"
+            "subtitle": "Add subscribed indicator / button to search",
+            "systemImage": "checkmark.square",
+            "title": "Subscribed Indicator in Search"
         },
         {
-            "subtitle": "Wait didn't I read this already? With new comments indicators you dont need to ask yourself this question anymore!",
-            "systemImage": "person",
-            "title": "New Comments Indicator"
+            "subtitle": "Added option to use inline post toolbar in place of floating toolbar in the post page. (Theme -> Post page -> Inline upvote toolbar - at bottom)",
+            "systemImage": "rectangle.and.pencil.and.ellipsis",
+            "title": "Inline Post Toolbar Option"
         },
         {
-            "subtitle": "Show some flair with...flairs! Winston now displays flairs in comments.",
-            "systemImage": "flag",
-            "title": "User Flairs in Comments"
+            "subtitle": "Added ability to sort by only posts or only comments in a user profile. (Click the corresponding karma button)",
+            "systemImage": "arrow.up.arrow.down.square",
+            "title": "User Profile Sorting"
+        },
+        {
+            "subtitle": "Tweaked look of UI in many areas (mainly compact mode improvements).",
+            "systemImage": "rectangle.3.group",
+            "title": "UI Tweaks"
+        },
+        {
+            "subtitle": "Images in comments now open in the app.",
+            "systemImage": "photo",
+            "title": "In-App Image Viewer"
+        },
+        {
+            "subtitle": "In-app safari support improved.",
+            "systemImage": "safari",
+            "title": "Improved In-App Safari Support"
+        },
+        {
+            "subtitle": "Implemented iCloud syncing for credentials.",
+            "systemImage": "icloud",
+            "title": "iCloud Syncing for Credentials"
+        },
+        {
+            "subtitle": "Removed deprecated bug reporting functionality.",
+            "systemImage": "xmark.octagon",
+            "title": "Bug Reporting Removal"
+        },
+        {
+            "subtitle": "Enhanced stability for the video player and made minor performance tweaks.",
+            "systemImage": "play.rectangle",
+            "title": "Video Player Stability and Performance"
+        },
+        {
+            "subtitle": "Deployed fix for user flairs and new comment indicators.",
+            "systemImage": "wrench.and.screwdriver",
+            "title": "Fix for User Flairs and Comment Indicators"
+        },
+        {
+            "subtitle": "Various bug fixes, stability improvements and QOL tweaks.",
+            "systemImage": "hammer",
+            "title": "Bug Fixes and QOL Tweaks"
         }
-    ],
-   
+    ]
 }

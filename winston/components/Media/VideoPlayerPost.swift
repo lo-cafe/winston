@@ -14,6 +14,23 @@ struct SharedVideo: Equatable {
   var url: URL
   var size: CGSize
   
+  static func get(url: URL, size: CGSize) -> SharedVideo {
+    let cacheKey =  SharedVideo.cacheKey(url: url, size: size)
+    
+    if let sharedVideo = Caches.videos.get(key: cacheKey) {
+      return sharedVideo
+    } else {
+      let sharedVideo = SharedVideo(url: url, size: size)
+      Caches.videos.addKeyValue(key: cacheKey, data: { sharedVideo }, expires: Date().dateByAdding(1, .day).date)
+      
+      return sharedVideo
+    }
+  }
+  
+  static func cacheKey(url: URL, size: CGSize) -> String {
+    return "\(url.absoluteString):\(size.width)x\(size.height)"
+  }
+  
   init(url: URL, size: CGSize) {
     self.url = url
     self.size = size
@@ -45,6 +62,7 @@ struct VideoPlayerPost: View, Equatable {
   @Default(.autoPlayVideos) private var autoPlayVideos
   @Default(.loopVideos) private var loopVideos
   @Default(.lightboxViewsPost) private var lightboxViewsPost
+	@Default(.muteVideos) private var muteVideos
   
   init(controller: UIViewController?, cachedVideo: SharedVideo?, markAsSeen: (() async -> ())?, compact: Bool = false, overrideWidth: CGFloat? = nil, url: URL) {
     self.controller = controller
@@ -107,8 +125,14 @@ struct VideoPlayerPost: View, Equatable {
           .onChange(of: fullscreen) { val in
             if !firstFullscreen {
               firstFullscreen = true
+							sharedVideo.player.isMuted = muteVideos
               sharedVideo.player.play()
             }
+						if !val && !autoPlayVideos {
+							sharedVideo.player.seek(to: .zero)
+							sharedVideo.player.pause()
+							firstFullscreen = false
+						}
             sharedVideo.player.volume = val ? 1.0 : 0.0
           }
           .allowsHitTesting(false)
@@ -144,8 +168,14 @@ struct VideoPlayerPost: View, Equatable {
         .onChange(of: fullscreen) { val in
           if !firstFullscreen {
             firstFullscreen = true
+						sharedVideo.player.isMuted = muteVideos
             sharedVideo.player.play()
-          }
+          } 
+					if !val && !autoPlayVideos {
+						sharedVideo.player.seek(to: .zero)
+						sharedVideo.player.pause()
+						firstFullscreen = false
+					 }
           sharedVideo.player.volume = val ? 1.0 : 0.0
         }
         .fullScreenCover(isPresented: $fullscreen) {

@@ -21,16 +21,16 @@ extension RedditAPI {
   }
   
   struct VotePayload: Codable {
-    let dir: Int
+    let dir: String
     let id: String
 //    var rank = 1
     var api_type = "json"
   }
   
-  enum VoteAction: Int, Codable {
-    case up = 1
-    case none = 0
-    case down = -1
+  enum VoteAction: String, Codable {
+    case up = "1"
+    case none = "0"
+    case down = "-1"
     
     func boolVersion() -> Bool? {
       switch self {

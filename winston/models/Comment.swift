@@ -69,7 +69,7 @@ extension Comment {
     bodyAttr.addAttribute(.paragraphStyle, value: style, range: NSRange(location: 0, length: bodyAttr.length))
     winstonData.bodyAttr = bodyAttr
     
-    let screenWidth = UIScreen.screenWidth
+    let screenWidth = UIScreen.screenWidth - (!IPAD ? 0 : (UIScreen.screenWidth /  3))
     var bodyMaxWidth = Double(screenWidth - (theme.outerHPadding * 2) - (theme.innerPadding.horizontal * 2))
     if let depth = data.depth, depth > 0 {
       bodyMaxWidth -= Double(CommentLinkContent.indentLineContentSpacing)
@@ -324,7 +324,7 @@ extension Comment {
     await MainActor.run { [newAction] in
       withAnimation {
         data?.likes = newAction.boolVersion()
-        data?.ups = oldUps + (action.boolVersion() == oldLikes ? oldLikes == nil ? 0 : -action.rawValue : action.rawValue * (oldLikes == nil ? 1 : 2))
+        data?.ups = oldUps + (action.boolVersion() == oldLikes ? oldLikes == nil ? 0 : -(Int(action.rawValue) ?? 0) : (Int(action.rawValue) ?? 1) * (oldLikes == nil ? 1 : 2))
       }
     }
     let result = await RedditAPI.shared.vote(newAction, id: "\(typePrefix ?? "")\(id.dropLast(2))")

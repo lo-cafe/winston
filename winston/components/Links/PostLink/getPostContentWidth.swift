@@ -109,6 +109,8 @@ func getPostDimensions(post: Post, winstonData: PostWinstonData? = nil, columnWi
           }
         case .video(let video):
           ACC_mediaSize = defaultMediaSize(video.size)
+        case .streamable(_):
+          ACC_mediaSize = CGSize(width: contentWidth, height: 100)
         case .yt(let ytMediaExtracted):
           let size = ytMediaExtracted.size
           let actualHeight = (contentWidth * CGFloat(size.height)) / CGFloat(size.width)
@@ -183,7 +185,7 @@ func getPostDimensions(post: Post, winstonData: PostWinstonData? = nil, columnWi
     let theresTitle = true
     let theresSelftext = !compact && !data.selftext.isEmpty
     let theresMedia = extractedMedia != nil
-    let theresSubDivider = !compact
+    let theresSubDivider = !compact && theme.showDivider
     let theresBadge = true
     let elements = [theresTitle, theresSelftext, !compact && theresMedia, theresSubDivider, theresBadge]
     let ACC_allSpacingsHeight = Double(elements.filter { $0 }.count - 1) * postGeneralSpacing

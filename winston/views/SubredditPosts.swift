@@ -35,6 +35,7 @@ struct SubredditPosts: View, Equatable {
   @State private var loadNextSavedData: Bool = false
   @State private var isSavedSubreddit: Bool = false
   @State private var hasViewLoaded: Bool = false
+  @State private var reachedEndOfFeed: Bool = false
   
   @EnvironmentObject private var routerProxy: RouterProxy
   @Environment(\.useTheme) private var selectedTheme
@@ -56,6 +57,7 @@ struct SubredditPosts: View, Equatable {
       await subreddit.refreshSubreddit()
     }
     if posts.data.count > 0 && lastPostAfter == nil && !force {
+      reachedEndOfFeed = true
       return
     }
     withAnimation {
@@ -78,6 +80,7 @@ struct SubredditPosts: View, Equatable {
           
           loading = false
           lastPostAfter = result.1
+          reachedEndOfFeed = newPostsFiltered.count == 0
         }
       }
     } else {
@@ -94,6 +97,8 @@ struct SubredditPosts: View, Equatable {
             lastPostAfter = getItemId(for: lastItem)
           }
         }
+        
+        reachedEndOfFeed = result.count == 0
       }
     }
   }
@@ -112,6 +117,7 @@ struct SubredditPosts: View, Equatable {
     withAnimation {
       posts.data.removeAll()
       loadedPosts.removeAll()
+      reachedEndOfFeed = false
       
       if isSavedSubreddit {
         savedMixedMediaLinks?.removeAll()
@@ -136,13 +142,14 @@ struct SubredditPosts: View, Equatable {
           if IPAD {
             SubredditPostsIPAD(showSub: isFeedsAndSuch, subreddit: subreddit, posts: posts.data, searchText: searchText, fetch: fetch, selectedTheme: selectedTheme)
           } else {
-            SubredditPostsIOS(showSub: isFeedsAndSuch, lastPostAfter: lastPostAfter, subreddit: subreddit, posts: posts.data, searchText: searchText, fetch: fetch, selectedTheme: selectedTheme)
+            SubredditPostsIOS(showSub: isFeedsAndSuch, lastPostAfter: lastPostAfter, subreddit: subreddit, posts: posts.data, searchText: searchText, fetch: fetch, selectedTheme: selectedTheme, reachedEndOfFeed: $reachedEndOfFeed)
+            
           }
         }
         .searchable(text: $searchText, prompt: "Search r/\(subreddit.data?.display_name ?? subreddit.id)")
       } else {
         if let savedMixedMediaLinks = savedMixedMediaLinks, let user = redditAPI.me {
-          MixedContentFeedView(mixedMediaLinks: savedMixedMediaLinks, loadNextData: $loadNextSavedData, user: user)
+          MixedContentFeedView(mixedMediaLinks: savedMixedMediaLinks, loadNextData: $loadNextSavedData, user: user, reachedEndOfFeed: $reachedEndOfFeed)
             .onChange(of: loadNextSavedData) { shouldLoad in
               if shouldLoad {
                 fetch(shouldLoad)

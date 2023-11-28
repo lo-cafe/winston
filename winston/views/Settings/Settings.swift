@@ -23,10 +23,15 @@ struct Settings: View {
   @Environment(\.colorScheme) private var cs
   @State private var id = UUID().uuidString
   
-  @State var presentingWhatsNew: Bool = false
   
+  
+  @EnvironmentObject var winstonAPI: WinstonAPI
+
+  @State var presentingWhatsNew: Bool = false
+  @State var presentingAnnouncement: Bool = false
   var body: some View {
     NavigationStack(path: $router.path) {
+  
       RouterProxyInjector(routerProxy: RouterProxy(router)) { routerProxy in
         List {
           Group {
@@ -60,6 +65,13 @@ struct Settings: View {
               }
               .disabled(getCurrentChangelog().isEmpty)
               
+              WListButton {
+               
+                presentingAnnouncement.toggle()
+              } label: {
+                Label("Announcements", systemImage: "newspaper")
+              }
+              
               WSListButton("Donate monthly", icon: "heart.fill") {
                 openURL(URL(string: "https://patreon.com/user?u=93745105")!)
               }
@@ -89,6 +101,21 @@ struct Settings: View {
               WhatsNewView(whatsNew: isNew)
           }
         }
+        .sheet(isPresented: $presentingAnnouncement){
+          
+          if let announcement = winstonAPI.announcement {
+            AnnouncementSheet(showingAnnouncement: $presentingAnnouncement, announcement: announcement)
+          } else {
+            ProgressView()
+              .onAppear{
+                Task(priority: .userInitiated){
+                  winstonAPI.announcement = await winstonAPI.getAnnouncement()
+                }
+              }
+          }
+        }
+        
+        
         .themedListBG(selectedTheme.lists.bg)
         .scrollContentBackground(.hidden)
         .navigationDestination(for: SettingsPages.self) { x in

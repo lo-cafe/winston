@@ -81,6 +81,11 @@ struct CardSettings: View {
         
         Divider()
         
+        Toggle("Show divider", isOn: $theme.showDivider)
+          .padding(.horizontal, 16)
+        
+        Divider()
+                
         VStack {
           HStack {
             Text("Unseen type")
