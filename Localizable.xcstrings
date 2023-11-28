@@ -421,23 +421,6 @@
         }
       }
     },
-    "Account switcher\ncoming soon..." : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Kontoauswahlschalter\nDemnächst verfügbar..."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Selettore account\nin arrivo..."
-          }
-        }
-      }
-    },
     "Accounts" : {
 
     },
@@ -492,23 +475,6 @@
         }
       }
     },
-    "API Credentials Setup" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Einrichtung von API-Anmeldeinformationen"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Configurazione Credenziali API"
-          }
-        }
-      }
-    },
     "App icon" : {
       "localizations" : {
         "de" : {
@@ -521,40 +487,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Icona dell'app"
-          }
-        }
-      }
-    },
-    "App ID" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "App ID"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "App ID"
-          }
-        }
-      }
-    },
-    "App secret" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "App Geheimnis"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Segreto dell'app"
           }
         }
       }
@@ -587,23 +519,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sei sicuro di voler scartare?"
-          }
-        }
-      }
-    },
-    "Are you sure you wanna logoff?" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sind Sie sicher, dass Sie sich abmelden möchten?"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sei sicuro di volerti scollegare?"
           }
         }
       }
@@ -751,23 +666,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Annulla"
-          }
-        }
-      }
-    },
-    "Check \"web app\":" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Überprüfe \"Web-App\":"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Controlla \"web app\":"
           }
         }
       }
@@ -1183,26 +1081,6 @@
         }
       }
     },
-    "Don't worry, there will be no costs, there's a free tier of 100 requests/minute and it's kinda impossible for you to go beyond that." : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Keine Sorge, es entstehen keine Kosten. Es gibt eine kostenlose Stufe mit 100 Anfragen pro Minute, und es ist ziemlich unmöglich, dass du darüber hinausgehst."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Non preoccuparti, non ci saranno costi; c'è un livello gratuito di 100 richieste al minuto ed è praticamente impossibile superarlo."
-          }
-        }
-      }
-    },
-    "Download" : {
-
-    },
     "Drag Left" : {
       "localizations" : {
         "de" : {
@@ -1338,29 +1216,6 @@
         }
       }
     },
-    "Everything Amazing!" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Alles wunderbar!"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tout est incroyable!"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tutto Fantastico!"
-          }
-        }
-      }
-    },
     "Export" : {
       "localizations" : {
         "de" : {
@@ -1445,29 +1300,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Preferiti"
-          }
-        }
-      }
-    },
-    "Fill the other fields however you want and click:" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Füllen Sie die anderen Felder aus, wie Sie möchten und klicken Sie auf:"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Remplissez les autres champs comme vous le souhaitez et cliquez sur :"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Compila gli altri campi come preferisci e fai clic:"
           }
         }
       }
@@ -1746,23 +1578,6 @@
         }
       }
     },
-    "Hold up, we're getting your access token!" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bitte warten Sie, wir holen Ihren Zugangs-Token!"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aspetta un attimo, stiamo ottenendo il tuo token di accesso!"
-          }
-        }
-      }
-    },
     "Home" : {
       "localizations" : {
         "de" : {
@@ -1889,29 +1704,6 @@
         }
       }
     },
-    "If Reddit ban the user-agent this app uses, you can change it to a custom one here:" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Falls Reddit den von dieser App verwendeten User-Agent bannt, kann dieser hier geändert werden:"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Si Reddit bannit l'user-agent que cette application utilise, vous pouvez le changer en un custom one ici :"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Se Reddit banna l'User-Agent utilizzato da questa app, puoi cambiarlo con uno personalizzato qui:"
-          }
-        }
-      }
-    },
     "Import Settings" : {
       "localizations" : {
         "de" : {
@@ -1934,52 +1726,6 @@
         }
       }
     },
-    "In order to be able to use Reddit, you'll need to provide your own API credentials." : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Um Reddit nutzen zu können, müssen Sie Ihre eigenen API-Zugangsdaten angeben."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Afin de pouvoir utiliser Reddit, vous devrez fournir vos propres identifiants API."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Per poter utilizzare Reddit, è necessario fornire le proprie credenziali API."
-          }
-        }
-      }
-    },
-    "In the new app you created, find the app ID and paste it below:" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "In der neuen App, die Sie erstellt haben, suchen Sie die App-ID und fügen sie unten ein:"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dans la nouvelle application que vous avez créée, trouvez l'ID de l'application et collez-la ci-dessous:"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nella nuova app che hai creato, trova l'ID dell'app e incollalo qui sotto:"
-          }
-        }
-      }
-    },
     "Inbox" : {
       "localizations" : {
         "de" : {
@@ -1997,7 +1743,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Posta in arrivo"
+            "value" : "Posta"
           }
         }
       }
@@ -2590,23 +2336,6 @@
         }
       }
     },
-    "Now click the button below and grant full access to the app you created:" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Klicke nun auf den Button unten und gewähre vollen Zugriff der App, die du erstellt hast:"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ora clicca il pulsante sottostante e concedi l'accesso completo all'app che hai creato:"
-          }
-        }
-      }
-    },
     "Now paste it here:" : {
       "localizations" : {
         "de" : {
@@ -2635,23 +2364,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ora abbiamo una \"tip jar\"!"
-          }
-        }
-      }
-    },
-    "Now, your \"secret\" (don't worry, it'll be saved locally in your keychain):" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nun dein \"Geheimnis\" (keine Sorge, es wird lokal in deinem Schlüsselbund gespeichert):"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ora, il \"segreto\" (non preoccuparti, verrà salvato localmente nel tuo portachiavi):"
           }
         }
       }
@@ -2770,23 +2482,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Apri le impostazioni dell'API di Reddit in Safari cliccando il pulsante sottostante, quindi torna a Winston."
-          }
-        }
-      }
-    },
-    "Open Reddit's apps settings by clicking this button:" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Öffnen Sie Reddit's App-Einstellungen durch Klicken auf diesen Button:"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Apri le impostazioni dell'app Reddit cliccando su questo pulsante:"
           }
         }
       }
@@ -3146,23 +2841,6 @@
         }
       }
     },
-    "Reset winston" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Winston zurücksetzen"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ripristina winston"
-          }
-        }
-      }
-    },
     "Restart required" : {
       "localizations" : {
         "de" : {
@@ -3226,23 +2904,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Salva l'ordinamento per ogni subreddit"
-          }
-        }
-      }
-    },
-    "Scroll down and click" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nach unten Scrollen und klicken"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Scorri verso il basso e clicca"
           }
         }
       }
@@ -3749,23 +3410,6 @@
         }
       }
     },
-    "Tap the URL below to copy and paste it in the \"redirect uri\" field:" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tippe die URL unten, um sie zu kopieren und füge sie ins \"redirect uri\" Feld ein:"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tocca l'URL qui sotto per copiarlo e incollarlo nel campo \"redirect uri\":"
-          }
-        }
-      }
-    },
     "Tap to copy" : {
       "localizations" : {
         "de" : {
@@ -3846,23 +3490,6 @@
         }
       }
     },
-    "That's it! Your API credentials are setup and you don't need to worry about these boring details anymore." : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Das war's! Deine API-Anmeldeinformationen sind eingerichtet und du musst dich nicht mehr um die langweiligen Details kümmern."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Fatto! Le tue credenziali API sono configurate e non devi preoccuparti di questi dettagli noiosi."
-          }
-        }
-      }
-    },
     "The theme was imported successfully. Enable it in \"Themes\" section in the Settings tab." : {
       "localizations" : {
         "de" : {
@@ -3878,9 +3505,6 @@
           }
         }
       }
-    },
-    "Theme Store" : {
-
     },
     "Theme Store Tint" : {
       "localizations" : {
@@ -3946,9 +3570,6 @@
         }
       }
     },
-    "There was an error importing this theme" : {
-
-    },
     "This is not working yet :(" : {
       "localizations" : {
         "de" : {
@@ -4009,23 +3630,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ciò ti permetterà di tornare indietro effettuando uno swipe ovunque sullo schermo, ma disabiliterà i gesti di swipe per i post e i commenti."
-          }
-        }
-      }
-    },
-    "This will clear everything in the app (your Reddit account is safe)." : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dies wird alles in der App löschen (Dein Reddit Konto ist sicher)."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Questo cancellerà tutto nell'app (il tuo account Reddit è al sicuro)."
           }
         }
       }
@@ -4192,23 +3796,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Carica Tema"
-          }
-        }
-      }
-    },
-    "User Agent" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "User-Agent"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "User Agent"
           }
         }
       }
@@ -4449,23 +4036,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Non hai nessun tema locale"
-          }
-        }
-      }
-    },
-    "Your API credentials are 👌" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ihre API-Zugangsdaten sind 👌"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Le tue credenziali API sono 👌"
           }
         }
       }
