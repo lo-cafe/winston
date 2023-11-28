@@ -207,7 +207,7 @@ struct Tabber: View, Equatable {
         Defaults[.subreddits] = []
       }
       Task(priority: .background) { await updatePostsInBox(RedditAPI.shared) }
-      print(redditCredentialsManager.credentials.count)
+
       if redditCredentialsManager.credentials.count == 0 {
         withAnimation(spring) {
           credModalOpen = true
