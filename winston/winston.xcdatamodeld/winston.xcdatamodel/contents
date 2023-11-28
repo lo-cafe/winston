@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="22222" systemVersion="23B5067a" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithCloudKit="YES" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="22225" systemVersion="23B74" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithCloudKit="YES" userDefinedModelVersionIdentifier="">
     <entity name="CachedMulti" representedClassName="CachedMulti" syncable="YES">
         <attribute name="display_name" optional="YES" attributeType="String"/>
         <attribute name="icon_url" optional="YES" attributeType="String"/>
@@ -40,6 +40,7 @@
         <attribute name="user_is_moderator" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="user_is_subscriber" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="uuid" optional="YES" attributeType="String"/>
+        <attribute name="winstonAccountID" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <relationship name="multis" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="CachedMulti" inverseName="subreddits" inverseEntity="CachedMulti"/>
         <uniquenessConstraints>
             <uniquenessConstraint>

@@ -44,6 +44,7 @@ let DEFAULT_COMMENT_SWIPE_ACTIONS = SwipeActionsSet(
 )
 
 extension Defaults.Keys {
+  static let redditCredentialSelectedID = Key<UUID?>("redditCredentialSelectedID", default: nil)
   static let redditAPILastTokenRefreshDate = Key<Date?>("redditAPILastTokenRefreshDate", default: nil)
   static let redditAPITokenExpiration = Key<Int?>("redditAPITokenExpiration", default: nil)
   static let multis = Key<[MultiData]>("multis", default: [])
@@ -57,8 +58,9 @@ extension Defaults.Keys {
   static let blurPostNSFW = Key<Bool>("blurPostNSFW", default: false)
   static let collapseAutoModerator = Key<Bool>("collapseAutoModerator", default: false)
   static let preferredCommentSort = Key<CommentSortOption>("preferredCommentSort", default: .confidence)
+  static let tappableFeedMedia = Key<Bool>("tappableFeedMedia", default: true)
   
-  // Compact Mode Settings
+  // CompdismissKeyboardt Mode Settings
   static let compactMode = Key<Bool>("compactMode", default: false)
   static let compThumbnailSize = Key<ThumbnailSizeModifier>("compThumbnailSize", default: .small)
   static let thumbnailPositionRight = Key<Bool>("thumbnailPositionRight", default: true)
@@ -109,6 +111,7 @@ extension Defaults.Keys {
   static let showSavedFeed = Key<Bool>("showSavedFeed", default: true)
   static let enableSwipeAnywhere = Key<Bool>("enableSwipeAnywhere", default: false)
   static let autoPlayVideos = Key<Bool>("autoPlayVideos", default: true)
+	static let muteVideos = Key<Bool>("muteVideos", default: false)
   static let loopVideos = Key<Bool>("loopVideos", default: true)
   static let showSubsAtTop = Key<Bool>("showSubsAtTop", default: false)
   static let showTitleAtTop = Key<Bool>("showTitleAtTop", default: true)

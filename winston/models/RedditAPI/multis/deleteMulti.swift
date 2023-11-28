@@ -10,24 +10,12 @@ import Alamofire
 
 extension RedditAPI {
   func deleteMulti(_ path: String) async -> Bool? {
-    await refreshToken()
-    //    await getModHash()
-    if let headers = self.getRequestHeaders() {
-      let dataTask = AF.request(
-        "\(RedditAPI.redditApiURLBase)/api/multi/\(path)",
-        method: .delete,
-        headers: headers
-      ).serializingString()
-      let result = await dataTask.result
-      switch result {
+      switch await self.doRequest("\(RedditAPI.redditApiURLBase)/api/multi/\(path)", method: .delete) {
       case .success:
         return true
       case .failure:
         //        print(error)
         return nil
       }
-    } else {
-      return nil
-    }
   }
 }

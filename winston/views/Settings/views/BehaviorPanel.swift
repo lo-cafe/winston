@@ -24,6 +24,7 @@ struct BehaviorPanel: View {
   @Default(.hideReadPosts) var hideReadPosts
   @Default(.enableSwipeAnywhere) var enableSwipeAnywhere
   @Default(.autoPlayVideos) var autoPlayVideos
+	@Default(.muteVideos) var muteVideos
   @Default(.loopVideos) private var loopVideos
   @Default(.lightboxViewsPost) private var lightboxViewsPost
   @Default(.openLinksInSafari) private var openLinksInSafari
@@ -31,6 +32,7 @@ struct BehaviorPanel: View {
   @Default(.perSubredditSort) private var perSubredditSort
   @Default(.perPostSort) private var perPostSort
   @Default(.doLiveText) var doLiveText
+  @Default(.tappableFeedMedia) var tappableFeedMedia
 
   
   @Environment(\.useTheme) private var theme
@@ -102,12 +104,14 @@ struct BehaviorPanel: View {
         Group {
           Toggle("Loop videos", isOn: $loopVideos)
           Toggle("Autoplay videos (muted)", isOn: $autoPlayVideos)
+					Toggle("Default mute fullscreen videos", isOn: $muteVideos)
           Toggle("Read on preview media", isOn: $lightboxViewsPost)
           Toggle("Read on scroll", isOn: $readPostOnScroll)
           Toggle("Hide read posts", isOn: $hideReadPosts)
           Toggle("Blur NSFW in opened posts", isOn: $blurPostNSFW)
           Toggle("Blur NSFW", isOn: $blurPostLinkNSFW)
           Toggle("Save sort per subreddit", isOn: $perSubredditSort)
+          Toggle("Open media from feed", isOn: $tappableFeedMedia)
           Menu {
             ForEach(SubListingSortOption.allCases) { opt in
               if case .top(_) = opt {

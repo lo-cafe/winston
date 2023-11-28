@@ -75,10 +75,7 @@ extension Post {
       self.winstonData?.postDimensionsForcedNormal = getPostDimensions(post: self, winstonData: self.winstonData, columnWidth: contentWidth, secondary: secondary, rawTheme: theme, compact: false)
       
       self.winstonData?.titleAttr = createTitleTagsAttrString(titleTheme: theme.postLinks.theme.titleText, postData: data, textColor: theme.postLinks.theme.titleText.color.cs(cs).color())
-      
-      if fetchSub {
-        self.winstonData?.subreddit = Subreddit(id: data.subreddit, api: RedditAPI.shared)
-      }
+      if fetchSub { self.winstonData?.subreddit = Subreddit(id: data.subreddit, api: RedditAPI.shared) }
       
       if fetchAvatar {
         Task(priority: .background) {
@@ -472,7 +469,7 @@ extension Post {
     await MainActor.run { [newAction] in
       withAnimation(.spring()) {
         data?.likes = newAction.boolVersion()
-        data?.ups = oldUps + (action.boolVersion() == oldLikes ? oldLikes == nil ? 0 : -action.rawValue : action.rawValue * (oldLikes == nil ? 1 : 2))
+        data?.ups = oldUps + (action.boolVersion() == oldLikes ? oldLikes == nil ? 0 : -(Int(action.rawValue) ?? 0) : (Int(action.rawValue) ?? 1) * (oldLikes == nil ? 1 : 2))
       }
     }
     let result = await RedditAPI.shared.vote(newAction, id: "\(typePrefix ?? "")\(id)")

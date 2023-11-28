@@ -61,6 +61,7 @@ struct PostLinkCompact: View, Equatable, Identifiable {
   
   @Environment(\.useTheme) private var selectedTheme
   @Default(.showAuthorOnPostLinks) private var showAuthorOnPostLinks
+  @Default(.tappableFeedMedia) private var tappableFeedMedia
   
   @State private var isOpen = false
   
@@ -98,6 +99,7 @@ struct PostLinkCompact: View, Equatable, Identifiable {
   func mediaComponentCall(showURLInstead: Bool = false) -> some View {
     if let data = post.data, let extractedMedia = post.winstonData?.extractedMedia {
       MediaPresenter(postDimensions: $winstonData.postDimensions, controller: controller, postTitle: data.title, badgeKit: data.badgeKit, avatarImageRequest: winstonData.avatarImageRequest, markAsSeen: markAsRead, cornerRadius: theme.theme.mediaCornerRadius, blurPostLinkNSFW: blurPostLinkNSFW, showURLInstead: showURLInstead, media: extractedMedia, over18: over18, compact: true, contentWidth: winstonData.postDimensions.mediaSize?.width ?? 0, routerProxy: routerProxy)
+        .allowsHitTesting(tappableFeedMedia)
     }
   }
   

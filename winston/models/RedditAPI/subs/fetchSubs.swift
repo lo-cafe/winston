@@ -26,71 +26,56 @@ func cleanSubs(_ subs: [ListingChild<SubredditData>]) -> [ListingChild<Subreddit
 
 extension RedditAPI {
   func fetchSubs(after: String? = nil) async -> [ListingChild<SubredditData>]? {
-    await refreshToken()
-    if let headers = self.getRequestHeaders() {
-      
-      var params = FetchSubsPayload(limit: 100)
-      
-      if let after = after {
-        params.after = after
+    var params = FetchSubsPayload(limit: 100)
+    
+    if let after = after {
+      params.after = after
+    }
+    switch await self.doRequest("\(RedditAPI.redditApiURLBase)/subreddits/mine/subscriber.json", method: .get, params: params, paramsLocation: .queryString, decodable: Listing<SubredditData>.self)  {
+    case .success(let data):
+      var finalSubs: [ListingChild<SubredditData>] = []
+      if let dataAfter = data.data?.after, !dataAfter.isEmpty, let extraFetchedSubs = await fetchSubs(after: dataAfter) {
+        finalSubs += extraFetchedSubs
+      }
+      if let fetchedSubs = data.data?.children {
+        finalSubs += fetchedSubs
+      }
+      if after != nil {
+        return finalSubs
       }
       
-      let response = await AF.request(
-        "\(RedditAPI.redditApiURLBase)/subreddits/mine/subscriber.json",
-        method: .get,
-        parameters: params,
-        encoder: URLEncodedFormParameterEncoder(destination: .queryString),
-        headers: headers
-      )
-        .serializingDecodable(Listing<SubredditData>.self).response
-      switch response.result {
-      case .success(let data):
-        var finalSubs: [ListingChild<SubredditData>] = []
-        if let dataAfter = data.data?.after, !dataAfter.isEmpty, let extraFetchedSubs = await fetchSubs(after: dataAfter) {
-          finalSubs += extraFetchedSubs
-        }
-        if let fetchedSubs = data.data?.children {
-          finalSubs += fetchedSubs
-        }
-        if after != nil {
-          return finalSubs
-        }
-        
-        finalSubs = finalSubs.filter { $0.data?.subreddit_type != "user" }
-        
-        let context = PersistenceController.shared.container.viewContext
-        
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "CachedSub")
-        let results = (context.performAndWait { try? context.fetch(fetchRequest) as? [CachedSub] }) ?? []
-          results.forEach { cachedSub in
-            context.performAndWait {
-              if !finalSubs.contains(where: { listingChild in
-                cachedSub.uuid == listingChild.data?.name
-              }) {
-                context.delete(cachedSub)
-              }
-            }
-          }
-        
-        await context.perform(schedule: .enqueued) {
-          cleanSubs(finalSubs).compactMap { $0.data }.forEach { x in
-            if let found = results.first(where: { $0.uuid == x.name }) {
-              found.update(data: x)
-            } else {
-              _ = CachedSub(data: x, context: context)
-            }
+      finalSubs = finalSubs.filter { $0.data?.subreddit_type != "user" }
+      
+      let context = PersistenceController.shared.container.viewContext
+      
+      let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "CachedSub")
+      let results = (context.performAndWait { try? context.fetch(fetchRequest) as? [CachedSub] }) ?? []
+      results.forEach { cachedSub in
+        context.performAndWait {
+          if !finalSubs.contains(where: { listingChild in
+            cachedSub.uuid == listingChild.data?.name
+          }) {
+            context.delete(cachedSub)
           }
         }
-        
-        await context.perform(schedule: .enqueued) {
-          try? context.save()
-        }
-        return nil
-      case .failure(let error):
-        print(error)
-        return nil
       }
-    } else {
+      
+      await context.perform(schedule: .enqueued) {
+        cleanSubs(finalSubs).compactMap { $0.data }.forEach { x in
+          if let found = results.first(where: { $0.uuid == x.name }) {
+            found.update(data: x)
+          } else {
+            _ = CachedSub(data: x, context: context)
+          }
+        }
+      }
+      
+      await context.perform(schedule: .enqueued) {
+        try? context.save()
+      }
+      return nil
+    case .failure(let error):
+      print(error)
       return nil
     }
   }

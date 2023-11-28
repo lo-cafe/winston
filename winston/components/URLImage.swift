@@ -147,6 +147,7 @@ struct URLImageLoader: View, Equatable {
       .resizable()
       .scaledToFill()
       .mask(Circle())
+      .opacity(0.5)
       .frame(maxWidth: size, maxHeight: size)
   }
 }

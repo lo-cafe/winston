@@ -10,30 +10,16 @@ import Alamofire
 
 extension RedditAPI {
   func readMessage(_ fullname: String) async -> Bool? {
-    await refreshToken()
-    //    await getModHash()
-    if let headers = self.getRequestHeaders() {
-      let params = ReadMessagePayload(id: fullname)
-      let dataTask = AF.request(
-        "\(RedditAPI.redditApiURLBase)/api/read_message",
-        method: .post,
-        parameters: params,
-        encoder: URLEncodedFormParameterEncoder(destination: .httpBody),
-        headers: headers
-      )
-        .serializingString()
-      let result = await dataTask.result
-      switch result {
-      case .success:
-        return true
-      case .failure:
-        return nil
-      }
-    } else {
+    let params = ReadMessagePayload(id: fullname)
+    let result = await self.doRequest("\(RedditAPI.redditApiURLBase)/api/read_message", method: .post, params: params)
+    switch result {
+    case .success:
+      return true
+    case .failure:
       return nil
     }
   }
-
+  
   struct ReadMessagePayload: Codable {
     var id: String
   }
