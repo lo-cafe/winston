@@ -158,13 +158,15 @@ struct VotesClusterInfo: View, Equatable {
           }
         }
       
-      if likeRatio != nil, let ratio = likeRatio {
-        HStack(spacing: 1) {
-          Image(systemName: "face.smiling")
-          Text(String(Int(ratio * 100)) + "%")
+      if Defaults[.showUpvoteRatio] {
+        if likeRatio != nil, let ratio = likeRatio {
+          HStack(spacing: 1) {
+            Image(systemName: "face.smiling")
+            Text(String(Int(ratio * 100)) + "%")
+          }
+          .fontSize(12, .medium)
+          .foregroundColor(.gray)
         }
-        .fontSize(12, .medium)
-        .foregroundColor(.gray)
       }
     }
     .ifIOS17 { view in

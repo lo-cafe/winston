@@ -71,10 +71,19 @@ struct CommentLinkContent: View {
   
   @State var commentViewLoaded = false
   
+  nonisolated func haptic() {
+    Task(priority: .background) {
+      let medium = await UIImpactFeedbackGenerator(style: .medium)
+      await medium.prepare()
+      await medium.impactOccurred()
+    }
+  }
+  
   var body: some View {    
     let theme = selectedTheme.comments
     let selectable = (comment.data?.winstonSelecting ?? false)
     let horPad = theme.theme.innerPadding.horizontal
+    
     
     if let data = comment.data {
       let collapsed = data.collapsed ?? false
@@ -128,7 +137,11 @@ struct CommentLinkContent: View {
                   .foregroundColor(data.likes != nil && data.likes! ? .orange : .gray)
                   .contentShape(Rectangle())
                   .onTapGesture {
-                    Task { _ = await comment.vote(action: .up) }
+                    
+                    Task {
+                      haptic()
+                      _ = await comment.vote(action: .up)
+                    }
                   }
                 
                 let downup = Int(ups)
@@ -143,7 +156,11 @@ struct CommentLinkContent: View {
                   .foregroundColor(data.likes != nil && !data.likes! ? .blue : .gray)
                   .contentShape(Rectangle())
                   .onTapGesture {
-                    Task { _ = await comment.vote(action: .down) }
+                    
+                    Task {
+                      haptic()
+                      _ = await comment.vote(action: .down)
+                    }
                   }
               }
               .fontSize(14, .medium)

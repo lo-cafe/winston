@@ -26,7 +26,7 @@ extension WinstonAPI {
   }
 }
 
-struct Announcement: Codable{
+struct Announcement: Codable, Equatable{
   var name: String?
   var description: String?
   var buttonLabel: String?
