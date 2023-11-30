@@ -218,7 +218,7 @@ struct SubredditData: Codable, GenericRedditEntityDataType, Defaults.Serializabl
   var name: String
   var quarantine: Bool? = nil
   var hide_ads: Bool? = nil
-  var prediction_leaderboard_entry_type: String? = nil
+  var prediction_leaderboard_entry_type: Double? = nil
   var emojis_enabled: Bool? = nil
   var advertiser_category: String? = nil
   var public_description: String
