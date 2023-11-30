@@ -457,7 +457,7 @@ struct SubredditData: Codable, GenericRedditEntityDataType, Defaults.Serializabl
     self.name = try container.decode(String.self, forKey: .name)
     self.quarantine = try container.decodeIfPresent(Bool.self, forKey: .quarantine)
     self.hide_ads = try container.decodeIfPresent(Bool.self, forKey: .hide_ads)
-    self.prediction_leaderboard_entry_type = try container.decodeIfPresent(String.self, forKey: .prediction_leaderboard_entry_type)
+    self.prediction_leaderboard_entry_type = try container.decodeIfPresent(Double.self, forKey: .prediction_leaderboard_entry_type)
     self.emojis_enabled = try container.decodeIfPresent(Bool.self, forKey: .emojis_enabled)
     self.advertiser_category = try container.decodeIfPresent(String.self, forKey: .advertiser_category)
     self.public_description = try container.decode(String.self, forKey: .public_description)
