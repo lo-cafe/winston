@@ -55,7 +55,6 @@ struct ThemeEditPanel: View {
   var body: some View {
     let theme = themeEditedInstance.winstonTheme
     List {
-      
       Image(systemName: theme.metadata.icon)
         .fontSize(48)
         .foregroundColor(.white)
@@ -65,55 +64,58 @@ struct ThemeEditPanel: View {
         .listRowBackground(Color.clear)
         .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
       
-      Section("Theming") {
-        WSNavigationLink(ThemeEditPanels.general, "General", icon: "paintbrush.pointed.fill")
-        WSNavigationLink(ThemeEditPanels.commonLists, "Common lists", icon: "list.bullet")
-        WSNavigationLink(ThemeEditPanels.feed, "Posts feed", icon: "rectangle.grid.1x2.fill")
-        WSNavigationLink(ThemeEditPanels.postLinks, "Posts links", icon: "rectangle.and.hand.point.up.left.fill")
-        WSNavigationLink(ThemeEditPanels.posts, "Post page", icon: "doc.richtext.fill")
-        WSNavigationLink(ThemeEditPanels.comments, "Comments", icon: "message.fill")
-      }
-      .themedListDividers()
-      
-      Section("Metadatas") {
-        
-        Button {
-          iconPickerOpen = true
-        } label: {
-          HStack {
-            Text("Icon")
-              .foregroundColor(.primary)
-            
-            Spacer()
-            
-            Image(systemName: theme.metadata.icon)
-              .foregroundColor(theme.metadata.color.color())
-          }
-          .themedListRowBG(enablePadding: true)
+      Group {
+        Section("Theming") {
+          WSNavigationLink(ThemeEditPanels.general, "General", icon: "paintbrush.pointed.fill")
+          WSNavigationLink(ThemeEditPanels.commonLists, "Common lists", icon: "list.bullet")
+          WSNavigationLink(ThemeEditPanels.feed, "Posts feed", icon: "rectangle.grid.1x2.fill")
+          WSNavigationLink(ThemeEditPanels.postLinks, "Posts links", icon: "rectangle.and.hand.point.up.left.fill")
+          WSNavigationLink(ThemeEditPanels.posts, "Post page", icon: "doc.richtext.fill")
+          WSNavigationLink(ThemeEditPanels.comments, "Comments", icon: "message.fill")
         }
-        .buttonStyle(WNavLinkButtonStyle())
-        .sheet(isPresented: $iconPickerOpen) {
-          SymbolPicker(symbol: $themeEditedInstance.winstonTheme.metadata.icon)
-        }
+        //      .themedListDividers()
         
-        Group {
-          ThemeColorPicker("Icon background color", $themeEditedInstance.winstonTheme.metadata.color)
-          LabeledTextField("Name", $themeEditedInstance.winstonTheme.metadata.name)
-          LabeledTextField("Author", $themeEditedInstance.winstonTheme.metadata.author)
+        Section("Metadatas") {
           
-          VStack(alignment: .leading, spacing: 4) {
-            Text("Description:")
-              .padding(.top, 8)
-            TextEditor(text: $themeEditedInstance.winstonTheme.metadata.description)
-              .frame(maxWidth: .infinity, minHeight: 100)
-              .padding(.horizontal, 6)
-              .background(.primary.opacity(0.05))
-              .mask(RR(8, .black))
-              .padding(.bottom, 8)
-              .fontSize(15)
+          Button {
+            iconPickerOpen = true
+          } label: {
+            HStack {
+              Text("Icon")
+                .foregroundColor(.primary)
+              
+              Spacer()
+              
+              Image(systemName: theme.metadata.icon)
+                .foregroundColor(theme.metadata.color.color())
+            }
+            .themedListRowBG(enablePadding: true,disableBG: true)
           }
+          .buttonStyle(WNavLinkButtonStyle())
+          .sheet(isPresented: $iconPickerOpen) {
+            SymbolPicker(symbol: $themeEditedInstance.winstonTheme.metadata.icon)
+          }
+          
+          Group {
+            ThemeColorPicker("Icon background color", $themeEditedInstance.winstonTheme.metadata.color)
+            LabeledTextField("Name", $themeEditedInstance.winstonTheme.metadata.name)
+            LabeledTextField("Author", $themeEditedInstance.winstonTheme.metadata.author)
+            
+            VStack(alignment: .leading, spacing: 4) {
+              Text("Description:")
+                .padding(.top, 8)
+              TextEditor(text: $themeEditedInstance.winstonTheme.metadata.description)
+                .frame(maxWidth: .infinity, minHeight: 100)
+                .padding(.horizontal, 6)
+                .background(.primary.opacity(0.05))
+                .mask(RR(8, .black))
+                .padding(.bottom, 8)
+                .fontSize(15)
+            }
+          }
+          .themedListRowBG(enablePadding: true, disableBG: true)
+          
         }
-        .themedListRowBG(enablePadding: true)
         
       }
       .themedListDividers()

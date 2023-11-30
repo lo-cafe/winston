@@ -43,7 +43,6 @@ struct SubredditPosts: View, Equatable {
   @Environment(\.contentWidth) private var contentWidth
   
   let context = PersistenceController.shared.container.newBackgroundContext()
-  let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "SeenPost")
   
   init(subreddit: Subreddit) {
     self.subreddit = subreddit;

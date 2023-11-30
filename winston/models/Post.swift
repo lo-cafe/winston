@@ -98,9 +98,9 @@ extension Post {
   
   static func initMultiple(datas: [T], api: RedditAPI, fetchSubs: Bool = false, contentWidth: CGFloat = 0) -> [Post] {
     let context = PersistenceController.shared.container.newBackgroundContext()
-    let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "SeenPost")
+    let fetchRequest = NSFetchRequest<SeenPost>(entityName: "SeenPost")
     
-    if let results = (context.performAndWait { try? context.fetch(fetchRequest) as? [SeenPost] }) {
+    if let results = (context.performAndWait { try? context.fetch(fetchRequest) }) {
       let posts = Array(datas.enumerated()).map { i, data in
         return context.performAndWait {
           let isSeen = results.contains(where: { $0.postID == data.id })
@@ -177,8 +177,8 @@ extension Post {
         }
       }
     }
-    let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "SeenPost")
-    if let results = (await context.perform(schedule: .enqueued) { try? context.fetch(fetchRequest) as? [SeenPost] }) {
+    let fetchRequest = NSFetchRequest<SeenPost>(entityName: "SeenPost")
+    if let results = (await context.perform(schedule: .enqueued) { try? context.fetch(fetchRequest) }) {
       await context.perform(schedule: .enqueued) {
         let foundPost = results.first(where: { obj in obj.postID == self.id })
         
@@ -223,8 +223,8 @@ extension Post {
   func saveCommentsCount(numComments: Int) async -> Void {
     let context = PersistenceController.shared.container.viewContext
     
-    let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "SeenPost")
-    if let results = (await context.perform(schedule: .enqueued) { try? context.fetch(fetchRequest) as? [SeenPost] }) {
+    let fetchRequest = NSFetchRequest<SeenPost>(entityName: "SeenPost")
+    if let results = (await context.perform(schedule: .enqueued) { try? context.fetch(fetchRequest) }) {
       await context.perform(schedule: .enqueued) {
         let foundPost = results.first(where: { obj in obj.postID == self.id })
         
@@ -258,8 +258,8 @@ extension Post {
     let context = PersistenceController.shared.container.viewContext
     let newComments = self.getCommentIds(comments: comments)
     
-    let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "SeenPost")
-    if let results = (await context.perform(schedule: .enqueued) { try? context.fetch(fetchRequest) as? [SeenPost] }) {
+    let fetchRequest = NSFetchRequest<SeenPost>(entityName: "SeenPost")
+    if let results = (await context.perform(schedule: .enqueued) { try? context.fetch(fetchRequest) }) {
       await context.perform(schedule: .enqueued) {
         let foundPost = results.first(where: { obj in obj.postID == self.id })
         
@@ -288,8 +288,8 @@ extension Post {
   func saveMoreComments(comments: [Comment]) async -> Void {
     let context = PersistenceController.shared.container.viewContext
     
-    let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "SeenPost")
-    if let results = (await context.perform(schedule: .enqueued) { try? context.fetch(fetchRequest) as? [SeenPost] }) {
+    let fetchRequest = NSFetchRequest<SeenPost>(entityName: "SeenPost")
+    if let results = (await context.perform(schedule: .enqueued) { try? context.fetch(fetchRequest) }) {
       await context.perform(schedule: .enqueued) {
         let foundPost = results.first(where: { obj in obj.postID == self.id })
         

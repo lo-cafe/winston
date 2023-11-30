@@ -1,5 +1,5 @@
 //
-//  AccountsPanel.swift
+//  CredentialsPanel.swift
 //  winston
 //
 //  Created by Igor Marcossi on 05/07/23.
@@ -9,7 +9,7 @@ import SwiftUI
 import Defaults
 import Nuke
 
-struct AccountsPanel: View {
+struct CredentialsPanel: View {
   
   @State private var selectedCredential: RedditCredential? = nil
   
@@ -18,64 +18,67 @@ struct AccountsPanel: View {
   
   var body: some View {
     List {
-      Section {
-        ForEach(credentialsManager.credentials) { cred in
-          WListButton(showArrow: true) {
-            selectedCredential = cred
-          } label: {
-            HStack {
+      Group {
+        Section {
+          ForEach(credentialsManager.credentials) { cred in
+            WListButton(showArrow: true) {
+              TempGlobalState.shared.editingCredential = cred
+            } label: {
+              HStack {
                 if let profilePicture = cred.profilePicture, let url = URL(string: profilePicture) {
                   URLImage(url: url, processors: [.resize(size: .init(width: 32, height: 32))])
-                  .scaledToFill()
-                  .frame(32)
-                  .mask(Circle().fill(.black))
+                    .scaledToFill()
+                    .frame(32)
+                    .mask(Circle().fill(.black))
                 } else {
                   Image(systemName: "person.text.rectangle.fill")
                     .foregroundStyle(Color.accentColor)
                     .fontSize(20)
                 }
-
-              Text(cred.userName ?? (cred.apiAppID.isEmpty ? "Empty credential" : cred.apiAppID))
-              
-              Spacer()
-              
-              if cred.id == credentialsManager.selectedCredential?.id {
-                Text("ACTIVE")
-                  .foregroundStyle(.white)
-                  .shadow(color: .black.opacity(0.5), radius: 8, y: 4)
-                  .fontSize(12, .semibold)
-                  .padding(.vertical, 1)
-                  .padding(.horizontal, 4)
-                  .background(RR(4, Color.accentColor))
-              }
-              
-              if cred.refreshToken == nil {
-                Image(systemName: "exclamationmark.triangle.fill").foregroundStyle(.orange)
+                
+                Text(cred.userName ?? (cred.apiAppID.isEmpty ? "Empty credential" : cred.apiAppID))
+                
+                Spacer()
+                
+                if cred.id == credentialsManager.selectedCredential?.id {
+                  Text("ACTIVE")
+                    .foregroundStyle(.white)
+                    .shadow(color: .black.opacity(0.5), radius: 8, y: 4)
+                    .fontSize(12, .semibold)
+                    .padding(.vertical, 1)
+                    .padding(.horizontal, 4)
+                    .background(RR(4, Color.accentColor))
+                }
+                
+                if cred.refreshToken == nil {
+                  Image(systemName: "exclamationmark.triangle.fill").foregroundStyle(.orange)
+                }
               }
             }
+            .contextMenu(ContextMenu(menuItems: {
+              if let accessToken = cred.accessToken?.token {
+                Button("Copy access token", systemImage: "doc.on.clipboard") {
+                  UIPasteboard.general.string = accessToken
+                }
+              }
+              if cred.refreshToken != nil {
+                Button("Refresh access token", systemImage: "arrow.clockwise") {
+                  Task(priority: .background) { _ = await cred.getUpToDateToken(forceRenew: true) }
+                }
+              }
+              Button("Delete", systemImage: "trash", role: .destructive) {
+                credentialsManager.deleteCred(cred)
+              }
+            }))
           }
-          .contextMenu(ContextMenu(menuItems: {
-            if let accessToken = cred.accessToken?.token {
-              Button("Copy access token", systemImage: "doc.on.clipboard") {
-                UIPasteboard.general.string = accessToken
-              }
-            }
-            if cred.refreshToken != nil {
-              Button("Refresh access token", systemImage: "arrow.clockwise") {
-                Task(priority: .background) { _ = await cred.getUpToDateToken(forceRenew: true) }
-              }
-            }
-            Button("Delete", systemImage: "trash", role: .destructive) {
-              credentialsManager.deleteCred(cred)
-            }
-          }))
+        } footer: {
+          Text("To switch accounts, hold the \"me\" (or your username) tab pressed in the bottom bar.")
         }
-      } footer: {
-        Text("To switch accounts, hold the \"me\" (or your username) tab pressed in the bottom bar.")
       }
+      .themedListDividers()
     }
     .themedListBG(theme.lists.bg)
-    .navigationTitle("Accounts")
+    .navigationTitle("Credentials")
     .toolbar {
       ToolbarItem {
         Button {

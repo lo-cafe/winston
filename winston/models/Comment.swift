@@ -128,8 +128,8 @@ extension Comment {
   
   static func initMultiple(datas: [ListingChild<T>], api: RedditAPI, parent: ObservableArray<GenericRedditEntity<T, B>>? = nil) -> [Comment] {
     let context = PersistenceController.shared.container.viewContext
-    let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "CollapsedComment")
-    if let results = (context.performAndWait { try? context.fetch(fetchRequest) as? [CollapsedComment] }) {
+    let fetchRequest = NSFetchRequest<CollapsedComment>(entityName: "CollapsedComment")
+    if let results = (context.performAndWait { try? context.fetch(fetchRequest) }) {
       return datas.compactMap { x in
         context.performAndWait {
           if let data = x.data {
@@ -152,9 +152,9 @@ extension Comment {
       if prev != new { data?.collapsed = new }
     }
     let context = PersistenceController.shared.container.viewContext
-    let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "CollapsedComment")
+    let fetchRequest = NSFetchRequest<CollapsedComment>(entityName: "CollapsedComment")
     do {
-      let results = try context.fetch(fetchRequest) as! [CollapsedComment]
+      let results = try context.fetch(fetchRequest)
       let foundPost = results.first(where: { obj in obj.commentID == id })
       
       if let foundPost = foundPost {

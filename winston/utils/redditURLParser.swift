@@ -17,14 +17,14 @@ enum RedditURLType: Equatable, Hashable {
 }
 
 func parseRedditURL(_ rawUrlString: String) -> RedditURLType {
-  let urlString = rawUrlString.replacingOccurrences(of: "winstonapp://", with: "https://winston.cafe/").replacingOccurrences(of: "https://reddit.com/", with: "https://winston.cafe/")
+  let urlString = rawUrlString.replacingOccurrences(of: "winstonapp://", with: "https://app.winston.cafe/").replacingOccurrences(of: "https://reddit.com/", with: "https://app.winston.cafe/")
   guard let urlComponents = URLComponents(string: urlString) else {
     return .other(link: urlString)
   }
   
   let pathComponents = urlComponents.path.components(separatedBy: "/").filter({ !$0.isEmpty })
     
-  if urlComponents.host?.hasSuffix("reddit.com") == true || urlComponents.host?.hasSuffix("winston.cafe") == true, pathComponents.count > 1 {
+  if urlComponents.host?.hasSuffix("reddit.com") == true || urlComponents.host?.hasSuffix("app.winston.cafe") == true, pathComponents.count > 1 {
     switch pathComponents[0] {
     case "r":
       let subredditName = pathComponents[1]

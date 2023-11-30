@@ -12,6 +12,7 @@ import SpriteKit
 
 class TempGlobalState: ObservableObject {
   static var shared = TempGlobalState()
+  @Published var editingCredential: RedditCredential? = nil
   @Published var globalLoader = GlobalLoader()
   @Published var tabBarHeight: CGFloat? = nil
   @Published var inAppBrowserURL: URL? = nil
@@ -172,6 +173,9 @@ struct Tabber: View, Equatable {
         }
       
     }
+    .sheet(item: $tempGlobalState.editingCredential) { cred in
+      CredentialView(credential: cred)
+    }
     .replyModalPresenter(routerProxy: RouterProxy(payload[activeTab]!.router))
     .overlay(
       GeometryReader { geo in
@@ -205,13 +209,12 @@ struct Tabber: View, Equatable {
       Text("The theme was imported successfully. Enable it in \"Themes\" section in the Settings tab.")
     }
     .onAppear {
-      Defaults[.themesPresets] = Defaults[.themesPresets].filter { $0.id != "default" }
-      if Defaults[.multis].count != 0 || Defaults[.subreddits].count != 0 {
-        Defaults[.multis] = []
-        Defaults[.subreddits] = []
-      }
+      removeDefaultThemeFromThemes()
+      
+      removeLegacySubsAndMultisCache()
+      
       Task(priority: .background) { await updatePostsInBox(RedditAPI.shared) }
-
+      
       if redditCredentialsManager.credentials.count == 0 {
         withAnimation(spring) {
           credModalOpen = true
@@ -243,9 +246,6 @@ struct Tabber: View, Equatable {
     .sheet(isPresented: $showingAnnouncement, content: {
       if let testAnnouncement {
         AnnouncementSheet(showingAnnouncement: $showingAnnouncement,announcement: testAnnouncement)
-          .onAppear{
-              print(testAnnouncement)
-          }
       } else {
         ProgressView()
       }
@@ -262,6 +262,15 @@ struct Tabber: View, Equatable {
       }
     })
     .onOpenURL { url in
+      
+      if let queryParams = url.queryParameters, let appID = queryParams["appID"], let appSecret = queryParams["appSecret"] {
+        credModalOpen = false
+        if let foundCred = redditCredentialsManager.credentials.first(where: { $0.apiAppID == appID }) {
+          tempGlobalState.editingCredential = foundCred
+        } else {
+          tempGlobalState.editingCredential = .init(apiAppID: appID, apiAppSecret: appSecret)
+        }
+      }
       
       if url.absoluteString.contains("winstonapp://theme/") {
         let themeID = url.lastPathComponent

@@ -4,7 +4,7 @@
 <dict>
 	<key>com.apple.developer.associated-domains</key>
 	<array>
-		<string>applinks:winston.cafe</string>
+		<string>applinks:app.winston.cafe</string>
 		<string>applinks:app.winston.lo.cafe</string>
 	</array>
 </dict>

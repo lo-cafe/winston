@@ -26,6 +26,8 @@ func cleanSubs(_ subs: [ListingChild<SubredditData>]) -> [ListingChild<Subreddit
 
 extension RedditAPI {
   func fetchSubs(after: String? = nil) async -> [ListingChild<SubredditData>]? {
+    guard let currentCredentialID = RedditCredentialsManager.shared.selectedCredential?.id else { return [] }
+
     var params = FetchSubsPayload(limit: 100)
     
     if let after = after {
@@ -48,8 +50,9 @@ extension RedditAPI {
       
       let context = PersistenceController.shared.container.viewContext
       
-      let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "CachedSub")
-      let results = (context.performAndWait { try? context.fetch(fetchRequest) as? [CachedSub] }) ?? []
+      let fetchRequest = NSFetchRequest<CachedSub>(entityName: "CachedSub")
+      fetchRequest.predicate = NSPredicate(format: "winstonCredentialID == %@", currentCredentialID as CVarArg)
+      let results = (context.performAndWait { try? context.fetch(fetchRequest) }) ?? []
       results.forEach { cachedSub in
         context.performAndWait {
           if !finalSubs.contains(where: { listingChild in
@@ -63,9 +66,9 @@ extension RedditAPI {
       await context.perform(schedule: .enqueued) {
         cleanSubs(finalSubs).compactMap { $0.data }.forEach { x in
           if let found = results.first(where: { $0.uuid == x.name }) {
-            found.update(data: x)
+            found.update(data: x, credentialID: currentCredentialID)
           } else {
-            _ = CachedSub(data: x, context: context)
+            _ = CachedSub(data: x, context: context, credentialID: currentCredentialID)
           }
         }
       }

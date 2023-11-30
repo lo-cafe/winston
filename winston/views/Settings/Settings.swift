@@ -22,9 +22,7 @@ struct Settings: View {
   @Environment(\.useTheme) private var selectedTheme
   @Environment(\.colorScheme) private var cs
   @State private var id = UUID().uuidString
-  
-  
-  
+    
   @EnvironmentObject var winstonAPI: WinstonAPI
 
   @State var presentingWhatsNew: Bool = false
@@ -46,7 +44,7 @@ struct Settings: View {
                 Label("Appearance", systemImage: "theatermask.and.paintbrush.fill")
               }
               WNavigationLink(value: SettingsPages.account) {
-                Label("Account", systemImage: "person.crop.circle")
+                Label("Credentials", systemImage: "person.2.badge.key.fill")
               }
             }
             
@@ -66,7 +64,6 @@ struct Settings: View {
               .disabled(getCurrentChangelog().isEmpty)
               
               WListButton {
-               
                 presentingAnnouncement.toggle()
               } label: {
                 Label("Announcements", systemImage: "newspaper")
@@ -75,7 +72,6 @@ struct Settings: View {
               WSListButton("Donate monthly", icon: "heart.fill") {
                 openURL(URL(string: "https://patreon.com/user?u=93745105")!)
               }
-              .accentColor(.red)
               
               WListButton {
                 openURL(URL(string: "https://ko-fi.com/locafe")!)
@@ -114,8 +110,6 @@ struct Settings: View {
               }
           }
         }
-        
-        
         .themedListBG(selectedTheme.lists.bg)
         .scrollContentBackground(.hidden)
         .navigationDestination(for: SettingsPages.self) { x in
@@ -128,7 +122,7 @@ struct Settings: View {
             case .appearance:
               AppearancePanel()
             case .account:
-              AccountsPanel()
+              CredentialsPanel()
             case .about:
               AboutPanel()
             case .commentSwipe:

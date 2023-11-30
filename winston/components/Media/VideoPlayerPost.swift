@@ -450,7 +450,3 @@ extension AVPlayer {
     return rate != 0 && error == nil
   }
 }
-
-func doThisAfter(_ seconds: Double, _ completion: @escaping () -> Void) {
-  DispatchQueue.main.asyncAfter(deadline: .now() + seconds, execute: completion)
-}

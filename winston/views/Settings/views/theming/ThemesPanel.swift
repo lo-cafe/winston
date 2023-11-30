@@ -18,49 +18,49 @@ struct ThemesPanel: View {
   var body: some View {
     List {
       
-      Section {
-        ThemeNavLink(theme: defaultTheme)
-          .themedListRowBG(enablePadding: true)
-          .deleteDisabled(true)
-        ForEach(themesPresets) { theme in
-          if theme.id != "default" {
-            WNavigationLink(value: theme) {
-              ThemeNavLink(theme: theme)
-            }
-          }
-        }
-        .onDelete { index in
-          withAnimation { themesPresets.remove(atOffsets: index) }
-        }
-      }
-      .themedListDividers()
-      
-      Section {
-        WSListButton("Import theme", icon: "doc.zipper") { isUnzipping = true }
-          .fileImporter(isPresented: $isUnzipping,
-                        allowedContentTypes: [UTType.zip],
-                        allowsMultipleSelection: false) { res in
-            do {
-              switch res {
-              case .success(let file):
-                importTheme(at: file[0])
-              case .failure(let error):
-                print(error.localizedDescription)
+      Group {
+        Section {
+          ThemeNavLink(theme: defaultTheme)
+            .themedListRowBG(enablePadding: true, disableBG: true)
+            .deleteDisabled(true)
+          ForEach(themesPresets) { theme in
+            if theme.id != "default" {
+              WNavigationLink(value: theme) {
+                ThemeNavLink(theme: theme)
               }
-            } catch {
-              print("Failed to import file with error: \(error.localizedDescription)")
             }
           }
+          .onDelete { index in
+            withAnimation { themesPresets.remove(atOffsets: index) }
+          }
+        }
+        
+        Section {
+          WSListButton("Import theme", icon: "doc.zipper") { isUnzipping = true }
+            .fileImporter(isPresented: $isUnzipping,
+                          allowedContentTypes: [UTType.zip],
+                          allowsMultipleSelection: false) { res in
+              do {
+                switch res {
+                case .success(let file):
+                  importTheme(at: file[0])
+                case .failure(let error):
+                  print(error.localizedDescription)
+                }
+              } catch {
+                print("Failed to import file with error: \(error.localizedDescription)")
+              }
+            }
+        }
       }
       .themedListDividers()
-      
     }
     .themedListBG(theme.lists.bg)
     .overlay(
       themesPresets.count > 1
       ? nil
       : VStack(spacing: 0) {
-        Text("Start duplicating the")
+        Text("Start by duplicating the")
         HStack(spacing: 4) {
           Text("default theme by tapping")
           Image(systemName: "plus")

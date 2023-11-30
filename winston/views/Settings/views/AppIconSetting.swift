@@ -45,7 +45,7 @@ struct AppIconSetting: View {
                 }
             }
           }
-          .themedListRowBG(enablePadding: true)
+          .themedListRowBG(enablePadding: true, disableBG: true)
           .onTapGesture {
               appIcon = icon
           }

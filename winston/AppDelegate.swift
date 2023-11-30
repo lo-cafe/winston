@@ -11,10 +11,19 @@ import SwiftUI
 import AVKit
 import AVFoundation
 import Nuke
+import CoreHaptics
 
 class AppDelegate: UIResponder, UIApplicationDelegate {
+  static private(set) var instance: AppDelegate! = nil
+  var supportsHaptics: Bool = false
+  
   func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
+    AppDelegate.instance = self
     setAudioToMixWithOthers()
+    
+    let hapticCapability = CHHapticEngine.capabilitiesForHardware()
+    supportsHaptics = hapticCapability.supportsHaptics
+    
     return true
   }
     

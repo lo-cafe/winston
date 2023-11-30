@@ -36,7 +36,7 @@ struct FilteredSubredditsSettings: View {
                 }
                 .tint(Color.green)
               }
-            .themedListRowBG(enablePadding: true)
+              .themedListRowBG(enablePadding: true, disableBG: true)
           }
         }
         .themedListDividers()

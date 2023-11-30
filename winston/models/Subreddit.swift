@@ -76,12 +76,15 @@ extension Subreddit {
   
   
   func subscribeToggle(optimistic: Bool = false, _ cb: (()->())? = nil) {
+    guard let currentCredentialID = RedditCredentialsManager.shared.selectedCredential?.id else { return }
+
     let context = PersistenceController.shared.container.viewContext
     
     if let data = data {
       @Sendable func doToggle() {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "CachedSub")
-        guard let results = (context.performAndWait { return try? context.fetch(fetchRequest) as? [CachedSub] }) else { return }
+        let fetchRequest = NSFetchRequest<CachedSub>(entityName: "CachedSub")
+        fetchRequest.predicate = NSPredicate(format: "winstonCredentialID == %@", currentCredentialID as CVarArg)
+        guard let results = (context.performAndWait { return try? context.fetch(fetchRequest) }) else { return }
         let foundSub = context.performAndWait { results.first(where: { $0.name == self.data?.name }) }
         
         withAnimation {
@@ -91,7 +94,7 @@ extension Subreddit {
           context.delete(foundSub)
         } else if let newData = self.data {
           context.performAndWait {
-            _ = CachedSub(data: newData, context: context)
+            _ = CachedSub(data: newData, context: context, credentialID: currentCredentialID)
           }
         }
       }

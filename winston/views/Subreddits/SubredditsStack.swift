@@ -12,6 +12,7 @@ struct SubredditsStack: View {
   var reset: Bool
   @StateObject var router: Router
   @Default(.preferenceDefaultFeed) private var preferenceDefaultFeed // handle default feed selection routing
+  @Default(.redditCredentialSelectedID) private var redditCredentialSelectedID
   @State private var columnVisibility: NavigationSplitViewVisibility = .automatic
   @State private var sidebarSize: CGSize = .zero
   
@@ -20,8 +21,10 @@ struct SubredditsStack: View {
   @State private var loaded = false
   var body: some View {
     NavigationSplitView(columnVisibility: $columnVisibility) {
-      Subreddits(selectedSub: $router.firstSelected, loaded: loaded, routerProxy: RouterProxy(router))
-        .measure($sidebarSize)
+      if let redditCredentialSelectedID = redditCredentialSelectedID {
+        Subreddits(selectedSub: $router.firstSelected, loaded: loaded, routerProxy: RouterProxy(router), currentCredentialID: redditCredentialSelectedID)
+          .measure($sidebarSize)
+      }
     } detail: {
       NavigationStack(path: $router.path) {
         DefaultDestinationInjector(routerProxy: RouterProxy(router)) { _ in
@@ -56,7 +59,7 @@ struct SubredditsStack: View {
             }
           }
         }
-        .task {
+        .task(priority: .background) {
           if !loaded {
             // MARK: Route to default feed
             if preferenceDefaultFeed != "subList" && router.path.count == 0 { // we are in subList, can ignore

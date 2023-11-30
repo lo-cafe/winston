@@ -56,23 +56,16 @@ struct ListBigBtn: View {
     Button {
       if let destination {
         selectedSub = .sub(destination)
-        print("Going to sub")
       } else if let value{
-        print(value)
         routerProxy.router.path.append(value)
-        print("Using Router")
-      } else {
-        print("Destination and value are nil")
       }
     } label: {
       VStack(alignment: .leading, spacing: 8) {
         Image(systemName: icon)
+          .symbolRenderingMode(.palette)
+          .foregroundStyle(.white, iconColor)
           .fontSize(isNotCircled ? 20 : 32)
-          .foregroundColor(isNotCircled ? theme.lists.foreground.color.cs(cs).color() : iconColor)
           .padding(isNotCircled ? 5 : 0)
-          .background(
-            isNotCircled ? Circle().foregroundColor(iconColor) : nil
-          )
         Text(label)
           .fontSize(17, .semibold)
       }

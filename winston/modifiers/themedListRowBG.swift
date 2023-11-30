@@ -32,7 +32,7 @@ struct ThemedListRowBGModifier: ViewModifier {
     let isActive = active && IPAD
     return content
       .padding(.horizontal, enablePadding ? 16 : 0)
-      .padding(.vertical, enablePadding ? 6 : 0)
+      .padding(.vertical, enablePadding ? 8 : 0)
       .frame(maxWidth: .infinity, minHeight: 45, alignment: .leading)
       .background(
         disableBG ? nil :

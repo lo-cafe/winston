@@ -121,7 +121,7 @@ struct OnlineThemeItem: View {
 struct ThemeItemShareButton: View {
   var theme: ThemeData
   var body: some View {
-    ShareLink(item: URL(string: "https://winston.cafe/theme/\(theme.file_id ?? "")")!)
+    ShareLink(item: URL(string: "https://app.winston.cafe/theme/\(theme.file_id ?? "")")!)
       .labelStyle(.iconOnly)
   }
 }

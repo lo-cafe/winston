@@ -173,7 +173,7 @@ func mediaExtractor(compact: Bool, contentWidth: Double = UIScreen.screenWidth, 
   
   let pathComponents = urlComponents.path.components(separatedBy: "/").filter({ !$0.isEmpty })
   
-  if urlComponents.host?.hasSuffix("reddit.com") == true || urlComponents.host?.hasSuffix("winston.cafe") == true, pathComponents.count > 1 {
+  if urlComponents.host?.hasSuffix("reddit.com") == true || urlComponents.host?.hasSuffix("app.winston.cafe") == true, pathComponents.count > 1 {
     switch pathComponents[0] {
     case "r":
       let subredditName = pathComponents[1]

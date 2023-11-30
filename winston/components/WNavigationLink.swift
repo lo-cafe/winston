@@ -37,7 +37,7 @@ struct WListButton<Content: View>: View {
             .foregroundColor(.primary)
         }
       }
-      .themedListRowBG(enablePadding: true, active: active)
+      .themedListRowBG(enablePadding: true, disableBG: true, active: active)
       .contentShape(Rectangle())
     }
     .buttonStyle(WNavLinkButtonStyle(active: active))

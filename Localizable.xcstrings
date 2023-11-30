@@ -406,6 +406,7 @@
       }
     },
     "Account" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -420,9 +421,6 @@
           }
         }
       }
-    },
-    "Accounts" : {
-
     },
     "ACTIVE" : {
 
@@ -854,6 +852,9 @@
           }
         }
       }
+    },
+    "Credentials" : {
+
     },
     "Current Theme" : {
       "localizations" : {
@@ -3247,7 +3248,11 @@
         }
       }
     },
+    "Start by duplicating the" : {
+
+    },
     "Start duplicating the" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {

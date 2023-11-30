@@ -22,20 +22,32 @@ enum FirstSelectable: Equatable, Hashable {
 
 struct Subreddits: View, Equatable {
   static func == (lhs: Subreddits, rhs: Subreddits) -> Bool {
-    return lhs.loaded == rhs.loaded && lhs.selectedSub == rhs.selectedSub
+    return lhs.loaded == rhs.loaded && lhs.selectedSub == rhs.selectedSub && lhs.currentCredentialID == rhs.currentCredentialID
   }
   @Binding var selectedSub: FirstSelectable?
   var loaded: Bool
   @StateObject var routerProxy: RouterProxy
-  @Environment(\.managedObjectContext) private var context
+  var currentCredentialID: UUID
   
-  @FetchRequest(sortDescriptors: [NSSortDescriptor(key: "name", ascending: true)], animation: .default) var subreddits: FetchedResults<CachedSub>
-  @FetchRequest(sortDescriptors: [NSSortDescriptor(key: "name", ascending: true)], animation: .default) var multis: FetchedResults<CachedMulti>
+  init(selectedSub: Binding<FirstSelectable?>, loaded: Bool, routerProxy: RouterProxy, currentCredentialID: UUID) {
+    self.currentCredentialID = currentCredentialID
+    self._selectedSub = selectedSub
+    self.loaded = loaded
+    self._routerProxy = .init(wrappedValue: routerProxy)
+    self._subreddits = FetchRequest<CachedSub>(sortDescriptors: [NSSortDescriptor(key: "name", ascending: true)], predicate: NSPredicate(format: "winstonCredentialID == %@", currentCredentialID as CVarArg), animation: .default)
+    self._multis = FetchRequest<CachedMulti>(sortDescriptors: [NSSortDescriptor(key: "name", ascending: true)], predicate: NSPredicate(format: "winstonCredentialID == %@", currentCredentialID as CVarArg), animation: .default)
+  }
+  
+  @FetchRequest private var subreddits: FetchedResults<CachedSub>
+  @FetchRequest private var multis: FetchedResults<CachedMulti>
+  
   @State private var searchText: String = ""
   @State private var favoritesArr: [Subreddit] = []
   
-  @Default(.likedButNotSubbed) var likedButNotSubbed // subreddits that a user likes but is not subscribed to so they wont be in subsDict
-  @Default(.disableAlphabetLettersSectionsInSubsList) var disableAlphabetLettersSectionsInSubsList
+  @Default(.likedButNotSubbed) private var likedButNotSubbed // subreddits that a user likes but is not subscribed to so they wont be in subsDict
+  @Default(.disableAlphabetLettersSectionsInSubsList) private var disableAlphabetLettersSectionsInSubsList
+  @Default(.redditCredentialSelectedID) private var redditCredentialSelectedID
+  @Environment(\.managedObjectContext) private var context
   @Environment(\.useTheme) private var selectedTheme
   @Environment(\.colorScheme) private var cs
   

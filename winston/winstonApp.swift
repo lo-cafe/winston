@@ -20,9 +20,7 @@ struct winstonApp: App {
   @Default(.selectedThemeID) private var selectedThemeID
   @Default(.redditCredentialSelectedID) private var redditCredentialSelectedID
   
-  
   var selectedTheme: WinstonTheme { themesPresets.first { $0.id == selectedThemeID } ?? defaultTheme }
-  
   
   var body: some Scene {
     WindowGroup {
@@ -35,6 +33,7 @@ struct winstonApp: App {
         )
         .environment(\.useTheme, selectedTheme)
         .onAppear {
+          cleanEntitiesWithNilCredentials()
           if redditCredentialSelectedID == nil {
             let validCreds = RedditCredentialsManager.shared.validCredentials
             if validCreds.count > 0 { redditCredentialSelectedID = validCreds[0].id }
@@ -43,6 +42,7 @@ struct winstonApp: App {
         .onChange(of: redditCredentialSelectedID) { val in
           Task(priority: .background) { await RedditAPI.shared.fetchMe(force: true) }
           Task(priority: .background) { await RedditAPI.shared.fetchSubs() }
+          Task(priority: .background) { await RedditAPI.shared.fetchMyMultis() }
         }
     }
   }
@@ -110,7 +110,6 @@ struct AppContent: View {
         isAuthenticating = false
       }
       
-      
       switch newPhase {
       case .active :
         guard let name = shortcutItemToProcess?.userInfo?["name"] as? String else {
@@ -134,7 +133,8 @@ struct AppContent: View {
       @unknown default:
         print("default")
       }
-    }.blur(radius: CGFloat(lockBlur)) // Set lockscreen blur
+    }
+    .blur(radius: CGFloat(lockBlur)) // Set lockscreen blur
   }
   
   func addQuickActions() {

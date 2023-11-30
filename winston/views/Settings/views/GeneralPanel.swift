@@ -20,28 +20,36 @@ struct GeneralPanel: View {
   @State var doImport: Bool = false
   var body: some View {
     List{
-      Section("General"){
-        Toggle("Sync API Key", isOn: $syncKeyChainAndSettings)
-      }
-      Section("Backup"){
-        Button{
-          let date = Date()
-          let file = exportUserDefaultsToJSON(fileName: "WinstonSettings-" + date.ISO8601Format() + ".json")
-          if let file {
-            isMoving.toggle()
-            settingsFileURL = file
-          }
-        } label: {
-          Label("Export Settings", systemImage: "arrowshape.turn.up.left")
+      
+      Group {
+        Section("General"){
+          Toggle("Sync API Key", isOn: $syncKeyChainAndSettings)
+            .themedListRowBG(enablePadding: true, disableBG: true)
         }
-        .fileMover(isPresented: $isMoving, file: URL(string: settingsFileURL), onCompletion: { completion in
-//          print(completion)
-        })
-        Button{
-          doImport.toggle()
-        } label: {
-          Label("Import Settings", systemImage: "square.and.arrow.down")
-        }.fileImporter(isPresented: $doImport, allowedContentTypes: [UTType.json], allowsMultipleSelection: false, onCompletion: { result in
+        
+        Section("Backup"){
+          WListButton {
+            let date = Date()
+            let file = exportUserDefaultsToJSON(fileName: "WinstonSettings-" + date.ISO8601Format() + ".json")
+            if let file {
+              isMoving.toggle()
+              settingsFileURL = file
+            }
+          } label: {
+            HStack {
+              Image(systemName: "arrowshape.turn.up.left")
+              Text("Export Settings").foregroundStyle(Color.accentColor)
+            }
+          }
+          .fileMover(isPresented: $isMoving, file: URL(string: settingsFileURL), onCompletion: { completion in
+            //          print(completion)
+          })
+          
+          WListButton {
+            doImport.toggle()
+          } label: {
+            Label("Import Settings", systemImage: "square.and.arrow.down")
+          }.fileImporter(isPresented: $doImport, allowedContentTypes: [UTType.json], allowsMultipleSelection: false, onCompletion: { result in
             switch result {
             case .success(let file):
               let success = importUserDefaultsFromJSON(jsonFilePath: file[0])
@@ -53,40 +61,41 @@ struct GeneralPanel: View {
             case .failure(let error):
               print(error.localizedDescription)
             }
+            
+          })
+        }
+        
+        Section("Advanced") {
           
-        })
-      }
-      
-      Section("Advanced") {
-        
-        WListButton {
-          resetPreferences()
-        } label: {
-          Label("Reset preferences", systemImage: "trash")
-            .foregroundColor(.red)
+          WListButton {
+            resetPreferences()
+          } label: {
+            Label("Reset preferences", systemImage: "trash")
+              .foregroundColor(.red)
+          }
+          
+          WListButton {
+            clearCache()
+            resetCaches()
+            resetCoreData()
+          } label: {
+            Label("Clear Cache (" + totalCacheSize + ")", systemImage: "trash")
+              .foregroundColor(.red)
+          }
+          .onAppear{
+            calculateTotalCacheSize()
+          }
+          
+          WListButton {
+            likedButNotSubbed = []
+          } label: {
+            Label("Clear " + String(likedButNotSubbed.count) + " Local Favorites", systemImage: "heart.slash.fill")
+              .foregroundColor(.red)
+          }
         }
-        
-        WListButton {
-          clearCache()
-          resetCaches()
-          resetCoreData()
-        } label: {
-          Label("Clear Cache (" + totalCacheSize + ")", systemImage: "trash")
-            .foregroundColor(.red)
-        }
-        .onAppear{
-          calculateTotalCacheSize()
-        }
-        
-        WListButton {
-          likedButNotSubbed = []
-        } label: {
-          Label("Clear " + String(likedButNotSubbed.count) + " Local Favorites", systemImage: "heart.slash.fill")
-            .foregroundColor(.red)
-        }
-        
       }
       .themedListDividers()
+      
     }
     .themedListBG(theme.lists.bg)
     .navigationTitle("General")

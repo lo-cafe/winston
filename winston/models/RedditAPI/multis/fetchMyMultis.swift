@@ -13,22 +13,25 @@ import CoreData
 
 extension RedditAPI {
   func fetchMyMultis() async -> Bool? {
+    guard let currentCredentialID = RedditCredentialsManager.shared.selectedCredential?.id else { return nil }
+
     let params = ["expand_srs":true]
     
     switch await self.doRequest("\(RedditAPI.redditApiURLBase)/api/multi/mine", method: .get, params: params, paramsLocation: .queryString, decodable: [MultiContainerResponse].self) {
     case .success(let data):
       let context = PersistenceController.shared.container.newBackgroundContext()
       
-      let multisFetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "CachedMulti")
-      let multisResults = (context.performAndWait { try? context.fetch(multisFetchRequest) as? [CachedMulti] }) ?? []
+      let multisFetchRequest = NSFetchRequest<CachedMulti>(entityName: "CachedMulti")
+      multisFetchRequest.predicate = NSPredicate(format: "winstonCredentialID == %@", currentCredentialID as CVarArg)
+      let multisResults = (context.performAndWait { try? context.fetch(multisFetchRequest) }) ?? []
       
       data.forEach { c in
         if let data = c.data {
           return context.performAndWait {
             if let found = multisResults.first(where: { $0.uuid == data.id }) {
-              found.update(data)
+              found.update(data, credentialID: currentCredentialID)
             } else {
-              _ = CachedMulti(data: data, context: context)
+              _ = CachedMulti(data: data, context: context, credentialID: currentCredentialID)
             }
           }
         }

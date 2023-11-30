@@ -141,7 +141,7 @@ struct CopiableValue: View {
 //                VStack (alignment: .leading) {
 //                  Text("Open Reddit's apps settings by clicking this button:")
 //                  MasterButton(label: "Reddit apps settings", height: 40, fullWidth: true) {
-//                    openURL(URL(string: "https://www.reddit.com/prefs/apps")!)
+//                    openURL(redditApiSettingsUrl)
 //                  }
 //                   TextField("App ID", text: $appID)
 //                 }

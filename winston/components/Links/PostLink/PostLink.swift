@@ -117,9 +117,6 @@ extension View {
       .contextMenu(menuItems: { PostLinkContext(post: post) }, preview: { PostLinkContextPreview(post: post, sub: sub, routerProxy: routerProxy) })
       .foregroundStyle(.primary)
       .multilineTextAlignment(.leading)
-      .onAppear {
-        print(post.data?.title, post.winstonData?.postDimensions.urlTagHeight)
-      }
       .onDisappear {
         Task(priority: .background) {
           if readPostOnScroll {

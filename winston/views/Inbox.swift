@@ -11,9 +11,10 @@ import Defaults
 struct Inbox: View {
   var reset: Bool
   @StateObject var router: Router
-  @StateObject var messages = ObservableArray<Message>()
-  @State var loading = false
   
+  @StateObject private var messages = ObservableArray<Message>()
+  @State private var loading = false
+  @Default(.redditCredentialSelectedID) private var redditCredentialSelectedID
   @Environment(\.useTheme) private var selectedTheme
   
   func fetch(_ loadMore: Bool = false, _ force: Bool = false) async {
@@ -56,6 +57,10 @@ struct Inbox: View {
       }
       .refreshable {
         await fetch(false, true)
+      }
+      .onChange(of: redditCredentialSelectedID) { _ in
+        messages.data = []
+        Task(priority: .background) { await fetch(false, true) }
       }
       .navigationTitle("Inbox")
     }

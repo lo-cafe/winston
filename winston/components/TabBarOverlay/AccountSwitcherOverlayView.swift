@@ -23,7 +23,7 @@ struct AccountSwitcherOverlayView: View, Equatable {
   
   
   var body: some View {
-    let showOverlay = showOverlay && !willEnd
+//    let showOverlay = showOverlay && !willEnd
     let validCredentials = credentialsManager.credentials.filter { $0.isAuthorized }.reversed()
     ZStack(alignment: .bottom) {
       

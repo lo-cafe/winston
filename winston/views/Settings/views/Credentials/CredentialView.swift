@@ -127,7 +127,7 @@ struct CredentialView: View {
           }
           
           Button {
-            openURL(URL(string: "https://www.reddit.com/prefs/apps")!)
+            openURL(redditApiSettingsUrl)
           } label: {
             HStack(spacing: 0) {
               Image(.redditLogo)

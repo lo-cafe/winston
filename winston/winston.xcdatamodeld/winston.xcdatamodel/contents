@@ -8,10 +8,12 @@
         <attribute name="over_18" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="path" optional="YES" attributeType="String"/>
         <attribute name="uuid" optional="YES" attributeType="String"/>
+        <attribute name="winstonCredentialID" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <relationship name="subreddits" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="CachedSub" inverseName="multis" inverseEntity="CachedSub"/>
         <uniquenessConstraints>
             <uniquenessConstraint>
                 <constraint value="uuid"/>
+                <constraint value="winstonCredentialID"/>
             </uniquenessConstraint>
         </uniquenessConstraints>
     </entity>
@@ -40,11 +42,12 @@
         <attribute name="user_is_moderator" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="user_is_subscriber" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="uuid" optional="YES" attributeType="String"/>
-        <attribute name="winstonAccountID" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="winstonCredentialID" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <relationship name="multis" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="CachedMulti" inverseName="subreddits" inverseEntity="CachedMulti"/>
         <uniquenessConstraints>
             <uniquenessConstraint>
                 <constraint value="uuid"/>
+                <constraint value="winstonCredentialID"/>
             </uniquenessConstraint>
         </uniquenessConstraints>
     </entity>

@@ -17,7 +17,7 @@ class RedditAPI: ObservableObject {
   static let winstonAPIBase = "https://winston.lo.cafe/api"
   static let redditApiURLBase = "https://oauth.reddit.com"
   static let redditWWWApiURLBase = "https://www.reddit.com"
-  static let appRedirectURI: String = "https://winston.cafe/auth-success"
+  static let appRedirectURI: String = "https://app.winston.cafe/auth-success"
   
   @Published var loggedUser: UserCredential = UserCredential()
   var lastAuthState: String?
@@ -136,7 +136,7 @@ class RedditAPI: ObservableObject {
   }
   
   func monitorAuthCallback( credential: inout RedditCredential, _ rawUrl: URL) async -> Bool {
-    if let url = URL(string: rawUrl.absoluteString.replacingOccurrences(of: "winstonapp://", with: "https://winston.cafe/")), url.lastPathComponent == "auth-success", let query = URLComponents(url: url, resolvingAgainstBaseURL: false), let state = query.queryItems?.first(where: { $0.name == "state" })?.value, let code = query.queryItems?.first(where: { $0.name == "code" })?.value, state == lastAuthState {
+    if let url = URL(string: rawUrl.absoluteString.replacingOccurrences(of: "winstonapp://", with: "https://app.winston.cafe/")), url.lastPathComponent == "auth-success", let query = URLComponents(url: url, resolvingAgainstBaseURL: false), let state = query.queryItems?.first(where: { $0.name == "state" })?.value, let code = query.queryItems?.first(where: { $0.name == "code" })?.value, state == lastAuthState {
       let res = await injectFirstAccessTokenInto(&credential, authCode: code)
       lastAuthState = nil
       return res
@@ -180,7 +180,7 @@ class RedditAPI: ObservableObject {
   struct GetAccessTokenPayload: Encodable {
     let grant_type = "authorization_code"
     let code: String
-    let redirect_uri = "https://winston.cafe/auth-success"
+    let redirect_uri = RedditAPI.appRedirectURI
   }
   
   struct UserCredential: Hashable {
