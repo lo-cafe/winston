@@ -76,7 +76,19 @@ func quirkyEndOfFeed() -> String {
     "...this is awkward. You are at the end!",
     "You’ve read all of Reddit. Does that make you feel good about yourself?",
     "Sorry Mario, your post is in another castle.",
-    "It’s dangerous to go alone, take another post!"
+    "It’s dangerous to go alone, take another post!",
+    "𓏏𓉔𓅂 𓅂𓄿𓂋𓏏𓉔 𓅃𓇋𓃭 𓅂𓈖𓂧 𓅱𓈖 𓏏𓉔𓅂 𓏏𓅃𓅂𓈖𓏏𓇌-𓆑𓇋𓆑𓏏𓉔 𓅱𓆑 𓅓𓄿𓂋𓎢𓉔 𓏏𓅃𓅂𓈖𓏏𓇌 𓄿𓈖𓂧 𓏏𓉔𓇋𓂋𓏏𓇌𓏏𓅃𓅱 ",
+    ".. -- ....... - .-. .- .--. .--. . -.. ....... .. -. ....... -.-- --- ..- .-. ....... .-- .- .-.. .-.. ...",
+    "Si vis pacem, para bellum",
+    "My name is Ozymandias, king of kings: Look on my works, ye Mighty, and despair!",
+    "If a can of Alpo costs 38 cents, would it cost $2.50 in Dog Dollars?",
+    "A person with one watch knows what time it is; a person with two watches is never sure.",
+    "Beer & Pretzels -- Breakfast of Champions.",
+    "Neutrinos are into physicists.",
+    "HOW YOU CAN TELL THAT IT'S GOING TO BE A ROTTEN DAY: #15 Your pet rock snaps at you.",
+    "Pyros of the world... IGNITE !!!",
+    "If God didn't mean for us to juggle, tennis balls wouldn't come three to a can.",
+    "The difference between this place and yogurt is that yogurt has a live culture."
   ]
 
   return quirkyResponses.randomElement() ?? "End of feed."
