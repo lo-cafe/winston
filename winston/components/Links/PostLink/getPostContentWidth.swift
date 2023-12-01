@@ -140,7 +140,7 @@ func getPostDimensions(post: Post, winstonData: PostWinstonData? = nil, columnWi
       }
     }
     
-    let compactTitleWidth = postGeneralSpacing + VotesCluster.verticalWidth + (showSelfPostThumbnails || extractedMedia != nil ? postGeneralSpacing + compactMediaSize.width : 0)
+    let compactTitleWidth = postGeneralSpacing + VotesCluster.verticalWidth + postGeneralSpacing + compactMediaSize.width
     
     let titleContentWidth = contentWidth - (compact ? compactTitleWidth : 0)
     
