@@ -6,6 +6,8 @@
 //
 
 import Foundation
+import UIKit
+import SwiftUI
 
 func getTagsFromTitle(_ post: Post) -> [PrependTag] {
   var tags: [PrependTag] = []
@@ -21,7 +23,12 @@ func getTagsFromTitle(_ data: PostData) -> [PrependTag] {
 
 func getTagsFromTitleRaw(_ data: PostData) -> [PrependTag] {
   var tags: [PrependTag] = []
-  if data.over_18 ?? false { tags.append(.init(label: "NSFW", bgColor: .red.opacity(0.25))) }
-  if let flair = data.link_flair_text { tags.append(.init(label: flair, bgColor: .primary.opacity(0.2))) }
+  if data.over_18 ?? false { tags.append(.init(label: "NSFW", bgColor: UIColor(.red.opacity(0.9)), textColor: .white)) }
+  if let flair = data.link_flair_text, let cleansed = flairWithoutEmojis(str: flair), !cleansed.joined().isEmpty {
+    let hasBackground = data.link_flair_background_color != nil && !data.link_flair_background_color!.isEmpty
+    let textColor: UIColor = hasBackground && data.link_flair_text_color != nil ? (data.link_flair_text_color! == "light" ? .white : .black) : .black
+    let bgColor = hasBackground ? UIColor(hex: data.link_flair_background_color!) : UIColor(hex: "D5D7D9")
+    tags.append(.init(label: cleansed.joined(separator: " "), bgColor: bgColor, textColor: textColor))
+  }
   return tags
 }
