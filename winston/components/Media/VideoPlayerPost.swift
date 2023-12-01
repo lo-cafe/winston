@@ -91,6 +91,7 @@ struct VideoPlayerPost: View, Equatable {
     let finalHeight = maxPostLinkImageHeightPercentage != 110 ? Double(min(maxHeight, propHeight)) : Double(propHeight)
     
     if let sharedVideo = sharedVideo {
+			var hasAudio = sharedVideo.player.currentItem?.tracks.contains(where: {$0.assetTrack?.mediaType == AVMediaType.audio})
       if let controller = controller {
         AVPlayerRepresentable(fullscreen: $fullscreen, autoPlayVideos: autoPlayVideos, player: sharedVideo.player, aspect: .resizeAspectFill, controller: controller)
           .frame(width: compact ? scaledCompactModeThumbSize() : contentWidth, height: compact ? scaledCompactModeThumbSize() : CGFloat(finalHeight))
@@ -137,6 +138,9 @@ struct VideoPlayerPost: View, Equatable {
 							sharedVideo.player.pause()
 							firstFullscreen = false
 						}
+						if sharedVideo.player.isMuted == false && hasAudio == true {
+							setAudioToMixWithOthers(val)
+						}
             sharedVideo.player.volume = val ? 1.0 : 0.0
           }
           .allowsHitTesting(false)
@@ -180,6 +184,9 @@ struct VideoPlayerPost: View, Equatable {
 						sharedVideo.player.pause()
 						firstFullscreen = false
 					 }
+					if sharedVideo.player.isMuted == false && hasAudio == true {
+						setAudioToMixWithOthers(val)
+					}
           sharedVideo.player.volume = val ? 1.0 : 0.0
         }
         .fullScreenCover(isPresented: $fullscreen) {
