@@ -31,6 +31,25 @@ struct UserFlair: View, Equatable {
   }
 }
 
+func flairWithoutEmojis(str: String?) -> [String]? {
+  do {
+    let emojiRegex = try NSRegularExpression(pattern: ":(.*?):")
+    if let s = str {
+      let sep = "<separator>"
+      return emojiRegex.stringByReplacingMatches(in: s, range: NSMakeRange(0, s.count), withTemplate: sep)
+        .components(separatedBy: sep).map{ str in
+          return str.replacingOccurrences(of: sep, with: "").trimmingCharacters(in: .whitespacesAndNewlines)
+        }.filter { str in
+          return !str.isEmpty
+        }
+    } else {
+      return nil
+    }
+  } catch {
+    return nil
+  }
+}
+
 struct BadgeView: View, Equatable {
   static let authorStatsSpacing: Double = 2
   static func == (lhs: BadgeView, rhs: BadgeView) -> Bool {
@@ -60,25 +79,6 @@ struct BadgeView: View, Equatable {
     
   nonisolated func openUser() {
     routerProxy?.router.path.append(User(id: author, api: RedditAPI.shared))
-  }
-  
-  func flairWithoutEmojis(str: String?) -> [String]? {
-    do {
-      let emojiRegex = try NSRegularExpression(pattern: ":(.*?):")
-      if let s = str {
-        let sep = "<separator>"
-        return emojiRegex.stringByReplacingMatches(in: s, range: NSMakeRange(0, s.count), withTemplate: sep)
-          .components(separatedBy: sep).map{ str in
-            return str.replacingOccurrences(of: sep, with: "").trimmingCharacters(in: .whitespacesAndNewlines)
-          }.filter { str in
-            return !str.isEmpty
-          }
-      } else {
-        return nil
-      }
-    } catch {
-      return nil
-    }
   }
   
   var body: some View {
