@@ -16,9 +16,9 @@ typealias Subreddit = GenericRedditEntity<SubredditData, AnyHashable>
 extension Subreddit {
   static var prefix = "t5"
   var selfPrefix: String { Self.prefix }
+  
   convenience init(data: T, api: RedditAPI) {
     self.init(data: data, api: api, typePrefix: "\(Subreddit.prefix)_")
-    
   }
   
   convenience init(id: String, api: RedditAPI) {
@@ -28,7 +28,6 @@ extension Subreddit {
   convenience init(entity: CachedSub, api: RedditAPI) {
     self.init(id: entity.uuid ?? UUID().uuidString, api: api, typePrefix: "\(Subreddit.prefix)_")
     self.data = SubredditData(entity: entity)
-    
   }
   
   
@@ -126,10 +125,13 @@ extension Subreddit {
   }
   
   func getFlairs() async -> [Flair]? {
+    if self.data?.winstonFlairs != nil { return self.data?.winstonFlairs }
+    
     if let data = (await RedditAPI.shared.getFlairs(data?.display_name ?? id)) {
       await MainActor.run {
         withAnimation {
           self.data?.winstonFlairs = data
+          return data
         }
       }
     }
@@ -153,9 +155,9 @@ extension Subreddit {
     return nil
   }
   
-  func fetchPosts(sort: SubListingSortOption = .best, after: String? = nil, searchText: String? = nil, contentWidth: CGFloat = UIScreen.screenWidth) async -> ([Post]?, String?)? {
+  func fetchPosts(sort: SubListingSortOption = .best, after: String? = nil, searchText: String? = nil, contentWidth: CGFloat = UIScreen.screenWidth, subId: String? = nil) async -> ([Post]?, String?)? {
     if let response = await RedditAPI.shared.fetchSubPosts(data?.url ?? (id == "home" ? "" : id), sort: sort, after: after, searchText: searchText), let data = response.0 {
-      return (Post.initMultiple(datas: data.compactMap { $0.data }, api: RedditAPI.shared, contentWidth: contentWidth), response.1)
+      return (Post.initMultiple(datas: data.compactMap { $0.data }, api: RedditAPI.shared, contentWidth: contentWidth, subId: subId), response.1)
     }
     
     return nil

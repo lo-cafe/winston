@@ -22,6 +22,7 @@ struct MultiPostsView: View {
   @State private var searchText: String = ""
   @State private var sort: SubListingSortOption = Defaults[.preferredSort]
   @State private var newPost = false
+  @State private var filter: String = "All"
   @State private var reachedEndOfFeed: Bool = false
   
   @EnvironmentObject private var routerProxy: RouterProxy
@@ -58,12 +59,28 @@ struct MultiPostsView: View {
     }
   }
   
+  func clearAndReloadData() {
+    withAnimation {
+      loading = true
+      posts.data.removeAll()
+      reachedEndOfFeed = false
+    }
+    
+    fetch()
+  }
+  
   var body: some View {
     Group {
       if IPAD {
         SubredditPostsIPAD(showSub: true, posts: posts.data, searchText: searchText, fetch: fetch, selectedTheme: selectedTheme)
       } else {
-        SubredditPostsIOS(showSub: true, lastPostAfter: lastPostAfter, posts: posts.data, searchText: searchText, fetch: fetch, selectedTheme: selectedTheme, reachedEndOfFeed: $reachedEndOfFeed)
+        SubredditPostsIOS(showSub: true, lastPostAfter: lastPostAfter, posts: posts.data, searchText: searchText, fetch: fetch, selectedTheme: selectedTheme, filter: $filter, reachedEndOfFeed: $reachedEndOfFeed, compactToggled: { 
+            withAnimation {
+              posts.data.forEach {
+                $0.setupWinstonData(data: $0.data, winstonData: $0.winstonData, theme: selectedTheme, subId: multi.id)
+              }
+            }
+          })
       }
     }
     //.themedListBG(selectedTheme.postLinks.bg)
@@ -115,12 +132,7 @@ struct MultiPostsView: View {
       }
     }
     .onChange(of: sort) { val in
-      withAnimation {
-        loading = true
-        posts.data.removeAll()
-        reachedEndOfFeed = false
-      }
-      fetch()
+      clearAndReloadData()
       Defaults[.preferredSort] = sort
     }
 //    .searchable(text: $searchText, prompt: "Search r/\(subreddit.data?.display_name ?? subreddit.id)")

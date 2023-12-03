@@ -62,6 +62,7 @@ extension Defaults.Keys {
   
   // CompdismissKeyboardt Mode Settings
   static let compactMode = Key<Bool>("compactMode", default: false)
+  static let compactPerSubreddit = Key<Dictionary<String, Bool>>("compactMode", default: [:])
   static let compThumbnailSize = Key<ThumbnailSizeModifier>("compThumbnailSize", default: .small)
   static let thumbnailPositionRight = Key<Bool>("thumbnailPositionRight", default: true)
   static let voteButtonPositionRight = Key<Bool>("voteButtonPositionRight", default: true)
@@ -153,6 +154,8 @@ extension Defaults.Keys {
   static let showingUpsellDict = Key<Dictionary<String, Bool>>("showingUpsellDict", default: [
     "themesUpsell_01": true
   ])
+  
+  static let subredditFlairs = Key<Dictionary<String,[FlairData]>>("subredditFlairs", default: [String: [FlairData]]())
 }
 
 extension UIScreen {

@@ -10,6 +10,7 @@ import SwiftUI
 struct FontSelector: View {
   @Binding var theme: ThemeText
   var defaultVal: ThemeText
+  var showColor: Bool = true
   
   var body: some View {
     VStack {
@@ -36,9 +37,11 @@ struct FontSelector: View {
       .padding(.horizontal, 16)
       .resetter($theme.weight, defaultVal.weight)
       
-      Divider()
-      
-      SchemesColorPicker(theme: $theme.color, defaultVal: defaultVal.color)
+      if (showColor) {
+        Divider()
+        
+        SchemesColorPicker(theme: $theme.color, defaultVal: defaultVal.color)
+      }
     }
   }
 }

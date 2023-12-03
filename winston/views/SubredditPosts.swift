@@ -30,12 +30,17 @@ struct SubredditPosts: View, Equatable {
   @State private var searchText: String = ""
   @State private var sort: SubListingSortOption
   @State private var newPost = false
+  @State private var filter = "All"
   
   @State private var savedMixedMediaLinks: [Either<Post, Comment>]?
   @State private var loadNextSavedData: Bool = false
   @State private var isSavedSubreddit: Bool = false
   @State private var hasViewLoaded: Bool = false
   @State private var reachedEndOfFeed: Bool = false
+  
+  @StateObject private var unfilteredPosts = NonObservableArray<Post>()
+  @State private var unfilteredLastPostAfter: String?
+  @State private var unfilteredreachedEndOfFeed: Bool = false
   
   @EnvironmentObject private var routerProxy: RouterProxy
   @Environment(\.useTheme) private var selectedTheme
@@ -55,16 +60,29 @@ struct SubredditPosts: View, Equatable {
     if (subreddit.data == nil || force) && !isFeedsAndSuch {
       await subreddit.refreshSubreddit()
     }
+    
+    if (searchText == nil || searchText!.isEmpty) && !loadMore && !unfilteredPosts.data.isEmpty {
+      posts.data = unfilteredPosts.data
+      lastPostAfter = unfilteredLastPostAfter
+      reachedEndOfFeed = unfilteredreachedEndOfFeed
+      return
+    }
+    
     if posts.data.count > 0 && lastPostAfter == nil && !force {
       reachedEndOfFeed = true
       return
     }
+        
+    if !loadMore && !subreddit.id.starts(with: "t5") {
+      Defaults[.subredditFlairs][subreddit.id] = []
+    }
+    
     withAnimation {
       loading = true
     }
     
     if subreddit.id != "saved" {
-      if let result = await subreddit.fetchPosts(sort: sort, after: loadMore ? lastPostAfter : nil, searchText: searchText, contentWidth: contentWidth), let newPosts = result.0 {
+      if let result = await subreddit.fetchPosts(sort: sort, after: loadMore ? lastPostAfter : nil, searchText: searchText, contentWidth: contentWidth, subId: subreddit.id), let newPosts = result.0 {
         await RedditAPI.shared.updatePostsWithAvatar(posts: newPosts, avatarSize: selectedTheme.postLinks.theme.badge.avatar.size)
         withAnimation {
           let newPostsFiltered = newPosts.filter { !loadedPosts.contains($0.id) && !filteredSubreddits.contains($0.data?.subreddit ?? "") }
@@ -80,6 +98,18 @@ struct SubredditPosts: View, Equatable {
           loading = false
           lastPostAfter = result.1
           reachedEndOfFeed = newPostsFiltered.count == 0
+          
+          // Save posts if no searchText
+          if searchText == nil || searchText!.isEmpty {
+            unfilteredPosts.data = posts.data
+            unfilteredLastPostAfter = lastPostAfter
+            unfilteredreachedEndOfFeed = reachedEndOfFeed
+          }
+                    
+          if !reachedEndOfFeed && filter != "All" &&
+              newPostsFiltered.filter({ $0.data?.link_flair_text == filter && !($0.winstonData?.appeared ?? false) }).count == 0 {
+            fetch(true, searchText)
+          }
         }
       }
     } else {
@@ -131,7 +161,7 @@ struct SubredditPosts: View, Equatable {
   }
   
   func updatePostsCalcs(_ newTheme: WinstonTheme) {
-    Task(priority: .background) { posts.data.forEach { $0.setupWinstonData(data: $0.data, winstonData: $0.winstonData, theme: newTheme, fetchAvatar: false) } }
+    Task(priority: .background) { posts.data.forEach { $0.setupWinstonData(data: $0.data, winstonData: $0.winstonData, theme: newTheme, fetchAvatar: false, subId: subreddit.id) } }
   }
   
   var body: some View {
@@ -141,7 +171,14 @@ struct SubredditPosts: View, Equatable {
           if IPAD {
             SubredditPostsIPAD(showSub: isFeedsAndSuch, subreddit: subreddit, posts: posts.data, searchText: searchText, fetch: fetch, selectedTheme: selectedTheme)
           } else {
-            SubredditPostsIOS(showSub: isFeedsAndSuch, lastPostAfter: lastPostAfter, subreddit: subreddit, posts: posts.data, searchText: searchText, fetch: fetch, selectedTheme: selectedTheme, reachedEndOfFeed: $reachedEndOfFeed)
+            let filteredPosts = filter == "All" ? posts.data : posts.data.filter({ $0.data?.link_flair_text == filter })
+            SubredditPostsIOS(showSub: isFeedsAndSuch, lastPostAfter: lastPostAfter, subreddit: subreddit, flairs: subreddit.data?.winstonFlairs, posts: filteredPosts, searchText: searchText, fetch: fetch, selectedTheme: selectedTheme, filter: $filter, reachedEndOfFeed: $reachedEndOfFeed, compactToggled: {
+                withAnimation {
+                  posts.data.forEach {
+                    $0.setupWinstonData(data: $0.data, winstonData: $0.winstonData, theme: selectedTheme, subId: subreddit.id)
+                  }
+                }
+            })
             
           }
         }
@@ -164,6 +201,8 @@ struct SubredditPosts: View, Equatable {
         hasViewLoaded = true
       }
     }
+    .listRowSeparator(.hidden)
+    .listSectionSeparator(.hidden)
     .environment(\.defaultMinListRowHeight, 1)
     .loader(loading && posts.data.count == 0)
     .overlay(
@@ -214,6 +253,17 @@ struct SubredditPosts: View, Equatable {
     .onChange(of: searchText) { val in
       if searchText.isEmpty {
         clearAndLoadData()
+      }
+    }
+    .onChange(of: filter) { val in
+      if val != "All" {
+        if !reachedEndOfFeed {
+          if self.searchText.isEmpty {
+            fetch(true, nil)
+          } else {
+            fetch(true, self.searchText)
+          }
+        }
       }
     }
   }
