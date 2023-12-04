@@ -61,7 +61,8 @@ let defaultTheme = WinstonTheme(
     bg: defaultThemeBG,
     stickyFilters: false,
     filterText: .init(size: 17, color: .init(light: .init(hex: "000000"), dark: .init(hex: "000000")), weight: .semibold),
-    filtersPadding: 8
+    filterPadding: .init(horizontal: 6, vertical: 8),
+    filterOpacity: 0.3
   ),
   posts: .init(
     padding: .init(horizontal: 8, vertical: 6),

@@ -187,7 +187,7 @@ struct UserView: View {
             ProgressView()
               .progressViewStyle(.circular)
               .frame(maxWidth: .infinity, minHeight: 100 )
-              .id("post-loading")
+              .id("user-loading")
               .id(UUID()) // spawns unique spinner, swiftui bug.
           }
         }

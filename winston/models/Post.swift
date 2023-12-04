@@ -96,7 +96,7 @@ extension Post {
     }
   }
   
-  static func extractFlairData(data: PostData, checkDefaultsForColor: Bool = false) -> FlairData? {
+  static func extractFlairData(data: PostData, checkDefaultsForColor: Bool = false) -> FilterData? {
     if let flair = data.link_flair_text, let cleansed = flairWithoutEmojis(str: flair), !cleansed.joined().isEmpty {
       let hasBackground = data.link_flair_background_color != nil && !data.link_flair_background_color!.isEmpty
       var textColor = hasBackground && data.link_flair_text_color != nil ? (data.link_flair_text_color! == "light" ? "FFFFFF" : "000000") : "000000"
@@ -104,7 +104,7 @@ extension Post {
       
       if bgColor == "D5D7D9" && checkDefaultsForColor {
         if let subId = data.subreddit_id, let flairText = data.link_flair_text {
-          let prevFlairs = Defaults[.subredditFlairs][subId] ?? []
+          let prevFlairs = Defaults[.subredditFilters][subId] ?? []
           if let prevFlair = prevFlairs.first(where: { $0.text == flairText }) {
             bgColor = prevFlair.background_color
             textColor = prevFlair.text_color
@@ -112,7 +112,7 @@ extension Post {
         }
       }
       
-      return FlairData(text: cleansed.joined(separator: " "), text_color: textColor, background_color: bgColor)
+      return FilterData(text: cleansed.joined(separator: " "), text_color: textColor, background_color: bgColor)
     }
     
     return nil
@@ -168,24 +168,25 @@ extension Post {
       Post.prefetcher.startPrefetching(with: imgRequests)
       return posts
     }
+    
     return []
   }
   
   static func saveFlairsToDefaults(posts: [Post], subId: String? = nil) {
-    var prevFlairs = Defaults[.subredditFlairs]
+    var prevFlairs = Defaults[.subredditFilters]
     
     posts.forEach { post in
       if let data = post.data, let subredditId = subId ?? data.subreddit_id, let flairText = data.link_flair_text {
         guard var flairData = Post.extractFlairData(data: data) else { return }
         var prevSubFlairs = prevFlairs[subredditId] ?? []
 
-        if let prev = prevSubFlairs.first(where: { $0.text == flairText }) {
+        if let prev = prevSubFlairs.first(where: { $0.id == "flair:\(flairText)" }) {
           // Remove and add back with updated occurences for sorting
-          prevSubFlairs.removeAll(where: { $0.text == prev.text })
+          prevSubFlairs.removeAll(where: { $0.id == prev.id })
           if flairData.background_color == "D5D7D9" && flairData.background_color != prev.background_color {
-            flairData = FlairData(text: flairData.text, text_color: prev.text_color, background_color: prev.background_color, occurences: prev.occurences)
+            flairData = FilterData(text: flairData.text, text_color: prev.text_color, background_color: prev.background_color, occurences: prev.occurences)
           } else {
-            flairData = FlairData(text: flairData.text, text_color: flairData.text_color, background_color: flairData.background_color, occurences: prev.occurences)
+            flairData = FilterData(text: flairData.text, text_color: flairData.text_color, background_color: flairData.background_color, occurences: prev.occurences)
           }
         }
         
@@ -194,7 +195,7 @@ extension Post {
       }
     }
     
-    Defaults[.subredditFlairs] = prevFlairs
+    Defaults[.subredditFilters] = prevFlairs
   }
   
   func loadStreamableMedia(streamable: StreamableExtracted) async -> SharedVideo? {

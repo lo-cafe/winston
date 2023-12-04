@@ -47,8 +47,14 @@ struct FeedThemingPanel: View {
           Divider()
           FontSelector(theme: $theme.postLinks.filterText, defaultVal: defaultTheme.postLinks.filterText, showColor: false)
           Divider()
-          LabeledSlider(label: "Vertical padding", value: $theme.postLinks.filtersPadding, range: 0...24)
-            .resetter($theme.postLinks.filtersPadding, defaultTheme.postLinks.filtersPadding)
+          LabeledSlider(label: "Horizontal Spacing", value: $theme.postLinks.filterPadding.horizontal, range: 0...24)
+            .resetter($theme.postLinks.filterPadding.horizontal, defaultTheme.postLinks.filterPadding.horizontal)
+          Divider()
+          LabeledSlider(label: "Vertical padding", value: $theme.postLinks.filterPadding.vertical, range: 0...24)
+            .resetter($theme.postLinks.filterPadding.vertical, defaultTheme.postLinks.filterPadding.vertical)
+          Divider()
+          LabeledSlider(label: "Opacity", value: $theme.postLinks.filterOpacity, range: 0...1, step: 0.05)
+            .resetter($theme.postLinks.filterOpacity, defaultTheme.postLinks.filterOpacity)
         }
         
         FakeSection("Divider") {
