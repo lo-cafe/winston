@@ -1,0 +1,34 @@
+{
+  "name": "winston-everywhere",
+  "version": "1.0.0",
+  "description": "Winston app safari extension companion",
+  "scripts": {
+    "build": "parcel build src/manifest.json --no-content-hash --no-cache",
+    "build-report": "parcel build src/manifest.json --no-cache --reporter @parcel/reporter-bundle-analyzer",
+    "dev": "parcel serve src/manifest.json"
+  },
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lo-cafe/winston.git"
+  },
+  "author": "lo.cafe",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/lo-cafe/winston/issues"
+  },
+  "homepage": "https://github.com/lo-cafe/winston#readme",
+  "devDependencies": {
+    "@parcel/config-webextension": "^2.10.3",
+    "@parcel/reporter-bundle-analyzer": "^2.10.3",
+    "@parcel/transformer-sass": "^2.10.3",
+    "parcel": "^2.10.3",
+    "process": "^0.11.10"
+  },
+  "dependencies": {
+    "@react-icons/all-files": "https://github.com/react-icons/react-icons/releases/download/v4.12.0/react-icons-all-files-4.12.0.tgz",
+    "framer-motion": "^10.16.12",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  }
+}

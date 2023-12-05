@@ -174,7 +174,7 @@ struct Tabber: View, Equatable {
       
     }
     .sheet(item: $tempGlobalState.editingCredential) { cred in
-      CredentialView(credential: cred)
+      CredentialView(credential: cred).id("editing-credential-view-\(cred.id)")
     }
     .replyModalPresenter(routerProxy: RouterProxy(payload[activeTab]!.router))
     .overlay(
@@ -263,9 +263,10 @@ struct Tabber: View, Equatable {
     })
     .onOpenURL { url in
       
-      if let queryParams = url.queryParameters, let appID = queryParams["appID"], let appSecret = queryParams["appSecret"] {
+      if tempGlobalState.editingCredential == nil, let queryParams = url.queryParameters, let appID = queryParams["appID"], let appSecret = queryParams["appSecret"] {
         credModalOpen = false
-        if let foundCred = redditCredentialsManager.credentials.first(where: { $0.apiAppID == appID }) {
+        if var foundCred = redditCredentialsManager.credentials.first(where: { $0.apiAppID == appID }) {
+          foundCred.apiAppSecret = appSecret
           tempGlobalState.editingCredential = foundCred
         } else {
           tempGlobalState.editingCredential = .init(apiAppID: appID, apiAppSecret: appSecret)

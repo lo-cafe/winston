@@ -1,0 +1,10 @@
+{
+    "extension_name": {
+        "message": "Winston Everywhere",
+        "description": "Open Reddit links directly in Winston!"
+    },
+    "extension_description": {
+        "message": "This is Winston Everywhere, an extension that allows opening Reddit links directly in Winston.",
+        "description": "Open Reddit links directly in Winston!"
+    }
+}

@@ -38,9 +38,9 @@ struct CredentialView: View {
           VStack {
             if let profilePicture = draftCredential.profilePicture, let url = URL(string: profilePicture) {
               URLImage(url: url)
-              .scaledToFill()
-              .frame(72)
-              .mask(Circle().fill(.black))
+                .scaledToFill()
+                .frame(72)
+                .mask(Circle().fill(.black))
             } else {
               Image(systemName: "person.text.rectangle.fill")
                 .fontSize(28)
@@ -165,6 +165,13 @@ struct CredentialView: View {
         draftCredential = credential
       }
       .onOpenURL { url in
+        
+        if let queryParams = url.queryParameters, let appID = queryParams["appID"], let appSecret = queryParams["appSecret"] {
+          draftCredential.apiAppID = appID
+          draftCredential.apiAppSecret = appSecret
+        }
+        
+        
         if waitingForCallback == true {
           Task(priority: .background) {
             var tempCred = draftCredential

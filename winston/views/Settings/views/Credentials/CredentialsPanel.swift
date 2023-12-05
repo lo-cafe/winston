@@ -11,7 +11,7 @@ import Nuke
 
 struct CredentialsPanel: View {
   
-  @State private var selectedCredential: RedditCredential? = nil
+//  @State private var selectedCredential: RedditCredential? = nil
   
   @ObservedObject private var credentialsManager = RedditCredentialsManager.shared
   @Environment(\.useTheme) private var theme
@@ -82,16 +82,14 @@ struct CredentialsPanel: View {
     .toolbar {
       ToolbarItem {
         Button {
-          selectedCredential = .init()
+          TempGlobalState.shared.editingCredential = .init()
+//          selectedCredential = .init()
         } label: {
           Image(systemName: "plus")
         }
       }
     }
     .navigationBarTitleDisplayMode(.inline)
-    .sheet(item: $selectedCredential) { cred in
-      CredentialView(credential: cred)
-    }
   }
 }
 

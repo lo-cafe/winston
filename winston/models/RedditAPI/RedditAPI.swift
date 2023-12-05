@@ -32,11 +32,14 @@ class RedditAPI: ObservableObject {
       headers["Authorization"] = "Bearer \(accessToken.token)"
     }
   
-    for (protectionSpace, credentials) in URLCredentialStorage.shared.allCredentials {
-        for (_, credential) in credentials {
-          URLCredentialStorage.shared.remove(credential, for: protectionSpace)
-        }
-    }
+//    for (protectionSpace, credentials) in URLCredentialStorage.shared.allCredentials {
+//        for (_, credential) in credentials {
+//          // Even though the values are not optionals, it seems to crash at some points if you don't do the check
+//          if URLCredentialStorage.shared != nil && credential != nil && protectionSpace != nil {
+//            URLCredentialStorage.shared.remove(credential, for: protectionSpace)
+//          }
+//        }
+//    }
     HTTPCookieStorage.shared.cookies?.forEach(HTTPCookieStorage.shared.deleteCookie)    
     
     return headers

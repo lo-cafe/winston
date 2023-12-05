@@ -44,7 +44,7 @@ struct Settings: View {
                 Label("Appearance", systemImage: "theatermask.and.paintbrush.fill")
               }
               WNavigationLink(value: SettingsPages.account) {
-                Label("Credentials", systemImage: "person.2.badge.key.fill")
+                Label("Credentials", systemImage: "key.horizontal.fill")
               }
             }
             
