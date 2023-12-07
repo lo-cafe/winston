@@ -42,57 +42,53 @@ struct BehaviorPanel: View {
       
       Group {
         Section("General") {
-          Group {
-            Toggle("Open links in Safari", isOn: $openLinksInSafari)
-            Toggle("Open Youtube Videos Externally", isOn: $openYoutubeApp)
-            let auth_type = Biometrics().biometricType()
-            Toggle("Lock Winston With \(auth_type)", isOn: $useAuth)
-            
-            VStack{
-              Toggle("Live Text Analyzer", isOn: $doLiveText)
-                .disabled(!imageAnalyzerSupport)
-                .onAppear{
-                  imageAnalyzerSupport = ImageAnalyzer.isSupported
-                  if !ImageAnalyzer.isSupported {
-                    doLiveText = false
-                  }
+          Toggle("Open links in Safari", isOn: $openLinksInSafari)
+          Toggle("Open Youtube Videos Externally", isOn: $openYoutubeApp)
+          let auth_type = Biometrics().biometricType()
+          Toggle("Lock Winston With \(auth_type)", isOn: $useAuth)
+          
+          VStack{
+            Toggle("Live Text Analyzer", isOn: $doLiveText)
+              .disabled(!imageAnalyzerSupport)
+              .onAppear{
+                imageAnalyzerSupport = ImageAnalyzer.isSupported
+                if !ImageAnalyzer.isSupported {
+                  doLiveText = false
                 }
-              
-              
-              if !imageAnalyzerSupport{
-                HStack{
-                  Text("Your iPhone does not support Live Text :(")
-                    .fontSize(12)
-                    .opacity(0.5)
-                  Spacer()
-                }
-                
               }
+            
+            
+            if !imageAnalyzerSupport{
+              HStack{
+                Text("Your iPhone does not support Live Text :(")
+                  .fontSize(12)
+                  .opacity(0.5)
+                Spacer()
+              }
+              
             }
-            Picker("Default Launch Feed", selection: $preferenceDefaultFeed) {
-              Text("Home").tag("home")
-              Text("Popular").tag("popular")
-              Text("All").tag("all")
-              Text("Subscription List").tag("subList")
-            }
-            .pickerStyle(DefaultPickerStyle())
           }
-          .themedListRowBG(enablePadding: true, disableBG: true)
+          Picker("Default Launch Feed", selection: $preferenceDefaultFeed) {
+            Text("Home").tag("home")
+            Text("Popular").tag("popular")
+            Text("All").tag("all")
+            Text("Subscription List").tag("subList")
+          }
+          .pickerStyle(DefaultPickerStyle())
           
           WSNavigationLink(SettingsPages.filteredSubreddits, "Filtered Subreddits")
         }
         
         
         Section {
-          LabeledSlider(label: "Loading limit", value: Binding(get: { CGFloat(feedPostsLoadLimit) }, set: { val in feedPostsLoadLimit = Int(val) }), range: 15...100)
-            .themedListRowBG(enablePadding: true, disableBG: true)
+          LabeledSlider(label: "Loading limit", value: Binding(get: { CGFloat(feedPostsLoadLimit) }, set: { val in feedPostsLoadLimit = Int(val) }), range: 15...100, disablePadding: true)
+          //            .themedListRowBG(enablePadding: true, disableBG: true)
         } footer: {
           Text("Sets how many posts to load per chunk (loads more on scroll)")
         }
         
         Section {
           Toggle("Navigation everywhere", isOn: $enableSwipeAnywhere)
-            .themedListRowBG(enablePadding: true, disableBG: true)
         } footer: {
           Text("This will allow you to do go back by swiping anywhere in the screen, but will disable post and comments swipe gestures.")
             .padding(.bottom)
@@ -100,131 +96,125 @@ struct BehaviorPanel: View {
         
         Section("Posts") {
           WSNavigationLink(SettingsPages.postSwipe, "Posts swipe settings")
-          Group {
-            Toggle("Loop videos", isOn: $loopVideos)
-            Toggle("Autoplay videos (muted)", isOn: $autoPlayVideos)
-            Toggle("Default mute fullscreen videos", isOn: $muteVideos)
-            Toggle("Read on preview media", isOn: $lightboxViewsPost)
-            Toggle("Read on scroll", isOn: $readPostOnScroll)
-            Toggle("Hide read posts", isOn: $hideReadPosts)
-            Toggle("Blur NSFW in opened posts", isOn: $blurPostNSFW)
-            Toggle("Blur NSFW", isOn: $blurPostLinkNSFW)
-            Toggle("Save sort per subreddit", isOn: $perSubredditSort)
-            Toggle("Open media from feed", isOn: $tappableFeedMedia)
-            Menu {
-              ForEach(SubListingSortOption.allCases) { opt in
-                if case .top(_) = opt {
-                  Menu {
-                    ForEach(SubListingSortOption.TopListingSortOption.allCases, id: \.self) { topOpt in
-                      Button {
-                        preferredSort = .top(topOpt)
-                      } label: {
-                        HStack {
-                          Text(topOpt.rawValue.capitalized)
-                          Spacer()
-                          Image(systemName: topOpt.icon)
-                        }
+          Toggle("Loop videos", isOn: $loopVideos)
+          Toggle("Autoplay videos (muted)", isOn: $autoPlayVideos)
+          Toggle("Default mute fullscreen videos", isOn: $muteVideos)
+          Toggle("Read on preview media", isOn: $lightboxViewsPost)
+          Toggle("Read on scroll", isOn: $readPostOnScroll)
+          Toggle("Hide read posts", isOn: $hideReadPosts)
+          Toggle("Blur NSFW in opened posts", isOn: $blurPostNSFW)
+          Toggle("Blur NSFW", isOn: $blurPostLinkNSFW)
+          Toggle("Save sort per subreddit", isOn: $perSubredditSort)
+          Toggle("Open media from feed", isOn: $tappableFeedMedia)
+          Menu {
+            ForEach(SubListingSortOption.allCases) { opt in
+              if case .top(_) = opt {
+                Menu {
+                  ForEach(SubListingSortOption.TopListingSortOption.allCases, id: \.self) { topOpt in
+                    Button {
+                      preferredSort = .top(topOpt)
+                    } label: {
+                      HStack {
+                        Text(topOpt.rawValue.capitalized)
+                        Spacer()
+                        Image(systemName: topOpt.icon)
                       }
                     }
-                  } label: {
-                    Label(opt.rawVal.value.capitalized, systemImage: opt.rawVal.icon)
                   }
-                } else {
-                  Button {
-                    preferredSort = opt
-                  } label: {
-                    HStack {
-                      Text(opt.rawVal.value.capitalized)
-                      Spacer()
-                      Image(systemName: opt.rawVal.icon)
-                    }
+                } label: {
+                  Label(opt.rawVal.value.capitalized, systemImage: opt.rawVal.icon)
+                }
+              } else {
+                Button {
+                  preferredSort = opt
+                } label: {
+                  HStack {
+                    Text(opt.rawVal.value.capitalized)
+                    Spacer()
+                    Image(systemName: opt.rawVal.icon)
                   }
                 }
-              }
-            } label: {
-              Button { } label: {
-                HStack {
-                  Text("Default post sorting")
-                  Spacer()
-                  Image(systemName: preferredSort.rawVal.icon)
-                }
-                .foregroundColor(.primary)
               }
             }
-            
-            Menu {
-              ForEach(SubListingSortOption.allCases) { opt in
-                if case .top(_) = opt {
-                  Menu {
-                    ForEach(SubListingSortOption.TopListingSortOption.allCases, id: \.self) { topOpt in
-                      Button {
-                        preferredSearchSort = .top(topOpt)
-                      } label: {
-                        HStack {
-                          Text(topOpt.rawValue.capitalized)
-                          Spacer()
-                          Image(systemName: topOpt.icon)
-                        }
-                      }
-                    }
-                  } label: {
-                    Label(opt.rawVal.value.capitalized, systemImage: opt.rawVal.icon)
-                  }
-                } else {
-                  Button {
-                    preferredSearchSort = opt
-                  } label: {
-                    HStack {
-                      Text(opt.rawVal.value.capitalized)
-                      Spacer()
-                      Image(systemName: opt.rawVal.icon)
-                    }
-                  }
-                }
-              }
-            } label: {
-              Button { } label: {
-                HStack {
-                  Text("Default search sorting")
-                  Spacer()
-                  Image(systemName: preferredSearchSort.rawVal.icon)
-                }
-                .foregroundColor(.primary)
-              }
-            }
-            
-            VStack(alignment: .leading) {
+          } label: {
+            Button { } label: {
               HStack {
-                Text("Max Posts Image Height")
+                Text("Default post sorting")
                 Spacer()
-                Text(maxPostLinkImageHeightPercentage == 110 ? "Original" : "\(Int(maxPostLinkImageHeightPercentage))%")
-                  .opacity(0.6)
+                Image(systemName: preferredSort.rawVal.icon)
               }
-              Slider(value: $maxPostLinkImageHeightPercentage, in: 10...110, step: 10)
+              .foregroundColor(.primary)
             }
           }
-          .themedListRowBG(enablePadding: true, disableBG: true)
+          
+          Menu {
+            ForEach(SubListingSortOption.allCases) { opt in
+              if case .top(_) = opt {
+                Menu {
+                  ForEach(SubListingSortOption.TopListingSortOption.allCases, id: \.self) { topOpt in
+                    Button {
+                      preferredSearchSort = .top(topOpt)
+                    } label: {
+                      HStack {
+                        Text(topOpt.rawValue.capitalized)
+                        Spacer()
+                        Image(systemName: topOpt.icon)
+                      }
+                    }
+                  }
+                } label: {
+                  Label(opt.rawVal.value.capitalized, systemImage: opt.rawVal.icon)
+                }
+              } else {
+                Button {
+                  preferredSearchSort = opt
+                } label: {
+                  HStack {
+                    Text(opt.rawVal.value.capitalized)
+                    Spacer()
+                    Image(systemName: opt.rawVal.icon)
+                  }
+                }
+              }
+            }
+          } label: {
+            Button { } label: {
+              HStack {
+                Text("Default search sorting")
+                Spacer()
+                Image(systemName: preferredSearchSort.rawVal.icon)
+              }
+              .foregroundColor(.primary)
+            }
+          }
+          
+          VStack(alignment: .leading) {
+            HStack {
+              Text("Max Posts Image Height")
+              Spacer()
+              Text(maxPostLinkImageHeightPercentage == 110 ? "Original" : "\(Int(maxPostLinkImageHeightPercentage))%")
+                .opacity(0.6)
+            }
+            Slider(value: $maxPostLinkImageHeightPercentage, in: 10...110, step: 10)
+          }
         }
+        .themedListSection()
         
         Section("Comments") {
           WSNavigationLink(SettingsPages.commentSwipe, "Comments Swipe Settings")
           
-          Group {
-            Picker("Comments Sorting", selection: $preferredCommentSort) {
-              ForEach(CommentSortOption.allCases, id: \.self) { val in
-                Label(val.rawVal.id.capitalized, systemImage: val.rawVal.icon)
-              }
+          Picker("Comments Sorting", selection: $preferredCommentSort) {
+            ForEach(CommentSortOption.allCases, id: \.self) { val in
+              Label(val.rawVal.id.capitalized, systemImage: val.rawVal.icon)
             }
-            
-            Toggle("Collapse AutoModerator comments", isOn: $collapseAutoModerator)
-            Toggle("Save comment sort per post", isOn: $perPostSort)
-            
           }
-          .themedListRowBG(enablePadding: true, disableBG: true)
+          
+          Toggle("Collapse AutoModerator comments", isOn: $collapseAutoModerator)
+          Toggle("Save comment sort per post", isOn: $perPostSort)
         }
         
       }
-      .themedListDividers()
+      .themedListSection()
     }
     .themedListBG(theme.lists.bg)
     .navigationTitle("Behavior")

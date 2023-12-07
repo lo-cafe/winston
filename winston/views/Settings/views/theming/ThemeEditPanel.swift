@@ -73,11 +73,11 @@ struct ThemeEditPanel: View {
           WSNavigationLink(ThemeEditPanels.posts, "Post page", icon: "doc.richtext.fill")
           WSNavigationLink(ThemeEditPanels.comments, "Comments", icon: "message.fill")
         }
-        //      .themedListDividers()
+        //      .themedListSection()
         
         Section("Metadatas") {
           
-          Button {
+          WListButton {
             iconPickerOpen = true
           } label: {
             HStack {
@@ -89,9 +89,7 @@ struct ThemeEditPanel: View {
               Image(systemName: theme.metadata.icon)
                 .foregroundColor(theme.metadata.color.color())
             }
-            .themedListRowBG(enablePadding: true,disableBG: true)
           }
-          .buttonStyle(WNavLinkButtonStyle())
           .sheet(isPresented: $iconPickerOpen) {
             SymbolPicker(symbol: $themeEditedInstance.winstonTheme.metadata.icon)
           }
@@ -113,12 +111,12 @@ struct ThemeEditPanel: View {
                 .fontSize(15)
             }
           }
-          .themedListRowBG(enablePadding: true, disableBG: true)
+//          .themedListRowBG(enablePadding: true, disableBG: true)
           
         }
         
       }
-      .themedListDividers()
+      .themedListSection()
       
     }
     .themedListBG(themeEditedInstance.winstonTheme.lists.bg)

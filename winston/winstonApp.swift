@@ -161,6 +161,14 @@ struct AppContent: View {
   }
 }
 
+private struct ChangeAppTabWithPathFuncKey: EnvironmentKey {
+  static let defaultValue: (TabIdentifier, NavigationPath) -> () = { _, _ in }
+}
+
+private struct ChangeAppTabFuncKey: EnvironmentKey {
+  static let defaultValue: (TabIdentifier) -> () = { _ in }
+}
+
 private struct CurrentThemeKey: EnvironmentKey {
   static let defaultValue = defaultTheme
 }
@@ -170,6 +178,14 @@ private struct ContentWidthKey: EnvironmentKey {
 }
 
 extension EnvironmentValues {
+  var changeAppTabWithPath: (TabIdentifier, NavigationPath) -> () {
+    get { self[ChangeAppTabWithPathFuncKey.self] }
+    set { self[ChangeAppTabWithPathFuncKey.self] = newValue }
+  }
+  var changeAppTab: (TabIdentifier) -> () {
+    get { self[ChangeAppTabFuncKey.self] }
+    set { self[ChangeAppTabFuncKey.self] = newValue }
+  }
   var contentWidth: Double {
     get { self[ContentWidthKey.self] }
     set { self[ContentWidthKey.self] = newValue }

@@ -422,9 +422,6 @@
         }
       }
     },
-    "ACTIVE" : {
-
-    },
     "Advanced" : {
       "localizations" : {
         "de" : {
@@ -458,6 +455,7 @@
       }
     },
     "Announcements" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -853,6 +851,9 @@
         }
       }
     },
+    "Credential invalid" : {
+
+    },
     "Credentials" : {
 
     },
@@ -1043,6 +1044,9 @@
           }
         }
       }
+    },
+    "Do you really wanna delete this credential?" : {
+
     },
     "Do you wanna reset this property?" : {
       "localizations" : {
@@ -1262,6 +1266,7 @@
       }
     },
     "FAQ" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -1499,6 +1504,9 @@
         }
       }
     },
+    "Go to credentials settings" : {
+
+    },
     "Gotcha!" : {
       "localizations" : {
         "de" : {
@@ -1726,6 +1734,9 @@
           }
         }
       }
+    },
+    "IN USE" : {
+
     },
     "Inbox" : {
       "localizations" : {
@@ -2336,6 +2347,9 @@
           }
         }
       }
+    },
+    "No credential" : {
+
     },
     "Now paste it here:" : {
       "localizations" : {
@@ -3869,6 +3883,9 @@
         }
       }
     },
+    "We can't load this page 😔" : {
+
+    },
     "We hit 8500 testers on TestFlight and this couldn't make us happier. Thank you so much for using and supporting Winston." : {
       "localizations" : {
         "de" : {
@@ -3886,6 +3903,7 @@
       }
     },
     "Whats New" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -4012,6 +4030,9 @@
           }
         }
       }
+    },
+    "Yes, delete" : {
+
     },
     "Yes, reset" : {
       "localizations" : {

@@ -31,11 +31,9 @@ struct AccountSwitcherTrigger<Content: View>: View {
       })
       .simultaneousGesture(onTap == nil || dragging ? nil : TapGesture().onEnded { _ in if !dragging { onTap?() } })
       .simultaneousGesture(
-        credentialsManager.validCredentials.count <= 1
-        ? nil
-        : LongPressGesture(minimumDuration: 0.1)
+        LongPressGesture(minimumDuration: 0.1)
           .onEnded({ _ in
-//            if transmitter.willEnd { return }
+            //            if transmitter.willEnd { return }
             dragging = true
             medium.prepare()
           })

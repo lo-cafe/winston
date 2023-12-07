@@ -27,6 +27,7 @@ struct ListBigBtn: View {
   var shiny: Gradient?
   /// The value associated with the button.
   var value: (any Hashable)?
+  @State private var pressed = false
   
   @Environment(\.useTheme) private var theme
   @Environment(\.colorScheme) private var cs
@@ -72,12 +73,12 @@ struct ListBigBtn: View {
       .padding(.all, 10)
       .frame(maxWidth: .infinity, alignment: .leading)
       .foregroundColor(.primary)
-      .themedListRowBG(shiny: shiny)
+      .themedListRowBG(pressed: pressed, shiny: shiny)
+      .mask(RoundedRectangle(cornerRadius: 10).foregroundColor(.black))
       .contentShape(RoundedRectangle(cornerRadius: 13))
       //    .onChange(of: reset) { _ in active = false }
     }
-    .buttonStyle(WNavLinkButtonStyle())
-    .mask(RoundedRectangle(cornerRadius: 10).foregroundColor(.black))
+    .buttonStyle(ButtonPressingProviderStyle(pressed: $pressed))
   }
 }
 

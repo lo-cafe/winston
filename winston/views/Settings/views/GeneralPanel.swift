@@ -24,7 +24,6 @@ struct GeneralPanel: View {
       Group {
         Section("General"){
           Toggle("Sync API Key", isOn: $syncKeyChainAndSettings)
-            .themedListRowBG(enablePadding: true, disableBG: true)
         }
         
         Section("Backup"){
@@ -94,7 +93,7 @@ struct GeneralPanel: View {
           }
         }
       }
-      .themedListDividers()
+      .themedListSection()
       
     }
     .themedListBG(theme.lists.bg)

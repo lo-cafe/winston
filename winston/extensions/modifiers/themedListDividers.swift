@@ -9,7 +9,7 @@ import Foundation
 import SwiftUI
 
 struct ThemedListDividersModifier: ViewModifier {
-  var enablePadding: Bool? = false
+  var enablePadding: Bool? = nil
   var active = false
   @Environment(\.useTheme) private var theme
   @Environment(\.colorScheme) private var cs
@@ -29,7 +29,7 @@ struct ThemedListDividersModifier: ViewModifier {
 }
 
 extension View {
-  func themedListDividers(enablePadding: Bool? = false) -> some View {
+  func themedListDividers(enablePadding: Bool? = nil) -> some View {
     self
       .modifier(ThemedListDividersModifier(enablePadding: enablePadding))
   }

@@ -17,6 +17,7 @@ struct ThemedListRowBGModifier: ViewModifier {
   var disableBG = false
   /// Whether the row is active.
   var active = false
+  var pressed = false
   /// The shiny gradient applied to the background.
   var shiny: Gradient? = nil
   
@@ -34,17 +35,7 @@ struct ThemedListRowBGModifier: ViewModifier {
       .padding(.horizontal, enablePadding ? 16 : 0)
       .padding(.vertical, enablePadding ? 8 : 0)
       .frame(maxWidth: .infinity, minHeight: 45, alignment: .leading)
-      .background(
-        disableBG ? nil :
-          Rectangle()
-          .if(shiny == nil) { content in
-            content.fill(theme.lists.foreground.blurry ? AnyShapeStyle(.bar) : AnyShapeStyle(isActive ? .blue : theme.lists.foreground.color.cs(cs).color()))
-          }
-          .if(shiny != nil) { content in
-            content.winstonShiny(shiny)
-          }
-          .overlay(!theme.lists.foreground.blurry ? nil : Rectangle().fill(isActive ? .blue : theme.lists.foreground.color.cs(cs).color()))
-      )
+      .background(disableBG ? nil : ListRowBackground(theme: theme, active: isActive, pressed: pressed, shiny: shiny).equatable())
   }
 }
 
@@ -56,7 +47,7 @@ extension View {
   ///   - active: Whether the row is active (default is `false`).
   ///   - shiny: The shiny gradient applied to the background (default is `nil`).
   /// - Returns: A modified version of the view with the themed background applied.
-  func themedListRowBG(enablePadding: Bool = false, disableBG: Bool = false, active: Bool = false, shiny: Gradient? = nil) -> some View {
-    self.modifier(ThemedListRowBGModifier(enablePadding: enablePadding, disableBG: disableBG, active: active, shiny: shiny))
+  func themedListRowBG(enablePadding: Bool = false, disableBG: Bool = false, active: Bool = false, pressed: Bool = false, shiny: Gradient? = nil) -> some View {
+    self.modifier(ThemedListRowBGModifier(enablePadding: enablePadding, disableBG: disableBG, active: active, pressed: pressed, shiny: shiny))
   }
 }

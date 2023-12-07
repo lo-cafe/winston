@@ -21,8 +21,8 @@ struct ThemesPanel: View {
       Group {
         Section {
           ThemeNavLink(theme: defaultTheme)
-            .themedListRowBG(enablePadding: true, disableBG: true)
             .deleteDisabled(true)
+          
           ForEach(themesPresets) { theme in
             if theme.id != "default" {
               WNavigationLink(value: theme) {
@@ -53,7 +53,7 @@ struct ThemesPanel: View {
             }
         }
       }
-      .themedListDividers()
+      .themedListSection()
     }
     .themedListBG(theme.lists.bg)
     .overlay(

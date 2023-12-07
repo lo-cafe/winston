@@ -30,10 +30,8 @@ struct AboutPanel: View {
               }
             }
           }
-          .themedListRowBG(enablePadding: true, disableBG: true)
           
           Text("Winston is developed by the lo.cafe team, a group of friends making amazing software together.")
-            .themedListRowBG(enablePadding: true, disableBG: true)
           
           WListButton {
             openURL(URL(string: "https://lo.cafe")!)
@@ -57,7 +55,6 @@ struct AboutPanel: View {
         
         Section {
           Text("Winston is a free and open source software, therefore it isn't against Reddit's policies.")
-            .themedListRowBG(enablePadding: true, disableBG: true)
           WListButton {
             openURL(URL(string: "https://github.com/Kinark/winston")!)
           } label: {
@@ -65,7 +62,7 @@ struct AboutPanel: View {
           }
         }
       }
-      .themedListDividers()
+      .themedListSection()
     }
     .themedListBG(theme.lists.bg)
     .navigationTitle("About")

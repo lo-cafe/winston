@@ -11,7 +11,7 @@ import WhatsNewKit
 //import SceneKit
 
 enum SettingsPages {
-  case behavior, appearance, account, about, commentSwipe, postSwipe, accessibility, faq, general, postFontSettings, themes, filteredSubreddits, appIcon, themeStore
+  case behavior, appearance, credentials, about, commentSwipe, postSwipe, accessibility, faq, general, postFontSettings, themes, filteredSubreddits, appIcon, themeStore
 }
 
 struct Settings: View {
@@ -34,39 +34,22 @@ struct Settings: View {
         List {
           Group {
             Section {
-              WNavigationLink(value: SettingsPages.general) {
-                Label("General", systemImage: "gear")
-              }
-              WNavigationLink(value: SettingsPages.behavior) {
-                Label("Behavior", systemImage: "arrow.triangle.turn.up.right.diamond.fill")
-              }
-              WNavigationLink(value: SettingsPages.appearance) {
-                Label("Appearance", systemImage: "theatermask.and.paintbrush.fill")
-              }
-              WNavigationLink(value: SettingsPages.account) {
-                Label("Credentials", systemImage: "key.horizontal.fill")
-              }
+              WSNavigationLink(SettingsPages.general, "General", icon: "gear")
+              WSNavigationLink(SettingsPages.behavior, "Behavior", icon: "arrow.triangle.turn.up.right.diamond.fill")
+              WSNavigationLink(SettingsPages.appearance, "Appearance", icon: "theatermask.and.paintbrush.fill")
+              WSNavigationLink(SettingsPages.credentials, "Credentials", icon: "key.horizontal.fill")
             }
             
             Section {
-              WNavigationLink(value: SettingsPages.faq){
-                Label("FAQ", systemImage: "exclamationmark.questionmark")
-              }
-              WNavigationLink(value: SettingsPages.about) {
-                Label("About", systemImage: "cup.and.saucer.fill")
-              }
-              
-              WListButton {
+              WSNavigationLink(SettingsPages.faq, "FAQ", icon: "exclamationmark.questionmark")
+              WSNavigationLink(SettingsPages.about, "About", icon: "cup.and.saucer.fill")
+              WSListButton("Whats New", icon: "star") {
                 presentingWhatsNew.toggle()
-              } label: {
-                Label("Whats New", systemImage: "star")
               }
               .disabled(getCurrentChangelog().isEmpty)
               
-              WListButton {
+              WSListButton("Announcements", icon: "newspaper") {
                 presentingAnnouncement.toggle()
-              } label: {
-                Label("Announcements", systemImage: "newspaper")
               }
               
               WSListButton("Donate monthly", icon: "heart.fill") {
@@ -76,20 +59,31 @@ struct Settings: View {
               WListButton {
                 openURL(URL(string: "https://ko-fi.com/locafe")!)
               } label: {
-                HStack {
+                Label {
+                  Text("Tip jar")
+                } icon: {
                   Image("jar")
                     .resizable()
                     .scaledToFit()
-                    .frame(width: 28, height: 32)
-                    .padding(.trailing, 9)
-                    .foregroundStyle(Color.accentColor)
-                  Text("Tip jar")
                 }
               }
+
+              
+//              Button {
+//                openURL(URL(string: "https://ko-fi.com/locafe")!)
+//              } label: {
+//                Label {
+//                  Text("Tip jar")
+//                } icon: {
+//                  Image("jar")
+//                    .resizable()
+//                    .scaledToFit()
+//                }
+//              }
               
             }
           }
-          .themedListDividers()
+          .themedListSection()
           
         }
         .sheet(isPresented: $presentingWhatsNew){
@@ -121,7 +115,7 @@ struct Settings: View {
               BehaviorPanel()
             case .appearance:
               AppearancePanel()
-            case .account:
+            case .credentials:
               CredentialsPanel()
             case .about:
               AboutPanel()

@@ -25,6 +25,8 @@ struct AccountSwitcherOverlayView: View, Equatable {
   var body: some View {
 //    let showOverlay = showOverlay && !willEnd
     let validCredentials = credentialsManager.credentials.filter { $0.isAuthorized }.reversed()
+    let showAddBtn = validCredentials.count < 3
+    let targetsCount = validCredentials.count + (showAddBtn ? 1 : 0)
     ZStack(alignment: .bottom) {
       
       ZStack {
@@ -43,9 +45,13 @@ struct AccountSwitcherOverlayView: View, Equatable {
         AccountSwitcherGradientBackground().equatable().opacity(willEnd ? 0 : 1)
         
         ZStack {
-          ForEach(Array(validCredentials.enumerated()), id: \.element) { index, cred in
-            AccountSwitcherTarget(containerSize: targetsContainerSize, index: index, targetsCount: validCredentials.count, fingerPos: fingerPosition.location, account: cred, willEnd: willEnd).equatable()
+          if showAddBtn {
+            AccountSwitcherTarget(containerSize: targetsContainerSize, index: 0, targetsCount: targetsCount, fingerPos: fingerPosition.location, cred: nil, willEnd: willEnd)
           }
+          ForEach(Array(validCredentials.enumerated()), id: \.element) { index, cred in
+            AccountSwitcherTarget(containerSize: targetsContainerSize, index: index + (showAddBtn ? 1 : 0), targetsCount: targetsCount, fingerPos: fingerPosition.location, cred: cred, willEnd: willEnd).equatable()
+          }
+
         }
         .frame(targetsContainerSize)
         .position(fingerPosition.initialLocation)

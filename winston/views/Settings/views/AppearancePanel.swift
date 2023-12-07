@@ -51,7 +51,6 @@ struct AppearancePanel: View {
           Text("Current Theme")
         }
         .listRowSeparator(.hidden)
-        .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
         
         //      .background{
         //        RadialGradient(gradient: Gradient(colors: [Color(uiColor: UIColor(hex: theme.metadata.color.hex)).opacity(0.3), theme.lists.foreground.color.cs(cs).color()]), center: UnitPoint(x: 0.25, y: 0.5), startRadius: 0, endRadius: UIScreen.main.bounds.width * 0.6)
@@ -105,11 +104,11 @@ struct AppearancePanel: View {
         
         
         Section("General") {
-          Group {
+//          Group {
             Toggle("Show Username in Tab Bar", isOn: $showUsernameInTabBar)
             Toggle("Disable subs list letter sections", isOn: $disableAlphabetLettersSectionsInSubsList)
-          }
-          .themedListRowBG(enablePadding: true, disableBG: true)
+//          }
+//          .themedListRowBG(enablePadding: true, disableBG: true)
         }
         
         //      Section("Theming") {
@@ -124,11 +123,11 @@ struct AppearancePanel: View {
         //            Label("Theme Store (alpha)", systemImage: "giftcard.fill")
         //          }
         //        }
-        //        .themedListDividers()
+        //        .themedListSection()
         //      }
         
         Section("Posts") {
-          Group {
+//          Group {
             Toggle("Show Upvote Ratio", isOn: $showUpvoteRatio)
             Toggle("Show Voting Buttons", isOn: $showVotes)
             Toggle("Show Self Text", isOn: $showSelfText)
@@ -136,12 +135,11 @@ struct AppearancePanel: View {
             Toggle("Show Title at Top", isOn: $showTitleAtTop)
             Toggle("Show Author", isOn: $showAuthorOnPostLinks)
             //        Toggle("Prefer inline tags", isOn: $preferInlineTags)
-          }
-          .themedListRowBG(enablePadding: true, disableBG: true)
+//          }
+//          .themedListRowBG(enablePadding: true, disableBG: true)
         }
         
         Section("Compact Posts") {
-          Group {
             Toggle("Compact Mode", isOn: $compactMode)
             Toggle("Show Thumbnail Placeholder", isOn: $showSelfPostThumbnails)
             Picker("Thumbnail Position", selection: Binding(get: {
@@ -175,13 +173,10 @@ struct AppearancePanel: View {
               Text("Left").tag("Left")
               Text("Right").tag("Right")
             }
-          }
-          .themedListRowBG(enablePadding: true, disableBG: true)
         }
         
         Section("Comments") {
           Toggle("Colored Usernames", isOn: $coloredCommentNames)
-            .themedListRowBG(enablePadding: true, disableBG: true)
         }
         
         Section("Accessibility"){
@@ -190,7 +185,7 @@ struct AppearancePanel: View {
         }
         
       }
-      .themedListDividers()
+      .themedListSection()
     }
     .themedListBG(theme.lists.bg)
     .navigationTitle("Appearance")

@@ -52,9 +52,9 @@ struct CommentSwipePanel: View {
             Label("Long Drag Right", image: "longDragRight")
           }
         }
-        .themedListRowBG(enablePadding: true, disableBG: true)
+//        .themedListRowBG(enablePadding: true, disableBG: true)
       }
-      .themedListDividers()
+      .themedListSection()
       
     }
     .themedListBG(theme.lists.bg)

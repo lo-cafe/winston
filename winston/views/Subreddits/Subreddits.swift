@@ -179,7 +179,7 @@ struct Subreddits: View, Equatable {
             
           }
         }
-        .themedListDividers()
+        .themedListSection()
       }
       .environmentObject(routerProxy)
       .themedListBG(selectedTheme.lists.bg)

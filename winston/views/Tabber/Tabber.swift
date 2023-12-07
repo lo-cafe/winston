@@ -58,7 +58,6 @@ struct Tabber: View, Equatable {
   @Default(.showUsernameInTabBar) private var showUsernameInTabBar
   @Default(.showTipJarModal) private var showTipJarModal
   
-  
   @State var sharedTheme: ThemeData? = nil
   @State var showingSharedThemeSheet: Bool = false
   
@@ -80,6 +79,15 @@ struct Tabber: View, Equatable {
     } else {
       activeTab = .me
     }
+  }
+
+  func navigateTo(_ tab: TabIdentifier, _ path: NavigationPath)  {
+    activeTab = tab
+    payload[tab]?.router.path = path
+  }
+
+  func navigateTo(_ tab: TabIdentifier) {
+    activeTab = tab
   }
   
   init(theme: WinstonTheme, cs: ColorScheme) {
@@ -108,7 +116,9 @@ struct Tabber: View, Equatable {
     let tabHeight = (tabBarHeight ?? 0) - getSafeArea().bottom
     TabView(selection: $activeTab.onUpdate { newTab in if activeTab == newTab { payload[newTab]!.reset.toggle() } }) {
       
-      SubredditsStack(reset: payload[.posts]!.reset, router: payload[.posts]!.router)
+      WithCredentialOnly(credential: redditCredentialsManager.selectedCredential) {
+        SubredditsStack(reset: payload[.posts]!.reset, router: payload[.posts]!.router)
+      }
         .background(TabBarAccessor { tabBar in
           if tabBarHeight != tabBar.bounds.height { tempGlobalState.tabBarHeight = tabBar.bounds.height }
         })
@@ -120,7 +130,9 @@ struct Tabber: View, Equatable {
           }
         }
       
-      Inbox(reset: payload[.inbox]!.reset, router: payload[.inbox]!.router)
+      WithCredentialOnly(credential: redditCredentialsManager.selectedCredential) {
+        Inbox(reset: payload[.inbox]!.reset, router: payload[.inbox]!.router)
+      }
         .background(TabBarAccessor { tabBar in
           if tabBarHeight != tabBar.bounds.height { tempGlobalState.tabBarHeight = tabBar.bounds.height }
         })
@@ -132,7 +144,9 @@ struct Tabber: View, Equatable {
           }
         }
       
-      Me(reset: payload[.me]!.reset, router: payload[.me]!.router)
+      WithCredentialOnly(credential: redditCredentialsManager.selectedCredential) {
+        Me(reset: payload[.me]!.reset, router: payload[.me]!.router)
+      }
         .background(TabBarAccessor { tabBar in
           if tabBarHeight != tabBar.bounds.height { tempGlobalState.tabBarHeight = tabBar.bounds.height }
         })
@@ -148,7 +162,9 @@ struct Tabber: View, Equatable {
           }
         }
       
-      Search(reset: payload[.search]!.reset, router: payload[.search]!.router)
+      WithCredentialOnly(credential: redditCredentialsManager.selectedCredential) {
+        Search(reset: payload[.search]!.reset, router: payload[.search]!.router)
+      }
         .background(TabBarAccessor { tabBar in
           if tabBarHeight != tabBar.bounds.height { tempGlobalState.tabBarHeight = tabBar.bounds.height }
         })
@@ -200,6 +216,8 @@ struct Tabber: View, Equatable {
           .ignoresSafeArea()
       }
     }
+    .environment(\.changeAppTab, navigateTo)
+    .environment(\.changeAppTabWithPath, navigateTo)
     .environmentObject(tempGlobalState)
     .alert("Success!", isPresented: $importedThemeAlert) {
       Button("Nice!", role: .cancel) {
@@ -236,8 +254,8 @@ struct Tabber: View, Equatable {
       }
       
     }
-    .onChange(of: redditCredentialsManager.credentials) { creds in
-      if creds.count == 0 {
+    .onChange(of: redditCredentialsManager.credentials.count) { count in
+      if count == 0 {
         withAnimation(spring) {
           credModalOpen = true
         }

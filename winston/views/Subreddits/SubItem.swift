@@ -49,9 +49,12 @@ struct SubItem: View {
         selectedSub = .sub(sub)
       } label: {
         HStack {
-          SubredditIcon(subredditIconKit: data.subredditIconKit)
-          Text(data.display_name ?? "")
-            .foregroundStyle(isActive ? .white : .primary)
+          Label {
+            Text(data.display_name ?? "")
+              .foregroundStyle(isActive ? .white : .primary)
+          } icon: {
+            SubredditIcon(subredditIconKit: data.subredditIconKit)
+          }
           
           Spacer()
           

@@ -31,7 +31,7 @@ struct AccountSwitcherTarget: View, Equatable {
   static let floatOffsetVariationAmount: Double = 10
   
   static func == (lhs: AccountSwitcherTarget, rhs: AccountSwitcherTarget) -> Bool {
-    lhs.account == rhs.account && lhs.index == rhs.index && lhs.hovered == rhs.hovered && lhs.willEnd == rhs.willEnd && lhs.distance == rhs.distance && lhs.fingerPos == rhs.fingerPos
+    lhs.cred == rhs.cred && lhs.index == rhs.index && lhs.hovered == rhs.hovered && lhs.willEnd == rhs.willEnd && lhs.distance == rhs.distance && lhs.fingerPos == rhs.fingerPos
   }
   
   @Default(.redditCredentialSelectedID) private var redditCredentialSelectedID
@@ -42,20 +42,19 @@ struct AccountSwitcherTarget: View, Equatable {
   @State private var globalCirclePos: CGPoint = .zero
   @State private var impactRigid = UIImpactFeedbackGenerator(style: .rigid)
 
-  
-  
   var containerSize: CGSize
   var index: Int
   var targetsCount: Int
   var fingerPos: CGPoint
-  var account: RedditCredential
+  var cred: RedditCredential? = nil
   var willEnd: Bool
-  
+
   private let distanceMaxSelectedVibrating: Double = 100
   private let verticalOffset = -50.0
   private let textSpace = (AccountSwitcherTarget.fontSize * 1.2) + AccountSwitcherTarget.vStackSpacing
   private let actualTargetSize = AccountSwitcherTarget.size
-  private var isSelected: Bool { redditCredentialSelectedID == account.id }
+  private var isAddBtn: Bool { cred == nil }
+  private var isSelected: Bool { !isAddBtn && redditCredentialSelectedID == cred?.id }
   private var radiusX: Double { (containerSize.width / 2) }
   private var radiusY: Double { (containerSize.height / 2) }
   private var x: Double { self.calculateXOffset(count: targetsCount, index: index) }
@@ -73,14 +72,15 @@ struct AccountSwitcherTarget: View, Equatable {
   }
   private var hovered: Bool {
     let actualAttraction: CGSize = isSelected ? .zero : attraction
-    let xRange = (xMin + (actualAttraction.height * 2))...(xMax + actualAttraction.width)
-    let yRange = (yMin + (actualAttraction.height * 2))...(yMax + actualAttraction.height)
+    let xRange = (xMin + (actualAttraction.width * 2))...(xMax + (actualAttraction.width * 2))
+    let yRange = (yMin + (actualAttraction.height * 2))...(yMax + (actualAttraction.height * 2))
     return xRange.contains(fingerPos.x) && yRange.contains(fingerPos.y)
   }
   
-  var eccentricity: Double { sqrt(1 - pow(min(radiusX, radiusY) / max(radiusX, radiusY), 2)) }
+  private var eccentricity: Double { sqrt(1 - pow(min(radiusX, radiusY) / max(radiusX, radiusY), 2)) }
 
   func calculateXOffset(count: Int, index: Int) -> Double {
+    if count == 1 { return -radiusX }
     let t = calculateT(count: count, index: index)
     let e = eccentricity
     let theta = t + (pow(e, 2)/8 + pow(e, 4)/16 + 71*pow(e, 6)/2048) * sin(2*t) +
@@ -92,6 +92,7 @@ struct AccountSwitcherTarget: View, Equatable {
   }
   
   func calculateYOffset(count: Int, index: Int) -> Double {
+    if count == 1 { return radiusY }
     let t = calculateT(count: count, index: index)
     let e = eccentricity
     let theta = t + (pow(e, 2)/8 + pow(e, 4)/16 + 71*pow(e, 6)/2048) * sin(2*t) +
@@ -120,20 +121,27 @@ struct AccountSwitcherTarget: View, Equatable {
     //    let appear = !willEnd && appear
     VStack(spacing: Self.vStackSpacing) {
       Group {
-        if let picture = account.profilePicture, let url = URL(string: picture) {
-          URLImage(url: url)
+        if isAddBtn {
+          Image(systemName: "plus")
+            .fontSize(Self.size * 0.75, .semibold)
+            .foregroundStyle(hovered ? .white : .primary)
         } else {
-          Image(.emptyCredential).resizable()
+          if let picture = cred?.profilePicture, let url = URL(string: picture) {
+            URLImage(url: url).equatable()
+          } else {
+            Image(.emptyCredential).resizable()
+          }
         }
       }
       .scaledToFill()
       .frame(Self.size - Self.strokeWidth)
+      .background(Circle().fill(Color.accentColor).scaleEffect(hovered ? 1 : 0.1))
       .background(GeometryReader { geo in Color.clear.onAppear {
        let frame = geo.frame(in: .global)
         globalCirclePos = .init(x: frame.midX, y: frame.midY)
       } })
       .mask(Circle().fill(.black))
-      .overlay(Circle().stroke(.white, lineWidth: Self.strokeWidth))
+      .overlay(isAddBtn ? nil : Circle().stroke(.white, lineWidth: Self.strokeWidth))
       .overlay(
         !isSelected
         ? nil
@@ -146,7 +154,7 @@ struct AccountSwitcherTarget: View, Equatable {
         , alignment: .topTrailing
       )
       .background(
-        isSelected
+        isSelected || isAddBtn
         ? nil
         : ZStack {
           Circle().fill(Color.hex("F2DDFF")).blur(radius: 30)
@@ -164,7 +172,7 @@ struct AccountSwitcherTarget: View, Equatable {
       }
       
       VStack(spacing: 2) {
-        Text(account.userName ?? "Unknown")
+        Text(isAddBtn ? "Add new" : cred?.userName ?? "Unknown")
           .foregroundStyle(.primary)
           .shadow(radius: 8, y: 4)
           .fontSize(Self.fontSize, .semibold)
@@ -176,9 +184,9 @@ struct AccountSwitcherTarget: View, Equatable {
     .blur(radius: appear ? 0 : 30)
     .compositingGroup()
     .offset(hovered ? .zero : floatOffset)
-    .brightness(!isSelected && hovered ? 0.5 : 0)
+    .brightness(!isSelected && hovered && !isAddBtn ? 0.5 : 0)
     .scaleEffect(!isSelected && hovered ? 1.2 : 1)
-    .animation(hovered ? .snappy.speed(2) : .smooth, value: hovered)
+    .animation(hovered ? .spring(response: 0.5, dampingFraction: 0.525) : .smooth, value: hovered)
     .offset(x: appear ? x + radiusX : 0, y: appear ? y + verticalOffset : 0)
     .offset(isSelected ? .zero : attraction)
     .scaleEffect(appear ? 1 : 0.1)
@@ -187,9 +195,15 @@ struct AccountSwitcherTarget: View, Equatable {
       if $0 {
         withAnimation(.snappy.delay(0.025 * Double(index))) { self.appear = false }
         let wasHovered = hovered
-        doThisAfter(0.4) { if wasHovered {
-          redditCredentialSelectedID = account.id
-        } }
+        if wasHovered {
+          doThisAfter(0.4) {
+            if let cred = cred {
+              redditCredentialSelectedID = cred.id
+            } else {
+              TempGlobalState.shared.editingCredential = .init()
+            }
+          }
+        }
       }
     }
     .onAppear {

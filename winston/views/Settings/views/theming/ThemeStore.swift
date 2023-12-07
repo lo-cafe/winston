@@ -25,11 +25,11 @@ struct ThemeStore: View {
               NavigationLink(destination: ThemeStoreDetailsView(themeData: theme), label: {
                 OnlineThemeItem(theme: theme)
               })
-              .themedListRowBG(enablePadding: true)
+//              .themedListRowBG(enablePadding: true)
 
             }
           }
-          .themedListDividers()
+          .themedListSection()
         } else {
           ProgressView()
         }
