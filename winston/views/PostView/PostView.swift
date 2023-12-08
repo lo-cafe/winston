@@ -10,9 +10,8 @@ import Defaults
 import AVFoundation
 import AlertToast
 
-struct PostViewPayload: Hashable {
+struct PostViewPayload: Hashable, Equatable {
   let post: Post
-  var postSelfAttr: AttributedString? = nil
   let sub: Subreddit
   var highlightID: String? = nil
 }
@@ -23,7 +22,6 @@ struct PostView: View, Equatable {
   }
   
   @ObservedObject var post: Post
-  var selfAttr: AttributedString? = nil
   var subreddit: Subreddit
   var highlightID: String?
   var forceCollapse: Bool = false
@@ -54,15 +52,6 @@ struct PostView: View, Equatable {
   
   init(post: Post, subreddit: Subreddit, highlightID: String?) {
     self.post = post
-    self.subreddit = subreddit
-    self.highlightID = highlightID
-    
-    _sort = State(initialValue: Defaults[.perPostSort] ? (Defaults[.postSorts][post.id] ?? Defaults[.preferredCommentSort]) : Defaults[.preferredCommentSort]);
-  }
-  
-  init(post: Post, selfAttr: AttributedString?, subreddit: Subreddit, highlightID: String?) {
-    self.post = post
-    self.selfAttr = selfAttr
     self.subreddit = subreddit
     self.highlightID = highlightID
     

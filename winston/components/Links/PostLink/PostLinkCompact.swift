@@ -72,7 +72,7 @@ struct PostLinkCompact: View, Equatable, Identifiable {
   func openPost() {
     if let routerProxy = routerProxy {
       withAnimation(nil) { isOpen = true }
-      routerProxy.router.path.append(PostViewPayload(post: post, postSelfAttr: nil, sub: feedsAndSuch.contains(sub.id) ? sub : sub))
+      routerProxy.router.path.append(PostViewPayload(post: post, sub: feedsAndSuch.contains(sub.id) ? sub : sub))
     }
   }
   

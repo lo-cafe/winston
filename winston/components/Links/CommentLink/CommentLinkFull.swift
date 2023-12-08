@@ -53,7 +53,7 @@ struct CommentLinkFull: View {
       .background(curveColor)
       .contentShape(Rectangle())
       .onTapGesture {
-        routerProxy.router.path.append(PostViewPayload(post: post, postSelfAttr: nil, sub: subreddit))
+        routerProxy.router.path.append(PostViewPayload(post: post, sub: subreddit))
       }
       .allowsHitTesting(!loadMoreLoading)
       .opacity(loadMoreLoading ? 0.5 : 1)

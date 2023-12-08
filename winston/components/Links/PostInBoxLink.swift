@@ -119,7 +119,7 @@ struct PostInBoxLink: View {
         .scaleEffect(deleting ? 1 : 0.85)
     )
     .onTapGesture {
-      selectedSub = .post(PostViewPayload(post: post, postSelfAttr: nil, sub: sub))
+      selectedSub = .post(PostViewPayload(post: post, sub: sub))
     }
     .gesture(
       LongPressGesture(minimumDuration: 0.5, maximumDistance: 10)

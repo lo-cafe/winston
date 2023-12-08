@@ -222,14 +222,7 @@ struct Search: View {
           searchViewLoaded = true
         }
       }
-//      .defaultNavDestinations(router)
     }
     .swipeAnywhere(routerProxy: RouterProxy(router), routerContainer: router.isRootWrapper)
   }
 }
-
-//struct Search_Previews: PreviewProvider {
-//    static var previews: some View {
-//        Search()
-//    }
-//}

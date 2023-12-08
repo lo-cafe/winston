@@ -40,7 +40,7 @@ struct ShortPostLink: View {
       .themedListRowBG()
       .mask(RR(20, Color.black))
       .onTapGesture {
-        routerProxy.router.path.append(PostViewPayload(post: post, postSelfAttr: nil, sub: Subreddit(id: data.subreddit, api: post.redditAPI)))
+        routerProxy.router.path.append(PostViewPayload(post: post, sub: Subreddit(id: data.subreddit, api: post.redditAPI)))
       }
     }
   }

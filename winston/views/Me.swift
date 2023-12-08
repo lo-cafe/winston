@@ -34,7 +34,6 @@ struct Me: View {
         }
         .onChange(of: reset) { _ in router.path.removeLast(router.path.count) }
       }
-//      .defaultNavDestinations(router)
     }
     .swipeAnywhere(routerProxy: RouterProxy(router), routerContainer: router.isRootWrapper)
   }
