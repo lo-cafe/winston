@@ -7,6 +7,7 @@
 
 import SwiftUI
 import Defaults
+import Nuke
 import WebKit
 import UniformTypeIdentifiers
 
@@ -139,12 +140,17 @@ struct GeneralPanel: View {
   }
   
   func clearCache() {
+    (try? DataCache(name: "lo.cafe.winston.datacache"))?.flush()
+    Nuke.ImageCache.shared.removeAll()
+    Nuke.DataLoader.sharedUrlCache.removeAllCachedResponses()
+    (ImagePipeline.shared.configuration.dataLoader as? DataLoader)?.session.configuration.urlCache?.removeAllCachedResponses()
     let temporaryDirectory = FileManager.default.temporaryDirectory
     let cacheDirectory = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first
     
-    clearDirectory(directory: temporaryDirectory)
-    clearDirectory(directory: cacheDirectory)
     
+    flushFilesInDirectoryButNotFolders(temporaryDirectory)
+    flushFilesInDirectoryButNotFolders(cacheDirectory)
+    resetCoreData()
     totalCacheSize = "0 bytes"
     print("Cache cleared successfully.")
   }
@@ -169,3 +175,24 @@ struct GeneralPanel: View {
 }
 
 
+
+func flushFilesInDirectoryButNotFolders(_ at: URL?) {
+  guard let at = at else { return }
+  let fileManager = FileManager.default
+  guard let enumerator = fileManager.enumerator(at: at, includingPropertiesForKeys: nil) else { return }
+  
+  for case let file as String in enumerator {
+    let path = at.appendingPathComponent(file)
+    var isDirectory: ObjCBool = false
+    
+    if fileManager.fileExists(atPath: path.path, isDirectory: &isDirectory) {
+      if !isDirectory.boolValue {
+        do {
+          try fileManager.removeItem(at: path)
+        } catch let error as NSError {
+          print("Error: \(error.localizedDescription)")
+        }
+      }
+    }
+  }
+}

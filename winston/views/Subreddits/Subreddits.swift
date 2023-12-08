@@ -28,14 +28,13 @@ struct Subreddits: View, Equatable {
   var loaded: Bool
   @StateObject var routerProxy: RouterProxy
   var currentCredentialID: UUID
-  
   init(selectedSub: Binding<FirstSelectable?>, loaded: Bool, routerProxy: RouterProxy, currentCredentialID: UUID) {
     self.currentCredentialID = currentCredentialID
     self._selectedSub = selectedSub
     self.loaded = loaded
     self._routerProxy = .init(wrappedValue: routerProxy)
-    self._subreddits = FetchRequest<CachedSub>(sortDescriptors: [NSSortDescriptor(key: "name", ascending: true)], predicate: NSPredicate(format: "winstonCredentialID == %@", currentCredentialID as CVarArg), animation: .default)
-    self._multis = FetchRequest<CachedMulti>(sortDescriptors: [NSSortDescriptor(key: "name", ascending: true)], predicate: NSPredicate(format: "winstonCredentialID == %@", currentCredentialID as CVarArg), animation: .default)
+    self._subreddits = FetchRequest<CachedSub>(sortDescriptors: [NSSortDescriptor(key: "display_name", ascending: true)], predicate: NSPredicate(format: "winstonCredentialID == %@", currentCredentialID as CVarArg), animation: .default)
+    self._multis = FetchRequest<CachedMulti>(sortDescriptors: [NSSortDescriptor(key: "display_name", ascending: true)], predicate: NSPredicate(format: "winstonCredentialID == %@", currentCredentialID as CVarArg), animation: .default)
   }
   
   @FetchRequest private var subreddits: FetchedResults<CachedSub>
@@ -46,7 +45,6 @@ struct Subreddits: View, Equatable {
   
   @Default(.likedButNotSubbed) private var likedButNotSubbed // subreddits that a user likes but is not subscribed to so they wont be in subsDict
   @Default(.disableAlphabetLettersSectionsInSubsList) private var disableAlphabetLettersSectionsInSubsList
-  @Default(.redditCredentialSelectedID) private var redditCredentialSelectedID
   @Environment(\.managedObjectContext) private var context
   @Environment(\.useTheme) private var selectedTheme
   @Environment(\.colorScheme) private var cs
@@ -122,7 +120,7 @@ struct Subreddits: View, Equatable {
             Section("Found subs") {
               let foundSubs = Array(Array(subreddits.filter { ($0.display_name ?? "").lowercased().contains(searchText.lowercased()) }).enumerated())
               ForEach(foundSubs, id: \.self.element.uuid) { i, cachedSub in
-                SubItem(forcedMaskType: CommentBGSide.getFromArray(count: foundSubs.count, i: i), selectedSub: $selectedSub, sub: Subreddit(data: SubredditData(entity: cachedSub), api: RedditAPI.shared), cachedSub: cachedSub)
+                SubItem(selectedSub: $selectedSub, sub: Subreddit(data: SubredditData(entity: cachedSub), api: RedditAPI.shared), cachedSub: cachedSub)
               }
             }
           } else {
@@ -131,7 +129,7 @@ struct Subreddits: View, Equatable {
               Section("Favorites") {
                 let favs = Array(favs.sorted(by: { x, y in (x.display_name?.lowercased() ?? "a") < (y.display_name?.lowercased() ?? "a") }).enumerated())
                 ForEach(favs, id: \.self.element) { i, cachedSub in
-                  SubItem(forcedMaskType: CommentBGSide.getFromArray(count: favs.count, i: i), selectedSub: $selectedSub, sub: Subreddit(data: SubredditData(entity: cachedSub), api: RedditAPI.shared), cachedSub: cachedSub)
+                  SubItem(selectedSub: $selectedSub, sub: Subreddit(data: SubredditData(entity: cachedSub), api: RedditAPI.shared), cachedSub: cachedSub)
 //                    .equatable()
                     .id("\(cachedSub.uuid ?? "")-fav")
                     .onAppear{
@@ -149,7 +147,7 @@ struct Subreddits: View, Equatable {
               Section("Subs") {
                 let subs = Array(subreddits.filter({ $0.user_is_subscriber }).sorted(by: { x, y in (x.display_name?.lowercased() ?? "a") < (y.display_name?.lowercased() ?? "a") }).enumerated())
                 ForEach(subs, id: \.self.element) { i, cachedSub in
-                  SubItem(forcedMaskType: CommentBGSide.getFromArray(count: subs.count, i: i), selectedSub: $selectedSub, sub: Subreddit(data: SubredditData(entity: cachedSub), api: RedditAPI.shared), cachedSub: cachedSub)
+                  SubItem(selectedSub: $selectedSub, sub: Subreddit(data: SubredditData(entity: cachedSub), api: RedditAPI.shared), cachedSub: cachedSub)
 //                    .equatable()
                 }
               }
@@ -163,7 +161,7 @@ struct Subreddits: View, Equatable {
                       (x.display_name?.lowercased() ?? "a") < (y.display_name?.lowercased() ?? "a")
                     }).enumerated())
                     ForEach(subs, id: \.self.element.uuid) { i, cachedSub in
-                      SubItem(forcedMaskType: CommentBGSide.getFromArray(count: subs.count, i: i), selectedSub: $selectedSub, sub: Subreddit(data: SubredditData(entity: cachedSub), api: RedditAPI.shared), cachedSub: cachedSub)
+                      SubItem(selectedSub: $selectedSub, sub: Subreddit(data: SubredditData(entity: cachedSub), api: RedditAPI.shared), cachedSub: cachedSub)
 //                        .equatable()
                     }
                     .onDelete(perform: { i in
@@ -208,6 +206,7 @@ struct Subreddits: View, Equatable {
         _ = await RedditAPI.shared.fetchSubs()
       }
       .navigationTitle("Subs")
+      .log(subreddits.count, subreddits.map { ($0.name, $0.display_name) })
     }
   }
   

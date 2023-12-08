@@ -104,7 +104,7 @@ struct SwipeAnywhere: ViewModifier {
           )
           .scaleEffect(interpolate([0.5, dragState.activated ? 1 : 0.9], true))
           .offset(x: -76 + finalOffset.width, y: finalOffset.height)
-          .frame(width: UIScreen.screenWidth, height: UIScreen.screenHeight, alignment: .leading)
+          .frame(.screenSize,  .leading)
           .ignoresSafeArea()
           .allowsHitTesting(false)
         //          .drawingGroup()

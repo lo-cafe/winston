@@ -16,6 +16,7 @@ class TempGlobalState: ObservableObject {
   @Published var globalLoader = GlobalLoader()
   @Published var tabBarHeight: CGFloat? = nil
   @Published var inAppBrowserURL: URL? = nil
+  @Published var credModalOpen = false
 }
 
 enum TabIdentifier {
@@ -43,7 +44,6 @@ struct Tabber: View, Equatable {
   @ObservedObject private var redditCredentialsManager = RedditCredentialsManager.shared
   @State private var activeTab: TabIdentifier = .posts
   
-  @State private var credModalOpen = false
   @State private var importedThemeAlert = false
   
   //  @State var tabBarHeight: CGFloat?
@@ -226,41 +226,30 @@ struct Tabber: View, Equatable {
     } message: {
       Text("The theme was imported successfully. Enable it in \"Themes\" section in the Settings tab.")
     }
-    .onAppear {
-      removeDefaultThemeFromThemes()
-      
-      removeLegacySubsAndMultisCache()
-      
-      Task(priority: .background) { await updatePostsInBox(RedditAPI.shared) }
-      
-      if redditCredentialsManager.credentials.count == 0 {
-        withAnimation(spring) {
-          credModalOpen = true
-        }
-      } else if redditCredentialsManager.selectedCredential != nil {
-        Task(priority: .background) {
-          await RedditAPI.shared.fetchMe(force: true)
-        }
+    .task(priority: .background) {
+      async let _ = cleanCredentialOrphanEntities()
+      async let _ = autoSelectCredentialIfNil()
+      async let _ = removeDefaultThemeFromThemes()
+      async let _ = removeLegacySubsAndMultisCache()
+      async let _ = updatePostsInBox(RedditAPI.shared)
+      if RedditCredentialsManager.shared.selectedCredential != nil {
+        async let _ = RedditAPI.shared.fetchMe(force: true)
       }
-      
-      //Check for announcements
-      Task(priority: .background){
-        testAnnouncement = await winstonAPI.getAnnouncement()
-        if let testAnnouncement{
-          showingAnnouncement = testAnnouncement.timestamp != Defaults[.lastSeenAnnouncementTimeStamp]
-        } else {
-          showingAnnouncement = false
-        }
-      }
-      
-    }
-    .onChange(of: redditCredentialsManager.credentials.count) { count in
-      if count == 0 {
-        withAnimation(spring) {
-          credModalOpen = true
-        }
+      //      if RedditCredentialsManager.shared.credentials.count == 0 {
+      //        withAnimation(spring) { tempGlobalState.credModalOpen = true }
+      //      }
+      testAnnouncement = await winstonAPI.getAnnouncement()
+      if let testAnnouncement {
+        showingAnnouncement = testAnnouncement.timestamp != Defaults[.lastSeenAnnouncementTimeStamp]
+      } else {
+        showingAnnouncement = false
       }
     }
+//    .onChange(of: redditCredentialsManager.credentials.count) { count in
+//      if count == 0 {
+//        withAnimation(spring) { TempGlobalState.shared.credModalOpen = true }
+//      }
+//    }
     .sheet(isPresented: $showingAnnouncement, content: {
       if let testAnnouncement {
         AnnouncementSheet(showingAnnouncement: $showingAnnouncement,announcement: testAnnouncement)
@@ -282,7 +271,7 @@ struct Tabber: View, Equatable {
     .onOpenURL { url in
       
       if tempGlobalState.editingCredential == nil, let queryParams = url.queryParameters, let appID = queryParams["appID"], let appSecret = queryParams["appSecret"] {
-        credModalOpen = false
+        tempGlobalState.credModalOpen = false
         if var foundCred = redditCredentialsManager.credentials.first(where: { $0.apiAppID == appID }) {
           foundCred.apiAppSecret = appSecret
           tempGlobalState.editingCredential = foundCred
@@ -328,8 +317,8 @@ struct Tabber: View, Equatable {
     .sheet(isPresented: $showTipJarModal) {
       TipJar()
     }
-    .sheet(isPresented: $credModalOpen) {
-      Onboarding(open: $credModalOpen)
+    .sheet(isPresented: $tempGlobalState.credModalOpen) {
+      Onboarding(open: $tempGlobalState.credModalOpen)
         .interactiveDismissDisabled(true)
     }
     .accentColor(currentTheme.general.accentColor.cs(colorScheme).color())

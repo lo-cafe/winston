@@ -13,6 +13,8 @@ struct AccountSwitcherTrigger<Content: View>: View {
   @State private var medium = UIImpactFeedbackGenerator(style: .soft)
   @State private var dragging = false
   @State private var triggerLocation: CGPoint? = nil
+  @State private var takeScreenshot = false
+
   
   var onTap: (()->())? = nil
   var content: () -> Content
@@ -24,16 +26,18 @@ struct AccountSwitcherTrigger<Content: View>: View {
           .allowsHitTesting(false)
           .onChange(of: dragging) { if $0 {
             medium.impactOccurred()
-            withAnimation {
+            withAnimation(.spring) {
+              takeScreenshot = false
               transmitter.positionInfo = .init(geo.frame(in: .global).point(at: .center))
             }
           }}
       })
+      .background(TakeSnapshotView(screenshot: $transmitter.screenshot, takeScreenshot: takeScreenshot))
       .simultaneousGesture(onTap == nil || dragging ? nil : TapGesture().onEnded { _ in if !dragging { onTap?() } })
       .simultaneousGesture(
         LongPressGesture(minimumDuration: 0.1)
           .onEnded({ _ in
-            //            if transmitter.willEnd { return }
+            takeScreenshot = true
             dragging = true
             medium.prepare()
           })
@@ -47,7 +51,7 @@ struct AccountSwitcherTrigger<Content: View>: View {
           }
           .onEnded({ sequence in
             if case .second(_, _) = sequence {
-              withAnimation(.bouncy) {
+              withAnimation(.spring) {
                 transmitter.willEnd = true
                 dragging = false
               }

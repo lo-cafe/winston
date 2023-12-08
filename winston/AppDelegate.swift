@@ -44,7 +44,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     setAudioToMixWithOthers()
     
     let defaultPipeline = ImagePipeline { config in
-      config.dataCache = try? DataCache(name: "lo.cafe.winston.datacache")
+      let dataCache = try? DataCache(name: "lo.cafe.winston.datacache")
+      config.dataCache = dataCache
       let dataLoader: DataLoader = {
         let config = URLSessionConfiguration.default
         config.urlCache = nil

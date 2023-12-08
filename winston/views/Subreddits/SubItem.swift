@@ -10,9 +10,9 @@ import Defaults
 
 struct SubItemButton: View {
   @Binding var selectedSub: FirstSelectable?
-  var sub: Subreddit
+  weak var sub: Subreddit?
   var body: some View {
-    if let data = sub.data {
+    if let sub, let data = sub.data {
       Button {
         selectedSub = .sub(sub)
       } label: {
@@ -25,14 +25,18 @@ struct SubItemButton: View {
   }
 }
 
-struct SubItem: View {
-  var forcedMaskType: CommentBGSide = .middle
+struct SubItem: View, Equatable {
+  static func == (lhs: SubItem, rhs: SubItem) -> Bool {
+    lhs.sub == rhs.sub
+  }
+  
   @Binding var selectedSub: FirstSelectable?
   @StateObject var sub: Subreddit
   var cachedSub: CachedSub
   @Default(.likedButNotSubbed) private var likedButNotSubbed
   
   func favoriteToggle() {
+//    guard let sub = sub else { return }
     if likedButNotSubbed.contains(sub) {
       _ = sub.localFavoriteToggle()
     } else {

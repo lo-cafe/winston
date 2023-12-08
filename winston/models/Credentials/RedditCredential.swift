@@ -71,6 +71,10 @@ struct RedditCredential: Identifiable, Equatable, Hashable, Codable {
     RedditCredentialsManager.shared.saveCred(self, forceCreate: forceCreate)
   }
   
+  func delete() {
+    RedditCredentialsManager.shared.deleteCred(self)
+  }
+  
   func getUpToDateToken(forceRenew: Bool = false, saveToken: Bool = true) async -> AccessToken? {
     guard let refreshToken = self.refreshToken, !apiAppID.isEmpty && !apiAppSecret.isEmpty else { return nil }
     if !forceRenew, let accessToken = self.accessToken {

@@ -77,7 +77,7 @@ struct SubtleSheetModifier<T: View>: ViewModifier {
         //            print(newValue)
         //          })
         //          .padding(.top, handlerHeight)
-          .frame(width: UIScreen.screenWidth, height: UIScreen.screenHeight, alignment: .top)
+          .frame(.screenSize,  .top)
           .mask(SheetShape(width: UIScreen.screenWidth, height: UIScreen.screenHeight).fill(.black))
           .overlay(
             Capsule(style: .continuous).fill(.ultraThinMaterial)

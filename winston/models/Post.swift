@@ -166,7 +166,7 @@ extension Post {
   }
   
   func toggleSeen(_ seen: Bool? = nil, optimistic: Bool = false) async -> Void {
-    let context = PersistenceController.shared.container.viewContext
+    let context = PersistenceController.shared.primaryBGContext
     if (self.data?.winstonSeen ?? false) == seen { return }
     if optimistic {
       let prev = self.data?.winstonSeen ?? false
@@ -221,7 +221,7 @@ extension Post {
   }
   
   func saveCommentsCount(numComments: Int) async -> Void {
-    let context = PersistenceController.shared.container.viewContext
+    let context = PersistenceController.shared.primaryBGContext
     
     let fetchRequest = NSFetchRequest<SeenPost>(entityName: "SeenPost")
     if let results = (await context.perform(schedule: .enqueued) { try? context.fetch(fetchRequest) }) {
@@ -255,7 +255,7 @@ extension Post {
   }
   
   func saveSeenComments(comments: ListingData<CommentData>?) async -> Void {
-    let context = PersistenceController.shared.container.viewContext
+    let context = PersistenceController.shared.primaryBGContext
     let newComments = self.getCommentIds(comments: comments)
     
     let fetchRequest = NSFetchRequest<SeenPost>(entityName: "SeenPost")
@@ -286,7 +286,7 @@ extension Post {
   }
   
   func saveMoreComments(comments: [Comment]) async -> Void {
-    let context = PersistenceController.shared.container.viewContext
+    let context = PersistenceController.shared.primaryBGContext
     
     let fetchRequest = NSFetchRequest<SeenPost>(entityName: "SeenPost")
     if let results = (await context.perform(schedule: .enqueued) { try? context.fetch(fetchRequest) }) {

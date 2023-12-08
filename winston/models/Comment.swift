@@ -127,7 +127,7 @@ extension Comment {
   }
   
   static func initMultiple(datas: [ListingChild<T>], api: RedditAPI, parent: ObservableArray<GenericRedditEntity<T, B>>? = nil) -> [Comment] {
-    let context = PersistenceController.shared.container.viewContext
+    let context = PersistenceController.shared.primaryBGContext
     let fetchRequest = NSFetchRequest<CollapsedComment>(entityName: "CollapsedComment")
     if let results = (context.performAndWait { try? context.fetch(fetchRequest) }) {
       return datas.compactMap { x in
@@ -151,7 +151,7 @@ extension Comment {
       let new = collapsed == nil ? !prev : collapsed
       if prev != new { data?.collapsed = new }
     }
-    let context = PersistenceController.shared.container.viewContext
+    let context = PersistenceController.shared.primaryBGContext
     let fetchRequest = NSFetchRequest<CollapsedComment>(entityName: "CollapsedComment")
     do {
       let results = try context.fetch(fetchRequest)

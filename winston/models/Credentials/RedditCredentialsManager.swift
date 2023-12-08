@@ -75,6 +75,9 @@ class RedditCredentialsManager: ObservableObject {
       
     self.cancelables.append(Defaults.observe(.redditCredentialSelectedID) { _ in
       self.objectWillChange.send()
+      Task(priority: .background) { await RedditAPI.shared.fetchMe(force: true) }
+      Task(priority: .background) { await RedditAPI.shared.fetchSubs() }
+      Task(priority: .background) { await RedditAPI.shared.fetchMyMultis() }
     })
   }
   

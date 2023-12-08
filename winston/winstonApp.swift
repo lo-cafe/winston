@@ -9,6 +9,7 @@ import SwiftUI
 import AlertToast
 import Defaults
 import WhatsNewKit
+import CoreData
 
 var shortcutItemToProcess: UIApplicationShortcutItem?
 @main
@@ -18,7 +19,6 @@ struct winstonApp: App {
   
   @Default(.themesPresets) private var themesPresets
   @Default(.selectedThemeID) private var selectedThemeID
-  @Default(.redditCredentialSelectedID) private var redditCredentialSelectedID
   
   var selectedTheme: WinstonTheme { themesPresets.first { $0.id == selectedThemeID } ?? defaultTheme }
   
@@ -27,23 +27,12 @@ struct winstonApp: App {
       AppContent(selectedTheme: selectedTheme)
         .onAppear { themesPresets = themesPresets.filter { $0.id != "default" } }
         .environment(\.managedObjectContext, persistenceController.container.viewContext)
+        .environment(\.primaryBGContext, persistenceController.primaryBGContext)
         .environment(
           \.whatsNew,
            WhatsNewEnvironment(currentVersion: .current(), whatsNewCollection: getCurrentChangelog())
         )
         .environment(\.useTheme, selectedTheme)
-        .onAppear {
-          cleanEntitiesWithNilCredentials()
-          if redditCredentialSelectedID == nil {
-            let validCreds = RedditCredentialsManager.shared.validCredentials
-            if validCreds.count > 0 { redditCredentialSelectedID = validCreds[0].id }
-          }
-        }
-        .onChange(of: redditCredentialSelectedID) { val in
-          Task(priority: .background) { await RedditAPI.shared.fetchMe(force: true) }
-          Task(priority: .background) { await RedditAPI.shared.fetchSubs() }
-          Task(priority: .background) { await RedditAPI.shared.fetchMyMultis() }
-        }
     }
   }
   
@@ -161,6 +150,10 @@ struct AppContent: View {
   }
 }
 
+private struct PrimaryBGContextKey: EnvironmentKey {
+  static let defaultValue: NSManagedObjectContext = PersistenceController.shared.primaryBGContext
+}
+
 private struct ChangeAppTabWithPathFuncKey: EnvironmentKey {
   static let defaultValue: (TabIdentifier, NavigationPath) -> () = { _, _ in }
 }
@@ -178,6 +171,10 @@ private struct ContentWidthKey: EnvironmentKey {
 }
 
 extension EnvironmentValues {
+  var primaryBGContext: NSManagedObjectContext {
+    get { self[PrimaryBGContextKey.self] }
+    set { self[PrimaryBGContextKey.self] = newValue }
+  }
   var changeAppTabWithPath: (TabIdentifier, NavigationPath) -> () {
     get { self[ChangeAppTabWithPathFuncKey.self] }
     set { self[ChangeAppTabWithPathFuncKey.self] = newValue }

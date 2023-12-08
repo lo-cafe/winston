@@ -18,6 +18,8 @@ func resetApp() {
 }
 
 func resetCredentials() {
+  RedditCredentialsManager.shared.credentials.forEach { $0.delete() }
+  
   let credentialsKeychain = Keychain(service: "lo.cafe.winston.reddit-credentials").synchronizable(Defaults[.syncKeyChainAndSettings])
   
   credentialsKeychain["apiAppID"] = nil
@@ -49,7 +51,7 @@ func resetCoreData() {
     let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: entityName)
     let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
     do {
-      try container.viewContext.execute(deleteRequest)
+      _ = try container.viewContext.performAndWait { try container.viewContext.execute(deleteRequest) }
     } catch let error as NSError {
       debugPrint(error)
     }
