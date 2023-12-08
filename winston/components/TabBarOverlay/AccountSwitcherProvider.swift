@@ -46,8 +46,6 @@ struct AccountSwitcherProvider<Content: View>: View {
   
   var content: () -> Content
   
-  
-  
   func selectCredential(_ cred: RedditCredential?) {
     if let cred = cred, let nextCredIndex = RedditCredentialsManager.shared.credentials.firstIndex(of: cred) {
       let curr = RedditCredentialsManager.shared.selectedCredential
@@ -67,7 +65,7 @@ struct AccountSwitcherProvider<Content: View>: View {
     let showScreenshot = transmitter.credentialToSet != nil
     let showOverlay = (transmitter.positionInfo != nil && !transmitter.willEnd) || showScreenshot
     let completelyFree = !showOverlay && !passScreen && !showScreenshot
-    let overFramePadding: Double = !showOverlay ? 0 : showScreenshot ? 32 : 24
+    let overFramePadding: Double = !showOverlay ? 0 : showScreenshot ? 32 : 16
     ZStack {
       content()
         .environmentObject(transmitter).zIndex(1)
