@@ -10,7 +10,7 @@ import Defaults
 
 struct SubredditLinkContainer: View {
   var noHPad = false
-  @StateObject var sub: Subreddit
+  @ObservedObject var sub: Subreddit
   var body: some View {
     SubredditLink(noHPad: true, sub: sub)
   }
@@ -19,10 +19,10 @@ struct SubredditLinkContainer: View {
 struct SubredditLink: View {
   var noHPad = false
   var sub: Subreddit
-  @State var opened = false
+  @State private var opened = false
   @EnvironmentObject private var routerProxy: RouterProxy
   var body: some View {
-    if var data = sub.data {
+    if let data = sub.data {
       @State var isSubbed = data.user_is_subscriber ?? false
       HStack(spacing: 12) {
         SubredditIcon(subredditIconKit: data.subredditIconKit, size: 64)

@@ -8,20 +8,22 @@
 import SwiftUI
 import Defaults
 
-struct SubItemButton: View {
-  @Binding var selectedSub: FirstSelectable?
-  weak var sub: Subreddit?
+struct SubItemButton: View, Equatable {
+  static func == (lhs: SubItemButton, rhs: SubItemButton) -> Bool {
+    lhs.data == rhs.data
+  }
+  
+//  @Binding var selectedSub: FirstSelectable?
+//  weak var sub: Subreddit?
+  var data: SubredditData
+  var action: () -> ()
   var body: some View {
-    if let sub, let data = sub.data {
-      Button {
-        selectedSub = .sub(sub)
-      } label: {
+    Button(action: action) {
         HStack {
           Text(data.display_name ?? "")
           SubredditIcon(subredditIconKit: data.subredditIconKit)
         }
       }
-    }
   }
 }
 
@@ -31,7 +33,7 @@ struct SubItem: View, Equatable {
   }
   
   @Binding var selectedSub: FirstSelectable?
-  @StateObject var sub: Subreddit
+  @ObservedObject var sub: Subreddit
   var cachedSub: CachedSub
   @Default(.likedButNotSubbed) private var likedButNotSubbed
   
