@@ -72,13 +72,12 @@ struct BadgeView: View, Equatable {
   var newCommentsCount: Int?
   var votesCount: String?
   var likes: Bool? = nil
-  weak var routerProxy: RouterProxy?
   var cs: ColorScheme
   var openSub: (() -> ())? = nil
   var subName: String? = nil
     
   nonisolated func openUser() {
-    routerProxy?.router.path.append(User(id: author, api: RedditAPI.shared))
+    Nav.to(.reddit(.user(User(id: author))))
   }
   
   var body: some View {
@@ -185,7 +184,6 @@ struct BadgeView: View, Equatable {
 struct Badge: View {
   
   var cs: ColorScheme
-  var routerProxy: RouterProxy?
   var showVotes = false
   var post: Post
   var usernameColor: Color?
@@ -197,7 +195,7 @@ struct Badge: View {
   var body: some View {
     if let data = post.data {
       //      let extraInfo = showVotes ? [BadgeExtraInfo(systemImage: "message.fill", text: "\(formatBigNumber(data.num_comments))"), BadgeExtraInfo(systemImage: "arrow.up", text: "\(formatBigNumber(data.ups))")] : [BadgeExtraInfo(systemImage: "message.fill", text: "\(formatBigNumber(data.num_comments))")]
-      BadgeView(saved: data.saved, usernameColor: usernameColor, author: data.author, fullname: data.author_fullname, userFlair: data.author_flair_text, created: data.created, avatarURL: avatarURL, theme: theme, commentsCount: formatBigNumber(data.num_comments), votesCount: !showVotes ? nil : formatBigNumber(data.ups), routerProxy: routerProxy, cs: cs)
+      BadgeView(saved: data.saved, usernameColor: usernameColor, author: data.author, fullname: data.author_fullname, userFlair: data.author_flair_text, created: data.created, avatarURL: avatarURL, theme: theme, commentsCount: formatBigNumber(data.num_comments), votesCount: !showVotes ? nil : formatBigNumber(data.ups), cs: cs)
     }
   }
 }
@@ -220,7 +218,6 @@ struct BadgeOpt: View, Equatable {
   var avatarRequest: ImageRequest?
   let badgeKit: BadgeKit
   var cs: ColorScheme
-  var routerProxy: RouterProxy?
   var showVotes = false
   var usernameColor: Color?
   var avatarURL: String?
@@ -229,7 +226,7 @@ struct BadgeOpt: View, Equatable {
   var subName: String? = nil
   
   var body: some View {
-      BadgeView(avatarRequest: avatarRequest ?? Caches.avatars.cache[badgeKit.authorFullname]?.data, saved: badgeKit.saved, usernameColor: usernameColor, author: badgeKit.author, fullname: badgeKit.authorFullname, userFlair: badgeKit.userFlair, created: badgeKit.created, avatarURL: avatarURL, theme: theme, commentsCount: formatBigNumber(badgeKit.numComments), votesCount: !showVotes ? nil : formatBigNumber(badgeKit.ups), routerProxy: routerProxy, cs: cs, openSub: openSub, subName: subName)
+      BadgeView(avatarRequest: avatarRequest ?? Caches.avatars.cache[badgeKit.authorFullname]?.data, saved: badgeKit.saved, usernameColor: usernameColor, author: badgeKit.author, fullname: badgeKit.authorFullname, userFlair: badgeKit.userFlair, created: badgeKit.created, avatarURL: avatarURL, theme: theme, commentsCount: formatBigNumber(badgeKit.numComments), votesCount: !showVotes ? nil : formatBigNumber(badgeKit.ups), cs: cs, openSub: openSub, subName: subName)
   }
 }
 
@@ -240,7 +237,6 @@ struct BadgeComment: View, Equatable {
   
   let badgeKit: BadgeKit
   var cs: ColorScheme
-  var routerProxy: RouterProxy?
   var showVotes = false
   var unseen: Bool
   var usernameColor: Color?
@@ -249,7 +245,7 @@ struct BadgeComment: View, Equatable {
   @ObservedObject private var avatarCache = Caches.avatars
   
   var body: some View {
-    BadgeView(avatarRequest: avatarCache.cache[badgeKit.authorFullname]?.data, saved: badgeKit.saved, unseen: unseen, usernameColor: usernameColor, author: badgeKit.author, fullname: badgeKit.authorFullname, userFlair: badgeKit.userFlair, created: badgeKit.created, avatarURL: avatarURL, theme: theme, commentsCount: formatBigNumber(badgeKit.numComments), votesCount: !showVotes ? nil : formatBigNumber(badgeKit.ups), routerProxy: routerProxy, cs: cs)
+    BadgeView(avatarRequest: avatarCache.cache[badgeKit.authorFullname]?.data, saved: badgeKit.saved, unseen: unseen, usernameColor: usernameColor, author: badgeKit.author, fullname: badgeKit.authorFullname, userFlair: badgeKit.userFlair, created: badgeKit.created, avatarURL: avatarURL, theme: theme, commentsCount: formatBigNumber(badgeKit.numComments), votesCount: !showVotes ? nil : formatBigNumber(badgeKit.ups), cs: cs)
   }
 }
 

@@ -10,10 +10,9 @@ import SwiftUI
 struct PostLinkContextPreview: View {
   weak var post: Post?
   weak var sub: Subreddit?
-  weak var routerProxy: RouterProxy?
   var body: some View {
-    if let post = post, let sub = sub, let routerProxy = routerProxy {
-      NavigationStack { PostView(post: post, subreddit: sub, forceCollapse: true).environmentObject(routerProxy) }
+    if let post = post, let sub = sub {
+      NavigationStack { PostView(post: post, subreddit: sub, forceCollapse: true) }
     }
   }
 }

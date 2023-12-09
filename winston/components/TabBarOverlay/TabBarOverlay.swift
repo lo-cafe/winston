@@ -10,7 +10,6 @@ import SwiftUI
 
 
 struct TabBarOverlay: View {
-  var router: Router
   var tabHeight: CGFloat
   var meTabTap: () -> ()
   
@@ -24,7 +23,7 @@ struct TabBarOverlay: View {
       }
       .frame(width: geo.size.width, height: tabHeight)
       .contentShape(Rectangle())
-      .swipeAnywhere(routerProxy: RouterProxy(router), routerContainer: router.isRootWrapper, forceEnable: true)
+      .swipeAnywhere(forceEnable: true)
       .padding(.bottom, getSafeArea().bottom)
       .frame(width: geo.size.width, height: geo.size.height, alignment: .bottom)
     }

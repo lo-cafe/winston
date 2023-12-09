@@ -13,7 +13,7 @@ import Zip
 struct ThemesPanel: View {
   @Default(.themesPresets) private var themesPresets
   @State private var isUnzipping = false
-  @EnvironmentObject private var routerProxy: RouterProxy
+  @State private var editingTheme: WinstonTheme? = nil
   @Environment(\.useTheme) private var theme
   var body: some View {
     List {
@@ -79,10 +79,7 @@ struct ThemesPanel: View {
         Image(systemName: "plus")
       }
     }
-    .navigationDestination(for: WinstonTheme.self) { theme in
-      ThemeEditPanel(themeEditedInstance: ThemeEditedInstance(theme))
-        .environmentObject(routerProxy)
-    }
+    .sheet(item: $editingTheme) { ThemeEditPanel(theme: $0) }
   }
   
   

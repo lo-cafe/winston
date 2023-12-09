@@ -20,7 +20,6 @@ struct SubredditLink: View {
   var noHPad = false
   var sub: Subreddit
   @State private var opened = false
-  @EnvironmentObject private var routerProxy: RouterProxy
   var body: some View {
     if let data = sub.data {
       @State var isSubbed = data.user_is_subscriber ?? false
@@ -51,7 +50,7 @@ struct SubredditLink: View {
       .themedListRowBG(disableBG: noHPad)
       .mask(RR(20, .black))
       .onTapGesture {
-        routerProxy.router.path.append(SubViewType.posts(sub))
+        Nav.to(.reddit(.subFeed(sub)))
       }
     }
   }

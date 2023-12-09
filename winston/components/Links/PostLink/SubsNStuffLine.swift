@@ -20,7 +20,6 @@ struct SubsNStuffLine: View, Equatable {
   var subredditIconKit: SubredditIconKit?
   var sub: Subreddit?
   var flair: String?
-  var routerProxy: RouterProxy?
   var over18: Bool?
   
   var body: some View {

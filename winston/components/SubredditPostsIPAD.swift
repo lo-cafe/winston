@@ -30,7 +30,6 @@ struct SubredditPostsIPAD: View, Equatable {
   @State var lastPostOnRefreshRequest = ""
   
   @Environment(\.contentWidth) var contentWidth
-  @EnvironmentObject private var routerProxy: RouterProxy
   
   @Default(.blurPostLinkNSFW) private var blurPostLinkNSFW
   
@@ -76,7 +75,6 @@ struct SubredditPostsIPAD: View, Equatable {
                 controller: nil,
                 theme: selectedTheme.postLinks,
                 showSub: showSub,
-                routerProxy: routerProxy,
                 contentWidth: contentWidth,
                 blurPostLinkNSFW: blurPostLinkNSFW,
                 postSwipeActions: postSwipeActions,

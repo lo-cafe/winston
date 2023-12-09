@@ -26,7 +26,6 @@ struct PostLink: View, Equatable, Identifiable {
   var theme: SubPostsListTheme
   var showSub = false
   var secondary = false
-  weak var routerProxy: RouterProxy?
   let contentWidth: CGFloat
   let blurPostLinkNSFW: Bool
   var postSwipeActions: SwipeActionsSet
@@ -53,7 +52,6 @@ struct PostLink: View, Equatable, Identifiable {
           theme: theme,
           showSub: showSub,
           secondary: secondary,
-          routerProxy: routerProxy,
           contentWidth: contentWidth,
           blurPostLinkNSFW: blurPostLinkNSFW,
           postSwipeActions: postSwipeActions,
@@ -77,7 +75,6 @@ struct PostLink: View, Equatable, Identifiable {
           theme: theme,
           showSub: showSub,
           secondary: secondary,
-          routerProxy: routerProxy,
           contentWidth: contentWidth,
           blurPostLinkNSFW: blurPostLinkNSFW,
           postSwipeActions: postSwipeActions,
@@ -97,7 +94,7 @@ struct PostLink: View, Equatable, Identifiable {
 }
 
 extension View {
-  func postLinkStyle(showSubBottom: Bool = false, post: Post, sub: Subreddit, routerProxy: RouterProxy, theme: SubPostsListTheme, size: CGSize, secondary: Bool, isOpen: Binding<Bool>, openPost: @escaping () -> (), readPostOnScroll: Bool, hideReadPosts: Bool, cs: ColorScheme) -> some View {
+  func postLinkStyle(showSubBottom: Bool = false, post: Post, sub: Subreddit, theme: SubPostsListTheme, size: CGSize, secondary: Bool, isOpen: Binding<Bool>, openPost: @escaping () -> (), readPostOnScroll: Bool, hideReadPosts: Bool, cs: ColorScheme) -> some View {
     let seen = (post.data?.winstonSeen ?? false)
 //    let size = CGSize(width: winstonData.postDimensions.size.width, height: winstonData.postDimensions.size.height)
     let fadeReadPosts = theme.theme.unseenType == .fade
@@ -114,7 +111,7 @@ extension View {
       .compositingGroup()
       .brightness(isOpen.wrappedValue ? 0.075 : 0)
       .opacity(fadeReadPosts && seen ? theme.theme.unseenFadeOpacity : 1)
-      .contextMenu(menuItems: { PostLinkContext(post: post) }, preview: { PostLinkContextPreview(post: post, sub: sub, routerProxy: routerProxy) })
+      .contextMenu(menuItems: { PostLinkContext(post: post) }, preview: { PostLinkContextPreview(post: post, sub: sub) })
       .foregroundStyle(.primary)
       .multilineTextAlignment(.leading)
       .onDisappear {

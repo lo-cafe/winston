@@ -45,7 +45,6 @@ struct SubredditPosts: View, Equatable {
   @State private var unfilteredLastPostAfter: String?
   @State private var unfilteredreachedEndOfFeed: Bool = false
   
-  @EnvironmentObject private var routerProxy: RouterProxy
   @Environment(\.useTheme) private var selectedTheme
   @Environment(\.colorScheme) private var cs
   @Environment(\.contentWidth) private var contentWidth
@@ -284,7 +283,7 @@ struct SubredditPosts: View, Equatable {
     //    .sheet(isPresented: $newPost, content: {
     //      NewPostModal(subreddit: subreddit)
     //    })
-    .navigationBarItems(trailing: SubredditPostsNavBtns(sort: $sort, subreddit: subreddit, routerProxy: routerProxy))
+    .navigationBarItems(trailing: SubredditPostsNavBtns(sort: $sort, subreddit: subreddit))
     .onSubmit(of: .search) {
       clearAndLoadData(withSearchText: searchText)
     }
@@ -331,7 +330,6 @@ struct SubredditPostsNavBtns: View, Equatable {
   }
   @Binding var sort: SubListingSortOption
   @ObservedObject var subreddit: Subreddit
-  var routerProxy: RouterProxy
   var body: some View {
     HStack {
       Menu {
@@ -381,7 +379,7 @@ struct SubredditPostsNavBtns: View, Equatable {
       
       if let data = subreddit.data {
         Button {
-          routerProxy.router.path.append(SubViewType.info(subreddit))
+          Nav.to(.reddit(.subInfo(subreddit)))
         } label: {
           SubredditIcon(subredditIconKit: data.subredditIconKit)
         }

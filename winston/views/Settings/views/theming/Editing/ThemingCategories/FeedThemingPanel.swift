@@ -10,7 +10,6 @@ import Defaults
 
 struct FeedThemingPanel: View {
   @Binding var theme: WinstonTheme
-  @StateObject private var routerProxy = RouterProxy(Router(id: "FeedThemingPanel"))
   @StateObject private var previewPostSample = Post(data: postSampleData, api: RedditAPI.shared)
   @StateObject private var previewPostSubSample = Subreddit(id: postSampleData.subreddit, api: RedditAPI.shared)
   
@@ -73,7 +72,6 @@ struct FeedThemingPanel: View {
               theme: theme.postLinks,
               showSub: true,
               secondary: true,
-              routerProxy: routerProxy,
               contentWidth: contentWidth,
               blurPostLinkNSFW: blurPostLinkNSFW,
               postSwipeActions: postSwipeActions,
@@ -102,7 +100,6 @@ struct FeedThemingPanel: View {
               theme: theme.postLinks,
               showSub: true,
               secondary: true,
-              routerProxy: routerProxy,
               contentWidth: contentWidth,
               blurPostLinkNSFW: blurPostLinkNSFW,
               postSwipeActions: postSwipeActions,

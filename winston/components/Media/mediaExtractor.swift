@@ -127,8 +127,7 @@ func mediaExtractor(compact: Bool, contentWidth: Double = UIScreen.screenWidth, 
   }
   
   if let postEmbed = data.crosspost_parent_list?.first {
-//    return .repost(Post(data: postEmbed, api: RedditAPI.shared, fetchSub: true, contentWidth: getPostContentWidth(contentWidth: contentWidth, secondary: true) ))
-    return .repost(Post(data: postEmbed, api: RedditAPI.shared, fetchSub: true, contentWidth: contentWidth, secondary: true, theme: theme))
+    return .repost(Post(data: postEmbed, contentWidth: contentWidth, secondary: true, theme: theme))
   }
   
   if IMAGES_FORMATS.contains(where: { data.url.hasSuffix($0) }), let url = rootURL(data.url) {

@@ -14,11 +14,11 @@ extension User {
   static var prefix = "t2"
   var selfPrefix: String { Self.prefix }
   
-  convenience init(data: T, api: RedditAPI) {
-    self.init(data: data, api: api, typePrefix: "\(User.prefix)_")
+  convenience init(data: T) {
+    self.init(data: data, typePrefix: "\(User.prefix)_")
   }
-  convenience init(id: String, api: RedditAPI) {
-    self.init(id: id, api: api, typePrefix: "\(User.prefix)_")
+  convenience init(id: String) {
+    self.init(id: id, typePrefix: "\(User.prefix)_")
   }
   
   func refetchOverview(_ dataTypeFilter: String? = nil, _ after: String? = nil) async -> [Either<Post, Comment>]? {
@@ -30,9 +30,9 @@ extension User {
       return overviewData.map {
         switch $0 {
         case .first(let postData):
-          return .first(Post(data: postData, api: RedditAPI.shared, fetchSub: true))
+          return .first(Post(data: postData))
         case .second(let commentData):
-          return .second(Comment(data: commentData, api: RedditAPI.shared))
+          return .second(Comment(data: commentData))
         }
       }
     }

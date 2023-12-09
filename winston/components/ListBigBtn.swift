@@ -11,10 +11,8 @@ import Defaults
 
 /// A button with an icon, label, and optional shiny gradient, used in a list.
 struct ListBigBtn: View {
-  /// The router proxy environment object.
-  @EnvironmentObject private var routerProxy: RouterProxy
   /// The binding for the selected subreddit.
-  @Binding var selectedSub: FirstSelectable?
+  @Binding var selectedSub: Router.NavDest?
   /// The icon name.
   var icon: String
   /// The color of the icon.
@@ -42,7 +40,7 @@ struct ListBigBtn: View {
   ///   - label: The label text.
   ///   - icon: The icon name.
   ///   - shiny: The shiny gradient applied to the button (default is `nil`).
-  init(selectedSub: Binding<FirstSelectable?>? = nil, value: (any Hashable)? = nil, destination: Subreddit? = nil, icon: String, iconColor: Color, label: String, shiny: Gradient? = nil) {
+  init(selectedSub: Binding<Router.NavDest?>? = nil, value: (any Hashable)? = nil, destination: Subreddit? = nil, icon: String, iconColor: Color, label: String, shiny: Gradient? = nil) {
     self._selectedSub = selectedSub ?? .constant(nil)
     self.value = value
     self.label = label
@@ -56,8 +54,8 @@ struct ListBigBtn: View {
     let isNotCircled = !icon.contains("circle")
     Button {
       if let destination {
-        selectedSub = .sub(destination)
-      } else if let value{
+        selectedSub = .reddit(.subFeed(destination))
+      } else if let value {
         routerProxy.router.path.append(value)
       }
     } label: {

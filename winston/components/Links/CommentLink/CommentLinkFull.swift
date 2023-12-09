@@ -9,9 +9,7 @@ import SwiftUI
 import Defaults
 
 struct CommentLinkFull: View {
-  @EnvironmentObject private var routerProxy: RouterProxy
   var post: Post
-  var subreddit: Subreddit
   var arrowKinds: [ArrowKind]
   var comment: Comment
   var indentLines: Int?
@@ -53,7 +51,7 @@ struct CommentLinkFull: View {
       .background(curveColor)
       .contentShape(Rectangle())
       .onTapGesture {
-        routerProxy.router.path.append(PostViewPayload(post: post, sub: subreddit))
+        Nav.to(.reddit(.post(PostViewPayload(post: post))))
       }
       .allowsHitTesting(!loadMoreLoading)
       .opacity(loadMoreLoading ? 0.5 : 1)
@@ -61,5 +59,23 @@ struct CommentLinkFull: View {
     } else {
       Text("Depressive load full :(")
     }
+  }
+}
+
+
+struct Path {
+  typealias reddit = Reddit
+    
+    enum Reddit: Hashable, Codable {
+      case post(PostViewPayload)
+      case subFeed(Subreddit)
+      case subInfo(Subreddit)
+      case multiFeed(Multi)
+      case multiInfo(Multi)
+      case user(User)
+  }
+  
+  enum Setting: String, Hashable, Codable {
+    case behavior, appearance, credentials, about, commentSwipe, postSwipe, accessibility, faq, general, postFontSettings, themes, filteredSubreddits, appIcon, themeStore
   }
 }

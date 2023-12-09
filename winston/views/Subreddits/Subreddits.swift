@@ -24,15 +24,13 @@ struct Subreddits: View, Equatable {
   static func == (lhs: Subreddits, rhs: Subreddits) -> Bool {
     return lhs.loaded == rhs.loaded && lhs.selectedSub == rhs.selectedSub && lhs.currentCredentialID == rhs.currentCredentialID
   }
-  @Binding var selectedSub: FirstSelectable?
+  @Binding var selectedSub: Router.NavDest?
   var loaded: Bool
-  @StateObject var routerProxy: RouterProxy
   var currentCredentialID: UUID
-  init(selectedSub: Binding<FirstSelectable?>, loaded: Bool, routerProxy: RouterProxy, currentCredentialID: UUID) {
+  init(selectedSub: Binding<Router.NavDest?>, loaded: Bool, currentCredentialID: UUID) {
     self.currentCredentialID = currentCredentialID
     self._selectedSub = selectedSub
     self.loaded = loaded
-    self._routerProxy = .init(wrappedValue: routerProxy)
     self._subreddits = FetchRequest<CachedSub>(sortDescriptors: [NSSortDescriptor(key: "display_name", ascending: true)], predicate: NSPredicate(format: "winstonCredentialID == %@", currentCredentialID as CVarArg), animation: .default)
     self._multis = FetchRequest<CachedMulti>(sortDescriptors: [NSSortDescriptor(key: "display_name", ascending: true)], predicate: NSPredicate(format: "winstonCredentialID == %@", currentCredentialID as CVarArg), animation: .default)
   }
@@ -179,7 +177,6 @@ struct Subreddits: View, Equatable {
         }
         .themedListSection()
       }
-      .environmentObject(routerProxy)
       .themedListBG(selectedTheme.lists.bg)
       .scrollIndicators(.hidden)
       .listStyle(.sidebar)

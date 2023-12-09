@@ -19,20 +19,6 @@ class TempGlobalState: ObservableObject {
   @Published var credModalOpen = false
 }
 
-enum TabIdentifier {
-  case posts, inbox, me, search, settings
-}
-
-class TabPayload: ObservableObject {
-  @Published var reset = false
-  var router = Router(id: "FeedThemingPanel")
-  
-  init(_ id: String, reset: Bool = false) {
-    self.reset = reset
-    self.router = Router(id: id)
-  }
-}
-
 class GlobalNavPathWrapper: ObservableObject {
   @Published var path = NavigationPath()
 }
@@ -42,16 +28,12 @@ struct Tabber: View, Equatable {
   
   @ObservedObject private var tempGlobalState = TempGlobalState.shared
   @ObservedObject private var redditCredentialsManager = RedditCredentialsManager.shared
-  @State private var activeTab: TabIdentifier = .posts
   
   @State private var importedThemeAlert = false
   
   //  @State var tabBarHeight: CGFloat?
-  @StateObject private var inboxPayload = TabPayload("inboxRouter")
-  @StateObject private var mePayload = TabPayload("meRouter")
-  @StateObject private var postsPayload = TabPayload("postsRouter")
-  @StateObject private var searchPayload = TabPayload("searchRouter")
-  @StateObject private var settingsPayload = TabPayload("settingsRouter")
+  @ObservedObject private var nav = Nav.shared
+  
   @Environment(\.useTheme) private var currentTheme
   @Environment(\.colorScheme) private var colorScheme
   @EnvironmentObject var themeStoreAPI: ThemeStoreAPI
@@ -65,29 +47,12 @@ struct Tabber: View, Equatable {
   @State var testAnnouncement: Announcement? = nil
   @EnvironmentObject var winstonAPI: WinstonAPI
   
-  var payload: [TabIdentifier:TabPayload] { [
-    .inbox: inboxPayload,
-    .me: mePayload,
-    .posts: postsPayload,
-    .search: searchPayload,
-    .settings: settingsPayload,
-  ] }
-  
   func meTabTap() {
-    if activeTab == .me {
-      payload[.me]!.reset.toggle()
+    if nav.activeTab == .me {
+      nav[.me].resetNavPath()
     } else {
-      activeTab = .me
+      nav.activeTab = .me
     }
-  }
-
-  func navigateTo(_ tab: TabIdentifier, _ path: NavigationPath)  {
-    activeTab = tab
-    payload[tab]?.router.path = path
-  }
-
-  func navigateTo(_ tab: TabIdentifier) {
-    activeTab = tab
   }
   
   init(theme: WinstonTheme, cs: ColorScheme) {
@@ -114,15 +79,15 @@ struct Tabber: View, Equatable {
   var body: some View {
     let tabBarHeight = tempGlobalState.tabBarHeight
     let tabHeight = (tabBarHeight ?? 0) - getSafeArea().bottom
-    TabView(selection: $activeTab.onUpdate { newTab in if activeTab == newTab { payload[newTab]!.reset.toggle() } }) {
+    TabView(selection: $nav.activeTab.onUpdate { newTab in if nav.activeTab == newTab { nav.resetStack() } }) {
       
       WithCredentialOnly(credential: redditCredentialsManager.selectedCredential) {
-        SubredditsStack(reset: payload[.posts]!.reset, router: payload[.posts]!.router)
+        SubredditsStack(router: nav[.posts])
       }
         .background(TabBarAccessor { tabBar in
           if tabBarHeight != tabBar.bounds.height { tempGlobalState.tabBarHeight = tabBar.bounds.height }
         })
-        .tag(TabIdentifier.posts)
+        .tag(Nav.TabIdentifier.posts)
         .tabItem {
           VStack {
             Image(systemName: "doc.text.image")
@@ -131,12 +96,12 @@ struct Tabber: View, Equatable {
         }
       
       WithCredentialOnly(credential: redditCredentialsManager.selectedCredential) {
-        Inbox(reset: payload[.inbox]!.reset, router: payload[.inbox]!.router)
+        Inbox(router: nav[.inbox])
       }
         .background(TabBarAccessor { tabBar in
           if tabBarHeight != tabBar.bounds.height { tempGlobalState.tabBarHeight = tabBar.bounds.height }
         })
-        .tag(TabIdentifier.inbox)
+        .tag(Nav.TabIdentifier.inbox)
         .tabItem {
           VStack {
             Image(systemName: "bell.fill")
@@ -145,12 +110,12 @@ struct Tabber: View, Equatable {
         }
       
       WithCredentialOnly(credential: redditCredentialsManager.selectedCredential) {
-        Me(reset: payload[.me]!.reset, router: payload[.me]!.router)
+        Me(router: nav[.me])
       }
         .background(TabBarAccessor { tabBar in
           if tabBarHeight != tabBar.bounds.height { tempGlobalState.tabBarHeight = tabBar.bounds.height }
         })
-        .tag(TabIdentifier.me)
+        .tag(Nav.TabIdentifier.me)
         .tabItem {
           VStack {
             Image(systemName: "person.fill")
@@ -163,12 +128,12 @@ struct Tabber: View, Equatable {
         }
       
       WithCredentialOnly(credential: redditCredentialsManager.selectedCredential) {
-        Search(reset: payload[.search]!.reset, router: payload[.search]!.router)
+        Search(router: nav[.search])
       }
         .background(TabBarAccessor { tabBar in
           if tabBarHeight != tabBar.bounds.height { tempGlobalState.tabBarHeight = tabBar.bounds.height }
         })
-        .tag(TabIdentifier.search)
+        .tag(Nav.TabIdentifier.search)
         .tabItem {
           VStack {
             Image(systemName: "magnifyingglass")
@@ -176,11 +141,11 @@ struct Tabber: View, Equatable {
           }
         }
       
-      Settings(reset: payload[.settings]!.reset, router: payload[.settings]!.router)
+      Settings(router: nav[.settings])
         .background(TabBarAccessor { tabBar in
           if tabBarHeight != tabBar.bounds.height { tempGlobalState.tabBarHeight = tabBar.bounds.height }
         })
-        .tag(TabIdentifier.settings)
+        .tag(Nav.TabIdentifier.settings)
         .tabItem {
           VStack {
             Image(systemName: "gearshape.fill")
@@ -192,7 +157,7 @@ struct Tabber: View, Equatable {
     .sheet(item: $tempGlobalState.editingCredential) { cred in
       CredentialView(credential: cred).id("editing-credential-view-\(cred.id)")
     }
-    .replyModalPresenter(routerProxy: RouterProxy(payload[activeTab]!.router))
+    .replyModalPresenter()
     .overlay(
       GeometryReader { geo in
         GlobalLoaderView()
@@ -204,10 +169,10 @@ struct Tabber: View, Equatable {
     .overlay(
       tabBarHeight == nil
       ? nil
-      : TabBarOverlay(router: payload[activeTab]!.router, tabHeight: tabHeight, meTabTap: meTabTap).id(payload[activeTab]!.router.id)
+      : TabBarOverlay(tabHeight: tabHeight, meTabTap: meTabTap)
       , alignment: .bottom
     )
-    .background(OFWOpener(router: payload[TabIdentifier.posts]!.router))
+    .background(OFWOpener(router: payload[Nav.TabIdentifier.posts]!.router))
     .fullScreenCover(isPresented: Binding(get: { tempGlobalState.inAppBrowserURL != nil }, set: { val in
       tempGlobalState.inAppBrowserURL = nil
     })) {
@@ -216,8 +181,6 @@ struct Tabber: View, Equatable {
           .ignoresSafeArea()
       }
     }
-    .environment(\.changeAppTab, navigateTo)
-    .environment(\.changeAppTabWithPath, navigateTo)
     .environmentObject(tempGlobalState)
     .alert("Success!", isPresented: $importedThemeAlert) {
       Button("Nice!", role: .cancel) {
@@ -300,15 +263,9 @@ struct Tabber: View, Equatable {
       let parsed = parseRedditURL(url.absoluteString)
       withAnimation {
         switch parsed {
-        case .post(_, _):
+        case .post(_, _), .subreddit(_), .user(_):
           OpenFromWeb.shared.data = parsed
-          activeTab = .posts
-        case .subreddit(_):
-          OpenFromWeb.shared.data = parsed
-          activeTab = .posts
-        case .user(_):
-          OpenFromWeb.shared.data = parsed
-          activeTab = .posts
+          nav.activeTab = .posts
         default:
           break
         }

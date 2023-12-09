@@ -20,7 +20,6 @@ struct PostLinkThemingPanel: View {
   @Default(.themesPresets) private var themesPresets
   @ObservedObject var tempGlobalState = TempGlobalState.shared
   @Environment(\.colorScheme) private var cs
-  @StateObject private var routerProxy = RouterProxy(Router(id: "PostLinkThemingPanelRouter"))
   
   @Default(.blurPostLinkNSFW) private var blurPostLinkNSFW
   @Default(.postSwipeActions) private var postSwipeActions
@@ -70,7 +69,6 @@ struct PostLinkThemingPanel: View {
             theme: theme.postLinks,
             showSub: true,
             secondary: false,
-            routerProxy: routerProxy,
             contentWidth: contentWidth,
             blurPostLinkNSFW: blurPostLinkNSFW,
             postSwipeActions: postSwipeActions,

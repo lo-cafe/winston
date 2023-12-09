@@ -11,9 +11,8 @@ import Defaults
 
 struct UserViewContextPreview: View {
   var author: String
-  weak var routerProxy: RouterProxy?
   var body: some View {
-    NavigationStack { UserView(user: User(id: author, api: RedditAPI.shared)) }
+    NavigationStack { UserView(user: User(id: author)) }
   }
 }
 
@@ -24,7 +23,6 @@ struct UserView: View {
   @State private var loadingOverview = true
   @State private var lastItemId: String? = nil
   @Environment(\.useTheme) private var selectedTheme
-  @EnvironmentObject private var routerProxy: RouterProxy
   
   @State private var dataTypeFilter: String = "" // Handles filtering for only posts or only comments.
   @State private var loadNextData: Bool = false
@@ -168,7 +166,7 @@ struct UserView: View {
           
           if let lastActivities = lastActivities {
             ForEach(Array(lastActivities.enumerated()), id: \.element) { i, item in
-              MixedContentLink(content: item, theme: selectedTheme.postLinks, routerProxy: routerProxy)
+              MixedContentLink(content: item, theme: selectedTheme.postLinks)
                 .onAppear {
                   if(lastActivities.count - 7 == i) {
                     getNextData()

@@ -23,9 +23,7 @@ struct PostThemingPanel: View {
   @StateObject private var previewPostSample = Post(data: selfPostSampleData, api: RedditAPI.shared)
   @Default(.themesPresets) private var themesPresets
   @ObservedObject var tempGlobalState = TempGlobalState.shared
-  @Environment(\.colorScheme) private var cs
-  @StateObject private var routerProxy = RouterProxy(Router(id: "PostThemingPanelRouer"))
-  
+  @Environment(\.colorScheme) private var cs  
   
   var body: some View {
     ScrollWithPreview(theme: theme.posts.bg) {
@@ -52,7 +50,6 @@ struct PostThemingPanel: View {
           if let winstonData = previewPostSample.winstonData {
             PostContent(post: previewPostSample, winstonData: winstonData, sub: Subreddit(id: "Apple", api: RedditAPI.shared))
               .environment(\.useTheme, theme)
-              .environmentObject(routerProxy)
               .allowsHitTesting(false)
           }
         }

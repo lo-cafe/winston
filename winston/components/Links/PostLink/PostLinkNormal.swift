@@ -39,7 +39,6 @@ struct PostLinkNormal: View, Equatable, Identifiable {
   var theme: SubPostsListTheme
   var showSub = false
   var secondary = false
-  weak var routerProxy: RouterProxy?
   let contentWidth: CGFloat
   let blurPostLinkNSFW: Bool
   var postSwipeActions: SwipeActionsSet
@@ -64,15 +63,13 @@ struct PostLinkNormal: View, Equatable, Identifiable {
   }
   
   func openPost() {
-    if let routerProxy = routerProxy {
       withAnimation(nil) { isOpen = true }
-      routerProxy.router.path.append(PostViewPayload(post: post, sub: feedsAndSuch.contains(sub.id) ? sub : sub))
-    }
+      Nav.to(.reddit(.post(post)))
   }
   
   func openSubreddit() {
-    if let routerProxy = routerProxy, let subName = post.data?.subreddit {
-      routerProxy.router.path.append(SubViewType.posts(Subreddit(id: subName, api: RedditAPI.shared)))
+    if let subName = post.data?.subreddit {
+      Nav.to(.reddit(.subFeed(Subreddit(id: subName, api: RedditAPI.shared))))
     }
   }
   
@@ -102,7 +99,7 @@ struct PostLinkNormal: View, Equatable, Identifiable {
   func mediaComponentCall() -> some View {
     if let data = post.data {
       if let extractedMedia = winstonData.extractedMedia {
-        MediaPresenter(postDimensions: $winstonData.postDimensions, controller: controller, postTitle: data.title, badgeKit: data.badgeKit, avatarImageRequest: winstonData.avatarImageRequest, markAsSeen: markAsRead, cornerRadius: theme.theme.mediaCornerRadius, blurPostLinkNSFW: blurPostLinkNSFW, media: extractedMedia, over18: over18, compact: false, contentWidth: winstonData.postDimensions.mediaSize?.width ?? 0, resetVideo: resetVideo, routerProxy: routerProxy)
+        MediaPresenter(postDimensions: $winstonData.postDimensions, controller: controller, postTitle: data.title, badgeKit: data.badgeKit, avatarImageRequest: winstonData.avatarImageRequest, markAsSeen: markAsRead, cornerRadius: theme.theme.mediaCornerRadius, blurPostLinkNSFW: blurPostLinkNSFW, media: extractedMedia, over18: over18, compact: false, contentWidth: winstonData.postDimensions.mediaSize?.width ?? 0, resetVideo: resetVideo)
           .allowsHitTesting(tappableFeedMedia)
         
         if case .repost(let repost) = extractedMedia {
@@ -113,7 +110,6 @@ struct PostLinkNormal: View, Equatable, Identifiable {
               theme: theme,
               showSub: true,
               secondary: true,
-              routerProxy: routerProxy,
               contentWidth: contentWidth,
               blurPostLinkNSFW: blurPostLinkNSFW,
               postSwipeActions: postSwipeActions,
@@ -144,7 +140,7 @@ struct PostLinkNormal: View, Equatable, Identifiable {
   }
   
   var body: some View {
-    if let routerProxy = routerProxy, let data = post.data {
+    if let data = post.data {
       let over18 = data.over_18 ?? false
       VStack(alignment: .leading, spacing: theme.theme.verticalElementsSpacing) {
         
@@ -166,7 +162,7 @@ struct PostLinkNormal: View, Equatable, Identifiable {
         
         HStack {
           let newCommentsCount = winstonData.seenCommentsCount == nil ? nil : data.num_comments - winstonData.seenCommentsCount!
-          BadgeView(avatarRequest: winstonData.avatarImageRequest, showAuthorOnPostLinks: showAuthorOnPostLinks, saved: data.badgeKit.saved, usernameColor: nil, author: data.badgeKit.author, fullname: data.badgeKit.authorFullname, userFlair: data.badgeKit.userFlair, created: data.badgeKit.created, avatarURL: nil, theme: theme.theme.badge, commentsCount: formatBigNumber(data.num_comments), newCommentsCount: newCommentsCount, votesCount: showVotes ? nil : formatBigNumber(data.ups), likes: data.likes, routerProxy: routerProxy, cs: cs, openSub: showSub ? openSubreddit : nil, subName: data.subreddit)
+          BadgeView(avatarRequest: winstonData.avatarImageRequest, showAuthorOnPostLinks: showAuthorOnPostLinks, saved: data.badgeKit.saved, usernameColor: nil, author: data.badgeKit.author, fullname: data.badgeKit.authorFullname, userFlair: data.badgeKit.userFlair, created: data.badgeKit.created, avatarURL: nil, theme: theme.theme.badge, commentsCount: formatBigNumber(data.num_comments), newCommentsCount: newCommentsCount, votesCount: showVotes ? nil : formatBigNumber(data.ups), likes: data.likes, cs: cs, openSub: showSub ? openSubreddit : nil, subName: data.subreddit)
           
           Spacer()
           
@@ -174,7 +170,7 @@ struct PostLinkNormal: View, Equatable, Identifiable {
           
         }
       }
-      .postLinkStyle(post: post, sub: sub, routerProxy: routerProxy, theme: theme, size: winstonData.postDimensions.size, secondary: secondary, isOpen: $isOpen, openPost: openPost, readPostOnScroll: readPostOnScroll, hideReadPosts: hideReadPosts, cs: cs)
+      .postLinkStyle(post: post, sub: sub, theme: theme, size: winstonData.postDimensions.size, secondary: secondary, isOpen: $isOpen, openPost: openPost, readPostOnScroll: readPostOnScroll, hideReadPosts: hideReadPosts, cs: cs)
       //      .scrollSwipe(size: winstonData.postDimensions.size, actionsSet: postSwipeActions, entity: post)
       .swipyUI(onTap: openPost, actionsSet: postSwipeActions, entity: post, secondary: secondary)
       //      .onChange(of: selectedTheme) { x in post.setupWinstonData(data: post.data, winstonData: winstonData, theme: x) }

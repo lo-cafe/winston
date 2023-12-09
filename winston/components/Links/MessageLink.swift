@@ -13,7 +13,6 @@ struct MessageLink: View {
   @Default(.preferenceShowPostsAvatars) private var preferenceShowPostsAvatars
   @State private var pressed = false
   @ObservedObject var message: Message
-  @EnvironmentObject private var routerProxy: RouterProxy
   
   var body: some View {
     if let data = message.data, let author = data.author, let subreddit = data.subreddit, let parentID = data.parent_id, let name = data.name {
@@ -38,7 +37,7 @@ struct MessageLink: View {
       .opacity(!(data.new ?? false) ? 0.65 : 1)
       .swipyActions(pressing: $pressed, onTap: {
         if data.context != nil {
-          routerProxy.router.path.append(PostViewPayload(post: Post(id: getPostId(from: data.context!) ?? "lol", api: message.redditAPI), sub: Subreddit(id: subreddit, api: message.redditAPI), highlightID: actualParentID))
+          Nav.to(.reddit(.postHighlighted(Post(id: getPostId(from: data.context!) ?? "lol", sub: Subreddit(id: subreddit)), actualParentID)))
         }
       }, rightActionIcon: !(data.new ?? false) ? "eye.slash.fill" : "eye.fill", rightActionHandler: {
         Task(priority: .background) {

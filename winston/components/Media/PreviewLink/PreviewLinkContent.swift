@@ -22,11 +22,10 @@ struct PreviewLinkContent: View {
   var url: URL
   static let height: CGFloat = 88
   @Environment(\.openURL) private var openURL
-  @EnvironmentObject private var routerProxy: RouterProxy
   @ObservedObject private var tempGlobalState = TempGlobalState.shared
   @Default(.openLinksInSafari) private var openLinksInSafari
   var body: some View {
-    PreviewLinkContentRaw(compact: compact, image: viewModel.image, title: viewModel.title, description: viewModel.description, loading: viewModel.loading, url: url, openURL: openURL, routerProxy: routerProxy, globalURL: $tempGlobalState.inAppBrowserURL, openLinksInSafari: openLinksInSafari)
+    PreviewLinkContentRaw(compact: compact, image: viewModel.image, title: viewModel.title, description: viewModel.description, loading: viewModel.loading, url: url, openURL: openURL, globalURL: $tempGlobalState.inAppBrowserURL, openLinksInSafari: openLinksInSafari)
   }
 }
 
@@ -44,7 +43,6 @@ struct PreviewLinkContentRaw: View, Equatable {
   var loading: Bool
   var url: URL
   var openURL: OpenURLAction
-  weak var routerProxy: RouterProxy?
   @Binding var globalURL: URL?
   var openLinksInSafari: Bool
     

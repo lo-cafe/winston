@@ -43,8 +43,7 @@ enum SearchTypeArr {
 }
 
 struct Search: View {
-  var reset: Bool
-  @StateObject var router: Router
+  @ObservedObject var router: Router
   @State private var searchType: SearchType = .subreddit
   @StateObject private var resultsSubs = ObservableArray<Subreddit>()
   @StateObject private var resultsUsers = ObservableArray<User>()
@@ -128,7 +127,7 @@ struct Search: View {
   
   var body: some View {
     NavigationStack(path: $router.path) {
-      DefaultDestinationInjector(routerProxy: RouterProxy(router)) { routerProxy in
+      DefaultDestinationInjector {
         List {
           Group {
             Section {
@@ -160,7 +159,6 @@ struct Search: View {
                           controller: nil,
                           theme: theme.postLinks,
                           showSub: true,
-                          routerProxy: routerProxy,
                           contentWidth: contentWidth,
                           blurPostLinkNSFW: blurPostLinkNSFW,
                           postSwipeActions: postSwipeActions,
@@ -200,7 +198,6 @@ struct Search: View {
         .scrollContentBackground(.hidden)
         .loader(loading, hideSpinner && !searchQuery.text.isEmpty)
         .onChange(of: searchType) { _ in fetch() }
-        .onChange(of: reset) { _ in router.path.removeLast(router.path.count) }
         .onChange(of: searchQuery.debounced) { val in
           if val == "" {
             resultsSubs.data = []
@@ -223,6 +220,6 @@ struct Search: View {
         }
       }
     }
-    .swipeAnywhere(routerProxy: RouterProxy(router), routerContainer: router.isRootWrapper)
+    .swipeAnywhere()
   }
 }

@@ -10,7 +10,7 @@ import Defaults
 import AVFoundation
 import AlertToast
 
-struct PostViewPayload: Hashable, Equatable {
+struct PostViewPayload: Hashable, Equatable, Codable {
   let post: Post
   let sub: Subreddit
   var highlightID: String? = nil
@@ -32,7 +32,6 @@ struct PostView: View, Equatable {
   @State private var sort: CommentSortOption = Defaults[.preferredCommentSort]
   //  @State private var sort: CommentSortOption = .confidence
   
-  @EnvironmentObject private var routerProxy: RouterProxy
   @State var update = false
     
   init(post: Post, subreddit: Subreddit) {
@@ -149,7 +148,7 @@ struct PostView: View, Equatable {
         }
       }
       .navigationBarTitle("\(post.data?.num_comments ?? 0) comments", displayMode: .inline)
-      .toolbar { Toolbar(hideElements: hideElements, subreddit: subreddit, post: post, routerProxy: routerProxy, sort: $sort) }
+      .toolbar { Toolbar(hideElements: hideElements, subreddit: subreddit, post: post, sort: $sort) }
       .onChange(of: sort) { val in
         updatePost()
       }
@@ -187,7 +186,6 @@ private struct Toolbar: View {
   var hideElements: Bool
   var subreddit: Subreddit
   var post: Post
-  var routerProxy: RouterProxy
   @Binding var sort: CommentSortOption
   var body: some View {
     HStack {
@@ -216,7 +214,7 @@ private struct Toolbar: View {
       
       if let data = subreddit.data, !feedsAndSuch.contains(subreddit.id) {
         SubredditIcon(subredditIconKit: data.subredditIconKit)
-          .onTapGesture { routerProxy.router.path.append(SubViewType.info(subreddit)) }
+          .onTapGesture { Nav.to(.reddit(.subInfo(subreddit))) }
       }
     }
     .animation(nil, value: sort)

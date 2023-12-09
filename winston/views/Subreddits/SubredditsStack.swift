@@ -10,7 +10,7 @@ import Defaults
 
 struct SubredditsStack: View {
   var reset: Bool
-  @StateObject var router: Router
+  @ObservedObject var router: Router
   @Default(.preferenceDefaultFeed) private var preferenceDefaultFeed // handle default feed selection routing
   @Default(.redditCredentialSelectedID) private var redditCredentialSelectedID
   @State private var columnVisibility: NavigationSplitViewVisibility = .automatic
@@ -22,12 +22,12 @@ struct SubredditsStack: View {
   var body: some View {
     NavigationSplitView(columnVisibility: $columnVisibility) {
       if let redditCredentialSelectedID = redditCredentialSelectedID {
-        Subreddits(selectedSub: $router.firstSelected, loaded: loaded, routerProxy: RouterProxy(router), currentCredentialID: redditCredentialSelectedID)
+        Subreddits(selectedSub: $router.firstSelected, loaded: loaded, currentCredentialID: redditCredentialSelectedID)
           .measure($sidebarSize)
       }
     } detail: {
       NavigationStack(path: $router.path) {
-        DefaultDestinationInjector(routerProxy: RouterProxy(router)) { _ in
+        DefaultDestinationInjector {
           if let firstSelected = router.firstSelected {
             switch firstSelected {
             case .multi(let multi):
@@ -64,7 +64,7 @@ struct SubredditsStack: View {
             // MARK: Route to default feed
             if preferenceDefaultFeed != "subList" && router.path.count == 0 { // we are in subList, can ignore
               let tempSubreddit = Subreddit(id: preferenceDefaultFeed, api: RedditAPI.shared)
-              router.path.append(SubViewType.posts(tempSubreddit))
+              router.navigateTo(.reddit(.subFeed(tempSubreddit)))
             }
             
             _ = await RedditAPI.shared.fetchSubs()
@@ -77,11 +77,11 @@ struct SubredditsStack: View {
       }
       .environment(\.contentWidth, postContentWidth)
     }
-    .swipeAnywhere(routerProxy: RouterProxy(router), routerContainer: router.isRootWrapper)
+    .swipeAnywhere()
     .environment(\.contentWidth, postContentWidth)
     .onChange(of: reset) { _ in
       withAnimation {
-        router.path.removeLast(router.path.count)
+        router.resetNavPath()
         router.firstSelected = nil
       }
     }

@@ -20,17 +20,19 @@ extension Post {
   static var prefix = "t3"
   var selfPrefix: String { Self.prefix }
   
-  convenience init(data: T, api: RedditAPI, fetchSub: Bool = false, contentWidth: Double = UIScreen.screenWidth, secondary: Bool = false, imgPriority: ImageRequest.Priority = .low, theme: WinstonTheme? = nil, fetchAvatar: Bool = true, subId: String? = nil) {
+  convenience init(data: T, sub: Subreddit? = nil, contentWidth: Double = UIScreen.screenWidth, secondary: Bool = false, imgPriority: ImageRequest.Priority = .low, theme: WinstonTheme? = nil, fetchAvatar: Bool = true) {
     let theme = theme ?? getEnabledTheme()
-    self.init(data: data, api: api, typePrefix: "\(Post.prefix)_")
-    setupWinstonData(data: data, contentWidth: contentWidth, secondary: secondary, theme: theme, fetchSub: fetchSub, fetchAvatar: fetchAvatar, subId: subId)
+    self.init(data: data, typePrefix: "\(Post.prefix)_")
+    setupWinstonData(data: data, contentWidth: contentWidth, secondary: secondary, theme: theme, sub: sub, fetchAvatar: fetchAvatar)
   }
   
-  convenience init(id: String, api: RedditAPI) {
-    self.init(id: id, api: api, typePrefix: "\(Post.prefix)_")
+  convenience init(id: String, sub: Subreddit? = nil) {
+    self.init(id: id, typePrefix: "\(Post.prefix)_")
+    self.winstonData = .init()
+    self.winstonData?.subreddit = sub
   }
   
-  func setupWinstonData(data: PostData? = nil, winstonData: PostWinstonData? = nil, contentWidth: Double = UIScreen.screenWidth, secondary: Bool = false, theme: WinstonTheme, fetchSub: Bool = false, fetchAvatar: Bool = true, subId: String? = nil) {
+  func setupWinstonData(data: PostData? = nil, winstonData: PostWinstonData? = nil, contentWidth: Double = UIScreen.screenWidth, secondary: Bool = false, theme: WinstonTheme, sub: Subreddit? = nil, fetchAvatar: Bool = true) {
     if let data = data ?? self.data {
       let cs: ColorScheme = UIScreen.main.traitCollection.userInterfaceStyle == .dark ? .dark : .light
       let compact = Defaults[.compactPerSubreddit][subId ?? data.subreddit_id ?? ""] ?? Defaults[.compactMode]
@@ -75,7 +77,7 @@ extension Post {
       self.winstonData?.postDimensionsForcedNormal = getPostDimensions(post: self, winstonData: self.winstonData, columnWidth: contentWidth, secondary: secondary, rawTheme: theme, compact: false)
       
       self.winstonData?.titleAttr = createTitleTagsAttrString(titleTheme: theme.postLinks.theme.titleText, postData: data, textColor: theme.postLinks.theme.titleText.color.cs(cs).color())
-      if fetchSub { self.winstonData?.subreddit = Subreddit(id: data.subreddit, api: RedditAPI.shared) }
+      self.winstonData?.subreddit = sub ?? Subreddit(id: data.subreddit)
       
       if fetchAvatar {
         Task(priority: .background) {
@@ -124,7 +126,7 @@ extension Post {
     return nil
   }
   
-  static func initMultiple(datas: [T], api: RedditAPI, fetchSubs: Bool = false, contentWidth: CGFloat = 0, subreddit: Subreddit? = nil) -> [Post] {
+  static func initMultiple(datas: [T], sub: Subreddit? = nil, contentWidth: CGFloat = 0) -> [Post] {
     let context = PersistenceController.shared.container.newBackgroundContext()
     let fetchRequest = NSFetchRequest<SeenPost>(entityName: "SeenPost")
     
@@ -139,7 +141,7 @@ extension Post {
             19: .low
           ]
           let priority = i > 19 ? .veryLow : priorityIMap[priorityIMap.keys.first { $0 > i } ?? 19]!
-          let newPost = Post.init(data: data, api: api, fetchSub: fetchSubs, contentWidth: contentWidth, imgPriority: i > 7 ? .veryLow : priority, fetchAvatar: false, subId: subreddit?.id)
+          let newPost = Post.init(data: data, sub: sub, contentWidth: contentWidth, imgPriority: i > 7 ? .veryLow : priority, fetchAvatar: false)
           newPost.data?.winstonSeen = isSeen
           
           if (isSeen) {
@@ -508,7 +510,7 @@ extension Post {
             await saveSeenComments(comments: data)
             
             if let dataArr = data.children?.compactMap({ $0 }) {
-              let comments = Comment.initMultiple(datas: dataArr, api: RedditAPI.shared);
+              let comments = Comment.initMultiple(datas: dataArr);
               return ( comments, data.after )
             }
             return nil
@@ -595,7 +597,7 @@ class PostWinstonData: Hashable, ObservableObject {
   var permaURL: URL? = nil
   @Published var extractedMedia: MediaExtractedType? = nil
   @Published var extractedMediaForcedNormal: MediaExtractedType? = nil
-  var subreddit: Subreddit?
+  weak var subreddit: Subreddit?
   @Published var mediaImageRequest: [ImageRequest] = []
   @Published var avatarImageRequest: ImageRequest? = nil
   @Published var postDimensions: PostDimensions = .zero

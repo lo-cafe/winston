@@ -10,7 +10,6 @@ import NukeUI
 import Defaults
 
 struct PostInBoxLink: View {
-  @EnvironmentObject private var routerProxy: RouterProxy
   @Binding var selectedSub: FirstSelectable?
   @Default(.postsInBox) private var postsInBox
   

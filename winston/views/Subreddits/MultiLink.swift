@@ -17,7 +17,7 @@ struct MultiLink: View {
     Menu {
       ForEach(subs.data) { sub in
         if let data = sub.data {
-          SubItemButton(data: data) {
+          SubItemButton(data: data, action: { selectedSub = .sub(sub) })
             // TO-DO
           }
         }

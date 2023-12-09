@@ -32,7 +32,6 @@ struct AppearancePanel: View {
   @Default(.showAuthorOnPostLinks) var showAuthorOnPostLinks
   @Environment(\.useTheme) private var theme
   @Environment(\.colorScheme) private var cs
-  @EnvironmentObject private var routerProxy: RouterProxy
   @State private var appIconManager = AppIconManger()
   
   var body: some View {
@@ -43,8 +42,7 @@ struct AppearancePanel: View {
             OnlineThemeItem(theme: ThemeData(theme_name: theme.metadata.name, theme_author:theme.metadata.author, theme_description: theme.metadata.description,color:theme.metadata.color, icon: theme.metadata.icon), showDownloadButton: false)
           }
           .navigationDestination(for: WinstonTheme.self) { theme in
-            ThemeEditPanel(themeEditedInstance: ThemeEditedInstance(theme))
-              .environmentObject(routerProxy)
+            ThemeEditPanel(theme: theme)
           }
           .disabled(theme.id == "default")
         } header: {

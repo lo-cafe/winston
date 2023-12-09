@@ -9,8 +9,7 @@ import SwiftUI
 import Defaults
 
 struct Inbox: View {
-  var reset: Bool
-  @StateObject var router: Router
+  @ObservedObject var router: Router
   
   @StateObject private var messages = ObservableArray<Message>()
   @State private var loading = false
@@ -36,7 +35,7 @@ struct Inbox: View {
   
   var body: some View {
     NavigationStack(path: $router.path) {
-      DefaultDestinationInjector(routerProxy: RouterProxy(router)) { _ in
+      DefaultDestinationInjector {
         List {
           ForEach(messages.data, id: \.self.id) { message in
             MessageLink(message: message)
@@ -47,7 +46,6 @@ struct Inbox: View {
         }
         .themedListBG(selectedTheme.lists.bg)
         .scrollContentBackground(.hidden)
-        .onChange(of: reset) { _ in router.path.removeLast(router.path.count) }
       }
       .loader(loading)
       .onAppear {

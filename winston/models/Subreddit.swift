@@ -17,18 +17,18 @@ extension Subreddit {
   static var prefix = "t5"
   var selfPrefix: String { Self.prefix }
   
-  convenience init(data: T, api: RedditAPI) {
-    self.init(data: data, api: api, typePrefix: "\(Subreddit.prefix)_")
+  convenience init(data: T) {
+    self.init(data: data, typePrefix: "\(Subreddit.prefix)_")
     self.winstonData = SubredditWinstonData()
   }
   
-  convenience init(id: String, api: RedditAPI) {
-    self.init(id: id, api: api, typePrefix: "\(Subreddit.prefix)_")
+  convenience init(id: String) {
+    self.init(id: id, typePrefix: "\(Subreddit.prefix)_")
     self.winstonData = SubredditWinstonData()
   }
   
-  convenience init(entity: CachedSub, api: RedditAPI) {
-    self.init(id: entity.uuid ?? UUID().uuidString, api: api, typePrefix: "\(Subreddit.prefix)_")
+  convenience init(entity: CachedSub) {
+    self.init(id: entity.uuid ?? UUID().uuidString, typePrefix: "\(Subreddit.prefix)_")
     self.winstonData = SubredditWinstonData()
     self.data = SubredditData(entity: entity)
   }
@@ -174,7 +174,7 @@ extension Subreddit {
   
   func fetchPosts(sort: SubListingSortOption = .best, after: String? = nil, searchText: String? = nil, contentWidth: CGFloat = UIScreen.screenWidth) async -> ([Post]?, String?)? {
     if let response = await RedditAPI.shared.fetchSubPosts(data?.url ?? (id == "home" ? "" : id), sort: sort, after: after, searchText: searchText), let data = response.0 {
-      return (Post.initMultiple(datas: data.compactMap { $0.data }, api: RedditAPI.shared, contentWidth: contentWidth, subreddit: self), response.1)
+      return (Post.initMultiple(datas: data.compactMap { $0.data }, sub: self, contentWidth: contentWidth), response.1)
     }
     
     return nil
@@ -194,9 +194,9 @@ extension Subreddit {
       let returnData: [Either<Post, Comment>]? = savedMediaData.map {
         switch $0 {
         case .first(let postData):
-          return .first(Post(data: postData, api: RedditAPI.shared, fetchSub: true))
+          return .first(Post(data: postData))
         case .second(let commentData):
-          let comment = Comment(data: commentData, api: RedditAPI.shared)
+          let comment = Comment(data: commentData)
           comments.append(comment)
           return .second(comment)
         }

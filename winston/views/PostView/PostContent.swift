@@ -21,7 +21,6 @@ struct PostContent: View, Equatable {
   var forceCollapse: Bool = false
   @State private var collapsed = false
   @Default(.blurPostNSFW) private var blurPostNSFW
-  @EnvironmentObject private var routerProxy: RouterProxy
   @Environment(\.useTheme) private var selectedTheme
   @Environment(\.colorScheme) private var cs
   
@@ -34,7 +33,7 @@ struct PostContent: View, Equatable {
   
   func openSubreddit() {
     if let subName = post.data?.subreddit {
-      routerProxy.router.path.append(SubViewType.posts(Subreddit(id: subName, api: RedditAPI.shared)))
+      Nav.to(.reddit(.subFeed(Subreddit(id: subName))))
     }
   }
   
@@ -66,7 +65,7 @@ struct PostContent: View, Equatable {
         VStack(spacing: selectedTheme.posts.spacing) {
           
           if let extractedMedia = winstonData.extractedMediaForcedNormal {
-            MediaPresenter(postDimensions: $winstonData.postDimensionsForcedNormal, controller: nil, postTitle: data.title, badgeKit: data.badgeKit, avatarImageRequest: winstonData.avatarImageRequest, markAsSeen: {}, cornerRadius: selectedTheme.postLinks.theme.mediaCornerRadius, blurPostLinkNSFW: false, media: extractedMedia, over18: over18, compact: false, contentWidth: winstonData.postDimensionsForcedNormal.mediaSize?.width ?? 0, resetVideo: nil, routerProxy: routerProxy)
+            MediaPresenter(postDimensions: $winstonData.postDimensionsForcedNormal, controller: nil, postTitle: data.title, badgeKit: data.badgeKit, avatarImageRequest: winstonData.avatarImageRequest, markAsSeen: {}, cornerRadius: selectedTheme.postLinks.theme.mediaCornerRadius, blurPostLinkNSFW: false, media: extractedMedia, over18: over18, compact: false, contentWidth: winstonData.postDimensionsForcedNormal.mediaSize?.width ?? 0, resetVideo: nil)
           }
           
           if data.selftext != "" {
@@ -112,7 +111,7 @@ struct PostContent: View, Equatable {
       .id("post-content")
       .listRowInsets(EdgeInsets(top: postsTheme.spacing / 2, leading: postsTheme.padding.horizontal, bottom: postsTheme.spacing / 2, trailing: postsTheme.spacing / 2))
       
-      BadgeOpt(avatarRequest: winstonData.avatarImageRequest, badgeKit: data.badgeKit, cs: cs, routerProxy: routerProxy, showVotes: false, theme: postsTheme.badge,
+      BadgeOpt(avatarRequest: winstonData.avatarImageRequest, badgeKit: data.badgeKit, cs: cs, showVotes: false, theme: postsTheme.badge,
                openSub: openSubreddit, subName: data.subreddit)
         .id("post-badge")
         .listRowInsets(EdgeInsets(top: postsTheme.spacing / 2, leading: postsTheme.padding.horizontal, bottom: postsTheme.spacing * 0.75, trailing: postsTheme.padding.horizontal))

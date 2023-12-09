@@ -118,7 +118,6 @@ struct ReplyModal<Content: View>: View {
   @Environment(\.useTheme) private var selectedTheme
   @FetchRequest(sortDescriptors: []) var drafts: FetchedResults<ReplyDraft>
   @Environment(\.colorScheme) private var cs
-  @EnvironmentObject private var routerProxy: RouterProxy
   @ObservedObject var redditAPI = RedditAPI.shared
   
   init(title: String = "Replying", loadingLabel: String = "Commenting...", submitBtnLabel: String = "Send", thingFullname: String, action: @escaping (@escaping (Bool) -> Void, String) -> Void, text: String? = nil, content: (() -> Content)?) {
@@ -138,7 +137,7 @@ struct ReplyModal<Content: View>: View {
           
           VStack(alignment: .leading) {
             if let me = redditAPI.me?.data, let avatarLink = me.icon_img ?? me.snoovatar_img, let rootURL = rootURLString(avatarLink), let avatarURL = URL(string: rootURL) {
-              BadgeOpt(avatarRequest: ImageRequest(url: avatarURL), badgeKit: .init(numComments: 0, ups: 0, saved: false, author: me.name, authorFullname: "t2_\(me.id)", userFlair: "", created: Date().timeIntervalSince1970), cs: cs, routerProxy: routerProxy, avatarURL: me.icon_img ?? me.snoovatar_img, theme: selectedTheme.comments.theme.badge)
+              BadgeOpt(avatarRequest: ImageRequest(url: avatarURL), badgeKit: .init(numComments: 0, ups: 0, saved: false, author: me.name, authorFullname: "t2_\(me.id)", userFlair: "", created: Date().timeIntervalSince1970), cs: cs, avatarURL: me.icon_img ?? me.snoovatar_img, theme: selectedTheme.comments.theme.badge)
             }
             MDEditor(text: $textWrapper.replyText)
           }

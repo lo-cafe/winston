@@ -18,7 +18,6 @@ struct MixedContentFeedView: View {
   @State private var lastItemId: String? = nil
   @Environment(\.useTheme) private var selectedTheme
   
-  @EnvironmentObject private var routerProxy: RouterProxy
   
   @State private var dataTypeFilter: String = "" // Handles filtering for only posts or only comments.
   
@@ -49,7 +48,7 @@ struct MixedContentFeedView: View {
     List {
       Section {
         ForEach(Array(mixedMediaLinks.enumerated()), id: \.self.element) { i, item in
-          MixedContentLink(content: item, theme: postLinksTheme, routerProxy: routerProxy)
+          MixedContentLink(content: item, theme: postLinksTheme)
           .listRowInsets(EdgeInsets(top: paddingV, leading: paddingH, bottom: paddingV, trailing: paddingH))
           .onAppear {
             if mixedMediaLinks.count > 0 && (Int(Double(mixedMediaLinks.count) * 0.75) == i) {

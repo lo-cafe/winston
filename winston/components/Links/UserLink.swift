@@ -18,7 +18,6 @@ struct UserLinkContainer: View {
 struct UserLink: View {
   var noHPad = false
   var user: User
-  @EnvironmentObject private var routerProxy: RouterProxy
     var body: some View {
       if let data = user.data {
         HStack(spacing: 12) {
@@ -41,7 +40,7 @@ struct UserLink: View {
         .themedListRowBG()
         .mask(RR(20, .black))
         .onTapGesture {
-          routerProxy.router.path.append(user)
+          Nav.to(.reddit(.user(user)))
         }
       }
     }

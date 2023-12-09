@@ -26,7 +26,6 @@ struct MultiPostsView: View {
   @State private var customFilter: FilterData?
   @State private var reachedEndOfFeed: Bool = false
   
-  @EnvironmentObject private var routerProxy: RouterProxy
   @Environment(\.useTheme) private var selectedTheme
   @Environment(\.contentWidth) private var contentWidth
   

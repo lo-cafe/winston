@@ -15,7 +15,6 @@ struct MixedContentLink: View, Equatable {
   
   var content: Either<Post, Comment>
   var theme: SubPostsListTheme
-  weak var routerProxy: RouterProxy?
   
   @Default(.blurPostLinkNSFW) private var blurPostLinkNSFW
   @Default(.postSwipeActions) private var postSwipeActions
@@ -42,7 +41,6 @@ struct MixedContentLink: View, Equatable {
           controller: nil,
           theme: theme,
           showSub: true,
-          routerProxy: routerProxy,
           contentWidth: contentWidth,
           blurPostLinkNSFW: blurPostLinkNSFW,
           postSwipeActions: postSwipeActions,

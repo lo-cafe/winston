@@ -8,52 +8,64 @@
 import SwiftUI
 
 struct DefaultDestinationInjector<Content: View>: View {
-  @StateObject var routerProxy: RouterProxy
-  @ViewBuilder var content: (RouterProxy) -> Content
-  
+  @ViewBuilder var content: () -> Content
   var body: some View {
-    content(routerProxy)
-      .navigationDestination(for: PostViewPayload.self) { postPayload in
-        PostView(post: postPayload.post, subreddit: postPayload.sub, highlightID: postPayload.highlightID)
-          .equatable()
-          .environmentObject(routerProxy)
-      }
-      .navigationDestination(for: SubViewType.self) { sub in
-        switch sub {
-        case .posts(let sub):
-          SubredditPosts(subreddit: sub)
-            .environmentObject(routerProxy)
-        case .info(let sub):
-          SubredditInfo(subreddit: sub)
-            .environmentObject(routerProxy)
+    content()
+      .navigationDestination(for: Router.NavDest.self, destination: { dest in
+        switch dest {
+        case .reddit(let reddDest):
+          switch reddDest {
+          case .post(let (post)):
+            if let sub = post.winstonData?.subreddit {
+              PostView(post: post, subreddit: sub)
+            }
+          case .postHighlighted(let post, let highlightID):
+            if let sub = post.winstonData?.subreddit {
+              PostView(post: post, subreddit: sub, highlightID: highlightID)
+            }
+          case .subFeed(let sub):
+            SubredditPosts(subreddit: sub)
+          case .subInfo(let sub):
+            SubredditInfo(subreddit: sub)
+          case .multiFeed(let multi):
+            MultiPostsView(multi: multi)
+          case .multiInfo(_):
+            EmptyView()
+          case .user(let user):
+            UserView(user: user)
+          }
+        case .setting(let settingsDest):
+          switch settingsDest {
+            case .general:
+              GeneralPanel()
+            case .behavior:
+              BehaviorPanel()
+            case .appearance:
+              AppearancePanel()
+            case .credentials:
+              CredentialsPanel()
+            case .about:
+              AboutPanel()
+            case .commentSwipe:
+              CommentSwipePanel()
+            case .postSwipe:
+              PostSwipePanel()
+            case .accessibility:
+              AccessibilityPanel()
+            case .postFontSettings:
+              PostFontSettings()
+            case .filteredSubreddits:
+              FilteredSubredditsSettings()
+            case .faq:
+              FAQPanel()
+            case .themes:
+              ThemesPanel()
+            case .themeStore:
+              ThemeStore()
+            case .appIcon:
+              AppIconSetting()
+            }
         }
-      }
-      .navigationDestination(for: MultiViewType.self) { sub in
-        switch sub {
-        case .posts(let multi):
-          MultiPostsView(multi: multi)
-            .environmentObject(routerProxy)
-        case .info(_):
-          EmptyView()
-        }
-      }
-      .navigationDestination(for: SubredditPostsContainerPayload.self) { payload in
-        SubredditPostsContainer(sub: payload.sub, highlightID: payload.highlightID)
-          .environmentObject(routerProxy)
-      }
-      .navigationDestination(for: User.self) { user in
-        UserView(user: user)
-          .environmentObject(routerProxy)
-      }
-      .environmentObject(routerProxy)
-  }
-}
-
-struct RouterProxyInjector<Content: View>: View {
-  @StateObject var routerProxy: RouterProxy
-  var content: (RouterProxy) -> Content
-  var body: some View {
-    content(routerProxy)
-      .environmentObject(routerProxy)
+      })
   }
 }

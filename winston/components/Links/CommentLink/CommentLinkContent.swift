@@ -67,7 +67,6 @@ struct CommentLinkContent: View {
   
   @Environment(\.useTheme) private var selectedTheme
   @Environment(\.colorScheme) private var cs
-  @EnvironmentObject private var routerProxy: RouterProxy
   
   @State var commentViewLoaded = false
   
@@ -103,8 +102,7 @@ struct CommentLinkContent: View {
           }
           HStack(spacing: 8) {
             if let author = data.author {
-              BadgeView(avatarRequest: winstonData.avatarImageRequest, saved: data.badgeKit.saved, unseen: seenComments == nil ? false : !seenComments!.contains(data.id), usernameColor: (post?.data?.author ?? "") == author ? Color.green : nil, author: data.badgeKit.author,fullname: data.badgeKit.authorFullname, userFlair: data.badgeKit.userFlair, created: data.badgeKit.created, theme: theme.theme.badge, commentTheme: theme.theme, routerProxy: routerProxy, cs: cs)
-              //              BadgeComment(badgeKit: data.badgeKit, cs: cs, routerProxy: routerProxy, showVotes: false, usernameColor:  , theme: theme.theme.badge)
+              BadgeView(avatarRequest: winstonData.avatarImageRequest, saved: data.badgeKit.saved, unseen: seenComments == nil ? false : !seenComments!.contains(data.id), usernameColor: (post?.data?.author ?? "") == author ? Color.green : nil, author: data.badgeKit.author,fullname: data.badgeKit.authorFullname, userFlair: data.badgeKit.userFlair, created: data.badgeKit.created, theme: theme.theme.badge, commentTheme: theme.theme, cs: cs)
             }
             
             Spacer()
@@ -323,7 +321,6 @@ struct CommentLinkContent: View {
         }
       } preview: {
         CommentLinkContentPreview(sizer: sizer, forcedBodySize: sizer.size, showReplies: showReplies, arrowKinds: arrowKinds, indentLines: indentLines, lineLimit: lineLimit, post: post, comment: comment, avatarsURL: avatarsURL)
-          .environmentObject(routerProxy)
           .id("\(data.id)-preview")
       }
     } else {

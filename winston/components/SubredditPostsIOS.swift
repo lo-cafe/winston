@@ -31,10 +31,7 @@ struct SubredditPostsIOS: View, Equatable {
   var loading: Bool
   
   @Binding var reachedEndOfFeed: Bool
-  @State var setupListViewHeader = false
-  
-  @EnvironmentObject private var routerProxy: RouterProxy
-  
+    
   @Default(.blurPostLinkNSFW) private var blurPostLinkNSFW
   
   @Default(.postSwipeActions) private var postSwipeActions
@@ -95,7 +92,6 @@ struct SubredditPostsIOS: View, Equatable {
               controller: nil,
               theme: selectedTheme.postLinks,
               showSub: showSub,
-              routerProxy: routerProxy,
               contentWidth: contentWidth,
               blurPostLinkNSFW: blurPostLinkNSFW,
               postSwipeActions: postSwipeActions,
@@ -118,6 +114,8 @@ struct SubredditPostsIOS: View, Equatable {
             .onAppear {
               post.winstonData?.appeared = true
               let toAppear = posts.filter({ !($0.winstonData?.appeared ?? false)}).count
+                  fetch(true, searchText)
+                } else {
               
               if (filter == "flair:All" && !loading && toAppear < 5) {
                 loadMorePosts()
@@ -126,7 +124,7 @@ struct SubredditPostsIOS: View, Equatable {
             .listRowInsets(EdgeInsets(top: paddingV, leading: paddingH, bottom: paddingV, trailing: paddingH))
           }
           
-          if posts.count > 0 && selectedTheme.postLinks.divider.style != .no && (i != (posts.count - 1) || filter != "flair:All") {
+          if selectedTheme.postLinks.divider.style != .no && i != (posts.count - 1) {
             NiceDivider(divider: selectedTheme.postLinks.divider)
               .id("\(post.id)-divider")
               .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))

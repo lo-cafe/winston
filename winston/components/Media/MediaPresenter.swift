@@ -59,7 +59,6 @@ struct MediaPresenter: View, Equatable {
   let compact: Bool
   let contentWidth: CGFloat
   let resetVideo: ((SharedVideo) -> ())?
-  weak var routerProxy: RouterProxy?
   
   var body: some View {
     switch media {

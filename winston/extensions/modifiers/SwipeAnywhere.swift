@@ -15,27 +15,8 @@ struct SwipeAywhereState {
   var dragging: Bool? = nil
 }
 
-class SwipeAnywhereRouterContainer: ObservableObject {
-  @Published var isRoot: Bool = false
-  
-  let router: Router
-  var cancellable: AnyCancellable? = nil
-  
-  init(_ router: Router) {
-    self.router = router
-    doThisAfter(0.0) {
-      self.cancellable = self.router.objectWillChange.sink { [weak self] val in
-        let isIt = self?.router.path.count == 0
-        if self?.isRoot != isIt { self?.isRoot = isIt }
-      }
-    }
-  }
-}
-
-
 struct SwipeAnywhere: ViewModifier {
-  @StateObject var routerProxy: RouterProxy
-  @StateObject var routerContainer: RouterIsRoot
+  @ObservedObject private var tabsManager = Nav.shared
   var forceEnable: Bool = false
   
   @Default(.enableSwipeAnywhere) private var enableSwipeAnywhere
@@ -46,7 +27,8 @@ struct SwipeAnywhere: ViewModifier {
   @State private var soft = UIImpactFeedbackGenerator(style: .soft)
   
   func body(content: Content) -> some View {
-    let enabled = !routerContainer.isRoot && (enableSwipeAnywhere || forceEnable)
+    let isAtRoot = tabsManager.activeRouter.isAtRoot
+    let enabled = !isAtRoot && (enableSwipeAnywhere || forceEnable)
     let finalOffset = dragState.offset + staticOffset
     let interpolate = interpolatorBuilder([0, activatedAmount], value: (abs(finalOffset.width) + abs(finalOffset.height)) / 2)
     content
@@ -77,8 +59,8 @@ struct SwipeAnywhere: ViewModifier {
             withAnimation(.interpolatingSpring(stiffness: 125, damping: 15, initialVelocity: -initialVel)) {
               staticOffset = .zero
             }
-            if !routerContainer.isRoot && val.translation.width > 0 && ((abs(val.translation.width) + abs(val.translation.height)) / 2) >= activatedAmount {
-              routerProxy.router.path.removeLast(1)
+            if !isAtRoot && val.translation.width > 0 && ((abs(val.translation.width) + abs(val.translation.height)) / 2) >= activatedAmount {
+              Nav.back()
             }
           }
       )
@@ -114,7 +96,7 @@ struct SwipeAnywhere: ViewModifier {
 }
 
 extension View {
-  func swipeAnywhere(routerProxy: RouterProxy, routerContainer: RouterIsRoot, forceEnable: Bool = false) -> some View {
-    self.modifier(SwipeAnywhere(routerProxy: routerProxy, routerContainer: routerContainer, forceEnable: forceEnable))
+  func swipeAnywhere(forceEnable: Bool = false) -> some View {
+    self.modifier(SwipeAnywhere(forceEnable: forceEnable))
   }
 }
