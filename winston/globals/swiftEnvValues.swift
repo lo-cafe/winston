@@ -17,6 +17,14 @@ private struct PrimaryBGContextKey: EnvironmentKey {
   static let defaultValue: NSManagedObjectContext = PersistenceController.shared.primaryBGContext
 }
 
+private struct ChangeAppTabWithPathFuncKey: EnvironmentKey {
+  static let defaultValue: (TabIdentifier, NavigationPath) -> () = { _, _ in }
+}
+
+private struct ChangeAppTabFuncKey: EnvironmentKey {
+  static let defaultValue: (TabIdentifier) -> () = { _ in }
+}
+
 private struct CurrentThemeKey: EnvironmentKey {
   static let defaultValue = defaultTheme
 }
@@ -41,6 +49,14 @@ extension EnvironmentValues {
   var useTheme: WinstonTheme {
     get { self[CurrentThemeKey.self] }
     set { self[CurrentThemeKey.self] = newValue }
+  }
+  var changeAppTabWithPath: (TabIdentifier, NavigationPath) -> () {
+    get { self[ChangeAppTabWithPathFuncKey.self] }
+    set { self[ChangeAppTabWithPathFuncKey.self] = newValue }
+  }
+  var changeAppTab: (TabIdentifier) -> () {
+    get { self[ChangeAppTabFuncKey.self] }
+    set { self[ChangeAppTabFuncKey.self] = newValue }
   }
 }
 

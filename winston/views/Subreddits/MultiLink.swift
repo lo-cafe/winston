@@ -16,7 +16,11 @@ struct MultiLink: View {
   var body: some View {
     Menu {
       ForEach(subs.data) { sub in
-        SubItemButton(selectedSub: $selectedSub, sub: sub)
+        if let data = sub.data {
+          SubItemButton(data: data) {
+            // TO-DO
+          }
+        }
       }
     } label: {
       VStack(spacing: 10) {
