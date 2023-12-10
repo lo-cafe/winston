@@ -58,6 +58,7 @@ struct MediaPresenter: View, Equatable {
   var over18 = false
   let compact: Bool
   let contentWidth: CGFloat
+  let resetVideo: ((SharedVideo) -> ())?
   weak var routerProxy: RouterProxy?
   
   var body: some View {
@@ -76,7 +77,7 @@ struct MediaPresenter: View, Equatable {
       }
     case .video(let sharedVideo):
       if !showURLInstead {
-        VideoPlayerPost(controller: controller, cachedVideo: sharedVideo, markAsSeen: markAsSeen, compact: compact, overrideWidth: contentWidth, url: sharedVideo.url)
+        VideoPlayerPost(controller: controller, cachedVideo: sharedVideo, markAsSeen: markAsSeen, compact: compact, overrideWidth: contentWidth, url: sharedVideo.url, resetVideo: resetVideo)
           .nsfw(over18 && blurPostLinkNSFW, smallIcon: compact, size: postDimensions.mediaSize)
       }
       

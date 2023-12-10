@@ -143,6 +143,12 @@ struct SubredditPosts: View, Equatable {
       if let result = await subreddit.fetchPosts(sort: sort, after: loadMore ? lastPostAfter : nil, searchText: searchText, contentWidth: contentWidth), let newPosts = result.0 {
         await RedditAPI.shared.updatePostsWithAvatar(posts: newPosts, avatarSize: selectedTheme.postLinks.theme.badge.avatar.size)
         withAnimation {
+          subreddit.loadFlairs() { loaded in
+            DispatchQueue.main.async {
+              filters = loaded
+            }
+          }
+          
           let newPostsFiltered = newPosts.filter { !loadedPosts.contains($0.id) && !filteredSubreddits.contains($0.data?.subreddit ?? "") }
           
           if loadMore {

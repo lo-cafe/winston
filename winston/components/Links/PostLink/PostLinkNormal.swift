@@ -76,6 +76,15 @@ struct PostLinkNormal: View, Equatable, Identifiable {
     }
   }
   
+  func resetVideo(video: SharedVideo) {
+    DispatchQueue.main.async {
+      let newVideo: MediaExtractedType = .video(SharedVideo.get(url: video.url, size: video.size, resetCache: true))
+      post.winstonData?.extractedMedia = newVideo
+      post.winstonData?.extractedMediaForcedNormal = newVideo
+
+    }
+  }
+  
   func onDisappear() {
     Task(priority: .background) {
       if readPostOnScroll {
@@ -93,7 +102,7 @@ struct PostLinkNormal: View, Equatable, Identifiable {
   func mediaComponentCall() -> some View {
     if let data = post.data {
       if let extractedMedia = winstonData.extractedMedia {
-        MediaPresenter(postDimensions: $winstonData.postDimensions, controller: controller, postTitle: data.title, badgeKit: data.badgeKit, avatarImageRequest: winstonData.avatarImageRequest, markAsSeen: markAsRead, cornerRadius: theme.theme.mediaCornerRadius, blurPostLinkNSFW: blurPostLinkNSFW, media: extractedMedia, over18: over18, compact: false, contentWidth: winstonData.postDimensions.mediaSize?.width ?? 0, routerProxy: routerProxy)
+        MediaPresenter(postDimensions: $winstonData.postDimensions, controller: controller, postTitle: data.title, badgeKit: data.badgeKit, avatarImageRequest: winstonData.avatarImageRequest, markAsSeen: markAsRead, cornerRadius: theme.theme.mediaCornerRadius, blurPostLinkNSFW: blurPostLinkNSFW, media: extractedMedia, over18: over18, compact: false, contentWidth: winstonData.postDimensions.mediaSize?.width ?? 0, resetVideo: resetVideo, routerProxy: routerProxy)
           .allowsHitTesting(tappableFeedMedia)
         
         if case .repost(let repost) = extractedMedia {
