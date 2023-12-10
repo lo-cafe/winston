@@ -61,7 +61,6 @@
 		BB0D15292B069A9700668448 /* getItemId.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0D15282B069A9700668448 /* getItemId.swift */; };
 		BB53CA9A2B0D827F003D3332 /* EndOfFeedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB53CA992B0D827F003D3332 /* EndOfFeedView.swift */; };
 		CE0EC5D82B1A9E9600C6E210 /* SubredditFilters.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE0EC5D72B1A9E9600C6E210 /* SubredditFilters.swift */; };
-		CEA345ED2B2661E400D98900 /* Router.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEA345EC2B2661E400D98900 /* Router.swift */; };
 		CECA71EB2B1E358700852DAD /* CustomFilterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CECA71EA2B1E358700852DAD /* CustomFilterView.swift */; };
 		EC051C472ACAF2DC00E9D9ED /* themeFileIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = EC051C462ACAF2DC00E9D9ED /* themeFileIcon.png */; };
 		EC082F252A65FB4300BA2727 /* MeasureOnce.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC082F242A65FB4300BA2727 /* MeasureOnce.swift */; };
@@ -462,6 +461,7 @@
 		ECF5B3072AC83AE600355589 /* getAppIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECF5B3062AC83AE600355589 /* getAppIcon.swift */; };
 		ECF5B3092AC83C8E00355589 /* AppIconSetting.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECF5B3082AC83C8E00355589 /* AppIconSetting.swift */; };
 		ECF72AE72B267CE20078AD0B /* _locales in Resources */ = {isa = PBXBuildFile; fileRef = ECF72AE62B267CE20078AD0B /* _locales */; };
+		ECF72AEA2B2681290078AD0B /* Router.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECF72AE92B2681290078AD0B /* Router.swift */; };
 		ECF82A152B214DE300CBF45D /* SecondaryButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECF82A142B214DE300CBF45D /* SecondaryButton.swift */; };
 		ECF82A172B21664100CBF45D /* ListRowBackground.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECF82A162B21664100CBF45D /* ListRowBackground.swift */; };
 		ECF82A192B216A8600CBF45D /* themedListSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECF82A182B216A8600CBF45D /* themedListSection.swift */; };
@@ -555,7 +555,6 @@
 		BB0D15282B069A9700668448 /* getItemId.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = getItemId.swift; sourceTree = "<group>"; };
 		BB53CA992B0D827F003D3332 /* EndOfFeedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EndOfFeedView.swift; sourceTree = "<group>"; };
 		CE0EC5D72B1A9E9600C6E210 /* SubredditFilters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubredditFilters.swift; sourceTree = "<group>"; };
-		CEA345EC2B2661E400D98900 /* Router.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Router.swift; path = winston/utils/Router.swift; sourceTree = SOURCE_ROOT; };
 		CECA71EA2B1E358700852DAD /* CustomFilterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomFilterView.swift; sourceTree = "<group>"; };
 		EC051C2A2ACAEFC500E9D9ED /* QuickLookThumbnailing.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuickLookThumbnailing.framework; path = System/Library/Frameworks/QuickLookThumbnailing.framework; sourceTree = SDKROOT; };
 		EC051C462ACAF2DC00E9D9ED /* themeFileIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = themeFileIcon.png; sourceTree = "<group>"; };
@@ -838,7 +837,6 @@
 		ECAEFF6C2A77E8CA0052FCD3 /* Onboarding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Onboarding.swift; sourceTree = "<group>"; };
 		ECB03BFA2AEC2D090090674A /* AltImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AltImage.swift; sourceTree = "<group>"; };
 		ECB155112B25A18D0069CA2C /* BigInput.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BigInput.swift; sourceTree = "<group>"; };
-		ECB155192B2656310069CA2C /* swiftEnvValues.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = swiftEnvValues.swift; path = winston/Globals/swiftEnvValues.swift; sourceTree = SOURCE_ROOT; };
 		ECB155132B25A1B60069CA2C /* BigInfoCredential.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BigInfoCredential.swift; sourceTree = "<group>"; };
 		ECB155172B25A1E30069CA2C /* NiceCredentialSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NiceCredentialSection.swift; sourceTree = "<group>"; };
 		ECB155192B2656310069CA2C /* swiftEnvValues.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = swiftEnvValues.swift; path = winston/Globals/swiftEnvValues.swift; sourceTree = SOURCE_ROOT; };
@@ -944,6 +942,7 @@
 		ECF5B3062AC83AE600355589 /* getAppIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = getAppIcon.swift; sourceTree = "<group>"; };
 		ECF5B3082AC83C8E00355589 /* AppIconSetting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppIconSetting.swift; sourceTree = "<group>"; };
 		ECF72AE62B267CE20078AD0B /* _locales */ = {isa = PBXFileReference; lastKnownFileType = folder; path = _locales; sourceTree = "<group>"; };
+		ECF72AE92B2681290078AD0B /* Router.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Router.swift; sourceTree = "<group>"; };
 		ECF82A142B214DE300CBF45D /* SecondaryButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecondaryButton.swift; sourceTree = "<group>"; };
 		ECF82A162B21664100CBF45D /* ListRowBackground.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListRowBackground.swift; sourceTree = "<group>"; };
 		ECF82A182B216A8600CBF45D /* themedListSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = themedListSection.swift; sourceTree = "<group>"; };
@@ -1498,7 +1497,7 @@
 			children = (
 				EC77B1822AA4021D00C482DF /* injectInTabDestinations.swift */,
 				EC77EC0A2B2549AA0053B966 /* GlobalDestinationsProvider.swift */,
-				ECF064EA2A7F2AC50088C2C0 /* Router.swift */,
+				ECF72AE92B2681290078AD0B /* Router.swift */,
 				ECEF41222B239ADC005FE84E /* Nav.swift */,
 			);
 			path = Navigation;
@@ -1749,7 +1748,6 @@
 			isa = PBXGroup;
 			children = (
 				ECAEFF672A77DDF60052FCD3 /* Emojize */,
-				CEA345EC2B2661E400D98900 /* Router.swift */,
 				ECC10C732A4A8729009124BE /* fontSize.swift */,
 				EC9EAEC32A4AAB470074D06B /* fromHex.swift */,
 				EC08542A2A4C2B6B00E88389 /* if.swift */,
@@ -2320,6 +2318,7 @@
 				EC22A3222A5C97D70062A112 /* readMessage.swift in Sources */,
 				EC08544A2A4D6EAE00E88389 /* blurTransitions.swift in Sources */,
 				ECEF41282B239F94005FE84E /* Published+Value.swift in Sources */,
+				ECF72AEA2B2681290078AD0B /* Router.swift in Sources */,
 				ECB549DF2B1908B0004E9A96 /* queryParameters.swift in Sources */,
 				EC7DBDF12A86C91A00D7C123 /* CommentSwipePanel.swift in Sources */,
 				ECEFC2752A5F72A40003C6C4 /* shareMedia.swift in Sources */,
@@ -2450,7 +2449,6 @@
 				EC5EDA772A4EA03800140A08 /* subscribeSubs.swift in Sources */,
 				652F24082B0E219700BB95A3 /* Pixelate.metal in Sources */,
 				ECF2C4492AE81C4D004FCA79 /* CustomPresenter.swift in Sources */,
-				CEA345ED2B2661E400D98900 /* Router.swift in Sources */,
 				EC593AD82A4673B2002D6454 /* winstonApp.swift in Sources */,
 				EC9BB1BD2A8ACD300070CD97 /* AlphabetJumper.swift in Sources */,
 				ECEFC2632A5DDBE00003C6C4 /* onBindingUpdate.swift in Sources */,

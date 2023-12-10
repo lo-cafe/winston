@@ -173,24 +173,24 @@ struct SubredditPostsIOS: View, Equatable {
         }
       }
     }
-    .introspect(.list, on: .iOS(.v16, .v17)) { collectionView in
-      if !selectedTheme.postLinks.stickyFilters || setupListViewHeader { 
-        setupListViewHeader = true
-        return
-      }
-      
-      var configuration = UICollectionLayoutListConfiguration(appearance: .plain)
-      configuration.headerMode = .supplementary
-      configuration.headerTopPadding = .zero
-      
-      configuration.footerMode = .supplementary
-      configuration.showsSeparators = false
-      
-      let layout = UICollectionViewCompositionalLayout.list(using: configuration)
-      collectionView.setCollectionViewLayout(layout, animated: false)
-      
-      setupListViewHeader = true
-    }
+//    .introspect(.list, on: .iOS(.v16, .v17)) { collectionView in
+//      if !selectedTheme.postLinks.stickyFilters || setupListViewHeader { 
+//        setupListViewHeader = true
+//        return
+//      }
+//      
+//      var configuration = UICollectionLayoutListConfiguration(appearance: .plain)
+//      configuration.headerMode = .supplementary
+//      configuration.headerTopPadding = .zero
+//      
+//      configuration.footerMode = .supplementary
+//      configuration.showsSeparators = false
+//      
+//      let layout = UICollectionViewCompositionalLayout.list(using: configuration)
+//      collectionView.setCollectionViewLayout(layout, animated: false)
+//      
+//      setupListViewHeader = true
+//    }
     .themedListBG(selectedTheme.postLinks.bg)
     .scrollContentBackground(.hidden)
     .scrollIndicators(.never)

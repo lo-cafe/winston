@@ -33,7 +33,8 @@ extension EnvironmentValues {
   var primaryBGContext: NSManagedObjectContext {
     get { self[PrimaryBGContextKey.self] }
     set { self[PrimaryBGContextKey.self] = newValue }
-  }  var contentWidth: Double {
+  }
+  var contentWidth: Double {
     get { self[ContentWidthKey.self] }
     set { self[ContentWidthKey.self] = newValue }
   }
