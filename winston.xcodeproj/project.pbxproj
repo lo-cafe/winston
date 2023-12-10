@@ -123,7 +123,6 @@
 		EC1AC9AB2B1FEB0200674B31 /* manifest.json in Resources */ = {isa = PBXBuildFile; fileRef = EC1AC98F2B1FEB0200674B31 /* manifest.json */; };
 		EC1AC9AC2B1FEB0200674B31 /* toolbar-icon-48.7ad754b6.png in Resources */ = {isa = PBXBuildFile; fileRef = EC1AC9902B1FEB0200674B31 /* toolbar-icon-48.7ad754b6.png */; };
 		EC1AC9AD2B1FEB0200674B31 /* icon-96.b672d854.png in Resources */ = {isa = PBXBuildFile; fileRef = EC1AC9912B1FEB0200674B31 /* icon-96.b672d854.png */; };
-		EC1AC9AE2B1FEB0200674B31 /* messages.json in Resources */ = {isa = PBXBuildFile; fileRef = EC1AC9942B1FEB0200674B31 /* messages.json */; };
 		EC1AC9AF2B1FEB0200674B31 /* openInWinstonBannerStyles.970adf4b.css in Resources */ = {isa = PBXBuildFile; fileRef = EC1AC9952B1FEB0200674B31 /* openInWinstonBannerStyles.970adf4b.css */; };
 		EC1AC9B02B1FEB0200674B31 /* icon-banner.334f83c4.svg in Resources */ = {isa = PBXBuildFile; fileRef = EC1AC9962B1FEB0200674B31 /* icon-banner.334f83c4.svg */; };
 		EC1AC9B12B1FEB0200674B31 /* icon-link.ea5c3354.svg in Resources */ = {isa = PBXBuildFile; fileRef = EC1AC9972B1FEB0200674B31 /* icon-link.ea5c3354.svg */; };
@@ -431,7 +430,6 @@
 		ECE5AE152B11FD0A00DA2020 /* Dust.sks in Resources */ = {isa = PBXBuildFile; fileRef = ECE5AE132B11FD0A00DA2020 /* Dust.sks */; };
 		ECE5AE182B11FE2600DA2020 /* DustScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECE5AE172B11FE2600DA2020 /* DustScene.swift */; };
 		ECE731122AE042DF0059065B /* WinstonCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECE731112AE042DF0059065B /* WinstonCollectionView.swift */; };
-		ECEF41212B238094005FE84E /* swiftEnvValues.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECEF41202B238094005FE84E /* swiftEnvValues.swift */; };
 		ECEF41232B239ADC005FE84E /* Nav.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECEF41222B239ADC005FE84E /* Nav.swift */; };
 		ECEF41282B239F94005FE84E /* Published+Value.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECEF41272B239F94005FE84E /* Published+Value.swift */; };
 		ECEF412A2B239FAC005FE84E /* Published+Codable.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECEF41292B239FAC005FE84E /* Published+Codable.swift */; };
@@ -463,6 +461,7 @@
 		ECF5B3052AC837F500355589 /* IconManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECF5B3042AC837F500355589 /* IconManager.swift */; };
 		ECF5B3072AC83AE600355589 /* getAppIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECF5B3062AC83AE600355589 /* getAppIcon.swift */; };
 		ECF5B3092AC83C8E00355589 /* AppIconSetting.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECF5B3082AC83C8E00355589 /* AppIconSetting.swift */; };
+		ECF72AE72B267CE20078AD0B /* _locales in Resources */ = {isa = PBXBuildFile; fileRef = ECF72AE62B267CE20078AD0B /* _locales */; };
 		ECF82A152B214DE300CBF45D /* SecondaryButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECF82A142B214DE300CBF45D /* SecondaryButton.swift */; };
 		ECF82A172B21664100CBF45D /* ListRowBackground.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECF82A162B21664100CBF45D /* ListRowBackground.swift */; };
 		ECF82A192B216A8600CBF45D /* themedListSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECF82A182B216A8600CBF45D /* themedListSection.swift */; };
@@ -618,7 +617,6 @@
 		EC1AC98F2B1FEB0200674B31 /* manifest.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = manifest.json; sourceTree = "<group>"; };
 		EC1AC9902B1FEB0200674B31 /* toolbar-icon-48.7ad754b6.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "toolbar-icon-48.7ad754b6.png"; sourceTree = "<group>"; };
 		EC1AC9912B1FEB0200674B31 /* icon-96.b672d854.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon-96.b672d854.png"; sourceTree = "<group>"; };
-		EC1AC9942B1FEB0200674B31 /* messages.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = messages.json; sourceTree = "<group>"; };
 		EC1AC9952B1FEB0200674B31 /* openInWinstonBannerStyles.970adf4b.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = openInWinstonBannerStyles.970adf4b.css; sourceTree = "<group>"; };
 		EC1AC9962B1FEB0200674B31 /* icon-banner.334f83c4.svg */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "icon-banner.334f83c4.svg"; sourceTree = "<group>"; };
 		EC1AC9972B1FEB0200674B31 /* icon-link.ea5c3354.svg */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "icon-link.ea5c3354.svg"; sourceTree = "<group>"; };
@@ -843,6 +841,7 @@
 		ECB155192B2656310069CA2C /* swiftEnvValues.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = swiftEnvValues.swift; path = winston/Globals/swiftEnvValues.swift; sourceTree = SOURCE_ROOT; };
 		ECB155132B25A1B60069CA2C /* BigInfoCredential.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BigInfoCredential.swift; sourceTree = "<group>"; };
 		ECB155172B25A1E30069CA2C /* NiceCredentialSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NiceCredentialSection.swift; sourceTree = "<group>"; };
+		ECB155192B2656310069CA2C /* swiftEnvValues.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = swiftEnvValues.swift; path = winston/Globals/swiftEnvValues.swift; sourceTree = SOURCE_ROOT; };
 		ECB549D42B189392004E9A96 /* cleanEntitiesWithNilCredentials.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = cleanEntitiesWithNilCredentials.swift; sourceTree = "<group>"; };
 		ECB549D82B18C3C5004E9A96 /* removeDefaultThemeFromThemes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = removeDefaultThemeFromThemes.swift; sourceTree = "<group>"; };
 		ECB549DA2B18C3F2004E9A96 /* removeLegacySubsAndMultisCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = removeLegacySubsAndMultisCache.swift; sourceTree = "<group>"; };
@@ -912,7 +911,6 @@
 		ECE5AE132B11FD0A00DA2020 /* Dust.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = Dust.sks; sourceTree = "<group>"; };
 		ECE5AE172B11FE2600DA2020 /* DustScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DustScene.swift; sourceTree = "<group>"; };
 		ECE731112AE042DF0059065B /* WinstonCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WinstonCollectionView.swift; sourceTree = "<group>"; };
-		ECEF41202B238094005FE84E /* swiftEnvValues.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = swiftEnvValues.swift; sourceTree = "<group>"; };
 		ECEF41222B239ADC005FE84E /* Nav.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Nav.swift; sourceTree = "<group>"; };
 		ECEF41272B239F94005FE84E /* Published+Value.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Published+Value.swift"; sourceTree = "<group>"; };
 		ECEF41292B239FAC005FE84E /* Published+Codable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Published+Codable.swift"; sourceTree = "<group>"; };
@@ -945,6 +943,7 @@
 		ECF5B3042AC837F500355589 /* IconManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconManager.swift; sourceTree = "<group>"; };
 		ECF5B3062AC83AE600355589 /* getAppIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = getAppIcon.swift; sourceTree = "<group>"; };
 		ECF5B3082AC83C8E00355589 /* AppIconSetting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppIconSetting.swift; sourceTree = "<group>"; };
+		ECF72AE62B267CE20078AD0B /* _locales */ = {isa = PBXFileReference; lastKnownFileType = folder; path = _locales; sourceTree = "<group>"; };
 		ECF82A142B214DE300CBF45D /* SecondaryButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecondaryButton.swift; sourceTree = "<group>"; };
 		ECF82A162B21664100CBF45D /* ListRowBackground.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListRowBackground.swift; sourceTree = "<group>"; };
 		ECF82A182B216A8600CBF45D /* themedListSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = themedListSection.swift; sourceTree = "<group>"; };
@@ -1151,8 +1150,8 @@
 				EC1AC98E2B1FEB0200674B31 /* toolbar-icon-72.89c57b78.png */,
 				EC1AC98F2B1FEB0200674B31 /* manifest.json */,
 				EC1AC9902B1FEB0200674B31 /* toolbar-icon-48.7ad754b6.png */,
+				ECF72AE62B267CE20078AD0B /* _locales */,
 				EC1AC9912B1FEB0200674B31 /* icon-96.b672d854.png */,
-				EC1AC9922B1FEB0200674B31 /* _locales */,
 				EC1AC9952B1FEB0200674B31 /* openInWinstonBannerStyles.970adf4b.css */,
 				EC1AC9962B1FEB0200674B31 /* icon-banner.334f83c4.svg */,
 				EC1AC9972B1FEB0200674B31 /* icon-link.ea5c3354.svg */,
@@ -1160,22 +1159,6 @@
 				EC1AC9992B1FEB0200674B31 /* popup.4386a3af.css */,
 			);
 			path = dist;
-			sourceTree = "<group>";
-		};
-		EC1AC9922B1FEB0200674B31 /* _locales */ = {
-			isa = PBXGroup;
-			children = (
-				EC1AC9932B1FEB0200674B31 /* en */,
-			);
-			path = _locales;
-			sourceTree = "<group>";
-		};
-		EC1AC9932B1FEB0200674B31 /* en */ = {
-			isa = PBXGroup;
-			children = (
-				EC1AC9942B1FEB0200674B31 /* messages.json */,
-			);
-			path = en;
 			sourceTree = "<group>";
 		};
 		EC1AC9B42B20084500674B31 /* Credentials */ = {
@@ -2200,7 +2183,6 @@
 				EC1AC9A82B1FEB0200674B31 /* icon-256.cad47425.png in Resources */,
 				EC1AC9A72B1FEB0200674B31 /* icon-48.71058295.png in Resources */,
 				EC1AC99C2B1FEB0200674B31 /* WinstonApiHelper.5c5223a0.js in Resources */,
-				EC1AC9AE2B1FEB0200674B31 /* messages.json in Resources */,
 				EC1AC9A02B1FEB0200674B31 /* popup.dc9af302.html in Resources */,
 				EC1AC9AD2B1FEB0200674B31 /* icon-96.b672d854.png in Resources */,
 				EC1AC9A52B1FEB0200674B31 /* common.9c015fef.js in Resources */,
@@ -2212,6 +2194,7 @@
 				EC1AC9A42B1FEB0200674B31 /* icon-512.fa271110.png in Resources */,
 				EC1AC99E2B1FEB0200674B31 /* background.26caa449.js in Resources */,
 				EC1AC99F2B1FEB0200674B31 /* openWinstonEverywhere.cc510c68.js in Resources */,
+				ECF72AE72B267CE20078AD0B /* _locales in Resources */,
 				EC1AC9A92B1FEB0200674B31 /* toolbar-icon-32.1cbb4524.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
