@@ -14,12 +14,8 @@ struct DefaultDestinationInjector<Content: View>: View {
   var body: some View {
     content(routerProxy)
       .navigationDestination(for: PostViewPayload.self) { postPayload in
-        PostView(post: postPayload.post, selfAttr: postPayload.postSelfAttr, subreddit: postPayload.sub, highlightID: postPayload.highlightID)
+        PostView(post: postPayload.post, subreddit: postPayload.sub, highlightID: postPayload.highlightID)
           .equatable()
-          .environmentObject(routerProxy)
-      }
-      .navigationDestination(for: PostViewContainerPayload.self) { postPayload in
-        PostViewContainer(post: postPayload.post, sub: postPayload.sub, highlightID: postPayload.highlightID)
           .environmentObject(routerProxy)
       }
       .navigationDestination(for: SubViewType.self) { sub in

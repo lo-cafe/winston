@@ -62,6 +62,7 @@
 		BB0D15292B069A9700668448 /* getItemId.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0D15282B069A9700668448 /* getItemId.swift */; };
 		BB53CA9A2B0D827F003D3332 /* EndOfFeedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB53CA992B0D827F003D3332 /* EndOfFeedView.swift */; };
 		CE0EC5D82B1A9E9600C6E210 /* SubredditFilters.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE0EC5D72B1A9E9600C6E210 /* SubredditFilters.swift */; };
+		CEA345ED2B2661E400D98900 /* Router.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEA345EC2B2661E400D98900 /* Router.swift */; };
 		CECA71EB2B1E358700852DAD /* CustomFilterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CECA71EA2B1E358700852DAD /* CustomFilterView.swift */; };
 		EC051C472ACAF2DC00E9D9ED /* themeFileIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = EC051C462ACAF2DC00E9D9ED /* themeFileIcon.png */; };
 		EC082F252A65FB4300BA2727 /* MeasureOnce.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC082F242A65FB4300BA2727 /* MeasureOnce.swift */; };
@@ -436,7 +437,6 @@
 		ECEFC2712A5F489E0003C6C4 /* fullscreenPresent.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECEFC2702A5F489E0003C6C4 /* fullscreenPresent.swift */; };
 		ECEFC2732A5F70B70003C6C4 /* saveMedia.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECEFC2722A5F70B70003C6C4 /* saveMedia.swift */; };
 		ECEFC2752A5F72A40003C6C4 /* shareMedia.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECEFC2742A5F72A40003C6C4 /* shareMedia.swift */; };
-		ECF064EB2A7F2AC50088C2C0 /* Router.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECF064EA2A7F2AC50088C2C0 /* Router.swift */; };
 		ECF064ED2A7F405C0088C2C0 /* KeyWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECF064EC2A7F405C0088C2C0 /* KeyWindow.swift */; };
 		ECF064EF2A80383C0088C2C0 /* sumCGSize.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECF064EE2A80383C0088C2C0 /* sumCGSize.swift */; };
 		ECF0B7DD2A53DD5C002B9FAD /* ImageMediaPost.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECF0B7DC2A53DD5C002B9FAD /* ImageMediaPost.swift */; };
@@ -549,6 +549,7 @@
 		BB0D15282B069A9700668448 /* getItemId.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = getItemId.swift; sourceTree = "<group>"; };
 		BB53CA992B0D827F003D3332 /* EndOfFeedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EndOfFeedView.swift; sourceTree = "<group>"; };
 		CE0EC5D72B1A9E9600C6E210 /* SubredditFilters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubredditFilters.swift; sourceTree = "<group>"; };
+		CEA345EC2B2661E400D98900 /* Router.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Router.swift; path = winston/utils/Router.swift; sourceTree = SOURCE_ROOT; };
 		CECA71EA2B1E358700852DAD /* CustomFilterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomFilterView.swift; sourceTree = "<group>"; };
 		EC051C2A2ACAEFC500E9D9ED /* QuickLookThumbnailing.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuickLookThumbnailing.framework; path = System/Library/Frameworks/QuickLookThumbnailing.framework; sourceTree = SDKROOT; };
 		EC051C462ACAF2DC00E9D9ED /* themeFileIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = themeFileIcon.png; sourceTree = "<group>"; };
@@ -910,7 +911,6 @@
 		ECEFC2702A5F489E0003C6C4 /* fullscreenPresent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = fullscreenPresent.swift; sourceTree = "<group>"; };
 		ECEFC2722A5F70B70003C6C4 /* saveMedia.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = saveMedia.swift; sourceTree = "<group>"; };
 		ECEFC2742A5F72A40003C6C4 /* shareMedia.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = shareMedia.swift; sourceTree = "<group>"; };
-		ECF064EA2A7F2AC50088C2C0 /* Router.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Router.swift; sourceTree = "<group>"; };
 		ECF064EC2A7F405C0088C2C0 /* KeyWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyWindow.swift; sourceTree = "<group>"; };
 		ECF064EE2A80383C0088C2C0 /* sumCGSize.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = sumCGSize.swift; sourceTree = "<group>"; };
 		ECF0B7DC2A53DD5C002B9FAD /* ImageMediaPost.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageMediaPost.swift; sourceTree = "<group>"; };
@@ -1408,7 +1408,6 @@
 				EC5EDA742A4E937700140A08 /* GenericRedditEntity.swift */,
 				EC50B0E32A84563C00AB8F72 /* SwipeAction.swift */,
 				ECF5B3042AC837F500355589 /* IconManager.swift */,
-				ECF064EA2A7F2AC50088C2C0 /* Router.swift */,
 			);
 			path = models;
 			sourceTree = "<group>";
@@ -1689,6 +1688,7 @@
 			isa = PBXGroup;
 			children = (
 				ECAEFF672A77DDF60052FCD3 /* Emojize */,
+				CEA345EC2B2661E400D98900 /* Router.swift */,
 				ECC10C732A4A8729009124BE /* fontSize.swift */,
 				EC9EAEC32A4AAB470074D06B /* fromHex.swift */,
 				EC08542A2A4C2B6B00E88389 /* if.swift */,
@@ -2391,6 +2391,7 @@
 				ECAA8B8D2A76709500D9D636 /* OFWOpener.swift in Sources */,
 				652F24082B0E219700BB95A3 /* Pixelate.metal in Sources */,
 				ECF2C4492AE81C4D004FCA79 /* CustomPresenter.swift in Sources */,
+				CEA345ED2B2661E400D98900 /* Router.swift in Sources */,
 				EC593AD82A4673B2002D6454 /* winstonApp.swift in Sources */,
 				EC9BB1BD2A8ACD300070CD97 /* AlphabetJumper.swift in Sources */,
 				ECEFC2632A5DDBE00003C6C4 /* onBindingUpdate.swift in Sources */,
@@ -2442,7 +2443,6 @@
 				650ACAFC2A87A36900A7C600 /* calcVotes.swift in Sources */,
 				ECC2C7B42AAB4A64000E196C /* ThemeEditPanel.swift in Sources */,
 				EC796DCD2B14468600B425A1 /* cgPointHashable.swift in Sources */,
-				ECF064EB2A7F2AC50088C2C0 /* Router.swift in Sources */,
 				EC97F0282ACB006A001814A6 /* importTheme.swift in Sources */,
 				ECE2859B2A5010E2009CF9DD /* DataBlock.swift in Sources */,
 				ECE5AE122B11F66D00DA2020 /* Wave.metal in Sources */,
