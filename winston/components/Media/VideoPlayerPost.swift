@@ -30,11 +30,7 @@ struct SharedVideo: Equatable {
       return sharedVideo
     }
   }
-  
-  func resetPlayer() {
-    player.replaceCurrentItem(with: AVPlayerItem(url: url))
-  }
-  
+
   static func cacheKey(url: URL, size: CGSize) -> String {
     return "\(url.absoluteString):\(size.width)x\(size.height)"
   }
@@ -237,7 +233,7 @@ struct VideoPlayerPost: View, Equatable {
         queue: nil) { notif in
           Task(priority: .background) {
             DispatchQueue.main.async {
-              sharedVideo.resetPlayer()
+              resetVideo?(sharedVideo)
             }
           }
         }
@@ -248,7 +244,7 @@ struct VideoPlayerPost: View, Equatable {
         queue: nil) { notif in
           Task(priority: .background) {
             DispatchQueue.main.async {
-              sharedVideo.resetPlayer()
+              resetVideo?(sharedVideo)
             }
           }
         }
