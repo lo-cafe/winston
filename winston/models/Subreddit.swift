@@ -11,26 +11,27 @@ import Defaults
 import SwiftUI
 
 
-typealias Subreddit = GenericRedditEntity<SubredditData, AnyHashable>
+typealias Subreddit = GenericRedditEntity<SubredditData, SubredditWinstonData>
 
 extension Subreddit {
   static var prefix = "t5"
   var selfPrefix: String { Self.prefix }
+  
   convenience init(data: T, api: RedditAPI) {
     self.init(data: data, api: api, typePrefix: "\(Subreddit.prefix)_")
-    
+    self.winstonData = SubredditWinstonData()
   }
   
   convenience init(id: String, api: RedditAPI) {
     self.init(id: id, api: api, typePrefix: "\(Subreddit.prefix)_")
+    self.winstonData = SubredditWinstonData()
   }
   
   convenience init(entity: CachedSub, api: RedditAPI) {
     self.init(id: entity.uuid ?? UUID().uuidString, api: api, typePrefix: "\(Subreddit.prefix)_")
+    self.winstonData = SubredditWinstonData()
     self.data = SubredditData(entity: entity)
-    
   }
-  
   
   /// Add a subreddit to the local like list
   /// This is a seperate list from reddits liked intenden for usage with subreddits a user wants to favorite but not subscribe to
@@ -72,8 +73,6 @@ extension Subreddit {
       }
     }
   }
-  
-  
   
   func subscribeToggle(optimistic: Bool = false, _ cb: (()->())? = nil) {
     guard let currentCredentialID = RedditCredentialsManager.shared.selectedCredential?.id else { return }
@@ -126,10 +125,13 @@ extension Subreddit {
   }
   
   func getFlairs() async -> [Flair]? {
+    if self.data?.winstonFlairs != nil { return self.data?.winstonFlairs }
+    
     if let data = (await RedditAPI.shared.getFlairs(data?.display_name ?? id)) {
       await MainActor.run {
         withAnimation {
           self.data?.winstonFlairs = data
+          return data
         }
       }
     }
@@ -146,6 +148,23 @@ extension Subreddit {
     }
   }
   
+  func loadFlairs(_ callback: (([FilterData]) -> ())? = nil) {
+    let context = PersistenceController.shared.container.newBackgroundContext()
+    let fetchRequest = NSFetchRequest<CachedFilter>(entityName: "CachedFilter")
+    fetchRequest.predicate = NSPredicate(format: "subreddit_id == %@", id)
+    
+    context.performAndWait {
+      let prevSubFlairs = (try? context.fetch(fetchRequest)) ?? []
+      let flairFilters = prevSubFlairs.map({ FilterData.from($0) })
+      DispatchQueue.main.async {
+        withAnimation {
+          self.winstonData?.flairs = flairFilters
+          callback?(flairFilters)
+        }
+      }
+    }
+  }
+  
   func fetchRules() async -> RedditAPI.FetchSubRulesResponse? {
     if let data = await RedditAPI.shared.fetchSubRules(data?.display_name ?? id) {
       return data
@@ -155,7 +174,7 @@ extension Subreddit {
   
   func fetchPosts(sort: SubListingSortOption = .best, after: String? = nil, searchText: String? = nil, contentWidth: CGFloat = UIScreen.screenWidth) async -> ([Post]?, String?)? {
     if let response = await RedditAPI.shared.fetchSubPosts(data?.url ?? (id == "home" ? "" : id), sort: sort, after: after, searchText: searchText), let data = response.0 {
-      return (Post.initMultiple(datas: data.compactMap { $0.data }, api: RedditAPI.shared, contentWidth: contentWidth), response.1)
+      return (Post.initMultiple(datas: data.compactMap { $0.data }, api: RedditAPI.shared, contentWidth: contentWidth, subreddit: self), response.1)
     }
     
     return nil
@@ -196,6 +215,16 @@ extension Subreddit {
 //struct SubredditData: GenericRedditEntityDataType, _DefaultsSerializable {
 //
 //}
+
+class SubredditWinstonData: Hashable, ObservableObject {
+  static func == (lhs: SubredditWinstonData, rhs: SubredditWinstonData) -> Bool { lhs.flairs == rhs.flairs }
+  
+  @Published var flairs: [FilterData] = []
+  
+  func hash(into hasher: inout Hasher) {
+    hasher.combine(flairs)
+  }
+}
 
 struct SubredditData: Codable, GenericRedditEntityDataType, Defaults.Serializable, Identifiable {
   var user_flair_background_color: String? = nil
@@ -318,6 +347,101 @@ struct SubredditData: Codable, GenericRedditEntityDataType, Defaults.Serializabl
     case user_flair_background_color, submit_text_html, restrict_posting, user_is_banned, free_form_reports, wiki_enabled, user_is_muted, user_can_flair_in_sr, display_name, header_img, title, allow_galleries, icon_size, primary_color, active_user_count, icon_img, display_name_prefixed, accounts_active, public_traffic, subscribers, name, quarantine, hide_ads, prediction_leaderboard_entry_type, emojis_enabled, advertiser_category, public_description, comment_score_hide_mins, allow_predictions, user_has_favorited, user_flair_template_id, community_icon, banner_background_image, original_content_tag_enabled, community_reviewed, submit_text, description_html, spoilers_enabled, allow_talks, is_enrolled_in_new_modmail, key_color, can_assign_user_flair, created, show_media_preview, user_is_subscriber, allow_videogifs, should_archive_posts, user_flair_type, allow_polls, public_description_html, allow_videos, banner_img, user_flair_text, banner_background_color, show_media, id, user_is_moderator, description, is_chat_post_feature_enabled, submit_link_label, user_flair_text_color, restrict_commenting, user_flair_css_class, allow_images, url, created_utc, user_is_contributor, winstonFlairs, subreddit_type, over18
   }
   
+  init(id: String) {
+    self.user_flair_background_color = nil
+    self.submit_text_html = nil
+    self.restrict_posting = nil
+    self.user_is_banned = nil
+    self.free_form_reports = nil
+    self.wiki_enabled = nil
+    self.user_is_muted = nil
+    self.user_can_flair_in_sr = nil
+    self.display_name = nil
+    self.header_img = nil
+    self.title = nil
+    self.allow_galleries = nil
+    self.icon_size = nil
+    self.primary_color = nil
+    self.active_user_count = nil
+    self.icon_img = nil
+    self.display_name_prefixed = nil
+    self.accounts_active = nil
+    self.public_traffic = nil
+    self.subscribers = nil
+    self.quarantine = nil
+    self.hide_ads = nil
+    self.prediction_leaderboard_entry_type = nil
+    self.emojis_enabled = nil
+    self.advertiser_category = nil
+    self.comment_score_hide_mins = nil
+    self.allow_predictions = nil
+    self.user_has_favorited = nil
+    self.user_flair_template_id = nil
+    self.community_icon = nil
+    self.banner_background_image = nil
+    self.original_content_tag_enabled = nil
+    self.community_reviewed = nil
+    self.over18 = nil
+    self.submit_text = nil
+    self.description_html = nil
+    self.spoilers_enabled = nil
+    self.allow_talks = nil
+    self.is_enrolled_in_new_modmail = nil
+    self.key_color = nil
+    self.can_assign_user_flair = nil
+    self.created = nil
+    self.show_media_preview = nil
+    self.user_is_subscriber = nil
+    self.allow_videogifs = nil
+    self.should_archive_posts = nil
+    self.user_flair_type = nil
+    self.allow_polls = nil
+    self.public_description = ""
+    self.public_description_html = nil
+    self.allow_videos = nil
+    self.banner_img = nil
+    self.user_flair_text = nil
+    self.banner_background_color = nil
+    self.show_media = nil
+    self.user_is_moderator = nil
+    self.description = nil
+    self.is_chat_post_feature_enabled = nil
+    self.submit_link_label = nil
+    self.user_flair_text_color = nil
+    self.restrict_commenting = nil
+    self.user_flair_css_class = nil
+    self.allow_images = nil
+    self.subreddit_type = "public"
+    self.created_utc = nil
+    self.user_is_contributor = nil
+    self.winstonFlairs = nil
+    self.title = nil
+    
+    self.allow_galleries = nil
+    self.allow_images = nil
+    self.allow_videos = nil
+    self.over18 = nil
+    self.restrict_commenting = nil
+    self.user_has_favorited = nil
+    self.user_is_banned = nil
+    self.user_is_moderator = nil
+    self.user_is_subscriber = nil
+    self.banner_background_color = nil
+    self.banner_background_image = nil
+    self.banner_img = nil
+    self.community_icon = nil
+    self.display_name = nil
+    self.header_img = nil
+    self.icon_img = nil
+    self.key_color =  nil
+    self.name = id
+    self.primary_color = nil
+    self.title = id
+    self.url = ""
+    self.user_flair_background_color = nil
+    self.id = id
+    self.subscribers = 0
+  }
   
   init(entity: CachedSub) {
     self.user_flair_background_color = nil

@@ -26,23 +26,23 @@ final class PreviewModel: ObservableObject, Equatable {
   
   init() {}
   
-  init(_ url: URL) {
+  init(_ url: URL, compact: Bool) {
     self.previewURL = url
-    fetchMetadata()
+    fetchMetadata(compact: compact)
   }
   
-  static func get(_ url: URL) -> PreviewModel {
+  static func get(_ url: URL, compact: Bool) -> PreviewModel {
     if let previewModel = Caches.postsPreviewModels.get(key: url.absoluteString) {
       return previewModel
     } else {
-      let previewModel = PreviewModel(url)
+      let previewModel = PreviewModel(url, compact: compact)
       Caches.postsPreviewModels.addKeyValue(key: url.absoluteString, data: { previewModel })
       
       return previewModel
     }
   }
   
-  private func fetchMetadata() {
+  private func fetchMetadata(compact: Bool) {
     guard let previewURL else { return }
     
     Task(priority: .background) {
@@ -51,7 +51,7 @@ final class PreviewModel: ObservableObject, Equatable {
       headers["charset"] = "UTF-8"
       if let og = try? await OpenGraph.fetch(url: previewURL, headers: headers) {
         if let imgURL = URL(string: og[.image] ?? "") {
-          Post.prefetcher.startPrefetching(with: [ImageRequest(url: imgURL, processors: [.resize(width:  Defaults[.compactMode] ? scaledCompactModeThumbSize() : 76)], priority: .veryLow)])
+          Post.prefetcher.startPrefetching(with: [ImageRequest(url: imgURL, processors: [.resize(width:  compact ? scaledCompactModeThumbSize() : 76)], priority: .veryLow)])
         }
         await MainActor.run {
           withAnimation {

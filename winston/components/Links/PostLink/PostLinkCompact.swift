@@ -116,11 +116,11 @@ struct PostLinkCompact: View, Equatable, Identifiable {
   func mediaPiece() -> some View {
     if let extractedMedia = post.winstonData?.extractedMedia {
       if case .repost(let repost) = extractedMedia, let repostData = repost.data, let url = URL(string: "https://reddit.com/r/\(repostData.subreddit)/comments/\(repost.id)") {
-        PreviewLink(url: url, compact: true, previewModel: PreviewModel.get(url))
+        PreviewLink(url: url, compact: true, previewModel: PreviewModel.get(url, compact: true))
       } else {
         mediaComponentCall()
       }
-    } else {
+    } else if showSelfPostThumbnails {
       PostLinkCompactThumbPlaceholder(theme: theme.theme.compactSelftextPostLinkPlaceholderImg).equatable()
     }
   }

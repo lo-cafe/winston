@@ -58,7 +58,11 @@ let defaultTheme = WinstonTheme(
     ),
     spacing: 16,
     divider: .init(style: .no, thickness: 6, color: listSectionBGTheme),
-    bg: defaultThemeBG
+    bg: defaultThemeBG,
+    stickyFilters: false,
+    filterText: .init(size: 17, color: .init(light: .init(hex: "000000"), dark: .init(hex: "000000")), weight: .semibold),
+    filterPadding: .init(horizontal: 6, vertical: 8),
+    filterOpacity: 0.3
   ),
   posts: .init(
     padding: .init(horizontal: 8, vertical: 6),

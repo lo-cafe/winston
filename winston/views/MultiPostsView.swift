@@ -22,11 +22,34 @@ struct MultiPostsView: View {
   @State private var searchText: String = ""
   @State private var sort: SubListingSortOption = Defaults[.preferredSort]
   @State private var newPost = false
+  @State private var filter: String = "flair:All"
+  @State private var customFilter: FilterData?
   @State private var reachedEndOfFeed: Bool = false
   
   @EnvironmentObject private var routerProxy: RouterProxy
   @Environment(\.useTheme) private var selectedTheme
   @Environment(\.contentWidth) private var contentWidth
+  
+  func searchCallback(str: String?) {
+    searchText = str ?? ""
+    clearAndReloadData()
+  }
+  
+  func filterCallback(str: String) {
+    filter = str
+  }
+  
+  func editCustomFilter(filterData: FilterData) {
+    customFilter = filterData
+  }
+  
+  func compactToggled() {
+    withAnimation {
+      posts.data.forEach {
+        $0.setupWinstonData(data: $0.data, winstonData: $0.winstonData, theme: selectedTheme, subId: multi.id)
+      }
+    }
+  }
   
   func asyncFetch(force: Bool = false, loadMore: Bool = false) async {
     //    if (multi.data == nil || force) {
@@ -52,18 +75,28 @@ struct MultiPostsView: View {
     }
   }
   
-  func fetch(loadMore: Bool = false, _ searchText: String? = nil) {
+  func fetch(loadMore: Bool = false, _ searchText: String? = nil, forceRefresh: Bool = false) {
     Task(priority: .background) {
       await asyncFetch(loadMore: loadMore)
     }
   }
   
+  func clearAndReloadData() {
+    withAnimation {
+      loading = true
+      posts.data.removeAll()
+      reachedEndOfFeed = false
+    }
+    
+    fetch()
+  }
+  
   var body: some View {
     Group {
       if IPAD {
-        SubredditPostsIPAD(showSub: true, posts: posts.data, searchText: searchText, fetch: fetch, selectedTheme: selectedTheme)
+        SubredditPostsIPAD(showSub: true, posts: posts.data, filter: filter, filterCallback: filterCallback, searchText: searchText, searchCallback: searchCallback, editCustomFilter: editCustomFilter, compactToggled: compactToggled, fetch: fetch, selectedTheme: selectedTheme)
       } else {
-        SubredditPostsIOS(showSub: true, lastPostAfter: lastPostAfter, posts: posts.data, searchText: searchText, fetch: fetch, selectedTheme: selectedTheme, reachedEndOfFeed: $reachedEndOfFeed)
+        SubredditPostsIOS(showSub: true, lastPostAfter: lastPostAfter, filters: [], posts: posts.data, filter: filter, filterCallback: filterCallback, searchText: searchText, searchCallback: searchCallback, editCustomFilter: editCustomFilter, compactToggled: compactToggled, fetch: fetch, selectedTheme: selectedTheme, loading: loading, reachedEndOfFeed: $reachedEndOfFeed)
       }
     }
     //.themedListBG(selectedTheme.postLinks.bg)
@@ -115,12 +148,7 @@ struct MultiPostsView: View {
       }
     }
     .onChange(of: sort) { val in
-      withAnimation {
-        loading = true
-        posts.data.removeAll()
-        reachedEndOfFeed = false
-      }
-      fetch()
+      clearAndReloadData()
       Defaults[.preferredSort] = sort
     }
 //    .searchable(text: $searchText, prompt: "Search r/\(subreddit.data?.display_name ?? subreddit.id)")

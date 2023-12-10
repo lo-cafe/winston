@@ -9,26 +9,36 @@ import SwiftUI
 import Defaults
 import NukeUI
 
+
 struct SubredditPostsIOS: View, Equatable {
   static func == (lhs: SubredditPostsIOS, rhs: SubredditPostsIOS) -> Bool {
-    lhs.posts.count == rhs.posts.count && lhs.subreddit?.id == rhs.subreddit?.id && lhs.searchText == rhs.searchText && lhs.selectedTheme == rhs.selectedTheme && lhs.lastPostAfter == rhs.lastPostAfter && lhs.selectedTheme == rhs.selectedTheme
+    lhs.posts.count == rhs.posts.count && lhs.subreddit?.id == rhs.subreddit?.id && lhs.searchText == rhs.searchText && lhs.selectedTheme == rhs.selectedTheme && lhs.lastPostAfter == rhs.lastPostAfter && lhs.filter == rhs.filter && lhs.loading == rhs.loading && lhs.filters == rhs.filters
   }
   
   var showSub = false
   var lastPostAfter: String?
   weak var subreddit: Subreddit?
+  var filters: [FilterData]
   var posts: [Post]
+  var filter: String
+  var filterCallback: ((String) -> ())
   var searchText: String
-  var fetch: (Bool, String?) -> ()
+  var searchCallback: ((String?) -> ())
+  var editCustomFilter: ((FilterData) -> ())
+  var compactToggled: (() -> ())
+  var fetch: (Bool, String?, Bool) -> ()
   var selectedTheme: WinstonTheme
+  var loading: Bool
   
   @Binding var reachedEndOfFeed: Bool
+  @State var setupListViewHeader = false
   
   @EnvironmentObject private var routerProxy: RouterProxy
   
   @Default(.blurPostLinkNSFW) private var blurPostLinkNSFW
   
   @Default(.postSwipeActions) private var postSwipeActions
+  @Default(.compactPerSubreddit) private var compactPerSubreddit
   @Default(.compactMode) private var compactMode
   @Default(.showVotes) private var showVotes
   @Default(.showSelfText) private var showSelfText
@@ -43,19 +53,40 @@ struct SubredditPostsIOS: View, Equatable {
   @Default(.showSubsAtTop) private var showSubsAtTop
   @Default(.showTitleAtTop) private var showTitleAtTop
   @Default(.showSelfPostThumbnails) private var showSelfPostThumbnails
-  
+
   @Environment(\.colorScheme) private var cs
   
   //  @Environment(\.useTheme) private var selectedTheme
   @Environment(\.contentWidth) private var contentWidth
   
+  func loadMorePosts() {
+    if !searchText.isEmpty {
+      fetch(true, searchText, true)
+    } else {
+      fetch(true, nil, true)
+    }
+  }
+  
   var body: some View {
     let isThereDivider = selectedTheme.postLinks.divider.style != .no
     let paddingH = selectedTheme.postLinks.theme.outerHPadding
     let paddingV = selectedTheme.postLinks.spacing / (isThereDivider ? 4 : 2)
+    
     List {
       
-      Section {
+      if !selectedTheme.postLinks.stickyFilters, let sub = subreddit {
+        SubredditFilters(subId: sub.id, filters: filters, selected: filter, filterCallback: filterCallback, searchText: searchText, searchCallback: searchCallback, editCustomFilter: editCustomFilter, theme: selectedTheme, compactToggled: compactToggled)
+          .equatable()
+          .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
+          .listRowSeparator(.hidden)
+      }
+      
+      Section(header: subreddit != nil && selectedTheme.postLinks.stickyFilters ?
+              SubredditFilters(subId: subreddit!.id, filters: filters, selected: filter, filterCallback: filterCallback, searchText: searchText, searchCallback: searchCallback, editCustomFilter: editCustomFilter, theme: selectedTheme, compactToggled: compactToggled)
+                .equatable()
+                .listRowSeparator(.hidden)
+                .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
+              : nil) {
         ForEach(Array(posts.enumerated()), id: \.self.element.id) { i, post in
           
           if let sub = subreddit ?? post.winstonData?.subreddit, let winstonData = post.winstonData {
@@ -75,7 +106,7 @@ struct SubredditPostsIOS: View, Equatable {
               showUpvoteRatio: showUpvoteRatio,
               showSubsAtTop: showSubsAtTop,
               showTitleAtTop: showTitleAtTop,
-              compact: compactMode,
+              compact: compactPerSubreddit[sub.id] ?? compactMode,
               thumbnailPositionRight: thumbnailPositionRight,
               voteButtonPositionRight: voteButtonPositionRight,
               showSelfPostThumbnails: showSelfPostThumbnails,
@@ -85,48 +116,89 @@ struct SubredditPostsIOS: View, Equatable {
             .environmentObject(post)
             .environmentObject(winstonData)
             .onAppear {
-              if(posts.count - 7 == i) {
-                if !searchText.isEmpty {
-                  fetch(true, searchText)
-                } else {
-                  fetch(true, nil)
-                }
+              post.winstonData?.appeared = true
+              let toAppear = posts.filter({ !($0.winstonData?.appeared ?? false)}).count
+              
+              if (filter == "flair:All" && !loading && toAppear < 5) {
+                loadMorePosts()
               }
             }
             .listRowInsets(EdgeInsets(top: paddingV, leading: paddingH, bottom: paddingV, trailing: paddingH))
           }
           
-          if selectedTheme.postLinks.divider.style != .no && i != (posts.count - 1) {
+          if posts.count > 0 && selectedTheme.postLinks.divider.style != .no && (i != (posts.count - 1) || filter != "flair:All") {
             NiceDivider(divider: selectedTheme.postLinks.divider)
               .id("\(post.id)-divider")
               .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
           }
-          
         }
         
-        if reachedEndOfFeed {
+        if filter != "flair:All" && posts.count == 0 {
+          Text("No filtered posts")
+            .frame(maxWidth: .infinity)
+            .font(Font.system(size: 22, weight: .semibold))
+            .opacity(0.5)
+            .padding(.vertical, 24)
+            .background(RR(12, Color.primary.opacity(0.1)))
+        }
+        
+        if filter != "flair:All" && !loading && !reachedEndOfFeed  {
+          Button(action: {
+            loadMorePosts()
+          }) {
+            Label("LOAD MORE", systemImage: "arrow.clockwise.circle.fill")
+              .frame(maxWidth: .infinity)
+              .font(Font.system(size: 16, weight: .bold))
+              .foregroundStyle(selectedTheme.general.accentColor.cs(cs).color())
+              .padding(.top, 12)
+              .padding(.bottom, 48)
+          }
+
+        } else if reachedEndOfFeed {
           EndOfFeedView()
         }
       }
       .listRowSeparator(.hidden)
+      .listSectionSeparator(.hidden)
       .listRowBackground(Color.clear)
       
       Section {
-        if lastPostAfter != nil && !reachedEndOfFeed {
+        if loading {
           ProgressView()
             .progressViewStyle(.circular)
-            .frame(maxWidth: .infinity, minHeight: posts.count > 0 ? 100 : UIScreen.screenHeight - 200 )
-            .id("post-loading")
+            .frame(maxWidth: .infinity, minHeight: posts.count > 0 || filter != "flair:All" ? 100 : UIScreen.screenHeight - 300 )
             .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
             .listRowSeparator(.hidden)
+            .listSectionSeparator(.hidden)
             .listRowBackground(Color.clear)
+            .id(UUID())
         }
       }
+    }
+    .introspect(.list, on: .iOS(.v16, .v17)) { collectionView in
+      if !selectedTheme.postLinks.stickyFilters || setupListViewHeader { 
+        setupListViewHeader = true
+        return
+      }
       
+      var configuration = UICollectionLayoutListConfiguration(appearance: .plain)
+      configuration.headerMode = .supplementary
+      configuration.headerTopPadding = .zero
+      
+      configuration.footerMode = .supplementary
+      configuration.showsSeparators = false
+      
+      let layout = UICollectionViewCompositionalLayout.list(using: configuration)
+      collectionView.setCollectionViewLayout(layout, animated: false)
+      
+      setupListViewHeader = true
     }
     .themedListBG(selectedTheme.postLinks.bg)
     .scrollContentBackground(.hidden)
     .scrollIndicators(.never)
     .listStyle(.plain)
+    .listRowSeparator(.hidden)
+    .listSectionSeparator(.hidden)
+    .background(.blue)
   }
 }

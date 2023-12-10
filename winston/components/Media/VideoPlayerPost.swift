@@ -218,6 +218,17 @@ struct VideoPlayerPost: View, Equatable {
             }
           }
         }
+      
+      NotificationCenter.default.addObserver(
+        forName: .AVPlayerItemPlaybackStalled,
+        object: sharedVideo.player.currentItem,
+        queue: nil) { notif in
+          Task(priority: .background) {
+            DispatchQueue.main.async {
+              sharedVideo.resetPlayer()
+            }
+          }
+        }
     }
   }
   
@@ -231,6 +242,11 @@ struct VideoPlayerPost: View, Equatable {
       NotificationCenter.default.removeObserver(
         self,
         name: .AVPlayerItemFailedToPlayToEndTime,
+        object: sharedVideo.player.currentItem)
+      
+      NotificationCenter.default.removeObserver(
+        self,
+        name: .AVPlayerItemPlaybackStalled,
         object: sharedVideo.player.currentItem)
     }
   }

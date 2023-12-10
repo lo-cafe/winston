@@ -60,11 +60,11 @@ struct PostDimensions: Hashable, Equatable {
   }
 }
 
-func getPostDimensions(post: Post, winstonData: PostWinstonData? = nil, columnWidth: Double = UIScreen.screenWidth, secondary: Bool = false, rawTheme: WinstonTheme? = nil, compact: Bool? = nil) -> PostDimensions {
+func getPostDimensions(post: Post, winstonData: PostWinstonData? = nil, columnWidth: Double = UIScreen.screenWidth, secondary: Bool = false, rawTheme: WinstonTheme? = nil, compact: Bool? = nil, subId: String? = nil) -> PostDimensions {
   if let data = post.data {
     let selectedTheme = rawTheme ?? getEnabledTheme()
     let showSelfPostThumbnails = Defaults[.showSelfPostThumbnails]
-    let compact = compact ?? Defaults[.compactMode]
+    let compact = compact ?? Defaults[.compactPerSubreddit][subId ?? data.subreddit_id ?? ""] ?? Defaults[.compactMode]
     let showAuthorOnPostLinks = Defaults[.showAuthorOnPostLinks]
     let maxDefaultHeight: CGFloat = Defaults[.maxPostLinkImageHeightPercentage]
     let maxHeight: CGFloat = (maxDefaultHeight / 100) * (UIScreen.screenHeight)

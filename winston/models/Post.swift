@@ -20,20 +20,20 @@ extension Post {
   static var prefix = "t3"
   var selfPrefix: String { Self.prefix }
   
-  convenience init(data: T, api: RedditAPI, fetchSub: Bool = false, contentWidth: Double = UIScreen.screenWidth, secondary: Bool = false, imgPriority: ImageRequest.Priority = .low, theme: WinstonTheme? = nil, fetchAvatar: Bool = true) {
+  convenience init(data: T, api: RedditAPI, fetchSub: Bool = false, contentWidth: Double = UIScreen.screenWidth, secondary: Bool = false, imgPriority: ImageRequest.Priority = .low, theme: WinstonTheme? = nil, fetchAvatar: Bool = true, subId: String? = nil) {
     let theme = theme ?? getEnabledTheme()
     self.init(data: data, api: api, typePrefix: "\(Post.prefix)_")
-    setupWinstonData(data: data, contentWidth: contentWidth, secondary: secondary, theme: theme, fetchSub: fetchSub, fetchAvatar: fetchAvatar)
+    setupWinstonData(data: data, contentWidth: contentWidth, secondary: secondary, theme: theme, fetchSub: fetchSub, fetchAvatar: fetchAvatar, subId: subId)
   }
   
   convenience init(id: String, api: RedditAPI) {
     self.init(id: id, api: api, typePrefix: "\(Post.prefix)_")
   }
   
-  func setupWinstonData(data: PostData? = nil, winstonData: PostWinstonData? = nil, contentWidth: Double = UIScreen.screenWidth, secondary: Bool = false, theme: WinstonTheme, fetchSub: Bool = false, fetchAvatar: Bool = true) {
+  func setupWinstonData(data: PostData? = nil, winstonData: PostWinstonData? = nil, contentWidth: Double = UIScreen.screenWidth, secondary: Bool = false, theme: WinstonTheme, fetchSub: Bool = false, fetchAvatar: Bool = true, subId: String? = nil) {
     if let data = data ?? self.data {
       let cs: ColorScheme = UIScreen.main.traitCollection.userInterfaceStyle == .dark ? .dark : .light
-      let compact = Defaults[.compactMode]
+      let compact = Defaults[.compactPerSubreddit][subId ?? data.subreddit_id ?? ""] ?? Defaults[.compactMode]
       if self.winstonData == nil { self.winstonData = PostWinstonData() }
       self.winstonData?.permaURL = URL(string: "https://reddit.com\(data.permalink.escape.urlEncoded)")
       
@@ -57,7 +57,7 @@ extension Post {
                   self.winstonData?.extractedMedia = .video(video)
                   self.winstonData?.extractedMediaForcedNormal = .video(video)
                   
-                  self.winstonData?.postDimensions = getPostDimensions(post: self, winstonData: self.winstonData, columnWidth: contentWidth, secondary: secondary, rawTheme: theme)
+                  self.winstonData?.postDimensions = getPostDimensions(post: self, winstonData: self.winstonData, columnWidth: contentWidth, secondary: secondary, rawTheme: theme, subId: subId)
                   self.winstonData?.postDimensionsForcedNormal = getPostDimensions(post: self, winstonData: self.winstonData, columnWidth: contentWidth, secondary: secondary, rawTheme: theme, compact: false)
                 }
               }
@@ -71,7 +71,7 @@ extension Post {
       self.winstonData?.extractedMedia = extractedMedia
       self.winstonData?.extractedMediaForcedNormal = extractedMediaForcedNormal
       
-      self.winstonData?.postDimensions = getPostDimensions(post: self, winstonData: self.winstonData, columnWidth: contentWidth, secondary: secondary, rawTheme: theme)
+      self.winstonData?.postDimensions = getPostDimensions(post: self, winstonData: self.winstonData, columnWidth: contentWidth, secondary: secondary, rawTheme: theme, subId: subId)
       self.winstonData?.postDimensionsForcedNormal = getPostDimensions(post: self, winstonData: self.winstonData, columnWidth: contentWidth, secondary: secondary, rawTheme: theme, compact: false)
       
       self.winstonData?.titleAttr = createTitleTagsAttrString(titleTheme: theme.postLinks.theme.titleText, postData: data, textColor: theme.postLinks.theme.titleText.color.cs(cs).color())
@@ -96,7 +96,35 @@ extension Post {
     }
   }
   
-  static func initMultiple(datas: [T], api: RedditAPI, fetchSubs: Bool = false, contentWidth: CGFloat = 0) -> [Post] {
+  static func extractFlairData(data: PostData, checkDefaultsForColor: Bool = false) -> FilterData? {
+    if let flair = data.link_flair_text, let cleansed = flairWithoutEmojis(str: flair), !cleansed.joined().isEmpty {
+      let hasBackground = data.link_flair_background_color != nil && !data.link_flair_background_color!.isEmpty
+      var textColor = hasBackground && data.link_flair_text_color != nil ? (data.link_flair_text_color! == "light" ? "FFFFFF" : "000000") : "000000"
+      var bgColor = hasBackground ? data.link_flair_background_color! : "D5D7D9"
+      
+      if bgColor == "D5D7D9" && checkDefaultsForColor {
+        if let subId = data.subreddit_id, let flairText = data.link_flair_text {
+          let context = PersistenceController.shared.container.newBackgroundContext()
+          let fetchRequest = NSFetchRequest<CachedFilter>(entityName: "CachedFilter")
+          fetchRequest.predicate = NSPredicate(format: "subreddit_id == %@ && text == %@ && type == 'flair'", subId, flairText)
+          
+          let prevSubFlairs = (context.performAndWait { try? context.fetch(fetchRequest) }) ?? []
+          if let prevFlair = prevSubFlairs.first {
+            context.performAndWait {
+              bgColor = prevFlair.background_color ?? bgColor
+              textColor = prevFlair.text_color ?? textColor
+            }
+          }
+        }
+      }
+      
+      return FilterData(text: cleansed.joined(separator: " "), text_color: textColor, background_color: bgColor)
+    }
+    
+    return nil
+  }
+  
+  static func initMultiple(datas: [T], api: RedditAPI, fetchSubs: Bool = false, contentWidth: CGFloat = 0, subreddit: Subreddit? = nil) -> [Post] {
     let context = PersistenceController.shared.container.newBackgroundContext()
     let fetchRequest = NSFetchRequest<SeenPost>(entityName: "SeenPost")
     
@@ -111,7 +139,7 @@ extension Post {
             19: .low
           ]
           let priority = i > 19 ? .veryLow : priorityIMap[priorityIMap.keys.first { $0 > i } ?? 19]!
-          let newPost = Post.init(data: data, api: api, fetchSub: fetchSubs, contentWidth: contentWidth, imgPriority: i > 7 ? .veryLow : priority, fetchAvatar: false)
+          let newPost = Post.init(data: data, api: api, fetchSub: fetchSubs, contentWidth: contentWidth, imgPriority: i > 7 ? .veryLow : priority, fetchAvatar: false, subId: subreddit?.id)
           newPost.data?.winstonSeen = isSeen
           
           if (isSeen) {
@@ -121,6 +149,12 @@ extension Post {
           }
           
           return newPost
+        }
+      }
+      
+      Task(priority: .background) {
+        if let sub = subreddit {
+          saveFlairsFromPosts(sub: sub, posts: posts)
         }
       }
       
@@ -142,7 +176,53 @@ extension Post {
       Post.prefetcher.startPrefetching(with: imgRequests)
       return posts
     }
+    
     return []
+  }
+  
+  static func saveFlairsFromPosts(sub: Subreddit, posts: [Post]) {
+    let context = PersistenceController.shared.container.newBackgroundContext()
+    let fetchRequest = NSFetchRequest<CachedFilter>(entityName: "CachedFilter")
+    fetchRequest.predicate = NSPredicate(format: "subreddit_id == %@", sub.id)
+    
+    var prevSubFlairs = (context.performAndWait { try? context.fetch(fetchRequest) }) ?? []
+    
+    context.performAndWait {
+      posts.forEach { post in
+        if let data = post.data, let flairText = data.link_flair_text {
+          guard let flairData = Post.extractFlairData(data: data) else { return }
+          
+          if let prev = prevSubFlairs.first(where: { $0.text == flairText }) {
+            prev.occurences = prev.occurences + 1
+
+            if flairData.background_color != "D5D7D9" && flairData.background_color != prev.background_color {
+              prev.background_color = flairData.background_color
+              prev.text_color = flairData.text_color
+            }
+          } else {
+            let newFilter = CachedFilter(context: context)
+            
+            newFilter.subreddit_id = sub.id
+            newFilter.type = "flair"
+            newFilter.text = flairData.text
+            newFilter.text_color = flairData.text_color
+            newFilter.background_color = flairData.background_color
+            newFilter.occurences = 1
+            
+            prevSubFlairs.append(newFilter)
+          }
+        }
+      }
+      
+      try? context.save()
+      
+      let flairFilters = prevSubFlairs.map({ FilterData.from($0) })      
+      DispatchQueue.main.async {
+        withAnimation {
+          sub.winstonData?.flairs = flairFilters
+        }
+      }
+    }
   }
   
   func loadStreamableMedia(streamable: StreamableExtracted) async -> SharedVideo? {
@@ -403,7 +483,7 @@ extension Post {
     return false
   }
   
-  func refreshPost(commentID: String? = nil, sort: CommentSortOption = .confidence, after: String? = nil, subreddit: String? = nil, full: Bool = true) async -> ([Comment]?, String?)? {
+  func refreshPost(commentID: String? = nil, sort: CommentSortOption = .confidence, after: String? = nil, subreddit: String? = nil, full: Bool = true, subId: String? = nil) async -> ([Comment]?, String?)? {
     if let subreddit = data?.subreddit ?? subreddit, let response = await RedditAPI.shared.fetchPost(subreddit: subreddit, postID: id, commentID: commentID, sort: sort) {
       if let post = response[0] {
         switch post {
@@ -528,6 +608,7 @@ class PostWinstonData: Hashable, ObservableObject {
   @Published var media: PostWinstonDataMedia?
   @Published var seenCommentsCount: Int? = nil
   @Published var seenComments: String? = nil
+  @Published var appeared: Bool = false
   
   func hash(into hasher: inout Hasher) {
     hasher.combine(permaURL)

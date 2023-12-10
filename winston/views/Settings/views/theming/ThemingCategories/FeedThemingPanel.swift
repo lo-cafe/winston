@@ -42,6 +42,21 @@ struct FeedThemingPanel: View {
           ThemeBGPicker(bg: $theme.postLinks.bg, defaultVal: defaultTheme.postLinks.bg)
         }
         
+        FakeSection("Filters") {
+          Toggle("Sticky", isOn: $theme.postLinks.stickyFilters).padding(.horizontal, 16)
+          Divider()
+          FontSelector(theme: $theme.postLinks.filterText, defaultVal: defaultTheme.postLinks.filterText, showColor: false)
+          Divider()
+          LabeledSlider(label: "Horizontal Spacing", value: $theme.postLinks.filterPadding.horizontal, range: 0...24)
+            .resetter($theme.postLinks.filterPadding.horizontal, defaultTheme.postLinks.filterPadding.horizontal)
+          Divider()
+          LabeledSlider(label: "Vertical padding", value: $theme.postLinks.filterPadding.vertical, range: 0...24)
+            .resetter($theme.postLinks.filterPadding.vertical, defaultTheme.postLinks.filterPadding.vertical)
+          Divider()
+          LabeledSlider(label: "Opacity", value: $theme.postLinks.filterOpacity, range: 0...1, step: 0.05)
+            .resetter($theme.postLinks.filterOpacity, defaultTheme.postLinks.filterOpacity)
+        }
+        
         FakeSection("Divider") {
           LineThemeEditor(theme: $theme.postLinks.divider, defaultVal: defaultTheme.postLinks.divider)
         }
