@@ -14,8 +14,12 @@ struct SharedVideo: Equatable {
   var url: URL
   var size: CGSize
   
-  static func get(url: URL, size: CGSize) -> SharedVideo {
+  static func get(url: URL, size: CGSize, resetCache: Bool = false) -> SharedVideo {
     let cacheKey =  SharedVideo.cacheKey(url: url, size: size)
+    
+    if resetCache {
+      Caches.videos.cache.removeValue(forKey: cacheKey)
+    }
     
     if let sharedVideo = Caches.videos.get(key: cacheKey) {
       return sharedVideo
@@ -56,6 +60,7 @@ struct VideoPlayerPost: View, Equatable {
   var overrideWidth: CGFloat?
   var url: URL
   var size: CGSize
+  let resetVideo: ((SharedVideo) -> ())?
   @State private var firstFullscreen = false
   @State private var fullscreen = false
   @Default(.preferenceShowPostsCards) private var preferenceShowPostsCards
@@ -67,8 +72,9 @@ struct VideoPlayerPost: View, Equatable {
   @Default(.loopVideos) private var loopVideos
   @Default(.lightboxViewsPost) private var lightboxViewsPost
 	@Default(.muteVideos) private var muteVideos
+  @Environment(\.scenePhase) var scenePhase
   
-  init(controller: UIViewController?, cachedVideo: SharedVideo?, markAsSeen: (() async -> ())?, compact: Bool = false, overrideWidth: CGFloat? = nil, url: URL) {
+  init(controller: UIViewController?, cachedVideo: SharedVideo?, markAsSeen: (() async -> ())?, compact: Bool = false, overrideWidth: CGFloat? = nil, url: URL, resetVideo: ((SharedVideo) -> ())?) {
     self.controller = controller
     self.sharedVideo = cachedVideo
     self.markAsSeen = markAsSeen
@@ -76,6 +82,7 @@ struct VideoPlayerPost: View, Equatable {
     self.overrideWidth = overrideWidth
     self.url = url
     self.size = cachedVideo?.size ?? .zero
+    self.resetVideo = resetVideo
   }
   
   var safe: Double { getSafeArea().top + getSafeArea().bottom }
@@ -162,8 +169,24 @@ struct VideoPlayerPost: View, Equatable {
           if loopVideos {
             addObserver()
           }
+          
+          if (sharedVideo.player.status == .failed) {
+            resetVideo?(sharedVideo)
+          }
+          
           if autoPlayVideos {
             sharedVideo.player.play()
+          }
+        }
+        .onChange(of: scenePhase) { newPhase in
+          if newPhase == .active {
+            if (sharedVideo.player.status == .failed) {
+              resetVideo?(sharedVideo)
+            }
+            
+            if autoPlayVideos {
+              sharedVideo.player.play()
+            }
           }
         }
         .onDisappear() {
