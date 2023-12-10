@@ -12,13 +12,13 @@ import NukeUI
 
 struct SubredditPostsIOS: View, Equatable {
   static func == (lhs: SubredditPostsIOS, rhs: SubredditPostsIOS) -> Bool {
-    lhs.posts.count == rhs.posts.count && lhs.subreddit?.id == rhs.subreddit?.id && lhs.searchText == rhs.searchText && lhs.selectedTheme == rhs.selectedTheme && lhs.lastPostAfter == rhs.lastPostAfter && lhs.flairs == rhs.flairs && lhs.filter == rhs.filter && lhs.loading == rhs.loading
+    lhs.posts.count == rhs.posts.count && lhs.subreddit?.id == rhs.subreddit?.id && lhs.searchText == rhs.searchText && lhs.selectedTheme == rhs.selectedTheme && lhs.lastPostAfter == rhs.lastPostAfter && lhs.filter == rhs.filter && lhs.loading == rhs.loading && lhs.filters == rhs.filters
   }
   
   var showSub = false
   var lastPostAfter: String?
   weak var subreddit: Subreddit?
-  var flairs: [Flair]?
+  var filters: [FilterData]
   var posts: [Post]
   var filter: String
   var filterCallback: ((String) -> ())
@@ -53,7 +53,6 @@ struct SubredditPostsIOS: View, Equatable {
   @Default(.showSubsAtTop) private var showSubsAtTop
   @Default(.showTitleAtTop) private var showTitleAtTop
   @Default(.showSelfPostThumbnails) private var showSelfPostThumbnails
-  @Default(.subredditFilters) var subredditFilters
 
   @Environment(\.colorScheme) private var cs
   
@@ -76,14 +75,14 @@ struct SubredditPostsIOS: View, Equatable {
     List {
       
       if !selectedTheme.postLinks.stickyFilters, let sub = subreddit {
-        SubredditFilters(subreddit: sub, selected: filter, filterCallback: filterCallback, searchText: searchText, searchCallback: searchCallback, editCustomFilter: editCustomFilter, theme: selectedTheme, compactToggled: compactToggled)
+        SubredditFilters(subId: sub.id, filters: filters, selected: filter, filterCallback: filterCallback, searchText: searchText, searchCallback: searchCallback, editCustomFilter: editCustomFilter, theme: selectedTheme, compactToggled: compactToggled)
           .equatable()
           .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
           .listRowSeparator(.hidden)
       }
       
       Section(header: subreddit != nil && selectedTheme.postLinks.stickyFilters ?
-              SubredditFilters(subreddit: subreddit!, selected: filter, filterCallback: filterCallback, searchText: searchText, searchCallback: searchCallback, editCustomFilter: editCustomFilter, theme: selectedTheme, compactToggled: compactToggled)
+              SubredditFilters(subId: subreddit!.id, filters: filters, selected: filter, filterCallback: filterCallback, searchText: searchText, searchCallback: searchCallback, editCustomFilter: editCustomFilter, theme: selectedTheme, compactToggled: compactToggled)
                 .equatable()
                 .listRowSeparator(.hidden)
                 .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))

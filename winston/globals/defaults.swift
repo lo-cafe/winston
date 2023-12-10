@@ -154,9 +154,6 @@ extension Defaults.Keys {
   static let showingUpsellDict = Key<Dictionary<String, Bool>>("showingUpsellDict", default: [
     "themesUpsell_01": true
   ])
-  
-  static let subredditFilters = Key<Dictionary<String,[FilterData]>>("subredditFilters", default: [String: [FilterData]]())
-  static let subredditCustomFilters = Key<Dictionary<String,[FilterData]>>("subredditCustomFilters", default: [String: [FilterData]]())
 }
 
 extension UIScreen {

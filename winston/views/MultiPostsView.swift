@@ -96,7 +96,7 @@ struct MultiPostsView: View {
       if IPAD {
         SubredditPostsIPAD(showSub: true, posts: posts.data, filter: filter, filterCallback: filterCallback, searchText: searchText, searchCallback: searchCallback, editCustomFilter: editCustomFilter, compactToggled: compactToggled, fetch: fetch, selectedTheme: selectedTheme)
       } else {
-        SubredditPostsIOS(showSub: true, lastPostAfter: lastPostAfter, posts: posts.data, filter: filter, filterCallback: filterCallback, searchText: searchText, searchCallback: searchCallback, editCustomFilter: editCustomFilter, compactToggled: compactToggled, fetch: fetch, selectedTheme: selectedTheme, loading: loading, reachedEndOfFeed: $reachedEndOfFeed)
+        SubredditPostsIOS(showSub: true, lastPostAfter: lastPostAfter, filters: [], posts: posts.data, filter: filter, filterCallback: filterCallback, searchText: searchText, searchCallback: searchCallback, editCustomFilter: editCustomFilter, compactToggled: compactToggled, fetch: fetch, selectedTheme: selectedTheme, loading: loading, reachedEndOfFeed: $reachedEndOfFeed)
       }
     }
     //.themedListBG(selectedTheme.postLinks.bg)

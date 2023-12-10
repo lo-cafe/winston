@@ -768,9 +768,6 @@
         }
       }
     },
-    "Compact" : {
-
-    },
     "Compact Mode" : {
       "localizations" : {
         "de" : {
@@ -1156,9 +1153,6 @@
       }
     },
     "Edit credential" : {
-
-    },
-    "Edit filter" : {
 
     },
     "Enter a subreddit" : {
@@ -2014,9 +2008,6 @@
         }
       }
     },
-    "LOAD MORE" : {
-
-    },
     "Lock Winston With %@" : {
       "localizations" : {
         "de" : {
@@ -2309,9 +2300,6 @@
         }
       }
     },
-    "New filter" : {
-
-    },
     "New post" : {
       "localizations" : {
         "de" : {
@@ -2361,12 +2349,6 @@
       }
     },
     "No credential" : {
-
-    },
-    "No filtered posts" : {
-
-    },
-    "Normal" : {
 
     },
     "Now paste it here:" : {

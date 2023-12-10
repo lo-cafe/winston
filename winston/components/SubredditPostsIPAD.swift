@@ -56,7 +56,7 @@ struct SubredditPostsIPAD: View, Equatable {
     VStack(spacing: 8) {
       
       if let sub = subreddit {
-        SubredditFilters(subreddit: sub, selected: filter, filterCallback: filterCallback, searchText: searchText, searchCallback: searchCallback, editCustomFilter: editCustomFilter, theme: selectedTheme, compactToggled: compactToggled)
+        SubredditFilters(subId: sub.id, filters: sub.winstonData?.flairs ?? [], selected: filter, filterCallback: filterCallback, searchText: searchText, searchCallback: searchCallback, editCustomFilter: editCustomFilter, theme: selectedTheme, compactToggled: compactToggled)
       }
       
       Waterfall(

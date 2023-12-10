@@ -83,7 +83,7 @@ enum MediaExtractedType: Equatable {
   case repost(Post)
   case post(EntityExtracted<PostData, PostWinstonData>?)
   case comment(EntityExtracted<CommentData, CommentWinstonData>?)
-  case subreddit(EntityExtracted<SubredditData, AnyHashable>?)
+  case subreddit(EntityExtracted<SubredditData, SubredditWinstonData>?)
   case user(EntityExtracted<UserData, AnyHashable>?)
 }
 

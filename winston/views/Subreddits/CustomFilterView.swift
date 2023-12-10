@@ -7,7 +7,7 @@
 
 import SwiftUI
 import NukeUI
-import Defaults
+import CoreData
 
 struct CustomFilterView: View {
   @Environment(\.useTheme) private var theme
@@ -20,9 +20,18 @@ struct CustomFilterView: View {
   @State var draftFilter: FilterData = .init()
   
   func removeFromDefaults() {
-    guard var prevFlairs = Defaults[.subredditCustomFilters][subId] else { return }
-    prevFlairs.removeAll(where: { $0.id == filter.id })
-    Defaults[.subredditCustomFilters][subId] = prevFlairs
+    let context = PersistenceController.shared.container.newBackgroundContext()
+    let fetchRequest = NSFetchRequest<CachedFilter>(entityName: "CachedFilter")
+    fetchRequest.predicate = NSPredicate(format: "subreddit_id == %@ && text == %@ && type == %@", subId, filter.text, filter.type)
+      
+    context.performAndWait {
+      let prevFlairs = (try? context.fetch(fetchRequest)) ?? []
+      if let prevFlair = prevFlairs.first {
+        context.delete(prevFlair)
+      }
+      
+      try? context.save()
+    }
     
     if selected == filter.id {
       selected = "flair:All"
@@ -30,10 +39,28 @@ struct CustomFilterView: View {
   }
   
   func saveToDefaults() {
-    var prevFlairs = Defaults[.subredditCustomFilters][subId] ?? []
-    prevFlairs.removeAll(where: { $0.id == filter.id })
-    prevFlairs.append(draftFilter)
-    Defaults[.subredditCustomFilters][subId] = prevFlairs
+    let context = PersistenceController.shared.container.newBackgroundContext()
+    let fetchRequest = NSFetchRequest<CachedFilter>(entityName: "CachedFilter")
+    fetchRequest.predicate = NSPredicate(format: "subreddit_id == %@ && text == %@ && type == %@", subId, filter.text, filter.type)
+
+    context.performAndWait {
+      let prevFlairs = (try? context.fetch(fetchRequest)) ?? []
+      if let prevFlair = prevFlairs.first {
+        prevFlair.text = draftFilter.text
+        prevFlair.type = draftFilter.type
+        prevFlair.background_color = draftFilter.background_color
+        prevFlair.text_color = draftFilter.text_color
+      } else {
+        let newFilter = CachedFilter(context: context)
+        newFilter.subreddit_id = subId
+        newFilter.text = draftFilter.text
+        newFilter.type = draftFilter.type
+        newFilter.background_color = draftFilter.background_color
+        newFilter.text_color = draftFilter.text_color
+      }
+      
+      try? context.save()
+    }
   }
   
   

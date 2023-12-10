@@ -10,16 +10,14 @@ import Defaults
 
 struct SubredditFilters: View, Equatable {
   static func == (lhs: SubredditFilters, rhs: SubredditFilters) -> Bool {
-    lhs.subreddit.id == rhs.subreddit.id && lhs.theme == rhs.theme && lhs.selected == rhs.selected && lhs.searchText == rhs.searchText
+    lhs.subId == rhs.subId && lhs.theme == rhs.theme && lhs.selected == rhs.selected && lhs.searchText == rhs.searchText && lhs.filters == rhs.filters
   }
-  
-  var subreddit: Subreddit
-  
-  @Default(.subredditFilters) var subredditFilters
-  @Default(.subredditCustomFilters) var subredditCustomFilters
+    
   @Default(.compactPerSubreddit) var compactPerSubreddit
   @Default(.compactMode) var compactMode
   
+  var subId: String
+  var filters: [FilterData]
   var selected: String
   var filterCallback: ((String) -> ())
   var searchText: String
@@ -33,8 +31,9 @@ struct SubredditFilters: View, Equatable {
 
   @Environment(\.colorScheme) private var cs
   
-  init(subreddit: Subreddit, selected: String, filterCallback: @escaping ((String) -> ()), searchText: String, searchCallback: @escaping ((String?) -> ()), editCustomFilter: @escaping ((FilterData) -> ()), theme: WinstonTheme, compactToggled: @escaping (() -> ())) {
-    self.subreddit = subreddit
+  init(subId: String, filters: [FilterData], selected: String, filterCallback: @escaping ((String) -> ()), searchText: String, searchCallback: @escaping ((String?) -> ()), editCustomFilter: @escaping ((FilterData) -> ()), theme: WinstonTheme, compactToggled: @escaping (() -> ())) {
+    self.subId = subId
+    self.filters = filters
     self.selected = selected
     self.filterCallback = filterCallback
     self.searchText = searchText
@@ -43,11 +42,11 @@ struct SubredditFilters: View, Equatable {
     self.theme = theme
     self.compactToggled = compactToggled
     
-    _compactOn = State(initialValue: (compactPerSubreddit[subreddit.id] ?? compactMode) ? "Compact": "Normal")
+    _compactOn = State(initialValue: (compactPerSubreddit[subId] ?? compactMode) ? "Compact": "Normal")
   }
   
   func toggleCompactMode(compact: Bool) {
-    compactPerSubreddit[subreddit.id] = compact
+    compactPerSubreddit[self.subId] = compact
     compactToggled()
   }
   
@@ -93,17 +92,14 @@ struct SubredditFilters: View, Equatable {
           
           FlairFilter(filter: FilterData(text: "All", text_color: "000000", background_color: "D5D7D9"), filterFont: theme.postLinks.filterText, opacity: opacity, selected: selected, filterCallback: filterCallback, searchText: searchText, searchCallback: searchCallback, editCustomFilter: editCustomFilter)
           
-          if let customFilters = subredditCustomFilters[subreddit.id] {
-            ForEach(customFilters) {
-              FlairFilter(filter: $0, filterFont: theme.postLinks.filterText, opacity: opacity, selected: selected, filterCallback: filterCallback, searchText: searchText, searchCallback: searchCallback, editCustomFilter: editCustomFilter).equatable()
-            }
+          let customFilters = filters.filter({ $0.type != "flair" })
+          ForEach(customFilters) {
+            FlairFilter(filter: $0, filterFont: theme.postLinks.filterText, opacity: opacity, selected: selected, filterCallback: filterCallback, searchText: searchText, searchCallback: searchCallback, editCustomFilter: editCustomFilter).equatable()
           }
-          
-          if let flairs = subredditFilters[subreddit.id] {
-            let sortedFlairs = flairs.sorted(by: {$0.occurences > $1.occurences })
-            ForEach(sortedFlairs) {
-              FlairFilter(filter: $0, filterFont: theme.postLinks.filterText, opacity: opacity, selected: selected, filterCallback: filterCallback, searchText: searchText, searchCallback: searchCallback, editCustomFilter: editCustomFilter).equatable()
-            }
+        
+          let sortedFlairs = filters.filter({ $0.type == "flair" }).sorted(by: {$0.occurences > $1.occurences })
+          ForEach(sortedFlairs) {
+            FlairFilter(filter: $0, filterFont: theme.postLinks.filterText, opacity: opacity, selected: selected, filterCallback: filterCallback, searchText: searchText, searchCallback: searchCallback, editCustomFilter: editCustomFilter).equatable()
           }
         }
       }
@@ -189,8 +185,8 @@ struct FilterData: Identifiable, Codable, Defaults.Serializable, Equatable, Hash
   init() {
     self.id = ""
     self.text = ""
-    self.text_color = "#FFFFFF"
-    self.background_color = "0B84FE"
+    self.text_color = "000000"
+    self.background_color = "D5D7D9"
     self.occurences = 0
     self.type = "filter"
   }
@@ -203,10 +199,15 @@ struct FilterData: Identifiable, Codable, Defaults.Serializable, Equatable, Hash
     self.occurences = occurences + 1
     self.type = type
   }
-  
+    
   func getFormattedText() -> String {
     return self.text.replacingOccurrences(of: "&amp;", with: "&")
   }
+  
+  static func from(_ cached: CachedFilter) -> FilterData {
+    return FilterData(text: cached.text ?? "", text_color: cached.text_color ?? "000000", background_color: cached.background_color ?? "D5D7D9", occurences: Int(cached.occurences) - 1, type: cached.type ?? "flair")
+  }
+
   
   static func getTypeAndText(_ filter: String) -> [String] {
     let split = filter.components(separatedBy: ":")

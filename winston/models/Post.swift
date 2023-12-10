@@ -104,10 +104,16 @@ extension Post {
       
       if bgColor == "D5D7D9" && checkDefaultsForColor {
         if let subId = data.subreddit_id, let flairText = data.link_flair_text {
-          let prevFlairs = Defaults[.subredditFilters][subId] ?? []
-          if let prevFlair = prevFlairs.first(where: { $0.text == flairText }) {
-            bgColor = prevFlair.background_color
-            textColor = prevFlair.text_color
+          let context = PersistenceController.shared.container.newBackgroundContext()
+          let fetchRequest = NSFetchRequest<CachedFilter>(entityName: "CachedFilter")
+          fetchRequest.predicate = NSPredicate(format: "subreddit_id == %@ && text == %@ && type == 'flair'", subId, flairText)
+          
+          let prevSubFlairs = (context.performAndWait { try? context.fetch(fetchRequest) }) ?? []
+          if let prevFlair = prevSubFlairs.first {
+            context.performAndWait {
+              bgColor = prevFlair.background_color ?? bgColor
+              textColor = prevFlair.text_color ?? textColor
+            }
           }
         }
       }
@@ -118,7 +124,7 @@ extension Post {
     return nil
   }
   
-  static func initMultiple(datas: [T], api: RedditAPI, fetchSubs: Bool = false, contentWidth: CGFloat = 0, subId: String? = nil) -> [Post] {
+  static func initMultiple(datas: [T], api: RedditAPI, fetchSubs: Bool = false, contentWidth: CGFloat = 0, subreddit: Subreddit? = nil) -> [Post] {
     let context = PersistenceController.shared.container.newBackgroundContext()
     let fetchRequest = NSFetchRequest<SeenPost>(entityName: "SeenPost")
     
@@ -133,7 +139,7 @@ extension Post {
             19: .low
           ]
           let priority = i > 19 ? .veryLow : priorityIMap[priorityIMap.keys.first { $0 > i } ?? 19]!
-          let newPost = Post.init(data: data, api: api, fetchSub: fetchSubs, contentWidth: contentWidth, imgPriority: i > 7 ? .veryLow : priority, fetchAvatar: false, subId: subId)
+          let newPost = Post.init(data: data, api: api, fetchSub: fetchSubs, contentWidth: contentWidth, imgPriority: i > 7 ? .veryLow : priority, fetchAvatar: false, subId: subreddit?.id)
           newPost.data?.winstonSeen = isSeen
           
           if (isSeen) {
@@ -147,7 +153,9 @@ extension Post {
       }
       
       Task(priority: .background) {
-        saveFlairsToDefaults(posts: posts, subId: subId)
+        if let sub = subreddit {
+          saveFlairsFromPosts(sub: sub, posts: posts)
+        }
       }
       
       let repostsAvatars = posts.compactMap { post in
@@ -172,30 +180,49 @@ extension Post {
     return []
   }
   
-  static func saveFlairsToDefaults(posts: [Post], subId: String? = nil) {
-    var prevFlairs = Defaults[.subredditFilters]
+  static func saveFlairsFromPosts(sub: Subreddit, posts: [Post]) {
+    let context = PersistenceController.shared.container.newBackgroundContext()
+    let fetchRequest = NSFetchRequest<CachedFilter>(entityName: "CachedFilter")
+    fetchRequest.predicate = NSPredicate(format: "subreddit_id == %@", sub.id)
     
-    posts.forEach { post in
-      if let data = post.data, let subredditId = subId ?? data.subreddit_id, let flairText = data.link_flair_text {
-        guard var flairData = Post.extractFlairData(data: data) else { return }
-        var prevSubFlairs = prevFlairs[subredditId] ?? []
+    var prevSubFlairs = (context.performAndWait { try? context.fetch(fetchRequest) }) ?? []
+    
+    context.performAndWait {
+      posts.forEach { post in
+        if let data = post.data, let flairText = data.link_flair_text {
+          guard let flairData = Post.extractFlairData(data: data) else { return }
+          
+          if let prev = prevSubFlairs.first(where: { $0.text == flairText }) {
+            prev.occurences = prev.occurences + 1
 
-        if let prev = prevSubFlairs.first(where: { $0.id == "flair:\(flairText)" }) {
-          // Remove and add back with updated occurences for sorting
-          prevSubFlairs.removeAll(where: { $0.id == prev.id })
-          if flairData.background_color == "D5D7D9" && flairData.background_color != prev.background_color {
-            flairData = FilterData(text: flairData.text, text_color: prev.text_color, background_color: prev.background_color, occurences: prev.occurences)
+            if flairData.background_color != "D5D7D9" && flairData.background_color != prev.background_color {
+              prev.background_color = flairData.background_color
+              prev.text_color = flairData.text_color
+            }
           } else {
-            flairData = FilterData(text: flairData.text, text_color: flairData.text_color, background_color: flairData.background_color, occurences: prev.occurences)
+            let newFilter = CachedFilter(context: context)
+            
+            newFilter.subreddit_id = sub.id
+            newFilter.type = "flair"
+            newFilter.text = flairData.text
+            newFilter.text_color = flairData.text_color
+            newFilter.background_color = flairData.background_color
+            newFilter.occurences = 1
+            
+            prevSubFlairs.append(newFilter)
           }
         }
-        
-        prevSubFlairs.append(flairData)
-        prevFlairs[subredditId] = prevSubFlairs
+      }
+      
+      try? context.save()
+      
+      let flairFilters = prevSubFlairs.map({ FilterData.from($0) })      
+      DispatchQueue.main.async {
+        withAnimation {
+          sub.winstonData?.flairs = flairFilters
+        }
       }
     }
-    
-    Defaults[.subredditFilters] = prevFlairs
   }
   
   func loadStreamableMedia(streamable: StreamableExtracted) async -> SharedVideo? {

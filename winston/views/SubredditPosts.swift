@@ -30,6 +30,7 @@ struct SubredditPosts: View, Equatable {
   @State private var searchText: String = ""
   @State private var sort: SubListingSortOption
   @State private var newPost = false
+  @State private var filters: [FilterData] = []
   @State private var filter = "flair:All"
   @State private var customFilter: FilterData?
   
@@ -52,8 +53,8 @@ struct SubredditPosts: View, Equatable {
   let context = PersistenceController.shared.container.newBackgroundContext()
   
   init(subreddit: Subreddit) {
-    self.subreddit = subreddit;
-    _sort = State(initialValue: Defaults[.perSubredditSort] ? (Defaults[.subredditSorts][subreddit.id] ?? Defaults[.preferredSort]) : Defaults[.preferredSort]);
+    self.subreddit = subreddit
+    _sort = State(initialValue: Defaults[.perSubredditSort] ? (Defaults[.subredditSorts][subreddit.id] ?? Defaults[.preferredSort]) : Defaults[.preferredSort])
   }
   
   var isFeedsAndSuch: Bool { feedsAndSuch.contains(subreddit.id) }
@@ -131,7 +132,7 @@ struct SubredditPosts: View, Equatable {
     }
         
     if !loadMore && !subreddit.id.starts(with: "t5") {
-      Defaults[.subredditFilters][subreddit.id] = []
+      // Remove flairs from home/all
     }
     
     withAnimation {
@@ -139,7 +140,7 @@ struct SubredditPosts: View, Equatable {
     }
     
     if subreddit.id != "saved" {
-      if let result = await subreddit.fetchPosts(sort: sort, after: loadMore ? lastPostAfter : nil, searchText: searchText, contentWidth: contentWidth, subId: subreddit.id), let newPosts = result.0 {
+      if let result = await subreddit.fetchPosts(sort: sort, after: loadMore ? lastPostAfter : nil, searchText: searchText, contentWidth: contentWidth), let newPosts = result.0 {
         await RedditAPI.shared.updatePostsWithAvatar(posts: newPosts, avatarSize: selectedTheme.postLinks.theme.badge.avatar.size)
         withAnimation {
           let newPostsFiltered = newPosts.filter { !loadedPosts.contains($0.id) && !filteredSubreddits.contains($0.data?.subreddit ?? "") }
@@ -225,7 +226,7 @@ struct SubredditPosts: View, Equatable {
           if IPAD {
             SubredditPostsIPAD(showSub: isFeedsAndSuch, subreddit: subreddit, posts: filteredPosts, filter: filter, filterCallback: filterCallback, searchText: searchText, searchCallback: searchCallback, editCustomFilter: editCustomFilter, compactToggled: compactToggled, fetch: fetch, selectedTheme: selectedTheme)
           } else {
-            SubredditPostsIOS(showSub: isFeedsAndSuch, lastPostAfter: lastPostAfter, subreddit: subreddit, flairs: subreddit.data?.winstonFlairs, posts: filteredPosts, filter: filter, filterCallback: filterCallback, searchText: searchText, searchCallback: searchCallback, editCustomFilter: editCustomFilter, compactToggled: compactToggled, fetch: fetch, selectedTheme: selectedTheme, loading: loading, reachedEndOfFeed: $reachedEndOfFeed)
+            SubredditPostsIOS(showSub: isFeedsAndSuch, lastPostAfter: lastPostAfter, subreddit: subreddit, filters: filters, posts: filteredPosts, filter: filter, filterCallback: filterCallback, searchText: searchText, searchCallback: searchCallback, editCustomFilter: editCustomFilter, compactToggled: compactToggled, fetch: fetch, selectedTheme: selectedTheme, loading: loading, reachedEndOfFeed: $reachedEndOfFeed)
           }
         }
         .searchable(text: $searchText, prompt: "Search r/\(subreddit.data?.display_name ?? subreddit.id)")
@@ -242,6 +243,12 @@ struct SubredditPosts: View, Equatable {
       }
     }
     .onAppear {
+      subreddit.loadFlairs() { loaded in
+        DispatchQueue.main.async {
+          filters = loaded
+        }
+      }
+      
       if !hasViewLoaded {
         isSavedSubreddit = subreddit.id == "saved" // detect unique saved subreddit (saved posts and comments require unique logic)
         hasViewLoaded = true
@@ -300,7 +307,11 @@ struct SubredditPosts: View, Equatable {
         clearAndLoadData()
       }
     }
-    .sheet(item: $customFilter) { custom in
+    .sheet(item: $customFilter, onDismiss: {
+      self.subreddit.loadFlairs( { loaded in
+        filters = loaded
+      })
+    }) { custom in
       CustomFilterView(filter: custom, subId: subreddit.id, selected: $filter)
     }
   }
