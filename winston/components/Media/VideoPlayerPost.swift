@@ -67,7 +67,8 @@ struct VideoPlayerPost: View, Equatable {
   @Default(.autoPlayVideos) private var autoPlayVideos
   @Default(.loopVideos) private var loopVideos
   @Default(.lightboxViewsPost) private var lightboxViewsPost
-	@Default(.muteVideos) private var muteVideos
+  @Default(.muteVideos) private var muteVideos
+  @Default(.pauseBackgroundAudioOnFullscreen) private var pauseBackgroundAudioOnFullscreen
   @Environment(\.scenePhase) var scenePhase
   
   init(controller: UIViewController?, cachedVideo: SharedVideo?, markAsSeen: (() async -> ())?, compact: Bool = false, overrideWidth: CGFloat? = nil, url: URL, resetVideo: ((SharedVideo) -> ())?) {
@@ -141,9 +142,13 @@ struct VideoPlayerPost: View, Equatable {
 							sharedVideo.player.pause()
 							firstFullscreen = false
 						}
-						if sharedVideo.player.isMuted == false && hasAudio == true {
-							setAudioToMixWithOthers(val)
-						}
+            
+            if pauseBackgroundAudioOnFullscreen && sharedVideo.player.isMuted == false && hasAudio == true {
+              Task(priority: .background) {
+                setAudioToMixWithOthers(val)
+              }
+            }
+          
             sharedVideo.player.volume = val ? 1.0 : 0.0
           }
           .allowsHitTesting(false)
@@ -203,9 +208,13 @@ struct VideoPlayerPost: View, Equatable {
 						sharedVideo.player.pause()
 						firstFullscreen = false
 					 }
-					if sharedVideo.player.isMuted == false && hasAudio == true {
-						setAudioToMixWithOthers(val)
-					}
+          
+          if pauseBackgroundAudioOnFullscreen && sharedVideo.player.isMuted == false && hasAudio == true {
+            Task(priority: .background) {
+              setAudioToMixWithOthers(val)
+            }
+          }
+          
           sharedVideo.player.volume = val ? 1.0 : 0.0
         }
         .fullScreenCover(isPresented: $fullscreen) {
@@ -232,9 +241,7 @@ struct VideoPlayerPost: View, Equatable {
         object: sharedVideo.player.currentItem,
         queue: nil) { notif in
           Task(priority: .background) {
-            DispatchQueue.main.async {
-              resetVideo?(sharedVideo)
-            }
+            resetVideo?(sharedVideo)
           }
         }
       
@@ -243,9 +250,7 @@ struct VideoPlayerPost: View, Equatable {
         object: sharedVideo.player.currentItem,
         queue: nil) { notif in
           Task(priority: .background) {
-            DispatchQueue.main.async {
-              resetVideo?(sharedVideo)
-            }
+            resetVideo?(sharedVideo)
           }
         }
     }

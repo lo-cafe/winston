@@ -25,6 +25,7 @@ struct BehaviorPanel: View {
   @Default(.enableSwipeAnywhere) var enableSwipeAnywhere
   @Default(.autoPlayVideos) var autoPlayVideos
   @Default(.muteVideos) var muteVideos
+  @Default(.pauseBackgroundAudioOnFullscreen) var pauseBackgroundAudioOnFullscreen
   @Default(.loopVideos) private var loopVideos
   @Default(.lightboxViewsPost) private var lightboxViewsPost
   @Default(.openLinksInSafari) private var openLinksInSafari
@@ -99,6 +100,7 @@ struct BehaviorPanel: View {
           Toggle("Loop videos", isOn: $loopVideos)
           Toggle("Autoplay videos (muted)", isOn: $autoPlayVideos)
           Toggle("Default mute fullscreen videos", isOn: $muteVideos)
+          Toggle("Pause background audio on fullscreen", isOn: $pauseBackgroundAudioOnFullscreen)
           Toggle("Read on preview media", isOn: $lightboxViewsPost)
           Toggle("Read on scroll", isOn: $readPostOnScroll)
           Toggle("Hide read posts", isOn: $hideReadPosts)
