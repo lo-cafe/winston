@@ -167,6 +167,7 @@ struct SubredditPostsIOS: View, Equatable {
       }
     }
     .themedListBG(selectedTheme.postLinks.bg)
+    .environment(\.defaultMinListHeaderHeight, 0.1)
     .scrollContentBackground(.hidden)
     .scrollIndicators(.never)
     .listStyle(.plain)

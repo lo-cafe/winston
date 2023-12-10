@@ -44,7 +44,7 @@ struct SubredditFilters: View, Equatable {
   }
   
   func toggleCompactMode(compact: Bool) {
-    compactPerSubreddit[self.subId] = compact
+    Defaults[.compactPerSubreddit][self.subId] = compact
   }
   
   func getBackgroundColor() -> Color {

@@ -121,7 +121,20 @@ struct SubredditPosts: View, Equatable {
     }
         
     if !loadMore && !subreddit.id.starts(with: "t5") {
-      // Remove flairs from home/all
+      // Remove filters from home/all/popular so it only shows filters for current posts
+      let context = PersistenceController.shared.container.newBackgroundContext()
+      let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "CachedFilter")
+      fetchRequest.predicate = NSPredicate(format: "subreddit_id == %@ && type == 'flair'", subreddit.id)
+      let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
+      
+      do {
+        try context.performAndWait {
+          try context.execute(deleteRequest)
+          try context.save()
+        }
+      } catch {
+        print("Error resetting filters for \(subreddit.id)")
+      }
     }
     
     withAnimation {
