@@ -25,7 +25,7 @@ struct ThemeStore: View {
               NavigationLink(destination: ThemeStoreDetailsView(themeData: theme), label: {
                 OnlineThemeItem(theme: theme)
               })
-//              .themedListRowBG(enablePadding: true)
+//              .themedListRowLikeBG(enablePadding: true)
 
             }
           }

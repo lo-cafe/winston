@@ -49,7 +49,7 @@ struct WListButton<Content: View>: View {
     .themedListRow(active: forcedActive || active, isButton: !showArrow)
     .onAppear { withAnimation { forcedActive = false } }
 //    .id("\(uuid.uuidString)-\(pressed ? "pressed" : "")")
-//    .themedListRowBG(enablePadding: true, disableBG: true, active: active)
+//    .themedListRowLikeBG(enablePadding: true, disableBG: true, active: active)
   }
 }
 

@@ -14,8 +14,7 @@ class TempGlobalState: ObservableObject {
   static var shared = TempGlobalState()
   @Published var editingCredential: RedditCredential? = nil
   @Published var globalLoader = GlobalLoader()
-  @Published var tabBarHeight: CGFloat? = nil
-  @Published var inAppBrowserURL: URL? = nil
+  @Published var tabBarHeight: Double? = nil
   @Published var credModalOpen = false
 }
 
@@ -31,21 +30,13 @@ struct Tabber: View, Equatable {
   
   @State private var importedThemeAlert = false
   
-  //  @State var tabBarHeight: CGFloat?
   @ObservedObject private var nav = Nav.shared
   
   @Environment(\.useTheme) private var currentTheme
   @Environment(\.colorScheme) private var colorScheme
-  @EnvironmentObject var themeStoreAPI: ThemeStoreAPI
   @Default(.showUsernameInTabBar) private var showUsernameInTabBar
-  @Default(.showTipJarModal) private var showTipJarModal
   
   @State var sharedTheme: ThemeData? = nil
-  @State var showingSharedThemeSheet: Bool = false
-  
-  @State var showingAnnouncement: Bool = false
-  @State var testAnnouncement: Announcement? = nil
-  @EnvironmentObject var winstonAPI: WinstonAPI
   
   func meTabTap() {
     if nav.activeTab == .me {
@@ -84,111 +75,40 @@ struct Tabber: View, Equatable {
       WithCredentialOnly(credential: redditCredentialsManager.selectedCredential) {
         SubredditsStack(router: nav[.posts])
       }
-        .background(TabBarAccessor { tabBar in
-          if tabBarHeight != tabBar.bounds.height { tempGlobalState.tabBarHeight = tabBar.bounds.height }
-        })
-        .tag(Nav.TabIdentifier.posts)
-        .tabItem {
-          VStack {
-            Image(systemName: "doc.text.image")
-            Text("Posts")
-          }
-        }
+      .measureTabBar($tempGlobalState.tabBarHeight)
+      .tag(Nav.TabIdentifier.posts)
+      .tabItem { Label("Posts", systemImage: "doc.text.image") }
       
       WithCredentialOnly(credential: redditCredentialsManager.selectedCredential) {
         Inbox(router: nav[.inbox])
       }
-        .background(TabBarAccessor { tabBar in
-          if tabBarHeight != tabBar.bounds.height { tempGlobalState.tabBarHeight = tabBar.bounds.height }
-        })
-        .tag(Nav.TabIdentifier.inbox)
-        .tabItem {
-          VStack {
-            Image(systemName: "bell.fill")
-            Text("Inbox")
-          }
-        }
+      .tag(Nav.TabIdentifier.inbox)
+      .tabItem { Label("Inbox", systemImage: "bell.fill") }
       
       WithCredentialOnly(credential: redditCredentialsManager.selectedCredential) {
         Me(router: nav[.me])
       }
-        .background(TabBarAccessor { tabBar in
-          if tabBarHeight != tabBar.bounds.height { tempGlobalState.tabBarHeight = tabBar.bounds.height }
-        })
-        .tag(Nav.TabIdentifier.me)
-        .tabItem {
-          VStack {
-            Image(systemName: "person.fill")
-            if showUsernameInTabBar, let me = RedditAPI.shared.me, let data = me.data {
-              Text(data.name)
-            } else {
-              Text("Me")
-            }
-          }
-        }
+      .tag(Nav.TabIdentifier.me)
+      .tabItem { Label(showUsernameInTabBar ? RedditAPI.shared.me?.data?.name ?? "Me" : "Me", systemImage: "person.fill") }
       
       WithCredentialOnly(credential: redditCredentialsManager.selectedCredential) {
         Search(router: nav[.search])
       }
-        .background(TabBarAccessor { tabBar in
-          if tabBarHeight != tabBar.bounds.height { tempGlobalState.tabBarHeight = tabBar.bounds.height }
-        })
-        .tag(Nav.TabIdentifier.search)
-        .tabItem {
-          VStack {
-            Image(systemName: "magnifyingglass")
-            Text("Search")
-          }
-        }
+      .tag(Nav.TabIdentifier.search)
+      .tabItem { Label("Search", systemImage: "magnifyingglass") }
       
       Settings(router: nav[.settings])
-        .background(TabBarAccessor { tabBar in
-          if tabBarHeight != tabBar.bounds.height { tempGlobalState.tabBarHeight = tabBar.bounds.height }
-        })
         .tag(Nav.TabIdentifier.settings)
-        .tabItem {
-          VStack {
-            Image(systemName: "gearshape.fill")
-            Text("Settings")
-          }
-        }
+        .tabItem { Label("Settings", systemImage: "gearshape.fill") }
       
     }
-    .sheet(item: $tempGlobalState.editingCredential) { cred in
-      CredentialView(credential: cred).id("editing-credential-view-\(cred.id)")
-    }
-    .replyModalPresenter()
-    .overlay(
-      GeometryReader { geo in
-        GlobalLoaderView()
-          .frame(width: geo.size.width, height: geo.size.height, alignment: .bottom)
-      }
-        .ignoresSafeArea(.keyboard)
-      , alignment: .bottom
-    )
-    .overlay(
-      tabBarHeight == nil
-      ? nil
-      : TabBarOverlay(tabHeight: tabHeight, meTabTap: meTabTap)
-      , alignment: .bottom
-    )
-    .background(OFWOpener(router: payload[Nav.TabIdentifier.posts]!.router))
-    .fullScreenCover(isPresented: Binding(get: { tempGlobalState.inAppBrowserURL != nil }, set: { val in
-      tempGlobalState.inAppBrowserURL = nil
-    })) {
-      if let url = tempGlobalState.inAppBrowserURL {
-        SafariWebView(url: url)
-          .ignoresSafeArea()
-      }
-    }
+    .overlay(TabBarOverlay(tabHeight: tabHeight, meTabTap: meTabTap), alignment: .bottom)
+    .openFromWebListener()
+    .themeFetchingListener()
+    .newCredentialListener()
+    .themeImportingListener()
+    .globalLoaderProvider()
     .environmentObject(tempGlobalState)
-    .alert("Success!", isPresented: $importedThemeAlert) {
-      Button("Nice!", role: .cancel) {
-        importedThemeAlert = false
-      }
-    } message: {
-      Text("The theme was imported successfully. Enable it in \"Themes\" section in the Settings tab.")
-    }
     .task(priority: .background) {
       async let _ = cleanCredentialOrphanEntities()
       async let _ = autoSelectCredentialIfNil()
@@ -198,144 +118,11 @@ struct Tabber: View, Equatable {
       if RedditCredentialsManager.shared.selectedCredential != nil {
         async let _ = RedditAPI.shared.fetchMe(force: true)
       }
-      //      if RedditCredentialsManager.shared.credentials.count == 0 {
-      //        withAnimation(spring) { tempGlobalState.credModalOpen = true }
-      //      }
-      testAnnouncement = await winstonAPI.getAnnouncement()
-      if let testAnnouncement {
-        showingAnnouncement = testAnnouncement.timestamp != Defaults[.lastSeenAnnouncementTimeStamp]
-      } else {
-        showingAnnouncement = false
+      if let ann = await WinstonAPI.shared.getAnnouncement() {
+        Nav.present(.announcement(ann))
       }
-    }
-//    .onChange(of: redditCredentialsManager.credentials.count) { count in
-//      if count == 0 {
-//        withAnimation(spring) { TempGlobalState.shared.credModalOpen = true }
-//      }
-//    }
-    .sheet(isPresented: $showingAnnouncement, content: {
-      if let testAnnouncement {
-        AnnouncementSheet(showingAnnouncement: $showingAnnouncement,announcement: testAnnouncement)
-      } else {
-        ProgressView()
-      }
-    })
-    .sheet(isPresented: $showingSharedThemeSheet, content: {
-      if let theme = sharedTheme {
-        ThemeStoreDetailsView(themeData: theme)
-      } else {
-        HStack {
-          VStack{
-            ProgressView()
-          }
-        }
-      }
-    })
-    .onOpenURL { url in
-      
-      if tempGlobalState.editingCredential == nil, let queryParams = url.queryParameters, let appID = queryParams["appID"], let appSecret = queryParams["appSecret"] {
-        tempGlobalState.credModalOpen = false
-        if var foundCred = redditCredentialsManager.credentials.first(where: { $0.apiAppID == appID }) {
-          foundCred.apiAppSecret = appSecret
-          tempGlobalState.editingCredential = foundCred
-        } else {
-          tempGlobalState.editingCredential = .init(apiAppID: appID, apiAppSecret: appSecret)
-        }
-      }
-      
-      if url.absoluteString.contains("winstonapp://theme/") {
-        let themeID = url.lastPathComponent
-        Task {
-          sharedTheme = await themeStoreAPI.fetchThemeByID(id: themeID)
-          showingSharedThemeSheet.toggle()
-        }
-      }
-      
-      if url.absoluteString.hasSuffix(".winston") || url.absoluteString.hasSuffix(".zip") {
-        TempGlobalState.shared.globalLoader.enable("Importing...")
-        let result = importTheme(at: url)
-        TempGlobalState.shared.globalLoader.dismiss()
-        if result {
-          importedThemeAlert = true
-        }
-        return
-      }
-      let parsed = parseRedditURL(url.absoluteString)
-      withAnimation {
-        switch parsed {
-        case .post(_, _), .subreddit(_), .user(_):
-          OpenFromWeb.shared.data = parsed
-          nav.activeTab = .posts
-        default:
-          break
-        }
-      }
-    }
-    .sheet(isPresented: $showTipJarModal) {
-      TipJar()
-    }
-    .sheet(isPresented: $tempGlobalState.credModalOpen) {
-      Onboarding(open: $tempGlobalState.credModalOpen)
-        .interactiveDismissDisabled(true)
     }
     .accentColor(currentTheme.general.accentColor.cs(colorScheme).color())
-    //    .id(currentTheme.general.tabBarBG)
   }
 }
 
-
-struct BlurRadialGradientView: UIViewRepresentable {
-  func makeUIView(context: Context) -> UIView {
-    let view = UIView()
-    addBlurWithGradient(view: view)
-    return view
-  }
-  
-  func updateUIView(_ uiView: UIView, context: Context) {
-  }
-  
-  private func addBlurWithGradient(view: UIView) {
-    let gradient = CAGradientLayer()
-    gradient.frame = view.bounds
-    gradient.colors = [UIColor.blue.cgColor, UIColor.blue.withAlphaComponent(0.0).cgColor]
-    gradient.startPoint = CGPoint(x: 0.5, y: 0.5)
-    gradient.endPoint = CGPoint(x: 1.0, y: 1.0)
-    gradient.locations = [0, 1]
-    
-    let blurEffect = UIBlurEffect.init(style: .systemMaterial)
-    let visualEffectView = UIVisualEffectView.init(effect: blurEffect)
-    visualEffectView.frame = gradient.bounds
-    
-    gradient.mask = visualEffectView.layer
-    view.layer.addSublayer(gradient)
-  }
-}
-
-struct TabBarAccessor: UIViewControllerRepresentable {
-  var callback: (UITabBar) -> Void
-  private let proxyController = ViewController()
-  
-  func makeUIViewController(context: UIViewControllerRepresentableContext<TabBarAccessor>) ->
-  UIViewController {
-    proxyController.callback = callback
-    return proxyController
-  }
-  
-  func updateUIViewController(_ uiViewController: UIViewController, context: UIViewControllerRepresentableContext<TabBarAccessor>) {
-  }
-  
-  typealias UIViewControllerType = UIViewController
-  
-  private class ViewController: UIViewController {
-    var callback: (UITabBar) -> Void = { _ in }
-    
-    override func viewWillAppear(_ animated: Bool) {
-      super.viewWillAppear(animated)
-      if let tabBar = self.tabBarController {
-        Task(priority: .background) {
-          self.callback(tabBar.tabBar)
-        }
-      }
-    }
-  }
-}

@@ -9,7 +9,7 @@ import SwiftUI
 import Popovers
 
 struct MultiLink: View {
-  @Binding var selectedSub: FirstSelectable?
+  @Binding var initialSelected: Router.NavDest?
   @StateObject var multi: Multi
   @StateObject private var subs = NonObservableArray<Subreddit>()
   
@@ -17,9 +17,7 @@ struct MultiLink: View {
     Menu {
       ForEach(subs.data) { sub in
         if let data = sub.data {
-          SubItemButton(data: data, action: { selectedSub = .sub(sub) })
-            // TO-DO
-          }
+          SubItemButton(data: data, action: { initialSelected = .reddit(.subFeed(sub)) })
         }
       }
     } label: {
@@ -37,12 +35,12 @@ struct MultiLink: View {
       .multilineTextAlignment(.center)
       .contentShape(Rectangle())
     } primaryAction: {
-      selectedSub = .multi(multi)
+      initialSelected = .reddit(.multiFeed(multi))
     }
     .onAppear {
       if subs.data.count == 0 {
         subs.data = multi.data?.subreddits?.compactMap { sub in
-          if let data = sub.data { return Subreddit(data: data, api: RedditAPI.shared) }
+          if let data = sub.data { return Subreddit(data: data) }
           return nil
         } ?? []
       }

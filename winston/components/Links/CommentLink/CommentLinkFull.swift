@@ -51,7 +51,7 @@ struct CommentLinkFull: View {
       .background(curveColor)
       .contentShape(Rectangle())
       .onTapGesture {
-        Nav.to(.reddit(.post(PostViewPayload(post: post))))
+        Nav.to(.reddit(.post(post)))
       }
       .allowsHitTesting(!loadMoreLoading)
       .opacity(loadMoreLoading ? 0.5 : 1)
@@ -59,23 +59,5 @@ struct CommentLinkFull: View {
     } else {
       Text("Depressive load full :(")
     }
-  }
-}
-
-
-struct Path {
-  typealias reddit = Reddit
-    
-    enum Reddit: Hashable, Codable {
-      case post(PostViewPayload)
-      case subFeed(Subreddit)
-      case subInfo(Subreddit)
-      case multiFeed(Multi)
-      case multiInfo(Multi)
-      case user(User)
-  }
-  
-  enum Setting: String, Hashable, Codable {
-    case behavior, appearance, credentials, about, commentSwipe, postSwipe, accessibility, faq, general, postFontSettings, themes, filteredSubreddits, appIcon, themeStore
   }
 }

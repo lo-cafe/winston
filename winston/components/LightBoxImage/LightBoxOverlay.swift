@@ -47,14 +47,14 @@ struct LightBoxOverlay: View {
       HStack(spacing: 12) {
         
           // MANDRAKE
-          // if let post {
-          //     LightBoxButton(icon: "bubble.right") {
-          //   if let data = post.data {
-          //         routerProxy.router.path.append(PostViewPayload(post: Post(id: post.id, api: post.redditAPI), sub: Subreddit(id: data.subreddit, api: post.redditAPI)))
-          //         dismiss()
-          //       }
-          //     }
-          // }
+//           if let post {
+//               LightBoxButton(icon: "bubble.right") {
+//             if let data = post.data {
+//                   Nav.to(.reddit(.post(Post(id: post.id, sub: Subreddit(id: data.subreddit)))))
+//                   dismiss()
+//                 }
+//               }
+//           }
         
         
         LightBoxButton(icon: "square.and.arrow.down") {

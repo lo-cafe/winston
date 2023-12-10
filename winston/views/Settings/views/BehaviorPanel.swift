@@ -76,13 +76,13 @@ struct BehaviorPanel: View {
           }
           .pickerStyle(DefaultPickerStyle())
           
-          WSNavigationLink(SettingsPages.filteredSubreddits, "Filtered Subreddits")
+          WSNavigationLink(.setting(.filteredSubreddits), "Filtered Subreddits")
         }
         
         
         Section {
           LabeledSlider(label: "Loading limit", value: Binding(get: { CGFloat(feedPostsLoadLimit) }, set: { val in feedPostsLoadLimit = Int(val) }), range: 15...100, disablePadding: true)
-          //            .themedListRowBG(enablePadding: true, disableBG: true)
+          //            .themedListRowLikeBG(enablePadding: true, disableBG: true)
         } footer: {
           Text("Sets how many posts to load per chunk (loads more on scroll)")
         }
@@ -95,7 +95,7 @@ struct BehaviorPanel: View {
         }
         
         Section("Posts") {
-          WSNavigationLink(SettingsPages.postSwipe, "Posts swipe settings")
+          WSNavigationLink(.setting(.postSwipe), "Posts swipe settings")
           Toggle("Loop videos", isOn: $loopVideos)
           Toggle("Autoplay videos (muted)", isOn: $autoPlayVideos)
           Toggle("Default mute fullscreen videos", isOn: $muteVideos)
@@ -201,7 +201,7 @@ struct BehaviorPanel: View {
         .themedListSection()
         
         Section("Comments") {
-          WSNavigationLink(SettingsPages.commentSwipe, "Comments Swipe Settings")
+          WSNavigationLink(.setting(.commentSwipe), "Comments Swipe Settings")
           
           Picker("Comments Sorting", selection: $preferredCommentSort) {
             ForEach(CommentSortOption.allCases, id: \.self) { val in

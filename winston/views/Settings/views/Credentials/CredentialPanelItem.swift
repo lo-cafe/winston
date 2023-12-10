@@ -14,7 +14,7 @@ struct CredentialPanelItem: View {
   @State private var deleteAlertOpened = false
     var body: some View {
       WListButton(showArrow: true) {
-        TempGlobalState.shared.editingCredential = cred
+        Nav.present(.editingCredential(cred))
       } label: {
         HStack {
           Label {

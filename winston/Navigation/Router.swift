@@ -8,45 +8,62 @@
 import Foundation
 import SwiftUI
 import Combine
-import AnyCodable
-
-class RouterIsRoot: ObservableObject {
-  @Published var isRoot = true
-}
 
 class Router: ObservableObject, Hashable, Equatable, Codable {
   let id: String
-  @Published var firstSelected: NavDest?
-  @Published var path: [NavDest] = []
+  
+  var firstSelected: NavDest? {
+    get { fullPath.isEmpty ? nil : fullPath[0] }
+    set {
+      if let newValue = newValue {
+        if fullPath.count == 0 { fullPath.append(newValue) } else { fullPath[0] = newValue } } else { fullPath = [] }
+    }
+  }
+  @Published var fullPath: [NavDest] = []
+  var path: [NavDest] {
+    get { Array(self.fullPath.dropFirst()) }
+    set {
+      if fullPath.isEmpty { self.fullPath = newValue } else { self.fullPath = [fullPath[0]] + newValue }
+    }
+  }
   @Published private(set) var isAtRoot = false
-
+  
   private var cancellables = Set<AnyCancellable>()
-
+  
   init(id: String) {
     self.id = id
-    Publishers.CombineLatest($firstSelected, $path)
-      .map { $0.0 == nil && $0.1.isEmpty }
-      .assign(to: \.isAtRoot, on: self)
-      .store(in: &cancellables)
+    $fullPath.map { $0.isEmpty }.assign(to: \.isAtRoot, on: self).store(in: &cancellables)
+    
   }
   
   func goBack() { self.path.removeLast() }
   func resetNavPath() { self.path.removeAll() }
-  func navigateTo(_ dest: NavDest, _ reset: Bool = false) { self.path = reset ? [dest] : self.path + [dest] }
+  func navigateTo(_ dest: NavDest, _ reset: Bool = false) {
+    self.path = reset ? [dest] : self.path + [dest]
+  }
   
-  enum NavDest: Hashable, Codable {
+  enum NavDest: Hashable, Codable, Identifiable {
+    var id: String {
+      switch self {
+      case .reddit(let reddit): return reddit.id
+      case .setting(let setting): return setting.id
+      }
+    }
     case reddit(Reddit)
     case setting(Setting)
     
-    enum Reddit: Hashable, Codable {
-      static var post: (Post) -> NavDest = { .reddit(.post($0)) }
-      static var postHighlighted: (Post, String) -> NavDest = { .reddit(.postHighlighted($0, $1)) }
-      static var subFeed: (Subreddit) -> NavDest = { .reddit(.subFeed($0)) }
-      static var subInfo: (Subreddit) -> NavDest = { .reddit(.subInfo($0)) }
-      static var multiFeed: (Multi) -> NavDest = { .reddit(.multiFeed($0)) }
-      static var multiInfo: (Multi) -> NavDest = { .reddit(.multiInfo($0)) }
-      static var user: (User) -> NavDest = { .reddit(.user($0)) }
-      
+    enum Reddit: Hashable, Codable, Identifiable {
+      var id: String {
+        switch self {
+        case .post(let post): return post.id
+        case .postHighlighted(let post, _): return post.id
+        case .subFeed(let subreddit): return subreddit.id
+        case .subInfo(let subreddit): return subreddit.id
+        case .multiFeed(let multi): return multi.id
+        case .multiInfo(let multi): return multi.id
+        case .user(let user): return user.id
+        }
+      }
       case post(Post)
       case postHighlighted(Post, String)
       case subFeed(Subreddit)
@@ -55,7 +72,8 @@ class Router: ObservableObject, Hashable, Equatable, Codable {
       case multiInfo(Multi)
       case user(User)
     }
-    enum Setting: String, Hashable, Codable {
+    enum Setting: String, Hashable, Codable, Identifiable {
+      var id: String { self.rawValue }
       case behavior, appearance, credentials, about, commentSwipe, postSwipe, accessibility, faq, general, postFontSettings, themes, filteredSubreddits, appIcon, themeStore
     }
   }
@@ -72,7 +90,6 @@ class Router: ObservableObject, Hashable, Equatable, Codable {
   }
   
   required init(from decoder: Decoder) throws {
-    let t = defaultTheme.comments
     let container = try decoder.container(keyedBy: CodingKeys.self)
     self.id = try container.decode(String.self, forKey: .id)
     self.firstSelected = try container.decodeIfPresent(NavDest.self, forKey: .firstSelected)

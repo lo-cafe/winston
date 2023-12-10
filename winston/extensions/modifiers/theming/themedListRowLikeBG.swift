@@ -1,5 +1,5 @@
 //
-//  themedListRowBG.swift
+//  themedListRowLikeBG.swift
 //  winston
 //
 //  Created by Igor Marcossi on 19/09/23.
@@ -10,7 +10,7 @@ import SwiftUI
 import Shiny
 
 /// A view modifier to apply a themed background to a list row.
-struct ThemedListRowBGModifier: ViewModifier {
+struct ThemedListRowLikeBGModifier: ViewModifier {
   /// Whether to enable horizontal and vertical padding.
   var enablePadding = false
   /// Whether to disable the background.
@@ -47,7 +47,7 @@ extension View {
   ///   - active: Whether the row is active (default is `false`).
   ///   - shiny: The shiny gradient applied to the background (default is `nil`).
   /// - Returns: A modified version of the view with the themed background applied.
-  func themedListRowBG(enablePadding: Bool = false, disableBG: Bool = false, active: Bool = false, pressed: Bool = false, shiny: Gradient? = nil) -> some View {
-    self.modifier(ThemedListRowBGModifier(enablePadding: enablePadding, disableBG: disableBG, active: active, pressed: pressed, shiny: shiny))
+  func themedListRowLikeBG(enablePadding: Bool = false, disableBG: Bool = false, active: Bool = false, pressed: Bool = false, shiny: Gradient? = nil) -> some View {
+    self.modifier(ThemedListRowLikeBGModifier(enablePadding: enablePadding, disableBG: disableBG, active: active, pressed: pressed, shiny: shiny))
   }
 }

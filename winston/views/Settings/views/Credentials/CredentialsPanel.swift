@@ -56,7 +56,7 @@ struct CredentialsPanel: View {
 //      Text("Your API credentials are 👌")
 //    }
 //  }
-//  .themedListRowBG(enablePadding: true)
+//  .themedListRowLikeBG(enablePadding: true)
 //  
 //  if let accessToken = RedditCredentialsManager.shared.selectedCredential?.accessToken?.token {
 //    WSListButton("Copy Current Access Token", icon: "clipboard") {
@@ -71,13 +71,13 @@ struct CredentialsPanel: View {
 //  }
 //  
 //  Text("If Reddit ban the user-agent this app uses, you can change it to a custom one here:")
-//    .themedListRowBG(enablePadding: true)
+//    .themedListRowLikeBG(enablePadding: true)
 //  
 //  HStack {
 //    Image(systemName: "person.crop.circle.fill")
 //    TextField("User Agent", text: $redditAPIUserAgent)
 //  }
-//  .themedListRowBG(enablePadding: true)
+//  .themedListRowLikeBG(enablePadding: true)
 //}
 //.themedListSection()
 //

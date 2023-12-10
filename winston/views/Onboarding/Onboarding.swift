@@ -14,7 +14,6 @@ private let HANG_ANIM = Animation.spring(response: 0.3, dampingFraction: 0.5)
 private let ROT_ANIM = Animation.spring(response: 0.4, dampingFraction: 0.25)
 
 struct Onboarding: View {
-  @Binding var open: Bool
   @State private var currentTab = 0
   @State var showStars = false
   @State var hanging = true
@@ -79,7 +78,7 @@ struct Onboarding: View {
         .contentShape(Rectangle())
         .simultaneousGesture(DragGesture())
         .tag(7)
-      Onboarding7Ending(open: $open)
+      Onboarding7Ending()
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .contentShape(Rectangle())
         .simultaneousGesture(DragGesture())

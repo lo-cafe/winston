@@ -37,7 +37,7 @@ struct UserLink: View {
         .padding(.horizontal, noHPad ? 0 : 16)
         .padding(.vertical, 14)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .themedListRowBG()
+        .themedListRowLikeBG()
         .mask(RR(20, .black))
         .onTapGesture {
           Nav.to(.reddit(.user(user)))

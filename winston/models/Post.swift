@@ -475,7 +475,7 @@ extension Post {
         //          )
         //          await MainActor.run {
         //            withAnimation {
-        //              childrenWinston.data.append(Comment(data: newComment, api: self.redditAPI))
+        //              childrenWinston.data.append(Comment(data: newComment))
         //            }
         //          }
         //        }

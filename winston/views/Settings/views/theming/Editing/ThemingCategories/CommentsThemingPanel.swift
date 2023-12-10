@@ -91,7 +91,7 @@ struct CommentsGeneralSettings: View {
 struct CommentsThemingPanel: View {
   @Binding var theme: WinstonTheme
   @State private var selectedCategory = Category.general.rawValue
-  @StateObject private var sampleComment = Comment(data: getCommentSampleData(), api: RedditAPI.shared)
+  @StateObject private var sampleComment = Comment(data: getCommentSampleData())
 //  
   var body: some View {
     ScrollWithPreview(handlerBGOnly: false, theme: theme.postLinks.bg) {

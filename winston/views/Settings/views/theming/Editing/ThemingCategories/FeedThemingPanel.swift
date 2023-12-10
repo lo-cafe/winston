@@ -10,8 +10,8 @@ import Defaults
 
 struct FeedThemingPanel: View {
   @Binding var theme: WinstonTheme
-  @StateObject private var previewPostSample = Post(data: postSampleData, api: RedditAPI.shared)
-  @StateObject private var previewPostSubSample = Subreddit(id: postSampleData.subreddit, api: RedditAPI.shared)
+  @StateObject private var previewPostSample = Post(data: postSampleData)
+  @StateObject private var previewPostSubSample = Subreddit(id: postSampleData.subreddit)
   
   @Default(.blurPostLinkNSFW) private var blurPostLinkNSFW
   @Default(.postSwipeActions) private var postSwipeActions

@@ -52,7 +52,7 @@ struct PostSwipePanel: View {
               Label("Long Drag Right", image: "longDragRight")
             }
           }
-//          .themedListRowBG(enablePadding: true, disableBG: true)
+//          .themedListRowLikeBG(enablePadding: true, disableBG: true)
         }
         .themedListSection()
         

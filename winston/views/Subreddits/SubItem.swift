@@ -13,8 +13,6 @@ struct SubItemButton: View, Equatable {
     lhs.data == rhs.data
   }
   
-//  @Binding var selectedSub: FirstSelectable?
-//  weak var sub: Subreddit?
   var data: SubredditData
   var action: () -> ()
   var body: some View {
@@ -32,7 +30,7 @@ struct SubItem: View, Equatable {
     lhs.sub == rhs.sub
   }
   
-  @Binding var selectedSub: FirstSelectable?
+  @Binding var selectedSub: Router.NavDest?
   @ObservedObject var sub: Subreddit
   var cachedSub: CachedSub
   @Default(.likedButNotSubbed) private var likedButNotSubbed
@@ -50,9 +48,9 @@ struct SubItem: View, Equatable {
     if let data = sub.data {
       let favorite = cachedSub.user_has_favorited
       let localFav = likedButNotSubbed.contains(sub)
-      let isActive = selectedSub == .sub(sub)
+      let isActive = selectedSub == .reddit(.subFeed(sub))
       WListButton(showArrow: !IPAD, active: isActive) {
-        selectedSub = .sub(sub)
+        selectedSub = .reddit(.subFeed(sub))
       } label: {
         HStack {
           Label {

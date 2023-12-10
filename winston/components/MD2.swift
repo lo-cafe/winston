@@ -101,7 +101,7 @@ struct MD2: UIViewRepresentable {
           hostingController.overrideUserInterfaceStyle = .dark
           UIApplication.shared.firstKeyWindow?.rootViewController?.present(hostingController, animated: true)
         } else {
-          openInBuiltInBrowser(url)
+          Nav.openURL(url)
         }
         return false
         //      case .presentActions:

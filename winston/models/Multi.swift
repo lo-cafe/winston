@@ -14,12 +14,12 @@ typealias Multi = GenericRedditEntity<MultiData, AnyHashable>
 extension Multi {
   static var prefix = "LabeledMulti"
   var selfPrefix: String { Self.prefix }
-  convenience init(data: T, api: RedditAPI) {
-    self.init(data: data, api: api, typePrefix: "\(Post.prefix)_")
+  convenience init(data: T) {
+    self.init(data: data, typePrefix: "\(Post.prefix)_")
   }
   
-  convenience init(id: String, api: RedditAPI) {
-    self.init(id: id, api: api, typePrefix: "\(Post.prefix)_")
+  convenience init(id: String) {
+    self.init(id: id, typePrefix: "\(Post.prefix)_")
   }
   
   func fetchData() async -> Bool? {
@@ -32,7 +32,7 @@ extension Multi {
   func fetchPosts(sort: SubListingSortOption = .best, after: String? = nil, contentWidth: CGFloat = UIScreen.screenWidth) async -> ([Post]?, String?)? {
     if let data = data {
       if let response = await RedditAPI.shared.fetchMultiPosts(path: data.path, sort: sort, after: after), let data = response.0 {
-        return (Post.initMultiple(datas: data.compactMap { $0.data }, api: RedditAPI.shared, fetchSubs: true, contentWidth: contentWidth), response.1)
+        return (Post.initMultiple(datas: data.compactMap { $0.data }, contentWidth: contentWidth), response.1)
       }
     }
     return nil

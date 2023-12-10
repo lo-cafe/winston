@@ -22,10 +22,10 @@ struct ThemeEditPanel: View {
   @State private var themeColor: Color = .blue
   @State private var navPath: [ThemeEditPanels] = []
   
-  //  init(theme: WinstonTheme) {
-  //    self.index = Defaults[.themesPresets].firstIndex(of: theme) ?? 0
-  ////    self._theme = State(initialValue: theme)
-  //  }
+  @Environment(\.dismiss) private var dismiss
+  
+  var anyChanges: Bool { theme != draftTheme }
+
   var body: some View {
     NavigationStack(path: $navPath) {
       List {
@@ -47,7 +47,6 @@ struct ThemeEditPanel: View {
             WSListButton(showArrow: true, "Post page", icon: "doc.richtext.fill") { navPath.append(ThemeEditPanels.posts) }
             WSListButton(showArrow: true, "Comments", icon: "message.fill") { navPath.append(ThemeEditPanels.comments) }
           }
-          //      .themedListSection()
           
           Section("Metadatas") {
             
@@ -64,12 +63,8 @@ struct ThemeEditPanel: View {
                   .foregroundColor(theme.metadata.color.color())
               }
             }
-            .sheet(isPresented: $iconPickerOpen) {
-              SymbolPicker(symbol: $draftTheme.metadata.icon)
-            }
             
-            Group {
-              ThemeColorPicker("Icon background color", $draftTheme.metadata.color)
+            ThemeColorPicker("Icon background color", $draftTheme.metadata.color)
               LabeledTextField("Name", $draftTheme.metadata.name)
               LabeledTextField("Author", $draftTheme.metadata.author)
               
@@ -84,8 +79,7 @@ struct ThemeEditPanel: View {
                   .padding(.bottom, 8)
                   .fontSize(15)
               }
-            }
-            //          .themedListRowBG(enablePadding: true, disableBG: true)
+                      .themedListRowLikeBG(enablePadding: true, disableBG: true)
             
           }
           
@@ -95,9 +89,23 @@ struct ThemeEditPanel: View {
       }
       .themedListBG(draftTheme.lists.bg)
       .scrollDismissesKeyboard(.interactively)
-      .onAppear { draftTheme = theme }
+      .onAppear { if draftTheme.id != theme.id { draftTheme = theme } }
       .navigationTitle(theme.metadata.name)
       .navigationBarTitleDisplayMode(.inline)
+      .toolbar {
+        ToolbarItem(placement: .topBarLeading) {
+          Button("Cancel", role: .destructive) {
+            dismiss()
+          }
+        }
+        ToolbarItem(placement: .topBarTrailing) {
+          Button("Save") {
+            draftTheme.save()
+            dismiss()
+          }
+          .disabled(!anyChanges)
+        }
+      }
       .navigationDestination(for: ThemeEditPanels.self) { x in
         Group {
           switch x {
@@ -115,9 +123,13 @@ struct ThemeEditPanel: View {
             CommonListsThemingPanel(theme: $draftTheme)
           }
         }
-        .environment(\.useTheme, theme)
+        .environment(\.useTheme, draftTheme)
       }
-      .environment(\.useTheme, theme)
+      .sheet(isPresented: $iconPickerOpen) {
+        SymbolPicker(symbol: $draftTheme.metadata.icon)
+      }
+      .environment(\.useTheme, draftTheme)
     }
+    .interactiveDismissDisabled(anyChanges)
   }
 }

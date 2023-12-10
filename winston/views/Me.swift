@@ -13,25 +13,24 @@ struct Me: View {
   
   @State private var loading = true
   var body: some View {
-    NavigationStack(path: $router.path) {
-      DefaultDestinationInjector {
-        Group {
-          if let user = redditAPI.me {
-            UserView(user: user)
-              .id("me-user-view-\(user.id)")
-            
-          } else {
-            ProgressView()
-              .progressViewStyle(.circular)
-              .frame(maxWidth: .infinity, minHeight: UIScreen.screenHeight - 200 )
-              .onAppear {
-                Task(priority: .background) {
-                  await RedditAPI.shared.fetchMe(force: true)
-                }
+    NavigationStack(path: $router.fullPath) {
+      Group {
+        if let user = redditAPI.me {
+          UserView(user: user)
+            .id("me-user-view-\(user.id)")
+          
+        } else {
+          ProgressView()
+            .progressViewStyle(.circular)
+            .frame(maxWidth: .infinity, minHeight: UIScreen.screenHeight - 200 )
+            .onAppear {
+              Task(priority: .background) {
+                await RedditAPI.shared.fetchMe(force: true)
               }
-          }
+            }
         }
       }
+      .injectInTabDestinations()
     }
     .swipeAnywhere()
   }

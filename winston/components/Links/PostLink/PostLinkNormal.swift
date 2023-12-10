@@ -69,7 +69,7 @@ struct PostLinkNormal: View, Equatable, Identifiable {
   
   func openSubreddit() {
     if let subName = post.data?.subreddit {
-      Nav.to(.reddit(.subFeed(Subreddit(id: subName, api: RedditAPI.shared))))
+      Nav.to(.reddit(.subFeed(Subreddit(id: subName))))
     }
   }
   

@@ -9,7 +9,6 @@ import SwiftUI
 import Defaults
 
 struct SubredditsStack: View {
-  var reset: Bool
   @ObservedObject var router: Router
   @Default(.preferenceDefaultFeed) private var preferenceDefaultFeed // handle default feed selection routing
   @Default(.redditCredentialSelectedID) private var redditCredentialSelectedID
@@ -27,21 +26,25 @@ struct SubredditsStack: View {
       }
     } detail: {
       NavigationStack(path: $router.path) {
-        DefaultDestinationInjector {
+        Group {
           if let firstSelected = router.firstSelected {
             switch firstSelected {
-            case .multi(let multi):
+            case .reddit(.multiFeed(let multi)):
               MultiPostsView(multi: multi)
                 .id("\(multi.id)-multi-first-tab")
-            case .sub(let sub):
+            case .reddit(.subFeed(let sub)):
               SubredditPosts(subreddit: sub)
                 .id("\(sub.id)-sub-first-tab")
-            case .post(let payload):
-              PostView(post: payload.post, subreddit: payload.sub)
-                .id("\(payload.post.id)-post-first-tab")
-            case .user(let user):
+            case .reddit(.post(let post)):
+              if let sub = post.winstonData?.subreddit {
+                PostView(post: post, subreddit: sub)
+                  .id("\(post.id)-post-first-tab")
+              }
+            case .reddit(.user(let user)):
               UserView(user: user)
                 .id("\(user.id)-user-first-tab")
+            default:
+              EmptyView()
             }
           } else {
             VStack(spacing: 24) {
@@ -59,11 +62,12 @@ struct SubredditsStack: View {
             }
           }
         }
+        .injectInTabDestinations()
         .task(priority: .background) {
           if !loaded {
             // MARK: Route to default feed
             if preferenceDefaultFeed != "subList" && router.path.count == 0 { // we are in subList, can ignore
-              let tempSubreddit = Subreddit(id: preferenceDefaultFeed, api: RedditAPI.shared)
+              let tempSubreddit = Subreddit(id: preferenceDefaultFeed)
               router.navigateTo(.reddit(.subFeed(tempSubreddit)))
             }
             
@@ -79,11 +83,5 @@ struct SubredditsStack: View {
     }
     .swipeAnywhere()
     .environment(\.contentWidth, postContentWidth)
-    .onChange(of: reset) { _ in
-      withAnimation {
-        router.resetNavPath()
-        router.firstSelected = nil
-      }
-    }
   }
 }

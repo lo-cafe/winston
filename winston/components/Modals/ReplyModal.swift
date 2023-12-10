@@ -105,7 +105,6 @@ struct ReplyModal<Content: View>: View {
   var action: ((@escaping (Bool) -> ()), String) -> ()
   let content: (() -> Content)?
   
-  @ObservedObject private var globalLoader = TempGlobalState.shared.globalLoader
   
   @State private var alertExit = false
   @StateObject private var textWrapper: TextFieldObserver
@@ -118,6 +117,8 @@ struct ReplyModal<Content: View>: View {
   @Environment(\.useTheme) private var selectedTheme
   @FetchRequest(sortDescriptors: []) var drafts: FetchedResults<ReplyDraft>
   @Environment(\.colorScheme) private var cs
+  @Environment(\.globalLoaderStart) private var globalLoaderStart
+  @Environment(\.globalLoaderDismiss) private var globalLoaderDismiss
   @ObservedObject var redditAPI = RedditAPI.shared
   
   init(title: String = "Replying", loadingLabel: String = "Commenting...", submitBtnLabel: String = "Send", thingFullname: String, action: @escaping (@escaping (Bool) -> Void, String) -> Void, text: String? = nil, content: (() -> Content)?) {
@@ -168,9 +169,9 @@ struct ReplyModal<Content: View>: View {
           withAnimation(spring) {
             dismiss()
           }
-          globalLoader.enable(loadingLabel)
+          globalLoaderStart(loadingLabel)
           action({ result in
-            globalLoader.dismiss()
+            globalLoaderDismiss()
             if result {
               if let currentDraft = currentDraft {
                 Task {

@@ -61,7 +61,6 @@ struct winstonApp: App {
 }
 
 struct AppContent: View {
-  @ObservedObject private var winstonAPI = WinstonAPI()
   var selectedTheme: WinstonTheme
   @StateObject private var themeStore = ThemeStoreAPI()
   @Environment(\.colorScheme) private var cs
@@ -73,13 +72,13 @@ struct AppContent: View {
   
   var body: some View {
     AccountSwitcherProvider {
-      Tabber(theme: selectedTheme, cs: cs).equatable()
+      GlobalDestinationsProvider {
+        Tabber(theme: selectedTheme, cs: cs).equatable()
+      }
     }
     .whatsNewSheet()
-    .environmentObject(winstonAPI)
     .environmentObject(themeStore)
     //        .alertToastRoot()
-    //        .tint(selectedTheme.general.accentColor.cs(cs).color())
     .onChange(of: scenePhase) { newPhase in
       let useAuth = UserDefaults.standard.bool(forKey: "useAuth") // Get fresh value
       

@@ -30,7 +30,7 @@ struct MessageLink: View {
       .padding(.horizontal, 16)
       .padding(.vertical, 12)
       .frame(maxWidth: .infinity, alignment: .topLeading)
-      .themedListRowBG()
+      .themedListRowLikeBG()
       .mask(RR(20, .black))
       .allowsHitTesting(false)
       .compositingGroup()

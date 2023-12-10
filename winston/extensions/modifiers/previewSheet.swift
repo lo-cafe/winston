@@ -1,5 +1,5 @@
 //
-//  subtleSheet.swift
+//  previewSheet.swift
 //  winston
 //
 //  Created by Igor Marcossi on 14/09/23.
@@ -13,7 +13,7 @@ private let handlerHeight: CGFloat = 36
 private let handlerRadius: CGFloat = 18
 private let bodyRadius: CGFloat = 32
 
-struct SubtleSheetModifier<T: View>: ViewModifier {
+struct PreviewSheetModifier<T: View>: ViewModifier {
   var handlerBGOnly = false
   var scrollContentHeight: CGFloat
   @Binding var sheetContentSize: CGSize
@@ -26,7 +26,6 @@ struct SubtleSheetModifier<T: View>: ViewModifier {
   @GestureState private var dragOffsetRaw: CGFloat?
   @State private var initialDragOffset: CGFloat?
   @State private var currentStepIndex: Int = 0
-  //  @ObservedObject private var tempGlobalState = TempGlobalState.shared
   
   var pointZero: CGFloat { UIScreen.screenHeight - handlerHeight }
   var stepPoints: [CGFloat] { [pointZero - forcedOffset, pointZero - (sheetContentSize.height / 2) - max(0, forcedOffset - (sheetContentSize.height / 2)), pointZero - sheetContentSize.height] }
@@ -111,8 +110,8 @@ struct SubtleSheetModifier<T: View>: ViewModifier {
 }
 
 extension View {
-  func subtleSheet(handlerBGOnly: Bool = false, scrollContentHeight: CGFloat, sheetContentSize: Binding<CGSize>, forcedOffset: CGFloat = 0, bg: any ShapeStyle, border: Bool = false, @ViewBuilder _ content: @escaping (CGFloat) -> (some View)) -> some View {
-    self.modifier(SubtleSheetModifier(handlerBGOnly: handlerBGOnly, scrollContentHeight: scrollContentHeight, sheetContentSize: sheetContentSize, forcedOffset: forcedOffset, sheetContent: content, bg: bg, border: border))
+  func previewSheet(handlerBGOnly: Bool = false, scrollContentHeight: CGFloat, sheetContentSize: Binding<CGSize>, forcedOffset: CGFloat = 0, bg: any ShapeStyle, border: Bool = false, @ViewBuilder _ content: @escaping (CGFloat) -> (some View)) -> some View {
+    self.modifier(PreviewSheetModifier(handlerBGOnly: handlerBGOnly, scrollContentHeight: scrollContentHeight, sheetContentSize: sheetContentSize, forcedOffset: forcedOffset, sheetContent: content, bg: bg, border: border))
   }
 }
 

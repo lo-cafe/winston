@@ -24,7 +24,7 @@ struct ScrollWithPreview<Content: View, Preview: View>: View {
   @ViewBuilder let content: () -> Content
   @ViewBuilder let preview: () -> Preview
     var body: some View {
-      let tabHeight = (tempGlobalState.tabBarHeight ?? 0)
+      let tabHeight = CGFloat(tempGlobalState.tabBarHeight ?? 0)
       let interpolation = [
         -((UIScreen.screenHeight - (tabHeight)) - ((contentSize.height + getSafeArea().top + tabHeight) - (previewContentSize.height + 40 + 16))),
          (contentSize.height + getSafeArea().top + tabHeight) - (UIScreen.screenHeight - (getSafeArea().top)) - 20
@@ -35,7 +35,7 @@ struct ScrollWithPreview<Content: View, Preview: View>: View {
           .padding(.bottom, previewContentSize.height + 40 + 16)
           .measure($contentSize)
       }
-      .subtleSheet(handlerBGOnly: handlerBGOnly, scrollContentHeight: contentSize.height, sheetContentSize: $previewContentSize, forcedOffset: interpolate([0, previewContentSize.height], false), bg: defaultBG.cs(cs).color(), border: currentTheme.lists.bg == theme && previewBG == .theme) { handlerHeight in
+      .previewSheet(handlerBGOnly: handlerBGOnly, scrollContentHeight: contentSize.height, sheetContentSize: $previewContentSize, forcedOffset: interpolate([0, previewContentSize.height], false), bg: defaultBG.cs(cs).color(), border: currentTheme.lists.bg == theme && previewBG == .theme) { handlerHeight in
         VStack(spacing: 12) {
           let opts = [
             CarouselTagElement(label: "Blur", icon: { Image(systemName: "circle.dotted") }, value: PreviewBG.blur),

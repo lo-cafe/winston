@@ -14,12 +14,12 @@ import Shiny
 struct ThemedListSectionModifier: ViewModifier {
   @Environment(\.useTheme) private var theme
   @Environment(\.colorScheme) private var cs
-  
+    
   func body(content: Content) -> some View {
     content
       .listRowBackground(ListRowBackground(theme: theme).equatable())
       .listRowSeparatorTint(theme.lists.dividersColors.cs(cs).color())
-      .id(cs)
+//      .id(cs)
   }
 }
 

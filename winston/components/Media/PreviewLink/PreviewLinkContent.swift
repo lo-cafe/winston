@@ -22,10 +22,9 @@ struct PreviewLinkContent: View {
   var url: URL
   static let height: CGFloat = 88
   @Environment(\.openURL) private var openURL
-  @ObservedObject private var tempGlobalState = TempGlobalState.shared
   @Default(.openLinksInSafari) private var openLinksInSafari
   var body: some View {
-    PreviewLinkContentRaw(compact: compact, image: viewModel.image, title: viewModel.title, description: viewModel.description, loading: viewModel.loading, url: url, openURL: openURL, globalURL: $tempGlobalState.inAppBrowserURL, openLinksInSafari: openLinksInSafari)
+    PreviewLinkContentRaw(compact: compact, image: viewModel.image, title: viewModel.title, description: viewModel.description, loading: viewModel.loading, url: url, openURL: openURL, openLinksInSafari: openLinksInSafari)
   }
 }
 
@@ -43,7 +42,6 @@ struct PreviewLinkContentRaw: View, Equatable {
   var loading: Bool
   var url: URL
   var openURL: OpenURLAction
-  @Binding var globalURL: URL?
   var openLinksInSafari: Bool
     
   var body: some View {
@@ -113,7 +111,7 @@ struct PreviewLinkContentRaw: View, Equatable {
         if openLinksInSafari {
           openURL(newURL)
         } else {
-          openInBuiltInBrowser(newURL)
+          Nav.openURL(newURL)
         }
       }
     })

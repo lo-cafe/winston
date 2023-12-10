@@ -30,7 +30,6 @@ extension EnvironmentValues {
     get { self[BrighterBGKey.self] }
     set { self[BrighterBGKey.self] = newValue }
   }
-
   var primaryBGContext: NSManagedObjectContext {
     get { self[PrimaryBGContextKey.self] }
     set { self[PrimaryBGContextKey.self] = newValue }

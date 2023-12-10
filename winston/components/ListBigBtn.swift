@@ -19,14 +19,12 @@ struct ListBigBtn: View {
   var iconColor: Color
   /// The label text.
   var label: String
-  /// The destination subreddit.
-  var destination: Subreddit?
   /// The shiny gradient applied to the button.
   var shiny: Gradient?
-  /// The value associated with the button.
-  var value: (any Hashable)?
-  @State private var pressed = false
+  /// The action the button will perform.
+  var action: () -> ()
   
+  @State private var pressed = false
   @Environment(\.useTheme) private var theme
   @Environment(\.colorScheme) private var cs
   
@@ -40,25 +38,18 @@ struct ListBigBtn: View {
   ///   - label: The label text.
   ///   - icon: The icon name.
   ///   - shiny: The shiny gradient applied to the button (default is `nil`).
-  init(selectedSub: Binding<Router.NavDest?>? = nil, value: (any Hashable)? = nil, destination: Subreddit? = nil, icon: String, iconColor: Color, label: String, shiny: Gradient? = nil) {
+  init(selectedSub: Binding<Router.NavDest?>? = nil, value: (any Hashable)? = nil, destination: Subreddit? = nil, icon: String, iconColor: Color, label: String, shiny: Gradient? = nil, action: @escaping () -> ()) {
     self._selectedSub = selectedSub ?? .constant(nil)
-    self.value = value
     self.label = label
     self.iconColor = iconColor
     self.icon = icon
     self.shiny = shiny
-    self.destination = destination
+    self.action = action
   }
   
   var body: some View {
     let isNotCircled = !icon.contains("circle")
-    Button {
-      if let destination {
-        selectedSub = .reddit(.subFeed(destination))
-      } else if let value {
-        routerProxy.router.path.append(value)
-      }
-    } label: {
+    Button(action: action) {
       VStack(alignment: .leading, spacing: 8) {
         Image(systemName: icon)
           .symbolRenderingMode(.palette)
@@ -71,7 +62,7 @@ struct ListBigBtn: View {
       .padding(.all, 10)
       .frame(maxWidth: .infinity, alignment: .leading)
       .foregroundColor(.primary)
-      .themedListRowBG(pressed: pressed, shiny: shiny)
+      .themedListRowLikeBG(pressed: pressed, shiny: shiny)
       .mask(RoundedRectangle(cornerRadius: 10).foregroundColor(.black))
       .contentShape(RoundedRectangle(cornerRadius: 13))
       //    .onChange(of: reset) { _ in active = false }

@@ -10,12 +10,6 @@ import Defaults
 import AVFoundation
 import AlertToast
 
-struct PostViewPayload: Hashable, Equatable, Codable {
-  let post: Post
-  let sub: Subreddit
-  var highlightID: String? = nil
-}
-
 struct PostView: View, Equatable {
   static func == (lhs: PostView, rhs: PostView) -> Bool {
     lhs.post.id == rhs.post.id && lhs.subreddit.id == rhs.subreddit.id
@@ -31,6 +25,7 @@ struct PostView: View, Equatable {
   @State private var hideElements = true
   @State private var sort: CommentSortOption = Defaults[.preferredCommentSort]
   //  @State private var sort: CommentSortOption = .confidence
+  @Environment(\.globalLoaderStart) private var globalLoaderStart
   
   @State var update = false
     
@@ -109,7 +104,7 @@ struct PostView: View, Equatable {
           if !ignoreSpecificComment && highlightID != nil {
             Section {
               Button {
-                TempGlobalState.shared.globalLoader.enable("Loading full post...")
+                globalLoaderStart("Loading full post...")
                 withAnimation {
                   ignoreSpecificComment = true
                 }

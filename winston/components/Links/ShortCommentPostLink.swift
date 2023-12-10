@@ -31,7 +31,7 @@ struct ShortCommentPostLink: View {
         VStack(alignment: .leading, spacing: 2) {
           if let author = data.author {
             (Text(author).font(.system(size: selectedTheme.postLinks.theme.badge.authorText.size, weight: selectedTheme.postLinks.theme.badge.authorText.weight.t)).foregroundColor(author == "[deleted]" ? .red: selectedTheme.postLinks.theme.badge.authorText.color.cs(cs).color()))
-              .onTapGesture { Nav.to(.reddit(.user(User(id: data.author!, api: comment.redditAPI)))) }
+              .onTapGesture { Nav.to(.reddit(.user(User(id: data.author!)))) }
           }
           
           if let subreddit = data.subreddit {

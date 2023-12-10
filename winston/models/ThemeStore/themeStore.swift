@@ -22,7 +22,8 @@ class ThemeStoreAPI: ObservableObject {
 
 
 
-struct ThemeData: Codable, Hashable {
+struct ThemeData: Codable, Hashable, Identifiable {
+  var id: String { self.file_id ?? UUID().uuidString }
   var file_name: String?
   var file_id: String?
   var theme_name: String?

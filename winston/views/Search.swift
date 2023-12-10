@@ -83,7 +83,7 @@ struct Search: View {
     case .subreddit:
       resultsSubs.data.removeAll()
       Task(priority: .background) {
-        if let subs = await RedditAPI.shared.searchSubreddits(searchQuery.text)?.map({ Subreddit(data: $0, api: RedditAPI.shared) }) {
+        if let subs = await RedditAPI.shared.searchSubreddits(searchQuery.text)?.map({ Subreddit(data: $0) }) {
           await MainActor.run {
             withAnimation {
               resultsSubs.data = subs
@@ -97,7 +97,7 @@ struct Search: View {
     case .user:
       resultsUsers.data.removeAll()
       Task(priority: .background) {
-        if let users = await RedditAPI.shared.searchUsers(searchQuery.text)?.map({ User(data: $0, api: RedditAPI.shared) }) {
+        if let users = await RedditAPI.shared.searchUsers(searchQuery.text)?.map({ User(data: $0) }) {
           await MainActor.run {
             withAnimation {
               resultsUsers.data = users
@@ -126,8 +126,8 @@ struct Search: View {
   }
   
   var body: some View {
-    NavigationStack(path: $router.path) {
-      DefaultDestinationInjector {
+    NavigationStack(path: $router.fullPath) {
+      Group {
         List {
           Group {
             Section {
@@ -153,30 +153,30 @@ struct Search: View {
                 if let dummyAllSub = dummyAllSub {
                   ForEach(resultPosts.data) { post in
                     if let postData = post.data, let winstonData = post.winstonData {
-//                      SwipeRevolution(size: winstonData.postDimensions.size, actionsSet: postSwipeActions, entity: post) { controller in
-                        PostLink(
-                          id: post.id,
-                          controller: nil,
-                          theme: theme.postLinks,
-                          showSub: true,
-                          contentWidth: contentWidth,
-                          blurPostLinkNSFW: blurPostLinkNSFW,
-                          postSwipeActions: postSwipeActions,
-                          showVotes: showVotes,
-                          showSelfText: showSelfText,
-                          readPostOnScroll: readPostOnScroll,
-                          hideReadPosts: hideReadPosts,
-                          showUpvoteRatio: showUpvoteRatio,
-                          showSubsAtTop: showSubsAtTop,
-                          showTitleAtTop: showTitleAtTop,
-                          compact: compactMode,
-                          thumbnailPositionRight: thumbnailPositionRight,
-                          voteButtonPositionRight: voteButtonPositionRight,
-                          showSelfPostThumbnails: showSelfPostThumbnails,
-                          cs: cs
-                        )
-                        .swipyRev(size: winstonData.postDimensions.size, actionsSet: postSwipeActions, entity: post)
-//                      }
+                      //                      SwipeRevolution(size: winstonData.postDimensions.size, actionsSet: postSwipeActions, entity: post) { controller in
+                      PostLink(
+                        id: post.id,
+                        controller: nil,
+                        theme: theme.postLinks,
+                        showSub: true,
+                        contentWidth: contentWidth,
+                        blurPostLinkNSFW: blurPostLinkNSFW,
+                        postSwipeActions: postSwipeActions,
+                        showVotes: showVotes,
+                        showSelfText: showSelfText,
+                        readPostOnScroll: readPostOnScroll,
+                        hideReadPosts: hideReadPosts,
+                        showUpvoteRatio: showUpvoteRatio,
+                        showSubsAtTop: showSubsAtTop,
+                        showTitleAtTop: showTitleAtTop,
+                        compact: compactMode,
+                        thumbnailPositionRight: thumbnailPositionRight,
+                        voteButtonPositionRight: voteButtonPositionRight,
+                        showSelfPostThumbnails: showSelfPostThumbnails,
+                        cs: cs
+                      )
+                      .swipyRev(size: winstonData.postDimensions.size, actionsSet: postSwipeActions, entity: post)
+                      //                      }
                       .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
                       .animation(.default, value: resultPosts.data)
                       .environmentObject(post)
@@ -207,6 +207,7 @@ struct Search: View {
           fetch()
         }
       }
+      .injectInTabDestinations()
       .searchable(text: $searchQuery.text, placement: .toolbar)
       .autocorrectionDisabled(true)
       .textInputAutocapitalization(.none)
@@ -215,7 +216,7 @@ struct Search: View {
       .navigationTitle("Search")
       .onAppear() {
         if !searchViewLoaded {
-          dummyAllSub = Subreddit(id: "all", api: RedditAPI.shared)
+          dummyAllSub = Subreddit(id: "all")
           searchViewLoaded = true
         }
       }

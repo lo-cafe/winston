@@ -1,5 +1,5 @@
 //
-//  DefaultDestinationInjector.swift
+//  injectInTabDestinations.swift
 //  winston
 //
 //  Created by Igor Marcossi on 02/09/23.
@@ -7,10 +7,9 @@
 
 import SwiftUI
 
-struct DefaultDestinationInjector<Content: View>: View {
-  @ViewBuilder var content: () -> Content
-  var body: some View {
-    content()
+extension View {
+  func injectInTabDestinations() -> some View {
+    self
       .navigationDestination(for: Router.NavDest.self, destination: { dest in
         switch dest {
         case .reddit(let reddDest):

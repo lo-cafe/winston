@@ -27,15 +27,15 @@ struct Inbox: View {
       await MainActor.run {
         withAnimation {
           loading = false
-          messages.data = newItems.map { Message(data: $0, api: RedditAPI.shared) }
+          messages.data = newItems.map { Message(data: $0) }
         }
       }
     }
   }
   
   var body: some View {
-    NavigationStack(path: $router.path) {
-      DefaultDestinationInjector {
+    NavigationStack(path: $router.fullPath) {
+      Group {
         List {
           ForEach(messages.data, id: \.self.id) { message in
             MessageLink(message: message)
@@ -47,6 +47,7 @@ struct Inbox: View {
         .themedListBG(selectedTheme.lists.bg)
         .scrollContentBackground(.hidden)
       }
+      .injectInTabDestinations()
       .loader(loading)
       .onAppear {
         Task(priority: .background) {
@@ -62,7 +63,7 @@ struct Inbox: View {
       }
       .navigationTitle("Inbox")
     }
-    .swipeAnywhere(routerProxy: RouterProxy(router), routerContainer: router.isRootWrapper)
+    .swipeAnywhere()
   }
 }
 

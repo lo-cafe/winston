@@ -70,12 +70,12 @@ struct PostLinkCompact: View, Equatable, Identifiable {
   
   func openPost() {
     withAnimation(nil) { isOpen = true }
-    Nav.to(.Reddit.post(post))
+    Nav.to(.reddit(.post(post)))
   }
   
   func openSubreddit() {
     if let subName = post.data?.subreddit {
-      Nav.to(.Reddit.subFeed(Subreddit(id: subName)))
+      Nav.to(.reddit(.subFeed(Subreddit(id: subName))))
     }
   }
   

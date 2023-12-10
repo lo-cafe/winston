@@ -9,10 +9,10 @@ import SwiftUI
 import Defaults
 
 struct AnnouncementSheet: View {
-  @Binding var showingAnnouncement: Bool
   var announcement: Announcement?
   @Environment(\.useTheme) private var theme
   @Environment(\.colorScheme) private var cs
+  @Environment(\.dismiss) private var dismiss
   var body: some View {
     if let announcement {
       ZStack{
@@ -45,7 +45,7 @@ struct AnnouncementSheet: View {
           Spacer()
           MasterButton(label: announcement.buttonLabel == "" ? "Close" : announcement.buttonLabel, color: theme.general.accentColor.cs(cs).color(), colorHoverEffect: .animated, textSize: 18, height: 48, cornerRadius: 16, action: {
             withAnimation(spring) {
-              showingAnnouncement = false
+              dismiss()
             }
           })
           .padding()

@@ -20,9 +20,8 @@ struct PostThemingPanel: View {
   @Binding var theme: WinstonTheme
   @State private var selectedCategory = Category.page.rawValue
   @State private var previewBG: PreviewBG = .blur
-  @StateObject private var previewPostSample = Post(data: selfPostSampleData, api: RedditAPI.shared)
+  @StateObject private var previewPostSample = Post(data: selfPostSampleData)
   @Default(.themesPresets) private var themesPresets
-  @ObservedObject var tempGlobalState = TempGlobalState.shared
   @Environment(\.colorScheme) private var cs  
   
   var body: some View {
@@ -48,7 +47,7 @@ struct PostThemingPanel: View {
     } preview: {
         VStack(alignment: .leading, spacing: theme.posts.spacing) {
           if let winstonData = previewPostSample.winstonData {
-            PostContent(post: previewPostSample, winstonData: winstonData, sub: Subreddit(id: "Apple", api: RedditAPI.shared))
+            PostContent(post: previewPostSample, winstonData: winstonData, sub: Subreddit(id: "Apple"))
               .environment(\.useTheme, theme)
               .allowsHitTesting(false)
           }

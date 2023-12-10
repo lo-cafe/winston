@@ -13,7 +13,6 @@ import Zip
 struct ThemesPanel: View {
   @Default(.themesPresets) private var themesPresets
   @State private var isUnzipping = false
-  @State private var editingTheme: WinstonTheme? = nil
   @Environment(\.useTheme) private var theme
   var body: some View {
     List {
@@ -25,7 +24,9 @@ struct ThemesPanel: View {
           
           ForEach(themesPresets) { theme in
             if theme.id != "default" {
-              WNavigationLink(value: theme) {
+              WListButton(showArrow: true) {
+                Nav.present(.editingTheme(theme))
+              } label: {
                 ThemeNavLink(theme: theme)
               }
             }
@@ -37,18 +38,16 @@ struct ThemesPanel: View {
         
         Section {
           WSListButton("Import theme", icon: "doc.zipper") { isUnzipping = true }
-            .fileImporter(isPresented: $isUnzipping,
-                          allowedContentTypes: [UTType.zip],
-                          allowsMultipleSelection: false) { res in
-              do {
-                switch res {
-                case .success(let file):
-                  importTheme(at: file[0])
-                case .failure(let error):
-                  print(error.localizedDescription)
-                }
-              } catch {
-                print("Failed to import file with error: \(error.localizedDescription)")
+            .fileImporter(
+              isPresented: $isUnzipping,
+              allowedContentTypes: [UTType.zip],
+              allowsMultipleSelection: false
+            ) { res in
+              switch res {
+              case .success(let file):
+                _ = importTheme(at: file[0])
+              case .failure(let error):
+                print(error.localizedDescription)
               }
             }
         }
@@ -79,7 +78,6 @@ struct ThemesPanel: View {
         Image(systemName: "plus")
       }
     }
-    .sheet(item: $editingTheme) { ThemeEditPanel(theme: $0) }
   }
   
   
@@ -158,7 +156,7 @@ struct ThemeNavLink: View {
       } label: {
         Label("Duplicate", systemImage: "plus.square.on.square")
       }
-
+      
       Button(action: zipFiles) {
         Label("Export", systemImage: "doc.zipper")
       }

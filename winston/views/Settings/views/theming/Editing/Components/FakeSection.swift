@@ -41,7 +41,7 @@ struct FakeSection<Content: View>: View {
             content()
         }
         .padding(.vertical, 8)
-        .themedListRowBG()
+        .themedListRowLikeBG()
         .mask(RR(10, .black))
         
         if let footer = footer {

@@ -20,9 +20,10 @@ struct PostReplies: View {
   @Environment(\.colorScheme) private var cs
   
   @StateObject private var comments = ObservableArray<Comment>()
-  @ObservedObject private var globalLoader = TempGlobalState.shared.globalLoader
   @State private var loading = true
   @State var seenComments : String?
+  
+  @Environment(\.globalLoaderDismiss) private var globalLoaderDismiss
   
   func asyncFetch(_ full: Bool, _ altIgnoreSpecificComment: Bool? = nil) async {
     if let result = await post.refreshPost(commentID: (altIgnoreSpecificComment ?? ignoreSpecificComment) ? nil : highlightID, sort: sort, after: nil, subreddit: subreddit.data?.display_name ?? subreddit.id, full: full), let newComments = result.0 {
@@ -113,7 +114,7 @@ struct PostReplies: View {
             .onChange(of: ignoreSpecificComment) { val in
               Task(priority: .background) {
                 await asyncFetch(post.data == nil, val)
-                globalLoader.dismiss()
+                globalLoaderDismiss()
               }
               if val {
                 withAnimation(spring) {

@@ -16,6 +16,8 @@ struct ThemedListBGModifier: ViewModifier {
   func updateImg(_ bg: ThemeBG) {
     uiImage = returnImg(bg: bg, cs: cs)
   }
+  
+  @Environment(\.brighterBG) private var brighter
 
   func body(content: Content) -> some View {
     content
@@ -25,7 +27,7 @@ struct ThemedListBGModifier: ViewModifier {
       .onChange(of: bg) { val in
         updateImg(val)
       }
-      .background(disable ? nil : GeometryReader { geo in returnColor(bg: bg, cs: cs).frame(width: geo.size.width, height: geo.size.height) }.edgesIgnoringSafeArea(.all).allowsHitTesting(false))
+      .background(disable ? nil : GeometryReader { geo in returnColor(bg: bg, cs: cs).brightness(brighter ? 0.11 : 0).frame(width: geo.size.width, height: geo.size.height) }.edgesIgnoringSafeArea(.all).allowsHitTesting(false))
       .background(disable ? nil : GeometryReader { geo in Image(uiImage: uiImage).antialiased(true).resizable().scaledToFill().frame(width: geo.size.width, height: geo.size.height) }.edgesIgnoringSafeArea(.all).allowsHitTesting(false))
       .scrollContentBackground(.hidden)
   }

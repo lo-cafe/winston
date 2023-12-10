@@ -39,25 +39,25 @@ struct Arrows: View {
     let curve = selectedTheme.comments.theme.indentCurve
     let curveColor = selectedTheme.comments.theme.indentColor
     let avatarSize = selectedTheme.comments.theme.badge.avatar.size
-      Group {
-        switch kind {
-        case .curve:
-          CurveShape(offset: offset, curve: curve, avatarSize: avatarSize)
-            .stroke(curveColor.cs(cs).color(), style: StrokeStyle(lineWidth: 2, lineCap: .round))
-        case .straight:
-          StraightShape()
-            .stroke(curveColor.cs(cs).color(), style: StrokeStyle(lineWidth: 2, lineCap: .round))
-            .padding(.vertical, -1)
-        case .straightCurve:
-          StraightCurveShape(offset: offset, curve: curve, avatarSize: avatarSize)
-            .stroke(curveColor.cs(cs).color(), style: StrokeStyle(lineWidth: 2, lineCap: .round))
-            .padding(.vertical, -1)
-        case .empty:
-          Color.clear
-        }
+    Group {
+      switch kind {
+      case .curve:
+        CurveShape(offset: offset, curve: curve, avatarSize: avatarSize)
+          .stroke(curveColor.cs(cs).color(), style: StrokeStyle(lineWidth: 2, lineCap: .round))
+      case .straight:
+        StraightShape()
+          .stroke(curveColor.cs(cs).color(), style: StrokeStyle(lineWidth: 2, lineCap: .round))
+          .padding(.vertical, -1)
+      case .straightCurve:
+        StraightCurveShape(offset: offset, curve: curve, avatarSize: avatarSize)
+          .stroke(curveColor.cs(cs).color(), style: StrokeStyle(lineWidth: 2, lineCap: .round))
+          .padding(.vertical, -1)
+      case .empty:
+        Color.clear
       }
-      .padding(.all, 1)
-      .frame(maxWidth: curve, maxHeight: .infinity, alignment: .topLeading)
+    }
+    .padding(.all, 1)
+    .frame(maxWidth: curve, maxHeight: .infinity, alignment: .topLeading)
   }
 }
 

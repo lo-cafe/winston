@@ -38,11 +38,10 @@ struct AppearancePanel: View {
     List {
       Group {
         Section {
-          WNavigationLink(value: theme){
+          WListButton(showArrow: true) {
+            Nav.present(.editingTheme(theme))
+          } label: {
             OnlineThemeItem(theme: ThemeData(theme_name: theme.metadata.name, theme_author:theme.metadata.author, theme_description: theme.metadata.description,color:theme.metadata.color, icon: theme.metadata.icon), showDownloadButton: false)
-          }
-          .navigationDestination(for: WinstonTheme.self) { theme in
-            ThemeEditPanel(theme: theme)
           }
           .disabled(theme.id == "default")
         } header: {
@@ -65,7 +64,7 @@ struct AppearancePanel: View {
         //      }
         
         Section {
-          WNavigationLink(value: SettingsPages.appIcon) {
+          WNavigationLink(value: .setting(.appIcon)) {
             HStack{
               Image(uiImage: appIconManager.current.preview)
                 .resizable()
@@ -83,8 +82,8 @@ struct AppearancePanel: View {
         
         Section {
           HStack(spacing: 12){
-            ListBigBtn(value: SettingsPages.themes,icon: "paintbrush.fill", iconColor: Color.blue, label: "My Themes")
-            ListBigBtn(value: SettingsPages.themeStore, icon: "basket.fill", iconColor: Color.orange, label: "Theme Store")
+            ListBigBtn(icon: "paintbrush.fill", iconColor: Color.blue, label: "My Themes") { Nav.to(.setting(.themes)) }
+            ListBigBtn(icon: "basket.fill", iconColor: Color.orange, label: "Theme Store") { Nav.to(.setting(.themeStore)) }
           }
         } footer: {
           if theme.id == "default" {
@@ -106,7 +105,7 @@ struct AppearancePanel: View {
             Toggle("Show Username in Tab Bar", isOn: $showUsernameInTabBar)
             Toggle("Disable subs list letter sections", isOn: $disableAlphabetLettersSectionsInSubsList)
 //          }
-//          .themedListRowBG(enablePadding: true, disableBG: true)
+//          .themedListRowLikeBG(enablePadding: true, disableBG: true)
         }
         
         //      Section("Theming") {
@@ -134,7 +133,7 @@ struct AppearancePanel: View {
             Toggle("Show Author", isOn: $showAuthorOnPostLinks)
             //        Toggle("Prefer inline tags", isOn: $preferInlineTags)
 //          }
-//          .themedListRowBG(enablePadding: true, disableBG: true)
+//          .themedListRowLikeBG(enablePadding: true, disableBG: true)
         }
         
         Section("Compact Posts") {

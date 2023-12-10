@@ -16,9 +16,8 @@ struct PostLinkThemingPanel: View {
   @Binding var theme: WinstonTheme
   @State private var selectedCategory = "card"
   @StateObject var previewPostSample: Post
-  @StateObject private var previewPostSubSample = Subreddit(id: postSampleData.subreddit, api: RedditAPI.shared)
+  @StateObject private var previewPostSubSample = Subreddit(id: postSampleData.subreddit)
   @Default(.themesPresets) private var themesPresets
-  @ObservedObject var tempGlobalState = TempGlobalState.shared
   @Environment(\.colorScheme) private var cs
   
   @Default(.blurPostLinkNSFW) private var blurPostLinkNSFW

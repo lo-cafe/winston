@@ -33,7 +33,7 @@ struct OnlyURL: View {
 				if openLinksInSafari {
 					openURL(newURL)
 				} else {
-					openInBuiltInBrowser(newURL)
+					Nav.openURL(newURL)
 				}
       }
     })

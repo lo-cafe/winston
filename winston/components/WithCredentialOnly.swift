@@ -9,7 +9,6 @@ import SwiftUI
 
 struct WithCredentialOnly<Content: View>: View {
   let credential: RedditCredential?
-  @Environment(\.changeAppTabWithPath) var changeAppTabWithPath
   @ViewBuilder let content: () -> Content
     var body: some View {
       if !(credential?.isAuthorized ?? false) {
@@ -26,7 +25,7 @@ struct WithCredentialOnly<Content: View>: View {
             }
           }
           Button("Go to credentials settings", systemImage: "gear") {
-            changeAppTabWithPath(.settings, .init([SettingsPages.credentials]))
+            Nav.to(.setting(.credentials))
           }
           .buttonStyle(SecondaryButton())
         }
