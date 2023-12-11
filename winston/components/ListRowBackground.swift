@@ -9,7 +9,7 @@ import SwiftUI
 
 struct ListRowBackground: View, Equatable {
   static func == (lhs: ListRowBackground, rhs: ListRowBackground) -> Bool {
-    lhs.theme == rhs.theme && lhs.active == rhs.active && lhs.pressed == rhs.pressed && lhs.shiny == rhs.shiny && lhs.cs == rhs.cs && lhs.brighter == rhs.brighter
+    lhs.theme == rhs.theme && lhs.active == rhs.active && lhs.pressed == rhs.pressed && lhs.shiny == rhs.shiny
   }
   let theme: WinstonTheme
   var active = false
