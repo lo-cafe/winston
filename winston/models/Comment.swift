@@ -63,10 +63,13 @@ extension Comment {
     
     guard let winstonData = self.winstonData, let data = self.data else { return }
     let theme = getEnabledTheme().comments.theme
+    let cs: ColorScheme = UIScreen.main.traitCollection.userInterfaceStyle == .dark ? .dark : .light
+
     let bodyAttr = NSMutableAttributedString(attributedString: stringToNSAttr(data.body ?? "", fontSize: theme.bodyText.size))
     let style = NSMutableParagraphStyle()
     style.lineSpacing = theme.linespacing
     bodyAttr.addAttribute(.paragraphStyle, value: style, range: NSRange(location: 0, length: bodyAttr.length))
+    bodyAttr.addAttribute(.foregroundColor, value: UIColor(theme.bodyText.color.cs(cs).color()), range: NSRange(location: 0, length: bodyAttr.length))
     winstonData.bodyAttr = bodyAttr
     
     let screenWidth = UIScreen.screenWidth - (!IPAD ? 0 : (UIScreen.screenWidth /  3))

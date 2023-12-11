@@ -259,7 +259,6 @@ struct CommentLinkContent: View {
                   }
                 }
                 .fontSize(theme.theme.bodyText.size, theme.theme.bodyText.weight.t)
-                .foregroundColor(theme.theme.bodyText.color.cs(cs).color())
               }
               .onChange(of: theme) { newTheme in
                 let encoder = JSONEncoder()
