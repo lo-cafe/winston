@@ -23,7 +23,6 @@ struct SubredditPostsIPAD: View, Equatable {
   var searchText: String
   var searchCallback: ((String?) -> ())
   var editCustomFilter: ((FilterData) -> ())
-  var compactToggled: (() -> ())
   var fetch: (Bool, String?, Bool) -> ()
   var selectedTheme: WinstonTheme
   
@@ -55,7 +54,7 @@ struct SubredditPostsIPAD: View, Equatable {
     VStack(spacing: 8) {
       
       if let sub = subreddit {
-        SubredditFilters(subId: sub.id, filters: sub.winstonData?.flairs ?? [], selected: filter, filterCallback: filterCallback, searchText: searchText, searchCallback: searchCallback, editCustomFilter: editCustomFilter, theme: selectedTheme, compactToggled: compactToggled)
+        SubredditFilters(subId: sub.id, filters: sub.winstonData?.flairs ?? [], selected: filter, filterCallback: filterCallback, searchText: searchText, searchCallback: searchCallback, editCustomFilter: editCustomFilter, theme: selectedTheme)
       }
       
       Waterfall(
@@ -96,14 +95,7 @@ struct SubredditPostsIPAD: View, Equatable {
               .environmentObject(sub)
               .environmentObject(winstonData)
               .onAppear {
-                post.winstonData?.appeared = true
-                
-                let toAppear = posts.filter({ !($0.winstonData?.appeared ?? false)}).count
-                let lastPost = posts.last?.id ?? "no_posts"
-                
-                if (toAppear < 5 && lastPost != lastPostOnRefreshRequest) {
-                  lastPostOnRefreshRequest = lastPost
-                  
+                if(posts.count - 7 == i) {
                   if !searchText.isEmpty {
                     fetch(true, searchText, true)
                   } else {
@@ -111,7 +103,6 @@ struct SubredditPostsIPAD: View, Equatable {
                   }
                 }
               }
-              //                }
             }
           }
         },

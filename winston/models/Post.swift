@@ -35,7 +35,7 @@ extension Post {
   func setupWinstonData(data: PostData? = nil, winstonData: PostWinstonData? = nil, contentWidth: Double = UIScreen.screenWidth, secondary: Bool = false, theme: WinstonTheme, sub: Subreddit? = nil, fetchAvatar: Bool = true) {
     if let data = data ?? self.data {
       let cs: ColorScheme = UIScreen.main.traitCollection.userInterfaceStyle == .dark ? .dark : .light
-      let compact = Defaults[.compactPerSubreddit][subId ?? data.subreddit_id ?? ""] ?? Defaults[.compactMode]
+      let compact = Defaults[.compactPerSubreddit][sub?.id ?? data.subreddit_id ?? ""] ?? Defaults[.compactMode]
       if self.winstonData == nil { self.winstonData = PostWinstonData() }
       self.winstonData?.permaURL = URL(string: "https://reddit.com\(data.permalink.escape.urlEncoded)")
       
@@ -59,7 +59,7 @@ extension Post {
                   self.winstonData?.extractedMedia = .video(video)
                   self.winstonData?.extractedMediaForcedNormal = .video(video)
                   
-                  self.winstonData?.postDimensions = getPostDimensions(post: self, winstonData: self.winstonData, columnWidth: contentWidth, secondary: secondary, rawTheme: theme, subId: subId)
+                  self.winstonData?.postDimensions = getPostDimensions(post: self, winstonData: self.winstonData, columnWidth: contentWidth, secondary: secondary, rawTheme: theme, subId: sub?.id)
                   self.winstonData?.postDimensionsForcedNormal = getPostDimensions(post: self, winstonData: self.winstonData, columnWidth: contentWidth, secondary: secondary, rawTheme: theme, compact: false)
                 }
               }
@@ -73,7 +73,7 @@ extension Post {
       self.winstonData?.extractedMedia = extractedMedia
       self.winstonData?.extractedMediaForcedNormal = extractedMediaForcedNormal
       
-      self.winstonData?.postDimensions = getPostDimensions(post: self, winstonData: self.winstonData, columnWidth: contentWidth, secondary: secondary, rawTheme: theme, subId: subId)
+      self.winstonData?.postDimensions = getPostDimensions(post: self, winstonData: self.winstonData, columnWidth: contentWidth, secondary: secondary, rawTheme: theme, subId: sub?.id)
       self.winstonData?.postDimensionsForcedNormal = getPostDimensions(post: self, winstonData: self.winstonData, columnWidth: contentWidth, secondary: secondary, rawTheme: theme, compact: false)
       
       self.winstonData?.titleAttr = createTitleTagsAttrString(titleTheme: theme.postLinks.theme.titleText, postData: data, textColor: theme.postLinks.theme.titleText.color.cs(cs).color())
@@ -155,7 +155,7 @@ extension Post {
       }
       
       Task(priority: .background) {
-        if let sub = subreddit {
+        if let sub {
           saveFlairsFromPosts(sub: sub, posts: posts)
         }
       }
@@ -610,7 +610,6 @@ class PostWinstonData: Hashable, ObservableObject {
   @Published var media: PostWinstonDataMedia?
   @Published var seenCommentsCount: Int? = nil
   @Published var seenComments: String? = nil
-  @Published var appeared: Bool = false
   
   func hash(into hasher: inout Hasher) {
     hasher.combine(permaURL)

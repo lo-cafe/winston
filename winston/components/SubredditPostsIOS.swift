@@ -25,7 +25,6 @@ struct SubredditPostsIOS: View, Equatable {
   var searchText: String
   var searchCallback: ((String?) -> ())
   var editCustomFilter: ((FilterData) -> ())
-  var compactToggled: (() -> ())
   var fetch: (Bool, String?, Bool) -> ()
   var selectedTheme: WinstonTheme
   var loading: Bool
@@ -72,14 +71,14 @@ struct SubredditPostsIOS: View, Equatable {
     List {
       
       if !selectedTheme.postLinks.stickyFilters, let sub = subreddit {
-        SubredditFilters(subId: sub.id, filters: filters, selected: filter, filterCallback: filterCallback, searchText: searchText, searchCallback: searchCallback, editCustomFilter: editCustomFilter, theme: selectedTheme, compactToggled: compactToggled)
+        SubredditFilters(subId: sub.id, filters: filters, selected: filter, filterCallback: filterCallback, searchText: searchText, searchCallback: searchCallback, editCustomFilter: editCustomFilter, theme: selectedTheme)
           .equatable()
           .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
           .listRowSeparator(.hidden)
       }
       
       Section(header: subreddit != nil && selectedTheme.postLinks.stickyFilters ?
-              SubredditFilters(subId: subreddit!.id, filters: filters, selected: filter, filterCallback: filterCallback, searchText: searchText, searchCallback: searchCallback, editCustomFilter: editCustomFilter, theme: selectedTheme, compactToggled: compactToggled)
+              SubredditFilters(subId: subreddit!.id, filters: filters, selected: filter, filterCallback: filterCallback, searchText: searchText, searchCallback: searchCallback, editCustomFilter: editCustomFilter, theme: selectedTheme)
                 .equatable()
                 .listRowSeparator(.hidden)
                 .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
@@ -112,14 +111,7 @@ struct SubredditPostsIOS: View, Equatable {
             .environmentObject(post)
             .environmentObject(winstonData)
             .onAppear {
-              post.winstonData?.appeared = true
-              let toAppear = posts.filter({ !($0.winstonData?.appeared ?? false)}).count
-                  fetch(true, searchText)
-                } else {
-              
-              if (filter == "flair:All" && !loading && toAppear < 5) {
-                loadMorePosts()
-              }
+              if(posts.count - 7 == i) { loadMorePosts() }
             }
             .listRowInsets(EdgeInsets(top: paddingV, leading: paddingH, bottom: paddingV, trailing: paddingH))
           }

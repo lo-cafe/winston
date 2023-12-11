@@ -28,6 +28,8 @@ struct MultiPostsView: View {
   
   @Environment(\.useTheme) private var selectedTheme
   @Environment(\.contentWidth) private var contentWidth
+  @Environment(\.colorScheme) private var cs
+  @Default(.compactPerSubreddit) var compactPerSubreddit
   
   func searchCallback(str: String?) {
     searchText = str ?? ""
@@ -40,14 +42,6 @@ struct MultiPostsView: View {
   
   func editCustomFilter(filterData: FilterData) {
     customFilter = filterData
-  }
-  
-  func compactToggled() {
-    withAnimation {
-      posts.data.forEach {
-        $0.setupWinstonData(data: $0.data, winstonData: $0.winstonData, theme: selectedTheme, subId: multi.id)
-      }
-    }
   }
   
   func asyncFetch(force: Bool = false, loadMore: Bool = false) async {
@@ -90,12 +84,16 @@ struct MultiPostsView: View {
     fetch()
   }
   
+  func updatePostsCalcs(_ newTheme: WinstonTheme) {
+    Task(priority: .background) { posts.data.forEach { $0.setupWinstonData(data: $0.data, winstonData: $0.winstonData, contentWidth: contentWidth, secondary: false, theme: selectedTheme, sub: $0.winstonData?.subreddit, fetchAvatar: false) } }
+  }
+  
   var body: some View {
     Group {
       if IPAD {
-        SubredditPostsIPAD(showSub: true, posts: posts.data, filter: filter, filterCallback: filterCallback, searchText: searchText, searchCallback: searchCallback, editCustomFilter: editCustomFilter, compactToggled: compactToggled, fetch: fetch, selectedTheme: selectedTheme)
+        SubredditPostsIPAD(showSub: true, posts: posts.data, filter: filter, filterCallback: filterCallback, searchText: searchText, searchCallback: searchCallback, editCustomFilter: editCustomFilter, fetch: fetch, selectedTheme: selectedTheme)
       } else {
-        SubredditPostsIOS(showSub: true, lastPostAfter: lastPostAfter, filters: [], posts: posts.data, filter: filter, filterCallback: filterCallback, searchText: searchText, searchCallback: searchCallback, editCustomFilter: editCustomFilter, compactToggled: compactToggled, fetch: fetch, selectedTheme: selectedTheme, loading: loading, reachedEndOfFeed: $reachedEndOfFeed)
+        SubredditPostsIOS(showSub: true, lastPostAfter: lastPostAfter, filters: [], posts: posts.data, filter: filter, filterCallback: filterCallback, searchText: searchText, searchCallback: searchCallback, editCustomFilter: editCustomFilter, fetch: fetch, selectedTheme: selectedTheme, loading: loading, reachedEndOfFeed: $reachedEndOfFeed)
       }
     }
     //.themedListBG(selectedTheme.postLinks.bg)
@@ -151,6 +149,9 @@ struct MultiPostsView: View {
       Defaults[.preferredSort] = sort
     }
 //    .searchable(text: $searchText, prompt: "Search r/\(subreddit.data?.display_name ?? subreddit.id)")
+    .onChange(of: cs) { _ in updatePostsCalcs(selectedTheme) }
+    .onChange(of: compactPerSubreddit) { _ in updatePostsCalcs(selectedTheme) }
+    .onChange(of: selectedTheme, perform: updatePostsCalcs)
     .refreshable { await asyncFetch(force: true) }
     .navigationTitle(multi.data?.name ?? "MultiZ")
     .scrollContentBackground(.hidden)

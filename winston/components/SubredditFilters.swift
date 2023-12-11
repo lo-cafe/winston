@@ -27,11 +27,10 @@ struct SubredditFilters: View, Equatable {
   @State var compactOn: String = "Normal"
   
   var theme: WinstonTheme
-  var compactToggled: (() -> ())
 
   @Environment(\.colorScheme) private var cs
   
-  init(subId: String, filters: [FilterData], selected: String, filterCallback: @escaping ((String) -> ()), searchText: String, searchCallback: @escaping ((String?) -> ()), editCustomFilter: @escaping ((FilterData) -> ()), theme: WinstonTheme, compactToggled: @escaping (() -> ())) {
+  init(subId: String, filters: [FilterData], selected: String, filterCallback: @escaping ((String) -> ()), searchText: String, searchCallback: @escaping ((String?) -> ()), editCustomFilter: @escaping ((FilterData) -> ()), theme: WinstonTheme) {
     self.subId = subId
     self.filters = filters
     self.selected = selected
@@ -40,14 +39,12 @@ struct SubredditFilters: View, Equatable {
     self.searchCallback = searchCallback
     self.editCustomFilter = editCustomFilter
     self.theme = theme
-    self.compactToggled = compactToggled
     
     _compactOn = State(initialValue: (compactPerSubreddit[subId] ?? compactMode) ? "Compact": "Normal")
   }
   
   func toggleCompactMode(compact: Bool) {
     compactPerSubreddit[self.subId] = compact
-    compactToggled()
   }
   
   func getBackgroundColor() -> Color {

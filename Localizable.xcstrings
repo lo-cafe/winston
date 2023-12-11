@@ -768,6 +768,9 @@
         }
       }
     },
+    "Compact" : {
+
+    },
     "Compact Mode" : {
       "localizations" : {
         "de" : {
@@ -1086,9 +1089,6 @@
         }
       }
     },
-    "Download" : {
-
-    },
     "Drag Left" : {
       "localizations" : {
         "de" : {
@@ -1156,6 +1156,9 @@
       }
     },
     "Edit credential" : {
+
+    },
+    "Edit filter" : {
 
     },
     "Enter a subreddit" : {
@@ -2011,6 +2014,9 @@
         }
       }
     },
+    "LOAD MORE" : {
+
+    },
     "Lock Winston With %@" : {
       "localizations" : {
         "de" : {
@@ -2304,6 +2310,9 @@
         }
       }
     },
+    "New filter" : {
+
+    },
     "New post" : {
       "localizations" : {
         "de" : {
@@ -2353,6 +2362,12 @@
       }
     },
     "No credential" : {
+
+    },
+    "No filtered posts" : {
+
+    },
+    "Normal" : {
 
     },
     "Now paste it here:" : {
@@ -3529,9 +3544,6 @@
         }
       }
     },
-    "Theme Store" : {
-
-    },
     "Theme Store Tint" : {
       "localizations" : {
         "de" : {
@@ -3595,9 +3607,6 @@
           }
         }
       }
-    },
-    "There was an error importing this theme" : {
-
     },
     "This is not working yet :(" : {
       "localizations" : {

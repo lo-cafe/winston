@@ -49,6 +49,8 @@ struct SubredditPosts: View, Equatable {
   @Environment(\.colorScheme) private var cs
   @Environment(\.contentWidth) private var contentWidth
   
+  @Default(.compactPerSubreddit) var compactPerSubreddit
+  
   let context = PersistenceController.shared.container.newBackgroundContext()
   
   init(subreddit: Subreddit) {
@@ -59,11 +61,7 @@ struct SubredditPosts: View, Equatable {
   var isFeedsAndSuch: Bool { feedsAndSuch.contains(subreddit.id) }
   
   func getFilteredPosts(posts: [Post], onlyUnseen: Bool = false) -> [Post] {
-    var filtered = posts
-    
-    if onlyUnseen {
-      filtered = posts.filter({ !($0.winstonData?.appeared ?? true) })
-    }
+    let filtered = posts
     
     let filterData = FilterData.getTypeAndText(filter)
     
@@ -103,14 +101,6 @@ struct SubredditPosts: View, Equatable {
   
   func editCustomFilter(filterData: FilterData) {
     customFilter = filterData
-  }
-  
-  func compactToggled() {
-    withAnimation {
-      posts.data.forEach {
-        $0.setupWinstonData(data: $0.data, winstonData: $0.winstonData, theme: selectedTheme, subId: subreddit.id)
-      }
-    }
   }
   
   func asyncFetch(force: Bool = false, loadMore: Bool = false, searchText: String? = nil, forceRefresh: Bool = false) async throws {
@@ -219,7 +209,7 @@ struct SubredditPosts: View, Equatable {
   }
   
   func updatePostsCalcs(_ newTheme: WinstonTheme) {
-    Task(priority: .background) { posts.data.forEach { $0.setupWinstonData(data: $0.data, winstonData: $0.winstonData, theme: newTheme, fetchAvatar: false, subId: subreddit.id) } }
+    Task(priority: .background) { posts.data.forEach { $0.setupWinstonData(data: $0.data, winstonData: $0.winstonData, contentWidth: contentWidth, secondary: false, theme: selectedTheme, sub: subreddit, fetchAvatar: false) } }
   }
   
   var body: some View {
@@ -229,9 +219,9 @@ struct SubredditPosts: View, Equatable {
           let filteredPosts = getFilteredPosts(posts: posts.data)
           
           if IPAD {
-            SubredditPostsIPAD(showSub: isFeedsAndSuch, subreddit: subreddit, posts: filteredPosts, filter: filter, filterCallback: filterCallback, searchText: searchText, searchCallback: searchCallback, editCustomFilter: editCustomFilter, compactToggled: compactToggled, fetch: fetch, selectedTheme: selectedTheme)
+            SubredditPostsIPAD(showSub: isFeedsAndSuch, subreddit: subreddit, posts: filteredPosts, filter: filter, filterCallback: filterCallback, searchText: searchText, searchCallback: searchCallback, editCustomFilter: editCustomFilter, fetch: fetch, selectedTheme: selectedTheme)
           } else {
-            SubredditPostsIOS(showSub: isFeedsAndSuch, lastPostAfter: lastPostAfter, subreddit: subreddit, filters: filters, posts: filteredPosts, filter: filter, filterCallback: filterCallback, searchText: searchText, searchCallback: searchCallback, editCustomFilter: editCustomFilter, compactToggled: compactToggled, fetch: fetch, selectedTheme: selectedTheme, loading: loading, reachedEndOfFeed: $reachedEndOfFeed)
+            SubredditPostsIOS(showSub: isFeedsAndSuch, lastPostAfter: lastPostAfter, subreddit: subreddit, filters: filters, posts: filteredPosts, filter: filter, filterCallback: filterCallback, searchText: searchText, searchCallback: searchCallback, editCustomFilter: editCustomFilter, fetch: fetch, selectedTheme: selectedTheme, loading: loading, reachedEndOfFeed: $reachedEndOfFeed)
           }
         }
         .searchable(text: $searchText, prompt: "Search r/\(subreddit.data?.display_name ?? subreddit.id)")
@@ -303,15 +293,10 @@ struct SubredditPosts: View, Equatable {
     .onChange(of: sort) { val in
       clearAndLoadData(forceRefresh: true)
     }
-    .onChange(of: cs) { _ in
-      updatePostsCalcs(selectedTheme)
-    }
+    .onChange(of: cs) { _ in updatePostsCalcs(selectedTheme) }
+    .onChange(of: compactPerSubreddit) { _ in updatePostsCalcs(selectedTheme) }
     .onChange(of: selectedTheme, perform: updatePostsCalcs)
-    .onChange(of: searchText) { val in
-      if searchText.isEmpty {
-        clearAndLoadData()
-      }
-    }
+    .onChange(of: searchText) { val in if searchText.isEmpty { clearAndLoadData() } }
     .sheet(item: $customFilter, onDismiss: {
       self.subreddit.loadFlairs( { loaded in
         filters = loaded
