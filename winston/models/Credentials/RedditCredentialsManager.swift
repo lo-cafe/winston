@@ -75,10 +75,20 @@ class RedditCredentialsManager: ObservableObject {
       
     self.cancelables.append(Defaults.observe(.redditCredentialSelectedID) { _ in
       self.objectWillChange.send()
-      Task(priority: .background) { await RedditAPI.shared.fetchMe(force: true) }
-      Task(priority: .background) { await RedditAPI.shared.fetchSubs() }
-      Task(priority: .background) { await RedditAPI.shared.fetchMyMultis() }
+      self.updateMe()
     })
+    
+    if let currCredID = Defaults[.redditCredentialSelectedID], let currCred = self.credentials.first(where: { $0.id == currCredID })  {
+      doThisAfter(0.5) { self.updateMe(altCred: currCred) }
+    }
+  }
+  
+  func updateMe(altCred: RedditCredential? = nil) {
+    Task(priority: .background) {
+      async let _ = RedditAPI.shared.fetchMe(force: true, altCredential: altCred)
+      async let _ = RedditAPI.shared.fetchSubs()
+      async let _ = RedditAPI.shared.fetchMyMultis()
+    }
   }
   
   func saveCred(_ cred: RedditCredential, forceCreate: Bool = true) {

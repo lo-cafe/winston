@@ -30,7 +30,7 @@ struct SubredditPostsIOS: View, Equatable {
   var loading: Bool
   
   @Binding var reachedEndOfFeed: Bool
-    
+  
   @Default(.blurPostLinkNSFW) private var blurPostLinkNSFW
   
   @Default(.postSwipeActions) private var postSwipeActions
@@ -49,7 +49,7 @@ struct SubredditPostsIOS: View, Equatable {
   @Default(.showSubsAtTop) private var showSubsAtTop
   @Default(.showTitleAtTop) private var showTitleAtTop
   @Default(.showSelfPostThumbnails) private var showSelfPostThumbnails
-
+  
   @Environment(\.colorScheme) private var cs
   
   //  @Environment(\.useTheme) private var selectedTheme
@@ -66,7 +66,7 @@ struct SubredditPostsIOS: View, Equatable {
   var body: some View {
     let isThereDivider = selectedTheme.postLinks.divider.style != .no
     let paddingH = selectedTheme.postLinks.theme.outerHPadding
-    let paddingV = selectedTheme.postLinks.spacing / (isThereDivider ? 4 : 2)
+    let paddingV = selectedTheme .postLinks.spacing / (isThereDivider ? 4 : 2)
     
     List {
       
@@ -77,14 +77,15 @@ struct SubredditPostsIOS: View, Equatable {
           .listRowSeparator(.hidden)
       }
       
-      Section(header: subreddit != nil && selectedTheme.postLinks.stickyFilters ?
-              SubredditFilters(subId: subreddit!.id, filters: filters, selected: filter, filterCallback: filterCallback, searchText: searchText, searchCallback: searchCallback, editCustomFilter: editCustomFilter, theme: selectedTheme)
-                .equatable()
-                .listRowSeparator(.hidden)
-                .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
-              : nil) {
+      Section(
+        header: subreddit != nil && selectedTheme.postLinks.stickyFilters ?
+        SubredditFilters(subId: subreddit!.id, filters: filters, selected: filter, filterCallback: filterCallback, searchText: searchText, searchCallback: searchCallback, editCustomFilter: editCustomFilter, theme: selectedTheme)
+          .equatable()
+          .listRowSeparator(.hidden)
+          .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
+        : nil
+      ) {
         ForEach(Array(posts.enumerated()), id: \.self.element.id) { i, post in
-          
           if let sub = subreddit ?? post.winstonData?.subreddit, let winstonData = post.winstonData {
             PostLink(
               id: post.id,
@@ -143,7 +144,7 @@ struct SubredditPostsIOS: View, Equatable {
               .padding(.top, 12)
               .padding(.bottom, 48)
           }
-
+          
         } else if reachedEndOfFeed {
           EndOfFeedView()
         }
@@ -165,24 +166,6 @@ struct SubredditPostsIOS: View, Equatable {
         }
       }
     }
-//    .introspect(.list, on: .iOS(.v16, .v17)) { collectionView in
-//      if !selectedTheme.postLinks.stickyFilters || setupListViewHeader { 
-//        setupListViewHeader = true
-//        return
-//      }
-//      
-//      var configuration = UICollectionLayoutListConfiguration(appearance: .plain)
-//      configuration.headerMode = .supplementary
-//      configuration.headerTopPadding = .zero
-//      
-//      configuration.footerMode = .supplementary
-//      configuration.showsSeparators = false
-//      
-//      let layout = UICollectionViewCompositionalLayout.list(using: configuration)
-//      collectionView.setCollectionViewLayout(layout, animated: false)
-//      
-//      setupListViewHeader = true
-//    }
     .themedListBG(selectedTheme.postLinks.bg)
     .scrollContentBackground(.hidden)
     .scrollIndicators(.never)

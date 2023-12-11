@@ -77,7 +77,12 @@ extension Post {
       self.winstonData?.postDimensionsForcedNormal = getPostDimensions(post: self, winstonData: self.winstonData, columnWidth: contentWidth, secondary: secondary, rawTheme: theme, compact: false)
       
       self.winstonData?.titleAttr = createTitleTagsAttrString(titleTheme: theme.postLinks.theme.titleText, postData: data, textColor: theme.postLinks.theme.titleText.color.cs(cs).color())
-      self.winstonData?.subreddit = sub ?? Subreddit(id: data.subreddit)
+      
+      if let sub {
+        self.winstonData?.subreddit = sub
+      } else {
+        self.winstonData?._strongSubreddit = Subreddit(id: data.subreddit)
+      }
       
       if fetchAvatar {
         Task(priority: .background) {
@@ -597,7 +602,12 @@ class PostWinstonData: Hashable, ObservableObject {
   var permaURL: URL? = nil
   @Published var extractedMedia: MediaExtractedType? = nil
   @Published var extractedMediaForcedNormal: MediaExtractedType? = nil
-  weak var subreddit: Subreddit?
+  @Published var _strongSubreddit: Subreddit?
+  weak var _weakSubreddit: Subreddit?
+  var subreddit: Subreddit? {
+    get { _weakSubreddit ?? _strongSubreddit }
+    set { _weakSubreddit = newValue }
+  }
   @Published var mediaImageRequest: [ImageRequest] = []
   @Published var avatarImageRequest: ImageRequest? = nil
   @Published var postDimensions: PostDimensions = .zero

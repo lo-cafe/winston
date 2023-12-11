@@ -109,15 +109,22 @@ struct Tabber: View, Equatable {
     .themeImportingListener()
     .globalLoaderProvider()
     .environmentObject(tempGlobalState)
+    .onAppear {
+      Task {
+        if RedditCredentialsManager.shared.selectedCredential != nil {
+          async let _ = RedditAPI.shared.fetchMe(force: true)
+        }
+      }
+    }
     .task(priority: .background) {
       async let _ = cleanCredentialOrphanEntities()
       async let _ = autoSelectCredentialIfNil()
       async let _ = removeDefaultThemeFromThemes()
       async let _ = removeLegacySubsAndMultisCache()
       async let _ = updatePostsInBox(RedditAPI.shared)
-      if RedditCredentialsManager.shared.selectedCredential != nil {
-        async let _ = RedditAPI.shared.fetchMe(force: true)
-      }
+//      if RedditCredentialsManager.shared.selectedCredential != nil {
+//        async let _ = RedditAPI.shared.fetchMe(force: true)
+//      }
       if let ann = await WinstonAPI.shared.getAnnouncement() {
         Nav.present(.announcement(ann))
       }

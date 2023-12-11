@@ -82,10 +82,11 @@ struct RedditCredential: Identifiable, Equatable, Hashable, Codable {
       let expiration = Double(max(0, accessToken.expiration - 100))
       let now = Double(Date().timeIntervalSince1970)
       
-      if now - lastRefresh < expiration {
+      if (now - lastRefresh) < expiration {
         return accessToken
       }
     }
+    print("uerbson", forceRenew, saveToken, self.accessToken)
     return await fetchNewToken()
     
     func fetchNewToken(count: Int = 0) async -> AccessToken? {

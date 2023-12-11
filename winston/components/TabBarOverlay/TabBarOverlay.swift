@@ -18,11 +18,11 @@ struct TabBarOverlay: View {
       GeometryReader { geo in
         AccountSwitcherTrigger(onTap: meTabTap) {
           Color.clear
-            .frame(width: UIScreen.screenWidth / 5, height: tabHeight)
+            .frame(width: UIScreen.screenWidth / 5, height: max(0, (tabHeight)))
             .background(Color.clear)
             .contentShape(Rectangle())
         }
-        .frame(width: geo.size.width, height: tabHeight)
+        .frame(width: geo.size.width, height: max(0, (tabHeight)))
         .contentShape(Rectangle())
         .swipeAnywhere(forceEnable: true)
         .padding(.bottom, getSafeArea().bottom)

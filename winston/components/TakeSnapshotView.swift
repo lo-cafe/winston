@@ -31,9 +31,7 @@ struct TakeSnapshotView: UIViewRepresentable {
     }
     
     func takeScreenshotAndSave() {
-      print("a")
       guard let view = UIApplication.shared.windows.first?.rootViewController?.view else {
-        print("b")
         return
       }
       
@@ -45,11 +43,9 @@ struct TakeSnapshotView: UIViewRepresentable {
         view.drawHierarchy(in: view.bounds, afterScreenUpdates: true)
       }
       
-      print("c")
       // Save the screenshot to the Photos library
       DispatchQueue.main.async {
         self.parent.screenshot = screenshotImage
-        print("d", self.parent.screenshot)
       }
 //      UIImageWriteToSavedPhotosAlbum(screenshotImage, self, #selector(image(_:didFinishSavingWithError:contextInfo:)), nil)
     }
