@@ -16,18 +16,19 @@ struct ScrollWithPreview<Content: View, Preview: View>: View {
   var theme: ThemeBG?
   @State private var previewBG: PreviewBG = .theme
   @State private var scrollOffset = CGFloat.zero
-  @State private var contentSize = CGSize(width: 0, height: UIScreen.screenHeight)
+  @State private var contentSize = CGSize(width: 0, height: .screenH)
   @State private var previewContentSize: CGSize = .zero
-  @ObservedObject private var tempGlobalState = TempGlobalState.shared
+  
+  @Environment(\.tabBarHeight) private var tabBarHeight
   @Environment(\.colorScheme) private var cs
   @Environment(\.useTheme) private var currentTheme
   @ViewBuilder let content: () -> Content
   @ViewBuilder let preview: () -> Preview
     var body: some View {
-      let tabHeight = CGFloat(tempGlobalState.tabBarHeight ?? 0)
+      let tabHeight = CGFloat(tabBarHeight ?? 0)
       let interpolation = [
-        -((UIScreen.screenHeight - (tabHeight)) - ((contentSize.height + getSafeArea().top + tabHeight) - (previewContentSize.height + 40 + 16))),
-         (contentSize.height + getSafeArea().top + tabHeight) - (UIScreen.screenHeight - (getSafeArea().top)) - 20
+        -((.screenH - (tabHeight)) - ((contentSize.height + getSafeArea().top + tabHeight) - (previewContentSize.height + 40 + 16))),
+         (contentSize.height + getSafeArea().top + tabHeight) - (.screenH - (getSafeArea().top)) - 20
       ]
       let interpolate = interpolatorBuilder(interpolation, value: scrollOffset)
       ObservedScrollView(offset: $scrollOffset, showsIndicators: false) {

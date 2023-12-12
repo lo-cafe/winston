@@ -157,7 +157,7 @@ struct SubredditPostsIOS: View, Equatable {
         if loading {
           ProgressView()
             .progressViewStyle(.circular)
-            .frame(maxWidth: .infinity, minHeight: posts.count > 0 || filter != "flair:All" ? 100 : UIScreen.screenHeight - 300 )
+            .frame(maxWidth: .infinity, minHeight: posts.count > 0 || filter != "flair:All" ? 100 : .screenH - 300 )
             .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
             .listRowSeparator(.hidden)
             .listSectionSeparator(.hidden)

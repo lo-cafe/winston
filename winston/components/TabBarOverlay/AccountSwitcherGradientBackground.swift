@@ -68,7 +68,7 @@ struct AccountSwitcherGradientBackgroundLayer: View, Equatable {
         endRadiusFraction: 1
       ))
 //      .opacity(opacity)
-      .offset(y: UIScreen.screenHeight / 4)
+      .offset(y: .screenH / 4)
 //      .frame(maxWidth: .infinity, maxHeight: .infinity)
 //      .onDisappear {
 //        timer.d

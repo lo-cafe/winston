@@ -9,7 +9,7 @@ import SwiftUI
 import SpriteKit
 import AVKit
 
-//let dustScene = DustScene(size: .init(width: UIScreen.screenWidth, height: UIScreen.screenHeight))
+//let dustScene = DustScene(size: .init(width: .screenW, height: .screenH))
 
 struct AccountSwitcherParticles: View, Equatable {
   static var player = AVLooperPlayer(url: Bundle.main.url(forResource: "particle", withExtension: "mov")!)

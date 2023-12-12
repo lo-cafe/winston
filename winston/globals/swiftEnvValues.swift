@@ -9,6 +9,10 @@ import Foundation
 import SwiftUI
 import CoreData
 
+private struct TabBarHeightKey: EnvironmentKey {
+  static let defaultValue: Double? = nil
+}
+
 private struct BrighterBGKey: EnvironmentKey {
   static let defaultValue = false
 }
@@ -22,10 +26,14 @@ private struct CurrentThemeKey: EnvironmentKey {
 }
 
 private struct ContentWidthKey: EnvironmentKey {
-  static let defaultValue = UIScreen.screenWidth
+  static let defaultValue = .screenW
 }
 
 extension EnvironmentValues {
+  var tabBarHeight: Double? {
+    get { self[TabBarHeightKey.self] }
+    set { self[TabBarHeightKey.self] = newValue }
+  }
   var brighterBG: Bool {
     get { self[BrighterBGKey.self] }
     set { self[BrighterBGKey.self] = newValue }

@@ -120,7 +120,7 @@ struct CommentsThemingPanel: View {
         .padding(.horizontal, theme.comments.theme.outerHPadding)
       }
       .highPriorityGesture(DragGesture())
-      .frame(height: (UIScreen.screenHeight - getSafeArea().top - getSafeArea().bottom) / 2, alignment: .top)
+      .frame(height: (.screenH - getSafeArea().top - getSafeArea().bottom) / 2, alignment: .top)
       .clipped()
 //      .mask(RR(20, .black).padding(.horizontal, theme.comments.theme.outerHPadding))
     }

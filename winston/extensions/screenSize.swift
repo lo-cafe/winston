@@ -8,16 +8,16 @@
 import Foundation
 import UIKit
 
-extension CGSize {
-  static let screenSize = CGSize(width: .screenW, height: .screenH)
-}
-
 extension Double {
-  static let screenW = UIScreen.screenWidth
-  static let screenH = UIScreen.screenHeight
+  static let screenW = UIScreen.main.bounds.size.width
+  static let screenH = UIScreen.main.bounds.size.height
 }
 
 extension CGFloat {
-  static let screenW = UIScreen.screenWidth
-  static let screenH = UIScreen.screenHeight
+  static let screenW = UIScreen.main.bounds.size.width
+  static let screenH = UIScreen.main.bounds.size.height
+}
+
+extension CGSize {
+  static let screenSize = CGSize(width: .screenW, height: .screenH)
 }

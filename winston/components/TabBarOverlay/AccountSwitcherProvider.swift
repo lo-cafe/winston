@@ -53,11 +53,8 @@ struct AccountSwitcherProvider<Content: View>: View {
       if let curr { currCredIndex = RedditCredentialsManager.shared.credentials.firstIndex(of: curr) ?? -1 }
       leftSlide = Int(currCredIndex - nextCredIndex) <= 0
       withAnimation(.smooth) { transmitter.credentialToSet = cred }
-      //      withAnimation(.smooth) { credIDToSelect = cred.id }
     } else {
-      doThisAfter(0) {
-        TempGlobalState.shared.editingCredential = .init()
-      }
+      doThisAfter(0) { Nav.present(.editingCredential(.init())) }
     }
   }
   

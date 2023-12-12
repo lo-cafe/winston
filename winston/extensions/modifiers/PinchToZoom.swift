@@ -44,7 +44,7 @@ class PinchZoomView: UIView, UIGestureRecognizerDelegate {
   
   init(imgSize: CGSize, onTap: (()->())?) {
     self.onTap = onTap
-    self.imgSize = CGSize(width: UIScreen.screenWidth, height: (UIScreen.screenWidth * imgSize.height) / imgSize.width)
+    self.imgSize = CGSize(width: .screenW, height: (.screenW * imgSize.height) / imgSize.width)
     super.init(frame: .zero)
     
     let pinchGesture = UIPinchGestureRecognizer(target: self, action: #selector(pinch(gesture:)))
@@ -86,8 +86,8 @@ class PinchZoomView: UIView, UIGestureRecognizerDelegate {
     
     let overFlowFromCenterTopHeight = max(0, (scaledImageHeight - imageHeight) * CGFloat(anchor.y)) - offset.height
 //    let overFlowFromCenterLeftWidth = max(0, (scaledImageWidth - imageWidth) * CGFloat(anchor.x)) - offset.width
-    let blackAreaLeft = -(max(0, (scaledImageWidth - UIScreen.screenWidth) * CGFloat(anchor.x)) - offset.width)
-    let blackAreaTop = ((UIScreen.screenHeight - imgSize.height) / 2) - overFlowFromCenterTopHeight
+    let blackAreaLeft = -(max(0, (scaledImageWidth - .screenW) * CGFloat(anchor.x)) - offset.width)
+    let blackAreaTop = ((.screenH - imgSize.height) / 2) - overFlowFromCenterTopHeight
     
     let newAnchor = UnitPoint(x: (location.x + -blackAreaLeft) / scaledImageWidth, y: (location.y + -blackAreaTop) / scaledImageHeight)
     
@@ -130,14 +130,14 @@ class PinchZoomView: UIView, UIGestureRecognizerDelegate {
       let scaledImageWidth = imageWidth * scale
       
       let overFlowFromCenterTopHeight = max(0, (scaledImageHeight - imageHeight) * CGFloat(anchor.y)) - finalOffset.height
-      let blackAreaLeft = -(max(0, (scaledImageWidth - UIScreen.screenWidth) * CGFloat(anchor.x)) - finalOffset.width)
-      let blackAreaTop = ((UIScreen.screenHeight - imgSize.height) / 2) - overFlowFromCenterTopHeight
-      let blackAreaRight = blackAreaLeft < 0 ? UIScreen.screenWidth - (scaledImageWidth + blackAreaLeft) : 0
-      let blackAreaBot = -(scaledImageHeight - (UIScreen.screenHeight - blackAreaTop))
+      let blackAreaLeft = -(max(0, (scaledImageWidth - .screenW) * CGFloat(anchor.x)) - finalOffset.width)
+      let blackAreaTop = ((.screenH - imgSize.height) / 2) - overFlowFromCenterTopHeight
+      let blackAreaRight = blackAreaLeft < 0 ? .screenW - (scaledImageWidth + blackAreaLeft) : 0
+      let blackAreaBot = -(scaledImageHeight - (.screenH - blackAreaTop))
       
       var newOffset = finalOffset
       
-      if scaledImageHeight <= UIScreen.screenHeight {
+      if scaledImageHeight <= .screenH {
         let move = (blackAreaBot - blackAreaTop) / 2
         newOffset.height += move
       } else {
@@ -145,7 +145,7 @@ class PinchZoomView: UIView, UIGestureRecognizerDelegate {
         if blackAreaBot > 0 { newOffset.height += blackAreaBot }
       }
       
-      if scaledImageWidth <= UIScreen.screenWidth {
+      if scaledImageWidth <= .screenW {
         let move = (blackAreaRight - blackAreaLeft) / 2
         newOffset.width += move
       } else {
@@ -176,10 +176,10 @@ class PinchZoomView: UIView, UIGestureRecognizerDelegate {
       
       let overFlowFromCenterTopHeight = max(0, (scaledImageHeight - imageHeight) * CGFloat(anchor.y)) - offset.height
       let overFlowFromCenterLeftWidth = max(0, (scaledImageWidth - imageWidth) * CGFloat(anchor.x)) - offset.width
-      let blackAreaLeft = -(max(0, (scaledImageWidth - UIScreen.screenWidth) * CGFloat(anchor.x)) - offset.width)
-      let blackAreaTop = ((UIScreen.screenHeight - imgSize.height) / 2) - overFlowFromCenterTopHeight
-//      let blackAreaRight = blackAreaLeft < 0 ? UIScreen.screenWidth - (scaledImageWidth + blackAreaLeft) : 0
-//      let blackAreaBot = -(scaledImageHeight - UIScreen.screenHeight - blackAreaTop)
+      let blackAreaLeft = -(max(0, (scaledImageWidth - .screenW) * CGFloat(anchor.x)) - offset.width)
+      let blackAreaTop = ((.screenH - imgSize.height) / 2) - overFlowFromCenterTopHeight
+//      let blackAreaRight = blackAreaLeft < 0 ? .screenW - (scaledImageWidth + blackAreaLeft) : 0
+//      let blackAreaBot = -(scaledImageHeight - .screenH - blackAreaTop)
       
       let newAnchor = UnitPoint(x: (startLocation.x + -blackAreaLeft) / scaledImageWidth, y: (startLocation.y + -blackAreaTop) / scaledImageHeight)
       
@@ -215,14 +215,14 @@ class PinchZoomView: UIView, UIGestureRecognizerDelegate {
       let scaledImageWidth = imageWidth * scale
       
       let overFlowFromCenterTopHeight = max(0, (scaledImageHeight - imageHeight) * CGFloat(anchor.y)) - offset.height
-      let blackAreaLeft = -(max(0, (scaledImageWidth - UIScreen.screenWidth) * CGFloat(anchor.x)) - offset.width)
-      let blackAreaTop = ((UIScreen.screenHeight - imgSize.height) / 2) - overFlowFromCenterTopHeight
-      let blackAreaRight = blackAreaLeft < 0 ? UIScreen.screenWidth - (scaledImageWidth + blackAreaLeft) : 0
-      let blackAreaBot = -(scaledImageHeight - (UIScreen.screenHeight - blackAreaTop))
+      let blackAreaLeft = -(max(0, (scaledImageWidth - .screenW) * CGFloat(anchor.x)) - offset.width)
+      let blackAreaTop = ((.screenH - imgSize.height) / 2) - overFlowFromCenterTopHeight
+      let blackAreaRight = blackAreaLeft < 0 ? .screenW - (scaledImageWidth + blackAreaLeft) : 0
+      let blackAreaBot = -(scaledImageHeight - (.screenH - blackAreaTop))
       
       var newOffset = offset
       
-      if scaledImageHeight <= UIScreen.screenHeight {
+      if scaledImageHeight <= .screenH {
         let move = (blackAreaBot - blackAreaTop) / 2
         newOffset.height += move
       } else {
@@ -230,7 +230,7 @@ class PinchZoomView: UIView, UIGestureRecognizerDelegate {
         if blackAreaBot > 0 { newOffset.height += blackAreaBot }
       }
       
-      if scaledImageWidth <= UIScreen.screenWidth {
+      if scaledImageWidth <= .screenW {
         let move = (blackAreaRight - blackAreaLeft) / 2
         newOffset.width += move
       } else {
@@ -316,7 +316,7 @@ struct PinchToZoom: ViewModifier {
   
   func body(content: Content) -> some View {
     content
-      .frame(width: IPAD ? (UIScreen.screenHeight * size.width) / size.height : UIScreen.screenWidth, height: IPAD ? UIScreen.screenHeight : (UIScreen.screenWidth * size.height) / size.width)
+      .frame(width: IPAD ? (.screenH * size.width) / size.height : .screenW, height: IPAD ? .screenH : (.screenW * size.height) / size.width)
       .scaleEffect(scale, anchor: anchor)
       .offset(offset)
       .frame(.screenSize,  .center)

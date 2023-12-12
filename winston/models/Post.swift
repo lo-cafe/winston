@@ -20,7 +20,7 @@ extension Post {
   static var prefix = "t3"
   var selfPrefix: String { Self.prefix }
   
-  convenience init(data: T, sub: Subreddit? = nil, contentWidth: Double = UIScreen.screenWidth, secondary: Bool = false, imgPriority: ImageRequest.Priority = .low, theme: WinstonTheme? = nil, fetchAvatar: Bool = true) {
+  convenience init(data: T, sub: Subreddit? = nil, contentWidth: Double = .screenW, secondary: Bool = false, imgPriority: ImageRequest.Priority = .low, theme: WinstonTheme? = nil, fetchAvatar: Bool = true) {
     let theme = theme ?? getEnabledTheme()
     self.init(data: data, typePrefix: "\(Post.prefix)_")
     setupWinstonData(data: data, contentWidth: contentWidth, secondary: secondary, theme: theme, sub: sub, fetchAvatar: fetchAvatar)
@@ -32,7 +32,7 @@ extension Post {
     self.winstonData?.subreddit = sub
   }
   
-  func setupWinstonData(data: PostData? = nil, winstonData: PostWinstonData? = nil, contentWidth: Double = UIScreen.screenWidth, secondary: Bool = false, theme: WinstonTheme, sub: Subreddit? = nil, fetchAvatar: Bool = true) {
+  func setupWinstonData(data: PostData? = nil, winstonData: PostWinstonData? = nil, contentWidth: Double = .screenW, secondary: Bool = false, theme: WinstonTheme, sub: Subreddit? = nil, fetchAvatar: Bool = true) {
     if let data = data ?? self.data {
       let cs: ColorScheme = UIScreen.main.traitCollection.userInterfaceStyle == .dark ? .dark : .light
       let compact = Defaults[.compactPerSubreddit][sub?.id ?? data.subreddit_id ?? ""] ?? Defaults[.compactMode]
@@ -96,7 +96,7 @@ extension Post {
       bodyAttr.addAttribute(.paragraphStyle, value: style, range: NSRange(location: 0, length: bodyAttr.length))
       bodyAttr.addAttribute(.foregroundColor, value: UIColor(theme.posts.bodyText.color.cs(cs).color()), range: NSRange(location: 0, length: bodyAttr.length))
       self.winstonData?.postBodyAttr = bodyAttr
-			let postViewBodyMaxWidth = UIScreen.screenWidth - (!IPAD ? 0 : (UIScreen.screenWidth / 3)) - (theme.posts.padding.horizontal * 2)
+			let postViewBodyMaxWidth = .screenW - (!IPAD ? 0 : (.screenW / 3)) - (theme.posts.padding.horizontal * 2)
       
       let postViewBodyHeight = bodyAttr.boundingRect(with: CGSize(width: postViewBodyMaxWidth, height: .infinity), options: [.usesLineFragmentOrigin], context: nil).height
       self.winstonData?.postViewBodySize = .init(width: postViewBodyMaxWidth, height: postViewBodyHeight)

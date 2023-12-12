@@ -82,12 +82,12 @@ struct VideoPlayerPost: View, Equatable {
   }
   
   var safe: Double { getSafeArea().top + getSafeArea().bottom }
-  var rawContentWidth: CGFloat { UIScreen.screenWidth - ((preferenceShowPostsCards ? cardedPostLinksOuterHPadding : postLinksInnerHPadding) * 2) - (preferenceShowPostsCards ? (preferenceShowPostsCards ? cardedPostLinksInnerHPadding : 0) * 2 : 0) }
+  var rawContentWidth: CGFloat { .screenW - ((preferenceShowPostsCards ? cardedPostLinksOuterHPadding : postLinksInnerHPadding) * 2) - (preferenceShowPostsCards ? (preferenceShowPostsCards ? cardedPostLinksInnerHPadding : 0) * 2 : 0) }
   
   
   var body: some View {
     let contentWidth = overrideWidth ?? rawContentWidth
-    let maxHeight: CGFloat = (maxPostLinkImageHeightPercentage / 100) * (UIScreen.screenHeight)
+    let maxHeight: CGFloat = (maxPostLinkImageHeightPercentage / 100) * (.screenH)
     let sourceWidth = size.width
     let sourceHeight = size.height
     let propHeight = (contentWidth * sourceHeight) / sourceWidth

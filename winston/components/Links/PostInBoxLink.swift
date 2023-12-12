@@ -94,14 +94,14 @@ struct PostInBoxLink: View {
     }
     .padding(.horizontal, 13)
     .padding(.vertical, 11)
-    .frame(width: (UIScreen.screenWidth / 1.75), height: 120, alignment: .topLeading)
+    .frame(width: (.screenW / 1.75), height: 120, alignment: .topLeading)
     .background(
       postInBox.img != nil && postInBox.img != ""
       
       ? URLImage(url: URL(string: postInBox.img!)!)
         .scaledToFill()
         .opacity(0.15)
-        .frame(width: (UIScreen.screenWidth / 1.75), height: 120)
+        .frame(width: (.screenW / 1.75), height: 120)
         .clipped()
       : nil
     )

@@ -10,22 +10,24 @@ import SwiftUI
 
 
 struct TabBarOverlay: View {
-  var tabHeight: CGFloat?
   var meTabTap: () -> ()
   
+  @State private var bottomSafeArea = getSafeArea().bottom
+  
+  @Environment(\.tabBarHeight) private var tabBarHeight
   var body: some View {
-    if let tabHeight = tabHeight {
+    if let tabBarHeight {
       GeometryReader { geo in
         AccountSwitcherTrigger(onTap: meTabTap) {
           Color.clear
-            .frame(width: UIScreen.screenWidth / 5, height: max(0, (tabHeight)))
+            .frame(width: .screenW / 5, height: max(0, (tabBarHeight)))
             .background(Color.clear)
             .contentShape(Rectangle())
         }
-        .frame(width: geo.size.width, height: max(0, (tabHeight)))
+        .frame(width: geo.size.width, height: max(0, (tabBarHeight)))
         .contentShape(Rectangle())
         .swipeAnywhere(forceEnable: true)
-        .padding(.bottom, getSafeArea().bottom)
+        .padding(.bottom, bottomSafeArea)
         .frame(width: geo.size.width, height: geo.size.height, alignment: .bottom)
       }
       .ignoresSafeArea(.all)

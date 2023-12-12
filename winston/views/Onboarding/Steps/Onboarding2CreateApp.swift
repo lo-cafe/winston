@@ -21,7 +21,7 @@ struct Onboarding2CreateApp: View {
       Image("createAppButton")
         .resizable()
         .scaledToFit()
-        .frame(maxWidth: UIScreen.screenWidth * 0.75)
+        .frame(maxWidth: .screenW * 0.75)
         .mask(RR(12, Color.black))
       
       Text("Then, come back here!")

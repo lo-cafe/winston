@@ -173,7 +173,7 @@ struct Star: View {
       }
       .onAppear {
         timer.upstream.connect().cancel()
-        position.x = (((UIScreen.screenWidth - 48) / CGFloat(starsCount - 1)) * CGFloat(number)) + 24 + (CGFloat.rand(0...24) * ([-1, 1].randomElement())!)
+        position.x = (((.screenW - 48) / CGFloat(starsCount - 1)) * CGFloat(number)) + 24 + (CGFloat.rand(0...24) * ([-1, 1].randomElement())!)
         DispatchQueue.main.asyncAfter(deadline: .now() + CGFloat.random(in: 0...0.75)) {
           timer = Timer.publish(every: duration, on: .current, in: .common).autoconnect()
           move()

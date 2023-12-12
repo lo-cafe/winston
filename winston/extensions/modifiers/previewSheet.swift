@@ -27,7 +27,7 @@ struct PreviewSheetModifier<T: View>: ViewModifier {
   @State private var initialDragOffset: CGFloat?
   @State private var currentStepIndex: Int = 0
   
-  var pointZero: CGFloat { UIScreen.screenHeight - handlerHeight }
+  var pointZero: CGFloat { .screenH - handlerHeight }
   var stepPoints: [CGFloat] { [pointZero - forcedOffset, pointZero - (sheetContentSize.height / 2) - max(0, forcedOffset - (sheetContentSize.height / 2)), pointZero - sheetContentSize.height] }
   
   func body(content: Content) -> some View {
@@ -77,7 +77,7 @@ struct PreviewSheetModifier<T: View>: ViewModifier {
         //          })
         //          .padding(.top, handlerHeight)
           .frame(.screenSize,  .top)
-          .mask(SheetShape(width: UIScreen.screenWidth, height: UIScreen.screenHeight).fill(.black))
+          .mask(SheetShape(width: .screenW, height: .screenH).fill(.black))
           .overlay(
             Capsule(style: .continuous).fill(.ultraThinMaterial)
               .overlay(Capsule(style: .continuous).fill(.primary.opacity(!isDragging ? 0.15 : 0.3)))
@@ -88,12 +88,12 @@ struct PreviewSheetModifier<T: View>: ViewModifier {
             , alignment: .top
           )
           .background(
-            SheetShape(width: UIScreen.screenWidth, height: UIScreen.screenHeight)
+            SheetShape(width: .screenW, height: .screenH)
               .fill(AnyShapeStyle(bg))
               .shadow(radius: 16)
               .allowsHitTesting(!disabled)
           )
-//          .contentShape(.contextMenuPreview, SheetShape(width: UIScreen.screenWidth, height: UIScreen.screenHeight))
+//          .contentShape(.contextMenuPreview, SheetShape(width: .screenW, height: .screenH))
 //          .contentShape()
           .scaleEffect(1)
           .compositingGroup()

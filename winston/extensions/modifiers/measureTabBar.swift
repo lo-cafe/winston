@@ -31,7 +31,7 @@ struct TabBarMeasurerAccessor: UIViewControllerRepresentable {
       super.viewWillAppear(animated)
       if let tabBar = self.tabBarController {
         Task(priority: .background) {
-          self.callback(tabBar.tabBar.bounds.height)
+          self.callback(tabBar.tabBar.bounds.height - getSafeArea().bottom)
         }
       }
     }

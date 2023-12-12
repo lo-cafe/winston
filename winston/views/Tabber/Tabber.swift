@@ -9,28 +9,13 @@ import SwiftUI
 import Defaults
 import SpriteKit
 
-
-class TempGlobalState: ObservableObject {
-  static var shared = TempGlobalState()
-  @Published var editingCredential: RedditCredential? = nil
-  @Published var globalLoader = GlobalLoader()
-  @Published var tabBarHeight: Double? = nil
-  @Published var credModalOpen = false
-}
-
-class GlobalNavPathWrapper: ObservableObject {
-  @Published var path = NavigationPath()
-}
-
 struct Tabber: View, Equatable {
   static func == (lhs: Tabber, rhs: Tabber) -> Bool { true }
   
-  @ObservedObject private var tempGlobalState = TempGlobalState.shared
   @ObservedObject private var redditCredentialsManager = RedditCredentialsManager.shared
-  
-  @State private var importedThemeAlert = false
-  
   @ObservedObject private var nav = Nav.shared
+  
+  @State var tabBarHeight: Double? = nil
   
   @Environment(\.useTheme) private var currentTheme
   @Environment(\.colorScheme) private var colorScheme
@@ -68,14 +53,12 @@ struct Tabber: View, Equatable {
   }
   
   var body: some View {
-    let tabBarHeight = tempGlobalState.tabBarHeight
-    let tabHeight = (tabBarHeight ?? 0) - getSafeArea().bottom
     TabView(selection: $nav.activeTab.onUpdate { newTab in if nav.activeTab == newTab { nav.resetStack() } }) {
       
       WithCredentialOnly(credential: redditCredentialsManager.selectedCredential) {
         SubredditsStack(router: nav[.posts])
       }
-      .measureTabBar($tempGlobalState.tabBarHeight)
+      .measureTabBar($tabBarHeight)
       .tag(Nav.TabIdentifier.posts)
       .tabItem { Label("Posts", systemImage: "doc.text.image") }
       
@@ -102,17 +85,22 @@ struct Tabber: View, Equatable {
         .tabItem { Label("Settings", systemImage: "gearshape.fill") }
       
     }
-    .overlay(TabBarOverlay(tabHeight: tabHeight, meTabTap: meTabTap), alignment: .bottom)
+    .overlay(TabBarOverlay(meTabTap: meTabTap), alignment: .bottom)
     .openFromWebListener()
-    .themeFetchingListener()
+    .themeFetchingListener() // From WinstonAPI
     .newCredentialListener()
-    .themeImportingListener()
+    .themeImportingListener() // From local file
     .globalLoaderProvider()
-    .environmentObject(tempGlobalState)
+    .environment(\.tabBarHeight, tabBarHeight)
     .onAppear {
-      Task {
+      Task(priority: .background) {
+        // Some tasks have to be executed in an ".onAppear" rather than in a ".task" because
+        // the latter executes it's code brefore the view appears, therefore, before some
+        // models initiate, which may cause the functions to fail.
         if RedditCredentialsManager.shared.selectedCredential != nil {
           async let _ = RedditAPI.shared.fetchMe(force: true)
+          async let _ = RedditCredentialsManager.shared.updateMe()
+          async let _ = updatePostsInBox(RedditAPI.shared)
         }
       }
     }
@@ -121,13 +109,10 @@ struct Tabber: View, Equatable {
       async let _ = autoSelectCredentialIfNil()
       async let _ = removeDefaultThemeFromThemes()
       async let _ = removeLegacySubsAndMultisCache()
-      async let _ = updatePostsInBox(RedditAPI.shared)
-//      if RedditCredentialsManager.shared.selectedCredential != nil {
-//        async let _ = RedditAPI.shared.fetchMe(force: true)
+
+//      if let ann = await WinstonAPI.shared.getAnnouncement() {
+//        Nav.present(.announcement(ann))
 //      }
-      if let ann = await WinstonAPI.shared.getAnnouncement() {
-        Nav.present(.announcement(ann))
-      }
     }
     .accentColor(currentTheme.general.accentColor.cs(colorScheme).color())
   }

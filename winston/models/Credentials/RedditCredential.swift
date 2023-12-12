@@ -86,7 +86,6 @@ struct RedditCredential: Identifiable, Equatable, Hashable, Codable {
         return accessToken
       }
     }
-    print("uerbson", forceRenew, saveToken, self.accessToken)
     return await fetchNewToken()
     
     func fetchNewToken(count: Int = 0) async -> AccessToken? {

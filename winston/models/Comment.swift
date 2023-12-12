@@ -69,7 +69,7 @@ extension Comment {
     bodyAttr.addAttribute(.paragraphStyle, value: style, range: NSRange(location: 0, length: bodyAttr.length))
     winstonData.bodyAttr = bodyAttr
     
-    let screenWidth = UIScreen.screenWidth - (!IPAD ? 0 : (UIScreen.screenWidth /  3))
+    let screenWidth = .screenW - (!IPAD ? 0 : (.screenW /  3))
     var bodyMaxWidth = Double(screenWidth - (theme.outerHPadding * 2) - (theme.innerPadding.horizontal * 2))
     if let depth = data.depth, depth > 0 {
       bodyMaxWidth -= Double(CommentLinkContent.indentLineContentSpacing)

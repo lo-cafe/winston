@@ -22,7 +22,7 @@ struct Onboarding3FillingInfo: View {
         Image("filledForm")
           .resizable()
           .scaledToFit()
-          .frame(maxWidth: UIScreen.screenWidth * 0.85)
+          .frame(maxWidth: .screenW * 0.85)
           .mask(RR(12, Color.black))
         
         Text("Here are the values if you wanna quick copy them:")

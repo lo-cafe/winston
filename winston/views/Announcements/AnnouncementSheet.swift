@@ -49,7 +49,7 @@ struct AnnouncementSheet: View {
             }
           })
           .padding()
-          .frame(width: UIScreen.screenWidth)
+          .frame(width: .screenW)
           .background(
             Material.ultraThinMaterial
           )
