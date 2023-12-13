@@ -9,18 +9,16 @@ import SwiftUI
 import Combine
 import Defaults
 
-
 class AccountSwitcherTransmitter: ObservableObject {
+  enum SwitchingState {
+    case showing, hidden, selectedCred(RedditCredential)
+  }
   private var cancellable: Timer? = nil
-  @Published var positionInfo: PositionInfo? = nil { willSet { if newValue != nil && self.willEnd { cancellable?.invalidate(); withAnimation(.bouncy) { self.willEnd = false } } } }
-  @Published var willEnd = false { didSet { if willEnd {
-    //    if self.credentialToSet == nil { self.screenshot = nil }
-    self.cancellable = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: false) { _ in
-      (self.positionInfo, self.willEnd) = (nil, false)
-    }
-  }}}
+  @Published var positionInfo: PositionInfo?
+  @Published var showing = false
+  @Published var selectedCred: RedditCredential? = nil
   @Published var screenshot: UIImage? = nil
-  @Published var credentialToSet: RedditCredential? = nil
+  @Published var credentialIDToSet: UUID? = nil
   
   struct PositionInfo: Equatable, Hashable {
     static let zero = PositionInfo(.zero)
@@ -39,71 +37,101 @@ class AccountSwitcherTransmitter: ObservableObject {
 }
 
 struct AccountSwitcherProvider<Content: View>: View {
+  struct AccountTransitionKit {
+    var focusCloser: Bool = false
+    var willLensHeadLeft: Bool = false
+    var passLens: Bool = false
+  }
+  
   @StateObject private var transmitter = AccountSwitcherTransmitter()
   //  @State private var credIDToSelect: UUID? = nil
-  @State private var passScreen = false
-  @State private var leftSlide = false
+  @State private var accTransKit: AccountTransitionKit = .init()
   
   var content: () -> Content
   
-  func selectCredential(_ cred: RedditCredential?) {
-    if let cred = cred, let nextCredIndex = RedditCredentialsManager.shared.credentials.firstIndex(of: cred) {
-      let curr = RedditCredentialsManager.shared.selectedCredential
-      var currCredIndex = -1
-      if let curr { currCredIndex = RedditCredentialsManager.shared.credentials.firstIndex(of: curr) ?? -1 }
-      leftSlide = Int(currCredIndex - nextCredIndex) <= 0
-      withAnimation(.smooth) { transmitter.credentialToSet = cred }
+  func selectCredential() {
+    if let cred = transmitter.selectedCred {
+      if let nextCredIndex = RedditCredentialsManager.shared.credentials.firstIndex(of: cred) {
+        let curr = RedditCredentialsManager.shared.selectedCredential
+        var currCredIndex = -1
+        if let curr { currCredIndex = RedditCredentialsManager.shared.credentials.firstIndex(of: curr) ?? -1 }
+        accTransKit.willLensHeadLeft = Int(currCredIndex - nextCredIndex) <= 0
+        transmitter.selectedCred = nil
+        if #available(iOS 17.0, *) {
+          withAnimation(.spring) { accTransKit.focusCloser = true } completion: {
+//            withAnimation(.default.speed(20)) { transmitter.positionInfo = nil; Defaults[.redditCredentialSelectedID] = cred.id } completion: {
+            transmitter.positionInfo = nil; Defaults[.redditCredentialSelectedID] = cred.id
+              withAnimation(.spring) { accTransKit.passLens = true } completion: {
+                withAnimation(.spring) { transmitter.screenshot = nil; accTransKit.focusCloser = false } completion: {
+                  accTransKit.passLens = false
+                }
+              }
+//            }
+          }
+        } else {
+          // Fallback on earlier versions
+        }
+      } else {
+        doThisAfter(0) {
+          transmitter.screenshot = nil
+          transmitter.positionInfo = nil
+          transmitter.selectedCred = nil
+          Nav.present(.editingCredential(cred))
+        }
+      }
     } else {
-      doThisAfter(0) { Nav.present(.editingCredential(.init())) }
+      doThisAfter(0.5) {
+        transmitter.screenshot = nil
+        transmitter.positionInfo = nil
+      }
     }
   }
   
   var body: some View {
-    let showScreenshot = transmitter.credentialToSet != nil
-    let showOverlay = (transmitter.positionInfo != nil && !transmitter.willEnd) || showScreenshot
-    let completelyFree = !showOverlay && !passScreen && !showScreenshot
-    let overFramePadding: Double = !showOverlay ? 0 : showScreenshot ? 32 : 16
+    let showOverlay = (transmitter.positionInfo != nil && transmitter.showing) || accTransKit.focusCloser
+//        let completelyFree = !showOverlay && !accTransKit.passLens && !showScreenshot
+    let completelyFree = true
+    let focusFramePadding: Double = !showOverlay ? 0 : accTransKit.focusCloser ? 40 : 16
+    let frameSlideOffsetX = accTransKit.passLens ? (.screenW * (accTransKit.willLensHeadLeft ? -1 : 1)) : 0
     ZStack {
-      content()
-        .environmentObject(transmitter).zIndex(1)
-        .overlay {
-          if showScreenshot, let screenshot = transmitter.screenshot {
-            Image(uiImage: screenshot).resizable().frame(.screenSize)
-              .mask(Rectangle().fill(.black).offset(x: passScreen ? (.screenW * (leftSlide ? -1 : 1)) : 0))
-              .transition(.identity)
-              .onAppear {
-                Task(priority: .background) {
-                  if let credID = transmitter.credentialToSet?.id { withAnimation { Defaults[.redditCredentialSelectedID] = credID } }
-                }
-                doThisAfter(0.5) {
-                  withAnimation(.smooth) { passScreen = true }
-                  doThisAfter(0.5) {
-                    withAnimation(.smooth) { (transmitter.screenshot, transmitter.credentialToSet) = (nil, nil) }
-                    doThisAfter(0.5) {
-                      passScreen = false
-                    }
-                  }
-                }
+      
+      ZStack {
+        content()
+          .environmentObject(transmitter)
+          .zIndex(1)
+        
+        if let screenshot = transmitter.screenshot {
+          Image(uiImage: screenshot).resizable().frame(.screenSize)
+            .blur(radius: accTransKit.focusCloser ? 20 : transmitter.showing ? 10 : 0)
+            .background(.black)
+//            .offset(x: frameSlideOffsetX / 5)
+            .overlay {
+              SideBySideWindow(passLens: accTransKit.passLens, willLensHeadLeft: accTransKit.willLensHeadLeft) {
+                Rectangle().fill(EllipticalGradient(colors: [.gray.opacity(0.5), .gray.opacity(0.2)], center: .init(x: !transmitter.showing ? 1 : 0.75, y: 0), startRadiusFraction: 0, endRadiusFraction: 0.85)).padding(.all, focusFramePadding).opacity(!transmitter.showing ? 0 : 1).allowsHitTesting(false)
               }
-          }
+            }
+            .mask(Rectangle().fill(.black).offset(x: frameSlideOffsetX))
+            .saturation(accTransKit.focusCloser ? 2 : transmitter.showing ? 1.75 : 1)
+            .transition(.identity)
+            .zIndex(2)
+            .drawingGroup()
         }
-        .blur(radius: showOverlay ? showScreenshot ? 20 : 10 : 0)
-        .compositingGroup()
-        .saturation(showOverlay ? showScreenshot ? 2 : 1.75 : 1)
-        .opacity(showOverlay ? 0.9 : 1)
-        .overlay {
-          SideBySideWindow(passScreen: passScreen, leftSlide: leftSlide) {
-            Rectangle().fill(EllipticalGradient(colors: [.gray.opacity(0.5), .gray.opacity(0.2)], center: .init(x: !showOverlay ? 1 : 0.75, y: 0), startRadiusFraction: 0, endRadiusFraction: 0.85)).padding(.all, overFramePadding).opacity(!showOverlay ? 0 : 1).allowsHitTesting(false)
-          }
+      }
+      .mask(
+        SideBySideWindow(passLens: accTransKit.passLens, willLensHeadLeft: accTransKit.willLensHeadLeft) {
+          RR(showOverlay ? accTransKit.focusCloser ? 40 : 48 : .screenCornerRadius, .black).padding(.all, focusFramePadding)
         }
-        .mask(
-          SideBySideWindow(passScreen: passScreen, leftSlide: leftSlide) {
-            RR(showOverlay ? showScreenshot ? 48 : 56 : 0, .black).padding(.all, overFramePadding)
-          }
-        )
+      )
+      .frame(.screenSize)
+      .background(.black)
+      .animation(.spring, value: transmitter.showing)
       
       if let positionInfo = transmitter.positionInfo {
-        AccountSwitcherOverlayView(fingerPosition: positionInfo, willEnd: transmitter.willEnd, selectCredential: selectCredential).equatable().zIndex(3).allowsHitTesting(false)
+        AccountSwitcherOverlayView(fingerPosition: positionInfo, appear: transmitter.showing, transmitter: transmitter).equatable().zIndex(3).allowsHitTesting(false)
+          .zIndex(3)
+          .onAppear { transmitter.showing = true }
+          .onChange(of: transmitter.showing) { if !$0 { selectCredential() } }
+          .allowsHitTesting(false)
       }
     }
     .ignoresSafeArea(.all)
@@ -112,8 +140,8 @@ struct AccountSwitcherProvider<Content: View>: View {
 }
 
 struct SideBySideWindow<C: View>: View {
-  var passScreen: Bool
-  var leftSlide: Bool
+  var passLens: Bool
+  var willLensHeadLeft: Bool
   @ViewBuilder var content: () -> C
   var body: some View {
     HStack(spacing: 0) {
@@ -125,8 +153,8 @@ struct SideBySideWindow<C: View>: View {
     }
     .frame(width: .screenW * 2, alignment: .leading)
     .scaleEffect(1)
-    .offset(x: passScreen ? (.screenW * (leftSlide ? -1 : 1)) : 0)
-    .frame(width: .screenW, alignment: leftSlide ? .leading : .trailing)
+    .offset(x: passLens ? (.screenW * (willLensHeadLeft ? -1 : 1)) : 0)
+    .frame(width: .screenW, alignment: willLensHeadLeft ? .leading : .trailing)
     .allowsHitTesting(false)
     .clipped()
     .drawingGroup()

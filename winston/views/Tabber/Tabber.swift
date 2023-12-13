@@ -32,8 +32,6 @@ struct Tabber: View, Equatable {
   }
   
   init(theme: WinstonTheme, cs: ColorScheme) {
-    // MANDRAKE
-    // _activeTab = State(initialValue: activeTab) // Initialize activeTab
     Tabber.updateTabAndNavBar(tabTheme: theme.general.tabBarBG, navTheme: theme.general.navPanelBG, cs)
   }
   
@@ -91,6 +89,7 @@ struct Tabber: View, Equatable {
     .newCredentialListener()
     .themeImportingListener() // From local file
     .globalLoaderProvider()
+    .refetchMeListener()
     .environment(\.tabBarHeight, tabBarHeight)
     .onAppear {
       Task(priority: .background) {
@@ -98,7 +97,6 @@ struct Tabber: View, Equatable {
         // the latter executes it's code brefore the view appears, therefore, before some
         // models initiate, which may cause the functions to fail.
         if RedditCredentialsManager.shared.selectedCredential != nil {
-          async let _ = RedditAPI.shared.fetchMe(force: true)
           async let _ = RedditCredentialsManager.shared.updateMe()
           async let _ = updatePostsInBox(RedditAPI.shared)
         }

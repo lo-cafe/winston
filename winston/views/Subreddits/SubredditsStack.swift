@@ -22,7 +22,7 @@ struct SubredditsStack: View {
     NavigationSplitView(columnVisibility: $columnVisibility) {
       if let redditCredentialSelectedID = redditCredentialSelectedID {
         Subreddits(selectedSub: $router.firstSelected, loaded: loaded, currentCredentialID: redditCredentialSelectedID)
-          .measure($sidebarSize)
+          .measure($sidebarSize).id("subreddits-list-\(redditCredentialSelectedID)")
       }
     } detail: {
       NavigationStack(path: $router.path) {

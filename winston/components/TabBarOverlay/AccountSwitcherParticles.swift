@@ -17,15 +17,11 @@ struct AccountSwitcherParticles: View, Equatable {
   
   static func == (lhs: AccountSwitcherParticles, rhs: AccountSwitcherParticles) -> Bool { true }
   //  @State var player = AVPlayer(url: Bundle.main.url(forResource: "particles-1", withExtension: "mp4")!)
-  @State private var blur = true
   var body: some View {
 //    GeometryReader { proxy in
     PPlayer(player: Self.player)
         .frame(.screenSize,  .bottom)
-        .onAppear {
-          withAnimation(.easeOut) { blur = false }
-          Self.player.play()
-        }
+        .task { Self.player.play() }
         .onDisappear {
           let time = CMTime(seconds: Double(arc4random_uniform(16)), preferredTimescale: 1) // Random time between 0 and 15 seconds
           Self.player.seek(to: time)
@@ -44,9 +40,9 @@ struct PPlayer: UIViewRepresentable {
   func makeUIView(context: Context) -> UIView {
     let view = PlayerView()
 //    view.playerLayer.frame = CGRect(x: 0, y: 0, width: view.frame.height, height: view.frame.width)
-    let rotationDegrees: CGFloat = 90.0
-    let rotationRadians: CGFloat = (rotationDegrees * .pi) / 180.0
-    view.playerLayer.setAffineTransform(CGAffineTransform.identity.rotated(by: rotationRadians))
+//    let rotationDegrees: CGFloat = 90.0
+//    let rotationRadians: CGFloat = (rotationDegrees * .pi) / 180.0
+//    view.playerLayer.setAffineTransform(CGAffineTransform.identity.rotated(by: rotationRadians))
 
     view.player = self.player
     view.playerLayer.videoGravity = .resizeAspectFill

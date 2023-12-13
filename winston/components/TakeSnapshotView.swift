@@ -47,7 +47,6 @@ struct TakeSnapshotView: UIViewRepresentable {
       DispatchQueue.main.async {
         self.parent.screenshot = screenshotImage
       }
-//      UIImageWriteToSavedPhotosAlbum(screenshotImage, self, #selector(image(_:didFinishSavingWithError:contextInfo:)), nil)
     }
 //    @objc func image(_ image: UIImage, didFinishSavingWithError error: Error?, contextInfo: UnsafeMutableRawPointer?) {
 //      if let error = error {

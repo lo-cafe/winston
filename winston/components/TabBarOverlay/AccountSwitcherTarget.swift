@@ -29,28 +29,30 @@ struct AccountSwitcherTarget: View, Equatable {
   static let hitboxTolerance: Double = 5
   
   static func == (lhs: AccountSwitcherTarget, rhs: AccountSwitcherTarget) -> Bool {
-    lhs.cred == rhs.cred && lhs.index == rhs.index && lhs.hovered == rhs.hovered && lhs.willEnd == rhs.willEnd && lhs.distance == rhs.distance && lhs.fingerPos == rhs.fingerPos && lhs.attraction == rhs.attraction
+    lhs.cred == rhs.cred && lhs.index == rhs.index && lhs.hovered == rhs.hovered && lhs.distance == rhs.distance && lhs.attraction == rhs.attraction
   }
   
-  @State private var appear = false
+//  @State private var appear = false
   @State private var jump = 0
-  @State private var globalCirclePos: CGPoint = .zero
+//  @State private var globalCirclePos: CGPoint = .zero
   @State private var impactRigid = UIImpactFeedbackGenerator(style: .rigid)
   
-  var containerSize: CGSize
-  var index: Int
-  var targetsCount: Int
-  var fingerPos: CGPoint
-  var cred: RedditCredential? = nil
-  var willEnd: Bool
-  var selectCredential: (RedditCredential?) -> ()
-
+  let containerSize: CGSize
+  let index: Int
+  let targetsCount: Int
+  var cred: RedditCredential
+  
+  @ObservedObject var transmitter: AccountSwitcherTransmitter
+  
+  private var appear: Bool { transmitter.showing }
+  private var fingerPos: CGPoint { transmitter.positionInfo?.location ?? .zero }
+  private var globalCirclePos: CGPoint { transmitter.positionInfo?.initialLocation ?? .zero }
 
   private let distanceMaxSelectedVibrating: Double = 100
   private let verticalOffset = -50.0
   private let textSpace = (AccountSwitcherTarget.fontSize * 1.2) + AccountSwitcherTarget.vStackSpacing
-  private var isAddBtn: Bool { cred == nil }
-  private var isSelected: Bool { !isAddBtn && Defaults[.redditCredentialSelectedID] == cred?.id }
+  private var isAddBtn: Bool { !cred.isAuthorized }
+  private var isSelected: Bool { !isAddBtn && Defaults[.redditCredentialSelectedID] == cred.id }
   private var radiusX: Double { (containerSize.width / 2) }
   private var radiusY: Double { (containerSize.height / 2) }
   private var initialOffset: CGSize { getOffsetAroundCircleForIndex(count: targetsCount, index: index, circleSize: containerSize) }
@@ -86,7 +88,7 @@ struct AccountSwitcherTarget: View, Equatable {
           .foregroundStyle(.primary)
       } else {
         Group {
-          if let picture = cred?.profilePicture, let url = URL(string: picture) {
+          if let picture = cred.profilePicture, let url = URL(string: picture) {
             URLImage(url: url).equatable()
           } else {
             Image(.emptyCredential).resizable()
@@ -132,16 +134,14 @@ struct AccountSwitcherTarget: View, Equatable {
     .changeEffect(.shake(rate: .fast), value: jump)
     .background(alignment: .top) {
       VStack(spacing: 2) {
-        Text(isAddBtn ? "Add new" : cred?.userName ?? "Unknown")
+        Text(isAddBtn ? "Add new" : cred.userName ?? "Unknown")
           .fixedSize(horizontal: true, vertical: false)
           .foregroundStyle(.primary)
           .fontSize(Self.fontSize, .semibold)
-//          .shadow(color: .black.opacity(0.35), radius: 13, x: 0, y: 8)
       }
       .frame(alignment: .top)
       .position(x: Self.size / 2, y: Self.size + Self.vStackSpacing + ((Self.fontSize * 1.2) / 2))
       .scaleEffect(1)
-//      .offset(y: appear ? Self.size + Self.vStackSpacing : 0)
     }
     .compositingGroup()
     .shadow(color: .black.opacity(0.35), radius: 13, x: 0, y: 8)
@@ -153,21 +153,23 @@ struct AccountSwitcherTarget: View, Equatable {
     .animation(hovered ? .spring(response: 0.4, dampingFraction: 0.5) : .spring, value: hovered)
     .animation(.bouncy, value: attraction)
     .opacity(appear ? 1 : 0)
-    .background( GeometryReader { geo in Color.clear.onAppear {
-      let frame = geo.frame(in: .global)
-      impactRigid.prepare()
-      withAnimation(.bouncy.delay(0.05 * Double((targetsCount - 1) - index))) {
-        globalCirclePos = .init(x: frame.midX, y: frame.midY)
-        self.appear = true
-      }
-    } } )
-    .vibrate(.continuous(sharpness: hovered ? 0 : interpolateVibration([0.3, 0], false), intensity: hovered ? 0 : interpolateVibration([0.3, 0], false)), trigger: isSelected && !hovered ? distance : 0)
-    .vibrate(.transient(sharpness: !isSelected && !hovered ? 1.0 : 0, intensity: isSelected && hovered ? 0 : 1.0), trigger: hovered)
-    .onChange(of: willEnd) {
-      guard $0 else { return }
-      withAnimation(.snappy.delay(0.025 * Double(index))) { self.appear = false }
-      if hovered { selectCredential(cred) }
+    .animation(appear ? .bouncy.delay(0.05 * Double((targetsCount - 1) - index)) : .snappy.delay(0.025 * Double(index)), value: appear)
+    .vibrate(.continuous(sharpness: hovered ? 0 : interpolateVibration([0.3, 0], false), intensity: hovered ? 0 : interpolateVibration([0.3, 0], false)), trigger: isSelected && !hovered ? distance : 0, disabled: !appear)
+    .vibrate(.transient(sharpness: !isSelected && !hovered ? 1.0 : 0, intensity: isSelected && hovered ? 0 : 1.0), trigger: hovered, disabled: !appear)
+    .onChange(of: hovered) {
+      if transmitter.selectedCred == nil && $0 { transmitter.selectedCred = cred }
+      else if transmitter.selectedCred == cred && !$0 { transmitter.selectedCred = nil }
     }
+//    .onChange(of: appear) {
+//      guard !$0 else { return }
+////      withAnimation(.snappy.delay(0.025 * Double(index))) { self.appear = false }
+//      if hovered {
+//        transmitter.credentialIDToSet = cred.id
+////        selectCredential(cred)
+//      } else if index == 0 {
+//        selectCredential(nil)
+//      }
+//    }
     .onChange(of: hovered) { if $0 && isSelected { jump += 1 } }
     .transition(.identity)
   }

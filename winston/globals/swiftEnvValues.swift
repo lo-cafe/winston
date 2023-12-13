@@ -26,7 +26,7 @@ private struct CurrentThemeKey: EnvironmentKey {
 }
 
 private struct ContentWidthKey: EnvironmentKey {
-  static let defaultValue = .screenW
+  static let defaultValue: Double = .screenW
 }
 
 extension EnvironmentValues {

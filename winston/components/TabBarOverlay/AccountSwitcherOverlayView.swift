@@ -9,20 +9,20 @@ import SwiftUI
 
 struct AccountSwitcherOverlayView: View, Equatable {
   static func == (lhs: AccountSwitcherOverlayView, rhs: AccountSwitcherOverlayView) -> Bool {
-    lhs.fingerPosition == rhs.fingerPosition && lhs.willEnd == rhs.willEnd
+    lhs.fingerPosition == rhs.fingerPosition && lhs.appear == rhs.appear
   }
   
-  var fingerPosition: AccountSwitcherTransmitter.PositionInfo
-  var willEnd: Bool
-  var selectCredential: (RedditCredential?) -> ()
+  let fingerPosition: AccountSwitcherTransmitter.PositionInfo
+  let appear: Bool
+  @ObservedObject var transmitter: AccountSwitcherTransmitter
   
   @ObservedObject private var credentialsManager = RedditCredentialsManager.shared
   @State private var showOverlay = false
   
+  
   private let targetsContainerSize: CGSize = .init(width: 250, height: 150)
 
   var body: some View {
-    //    let showOverlay = showOverlay && !willEnd
     let validCredentials = credentialsManager.credentials.filter { $0.isAuthorized }.reversed()
     let showAddBtn = validCredentials.count < 3
     let targetsCount = validCredentials.count + (showAddBtn ? 1 : 0)
@@ -39,14 +39,14 @@ struct AccountSwitcherOverlayView: View, Equatable {
       //            .allowsHitTesting(false)
       //        }
       
-      AccountSwitcherGradientBackground().equatable().opacity(willEnd ? 0 : 1)
+//      AccountSwitcherGradientBackground().equatable().opacity(!appear ? 0 : 1)
       
       ZStack {
         if showAddBtn {
-          AccountSwitcherTarget(containerSize: targetsContainerSize, index: 0, targetsCount: targetsCount, fingerPos: fingerPosition.location, cred: nil, willEnd: willEnd, selectCredential: selectCredential)
+          AccountSwitcherTarget(containerSize: targetsContainerSize, index: 0, targetsCount: targetsCount, cred: .init(), transmitter: transmitter)
         }
         ForEach(Array(validCredentials.enumerated()), id: \.element) { index, cred in
-          AccountSwitcherTarget(containerSize: targetsContainerSize, index: index + (showAddBtn ? 1 : 0), targetsCount: targetsCount, fingerPos: fingerPosition.location, cred: cred, willEnd: willEnd, selectCredential: selectCredential)
+          AccountSwitcherTarget(containerSize: targetsContainerSize, index: index + (showAddBtn ? 1 : 0), targetsCount: targetsCount, cred: cred, transmitter: transmitter)
         }
         
       }
@@ -54,10 +54,10 @@ struct AccountSwitcherOverlayView: View, Equatable {
       .position(fingerPosition.initialLocation)
       .drawingGroup()
       
-      AccountSwitcherFingerLight().equatable().position(fingerPosition.location).opacity(willEnd ? 0 : 1)
-        .drawingGroup()
+//      AccountSwitcherFingerLight().equatable().position(fingerPosition.location).opacity(!appear ? 0 : 1)
+//        .drawingGroup()
       
-      AccountSwitcherParticles().equatable().opacity(willEnd ? 0 : 1)
+      AccountSwitcherParticles().equatable().opacity(appear ? 1 : 0).animation(.easeIn, value: appear)
       
     }
     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)

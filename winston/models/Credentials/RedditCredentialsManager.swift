@@ -14,6 +14,7 @@ import Combine
 
 class RedditCredentialsManager: ObservableObject {
   static let shared = RedditCredentialsManager()
+  static func getById(_ credID: UUID) -> RedditCredential? { RedditCredentialsManager.shared.credentials.first(where: { $0.id == credID } ) }
   static let keychainEntryDivider = "\\--(*.*)--/"
   static let oldKeychainServiceString = "lo.cafe.winston.reddit-credentials"
   static let keychainServiceString = "lo.cafe.winston.reddit-multi-credentials"
@@ -73,15 +74,20 @@ class RedditCredentialsManager: ObservableObject {
       }
     }
       
-    self.cancelables.append(Defaults.observe(.redditCredentialSelectedID) { _ in
-      self.objectWillChange.send()
-      self.updateMe()
-    })
+//    self.cancelables.append(Defaults.observe(.redditCredentialSelectedID) { change in
+//      if change.oldValue == change.newValue { return }
+//      if let cred = self.credentials.first(where: { $0.id == change.newValue }) {
+//        self.updateMe(altCred: cred)
+//      }
+//      doThisAfter(0) { self.objectWillChange.send() }
+//    })
     
-    if let currCredID = Defaults[.redditCredentialSelectedID], let currCred = self.credentials.first(where: { $0.id == currCredID })  {
-      doThisAfter(0.5) { self.updateMe(altCred: currCred) }
-    }
+//    if let currCredID = Defaults[.redditCredentialSelectedID], let currCred = self.credentials.first(where: { $0.id == currCredID })  {
+//      doThisAfter(0.5) { self.updateMe(altCred: currCred) }
+//    }
   }
+  
+  deinit { self.cancelables.forEach { obs in obs.invalidate() } }
   
   func updateMe(altCred: RedditCredential? = nil) {
     Task(priority: .background) {
@@ -110,8 +116,7 @@ class RedditCredentialsManager: ObservableObject {
       Task(priority: .background) { self.syncCredentialsWithKeychain() }
     }
   }
-  
-  deinit { self.cancelables.forEach { obs in obs.invalidate() } }
+
   
   func wipeAllCredentials() {
     DispatchQueue.main.async {

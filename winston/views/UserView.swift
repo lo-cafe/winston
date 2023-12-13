@@ -106,6 +106,7 @@ struct UserView: View {
             if let description = data.subreddit?.public_description {
               Text((description).md())
                 .fontSize(15)
+                .multilineTextAlignment(.center)
             }
             
             VStack {
