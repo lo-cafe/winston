@@ -62,7 +62,7 @@ extension Defaults.Keys {
   
   // CompdismissKeyboardt Mode Settings
   static let compactMode = Key<Bool>("compactMode", default: false)
-  static let compactPerSubreddit = Key<Dictionary<String, Bool>>("compactMode", default: [:])
+  static let compactPerSubreddit = Key<Dictionary<String, Bool>>("compactPerSubreddit", default: [:])
   static let compThumbnailSize = Key<ThumbnailSizeModifier>("compThumbnailSize", default: .small)
   static let thumbnailPositionRight = Key<Bool>("thumbnailPositionRight", default: true)
   static let voteButtonPositionRight = Key<Bool>("voteButtonPositionRight", default: true)
@@ -112,7 +112,8 @@ extension Defaults.Keys {
   static let showSavedFeed = Key<Bool>("showSavedFeed", default: true)
   static let enableSwipeAnywhere = Key<Bool>("enableSwipeAnywhere", default: false)
   static let autoPlayVideos = Key<Bool>("autoPlayVideos", default: true)
-	static let muteVideos = Key<Bool>("muteVideos", default: false)
+  static let muteVideos = Key<Bool>("muteVideos", default: false)
+  static let pauseBackgroundAudioOnFullscreen = Key<Bool>("pauseBackgroundAudioOnFullscreen", default: true)
   static let loopVideos = Key<Bool>("loopVideos", default: true)
   static let showSubsAtTop = Key<Bool>("showSubsAtTop", default: false)
   static let showTitleAtTop = Key<Bool>("showTitleAtTop", default: true)

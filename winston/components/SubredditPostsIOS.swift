@@ -65,6 +65,7 @@ struct SubredditPostsIOS: View, Equatable {
   
   var body: some View {
     let isThereDivider = selectedTheme.postLinks.divider.style != .no
+    let isFiltered = filter != "flair:All"
     let paddingH = selectedTheme.postLinks.theme.outerHPadding
     let paddingV = selectedTheme .postLinks.spacing / (isThereDivider ? 4 : 2)
     
@@ -112,19 +113,19 @@ struct SubredditPostsIOS: View, Equatable {
             .environmentObject(post)
             .environmentObject(winstonData)
             .onAppear {
-              if(posts.count - 7 == i) { loadMorePosts() }
+              if(posts.count - 7 == i && !isFiltered && !loading) { loadMorePosts() }
             }
             .listRowInsets(EdgeInsets(top: paddingV, leading: paddingH, bottom: paddingV, trailing: paddingH))
           }
           
-          if selectedTheme.postLinks.divider.style != .no && i != (posts.count - 1) {
+          if selectedTheme.postLinks.divider.style != .no && (i != (posts.count - 1) || isFiltered) {
             NiceDivider(divider: selectedTheme.postLinks.divider)
               .id("\(post.id)-divider")
               .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
           }
         }
         
-        if filter != "flair:All" && posts.count == 0 {
+        if isFiltered && posts.count == 0 {
           Text("No filtered posts")
             .frame(maxWidth: .infinity)
             .font(Font.system(size: 22, weight: .semibold))
@@ -133,7 +134,7 @@ struct SubredditPostsIOS: View, Equatable {
             .background(RR(12, Color.primary.opacity(0.1)))
         }
         
-        if filter != "flair:All" && !loading && !reachedEndOfFeed  {
+        if isFiltered && !loading && !reachedEndOfFeed  {
           Button(action: {
             loadMorePosts()
           }) {
@@ -144,8 +145,9 @@ struct SubredditPostsIOS: View, Equatable {
               .padding(.top, 12)
               .padding(.bottom, 48)
           }
-          
-        } else if reachedEndOfFeed {
+        }
+        
+        if reachedEndOfFeed {
           EndOfFeedView()
         }
       }
@@ -157,7 +159,7 @@ struct SubredditPostsIOS: View, Equatable {
         if loading {
           ProgressView()
             .progressViewStyle(.circular)
-            .frame(maxWidth: .infinity, minHeight: posts.count > 0 || filter != "flair:All" ? 100 : .screenH - 300 )
+            .frame(maxWidth: .infinity, minHeight: (posts.count > 0 || isFiltered) ? 100 : .screenH - 300 )
             .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
             .listRowSeparator(.hidden)
             .listSectionSeparator(.hidden)

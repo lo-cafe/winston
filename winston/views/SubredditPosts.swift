@@ -67,7 +67,7 @@ struct SubredditPosts: View, Equatable {
     
     if filterData[0] == "flair" {
       if filterData[1] == "All" { return posts }
-      return filtered.filter({ flairWithoutEmojis(str: $0.data?.link_flair_text)?[0] ?? "" == filterData[1] })
+      return filtered.filter({ flairWithoutEmojis(str: $0.data?.link_flair_text)?.first ?? "" == filterData[1] })
     } else if filterData[0] == "filter" {
       return filtered.filter({ ($0.data?.title.lowercased().contains(filterData[1].lowercased()) ?? false) ||
                                ($0.data?.selftext.lowercased().contains(filterData[1].lowercased()) ?? false) })
@@ -121,7 +121,20 @@ struct SubredditPosts: View, Equatable {
     }
         
     if !loadMore && !subreddit.id.starts(with: "t5") {
-      // Remove flairs from home/all
+      // Remove filters from home/all/popular so it only shows filters for current posts
+      let context = PersistenceController.shared.container.newBackgroundContext()
+      let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "CachedFilter")
+      fetchRequest.predicate = NSPredicate(format: "subreddit_id == %@ && type == 'flair'", subreddit.id)
+      let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
+      
+      do {
+        try context.performAndWait {
+          try context.execute(deleteRequest)
+          try context.save()
+        }
+      } catch {
+        print("Error resetting filters for \(subreddit.id)")
+      }
     }
     
     withAnimation {
