@@ -179,9 +179,7 @@ extension Post {
         return nil
       }
       
-      Task(priority: .background) {
-        async let _ = RedditAPI.shared.updatePostsWithAvatar(posts: repostsAvatars, avatarSize: getEnabledTheme().postLinks.theme.badge.avatar.size)
-      }
+      Task(priority: .background) { await RedditAPI.shared.updatePostsWithAvatar(posts: repostsAvatars, avatarSize: getEnabledTheme().postLinks.theme.badge.avatar.size) }
       
       let imgRequests = posts.reduce(into: []) { prev, curr in
         prev = prev + (curr.winstonData?.mediaImageRequest ?? [])

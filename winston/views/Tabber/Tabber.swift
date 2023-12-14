@@ -91,23 +91,15 @@ struct Tabber: View, Equatable {
     .globalLoaderProvider()
     .refetchMeListener()
     .environment(\.tabBarHeight, tabBarHeight)
-    .onAppear {
-      Task {
-        // Some tasks have to be executed in an ".onAppear" rather than in a ".task" because
-        // the latter executes it's code brefore the view appears, therefore, before some
-        // models initiate, which may cause the functions to fail.
-        if RedditCredentialsManager.shared.selectedCredential != nil {
-          async let _ = RedditCredentialsManager.shared.updateMe()
-          async let _ = updatePostsInBox(RedditAPI.shared)
-        }
-      }
-    }
     .task(priority: .background) {
-      async let _ = cleanCredentialOrphanEntities()
-      async let _ = autoSelectCredentialIfNil()
-      async let _ = removeDefaultThemeFromThemes()
-      async let _ = removeLegacySubsAndMultisCache()
-
+      cleanCredentialOrphanEntities()
+      autoSelectCredentialIfNil()
+      removeDefaultThemeFromThemes()
+      removeLegacySubsAndMultisCache()
+      if RedditCredentialsManager.shared.selectedCredential != nil {
+        RedditCredentialsManager.shared.updateMe()
+        Task(priority: .background) { await updatePostsInBox(RedditAPI.shared) }
+      }
 //      if let ann = await WinstonAPI.shared.getAnnouncement() {
 //        Nav.present(.announcement(ann))
 //      }

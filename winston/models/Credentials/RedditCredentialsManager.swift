@@ -90,11 +90,9 @@ class RedditCredentialsManager: ObservableObject {
   deinit { self.cancelables.forEach { obs in obs.invalidate() } }
   
   func updateMe(altCred: RedditCredential? = nil) {
-    Task {
-      async let _ = RedditAPI.shared.fetchMe(force: true, altCredential: altCred)
-      async let _ = RedditAPI.shared.fetchSubs()
-      async let _ = RedditAPI.shared.fetchMyMultis()
-    }
+    Task(priority: .background) { await RedditAPI.shared.fetchMe(force: true, altCredential: altCred) }
+    Task(priority: .background) { await RedditAPI.shared.fetchSubs() }
+    Task(priority: .background) { await RedditAPI.shared.fetchMyMultis() }
   }
   
   func saveCred(_ cred: RedditCredential, forceCreate: Bool = true) {
