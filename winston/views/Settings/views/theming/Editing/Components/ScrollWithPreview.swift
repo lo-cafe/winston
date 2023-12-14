@@ -46,9 +46,7 @@ struct ScrollWithPreview<Content: View, Preview: View>: View {
           .padding(.bottom, previewContentSize.height + 16)
       }
       .background(GeometryReader { geo in Color.clear.onChange(of: abs(geo.frame(in: .named("sheto")).minY)) { pro = $0 } })
-      .onChange(of: scrollOffset) { print("scrollOffset:", Int($0), "contentSize:", Int(contentSize.height), "previewContentSize:", Int(previewContentSize.height + 16), "containerSize:", Int(containerSize.height), "safeAreaTop:", Int(getSafeArea().top), "safeAreaBot:", Int(getSafeArea().bottom), "tabHeight:", Int(tabHeight), "ScreenH:", Double.screenH, "sheetHeight:", sheetHeight, "pro:", pro) }
-      .onChange(of: scrollOffset) { print(Int($0), interpolation) }
-      .background(GeometryReader { geo in Color.clear.onAppear { containerSize = geo.size; } })
+      .measure($containerSize)
       .previewSheet(handlerBGOnly: handlerBGOnly, scrollContentHeight: contentSize.height, sheetContentSize: $previewContentSize, forcedOffset: interpolate([0, previewContentSize.height], false), bg: defaultBG.cs(cs).color(), border: currentTheme.lists.bg == theme && previewBG == .theme) { handlerHeight in
         VStack(spacing: 12) {
           let opts = [
