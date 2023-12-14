@@ -74,7 +74,6 @@ struct PostReplies: View {
               .frame(maxWidth: .infinity, minHeight: theme.theme.cornerRadius, maxHeight: theme.theme.cornerRadius, alignment: .top)
               .clipped()
               .id("\(comment.id)-top-decoration")
-              .listRowInsets(EdgeInsets(top: 0, leading: horPad, bottom: 0, trailing: horPad))
             
             if let commentWinstonData = comment.winstonData {
               CommentLink(highlightID: ignoreSpecificComment ? nil : highlightID, post: post, subreddit: subreddit, postFullname: postFullname, seenComments: seenComments, parentElement: .post(comments), comment: comment, commentWinstonData: commentWinstonData, children: comment.childrenWinston)
@@ -87,7 +86,6 @@ struct PostReplies: View {
               .frame(maxWidth: .infinity, minHeight: theme.theme.cornerRadius, maxHeight: theme.theme.cornerRadius, alignment: .bottom)
               .clipped()
               .id("\(comment.id)-bot-decoration")
-              .listRowInsets(EdgeInsets(top: 0, leading: horPad, bottom: 0, trailing: horPad))
             
             Spacer()
               .frame(maxWidth: .infinity, minHeight: theme.spacing / 2, maxHeight: theme.spacing / 2)

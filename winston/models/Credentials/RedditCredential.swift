@@ -77,6 +77,7 @@ struct RedditCredential: Identifiable, Equatable, Hashable, Codable {
   
   func getUpToDateToken(forceRenew: Bool = false, saveToken: Bool = true) async -> AccessToken? {
     guard let refreshToken = self.refreshToken, !apiAppID.isEmpty && !apiAppSecret.isEmpty else { return nil }
+//    print(refreshToken, forceRenew, self.accessToken)
     if !forceRenew, let accessToken = self.accessToken {
       let lastRefresh = Double(accessToken.lastRefresh.timeIntervalSince1970)
       let expiration = Double(max(0, accessToken.expiration - 100))
