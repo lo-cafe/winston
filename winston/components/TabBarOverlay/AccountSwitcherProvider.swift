@@ -144,7 +144,6 @@ struct AccountSwitcherProvider<Content: View>: View {
           RR(showOverlay ? accTransKit.focusCloser ? 40 : 48 : .screenCornerRadius, .black).padding(.all, focusFramePadding)
         }
       )
-      .frame(.screenSize)
       .background(Color(.primaryInverted))
       .animation(.spring, value: transmitter.showing)
       

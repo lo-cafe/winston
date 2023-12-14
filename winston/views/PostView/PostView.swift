@@ -129,7 +129,6 @@ struct PostView: View, Equatable {
       }
       .scrollIndicators(.never)
       .themedListBG(selectedTheme.posts.bg)
-      .scrollContentBackground(.hidden)
       .transition(.opacity)
       .environment(\.defaultMinListRowHeight, 1)
       .listStyle(.plain)
@@ -153,6 +152,7 @@ struct PostView: View, Equatable {
         }
       }
       .onAppear {
+        print("almsas")
         if post.data == nil {
           updatePost()
         }
@@ -166,6 +166,7 @@ struct PostView: View, Equatable {
         Task(priority: .background) {
           doThisAfter(0.5) {
             hideElements = false
+            print("123")
           }
           if subreddit.data == nil && subreddit.id != "home" {
             await subreddit.refreshSubreddit()

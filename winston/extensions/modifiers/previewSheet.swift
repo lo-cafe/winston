@@ -45,7 +45,7 @@ struct PreviewSheetModifier<T: View>: ViewModifier {
         }
         if let initialDragOffset = initialDragOffset {
           trans.isContinuous = true
-          //          trans.animation = .interpolatingSpring(stiffness: 1000, damping: 100)
+          //          trans.animation = .interpolatingSpring(stiffness: 1000, damping: 100) 2349
           trans.animation = .interactiveSpring()
           withTransaction(trans) {
             state = y - initialDragOffset
@@ -69,11 +69,12 @@ struct PreviewSheetModifier<T: View>: ViewModifier {
       .overlay(
         VStack {
           sheetContent(handlerHeight)
-            .background(GeometryReader { g in Color.clear.onAppear { sheetContentSize = CGSize(width: g.size.width, height: g.size.height - handlerHeight) }.onChange(of: g.size) { sheetContentSize = CGSize(width: $0.width, height: $0.height - handlerHeight) } })
+            .measure($sheetContentSize)
+//            .background(GeometryReader { g in Color.clear.onAppear { sheetContentSize = CGSize(width: g.size.width, height: g.size.height - handlerHeight) }.onChange(of: g.size) { sheetContentSize = CGSize(width: $0.width, height: $0.height - handlerHeight) } })
           //            .measure($sheetContentSize)
         }
         //          .onChange(of: sheetContentSize, perform: { newValue in
-        //            print(newValue)
+        //            print(newValue) 103 / 69
         //          })
         //          .padding(.top, handlerHeight)
           .frame(.screenSize,  .top)

@@ -68,7 +68,12 @@ struct AppContent: View {
   
   let biometrics = Biometrics()
   @State private var isAuthenticating = false
+  @State private var tabBarHeight: Double = 0
   @State private var lockBlur = UserDefaults.standard.bool(forKey: "useAuth") ? 50 : 0 // Set initial startup blur
+  
+  func setTabBarHeight(_ val: Double) {
+    tabBarHeight = val
+  }
   
   var body: some View {
     AccountSwitcherProvider {
@@ -76,6 +81,8 @@ struct AppContent: View {
         Tabber(theme: selectedTheme, cs: cs).equatable()
       }
     }
+    .environment(\.tabBarHeight, tabBarHeight)
+    .environment(\.setTabBarHeight, setTabBarHeight)
     .whatsNewSheet()
     .environmentObject(themeStore)
     //        .alertToastRoot()

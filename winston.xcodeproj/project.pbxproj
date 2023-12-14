@@ -1288,9 +1288,9 @@
 			children = (
 				EC1312A32AB50C5800C95D3A /* Post */,
 				EC3AC9DB2AAD179B0078EC78 /* PostLink */,
+				EC3AC9EF2AB39BE50078EC78 /* FeedThemingPanel.swift */,
 				ECE08B7B2AA9F69A00F84DC9 /* CommentsThemingPanel.swift */,
 				ECE08B792AA9F68D00F84DC9 /* GeneralThemingPanel.swift */,
-				EC3AC9EF2AB39BE50078EC78 /* FeedThemingPanel.swift */,
 				EC91C8552AB9838D00F2AD30 /* CommonListsThemingPanel.swift */,
 			);
 			path = ThemingCategories;

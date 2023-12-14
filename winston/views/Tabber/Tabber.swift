@@ -19,6 +19,7 @@ struct Tabber: View, Equatable {
   
   @Environment(\.useTheme) private var currentTheme
   @Environment(\.colorScheme) private var colorScheme
+  @Environment(\.setTabBarHeight) private var setTabBarHeight
   @Default(.showUsernameInTabBar) private var showUsernameInTabBar
   
   @State var sharedTheme: ThemeData? = nil
@@ -56,7 +57,7 @@ struct Tabber: View, Equatable {
       WithCredentialOnly(credential: redditCredentialsManager.selectedCredential) {
         SubredditsStack(router: nav[.posts])
       }
-      .measureTabBar($tabBarHeight)
+      .measureTabBar(setTabBarHeight)
       .tag(Nav.TabIdentifier.posts)
       .tabItem { Label("Posts", systemImage: "doc.text.image") }
       
@@ -90,7 +91,6 @@ struct Tabber: View, Equatable {
     .themeImportingListener() // From local file
     .globalLoaderProvider()
     .refetchMeListener()
-    .environment(\.tabBarHeight, tabBarHeight)
     .task(priority: .background) {
       cleanCredentialOrphanEntities()
       autoSelectCredentialIfNil()

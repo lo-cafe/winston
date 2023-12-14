@@ -193,6 +193,7 @@ struct PostLinkBG: View, Equatable {
       }
     }
     .allowsHitTesting(false)
+    .mask(RR(theme.theme.cornerRadius, Color.black).equatable())
   }
 }
 

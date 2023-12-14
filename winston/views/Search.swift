@@ -127,93 +127,90 @@ struct Search: View {
   
   var body: some View {
     NavigationStack(path: $router.fullPath) {
-      Group {
-        List {
-          Group {
-            Section {
-              HStack {
-                SearchOption(activateSearchType: { searchType = .subreddit }, active: searchType == SearchType.subreddit, searchType: .subreddit)
-                SearchOption(activateSearchType: { searchType = .user }, active: searchType == SearchType.user, searchType: .user)
-                SearchOption(activateSearchType: { searchType = .post }, active: searchType == SearchType.post, searchType: .post)
-              }
-              .id("options")
+      List {
+        Group {
+          Section {
+            HStack {
+              SearchOption(activateSearchType: { searchType = .subreddit }, active: searchType == SearchType.subreddit, searchType: .subreddit)
+              SearchOption(activateSearchType: { searchType = .user }, active: searchType == SearchType.user, searchType: .user)
+              SearchOption(activateSearchType: { searchType = .post }, active: searchType == SearchType.post, searchType: .post)
             }
-            
-            Section {
-              switch searchType {
-              case .subreddit:
-                ForEach(resultsSubs.data) { sub in
-                  SubredditLink(sub: sub)
-                }
-              case .user:
-                ForEach(resultsUsers.data) { user in
-                  UserLink(user: user)
-                }
-              case .post:
-                if let dummyAllSub = dummyAllSub {
-                  ForEach(resultPosts.data) { post in
-                    if let postData = post.data, let winstonData = post.winstonData {
-                      //                      SwipeRevolution(size: winstonData.postDimensions.size, actionsSet: postSwipeActions, entity: post) { controller in
-                      PostLink(
-                        id: post.id,
-                        controller: nil,
-                        theme: theme.postLinks,
-                        showSub: true,
-                        contentWidth: contentWidth,
-                        blurPostLinkNSFW: blurPostLinkNSFW,
-                        postSwipeActions: postSwipeActions,
-                        showVotes: showVotes,
-                        showSelfText: showSelfText,
-                        readPostOnScroll: readPostOnScroll,
-                        hideReadPosts: hideReadPosts,
-                        showUpvoteRatio: showUpvoteRatio,
-                        showSubsAtTop: showSubsAtTop,
-                        showTitleAtTop: showTitleAtTop,
-                        compact: compactMode,
-                        thumbnailPositionRight: thumbnailPositionRight,
-                        voteButtonPositionRight: voteButtonPositionRight,
-                        showSelfPostThumbnails: showSelfPostThumbnails,
-                        cs: cs
-                      )
-                      .swipyRev(size: winstonData.postDimensions.size, actionsSet: postSwipeActions, entity: post)
-                      //                      }
-                      .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
-                      .animation(.default, value: resultPosts.data)
-                      .environmentObject(post)
-                      .environmentObject(dummyAllSub)
-                      .environmentObject(winstonData)
-                    }
+            .id("options")
+          }
+          
+          Section {
+            switch searchType {
+            case .subreddit:
+              ForEach(resultsSubs.data) { sub in
+                SubredditLink(sub: sub)
+              }
+            case .user:
+              ForEach(resultsUsers.data) { user in
+                UserLink(user: user)
+              }
+            case .post:
+              if let dummyAllSub = dummyAllSub {
+                ForEach(resultPosts.data) { post in
+                  if let postData = post.data, let winstonData = post.winstonData {
+                    //                      SwipeRevolution(size: winstonData.postDimensions.size, actionsSet: postSwipeActions, entity: post) { controller in
+                    PostLink(
+                      id: post.id,
+                      controller: nil,
+                      theme: theme.postLinks,
+                      showSub: true,
+                      contentWidth: contentWidth,
+                      blurPostLinkNSFW: blurPostLinkNSFW,
+                      postSwipeActions: postSwipeActions,
+                      showVotes: showVotes,
+                      showSelfText: showSelfText,
+                      readPostOnScroll: readPostOnScroll,
+                      hideReadPosts: hideReadPosts,
+                      showUpvoteRatio: showUpvoteRatio,
+                      showSubsAtTop: showSubsAtTop,
+                      showTitleAtTop: showTitleAtTop,
+                      compact: compactMode,
+                      thumbnailPositionRight: thumbnailPositionRight,
+                      voteButtonPositionRight: voteButtonPositionRight,
+                      showSelfPostThumbnails: showSelfPostThumbnails,
+                      cs: cs
+                    )
+                    .swipyRev(size: winstonData.postDimensions.size, actionsSet: postSwipeActions, entity: post)
+                    //                      }
+                    .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
+                    .animation(.default, value: resultPosts.data)
+                    .environmentObject(post)
+                    .environmentObject(dummyAllSub)
+                    .environmentObject(winstonData)
                   }
                 }
               }
             }
           }
-          .listRowSeparator(.hidden)
-          .listRowBackground(Color.clear)
-          .listRowInsets(EdgeInsets(top: 6, leading: 16, bottom: 6, trailing: 16))
         }
-        .themedListBG(theme.lists.bg)
-        .listStyle(.plain)
-        .background(Color(UIColor.systemGroupedBackground))
-        .scrollContentBackground(.hidden)
-        .loader(loading, hideSpinner && !searchQuery.text.isEmpty)
-        .onChange(of: searchType) { _ in fetch() }
-        .onChange(of: searchQuery.debounced) { val in
-          if val == "" {
-            resultsSubs.data = []
-            resultsUsers.data = []
-            resultPosts.data = []
-          }
-          fetch()
-        }
+        .listRowSeparator(.hidden)
+        .listRowBackground(Color.clear)
+        .listRowInsets(EdgeInsets(top: 6, leading: 16, bottom: 6, trailing: 16))
       }
+      .themedListBG(theme.lists.bg)
+      .listStyle(.plain)
+      .loader(loading, hideSpinner && !searchQuery.text.isEmpty)
       .injectInTabDestinations()
+      .scrollDismissesKeyboard(.automatic)
       .searchable(text: $searchQuery.text, placement: .toolbar)
       .autocorrectionDisabled(true)
       .textInputAutocapitalization(.none)
       .refreshable { fetch() }
       .onSubmit(of: .search) { fetch() }
       .navigationTitle("Search")
+      .onChange(of: searchType) { _ in fetch() }
+      .onChange(of: searchQuery.debounced) { val in
+        if val == "" {
+          resultsSubs.data = []
+          resultsUsers.data = []
+          resultPosts.data = []
+        }
+        fetch()
+      }
       .onAppear() {
         if !searchViewLoaded {
           dummyAllSub = Subreddit(id: "all")

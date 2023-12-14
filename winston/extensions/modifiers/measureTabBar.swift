@@ -8,15 +8,11 @@
 import SwiftUI
 
 struct TabBarMeasurerAccessor: UIViewControllerRepresentable {
-  @Binding var tabBarHeight: Double?
+  var setTabBarHeight: (Double) -> Void
   private let proxyController = ViewController()
   
-  func updateTabBarHeight(_ height: Double) {
-    tabBarHeight = height
-  }
-  
   func makeUIViewController(context: UIViewControllerRepresentableContext<TabBarMeasurerAccessor>) -> UIViewController {
-    proxyController.callback = updateTabBarHeight
+    proxyController.callback = setTabBarHeight
     return proxyController
   }
   
@@ -39,8 +35,8 @@ struct TabBarMeasurerAccessor: UIViewControllerRepresentable {
 }
 
 extension View {
-  func measureTabBar(_ tabBarHeight: Binding<Double?>) -> some View {
+  func measureTabBar(_ setTabBarHeight: @escaping (Double) -> Void) -> some View {
     self
-      .background(TabBarMeasurerAccessor(tabBarHeight: tabBarHeight))
+      .background(TabBarMeasurerAccessor(setTabBarHeight: setTabBarHeight))
   }
 }

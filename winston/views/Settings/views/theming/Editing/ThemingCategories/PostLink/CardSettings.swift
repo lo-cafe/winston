@@ -24,7 +24,6 @@ struct CardSettings: View {
         Divider()
         LabeledSlider(label: "Elements distance", value: $theme.verticalElementsSpacing, range: 0...64)
           .resetter($theme.verticalElementsSpacing, defaultTheme.postLinks.theme.verticalElementsSpacing)
-        Divider()
       }
       
       FakeSection("Media") {

@@ -10,14 +10,15 @@ import SwiftUI
 struct ThemedListBGModifier: ViewModifier {
   var bg: ThemeBG
   var disable = false
+  var forceNonBrighter = false
+  
   @Environment(\.colorScheme) private var cs
+  @Environment(\.brighterBG) private var brighter
   @State private var uiImage: UIImage?
   
   func updateImg(_ bg: ThemeBG) {
     uiImage = returnImg(bg: bg, cs: cs)
   }
-  
-  @Environment(\.brighterBG) private var brighter
 
   func body(content: Content) -> some View {
     content
@@ -27,15 +28,15 @@ struct ThemedListBGModifier: ViewModifier {
       .onChange(of: bg) { val in
         updateImg(val)
       }
-      .background(disable ? nil : GeometryReader { geo in returnColor(bg: bg, cs: cs).brightness(brighter ? 0.11 : 0).frame(width: geo.size.width, height: geo.size.height) }.edgesIgnoringSafeArea(.all).allowsHitTesting(false))
+      .background(disable ? nil : GeometryReader { geo in returnColor(bg: bg, cs: cs).brightness(brighter && !forceNonBrighter ? 0.11 : 0).frame(width: geo.size.width, height: geo.size.height) }.edgesIgnoringSafeArea(.all).allowsHitTesting(false))
       .background(disable ? nil : GeometryReader { geo in Image(uiImage: uiImage).antialiased(true).resizable().scaledToFill().frame(width: geo.size.width, height: geo.size.height) }.edgesIgnoringSafeArea(.all).allowsHitTesting(false))
       .scrollContentBackground(.hidden)
   }
 }
 
 extension View {
-  func themedListBG(_ bg: ThemeBG, disable: Bool = false) -> some View {
-    self.modifier(ThemedListBGModifier(bg: bg, disable: disable))
+  func themedListBG(_ bg: ThemeBG, disable: Bool = false, forceNonBrighter: Bool = false) -> some View {
+    self.modifier(ThemedListBGModifier(bg: bg, disable: disable, forceNonBrighter: forceNonBrighter))
   }
 }
 

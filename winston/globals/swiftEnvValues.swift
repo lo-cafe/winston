@@ -9,6 +9,14 @@ import Foundation
 import SwiftUI
 import CoreData
 
+private struct SheetHeightKey: EnvironmentKey {
+  static let defaultValue: Double = 0
+}
+
+private struct SetTabBarHeightKey: EnvironmentKey {
+  static let defaultValue: (Double)->() = { x in }
+}
+
 private struct TabBarHeightKey: EnvironmentKey {
   static let defaultValue: Double? = nil
 }
@@ -30,6 +38,14 @@ private struct ContentWidthKey: EnvironmentKey {
 }
 
 extension EnvironmentValues {
+  var sheetHeight: Double {
+    get { self[SheetHeightKey.self] }
+    set { self[SheetHeightKey.self] = newValue }
+  }
+  var setTabBarHeight: (Double)->() {
+    get { self[SetTabBarHeightKey.self] }
+    set { self[SetTabBarHeightKey.self] = newValue }
+  }
   var tabBarHeight: Double? {
     get { self[TabBarHeightKey.self] }
     set { self[TabBarHeightKey.self] = newValue }

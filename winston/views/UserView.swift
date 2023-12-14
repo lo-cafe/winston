@@ -198,7 +198,6 @@ struct UserView: View {
     }
     .loader(user.data == nil)
     .themedListBG(selectedTheme.lists.bg)
-    .scrollContentBackground(.hidden)
     .listStyle(.plain)
     .refreshable {
       await refresh()
