@@ -19,50 +19,16 @@ struct AccountSwitcherTrigger<Content: View>: View {
   
   var body: some View {
     content()
-    //      .background( GeometryReader { geo in
-    //        Color.clear
-    //          .allowsHitTesting(false)
-    //          .onChange(of: dragging) { if $0 {
-    //            medium.impactOccurred()
-    //            withAnimation(.spring) {
-    //              takeScreenshot = false
-    //              transmitter.positionInfo = .init(geo.frame(in: .global).point(at: .center))
-    //            }
-    //          }}
-    //      })
       .overlay(RadialMenuTriggerButton(fingerPos: $transmitter.positionInfo, snapshot: $transmitter.screenshot, onTap: onTap, onPressStarted: {
         medium.prepare()
         medium.impactOccurred()
       }, onPressEnded: {
-        transmitter.showing = false
-//        transmitter.state = .hidden
+        if transmitter.showing {
+          transmitter.showing = false
+          return
+        }
+        transmitter.reset()
       }))
-    //      .background(TakeSnapshotView(screenshot: $transmitter.screenshot, takeScreenshot: takeScreenshot))
-    //      .simultaneousGesture(onTap == nil || dragging ? nil : TapGesture().onEnded { _ in if !dragging { onTap?() } })
-    //      .simultaneousGesture(
-    //        LongPressGesture(minimumDuration: 0.1)
-    //          .onEnded({ _ in
-    //            takeScreenshot = true
-    //            dragging = true
-    //            medium.prepare()
-    //          })
-    //          .sequenced(before: DragGesture(minimumDistance: 0, coordinateSpace: .global))
-    //          .onChanged { sequence in
-    //            if case .second(_, let dragVal) = sequence, let dragVal = dragVal {
-    //              withAnimation((transmitter.positionInfo?.initialMovement ?? false) ? .interactiveSpring : nil) {
-    //                transmitter.positionInfo?.location = dragVal.location
-    //              }
-    //            }
-    //          }
-    //          .onEnded({ sequence in
-    //            if case .second(_, _) = sequence {
-    //              withAnimation(.spring) {
-    //                transmitter.willEnd = true
-    //                dragging = false
-    //              }
-    //            }
-    //          })
-    //      )
   }
 }
 
@@ -148,7 +114,7 @@ struct RadialMenuTriggerButton: UIViewRepresentable {
         // Finger has started moving
         parent.fingerPos?.location = location
         //              parent.onDragChanged?({ self.panning = false }, location, location, location)
-      case .ended, .cancelled:
+      case .ended, .cancelled, .failed:
         // Finger is lifted up
         //        parent.onPress?(false)
         parent.onPressEnded?()

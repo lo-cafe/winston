@@ -143,8 +143,9 @@ struct AccountSwitcherTarget: View, Equatable {
       .position(x: Self.size / 2, y: Self.size + Self.vStackSpacing + ((Self.fontSize * 1.2) / 2))
       .scaleEffect(1)
     }
+    .saturation(isSelected ? 0.5 : 1)
     .compositingGroup()
-    .shadow(color: .black.opacity(0.35), radius: 13, x: 0, y: 8)
+    .shadow(color: .black.opacity(isSelected ? 0 : 0.35), radius: 13, x: 0, y: 8)
     .floatingBounceEffect(disabled: isSelected || !appear || hovered)
     .scaleEffect(appear ? !isSelected && hovered ? 1.25 : 1 : 0.1)
     .blur(radius: appear ? 0 : 30)
@@ -160,16 +161,6 @@ struct AccountSwitcherTarget: View, Equatable {
       if transmitter.selectedCred == nil && $0 { transmitter.selectedCred = cred }
       else if transmitter.selectedCred == cred && !$0 { transmitter.selectedCred = nil }
     }
-//    .onChange(of: appear) {
-//      guard !$0 else { return }
-////      withAnimation(.snappy.delay(0.025 * Double(index))) { self.appear = false }
-//      if hovered {
-//        transmitter.credentialIDToSet = cred.id
-////        selectCredential(cred)
-//      } else if index == 0 {
-//        selectCredential(nil)
-//      }
-//    }
     .onChange(of: hovered) { if $0 && isSelected { jump += 1 } }
     .transition(.identity)
   }

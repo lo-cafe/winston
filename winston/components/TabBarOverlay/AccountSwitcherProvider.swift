@@ -18,7 +18,14 @@ class AccountSwitcherTransmitter: ObservableObject {
   @Published var showing = false
   @Published var selectedCred: RedditCredential? = nil
   @Published var screenshot: UIImage? = nil
-  @Published var credentialIDToSet: UUID? = nil
+  
+  func reset() {
+    self.cancellable?.invalidate()
+    self.positionInfo = nil
+    self.showing = false
+    self.selectedCred = nil
+    self.screenshot = nil
+  }
   
   struct PositionInfo: Equatable, Hashable {
     static let zero = PositionInfo(.zero)
@@ -37,10 +44,11 @@ class AccountSwitcherTransmitter: ObservableObject {
 }
 
 struct AccountSwitcherProvider<Content: View>: View {
-  struct AccountTransitionKit {
+  struct AccountTransitionKit: Equatable {
     var focusCloser: Bool = false
     var willLensHeadLeft: Bool = false
     var passLens: Bool = false
+    var blurMain: Bool = false
   }
   
   @StateObject private var transmitter = AccountSwitcherTransmitter()
@@ -59,14 +67,13 @@ struct AccountSwitcherProvider<Content: View>: View {
         transmitter.selectedCred = nil
         if #available(iOS 17.0, *) {
           withAnimation(.spring) { accTransKit.focusCloser = true } completion: {
-//            withAnimation(.default.speed(20)) { transmitter.positionInfo = nil; Defaults[.redditCredentialSelectedID] = cred.id } completion: {
-            transmitter.positionInfo = nil; Defaults[.redditCredentialSelectedID] = cred.id
+            withAnimation(.linear(duration: 0.001)) { accTransKit.blurMain = true; Defaults[.redditCredentialSelectedID] = cred.id } completion: {
               withAnimation(.spring) { accTransKit.passLens = true } completion: {
-                withAnimation(.spring) { transmitter.screenshot = nil; accTransKit.focusCloser = false } completion: {
+                withAnimation(.spring) { accTransKit.blurMain = false; transmitter.screenshot = nil; accTransKit.focusCloser = false; transmitter.positionInfo = nil } completion: {
                   accTransKit.passLens = false
                 }
               }
-//            }
+            }
           }
         } else {
           // Fallback on earlier versions
@@ -89,32 +96,45 @@ struct AccountSwitcherProvider<Content: View>: View {
   
   var body: some View {
     let showOverlay = (transmitter.positionInfo != nil && transmitter.showing) || accTransKit.focusCloser
-//        let completelyFree = !showOverlay && !accTransKit.passLens && !showScreenshot
-    let completelyFree = true
+//    let completelyFree = true
     let focusFramePadding: Double = !showOverlay ? 0 : accTransKit.focusCloser ? 40 : 16
     let frameSlideOffsetX = accTransKit.passLens ? (.screenW * (accTransKit.willLensHeadLeft ? -1 : 1)) : 0
+    let somethingGoinOnYet = accTransKit.focusCloser || transmitter.showing
+    let parallaxW = .screenW * 0.25
     ZStack {
       
       ZStack {
         content()
+          .blur(radius: accTransKit.blurMain ? 10 : 0)
+//          .offset(x: accTransKit.passLens ? 0 : accTransKit.focusCloser ? (parallaxW * (accTransKit.willLensHeadLeft ? -1 : 1)) : 0)
           .environmentObject(transmitter)
           .zIndex(1)
         
         if let screenshot = transmitter.screenshot {
           Image(uiImage: screenshot).resizable().frame(.screenSize)
-            .blur(radius: accTransKit.focusCloser ? 20 : transmitter.showing ? 10 : 0)
+            .blur(radius: accTransKit.focusCloser ? 15 : transmitter.showing ? 10 : 0)
+//            .offset(x: accTransKit.passLens ? (parallaxW * (accTransKit.willLensHeadLeft ? -1 : 1)) : 0)
             .background(.black)
 //            .offset(x: frameSlideOffsetX / 5)
-            .overlay {
-              SideBySideWindow(passLens: accTransKit.passLens, willLensHeadLeft: accTransKit.willLensHeadLeft) {
-                Rectangle().fill(EllipticalGradient(colors: [.gray.opacity(0.5), .gray.opacity(0.2)], center: .init(x: !transmitter.showing ? 1 : 0.75, y: 0), startRadiusFraction: 0, endRadiusFraction: 0.85)).padding(.all, focusFramePadding).opacity(!transmitter.showing ? 0 : 1).allowsHitTesting(false)
-              }
-            }
             .mask(Rectangle().fill(.black).offset(x: frameSlideOffsetX))
             .saturation(accTransKit.focusCloser ? 2 : transmitter.showing ? 1.75 : 1)
             .transition(.identity)
             .zIndex(2)
             .drawingGroup()
+        }
+      }
+      .overlay {
+        SideBySideWindow(passLens: accTransKit.passLens, willLensHeadLeft: accTransKit.willLensHeadLeft) {
+          Rectangle().fill(
+            EllipticalGradient(
+              colors: [.gray.opacity(0.5), .gray.opacity(0.2)],
+              center: .init(x: !transmitter.showing ? 1 : accTransKit.focusCloser ? 0.55 : 0.75, y: 0),
+              startRadiusFraction: 0,
+              endRadiusFraction: 0.85)
+          )
+          .padding(.all, focusFramePadding)
+          .opacity(!somethingGoinOnYet ? 0 : 1)
+          .allowsHitTesting(false)
         }
       }
       .mask(
@@ -135,7 +155,7 @@ struct AccountSwitcherProvider<Content: View>: View {
       }
     }
     .ignoresSafeArea(.all)
-    .allowsHitTesting(completelyFree)
+    .allowsHitTesting(!(showOverlay || accTransKit.passLens))
   }
 }
 

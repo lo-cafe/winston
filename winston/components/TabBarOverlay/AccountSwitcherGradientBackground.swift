@@ -110,14 +110,14 @@ struct AccountSwitcherGradientBackground: View, Equatable {
   
   var body: some View {
     ZStack(alignment: .bottom) {
-      AccountSwitcherGradientBackgroundLayer().equatable().opacity(0.15 * opacities[0]).drawingGroup()
+//      AccountSwitcherGradientBackgroundLayer().equatable().opacity(0.15 * opacities[0]).drawingGroup()
       AccountSwitcherGradientBackgroundLayer().equatable().opacity(opacities[1]).drawingGroup().blendMode(.plusLighter)
-      ZStack(alignment: .bottom) {
-        AccountSwitcherGradientBackgroundLayer().equatable().opacity(opacities[2])
-        AccountSwitcherGradientBackgroundLayer().equatable().opacity(opacities[3])
-      }
-      .drawingGroup()
-      .blendMode(.overlay)
+//      ZStack(alignment: .bottom) {
+//        AccountSwitcherGradientBackgroundLayer().equatable().opacity(opacities[2])
+//        AccountSwitcherGradientBackgroundLayer().equatable().opacity(opacities[3])
+//      }
+//      .drawingGroup()
+//      .blendMode(.overlay)
     }
     .ignoresSafeArea(.all)
     .frame(.screenSize,  .bottom)
@@ -125,6 +125,7 @@ struct AccountSwitcherGradientBackground: View, Equatable {
       withAnimation(.smooth) {
         let min: Double = 0.5
         opacities = [.random(in: min...1), .random(in: min...1), .random(in: min...1), .random(in: min...1)]
+//        opacities = [.random(in: min...1), .random(in: min...1)]
       }
     }
   }
