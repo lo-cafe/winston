@@ -144,6 +144,8 @@
 		EC22A3202A5C7FB50062A112 /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC22A31F2A5C7FB50062A112 /* Message.swift */; };
 		EC22A3222A5C97D70062A112 /* readMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC22A3212A5C97D70062A112 /* readMessage.swift */; };
 		EC2497102A82DF3B00AA1CF8 /* GlobalLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC24970F2A82DF3B00AA1CF8 /* GlobalLoader.swift */; };
+		EC2760812B2AD9E600ADCE26 /* concurrentMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC2760802B2AD9E600ADCE26 /* concurrentMap.swift */; };
+		EC2760832B2ADFD100ADCE26 /* ConcurrentRunner.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC2760822B2ADFD100ADCE26 /* ConcurrentRunner.swift */; };
 		EC2830EF2AC330F00042BE65 /* PreviewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC2830EE2AC330F00042BE65 /* PreviewModel.swift */; };
 		EC2A39132AC1FF63001E5354 /* PostLinkCompact.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC2A39122AC1FF63001E5354 /* PostLinkCompact.swift */; };
 		EC2A39152AC20155001E5354 /* PostLinkTitle.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC2A39142AC20155001E5354 /* PostLinkTitle.swift */; };
@@ -635,6 +637,8 @@
 		EC22A31F2A5C7FB50062A112 /* Message.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
 		EC22A3212A5C97D70062A112 /* readMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = readMessage.swift; sourceTree = "<group>"; };
 		EC24970F2A82DF3B00AA1CF8 /* GlobalLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobalLoader.swift; sourceTree = "<group>"; };
+		EC2760802B2AD9E600ADCE26 /* concurrentMap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = concurrentMap.swift; sourceTree = "<group>"; };
+		EC2760822B2ADFD100ADCE26 /* ConcurrentRunner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConcurrentRunner.swift; sourceTree = "<group>"; };
 		EC2830EE2AC330F00042BE65 /* PreviewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewModel.swift; sourceTree = "<group>"; };
 		EC2A39122AC1FF63001E5354 /* PostLinkCompact.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostLinkCompact.swift; sourceTree = "<group>"; };
 		EC2A39142AC20155001E5354 /* PostLinkTitle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostLinkTitle.swift; sourceTree = "<group>"; };
@@ -1567,6 +1571,7 @@
 				ECF314E42ABC187400DFDDBA /* hashableCGSize.swift */,
 				EC9EAEC32A4AAB470074D06B /* fromHex.swift */,
 				ECED2EB82B282B7800F4D25F /* UIScreen+ScreenCorners..swift */,
+				EC2760802B2AD9E600ADCE26 /* concurrentMap.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -1792,6 +1797,7 @@
 				ECC38B662B18729D00609C87 /* maxRelative.swift */,
 				EC1AC9B72B200ACD00674B31 /* wait.swift */,
 				EC30CBF52B2263DD0037DA86 /* getOffsetAroundCircleForIndex.swift */,
+				EC2760822B2ADFD100ADCE26 /* ConcurrentRunner.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -2534,6 +2540,7 @@
 				6576437C2ACF1E3900805641 /* ScrolViewContentRTLFriendly.swift in Sources */,
 				ECDD51542A73889A00FD9498 /* rootURL.swift in Sources */,
 				EC1E7B6C2A81650700DB459A /* loader.swift in Sources */,
+				EC2760812B2AD9E600ADCE26 /* concurrentMap.swift in Sources */,
 				EC58D4582AC02BA500FF5B6B /* PostLinkContext.swift in Sources */,
 				EC3BC5EC2ACC21AA0050CA8F /* SwipeRevolution.swift in Sources */,
 				ECAEFF662A77C43B0052FCD3 /* isVideoPlayer.swift in Sources */,
@@ -2563,6 +2570,7 @@
 				EC6373572A791A2D000A03A3 /* Onboarding5GettingSecret.swift in Sources */,
 				ECF1478F2AB620A400572352 /* CommentSample.swift in Sources */,
 				EC31DB182B12F0EB00A777ED /* CircleWave.metal in Sources */,
+				EC2760832B2ADFD100ADCE26 /* ConcurrentRunner.swift in Sources */,
 				ECE08B682AA9E62900F84DC9 /* AvatarTheme.swift in Sources */,
 				EC08541B2A4BFEB300E88389 /* User.swift in Sources */,
 				BB0D15272B0698FD00668448 /* MixedContentFeedView.swift in Sources */,

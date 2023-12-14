@@ -36,7 +36,8 @@ extension Post {
     if let data = data ?? self.data {
       let cs: ColorScheme = UIScreen.main.traitCollection.userInterfaceStyle == .dark ? .dark : .light
       let compact = Defaults[.compactPerSubreddit][sub?.id ?? data.subreddit_id ?? ""] ?? Defaults[.compactMode]
-      if self.winstonData == nil { self.winstonData = PostWinstonData() }
+      if self.winstonData == nil { self.winstonData = .init() }
+      
       self.winstonData?.permaURL = URL(string: "https://reddit.com\(data.permalink.escape.urlEncoded)")
       
       var extractedMedia = mediaExtractor(compact: compact, contentWidth: contentWidth, data, theme: theme)
@@ -51,7 +52,7 @@ extension Post {
           extractedMediaForcedNormal = .video(sharedVideo)
         } else {
           Task(priority: .background) {
-            if let video = await loadStreamableMedia(streamable: streamable) {
+            if let video = await self.loadStreamableMedia(streamable: streamable) {
               Caches.streamable.addKeyValue(key: streamable.shortCode, data: { StreamableCached(url: video.url, size: video.size) }, expires: Date().dateByAdding(1, .day).date)
               
               DispatchQueue.main.async {
@@ -73,6 +74,7 @@ extension Post {
       self.winstonData?.extractedMedia = extractedMedia
       self.winstonData?.extractedMediaForcedNormal = extractedMediaForcedNormal
       
+      
       self.winstonData?.postDimensions = getPostDimensions(post: self, winstonData: self.winstonData, columnWidth: contentWidth, secondary: secondary, rawTheme: theme, subId: sub?.id)
       self.winstonData?.postDimensionsForcedNormal = getPostDimensions(post: self, winstonData: self.winstonData, columnWidth: contentWidth, secondary: secondary, rawTheme: theme, compact: false)
       
@@ -89,17 +91,18 @@ extension Post {
           await RedditAPI.shared.updatePostsWithAvatar(posts: [self], avatarSize: theme.postLinks.theme.badge.avatar.size)
         }
       }
-
+      
       let bodyAttr = NSMutableAttributedString(attributedString: stringToNSAttr(data.selftext, fontSize: theme.posts.bodyText.size))
       let style = NSMutableParagraphStyle()
       style.lineSpacing = theme.posts.linespacing
       bodyAttr.addAttribute(.paragraphStyle, value: style, range: NSRange(location: 0, length: bodyAttr.length))
       bodyAttr.addAttribute(.foregroundColor, value: UIColor(theme.posts.bodyText.color.cs(cs).color()), range: NSRange(location: 0, length: bodyAttr.length))
       self.winstonData?.postBodyAttr = bodyAttr
-			let postViewBodyMaxWidth = .screenW - (!IPAD ? 0 : (.screenW / 3)) - (theme.posts.padding.horizontal * 2)
+      let postViewBodyMaxWidth = .screenW - (!IPAD ? 0 : (.screenW / 3)) - (theme.posts.padding.horizontal * 2)
       
       let postViewBodyHeight = bodyAttr.boundingRect(with: CGSize(width: postViewBodyMaxWidth, height: .infinity), options: [.usesLineFragmentOrigin], context: nil).height
       self.winstonData?.postViewBodySize = .init(width: postViewBodyMaxWidth, height: postViewBodyHeight)
+      
     }
   }
   
@@ -134,29 +137,33 @@ extension Post {
   static func initMultiple(datas: [T], sub: Subreddit? = nil, contentWidth: CGFloat = 0) -> [Post] {
     let context = PersistenceController.shared.container.newBackgroundContext()
     let fetchRequest = NSFetchRequest<SeenPost>(entityName: "SeenPost")
-    
+    let theme = getEnabledTheme()
+
     if let results = (context.performAndWait { try? context.fetch(fetchRequest) }) {
-      let posts = Array(datas.enumerated()).map { i, data in
-        return context.performAndWait {
-          let isSeen = results.contains(where: { $0.postID == data.id })
-          let priorityIMap: [Int:ImageRequest.Priority] = [
-            4: .veryHigh,
-            9: .high,
-            14: .normal,
-            19: .low
-          ]
-          let priority = i > 19 ? .veryLow : priorityIMap[priorityIMap.keys.first { $0 > i } ?? 19]!
-          let newPost = Post.init(data: data, sub: sub, contentWidth: contentWidth, imgPriority: i > 7 ? .veryLow : priority, fetchAvatar: false)
-          newPost.data?.winstonSeen = isSeen
-          
-          if (isSeen) {
-            let foundPost = results.first(where: { $0.postID == data.id })
-            newPost.winstonData?.seenCommentsCount = Int(foundPost?.numComments ?? 0)
-            newPost.winstonData?.seenComments = foundPost?.seenComments
+
+      let posts = Array(datas.enumerated()).concurrentMap { i, data in
+        let isSeen = context.performAndWait { results.contains(where: { $0.postID == data.id }) }
+        let priorityIMap: [Int:ImageRequest.Priority] = [
+          4: .veryHigh,
+          9: .high,
+          14: .normal,
+          19: .low
+        ]
+        let priority = i > 19 ? .veryLow : priorityIMap[priorityIMap.keys.first { $0 > i } ?? 19]!
+        let newPost = Post(data: data, sub: sub, contentWidth: contentWidth, imgPriority: i > 7 ? .veryLow : priority, theme: theme, fetchAvatar: false)
+        newPost.data?.winstonSeen = isSeen
+        
+        if (isSeen) {
+          Task {
+            await context.perform {
+              let foundPost =  results.first(where: { $0.postID == data.id })
+              newPost.winstonData?.seenCommentsCount = Int(foundPost?.numComments ?? 0)
+              newPost.winstonData?.seenComments = foundPost?.seenComments
+            }
           }
-          
-          return newPost
         }
+        
+        return newPost
       }
       
       Task(priority: .background) {
@@ -173,14 +180,14 @@ extension Post {
       }
       
       Task(priority: .background) {
-        await RedditAPI.shared.updatePostsWithAvatar(posts: repostsAvatars, avatarSize: getEnabledTheme().postLinks.theme.badge.avatar.size)
+        async let _ = RedditAPI.shared.updatePostsWithAvatar(posts: repostsAvatars, avatarSize: getEnabledTheme().postLinks.theme.badge.avatar.size)
       }
       
       let imgRequests = posts.reduce(into: []) { prev, curr in
         prev = prev + (curr.winstonData?.mediaImageRequest ?? [])
       }
       
-      Post.prefetcher.startPrefetching(with: imgRequests)
+      //      Post.prefetcher.startPrefetching(with: imgRequests)
       return posts
     }
     
@@ -201,7 +208,7 @@ extension Post {
           
           if let prev = prevSubFlairs.first(where: { $0.text == flairText }) {
             prev.occurences = prev.occurences + 1
-
+            
             if flairData.background_color != "D5D7D9" && flairData.background_color != prev.background_color {
               prev.background_color = flairData.background_color
               prev.text_color = flairData.text_color
@@ -223,7 +230,7 @@ extension Post {
       
       try? context.save()
       
-      let flairFilters = prevSubFlairs.map({ FilterData.from($0) })      
+      let flairFilters = prevSubFlairs.map({ FilterData.from($0) })
       DispatchQueue.main.async {
         withAnimation {
           sub.winstonData?.flairs = flairFilters
@@ -329,7 +336,7 @@ extension Post {
           newSeenPost.postID = self.id
           newSeenPost.numComments = Int32(numComments)
           try? context.save()
-      
+          
           DispatchQueue.main.async {
             withAnimation {
               self.data?.winstonSeen = true

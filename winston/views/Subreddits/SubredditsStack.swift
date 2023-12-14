@@ -70,9 +70,7 @@ struct SubredditsStack: View {
               let tempSubreddit = Subreddit(id: preferenceDefaultFeed)
               router.navigateTo(.reddit(.subFeed(tempSubreddit)))
             }
-            
-            _ = await RedditAPI.shared.fetchSubs()
-            _ = await RedditAPI.shared.fetchMyMultis()
+
             withAnimation {
               loaded = true
             }

@@ -108,34 +108,34 @@ struct SubredditPosts: View, Equatable {
       await subreddit.refreshSubreddit()
     }
     
-    if (searchText == nil || searchText!.isEmpty) && !loadMore && !forceRefresh && !unfilteredPosts.data.isEmpty {
-      posts.data = unfilteredPosts.data
-      lastPostAfter = unfilteredLastPostAfter
-      reachedEndOfFeed = unfilteredreachedEndOfFeed
-      return
-    }
-    
-    if posts.data.count > 0 && lastPostAfter == nil && !force {
-      reachedEndOfFeed = true
-      return
-    }
-        
-    if !loadMore && !subreddit.id.starts(with: "t5") {
-      // Remove filters from home/all/popular so it only shows filters for current posts
-      let context = PersistenceController.shared.container.newBackgroundContext()
-      let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "CachedFilter")
-      fetchRequest.predicate = NSPredicate(format: "subreddit_id == %@ && type == 'flair'", subreddit.id)
-      let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
-      
-      do {
-        try context.performAndWait {
-          try context.execute(deleteRequest)
-          try context.save()
-        }
-      } catch {
-        print("Error resetting filters for \(subreddit.id)")
-      }
-    }
+//    if (searchText == nil || searchText!.isEmpty) && !loadMore && !forceRefresh && !unfilteredPosts.data.isEmpty {
+//      posts.data = unfilteredPosts.data
+//      lastPostAfter = unfilteredLastPostAfter
+//      reachedEndOfFeed = unfilteredreachedEndOfFeed
+//      return
+//    }
+//    
+//    if posts.data.count > 0 && lastPostAfter == nil && !force {
+//      reachedEndOfFeed = true
+//      return
+//    }
+//        
+//    if !loadMore && !subreddit.id.starts(with: "t5") {
+//      // Remove filters from home/all/popular so it only shows filters for current posts
+//      let context = PersistenceController.shared.container.newBackgroundContext()
+//      let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "CachedFilter")
+//      fetchRequest.predicate = NSPredicate(format: "subreddit_id == %@ && type == 'flair'", subreddit.id)
+//      let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
+//      
+//      do {
+//        try context.performAndWait {
+//          try context.execute(deleteRequest)
+//          try context.save()
+//        }
+//      } catch {
+//        print("Error resetting filters for \(subreddit.id)")
+//      }
+//    }
     
     withAnimation {
       loading = true
@@ -143,7 +143,7 @@ struct SubredditPosts: View, Equatable {
     
     if subreddit.id != "saved" {
       if let result = await subreddit.fetchPosts(sort: sort, after: loadMore ? lastPostAfter : nil, searchText: searchText, contentWidth: contentWidth), let newPosts = result.0 {
-        await RedditAPI.shared.updatePostsWithAvatar(posts: newPosts, avatarSize: selectedTheme.postLinks.theme.badge.avatar.size)
+
         withAnimation {
           subreddit.loadFlairs() { loaded in
             DispatchQueue.main.async {
