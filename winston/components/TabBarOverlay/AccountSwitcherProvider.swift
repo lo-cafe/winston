@@ -14,10 +14,16 @@ class AccountSwitcherTransmitter: ObservableObject {
     case showing, hidden, selectedCred(RedditCredential)
   }
   private var cancellable: Timer? = nil
-  @Published var positionInfo: PositionInfo?
-  @Published var showing = false
+  @Published var positionInfo: PositionInfo? { willSet { self.cancellable?.invalidate() } }
+  @Published var showing = false { willSet { if newValue { self.cancellable?.invalidate() } } }
   @Published var selectedCred: RedditCredential? = nil
   @Published var screenshot: UIImage? = nil
+  
+  func scheduleReset(_ secs: Double) {
+    cancellable = Timer.scheduledTimer(withTimeInterval: secs, repeats: false) { _ in
+      self.reset()
+    }
+  }
   
   func reset() {
     self.cancellable?.invalidate()
@@ -66,10 +72,10 @@ struct AccountSwitcherProvider<Content: View>: View {
         accTransKit.willLensHeadLeft = Int(currCredIndex - nextCredIndex) <= 0
         transmitter.selectedCred = nil
         if #available(iOS 17.0, *) {
-          withAnimation(.spring) { accTransKit.focusCloser = true } completion: {
+          withAnimation(.snappy(extraBounce: 0.1)) { accTransKit.focusCloser = true } completion: {
             withAnimation(.linear(duration: 0.001)) { accTransKit.blurMain = true; Defaults[.redditCredentialSelectedID] = cred.id } completion: {
               withAnimation(.spring) { accTransKit.passLens = true } completion: {
-                withAnimation(.spring) { accTransKit.blurMain = false; transmitter.screenshot = nil; accTransKit.focusCloser = false; transmitter.positionInfo = nil } completion: {
+                withAnimation(.spring) { transmitter.positionInfo = nil; accTransKit.blurMain = false; transmitter.screenshot = nil; accTransKit.focusCloser = false;  } completion: {
                   accTransKit.passLens = false
                 }
               }
@@ -80,17 +86,12 @@ struct AccountSwitcherProvider<Content: View>: View {
         }
       } else {
         doThisAfter(0) {
-          transmitter.screenshot = nil
-          transmitter.positionInfo = nil
-          transmitter.selectedCred = nil
+          transmitter.reset()
           Nav.present(.editingCredential(cred))
         }
       }
     } else {
-      doThisAfter(0.5) {
-        transmitter.screenshot = nil
-        transmitter.positionInfo = nil
-      }
+      transmitter.scheduleReset(0.5)
     }
   }
   
@@ -100,7 +101,7 @@ struct AccountSwitcherProvider<Content: View>: View {
     let focusFramePadding: Double = !showOverlay ? 0 : accTransKit.focusCloser ? 40 : 16
     let frameSlideOffsetX = accTransKit.passLens ? (.screenW * (accTransKit.willLensHeadLeft ? -1 : 1)) : 0
     let somethingGoinOnYet = accTransKit.focusCloser || transmitter.showing
-    let parallaxW = .screenW * 0.25
+//    let parallaxW = .screenW * 0.25
     ZStack {
       
       ZStack {
@@ -121,6 +122,7 @@ struct AccountSwitcherProvider<Content: View>: View {
             .transition(.identity)
             .zIndex(2)
             .drawingGroup()
+            .allowsHitTesting(false)
         }
       }
       .overlay {
@@ -134,8 +136,8 @@ struct AccountSwitcherProvider<Content: View>: View {
           )
           .padding(.all, focusFramePadding)
           .opacity(!somethingGoinOnYet ? 0 : 1)
-          .allowsHitTesting(false)
         }
+        .allowsHitTesting(false)
       }
       .mask(
         SideBySideWindow(passLens: accTransKit.passLens, willLensHeadLeft: accTransKit.willLensHeadLeft) {
@@ -143,7 +145,7 @@ struct AccountSwitcherProvider<Content: View>: View {
         }
       )
       .frame(.screenSize)
-      .background(.black)
+      .background(Color(.primaryInverted))
       .animation(.spring, value: transmitter.showing)
       
       if let positionInfo = transmitter.positionInfo {

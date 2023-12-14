@@ -22,6 +22,7 @@ struct AccountSwitcherTrigger<Content: View>: View {
       .overlay(RadialMenuTriggerButton(fingerPos: $transmitter.positionInfo, snapshot: $transmitter.screenshot, onTap: onTap, onPressStarted: {
         medium.prepare()
         medium.impactOccurred()
+        if !transmitter.showing && transmitter.positionInfo != nil { transmitter.showing = true }
       }, onPressEnded: {
         if transmitter.showing {
           transmitter.showing = false

@@ -92,7 +92,7 @@ struct Tabber: View, Equatable {
     .refetchMeListener()
     .environment(\.tabBarHeight, tabBarHeight)
     .onAppear {
-      Task(priority: .background) {
+      Task {
         // Some tasks have to be executed in an ".onAppear" rather than in a ".task" because
         // the latter executes it's code brefore the view appears, therefore, before some
         // models initiate, which may cause the functions to fail.

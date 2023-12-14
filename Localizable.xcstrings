@@ -1089,6 +1089,9 @@
         }
       }
     },
+    "Download" : {
+
+    },
     "Drag Left" : {
       "localizations" : {
         "de" : {
@@ -2584,6 +2587,9 @@
         }
       }
     },
+    "Pause background audio on fullscreen" : {
+
+    },
     "Placeholder image" : {
       "localizations" : {
         "de" : {
@@ -3544,6 +3550,9 @@
         }
       }
     },
+    "Theme Store" : {
+
+    },
     "Theme Store Tint" : {
       "localizations" : {
         "de" : {
@@ -3607,6 +3616,9 @@
           }
         }
       }
+    },
+    "There was an error importing this theme" : {
+
     },
     "This is not working yet :(" : {
       "localizations" : {
