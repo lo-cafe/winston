@@ -103,7 +103,7 @@ extension View {
       .frame(width: size.width, height: size.height + (showSubBottom ? Tag.height + theme.theme.verticalElementsSpacing : 0), alignment: .top)
       .fixedSize()
       .background(PostLinkBG(theme: theme, stickied: post.data?.stickied, secondary: secondary, cs: cs).equatable())
-      .mask(RR(theme.theme.cornerRadius, Color.black).equatable())
+//      .mask(RR(theme.theme.cornerRadius, Color.black).equatable())
       .overlay(PostLinkGlowDot(unseenType: theme.theme.unseenType, seen: seen, cs: cs, badge: false).equatable(), alignment: .topTrailing)
       .scaleEffect(1)
       .contentShape(Rectangle())
