@@ -210,6 +210,30 @@ extension Subreddit {
     }
     return nil
   }
+  
+  func resetFlairs() {
+    let context = PersistenceController.shared.container.newBackgroundContext()
+
+    let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "CachedFilter")
+    fetchRequest.predicate = NSPredicate(format: "subreddit_id == %@ && type == 'flair'", self.id)
+    
+    let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
+    deleteRequest.resultType = .resultTypeObjectIDs
+
+    do {
+      // Perform the batch delete
+      try context.performAndWait {
+        let batchDelete = try context.execute(deleteRequest) as? NSBatchDeleteResult
+        
+        guard let deleteResult = batchDelete?.result as? [NSManagedObjectID] else { return }
+        let deletedObjects: [AnyHashable: Any] = [ NSDeletedObjectsKey: deleteResult ]
+        
+        NSManagedObjectContext.mergeChanges(fromRemoteContextSave: deletedObjects, into: [context])
+      }
+    } catch {
+      print("Error resetting flairs for \(self.id)")
+    }
+  }
 }
 
 //struct SubredditData: GenericRedditEntityDataType, _DefaultsSerializable {
