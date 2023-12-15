@@ -33,6 +33,11 @@ struct PostView: View, Equatable {
     self.post = post
     self.subreddit = subreddit
     
+		if self.post.data == nil {
+			print("post.data is nil")
+			updatePost()
+		}
+		
     _sort = State(initialValue: Defaults[.perPostSort] ? (Defaults[.postSorts][post.id] ?? Defaults[.preferredCommentSort]) : Defaults[.preferredCommentSort]);
   }
   

@@ -15,7 +15,7 @@ extension View {
         withAnimation {
           switch parsed {
           case .post(let postID, let subID):
-            Nav.fullTo(.posts, .reddit(.post(Post(id: postID, sub: Subreddit(id: subID)))))
+            Nav.fullTo(.posts, .reddit(.post(Post(id: postID, subID: subID))))
           case .subreddit(let name):
             Nav.fullTo(.posts, .reddit(.subFeed(Subreddit(id: name))))
           case .user(let username):
