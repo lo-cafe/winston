@@ -48,7 +48,7 @@ struct PostDimensions: Hashable, Equatable {
   
   init(contentWidth: Double, compact: Bool? = nil, theme: PostLinkTheme? = nil, titleSize: CGSize, bodySize: CGSize? = nil, urlTagHeight: Double? = nil, mediaSize: CGSize? = nil, dividerSize: CGSize? = nil, badgeSize: CGSize, spacingHeight: Double) {
     self.contentWidth = contentWidth
-    self.compact = compact ?? Defaults[.compactMode]
+    self.compact = compact ?? Defaults[.PostLinkDefSettings].compactMode.enabled
     self.theme = theme ?? getEnabledTheme().postLinks.theme
     self.titleSize = titleSize
     self.bodySize = bodySize
@@ -63,10 +63,10 @@ struct PostDimensions: Hashable, Equatable {
 func getPostDimensions(post: Post, winstonData: PostWinstonData? = nil, columnWidth: Double = .screenW, secondary: Bool = false, rawTheme: WinstonTheme? = nil, compact: Bool? = nil, subId: String? = nil) -> PostDimensions {
   if let data = post.data {
     let selectedTheme = rawTheme ?? getEnabledTheme()
-    let showSelfPostThumbnails = Defaults[.showSelfPostThumbnails]
-    let compact = compact ?? Defaults[.compactPerSubreddit][subId ?? data.subreddit_id ?? ""] ?? Defaults[.compactMode]
-    let showAuthorOnPostLinks = Defaults[.showAuthorOnPostLinks]
-    let maxDefaultHeight: CGFloat = Defaults[.maxPostLinkImageHeightPercentage]
+    let showSelfPostThumbnails = Defaults[.PostLinkDefSettings].compactMode.showPlaceholderThumbnail
+    let compact = compact ?? Defaults[.SubredditFeedDefSettings].compactPerSubreddit[subId ?? data.subreddit_id ?? ""] ?? Defaults[.PostLinkDefSettings].compactMode.enabled
+    let showAuthorOnPostLinks = Defaults[.PostLinkDefSettings].showAuthor
+    let maxDefaultHeight: CGFloat = Defaults[.PostLinkDefSettings].maxMediaHeightScreenPercentage
     let maxHeight: CGFloat = (maxDefaultHeight / 100) * (.screenH)
     let extractedMedia = compact ? winstonData?.extractedMedia : winstonData?.extractedMediaForcedNormal
     let compactImgSize = scaledCompactModeThumbSize()

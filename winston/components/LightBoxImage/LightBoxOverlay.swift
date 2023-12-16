@@ -20,7 +20,6 @@ struct LightBoxOverlay: View {
   @Environment(\.dismiss) var dismiss
   @Binding var done: Bool
   @Environment(\.useTheme) private var selectedTheme
-  @Environment(\.colorScheme) private var cs: ColorScheme
     @State private var isPresentingShareSheet = false
   @State private var sharedImageData: Data?
   var body: some View {
@@ -29,7 +28,7 @@ struct LightBoxOverlay: View {
         Text(postTitle)
           .fontSize(20, .semibold)
           .allowsHitTesting(false)
-        BadgeView(avatarRequest: avatarImageRequest, saved: false, usernameColor: nil, author: badgeKit.author, fullname: badgeKit.authorFullname, userFlair: badgeKit.userFlair, created: badgeKit.created, avatarURL: nil, theme: selectedTheme.postLinks.theme.badge, cs: cs)
+        BadgeView(avatarRequest: avatarImageRequest, saved: false, usernameColor: nil, author: badgeKit.author, fullname: badgeKit.authorFullname, userFlair: badgeKit.userFlair, created: badgeKit.created, avatarURL: nil, theme: selectedTheme.postLinks.theme.badge)
       }
       
       Spacer()

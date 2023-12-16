@@ -10,7 +10,7 @@ import Popovers
 import Defaults
 
 struct ViewVotesModifier: ViewModifier {
-  @Default(.enableVotesPopover) private var enableVotesPopover
+  @Default(.PostLinkDefSettings) private var postLinkDefSettings
   @State private var show = false
   var ups: Int
   var downs: Int
@@ -19,7 +19,7 @@ struct ViewVotesModifier: ViewModifier {
       .scaleEffect(show ? 1.175 : 1)
       .contentShape(Rectangle())
       .highPriorityGesture(
-        !enableVotesPopover
+        !postLinkDefSettings.enableVotesPopover
         ? nil
         : TapGesture().onEnded {
           withAnimation(spring) {

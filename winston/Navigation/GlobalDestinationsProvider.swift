@@ -32,7 +32,7 @@ struct GlobalDestinationsProvider<C: View>: View {
           .environment(\.tabBarHeight, tabBarHeight)
           .environment(\.sheetHeight, geo.size.height)
         }
-        .coordinateSpace(name: "sheto")
+        .coordinateSpace(name: "sheet")
         .environment(\.brighterBG, true)
       }
   }

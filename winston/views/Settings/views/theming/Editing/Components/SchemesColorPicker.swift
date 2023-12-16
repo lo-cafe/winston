@@ -11,7 +11,7 @@ struct SchemesColorPicker: View {
   @Binding var theme: ColorSchemes<ThemeColor>
   var defaultVal: ColorSchemes<ThemeColor>
   @Environment(\.useTheme) private var currentTheme
-  @Environment(\.colorScheme) private var cs
+
   var body: some View {
     HStack {
       ThemeColorPicker("Light", $theme.light)

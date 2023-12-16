@@ -16,17 +16,20 @@ struct ThemedListBGModifier: ViewModifier {
   @Environment(\.brighterBG) private var brighter
   @State private var uiImage: UIImage?
   
-  func updateImg(_ bg: ThemeBG) {
+  func updateImg(_ bg: ThemeBG, _ cs: ColorScheme) {
     uiImage = returnImg(bg: bg, cs: cs)
   }
 
   func body(content: Content) -> some View {
     content
       .onAppear {
-        updateImg(bg)
+        updateImg(bg, cs)
       }
       .onChange(of: bg) { val in
-        updateImg(val)
+        updateImg(val, cs)
+      }
+      .onChange(of: cs) { val in
+        updateImg(bg, val)
       }
       .background(disable ? nil : GeometryReader { geo in returnColor(bg: bg, cs: cs).brightness(brighter && !forceNonBrighter ? 0.11 : 0).frame(width: geo.size.width, height: geo.size.height) }.edgesIgnoringSafeArea(.all).allowsHitTesting(false))
       .background(disable ? nil : GeometryReader { geo in Image(uiImage: uiImage).antialiased(true).resizable().scaledToFill().frame(width: geo.size.width, height: geo.size.height) }.edgesIgnoringSafeArea(.all).allowsHitTesting(false))
@@ -43,7 +46,7 @@ extension View {
 private func returnColor(bg: ThemeBG, cs: ColorScheme) -> Color {
   switch bg {
   case .color(let color):
-    return color.cs(cs).color()
+    return color()
   default:
     return Color.clear
   }

@@ -53,8 +53,6 @@ extension View {
               PostSwipePanel()
             case .accessibility:
               AccessibilityPanel()
-            case .postFontSettings:
-              PostFontSettings()
             case .filteredSubreddits:
               FilteredSubredditsSettings()
             case .faq:

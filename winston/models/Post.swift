@@ -43,7 +43,7 @@ extension Post {
   func setupWinstonData(data: PostData? = nil, winstonData: PostWinstonData? = nil, contentWidth: Double = .screenW, secondary: Bool = false, theme: WinstonTheme, sub: Subreddit? = nil, fetchAvatar: Bool = true) {
     if let data = data ?? self.data {
       let cs: ColorScheme = UIScreen.main.traitCollection.userInterfaceStyle == .dark ? .dark : .light
-      let compact = Defaults[.compactPerSubreddit][sub?.id ?? data.subreddit_id ?? ""] ?? Defaults[.compactMode]
+      let compact = Defaults[.SubredditFeedDefSettings].compactPerSubreddit[sub?.id ?? data.subreddit_id ?? ""] ?? Defaults[.PostLinkDefSettings].compactMode.enabled
       if self.winstonData == nil { self.winstonData = .init() }
       
       self.winstonData?.permaURL = URL(string: "https://reddit.com\(data.permalink.escape.urlEncoded)")
@@ -86,7 +86,7 @@ extension Post {
       self.winstonData?.postDimensions = getPostDimensions(post: self, winstonData: self.winstonData, columnWidth: contentWidth, secondary: secondary, rawTheme: theme, subId: sub?.id)
       self.winstonData?.postDimensionsForcedNormal = getPostDimensions(post: self, winstonData: self.winstonData, columnWidth: contentWidth, secondary: secondary, rawTheme: theme, compact: false)
       
-      self.winstonData?.titleAttr = createTitleTagsAttrString(titleTheme: theme.postLinks.theme.titleText, postData: data, textColor: theme.postLinks.theme.titleText.color.cs(cs).color())
+      self.winstonData?.titleAttr = createTitleTagsAttrString(titleTheme: theme.postLinks.theme.titleText, postData: data, textColor: theme.postLinks.theme.titleText.color())
       
       if let sub {
         self.winstonData?.subreddit = sub
@@ -104,7 +104,7 @@ extension Post {
       let style = NSMutableParagraphStyle()
       style.lineSpacing = theme.posts.linespacing
       bodyAttr.addAttribute(.paragraphStyle, value: style, range: NSRange(location: 0, length: bodyAttr.length))
-      bodyAttr.addAttribute(.foregroundColor, value: UIColor(theme.posts.bodyText.color.cs(cs).color()), range: NSRange(location: 0, length: bodyAttr.length))
+      bodyAttr.addAttribute(.foregroundColor, value: UIColor(theme.posts.bodyText.color()), range: NSRange(location: 0, length: bodyAttr.length))
       self.winstonData?.postBodyAttr = bodyAttr
       let postViewBodyMaxWidth = .screenW - (!IPAD ? 0 : (.screenW / 3)) - (theme.posts.padding.horizontal * 2)
       

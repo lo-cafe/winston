@@ -198,7 +198,6 @@ struct NewPostModal: View {
   @State private var selection: PresentationDetent = .medium
   @State var selectedFlair: Flair?
   @Environment(\.useTheme) private var selectedTheme
-  @Environment(\.colorScheme) private var cs
   
   @FetchRequest(sortDescriptors: []) var drafts: FetchedResults<PostDraft>
   
@@ -348,12 +347,12 @@ struct NewPostModal: View {
       !selectedTheme.general.modalsBG.blurry
       ? nil
       : GeometryReader { geo in
-        selectedTheme.general.modalsBG.color.cs(cs).color()
+        selectedTheme.general.modalsBG.color()
           .frame(width: geo.size.width, height: geo.size.height)
       }
         .edgesIgnoringSafeArea(.all)
     )
-    .presentationBackground(selectedTheme.general.modalsBG.blurry ? AnyShapeStyle(.bar) : AnyShapeStyle(selectedTheme.general.modalsBG.color.cs(cs).color()))
+    .presentationBackground(selectedTheme.general.modalsBG.blurry ? AnyShapeStyle(.bar) : AnyShapeStyle(selectedTheme.general.modalsBG.color()))
     .scrollDismissesKeyboard(.immediately)
     .presentationDetents([.large, .fraction(0.75), .medium, collapsedPresentation], selection: $selection)
     .presentationCornerRadius(32)

@@ -8,4 +8,4 @@
 import Foundation
 import Defaults
 
-func removeDefaultThemeFromThemes() { Defaults[.themesPresets] = Defaults[.themesPresets].filter { $0.id != "default" } }
+func removeDefaultThemeFromThemes() { Defaults[.ThemesDefSettings].themesPresets = Defaults[.ThemesDefSettings].themesPresets.filter { $0.id != "default" } }

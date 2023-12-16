@@ -20,7 +20,7 @@ struct Tabber: View, Equatable {
   @Environment(\.useTheme) private var currentTheme
   @Environment(\.colorScheme) private var colorScheme
   @Environment(\.setTabBarHeight) private var setTabBarHeight
-  @Default(.showUsernameInTabBar) private var showUsernameInTabBar
+  @Default(.AppearanceDefSettings) private var appearanceDefSettings
   
   @State var sharedTheme: ThemeData? = nil
   
@@ -32,22 +32,22 @@ struct Tabber: View, Equatable {
     }
   }
   
-  init(theme: WinstonTheme, cs: ColorScheme) {
-    Tabber.updateTabAndNavBar(tabTheme: theme.general.tabBarBG, navTheme: theme.general.navPanelBG, cs)
+  init(theme: WinstonTheme) {
+    Tabber.updateTabAndNavBar(tabTheme: theme.general.tabBarBG, navTheme: theme.general.navPanelBG)
   }
   
-  static func updateTabAndNavBar(tabTheme: ThemeForegroundBG, navTheme: ThemeForegroundBG, _ cs: ColorScheme) {
+  static func updateTabAndNavBar(tabTheme: ThemeForegroundBG, navTheme: ThemeForegroundBG) {
     let toolbarAppearence = UINavigationBarAppearance()
     if !navTheme.blurry {
       toolbarAppearence.configureWithOpaqueBackground()
     }
-    toolbarAppearence.backgroundColor = UIColor(navTheme.color.cs(cs).color())
+    toolbarAppearence.backgroundColor = UIColor(navTheme.color())
     UINavigationBar.appearance().standardAppearance = toolbarAppearence
     let transparentAppearence = UITabBarAppearance()
     if !tabTheme.blurry {
       transparentAppearence.configureWithOpaqueBackground()
     }
-    transparentAppearence.backgroundColor = UIColor(tabTheme.color.cs(cs).color())
+    transparentAppearence.backgroundColor = UIColor(tabTheme.color())
     UITabBar.appearance().standardAppearance = transparentAppearence
   }
   
@@ -71,7 +71,7 @@ struct Tabber: View, Equatable {
         Me(router: nav[.me])
       }
       .tag(Nav.TabIdentifier.me)
-      .tabItem { Label(showUsernameInTabBar ? RedditAPI.shared.me?.data?.name ?? "Me" : "Me", systemImage: "person.fill") }
+      .tabItem { Label(appearanceDefSettings.showUsernameInTabBar ? RedditAPI.shared.me?.data?.name ?? "Me" : "Me", systemImage: "person.fill") }
       
       WithCredentialOnly(credential: redditCredentialsManager.selectedCredential) {
         Search(router: nav[.search])
@@ -95,7 +95,6 @@ struct Tabber: View, Equatable {
       cleanCredentialOrphanEntities()
       autoSelectCredentialIfNil()
       removeDefaultThemeFromThemes()
-      removeLegacySubsAndMultisCache()
       if RedditCredentialsManager.shared.selectedCredential != nil {
         RedditCredentialsManager.shared.updateMe()
         Task(priority: .background) { await updatePostsInBox(RedditAPI.shared) }

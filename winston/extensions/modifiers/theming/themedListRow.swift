@@ -12,7 +12,6 @@ struct ThemedListRowModifier: ViewModifier {
   var isButton = false
   @State private var pressed = false
   @Environment(\.useTheme) private var theme
-  @Environment(\.colorScheme) private var cs
   
   func body(content: Content) -> some View {
     content

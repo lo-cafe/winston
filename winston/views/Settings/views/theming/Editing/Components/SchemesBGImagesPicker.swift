@@ -11,8 +11,8 @@ struct SchemesBGImagesPicker: View {
   @Binding var theme: ColorSchemes<String>
   var defaultVal: ColorSchemes<String>
   @Environment(\.useTheme) private var currentTheme
-  @Environment(\.colorScheme) private var cs
-    var body: some View {
+
+  var body: some View {
       HStack {
         ImageThemePicker(label: "Light", image: $theme.light)
           .resetter($theme.light, defaultVal.light)

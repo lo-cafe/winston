@@ -10,7 +10,7 @@ import Defaults
 struct UpsellCard<Content: View>: View {
   var upsellName: String
   var content: (() -> Content)
-  @Default(.showingUpsellDict) var showingUpsellDict
+  @Default(.GeneralDefSettings) var generalDefSettings
   
   init(upsellName: String, _ content: @escaping () -> Content) {
     self.upsellName = upsellName
@@ -18,7 +18,7 @@ struct UpsellCard<Content: View>: View {
   }
   
   var body: some View {
-    if showingUpsellDict[upsellName] ?? true {
+    if generalDefSettings.showingUpsellDict[upsellName] ?? true {
       ZStack{
         content()
           .padding()
@@ -32,7 +32,7 @@ struct UpsellCard<Content: View>: View {
       HStack{
         Spacer()
         Button(action: {
-          showingUpsellDict[upsellName] = false
+          generalDefSettings.showingUpsellDict[upsellName] = false
         }) {
           Image(systemName: "xmark.circle.fill")
             .foregroundColor(.gray)

@@ -2642,6 +2642,7 @@
       }
     },
     "Post Link Body Size" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -2658,6 +2659,7 @@
       }
     },
     "Post Link Title Size" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -2690,6 +2692,7 @@
       }
     },
     "Post Page Body Size" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -2706,6 +2709,7 @@
       }
     },
     "Post Page Title Size" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -3146,6 +3150,9 @@
     "Show divider" : {
 
     },
+    "Show Divider at Top" : {
+
+    },
     "Show Self Text" : {
       "localizations" : {
         "de" : {
@@ -3163,6 +3170,7 @@
       }
     },
     "Show Subreddit at Top" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {

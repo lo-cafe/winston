@@ -11,7 +11,6 @@ import Defaults
 struct AnnouncementSheet: View {
   var announcement: Announcement?
   @Environment(\.useTheme) private var theme
-  @Environment(\.colorScheme) private var cs
   @Environment(\.dismiss) private var dismiss
   var body: some View {
     if let announcement {
@@ -37,13 +36,13 @@ struct AnnouncementSheet: View {
         }
         .padding()
         .ignoresSafeArea(.all)
-        .onAppear{
-          Defaults[.lastSeenAnnouncementTimeStamp] = announcement.timestamp ?? 0
-        }
+//        .onAppear{
+//          Defaults[.lastSeenAnnouncementTimeStamp] = announcement.timestamp ?? 0
+//        }
         
         VStack{
           Spacer()
-          MasterButton(label: announcement.buttonLabel == "" ? "Close" : announcement.buttonLabel, color: theme.general.accentColor.cs(cs).color(), colorHoverEffect: .animated, textSize: 18, height: 48, cornerRadius: 16, action: {
+          MasterButton(label: announcement.buttonLabel == "" ? "Close" : announcement.buttonLabel, color: theme.general.accentColor(), colorHoverEffect: .animated, textSize: 18, height: 48, cornerRadius: 16, action: {
             withAnimation(spring) {
               dismiss()
             }

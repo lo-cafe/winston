@@ -35,13 +35,10 @@ struct Subreddits: View, Equatable {
   @State private var favoritesArr: [Subreddit] = []
   
   @Default(.likedButNotSubbed) private var likedButNotSubbed // subreddits that a user likes but is not subscribed to so they wont be in subsDict
-  @Default(.disableAlphabetLettersSectionsInSubsList) private var disableAlphabetLettersSectionsInSubsList
+  @Default(.AppearanceDefSettings) private var appearanceDefSettings
   @Environment(\.managedObjectContext) private var context
   @Environment(\.useTheme) private var selectedTheme
-  @Environment(\.colorScheme) private var cs
-  
-  @Default(.showingUpsellDict) var showingUpsellDict
-  
+    
   var sections: [String:[CachedSub]] {
     return Dictionary(grouping: subreddits.filter({ $0.user_is_subscriber })) { sub in
       return String((sub.display_name ?? "a").first!.uppercased())
@@ -145,7 +142,7 @@ struct Subreddits: View, Equatable {
               }
             }
             
-            if disableAlphabetLettersSectionsInSubsList {
+            if appearanceDefSettings.disableAlphabetLettersSectionsInSubsList {
               
               Section("Subs") {
                 let subs = Array(subreddits.filter({ $0.user_is_subscriber }).sorted(by: { x, y in (x.display_name?.lowercased() ?? "a") < (y.display_name?.lowercased() ?? "a") }).enumerated())

@@ -33,16 +33,12 @@ struct CommentLinkContentPreview: View {
   }
 }
 
-class MyDefaults {
-  @Default(.commentSwipeActions) static var commentSwipeActions: SwipeActionsSet
-}
-
 struct CommentLinkContent: View {
   static let indentLineContentSpacing: Double = 4
   static let indentLinesSpacing: Double = 6
+  
   var disableBG = false
   var highlightID: String?
-  //  @Default(.commentSwipeActions) private var commentSwipeActions
   var seenComments: String?
   var forcedBodySize: CGSize?
   var showReplies = true
@@ -52,21 +48,21 @@ struct CommentLinkContent: View {
   var post: Post?
   @ObservedObject var comment: Comment
   @ObservedObject var winstonData: CommentWinstonData
-  @State var sizer = Sizer()
   var avatarsURL: [String:String]?
-  //  @Binding var collapsed: Bool
+
+  @State private var sizer = Sizer()
   @State private var showReplyModal = false
   @State private var pressing = false
   @State private var dragging = false
   @State private var offsetX: CGFloat = 0
   @State private var bodySize: CGSize = .zero
   @State private var highlight = false
-  @State private var commentSwipeActions: SwipeActionsSet = Defaults[.commentSwipeActions]
+  @State private var commentSwipeActions: SwipeActionsSet = Defaults[.CommentLinkDefSettings].swipeActions
   
-  @Default(.collapseAutoModerator) private var collapseAutoModerator
+  @Default(.CommentLinkDefSettings) private var defSettings
+  @Default(.CommentsSectionDefSettings) private var sectionDefSettings
   
   @Environment(\.useTheme) private var selectedTheme
-  @Environment(\.colorScheme) private var cs
   
   @State var commentViewLoaded = false
   
@@ -102,7 +98,7 @@ struct CommentLinkContent: View {
           }
           HStack(spacing: 8) {
             if let author = data.author {
-              BadgeView(avatarRequest: winstonData.avatarImageRequest, saved: data.badgeKit.saved, unseen: seenComments == nil ? false : !seenComments!.contains(data.id), usernameColor: (post?.data?.author ?? "") == author ? Color.green : nil, author: data.badgeKit.author,fullname: data.badgeKit.authorFullname, userFlair: data.badgeKit.userFlair, created: data.badgeKit.created, theme: theme.theme.badge, commentTheme: theme.theme, cs: cs)
+              BadgeView(avatarRequest: winstonData.avatarImageRequest, saved: data.badgeKit.saved, unseen: seenComments == nil ? false : !seenComments!.contains(data.id), usernameColor: (post?.data?.author ?? "") == author ? Color.green : nil, author: data.badgeKit.author,fullname: data.badgeKit.authorFullname, userFlair: data.badgeKit.userFlair, created: data.badgeKit.created, theme: theme.theme.badge, commentTheme: theme.theme)
             }
             
             Spacer()
@@ -200,9 +196,9 @@ struct CommentLinkContent: View {
         .frame(height: max(((theme.theme.badge.authorText.size * 1.2) + (theme.theme.badge.statsText.size * 1.2) + 2), theme.theme.badge.avatar.size) + (data.depth != 0 ? theme.theme.innerPadding.vertical + theme.theme.repliesSpacing : 0) + (data.depth != 0 ? 6 : 0), alignment: .leading)
         .mask(Color.black)
         .background(Color.accentColor.opacity(highlight ? 0.2 : 0))
-        .background(!disableBG && showReplies ? theme.theme.bg.cs(cs).color() : .clear)
+        .background(!disableBG && showReplies ? theme.theme.bg() : .clear)
         .onAppear {
-          let newCommentSwipeActions = Defaults[.commentSwipeActions]
+          let newCommentSwipeActions = Defaults[.CommentLinkDefSettings].swipeActions
           if commentSwipeActions != newCommentSwipeActions {
             commentSwipeActions = newCommentSwipeActions
           }
@@ -215,7 +211,7 @@ struct CommentLinkContent: View {
           }
         }
         .onAppear() {
-          if !commentViewLoaded && collapseAutoModerator {
+          if !commentViewLoaded && sectionDefSettings.collapseAutoModerator {
             if data.depth == 0 && data.author == "AutoModerator" && !(data.collapsed ?? false) {
               comment.toggleCollapsed(optimistic: true)
             }
@@ -254,12 +250,12 @@ struct CommentLinkContent: View {
                         ? nil
                         : TextViewWrapper(attributedText: NSAttributedString(body.md()), maxLayoutWidth: sizer.size.width)
                           .frame(width: sizer.size.width, height: sizer.size.height, alignment: .topLeading)
-                          .background(Rectangle().fill(theme.theme.bg.cs(cs).color()))
+                          .background(Rectangle().fill(theme.theme.bg()))
                       )
                   }
                 }
                 .fontSize(theme.theme.bodyText.size, theme.theme.bodyText.weight.t)
-                .foregroundColor(theme.theme.bodyText.color.cs(cs).color())
+                .foregroundColor(theme.theme.bodyText.color())
               }
               .onChange(of: theme) { newTheme in
                 let encoder = JSONEncoder()
@@ -294,7 +290,7 @@ struct CommentLinkContent: View {
           .padding(.horizontal, horPad)
           .mask(Color.black.padding(.top, -(data.depth != 0 ? 42 : 30)).padding(.bottom, -8))
           .background(Color.accentColor.opacity(highlight ? 0.2 : 0))
-          .background(showReplies ? theme.theme.bg.cs(cs).color() : .clear)
+          .background(showReplies ? theme.theme.bg() : .clear)
           .id("\(data.id)-body\(forcedBodySize == nil ? "" : "-preview")")
         }
       }

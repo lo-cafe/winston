@@ -17,15 +17,14 @@ struct winstonApp: App {
   @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
   let persistenceController = PersistenceController.shared
   
-  @Default(.themesPresets) private var themesPresets
-  @Default(.selectedThemeID) private var selectedThemeID
+  @Default(.ThemesDefSettings) private var themesDefSettings
   
-  var selectedTheme: WinstonTheme { themesPresets.first { $0.id == selectedThemeID } ?? defaultTheme }
+  var selectedTheme: WinstonTheme { themesDefSettings.themesPresets.first { $0.id == themesDefSettings.selectedThemeID } ?? defaultTheme }
   
   var body: some Scene {
     WindowGroup {
       AppContent(selectedTheme: selectedTheme)
-        .onAppear { themesPresets = themesPresets.filter { $0.id != "default" } }
+        .onAppear { themesDefSettings.themesPresets = themesDefSettings.themesPresets.filter { $0.id != "default" } }
         .environment(\.managedObjectContext, persistenceController.container.viewContext)
         .environment(\.primaryBGContext, persistenceController.primaryBGContext)
         .environment(
@@ -63,7 +62,6 @@ struct winstonApp: App {
 struct AppContent: View {
   var selectedTheme: WinstonTheme
   @StateObject private var themeStore = ThemeStoreAPI()
-  @Environment(\.colorScheme) private var cs
   @Environment(\.scenePhase) var scenePhase
   
   let biometrics = Biometrics()
@@ -78,7 +76,7 @@ struct AppContent: View {
   var body: some View {
     AccountSwitcherProvider {
       GlobalDestinationsProvider {
-        Tabber(theme: selectedTheme, cs: cs).equatable()
+        Tabber(theme: selectedTheme).equatable()
       }
     }
     .environment(\.tabBarHeight, tabBarHeight)

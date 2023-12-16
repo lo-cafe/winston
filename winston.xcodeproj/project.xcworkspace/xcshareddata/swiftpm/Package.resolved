@@ -55,6 +55,15 @@
       }
     },
     {
+      "identity" : "disk",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/saoudrizwan/Disk.git",
+      "state" : {
+        "revision" : "b0cb4fdf23e51849cc2460bdc6de795c3bcca99d",
+        "version" : "0.6.4"
+      }
+    },
+    {
       "identity" : "gifu",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/kaishin/Gifu.git",

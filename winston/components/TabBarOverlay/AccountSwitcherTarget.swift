@@ -52,7 +52,7 @@ struct AccountSwitcherTarget: View, Equatable {
   private let verticalOffset = -50.0
   private let textSpace = (AccountSwitcherTarget.fontSize * 1.2) + AccountSwitcherTarget.vStackSpacing
   private var isAddBtn: Bool { !cred.isAuthorized }
-  private var isSelected: Bool { !isAddBtn && Defaults[.redditCredentialSelectedID] == cred.id }
+  private var isSelected: Bool { !isAddBtn && Defaults[.GeneralDefSettings].redditCredentialSelectedID == cred.id }
   private var radiusX: Double { (containerSize.width / 2) }
   private var radiusY: Double { (containerSize.height / 2) }
   private var initialOffset: CGSize { getOffsetAroundCircleForIndex(count: targetsCount, index: index, circleSize: containerSize) }

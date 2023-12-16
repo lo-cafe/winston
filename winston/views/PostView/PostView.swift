@@ -17,39 +17,26 @@ struct PostView: View, Equatable {
   
   @ObservedObject var post: Post
   var subreddit: Subreddit
+  var forceCollapse: Bool
   var highlightID: String?
-  var forceCollapse: Bool = false
+  @Default(.PostPageDefSettings) private var defSettings
   @Environment(\.useTheme) private var selectedTheme
-  @Environment(\.colorScheme) private var cs
+  @Environment(\.globalLoaderStart) private var globalLoaderStart
   @State private var ignoreSpecificComment = false
   @State private var hideElements = true
-  @State private var sort: CommentSortOption = Defaults[.preferredCommentSort]
-  //  @State private var sort: CommentSortOption = .confidence
-  @Environment(\.globalLoaderStart) private var globalLoaderStart
+  @State private var sort: CommentSortOption
+  @State private var update = false
   
-  @State var update = false
-    
-  init(post: Post, subreddit: Subreddit) {
-    self.post = post
-    self.subreddit = subreddit
-    
-    _sort = State(initialValue: Defaults[.perPostSort] ? (Defaults[.postSorts][post.id] ?? Defaults[.preferredCommentSort]) : Defaults[.preferredCommentSort]);
-  }
-  
-  init(post: Post, subreddit: Subreddit, forceCollapse: Bool) {
+  init(post: Post, subreddit: Subreddit, forceCollapse: Bool = false, highlightID: String? = nil) {
     self.post = post
     self.subreddit = subreddit
     self.forceCollapse = forceCollapse
-    
-    _sort = State(initialValue: Defaults[.perPostSort] ? (Defaults[.postSorts][post.id] ?? Defaults[.preferredCommentSort]) : Defaults[.preferredCommentSort]);
-  }
-  
-  init(post: Post, subreddit: Subreddit, highlightID: String?) {
-    self.post = post
-    self.subreddit = subreddit
     self.highlightID = highlightID
     
-    _sort = State(initialValue: Defaults[.perPostSort] ? (Defaults[.postSorts][post.id] ?? Defaults[.preferredCommentSort]) : Defaults[.preferredCommentSort]);
+    let defSettings = Defaults[.PostPageDefSettings]
+    let commentsDefSettings = Defaults[.CommentsSectionDefSettings]
+    
+    _sort = State(initialValue: defSettings.perPostSort ? (defSettings.postSorts[post.id] ?? commentsDefSettings.preferredSort) : commentsDefSettings.preferredSort);
   }
   
   func asyncFetch(_ full: Bool = true) async {
@@ -85,7 +72,7 @@ struct PostView: View, Equatable {
             //              .equatable()
             
             if selectedTheme.posts.inlineFloatingPill {
-              PostFloatingPill(post: post, subreddit: subreddit)
+              PostFloatingPill(post: post, subreddit: subreddit, showUpVoteRatio: defSettings.showUpVoteRatio)
                     .padding(-10)
             }
             
@@ -138,7 +125,7 @@ struct PostView: View, Equatable {
       }
       .overlay(alignment: .bottomTrailing) {
         if !selectedTheme.posts.inlineFloatingPill {
-          PostFloatingPill(post: post, subreddit: subreddit)
+          PostFloatingPill(post: post, subreddit: subreddit, showUpVoteRatio: defSettings.showUpVoteRatio)
         }
       }
       .navigationBarTitle("\(post.data?.num_comments ?? 0) comments", displayMode: .inline)
@@ -146,13 +133,12 @@ struct PostView: View, Equatable {
       .onChange(of: sort) { val in
         updatePost()
       }
-      .onChange(of: cs) { _ in
-        Task(priority: .background) {
-          post.setupWinstonData(data: post.data, winstonData: post.winstonData, theme: selectedTheme, fetchAvatar: false)
-        }
-      }
+//      .onChange(of: cs) { _ in
+//        Task(priority: .background) {
+//          post.setupWinstonData(data: post.data, winstonData: post.winstonData, theme: selectedTheme, fetchAvatar: false)
+//        }
+//      }
       .onAppear {
-        print("almsas")
         if post.data == nil {
           updatePost()
         }
@@ -166,7 +152,6 @@ struct PostView: View, Equatable {
         Task(priority: .background) {
           doThisAfter(0.5) {
             hideElements = false
-            print("123")
           }
           if subreddit.data == nil && subreddit.id != "home" {
             await subreddit.refreshSubreddit()
@@ -190,7 +175,7 @@ private struct Toolbar: View {
           ForEach(CommentSortOption.allCases) { opt in
             Button {
               sort = opt
-              Defaults[.postSorts][post.id] = opt
+              Defaults[.PostPageDefSettings].postSorts[post.id] = opt
             } label: {
               HStack {
                 Text(opt.rawVal.value.capitalized)

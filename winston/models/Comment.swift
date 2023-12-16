@@ -33,15 +33,7 @@ extension Comment {
     }
     self.setupWinstonData()
     self.kind = kind
-//    if let body = self.data?.body {
-//      let theme = Defaults[.themesPresets].first(where: { $0.id == Defaults[.selectedThemeID] }) ?? defaultTheme
-//      let newWinstonBodyAttr = stringToAttr(body, fontSize: theme.comments.theme.bodyText.size)
-//      let encoder = JSONEncoder()
-//      if let jsonData = try? encoder.encode(newWinstonBodyAttr) {
-//        let json = String(decoding: jsonData, as: UTF8.self)
-//        self.data?.winstonBodyAttrEncoded = json
-//      }
-//    }
+
     if let replies = self.data?.replies {
       switch replies {
       case .first(_):

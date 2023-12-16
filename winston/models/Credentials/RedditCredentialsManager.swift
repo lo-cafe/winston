@@ -18,14 +18,14 @@ class RedditCredentialsManager: ObservableObject {
   static let keychainEntryDivider = "\\--(*.*)--/"
   static let oldKeychainServiceString = "lo.cafe.winston.reddit-credentials"
   static let keychainServiceString = "lo.cafe.winston.reddit-multi-credentials"
-  static let keychain = Keychain(service: RedditCredentialsManager.keychainServiceString).synchronizable(Defaults[.syncKeyChainAndSettings])
+  static let keychain = Keychain(service: RedditCredentialsManager.keychainServiceString).synchronizable(Defaults[.BehaviorDefSettings].iCloudSyncCredentials)
   @Published private(set) var credentials: [RedditCredential] = []
   var validCredentials: [RedditCredential] { credentials.filter { $0.isAuthorized } }
   var cancelables: [Defaults.Observation] = []
     
   var selectedCredential: RedditCredential? {
     if credentials.count > 0 {
-      return credentials.first { $0.id == Defaults[.redditCredentialSelectedID] } ?? credentials[0]
+      return credentials.first { $0.id == Defaults[.GeneralDefSettings].redditCredentialSelectedID } ?? credentials[0]
     }
     return nil
   }
@@ -58,7 +58,7 @@ class RedditCredentialsManager: ObservableObject {
     
     if let importedCredential = importedCredential {
       credentials.append(importedCredential)
-      Defaults[.redditCredentialSelectedID] = importedCredential.id
+      Defaults[.GeneralDefSettings].redditCredentialSelectedID = importedCredential.id
     }
 
     try? okc.remove("apiAppID")

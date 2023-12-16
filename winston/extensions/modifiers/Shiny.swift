@@ -13,7 +13,6 @@ import Defaults
 struct ShinyModifier: ViewModifier {
   /// The gradient used for the Shiny effect.
   var shiny: Gradient?
-  @Environment(\.colorScheme) private var cs
   @Environment(\.useTheme) private var theme
 
   /// Applies the Shiny effect to the content if the corresponding user preference is enabled.
@@ -21,11 +20,11 @@ struct ShinyModifier: ViewModifier {
   /// - Returns: A modified version of the content with the Shiny effect applied if enabled.
   func body(content: Content) -> some View {
     content
-      .if(Defaults[.shinyTextAndButtons]) { content in
-        content.shiny(shiny ?? Gradient(colors: createPaletteFromColors(colors: [theme.general.accentColor.cs(cs).color().opacity(0.1), ], opacity: 1) + [theme.lists.foreground.color.cs(cs).color()]))
+      .if(Defaults[.AppearanceDefSettings].shinyTextAndButtons) { content in
+        content.shiny(shiny ?? Gradient(colors: createPaletteFromColors(colors: [theme.general.accentColor().opacity(0.1), ], opacity: 1) + [theme.lists.foreground.color()]))
       }
-      .if(!Defaults[.shinyTextAndButtons]){ content in
-        content.foregroundColor(shiny?.stops.first?.color ?? theme.posts.bodyText.color.cs(cs).color())
+      .if(!Defaults[.AppearanceDefSettings].shinyTextAndButtons){ content in
+        content.foregroundColor(shiny?.stops.first?.color ?? theme.posts.bodyText.color())
       }
   }
 }

@@ -11,7 +11,7 @@ import Defaults
 
 extension RedditAPI {
   func searchInSubreddit(_ subreddit: String, _ query: String) async -> [UserData]? {
-    let limit = Defaults[.feedPostsLoadLimit]
+    let limit = Defaults[.SubredditFeedDefSettings].chunkLoadSize
     let params = SearchInSubredditPayload(limit: limit, q: query)
     switch await self.doRequest("\(RedditAPI.redditApiURLBase)/r/\(subreddit)/search", method: .get, params: params, paramsLocation: .queryString, decodable: Listing<UserData>.self)  {
     case .success(let data):

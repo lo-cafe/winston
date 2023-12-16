@@ -22,9 +22,9 @@ struct PreviewLinkContent: View {
   var url: URL
   static let height: CGFloat = 88
   @Environment(\.openURL) private var openURL
-  @Default(.openLinksInSafari) private var openLinksInSafari
+  @Default(.BehaviorDefSettings) private var behaviorDefSettings
   var body: some View {
-    PreviewLinkContentRaw(compact: compact, image: viewModel.image, title: viewModel.title, description: viewModel.description, loading: viewModel.loading, url: url, openURL: openURL, openLinksInSafari: openLinksInSafari)
+    PreviewLinkContentRaw(compact: compact, image: viewModel.image, title: viewModel.title, description: viewModel.description, loading: viewModel.loading, url: url, openURL: openURL, openLinksInSafari: behaviorDefSettings.openLinksInSafari)
   }
 }
 

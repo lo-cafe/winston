@@ -9,29 +9,11 @@ import SwiftUI
 import Defaults
 
 struct AppearancePanel: View {
-  @Default(.preferenceShowPostsAvatars) var preferenceShowPostsAvatars
-  @Default(.preferenceShowCommentsAvatars) var preferenceShowCommentsAvatars
-  @Default(.showUsernameInTabBar) var showUsernameInTabBar
-  @Default(.shinyTextAndButtons) var shinyTextAndButtons
-  
-  @Default(.coloredCommentNames) var coloredCommentNames
-  @Default(.showUpvoteRatio) var showUpvoteRatio
-  @Default(.showSubsAtTop) var showSubsAtTop
-  @Default(.showTitleAtTop) var showTitleAtTop
-  //Compact Mode
-  @Default(.compactMode) var compactMode
-  @Default(.showVotes) var showVotes
-  @Default(.showSelfText) var showSelfText
-  @Default(.compThumbnailSize) var compThumbnailSize
-  @Default(.thumbnailPositionRight) var thumbnailPositionRight
-  @Default(.voteButtonPositionRight) var voteButtonPositionRight
-  @Default(.showSelfPostThumbnails) var showSelfPostThumbnails
-  @Default(.disableAlphabetLettersSectionsInSubsList) var disableAlphabetLettersSectionsInSubsList
-  //  @Default(.preferInlineTags) var preferInlineTags
-  @Default(.themeStoreTint) var themeStoreTint
-  @Default(.showAuthorOnPostLinks) var showAuthorOnPostLinks
+  @Default(.PostLinkDefSettings) var postLinkDefSettings
+  @Default(.AppearanceDefSettings) var appearanceDefSettings
+  @Default(.CommentLinkDefSettings) var commentLinkDefSettings
+
   @Environment(\.useTheme) private var theme
-  @Environment(\.colorScheme) private var cs
   @State private var appIconManager = AppIconManger()
   
   var body: some View {
@@ -48,20 +30,6 @@ struct AppearancePanel: View {
           Text("Current Theme")
         }
         .listRowSeparator(.hidden)
-        
-        //      .background{
-        //        RadialGradient(gradient: Gradient(colors: [Color(uiColor: UIColor(hex: theme.metadata.color.hex)).opacity(0.3), theme.lists.foreground.color.cs(cs).color()]), center: UnitPoint(x: 0.25, y: 0.5), startRadius: 0, endRadius: UIScreen.main.bounds.width * 0.6)
-        //              .ignoresSafeArea(.all)
-        //      }
-        //      .listRowBackground(
-        //        RadialGradient(gradient: Gradient(colors: [Color(uiColor: UIColor(hex: theme.metadata.color.hex)).opacity(0.3), theme.lists.foreground.color.cs(cs).color()]), center: UnitPoint(x: 0.25, y: 0.5), startRadius: 0, endRadius: UIScreen.main.bounds.width * 0.6)
-        //              .ignoresSafeArea(.all)
-        //      )
-        //      .ifIOS17{ content in
-        //        if #available(iOS 17.0, *) {
-        //          content.listSectionSpacing(8)
-        //        }
-        //      }
         
         Section {
           WNavigationLink(value: .setting(.appIcon)) {
@@ -96,16 +64,10 @@ struct AppearancePanel: View {
         .listRowSeparator(.hidden)
         .listRowBackground(Color.clear)
         .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
-        //      .padding(.vertical, -8)  Adjust the value as needed
-        
-        
         
         Section("General") {
-//          Group {
-            Toggle("Show Username in Tab Bar", isOn: $showUsernameInTabBar)
-            Toggle("Disable subs list letter sections", isOn: $disableAlphabetLettersSectionsInSubsList)
-//          }
-//          .themedListRowLikeBG(enablePadding: true, disableBG: true)
+          Toggle("Show Username in Tab Bar", isOn: $appearanceDefSettings.showUsernameInTabBar)
+          Toggle("Disable subs list letter sections", isOn: $appearanceDefSettings.disableAlphabetLettersSectionsInSubsList)
         }
         
         //      Section("Theming") {
@@ -122,40 +84,37 @@ struct AppearancePanel: View {
         //        }
         //        .themedListSection()
         //      }
-        
+//        
         Section("Posts") {
-//          Group {
-            Toggle("Show Upvote Ratio", isOn: $showUpvoteRatio)
-            Toggle("Show Voting Buttons", isOn: $showVotes)
-            Toggle("Show Self Text", isOn: $showSelfText)
-            Toggle("Show Subreddit at Top", isOn: $showSubsAtTop)
-            Toggle("Show Title at Top", isOn: $showTitleAtTop)
-            Toggle("Show Author", isOn: $showAuthorOnPostLinks)
-            //        Toggle("Prefer inline tags", isOn: $preferInlineTags)
-//          }
-//          .themedListRowLikeBG(enablePadding: true, disableBG: true)
+          Toggle("Show Upvote Ratio", isOn: $postLinkDefSettings.showUpVoteRatio)
+          Toggle("Show Voting Buttons", isOn: $postLinkDefSettings.showVotesCluster)
+          Toggle("Show Self Text", isOn: $postLinkDefSettings.showSelfText)
+          Toggle("Show Divider at Top", isOn: Binding(get: {
+            postLinkDefSettings.dividerPosition == .top
+          }, set: { postLinkDefSettings.dividerPosition = $0 ? .top : .bottom } ))
+          Toggle("Show Title at Top", isOn: Binding(
+            get: { postLinkDefSettings.titlePosition == .top },
+            set: { postLinkDefSettings.titlePosition = $0 ? .top : .bottom } )
+          )
+          Toggle("Show Author", isOn: $postLinkDefSettings.showAuthor)
         }
         
         Section("Compact Posts") {
-            Toggle("Compact Mode", isOn: $compactMode)
-            Toggle("Show Thumbnail Placeholder", isOn: $showSelfPostThumbnails)
-            Picker("Thumbnail Position", selection: Binding(get: {
-              thumbnailPositionRight ? "Right" : "Left"
-            }, set: {val, _ in
-              thumbnailPositionRight = val == "Right"
-            })){
+          Toggle("Compact Mode", isOn: $postLinkDefSettings.compactMode.enabled)
+          Toggle("Show Thumbnail Placeholder", isOn: $postLinkDefSettings.compactMode.showPlaceholderThumbnail)
+            Picker("Thumbnail Position", selection: Binding(
+              get: { postLinkDefSettings.compactMode.thumbnailSide == .trailing ? "Right" : "Left" },
+              set: { postLinkDefSettings.compactMode.thumbnailSide = $0 == "Right" ? .trailing : .leading })
+            ){
               Text("Left").tag("Left")
               Text("Right").tag("Right")
             }
             
             Picker("Thumbnail Size", selection: Binding(get: {
-              compThumbnailSize
+              postLinkDefSettings.compactMode.thumbnailSize
             }, set: { val, _ in
-              compThumbnailSize = val
-              // This is a bit of a hacky way of refreshing the images, but it works
-              compactMode = false
-              compactMode = true
-            })){
+              postLinkDefSettings.compactMode.thumbnailSize = val
+            })) {
               Text("Hidden").tag(ThumbnailSizeModifier.hidden)
               Text("Small").tag(ThumbnailSizeModifier.small)
               Text("Medium").tag(ThumbnailSizeModifier.medium)
@@ -163,9 +122,9 @@ struct AppearancePanel: View {
             }
             
             Picker("Voting Buttons Position", selection: Binding(get: {
-              voteButtonPositionRight ? "Right" : "Left"
+              postLinkDefSettings.compactMode.voteButtonsSide == .trailing ? "Right" : "Left"
             }, set: {val, _ in
-              voteButtonPositionRight = val == "Right"
+              postLinkDefSettings.compactMode.voteButtonsSide = val == "Right" ? .trailing : .leading
             })){
               Text("Left").tag("Left")
               Text("Right").tag("Right")
@@ -173,12 +132,12 @@ struct AppearancePanel: View {
         }
         
         Section("Comments") {
-          Toggle("Colored Usernames", isOn: $coloredCommentNames)
+          Toggle("Colored Usernames", isOn: $commentLinkDefSettings.coloredNames)
         }
         
         Section("Accessibility"){
-          Toggle("Theme Store Tint", isOn: $themeStoreTint)
-          Toggle("\"Shiny\" Text and Buttons", isOn: $shinyTextAndButtons)
+          Toggle("Theme Store Tint", isOn: $appearanceDefSettings.themeStoreTint)
+          Toggle("\"Shiny\" Text and Buttons", isOn: $appearanceDefSettings.shinyTextAndButtons)
         }
         
       }

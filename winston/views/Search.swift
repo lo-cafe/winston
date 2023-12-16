@@ -55,23 +55,8 @@ struct Search: View {
   @State private var dummyAllSub: Subreddit? = nil
   @State private var searchViewLoaded: Bool = false
   
+  @Default(.PostLinkDefSettings) private var postLinkDefSettings
   @Environment(\.useTheme) private var theme
-  
-  @Default(.blurPostLinkNSFW) private var blurPostLinkNSFW
-  @Default(.postSwipeActions) private var postSwipeActions
-  @Default(.compactMode) private var compactMode
-  @Default(.showVotes) private var showVotes
-  @Default(.showSelfText) private var showSelfText
-  @Default(.thumbnailPositionRight) private var thumbnailPositionRight
-  @Default(.voteButtonPositionRight) private var voteButtonPositionRight
-  @Default(.readPostOnScroll) private var readPostOnScroll
-  @Default(.hideReadPosts) private var hideReadPosts
-  @Default(.showUpvoteRatio) private var showUpvoteRatio
-  @Default(.showSubsAtTop) private var showSubsAtTop
-  @Default(.showTitleAtTop) private var showTitleAtTop
-  @Default(.showSelfPostThumbnails) private var showSelfPostThumbnails
-  
-  @Environment(\.colorScheme) private var cs
   @Environment(\.contentWidth) private var contentWidth
   
   func fetch() {
@@ -153,28 +138,8 @@ struct Search: View {
                 ForEach(resultPosts.data) { post in
                   if let postData = post.data, let winstonData = post.winstonData {
                     //                      SwipeRevolution(size: winstonData.postDimensions.size, actionsSet: postSwipeActions, entity: post) { controller in
-                    PostLink(
-                      id: post.id,
-                      controller: nil,
-                      theme: theme.postLinks,
-                      showSub: true,
-                      contentWidth: contentWidth,
-                      blurPostLinkNSFW: blurPostLinkNSFW,
-                      postSwipeActions: postSwipeActions,
-                      showVotes: showVotes,
-                      showSelfText: showSelfText,
-                      readPostOnScroll: readPostOnScroll,
-                      hideReadPosts: hideReadPosts,
-                      showUpvoteRatio: showUpvoteRatio,
-                      showSubsAtTop: showSubsAtTop,
-                      showTitleAtTop: showTitleAtTop,
-                      compact: compactMode,
-                      thumbnailPositionRight: thumbnailPositionRight,
-                      voteButtonPositionRight: voteButtonPositionRight,
-                      showSelfPostThumbnails: showSelfPostThumbnails,
-                      cs: cs
-                    )
-                    .swipyRev(size: winstonData.postDimensions.size, actionsSet: postSwipeActions, entity: post)
+                    PostLink(id: post.id, theme: theme.postLinks, showSub: true, contentWidth: contentWidth, defSettings: postLinkDefSettings)
+//                    .swipyRev(size: winstonData.postDimensions.size, actionsSet: postSwipeActions, entity: post)
                     //                      }
                     .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
                     .animation(.default, value: resultPosts.data)

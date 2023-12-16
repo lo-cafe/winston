@@ -26,7 +26,7 @@ func cleanSubs(_ subs: [ListingChild<SubredditData>]) -> [ListingChild<Subreddit
 
 extension RedditAPI {
   func fetchSubs(after: String? = nil) async -> [ListingChild<SubredditData>]? {
-    guard let currentCredentialID = Defaults[.redditCredentialSelectedID] else { return [] }
+    guard let currentCredentialID = Defaults[.GeneralDefSettings].redditCredentialSelectedID else { return [] }
 
     var params = FetchSubsPayload(limit: 100)
     

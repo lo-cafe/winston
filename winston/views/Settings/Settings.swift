@@ -15,7 +15,6 @@ struct Settings: View {
   @Environment(\.openURL) private var openURL
   @Default(.likedButNotSubbed) var likedButNotSubbed
   @Environment(\.useTheme) private var selectedTheme
-  @Environment(\.colorScheme) private var cs
   @State private var id = UUID().uuidString
   
   @ObservedObject var winstonAPI = WinstonAPI.shared
