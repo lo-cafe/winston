@@ -37,6 +37,10 @@ struct PostView: View, Equatable {
     let commentsDefSettings = Defaults[.CommentsSectionDefSettings]
     
     _sort = State(initialValue: defSettings.perPostSort ? (defSettings.postSorts[post.id] ?? commentsDefSettings.preferredSort) : commentsDefSettings.preferredSort);
+		
+		if self.post.data == nil {
+			updatePost()
+		}
   }
   
   func asyncFetch(_ full: Bool = true) async {
@@ -143,9 +147,6 @@ struct PostView: View, Equatable {
           print("maos", hideElements)
           hideElements = false
           print("maoso", hideElements)
-        }
-        if post.data == nil {
-          updatePost()
         }
         
         Task(priority: .background) {          
