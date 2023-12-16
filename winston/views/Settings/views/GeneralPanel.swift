@@ -13,7 +13,7 @@ import UniformTypeIdentifiers
 
 struct GeneralPanel: View {
   @Default(.likedButNotSubbed) var likedButNotSubbed
-  @Default(.syncKeyChainAndSettings) var syncKeyChainAndSettings
+  @Default(.BehaviorDefSettings) var behaviorDefSettings
   @State private var totalCacheSize: String = ""
   @Environment(\.useTheme) private var theme
   @State var isMoving: Bool = false
@@ -24,7 +24,7 @@ struct GeneralPanel: View {
       
       Group {
         Section("General"){
-          Toggle("Sync API Key", isOn: $syncKeyChainAndSettings)
+          Toggle("Sync API Key", isOn: $behaviorDefSettings.iCloudSyncCredentials)
         }
         
         Section("Backup"){

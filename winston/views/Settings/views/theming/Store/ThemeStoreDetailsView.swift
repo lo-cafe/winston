@@ -13,7 +13,7 @@ struct ThemeStoreDetailsView: View {
   @EnvironmentObject var themeStore: ThemeStoreAPI
   @StateObject var viewModel = AppDetailViewObject()
   @Environment(\.useTheme) private var theme
-  @Default(.themeStoreTint) var themeStoreTint
+  @Default(.AppearanceDefSettings) var appearanceDefSettings
   var body: some View {
     FittingScrollView{
       VStack(spacing: 0){
@@ -71,13 +71,13 @@ struct ThemeStoreDetailsView: View {
         }
       }
     }
-    .if(themeStoreTint){ view in
+    .if(appearanceDefSettings.themeStoreTint){ view in
       view.background{
         LinearGradient(gradient: Gradient(colors: [Color(uiColor: UIColor(hex: themeData.color!.hex)).opacity(0.3), Color(UIColor.systemBackground)]), startPoint: .topLeading, endPoint: .bottomTrailing)
             .ignoresSafeArea(.all)
       }
     }
-    .if(!themeStoreTint){ view in
+    .if(!appearanceDefSettings.themeStoreTint){ view in
       view.themedListBG(theme.lists.bg)
     }
     .tint(Color(uiColor: UIColor(hex: themeData.color!.hex)))

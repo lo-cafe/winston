@@ -41,13 +41,13 @@ struct ImageMediaPost: View, Equatable {
   var compact = false
   var images: [ImgExtracted]
   var contentWidth: CGFloat
+  var maxMediaHeightScreenPercentage: CGFloat
 //  @State var fullscreen = false
   @State var fullscreenIndex: Int?
-  @Default(.maxPostLinkImageHeightPercentage) var maxPostLinkImageHeightPercentage
   
   var body: some View {
-//    let maxPostLinkImageHeightPercentage = 100.0
-    let maxHeight: CGFloat = (maxPostLinkImageHeightPercentage / 100) * (.screenH)
+//    let maxMediaHeightScreenPercentage = 100.0
+    let maxHeight: CGFloat = (maxMediaHeightScreenPercentage / 100) * (.screenH)
     VStack {
       if images.count == 1 || compact {
         let img = images[0]
@@ -55,7 +55,7 @@ struct ImageMediaPost: View, Equatable {
         let sourceWidth = img.size.width
         
         let propHeight = (contentWidth * sourceHeight) / sourceWidth
-        let finalHeight = maxPostLinkImageHeightPercentage != 110 ? Double(min(maxHeight, propHeight)) : Double(propHeight)
+        let finalHeight = maxMediaHeightScreenPercentage != 110 ? Double(min(maxHeight, propHeight)) : Double(propHeight)
         
         GalleryThumb(cornerRadius: cornerRadius, width: compact ? scaledCompactModeThumbSize() : contentWidth, height: compact ? scaledCompactModeThumbSize() : sourceHeight > 0 ? finalHeight : nil, url: img.url, imgRequest: images.count > 0 ? images[0].request : nil)
           .background(sourceHeight > 0 || compact ? nil : GeometryReader { geo in Color.clear.onAppear { postDimensions.mediaSize = geo.size }.onChange(of: geo.size) { postDimensions.mediaSize = $0 } })
@@ -116,18 +116,16 @@ struct ImageMediaPost: View, Equatable {
 //      LightBoxImage(postTitle: postTitle, badgeKit: badgeKit, markAsSeen: markAsSeen, i: fullscreenIndex ?? 0, imagesArr: images)
 //    })
     .fullScreenCover(item: $fullscreenIndex) { i in
-      LightBoxImage(postTitle: postTitle, badgeKit: badgeKit, avatarImageRequest: avatarImageRequest, markAsSeen: markAsSeen, i: i, imagesArr: images, doLiveText: Defaults[.doLiveText])
+      LightBoxImage(postTitle: postTitle, badgeKit: badgeKit, avatarImageRequest: avatarImageRequest, markAsSeen: markAsSeen, i: i, imagesArr: images, doLiveText: Defaults[.BehaviorDefSettings].doLiveText)
     }
   }
 }
 
 /// Either returns the content width or, if compact mode is enabled, the modified content width depending on what setting the user chose
-func scaledCompactModeThumbSize() -> CGFloat {
-  @Default(.compactMode) var compactMode
-  @Default(.compThumbnailSize) var compThumbnailSize
+func scaledCompactModeThumbSize(compact: Bool = Defaults[.PostLinkDefSettings].compactMode.enabled, thumbnailSize: ThumbnailSizeModifier = Defaults[.PostLinkDefSettings].compactMode.thumbnailSize) -> CGFloat {
   
-  if compactMode {
-    return compactModeThumbSize * compThumbnailSize.rawVal
+  if compact {
+    return compactModeThumbSize * thumbnailSize.rawVal
   } else {
     return compactModeThumbSize
   }

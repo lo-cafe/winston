@@ -9,8 +9,6 @@ import SwiftUI
 import Defaults
 
 struct MessageLink: View {
-  @Default(.preferenceShowPostsCards) private var preferenceShowPostsCards
-  @Default(.preferenceShowPostsAvatars) private var preferenceShowPostsAvatars
   @State private var pressed = false
   @ObservedObject var message: Message
   

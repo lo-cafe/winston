@@ -128,7 +128,6 @@ struct BigColorPicker: View {
   var initialValue: String
   @Binding var color: ThemeColor
   var placeholder: String? = nil
-  @Environment(\.colorScheme) private var cs
     
   var body: some View {
     VStack(alignment: .leading, spacing: 5) {
@@ -155,7 +154,6 @@ struct BigToggle: View {
   var title: String
   var initialValue: Bool
   @Binding var isOn: Bool
-  @Environment(\.colorScheme) private var cs
   var body: some View {
     VStack(alignment: .leading, spacing: 5) {
       Text(title.uppercased()).frame(maxWidth: .infinity, alignment: .leading).lineLimit(1).fontSize(12, .semibold).padding(.leading, 12).opacity(0.5)

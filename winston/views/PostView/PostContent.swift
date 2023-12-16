@@ -20,14 +20,8 @@ struct PostContent: View, Equatable {
   var sub: Subreddit
   var forceCollapse: Bool = false
   @State private var collapsed = false
-  @Default(.blurPostNSFW) private var blurPostNSFW
-  @Environment(\.useTheme) private var selectedTheme
-  @Environment(\.colorScheme) private var cs
-  
-  @ObservedObject var avatarCache = Caches.avatars
-  @ObservedObject private var videosCache = Caches.videos
-  
-  @Default(.blurPostLinkNSFW) private var blurPostLinkNSFW
+  @Default(.PostPageDefSettings) private var defSettings
+  @Environment(\.useTheme) private var selectedTheme  
   
   var contentWidth: CGFloat { .screenW - (selectedTheme.posts.padding.horizontal * 2) }
   
@@ -55,17 +49,17 @@ struct PostContent: View, Equatable {
       
       Text(data.title)
         .fontSize(postsTheme.titleText.size, .semibold)
-        .foregroundColor(postsTheme.titleText.color.cs(cs).color())
+        .foregroundColor(postsTheme.titleText.color())
         .fixedSize(horizontal: false, vertical: true)
         .id("post-title")
         .onAppear { Task { await post.toggleSeen(true) } }
         .listRowInsets(EdgeInsets(top: postsTheme.padding.vertical, leading: postsTheme.padding.horizontal, bottom: postsTheme.spacing / 2, trailing: selectedTheme.posts.padding.horizontal))
-      
+//      
       VStack(spacing: 0) {
         VStack(spacing: selectedTheme.posts.spacing) {
           
           if let extractedMedia = winstonData.extractedMediaForcedNormal {
-            MediaPresenter(postDimensions: $winstonData.postDimensionsForcedNormal, controller: nil, postTitle: data.title, badgeKit: data.badgeKit, avatarImageRequest: winstonData.avatarImageRequest, markAsSeen: {}, cornerRadius: selectedTheme.postLinks.theme.mediaCornerRadius, blurPostLinkNSFW: false, media: extractedMedia, over18: over18, compact: false, contentWidth: winstonData.postDimensionsForcedNormal.mediaSize?.width ?? 0, resetVideo: nil)
+            MediaPresenter(postDimensions: $winstonData.postDimensionsForcedNormal, controller: nil, postTitle: data.title, badgeKit: data.badgeKit, avatarImageRequest: winstonData.avatarImageRequest, markAsSeen: {}, cornerRadius: selectedTheme.postLinks.theme.mediaCornerRadius, blurPostLinkNSFW: defSettings.blurNSFW, media: extractedMedia, over18: over18, compact: false, contentWidth: winstonData.postDimensionsForcedNormal.mediaSize?.width ?? 0, maxMediaHeightScreenPercentage: Defaults[.PostLinkDefSettings].maxMediaHeightScreenPercentage, resetVideo: nil)
           }
           
           if data.selftext != "" {
@@ -73,7 +67,7 @@ struct PostContent: View, Equatable {
             MD2(winstonData.postBodyAttr == nil ? .str(data.selftext) : .nsAttr(winstonData.postBodyAttr!), onTap: { withAnimation(spring) { collapsed.toggle() } })
               .frame(width: winstonData.postViewBodySize.width, height: winstonData.postViewBodySize.height, alignment: .topLeading)
               .fixedSize()
-//              .foregroundColor(postsTheme.bodyText.color.cs(cs).color())
+//              .foregroundColor(postsTheme.bodyText.color())
               .allowsHitTesting(!isCollapsed)
           }
         }
@@ -106,12 +100,12 @@ struct PostContent: View, Equatable {
             .opacity(isCollapsed ? 1 : 0)
           , alignment: .bottom
         )
-        .nsfw(over18 && blurPostNSFW)
+        .nsfw(over18 && defSettings.blurNSFW)
       }
       .id("post-content")
       .listRowInsets(EdgeInsets(top: postsTheme.spacing / 2, leading: postsTheme.padding.horizontal, bottom: postsTheme.spacing / 2, trailing: postsTheme.spacing / 2))
       
-      BadgeOpt(avatarRequest: winstonData.avatarImageRequest, badgeKit: data.badgeKit, cs: cs, showVotes: false, theme: postsTheme.badge,
+      BadgeOpt(avatarRequest: winstonData.avatarImageRequest, badgeKit: data.badgeKit, showVotes: false, theme: postsTheme.badge,
                openSub: openSubreddit, subName: data.subreddit)
         .id("post-badge")
         .listRowInsets(EdgeInsets(top: postsTheme.spacing / 2, leading: postsTheme.padding.horizontal, bottom: postsTheme.spacing * 0.75, trailing: postsTheme.padding.horizontal))

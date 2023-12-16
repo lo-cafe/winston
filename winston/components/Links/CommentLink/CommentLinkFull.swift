@@ -16,12 +16,10 @@ struct CommentLinkFull: View {
   @State private var loadMoreLoading = false
   @State private var id = UUID().uuidString
   @Environment(\.useTheme) private var selectedTheme
-  @Environment(\.colorScheme) private var cs
   
   var body: some View {
-    let curveColor = selectedTheme.comments.theme.indentColor.cs(cs).color()
-    let cardedCommentsInnerHPadding = selectedTheme.comments.theme.innerPadding.horizontal
-    let horPad = cardedCommentsInnerHPadding
+    let curveColor = selectedTheme.comments.theme.indentColor()
+    let horPad = selectedTheme.comments.theme.innerPadding.horizontal
     if let data = comment.data {
       HStack {
         if data.depth != 0 && indentLines != 0 {

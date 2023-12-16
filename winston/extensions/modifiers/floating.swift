@@ -11,14 +11,13 @@ import Defaults
 
 struct FloatingModifier: ViewModifier {
   @Environment(\.useTheme) private var selectedTheme
-  @Environment(\.colorScheme) private var cs
   func body(content: Content) -> some View {
     content
       .background(
         Capsule(style: .continuous)
           .fill(.bar.opacity(selectedTheme.general.floatingPanelsBG.blurry ? 1 : 0))
           .shadow(radius: 8, y: 8)
-          .overlay(Circle().fill(selectedTheme.general.floatingPanelsBG.color.cs(cs).color()))
+          .overlay(Circle().fill(selectedTheme.general.floatingPanelsBG.color()))
       )
       .overlay(
         Capsule(style: .continuous)
@@ -33,5 +32,4 @@ extension View {
     self.modifier(FloatingModifier())
   }
 }
-//@Environment(\.useTheme) private var selectedTheme
-//@Environment(\.colorScheme) private var cs
+

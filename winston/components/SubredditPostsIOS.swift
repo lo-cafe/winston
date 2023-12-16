@@ -31,28 +31,8 @@ struct SubredditPostsIOS: View, Equatable {
   
   @Binding var reachedEndOfFeed: Bool
   
-  @Default(.blurPostLinkNSFW) private var blurPostLinkNSFW
-  
-  @Default(.postSwipeActions) private var postSwipeActions
-  @Default(.compactPerSubreddit) private var compactPerSubreddit
-  @Default(.compactMode) private var compactMode
-  @Default(.showVotes) private var showVotes
-  @Default(.showSelfText) private var showSelfText
-  @Default(.thumbnailPositionRight) private var thumbnailPositionRight
-  @Default(.voteButtonPositionRight) private var voteButtonPositionRight
-  
-  @Default(.readPostOnScroll) private var readPostOnScroll
-  @Default(.hideReadPosts) private var hideReadPosts
-  
-  @Default(.showUpvoteRatio) private var showUpvoteRatio
-  
-  @Default(.showSubsAtTop) private var showSubsAtTop
-  @Default(.showTitleAtTop) private var showTitleAtTop
-  @Default(.showSelfPostThumbnails) private var showSelfPostThumbnails
-  
-  @Environment(\.colorScheme) private var cs
-  
-  //  @Environment(\.useTheme) private var selectedTheme
+  @Default(.PostLinkDefSettings) private var postLinkDefSettings
+    
   @Environment(\.contentWidth) private var contentWidth
   
   func loadMorePosts() {
@@ -88,27 +68,7 @@ struct SubredditPostsIOS: View, Equatable {
       ) {
         ForEach(Array(posts.enumerated()), id: \.self.element.id) { i, post in
           if let sub = subreddit ?? post.winstonData?.subreddit, let winstonData = post.winstonData {
-            PostLink(
-              id: post.id,
-              controller: nil,
-              theme: selectedTheme.postLinks,
-              showSub: showSub,
-              contentWidth: contentWidth,
-              blurPostLinkNSFW: blurPostLinkNSFW,
-              postSwipeActions: postSwipeActions,
-              showVotes: showVotes,
-              showSelfText: showSelfText,
-              readPostOnScroll: readPostOnScroll,
-              hideReadPosts: hideReadPosts,
-              showUpvoteRatio: showUpvoteRatio,
-              showSubsAtTop: showSubsAtTop,
-              showTitleAtTop: showTitleAtTop,
-              compact: compactPerSubreddit[sub.id] ?? compactMode,
-              thumbnailPositionRight: thumbnailPositionRight,
-              voteButtonPositionRight: voteButtonPositionRight,
-              showSelfPostThumbnails: showSelfPostThumbnails,
-              cs: cs
-            )
+            PostLink(id: post.id, theme: selectedTheme.postLinks, showSub: showSub, contentWidth: contentWidth, defSettings: postLinkDefSettings)
             .environmentObject(sub)
             .environmentObject(post)
             .environmentObject(winstonData)
@@ -141,7 +101,7 @@ struct SubredditPostsIOS: View, Equatable {
             Label("LOAD MORE", systemImage: "arrow.clockwise.circle.fill")
               .frame(maxWidth: .infinity)
               .font(Font.system(size: 16, weight: .bold))
-              .foregroundStyle(selectedTheme.general.accentColor.cs(cs).color())
+              .foregroundStyle(selectedTheme.general.accentColor())
               .padding(.top, 12)
               .padding(.bottom, 48)
           }

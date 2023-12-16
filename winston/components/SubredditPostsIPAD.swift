@@ -30,26 +30,8 @@ struct SubredditPostsIPAD: View, Equatable {
   
   @Environment(\.contentWidth) var contentWidth
   
-  @Default(.blurPostLinkNSFW) private var blurPostLinkNSFW
-  
-  @Default(.postSwipeActions) private var postSwipeActions
-  @Default(.compactMode) private var compactMode
-  @Default(.showVotes) private var showVotes
-  @Default(.showSelfText) private var showSelfText
-  @Default(.thumbnailPositionRight) private var thumbnailPositionRight
-  @Default(.voteButtonPositionRight) private var voteButtonPositionRight
-  
-  @Default(.readPostOnScroll) private var readPostOnScroll
-  @Default(.hideReadPosts) private var hideReadPosts
-  
-  @Default(.showUpvoteRatio) private var showUpvoteRatio
-  
-  @Default(.showSubsAtTop) private var showSubsAtTop
-  @Default(.showTitleAtTop) private var showTitleAtTop
-  @Default(.showSelfPostThumbnails) private var showSelfPostThumbnails
-  
-  @Environment(\.colorScheme) private var cs
-  
+  @Default(.PostLinkDefSettings) private var postLinkDefSettings
+    
   var body: some View {
     VStack(spacing: 8) {
       
@@ -68,29 +50,8 @@ struct SubredditPostsIPAD: View, Equatable {
         contentForData: { post, i in
           Group {
             if let sub = subreddit ?? post.winstonData?.subreddit, let winstonData = post.winstonData {
-              //                SwipeRevolution(size: winstonData.postDimensions.size, actionsSet: postSwipeActions, entity: post) { controller in
-              PostLink(
-                id: post.id,
-                controller: nil,
-                theme: selectedTheme.postLinks,
-                showSub: showSub,
-                contentWidth: contentWidth,
-                blurPostLinkNSFW: blurPostLinkNSFW,
-                postSwipeActions: postSwipeActions,
-                showVotes: showVotes,
-                showSelfText: showSelfText,
-                readPostOnScroll: readPostOnScroll,
-                hideReadPosts: hideReadPosts,
-                showUpvoteRatio: showUpvoteRatio,
-                showSubsAtTop: showSubsAtTop,
-                showTitleAtTop: showTitleAtTop,
-                compact: compactMode,
-                thumbnailPositionRight: thumbnailPositionRight,
-                voteButtonPositionRight: voteButtonPositionRight,
-                showSelfPostThumbnails: showSelfPostThumbnails,
-                cs: cs
-              )
-              .swipyRev(size: winstonData.postDimensions.size, actionsSet: postSwipeActions, entity: post)
+              PostLink(id: post.id, theme: selectedTheme.postLinks, showSub: showSub, contentWidth: contentWidth, defSettings: postLinkDefSettings)
+//              .swipyRev(size: winstonData.postDimensions.size, actionsSet: postLinkDefSettings.swipeActions, entity: post)
               .environmentObject(post)
               .environmentObject(sub)
               .environmentObject(winstonData)

@@ -16,12 +16,11 @@ struct ListRowBackground: View, Equatable {
   var pressed = false
   var shiny: Gradient? = nil
   @Environment(\.brighterBG) private var brighter
-  @Environment(\.colorScheme) private var cs
   var body: some View {
     let isActive = active && IPAD
     Group {
       if shiny == nil {
-        Rectangle().fill(theme.lists.foreground.blurry ? AnyShapeStyle(.bar) : AnyShapeStyle(isActive ? .blue : theme.lists.foreground.color.cs(cs).color())).brightness(!theme.lists.foreground.blurry && brighter ? 0.075 : 0)
+        Rectangle().fill(theme.lists.foreground.blurry ? AnyShapeStyle(.bar) : AnyShapeStyle(isActive ? .blue : theme.lists.foreground.color())).brightness(!theme.lists.foreground.blurry && brighter ? 0.075 : 0)
       } else {
         Rectangle().winstonShiny(shiny)
       }

@@ -23,8 +23,6 @@ struct ThemedListRowLikeBGModifier: ViewModifier {
   
   /// The theme environment.
   @Environment(\.useTheme) private var theme
-  /// The color scheme environment.
-  @Environment(\.colorScheme) private var cs
   
   /// Applies the modifier to the content.
   /// - Parameter content: The content to which the modifier is applied.

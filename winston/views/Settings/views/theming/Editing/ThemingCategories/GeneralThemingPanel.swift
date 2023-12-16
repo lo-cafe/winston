@@ -10,7 +10,7 @@ import Defaults
 
 struct GeneralThemingPanel: View {
   @Binding var theme: WinstonTheme
-  @Default(.selectedThemeID) private var selectedThemeID
+  @Default(.ThemesDefSettings) private var themesDefSettings
   @State private var restartAlert = false
   @State private var firstWarning = false
   var body: some View {
@@ -42,7 +42,7 @@ struct GeneralThemingPanel: View {
       .padding(.vertical, 32)
     }
     .onChange(of: theme, debounceTime: .milliseconds(500), perform: { newValue in
-      if selectedThemeID == theme.id && !firstWarning {
+      if themesDefSettings.selectedThemeID == theme.id && !firstWarning {
         restartAlert = true
         firstWarning = true
       }

@@ -11,7 +11,6 @@ import Defaults
 struct SubscribeButton: View {
   
   @Environment(\.colorScheme) var colorScheme: ColorScheme
-//  @Default(.subreddits) var subs
   @FetchRequest(sortDescriptors: [], animation: .default) var subs: FetchedResults<CachedSub>
   @ObservedObject var subreddit: Subreddit
   var isSmall: Bool = false

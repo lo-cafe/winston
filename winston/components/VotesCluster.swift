@@ -27,9 +27,8 @@ struct VotesCluster: View, Equatable {
   var votesKit: VotesKit
   //  @ObservedObject var post: Post
   var voteAction: (RedditAPI.VoteAction) async -> Bool?
-  
   var vertical = false
-  //  @Default(.showUpvoteRatio) var showUpvoteRatio
+  var showUpVoteRatio: Bool
   
   nonisolated func haptic() {
     Task(priority: .background) {
@@ -58,31 +57,31 @@ struct VotesCluster: View, Equatable {
     if vertical {
       VotesClusterVertical(id: votesKit.id, likes: votesKit.likes, upvote: upvote, downvote: downvote)
     } else {
-      VotesClusterHorizontal(likes: votesKit.likes, ups: votesKit.ups, upvote_ratio: votesKit.ratio, showUpvoteRatio: true, upvote: upvote, downvote: downvote)
+      VotesClusterHorizontal(likes: votesKit.likes, ups: votesKit.ups, upvote_ratio: votesKit.ratio, upvote: upvote, downvote: downvote, showUpVoteRatio: showUpVoteRatio)
     }
   }
 }
 
 struct VotesClusterHorizontal: View, Equatable {
   static func == (lhs: VotesClusterHorizontal, rhs: VotesClusterHorizontal) -> Bool {
-    lhs.likes == rhs.likes && lhs.ups == rhs.ups && lhs.upvote_ratio == rhs.upvote_ratio && lhs.showUpvoteRatio == rhs.showUpvoteRatio
+    lhs.likes == rhs.likes && lhs.ups == rhs.ups && lhs.upvote_ratio == rhs.upvote_ratio && lhs.showUpVoteRatio == rhs.showUpVoteRatio
   }
   
   let likes: Bool?
   let ups: Int
   let upvote_ratio: Double
-  let showUpvoteRatio: Bool
   let upvote: () -> ()
   let downvote: () -> ()
+  var showUpVoteRatio: Bool
   var body: some View {
-    HStack(spacing: showUpvoteRatio ? 4 : 8) {
+    HStack(spacing: showUpVoteRatio ? 4 : 8) {
       if #available(iOS 17, *) {
         VoteButton(active: (likes ?? false), color: .orange, image: "arrow.up").equatable().onTapGesture(perform: upvote)
       } else {
         VoteButtonFallback(color: (likes ?? false) ? .orange : .gray, voteAction: upvote, image: "arrow.up")
       }
       
-      VotesClusterInfo(ups: ups, likes: likes, likeRatio: upvote_ratio, flyingNumber: FlyingNumberInfo(counter: 0, color: likes))
+      VotesClusterInfo(ups: ups, likes: likes, likeRatio: upvote_ratio, showUpVoteRatio: showUpVoteRatio, flyingNumber: FlyingNumberInfo(counter: 0, color: likes))
         .allowsHitTesting(false)
       
       if #available(iOS 17, *) {
@@ -138,6 +137,8 @@ struct VotesClusterInfo: View, Equatable {
   var ups: Int
   var likes: Bool?
   var likeRatio: CGFloat?
+  var showUpVoteRatio: Bool
+  
   @State var flyingNumber: FlyingNumberInfo
   var body: some View {
     VStack(spacing: 0) {
@@ -158,7 +159,7 @@ struct VotesClusterInfo: View, Equatable {
           }
         }
       
-      if Defaults[.showUpvoteRatio] {
+      if showUpVoteRatio {
         if likeRatio != nil, let ratio = likeRatio {
           HStack(spacing: 1) {
             Image(systemName: "face.smiling")

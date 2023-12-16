@@ -9,14 +9,14 @@ import SwiftUI
 import Defaults
 
 struct CommentSwipePanel: View {
-  @Default(.commentSwipeActions) private var commentSwipeActions
+  @Default(.CommentLinkDefSettings) private var commentLinkDefSettings
   @Environment(\.useTheme) private var theme
   var body: some View {
     List {
       
       Section {
         Group {
-          Picker(selection: $commentSwipeActions.leftFirst) {
+          Picker(selection: $commentLinkDefSettings.swipeActions.leftFirst) {
             ForEach(allCommentSwipeActions) { act in
               Label(act.label, systemImage: act.icon.normal)
                 .tag(act)
@@ -25,7 +25,7 @@ struct CommentSwipePanel: View {
             Label("Drag Left", image: "dragLeft")
           }
           
-          Picker(selection: $commentSwipeActions.rightFirst) {
+          Picker(selection: $commentLinkDefSettings.swipeActions.rightFirst) {
             ForEach(allCommentSwipeActions) { act in
               Label(act.label, systemImage: act.icon.normal)
                 .tag(act)
@@ -34,7 +34,7 @@ struct CommentSwipePanel: View {
             Label("Drag Right", image: "dragRight")
           }
           
-          Picker(selection: $commentSwipeActions.leftSecond) {
+          Picker(selection: $commentLinkDefSettings.swipeActions.leftSecond) {
             ForEach(allCommentSwipeActions) { act in
               Label(act.label, systemImage: act.icon.normal)
                 .tag(act)
@@ -43,7 +43,7 @@ struct CommentSwipePanel: View {
             Label("Long Drag Left", image: "longDragLeft")
           }
           
-          Picker(selection: $commentSwipeActions.rightSecond) {
+          Picker(selection: $commentLinkDefSettings.swipeActions.rightSecond) {
             ForEach(allCommentSwipeActions) { act in
               Label(act.label, systemImage: act.icon.normal)
                 .tag(act)

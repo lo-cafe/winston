@@ -30,8 +30,6 @@ struct LightBoxImage: View {
   @State private var loading = false
   @State private var done = false
   @State private var showOverlay = true
-  @Default(.lightboxViewsPost) private var lightboxViewsPost
-  
   @State private var isPinching: Bool = false
   @State private var isZoomed: Bool = false
   @State private var scale: CGFloat = 1.0
@@ -175,7 +173,7 @@ struct LightBoxImage: View {
       }
     }
     .onAppear {
-      if lightboxViewsPost { Task(priority: .background) { await markAsSeen?() } }
+      if let markAsSeen { Task(priority: .background) { await markAsSeen() } }
       xPos = -CGFloat(i) * (.screenW + SPACING)
       activeIndex = i
       doThisAfter(0.0) {

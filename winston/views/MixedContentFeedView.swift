@@ -23,7 +23,7 @@ struct MixedContentFeedView: View {
   
   @Binding var reachedEndOfFeed: Bool
   
-  @Environment(\.colorScheme) private var cs
+//  @Environment(\.colorScheme) private var cs
   
   func updateContentsCalcs(_ newTheme: WinstonTheme) {
     Task(priority: .background) {
@@ -71,9 +71,7 @@ struct MixedContentFeedView: View {
       .listRowBackground(Color.clear)
       .environment(\.defaultMinListRowHeight, 1)
     }
-    .onChange(of: cs) { _ in
-      updateContentsCalcs(selectedTheme)
-    }
+//    .onChange(of: cs) { _ in updateContentsCalcs(selectedTheme) }
     .onChange(of: selectedTheme, perform: updateContentsCalcs)
     .themedListBG(selectedTheme.postLinks.bg)
     .scrollContentBackground(.hidden)

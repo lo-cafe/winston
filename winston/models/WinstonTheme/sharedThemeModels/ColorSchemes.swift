@@ -23,3 +23,14 @@ struct ColorSchemes<Thing: Codable & Hashable>: Codable, Hashable, Equatable {
     }
   }
 }
+
+
+extension ColorSchemes<ThemeColor> {
+  func callAsFunction() -> Color {
+    Color(light: self.light.color(), dark: self.dark.color())
+  }
+  
+  func color() -> Color {
+    Color(light: self.light.color(), dark: self.dark.color())
+  }
+}

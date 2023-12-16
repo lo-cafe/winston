@@ -10,8 +10,8 @@ import Defaults
 
 struct SubredditsStack: View {
   @ObservedObject var router: Router
-  @Default(.preferenceDefaultFeed) private var preferenceDefaultFeed // handle default feed selection routing
-  @Default(.redditCredentialSelectedID) private var redditCredentialSelectedID
+  @Default(.BehaviorDefSettings) private var behaviorDefSettings // handle default feed selection routing
+  @Default(.GeneralDefSettings) private var generalDefSettings // handle default feed selection routing
   @State private var columnVisibility: NavigationSplitViewVisibility = .automatic
   @State private var sidebarSize: CGSize = .zero
   
@@ -20,7 +20,7 @@ struct SubredditsStack: View {
   @State private var loaded = false
   var body: some View {
     NavigationSplitView(columnVisibility: $columnVisibility) {
-      if let redditCredentialSelectedID = redditCredentialSelectedID {
+      if let redditCredentialSelectedID = generalDefSettings.redditCredentialSelectedID {
         Subreddits(selectedSub: $router.firstSelected, loaded: loaded, currentCredentialID: redditCredentialSelectedID)
           .measure($sidebarSize).id("subreddits-list-\(redditCredentialSelectedID)")
       }
@@ -66,8 +66,8 @@ struct SubredditsStack: View {
         .task(priority: .background) {
           if !loaded {
             // MARK: Route to default feed
-            if preferenceDefaultFeed != "subList" && router.path.count == 0 { // we are in subList, can ignore
-              let tempSubreddit = Subreddit(id: preferenceDefaultFeed)
+            if behaviorDefSettings.preferenceDefaultFeed != "subList" && router.path.count == 0 { // we are in subList, can ignore
+              let tempSubreddit = Subreddit(id: behaviorDefSettings.preferenceDefaultFeed)
               router.navigateTo(.reddit(.subFeed(tempSubreddit)))
             }
 

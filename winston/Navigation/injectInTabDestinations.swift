@@ -21,8 +21,6 @@ extension View {
           case .postHighlighted(let post, let highlightID):
             if let sub = post.winstonData?.subreddit {
               PostView(post: post, subreddit: sub, highlightID: highlightID)
-            } else {
-              Text("Mininu")
             }
           case .subFeed(let sub):
             SubredditPosts(subreddit: sub)
@@ -53,8 +51,6 @@ extension View {
               PostSwipePanel()
             case .accessibility:
               AccessibilityPanel()
-            case .postFontSettings:
-              PostFontSettings()
             case .filteredSubreddits:
               FilteredSubredditsSettings()
             case .faq:

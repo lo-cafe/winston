@@ -131,18 +131,18 @@ struct ThemeItemDownloadButton: View {
   var theme: ThemeData
   @State var downloading: Bool = false
   @State var showingImportError: Bool = false
-  @Default(.themesPresets) private var themesPresets
+  @Default(.ThemesDefSettings) private var themesDefSettings
   @EnvironmentObject var themeStore: ThemeStoreAPI
   @Environment(\.useTheme) private var themeTheme
   // Computed property to check if themesPresets contains the current theme
   private var isThemeInPresets: Bool {
-    themesPresets.contains { $0.id == theme.file_id }
+    themesDefSettings.themesPresets.contains { $0.id == theme.file_id }
   }
   var body: some View {
     if isThemeInPresets{
       Button {
         //Delete the Theme
-        themesPresets = themesPresets.filter { $0.id != theme.file_id}
+        themesDefSettings.themesPresets = themesDefSettings.themesPresets.filter { $0.id != theme.file_id}
       } label: {
         Label("Delete", systemImage: "trash")
           .labelStyle(.iconOnly)
@@ -151,7 +151,7 @@ struct ThemeItemDownloadButton: View {
         TapGesture()
           .onEnded{
             //Delete the Theme
-            themesPresets = themesPresets.filter { $0.id != theme.file_id}
+            themesDefSettings.themesPresets = themesDefSettings.themesPresets.filter { $0.id != theme.file_id}
           }
       )
     } else {

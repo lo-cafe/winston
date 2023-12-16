@@ -46,16 +46,17 @@ struct SubredditPosts: View, Equatable {
   @State private var unfilteredreachedEndOfFeed: Bool = false
   
   @Environment(\.useTheme) private var selectedTheme
-  @Environment(\.colorScheme) private var cs
+//  @Environment(\.colorScheme) private var cs
   @Environment(\.contentWidth) private var contentWidth
   
-  @Default(.compactPerSubreddit) var compactPerSubreddit
+  @Default(.SubredditFeedDefSettings) var subredditFeedDefSettings
   
   let context = PersistenceController.shared.container.newBackgroundContext()
   
   init(subreddit: Subreddit) {
     self.subreddit = subreddit
-    _sort = State(initialValue: Defaults[.perSubredditSort] ? (Defaults[.subredditSorts][subreddit.id] ?? Defaults[.preferredSort]) : Defaults[.preferredSort])
+    let defSettings = Defaults[.SubredditFeedDefSettings]
+    _sort = State(initialValue: defSettings.perSubredditSort ? (defSettings.subredditSorts[subreddit.id] ?? defSettings.preferredSort) : defSettings.preferredSort)
   }
   
   var isFeedsAndSuch: Bool { feedsAndSuch.contains(subreddit.id) }
@@ -306,8 +307,8 @@ struct SubredditPosts: View, Equatable {
     .onChange(of: sort) { val in
       clearAndLoadData(forceRefresh: true)
     }
-    .onChange(of: cs) { _ in updatePostsCalcs(selectedTheme) }
-    .onChange(of: compactPerSubreddit) { _ in updatePostsCalcs(selectedTheme) }
+//    .onChange(of: cs) { _ in updatePostsCalcs(selectedTheme) }
+    .onChange(of: subredditFeedDefSettings.compactPerSubreddit) { _ in updatePostsCalcs(selectedTheme) }
     .onChange(of: selectedTheme, perform: updatePostsCalcs)
     .onChange(of: searchText) { val in if searchText.isEmpty { clearAndLoadData() } }
     .sheet(item: $customFilter, onDismiss: {
@@ -337,7 +338,8 @@ struct SubredditPostsNavBtns: View, Equatable {
               ForEach(SubListingSortOption.TopListingSortOption.allCases, id: \.self) { topOpt in
                 Button {
                   sort = .top(topOpt)
-                  Defaults[.subredditSorts][subreddit.id] = .top(topOpt)
+//                  Defaults[.subredditSorts][subreddit.id] = .top(topOpt)
+                  Defaults[.SubredditFeedDefSettings].subredditSorts[subreddit.id] = .top(topOpt)
                 } label: {
                   HStack {
                     Text(topOpt.rawValue.capitalized)
@@ -356,7 +358,7 @@ struct SubredditPostsNavBtns: View, Equatable {
           } else {
             Button {
               sort = opt
-              Defaults[.subredditSorts][subreddit.id] = opt
+              Defaults[.SubredditFeedDefSettings].subredditSorts[subreddit.id] = opt
             } label: {
               HStack {
                 Text(opt.rawVal.value.capitalized)
