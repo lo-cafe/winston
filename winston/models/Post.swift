@@ -29,7 +29,7 @@ extension Post {
   convenience init(id: String, sub: Subreddit? = nil) {
     self.init(id: id, typePrefix: "\(Post.prefix)_")
     let newWinstonData = PostWinstonData()
-    newWinstonData.subreddit = sub
+    newWinstonData._strongSubreddit = sub
     self.winstonData = newWinstonData
   }
   

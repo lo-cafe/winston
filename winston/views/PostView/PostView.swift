@@ -26,7 +26,7 @@ struct PostView: View, Equatable {
   @State private var hideElements = true
   @State private var sort: CommentSortOption
   @State private var update = false
-  
+	 
   init(post: Post, subreddit: Subreddit, forceCollapse: Bool = false, highlightID: String? = nil) {
     self.post = post
     self.subreddit = subreddit
@@ -35,6 +35,11 @@ struct PostView: View, Equatable {
     
     let defSettings = Defaults[.PostPageDefSettings]
     let commentsDefSettings = Defaults[.CommentsSectionDefSettings]
+    
+    if self.post.data == nil {
+			print("post.data is nil")
+			updatePost()
+		}
     
     _sort = State(initialValue: defSettings.perPostSort ? (defSettings.postSorts[post.id] ?? commentsDefSettings.preferredSort) : commentsDefSettings.preferredSort);
   }
