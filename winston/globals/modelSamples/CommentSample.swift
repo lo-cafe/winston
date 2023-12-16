@@ -27,4 +27,4 @@ func getCommentSampleData(_ withChild: Bool = true) -> CommentData {
   return commentSampleData
 }
 
-let commentSample = Comment(data: getCommentSampleData(), api: RedditAPI.shared)
+let commentSample = Comment(data: getCommentSampleData())

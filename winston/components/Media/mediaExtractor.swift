@@ -83,13 +83,13 @@ enum MediaExtractedType: Equatable {
   case repost(Post)
   case post(EntityExtracted<PostData, PostWinstonData>?)
   case comment(EntityExtracted<CommentData, CommentWinstonData>?)
-  case subreddit(EntityExtracted<SubredditData, AnyHashable>?)
+  case subreddit(EntityExtracted<SubredditData, SubredditWinstonData>?)
   case user(EntityExtracted<UserData, AnyHashable>?)
 }
 
 
 // ORDER MATTERS!
-func mediaExtractor(compact: Bool, contentWidth: Double = UIScreen.screenWidth, _ data: PostData, theme: WinstonTheme? = nil) -> MediaExtractedType? {
+func mediaExtractor(compact: Bool, contentWidth: Double = .screenW, _ data: PostData, theme: WinstonTheme? = nil) -> MediaExtractedType? {
   guard !data.is_self else { return nil }
 
   if let is_gallery = data.is_gallery, is_gallery, let galleryData = data.gallery_data?.items, let metadata = data.media_metadata {
@@ -127,8 +127,7 @@ func mediaExtractor(compact: Bool, contentWidth: Double = UIScreen.screenWidth, 
   }
   
   if let postEmbed = data.crosspost_parent_list?.first {
-//    return .repost(Post(data: postEmbed, api: RedditAPI.shared, fetchSub: true, contentWidth: getPostContentWidth(contentWidth: contentWidth, secondary: true) ))
-    return .repost(Post(data: postEmbed, api: RedditAPI.shared, fetchSub: true, contentWidth: contentWidth, secondary: true, theme: theme))
+    return .repost(Post(data: postEmbed, contentWidth: contentWidth, secondary: true, theme: theme))
   }
   
   if IMAGES_FORMATS.contains(where: { data.url.hasSuffix($0) }), let url = rootURL(data.url) {
@@ -181,18 +180,18 @@ func mediaExtractor(compact: Bool, contentWidth: Double = UIScreen.screenWidth, 
         let postId = pathComponents[3]
         if pathComponents.count >= 6 {
           let commentId = pathComponents[5]
-          let comment = Comment(id: commentId, api: RedditAPI.shared, typePrefix: Comment.prefix)
+          let comment = Comment(id: commentId, typePrefix: Comment.prefix)
           comment.fetchItself()
           let entityExtracted = EntityExtracted(subredditID: subredditName, postID: postId, commentID: commentId, entity: comment)
           return .comment(entityExtracted)
         }
-        let post = Post(id: postId, api: RedditAPI.shared, typePrefix: Post.prefix)
+        let post = Post(id: postId, typePrefix: Post.prefix)
         post.fetchItself()
         let entityExtracted = EntityExtracted(subredditID: subredditName, postID: postId, entity: post)
         return .post(entityExtracted)
 //        return .post(id: postId, subreddit: subredditName)
       }
-      let sub = Subreddit(id: subredditName, api: RedditAPI.shared)
+      let sub = Subreddit(id: subredditName)
       Task(priority: .background) {
         await sub.refreshSubreddit()
       }
@@ -201,7 +200,7 @@ func mediaExtractor(compact: Bool, contentWidth: Double = UIScreen.screenWidth, 
       
     case "user", "u":
       let username = pathComponents[1]
-      let user = User(id: username, api: RedditAPI.shared, typePrefix: User.prefix)
+      let user = User(id: username, typePrefix: User.prefix)
       user.fetchItself()
       let entityExtracted = EntityExtracted(userID: username, entity: user)
       return .user(entityExtracted)
@@ -209,13 +208,13 @@ func mediaExtractor(compact: Bool, contentWidth: Double = UIScreen.screenWidth, 
       
     default:
       if !data.is_self, let linkURL = URL(string: data.url) {
-        return .link(PreviewModel.get(linkURL))
+        return .link(PreviewModel.get(linkURL, compact: compact))
       }
     }
   }
   
   if data.post_hint == "link", let linkURL = URL(string: data.url) {
-    return .link(PreviewModel.get(linkURL))
+    return .link(PreviewModel.get(linkURL, compact: compact))
   }
   
   return nil

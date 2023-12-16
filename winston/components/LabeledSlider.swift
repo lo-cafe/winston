@@ -12,6 +12,7 @@ struct LabeledSlider: View {
   @Binding var value: CGFloat
   var range: ClosedRange<CGFloat>
   var step: CGFloat = 1
+  var disablePadding = false
   var body: some View {
     VStack(spacing: 10) {
       HStack {
@@ -29,6 +30,6 @@ struct LabeledSlider: View {
           .fontSize(15)
       }
     }
-    .padding(.horizontal, 16)
+    .padding(.horizontal, disablePadding ? 0 : 16)
   }
 }

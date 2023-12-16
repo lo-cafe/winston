@@ -9,7 +9,9 @@ import Foundation
 import Alamofire
 
 extension WinstonAPI {
-  func getAnnouncement() async -> Announcement? {
+  
+  
+  func getAnnouncement(present: Bool = false) async -> Announcement? {
       let response = await AF.request(
         "\(WinstonAPI.baseURL)/api/v1/announcement",
         method: .get
@@ -17,6 +19,7 @@ extension WinstonAPI {
         .serializingDecodable(Announcement.self).response
       switch response.result {
       case .success(let data):
+        if present { Nav.present(.announcement(data)) }
         return data
       case .failure(let error):
         print(error)
@@ -26,7 +29,8 @@ extension WinstonAPI {
   }
 }
 
-struct Announcement: Codable, Equatable{
+struct Announcement: Codable, Equatable, Hashable, Identifiable {
+  var id: String { hashValue.description }
   var name: String?
   var description: String?
   var buttonLabel: String?

@@ -8,35 +8,31 @@
 import SwiftUI
 
 struct Me: View {
-  var reset: Bool
-  @StateObject var router: Router
+  @ObservedObject var router: Router
   @ObservedObject var redditAPI = RedditAPI.shared
   
   @State private var loading = true
   var body: some View {
-    NavigationStack(path: $router.path) {
-      DefaultDestinationInjector(routerProxy: RouterProxy(router)) { _ in
-        Group {
-          if let user = redditAPI.me {
-            UserView(user: user)
-              .id("me-user-view-\(user.id)")
-            
-          } else {
-            ProgressView()
-              .progressViewStyle(.circular)
-              .frame(maxWidth: .infinity, minHeight: UIScreen.screenHeight - 200 )
-              .onAppear {
-                Task(priority: .background) {
-                  await RedditAPI.shared.fetchMe(force: true)
-                }
+    NavigationStack(path: $router.fullPath) {
+      Group {
+        if let user = redditAPI.me {
+          UserView(user: user)
+            .id("me-user-view-\(user.id)")
+          
+        } else {
+          ProgressView()
+            .progressViewStyle(.circular)
+            .frame(maxWidth: .infinity, minHeight: .screenH - 200 )
+            .onAppear {
+              Task(priority: .background) {
+                await RedditAPI.shared.fetchMe(force: true)
               }
-          }
+            }
         }
-        .onChange(of: reset) { _ in router.path.removeLast(router.path.count) }
       }
-//      .defaultNavDestinations(router)
+      .injectInTabDestinations()
     }
-    .swipeAnywhere(routerProxy: RouterProxy(router), routerContainer: router.isRootWrapper)
+    .swipeAnywhere()
   }
 }
 

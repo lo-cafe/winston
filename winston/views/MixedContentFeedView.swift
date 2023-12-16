@@ -18,13 +18,12 @@ struct MixedContentFeedView: View {
   @State private var lastItemId: String? = nil
   @Environment(\.useTheme) private var selectedTheme
   
-  @EnvironmentObject private var routerProxy: RouterProxy
   
   @State private var dataTypeFilter: String = "" // Handles filtering for only posts or only comments.
   
   @Binding var reachedEndOfFeed: Bool
   
-  @Environment(\.colorScheme) private var cs
+//  @Environment(\.colorScheme) private var cs
   
   func updateContentsCalcs(_ newTheme: WinstonTheme) {
     Task(priority: .background) {
@@ -49,7 +48,7 @@ struct MixedContentFeedView: View {
     List {
       Section {
         ForEach(Array(mixedMediaLinks.enumerated()), id: \.self.element) { i, item in
-          MixedContentLink(content: item, theme: postLinksTheme, routerProxy: routerProxy)
+          MixedContentLink(content: item, theme: postLinksTheme)
           .listRowInsets(EdgeInsets(top: paddingV, leading: paddingH, bottom: paddingV, trailing: paddingH))
           .onAppear {
             if mixedMediaLinks.count > 0 && (Int(Double(mixedMediaLinks.count) * 0.75) == i) {
@@ -72,9 +71,7 @@ struct MixedContentFeedView: View {
       .listRowBackground(Color.clear)
       .environment(\.defaultMinListRowHeight, 1)
     }
-    .onChange(of: cs) { _ in
-      updateContentsCalcs(selectedTheme)
-    }
+//    .onChange(of: cs) { _ in updateContentsCalcs(selectedTheme) }
     .onChange(of: selectedTheme, perform: updateContentsCalcs)
     .themedListBG(selectedTheme.postLinks.bg)
     .scrollContentBackground(.hidden)

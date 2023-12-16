@@ -1,14 +1,2 @@
-- Huge performance upgrade!
-- Implemented saved posts. You can now access the "Saved" tab in your subs drawer.
-- Add controversial sort
-- Add subscribed indicator / button to search
-- Added option to use inline post toolbar in place of floating toolbar in the post page. (Theme -> Post page -> Inline upvote toolbar - at bottom)
-- Added ability to sort by only posts or only comments in a user profile. (Click the corresponding karma button)
-- Tweaked look of UI in many areas (mainly compact mode improvements).
-- Images in comments now open in the app.
-- In-app safari support improved.
-- Implemented iCloud syncing for credentials.
-- Removed deprecated bug reporting functionality.
-- Enhanced stability for the video player and made minor performance tweaks.
-- Deployed fix for user flairs and new comment indicators.
-- Various bug fixes, stability improvements and QOL tweaks.
+Alpha:
+- Basically perf optimizations to account switching.

@@ -9,5 +9,5 @@ import Foundation
 import Defaults
 
 func getEnabledTheme() -> WinstonTheme {
- return Defaults[.themesPresets].first(where: { $0.id == Defaults[.selectedThemeID] }) ?? defaultTheme
+  return Defaults[.ThemesDefSettings].themesPresets.first(where: { $0.id == Defaults[.ThemesDefSettings].selectedThemeID }) ?? defaultTheme
 }

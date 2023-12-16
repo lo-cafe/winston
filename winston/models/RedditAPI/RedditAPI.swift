@@ -19,24 +19,30 @@ class RedditAPI: ObservableObject {
   static let redditWWWApiURLBase = "https://www.reddit.com"
   static let appRedirectURI: String = "https://app.winston.cafe/auth-success"
   
-  @Published var loggedUser: UserCredential = UserCredential()
   var lastAuthState: String?
   @Published var me: User?
   
   // This is a replacement for getRequestHeader. We need to replace every instance of the former by this one
-  func fetchRequestHeaders(force: Bool = false, includeAuth: Bool = true, altCredential: RedditCredential? = nil, saveToken: Bool = true) async -> HTTPHeaders {
+  func fetchRequestHeaders(force: Bool = false, includeAuth: Bool = true, altCredential: RedditCredential? = nil, saveToken: Bool = true) async -> HTTPHeaders? {
     var headers: HTTPHeaders = [
-      "User-Agent": Defaults[.redditAPIUserAgent]
+      "User-Agent": Defaults[.GeneralDefSettings].redditAPIUserAgent
     ]
-    if includeAuth, let selectedCredential = altCredential ?? RedditCredentialsManager.shared.selectedCredential, let accessToken = await selectedCredential.getUpToDateToken(forceRenew: force, saveToken: saveToken) {
-      headers["Authorization"] = "Bearer \(accessToken.token)"
+    if includeAuth {
+      if let selectedCredential = altCredential ?? RedditCredentialsManager.shared.selectedCredential, let accessToken = await selectedCredential.getUpToDateToken(forceRenew: force, saveToken: saveToken) {
+        headers["Authorization"] = "Bearer \(accessToken.token)"
+      } else {
+        return nil
+      }
     }
-  
-    for (protectionSpace, credentials) in URLCredentialStorage.shared.allCredentials {
-        for (_, credential) in credentials {
-          URLCredentialStorage.shared.remove(credential, for: protectionSpace)
-        }
-    }
+    
+    //    for (protectionSpace, credentials) in URLCredentialStorage.shared.allCredentials {
+    //        for (_, credential) in credentials {
+//          // Even though the values are not optionals, it seems to crash at some points if you don't do the check
+//          if URLCredentialStorage.shared != nil && credential != nil && protectionSpace != nil {
+//            URLCredentialStorage.shared.remove(credential, for: protectionSpace)
+//          }
+//        }
+//    }
     HTTPCookieStorage.shared.cookies?.forEach(HTTPCookieStorage.shared.deleteCookie)    
     
     return headers
@@ -49,46 +55,48 @@ class RedditAPI: ObservableObject {
   }
   
   func doRequest<D: Decodable, P: Encodable>(_ url: String, authenticated: Bool = true, method: HTTPMethod, params: P? = nil, paramsLocation: URLEncodedFormParameterEncoder.Destination = .httpBody, decodable: D.Type, altCredential: RedditCredential? = nil, attempt: Int = 0, saveToken: Bool = true) async -> Result<D, AFError> {
-
-    let headers = await fetchRequestHeaders(includeAuth: authenticated, altCredential: altCredential, saveToken: saveToken)
-    let req = AF.request(url, method: method, parameters: params, encoder: URLEncodedFormParameterEncoder(destination: paramsLocation), headers: headers, requestModifier: reqModifier)
-    
-    let response = await req.serializingDecodable(decodable).response
-    if attempt < reqAttempts, case .failure(_) = response.result {
-      try? await Task.sleep(until: .now + .seconds(0.1), clock: .continuous)
-      return await doRequest(url, authenticated: authenticated, method: method, params: params, paramsLocation: paramsLocation, decodable: decodable, altCredential: altCredential, attempt: attempt + 1, saveToken: saveToken)
+    return await self._doRequest(authenticated: authenticated, altCredential: altCredential, saveToken: saveToken) { headers in
+      let req = AF.request(url, method: method, parameters: params, encoder: URLEncodedFormParameterEncoder(destination: paramsLocation), headers: headers, requestModifier: reqModifier).validate()
+      return await req.serializingDecodable(decodable).response.result
     }
-    return response.result
   }
   
   func doRequest<D: Decodable>(_ url: String, authenticated: Bool = true, method: HTTPMethod, decodable: D.Type, altCredential: RedditCredential? = nil, attempt: Int = 0, saveToken: Bool = true) async -> Result<D, AFError> {
-    let headers = await fetchRequestHeaders(includeAuth: authenticated, altCredential: altCredential, saveToken: saveToken)
-    let req = AF.request(url, method: method, headers: headers, requestModifier: reqModifier)
-
-    let response = await req.serializingDecodable(decodable).response
-    if attempt < reqAttempts, case .failure(_) = response.result {
-      try? await Task.sleep(until: .now + .seconds(0.1), clock: .continuous)
-      return await doRequest(url, authenticated: authenticated, method: method, decodable: decodable, altCredential: altCredential, attempt: attempt + 1, saveToken: saveToken)
+    return await self._doRequest(authenticated: authenticated, altCredential: altCredential, saveToken: saveToken) { headers in
+      let req = AF.request(url, method: method, headers: headers, requestModifier: reqModifier).validate()
+      return await req.serializingDecodable(decodable).response.result
     }
-    return response.result
   }
   
   func doRequest<P: Encodable>(_ url: String, authenticated: Bool = true, method: HTTPMethod, params: P, paramsLocation: URLEncodedFormParameterEncoder.Destination = .httpBody, altCredential: RedditCredential? = nil, attempt: Int = 0, saveToken: Bool = true) async -> Result<String, AFError> {
-    let headers = await fetchRequestHeaders(includeAuth: authenticated, altCredential: altCredential, saveToken: saveToken)
-    let req = AF.request(url, method: method, parameters: params, encoder: URLEncodedFormParameterEncoder(destination: paramsLocation), headers: headers, requestModifier: reqModifier)
-    let result = await req.serializingString().result
-    if attempt < reqAttempts, case .failure(_) = result {
-      return await doRequest(url, authenticated: authenticated, method: method, params: params, paramsLocation: paramsLocation, altCredential: altCredential, attempt: attempt + 1, saveToken: saveToken)
+    return await self._doRequest(authenticated: authenticated, altCredential: altCredential, saveToken: saveToken) { headers in
+      let req = AF.request(url, method: method, parameters: params, encoder: URLEncodedFormParameterEncoder(destination: paramsLocation), headers: headers, requestModifier: reqModifier).validate()
+      return await req.serializingString().result
     }
-    return result
   }
   
   func doRequest(_ url: String, authenticated: Bool = true, method: HTTPMethod, paramsLocation: URLEncodedFormParameterEncoder.Destination = .httpBody, altCredential: RedditCredential? = nil, attempt: Int = 0, saveToken: Bool = true) async -> Result<String, AFError> {
-    let headers = await fetchRequestHeaders(includeAuth: authenticated, altCredential: altCredential, saveToken: saveToken)
-    let req = AF.request(url, method: method, headers: headers)
-    let result = await req.serializingString().result
-    if attempt < reqAttempts, case .failure(_) = result {
-      return await doRequest(url, authenticated: authenticated, method: method, paramsLocation: paramsLocation, altCredential: altCredential, attempt: attempt + 1, saveToken: saveToken)
+    return await self._doRequest(authenticated: authenticated, altCredential: altCredential, saveToken: saveToken) { headers in
+      let req = AF.request(url, method: method, headers: headers).validate()
+      return await req.serializingString().result
+    }
+  }
+  
+  func _doRequest<D: Decodable>(attempt: Int = 0, forceAuth: Bool = false, authenticated: Bool = true, altCredential: RedditCredential? = nil, saveToken: Bool = true, req: (HTTPHeaders) async -> Result<D, AFError>) async -> Result<D, AFError> {
+    guard let headers = await fetchRequestHeaders(force: forceAuth, includeAuth: authenticated, altCredential: altCredential, saveToken: saveToken) else { return .failure(.serverTrustEvaluationFailed(reason: .noPublicKeysFound)) }
+
+    let result = await req(headers)
+    if case .failure(let error) = result {
+      print(error)
+      if attempt < (authenticated ? 5 : 2) {
+        return await self._doRequest(attempt: attempt + 1, forceAuth: authenticated && attempt == 2, authenticated: authenticated, altCredential: altCredential, saveToken: saveToken, req: req)
+      }
+      switch error.responseCode {
+      case 401:
+        break
+      default:
+        break
+      }
     }
     return result
   }
@@ -182,77 +190,6 @@ class RedditAPI: ObservableObject {
     let code: String
     let redirect_uri = RedditAPI.appRedirectURI
   }
-  
-  struct UserCredential: Hashable {
-    static func == (lhs: RedditAPI.UserCredential, rhs: RedditAPI.UserCredential) -> Bool {
-      lhs.hashValue == rhs.hashValue
-    }
-    
-    let credentialsKeychain = Keychain(service: "lo.cafe.winston.reddit-credentials").synchronizable(Defaults[.syncKeyChainAndSettings])
-    
-    func hash(into hasher: inout Hasher) {
-      hasher.combine(modhash)
-      hasher.combine(apiAppID)
-      hasher.combine(apiAppSecret)
-      hasher.combine(accessToken)
-      hasher.combine(refreshToken)
-      hasher.combine(expiration)
-      hasher.combine(lastRefresh)
-    }
-    
-    var modhash: String?
-    var apiAppID: String? {
-      didSet {
-        credentialsKeychain["apiAppID"] = apiAppID
-      }
-    }
-    var apiAppSecret: String? {
-      didSet {
-        credentialsKeychain["apiAppSecret"] = apiAppSecret
-      }
-    }
-    var accessToken: String? {
-      didSet {
-        credentialsKeychain["accessToken"] = accessToken
-      }
-    }
-    var refreshToken: String? {
-      didSet {
-        credentialsKeychain["refreshToken"] = refreshToken
-      }
-    }
-    var expiration: Int? {
-      get {
-        Defaults[.redditAPITokenExpiration]
-      }
-      set {
-        Defaults[.redditAPITokenExpiration] = newValue
-      }
-    }
-    var lastRefresh: Date? {
-      get {
-        Defaults[.redditAPILastTokenRefreshDate]
-      }
-      set {
-        Defaults[.redditAPILastTokenRefreshDate] = newValue
-      }
-    }
-    var isSet: Bool {
-      return accessToken != nil && refreshToken != nil && expiration != nil && lastRefresh != nil
-    }
-    
-    init(apiAppID: String? = nil, apiAppSecret: String? = nil, accessToken: String? = nil, refreshToken: String? = nil, expiration: Int? = nil) {
-      self.apiAppID = apiAppID ?? credentialsKeychain["apiAppID"]
-      self.apiAppSecret = apiAppSecret ?? credentialsKeychain["apiAppSecret"]
-      self.refreshToken = refreshToken ?? credentialsKeychain["refreshToken"]
-      self.accessToken = self.refreshToken == nil ? nil : (accessToken ?? credentialsKeychain["accessToken"])
-      if let expiration = expiration {
-        self.expiration = expiration
-      }
-      self.lastRefresh = self.refreshToken == nil ? nil : (Defaults[.redditAPILastTokenRefreshDate] ?? Date(seconds: Date().timeIntervalSince1970 - Double(self.expiration ?? 86400 * 10)))
-    }
-  }
-  
 }
 
 struct ListingChild<T: Codable & Hashable>: Codable, Defaults.Serializable, Hashable {

@@ -12,7 +12,7 @@ import Defaults
 extension RedditAPI {
   func fetchSubPosts(_ id: String, sort: SubListingSortOption = .best, after: String? = nil, searchText: String? = nil) async -> ([ListingChild<PostData>]?, String?)? {
       let subID = buildSubID(id, sort, after, searchText)
-      let limit = Defaults[.feedPostsLoadLimit]
+      let limit = Defaults[.SubredditFeedDefSettings].chunkLoadSize
       let params = FetchSubsPayload(limit: limit, after: after)
       
       let urlString = "\(RedditAPI.redditApiURLBase)\(subID)".replacingOccurrences(of: " ", with: "%20")
@@ -28,7 +28,7 @@ extension RedditAPI {
   
   func fetchSavedPosts(_ id: String, after: String? = nil, searchText: String? = nil) async -> [Either<PostData, CommentData>]? {
     let subID = buildSubID(id, nil, after, searchText)
-    let limit = Defaults[.feedPostsLoadLimit]
+    let limit = Defaults[.SubredditFeedDefSettings].chunkLoadSize
     let params = FetchSubsPayload(limit: limit, after: after)
     
     let urlString = "\(RedditAPI.redditApiURLBase)\(subID)".replacingOccurrences(of: " ", with: "%20")
@@ -81,7 +81,7 @@ extension RedditAPI {
       subID += "&restrict_sr=on"
       
       // Add preferred sort to search url
-      subID += "&sort=\(Defaults[.preferredSearchSort])"
+      subID += "&sort=\(Defaults[.SubredditFeedDefSettings].preferredSort)"
     }
     
     if let after = after {

@@ -9,6 +9,7 @@ import SwiftUI
 import AlertToast
 import Defaults
 import WhatsNewKit
+import CoreData
 
 var shortcutItemToProcess: UIApplicationShortcutItem?
 @main
@@ -16,34 +17,21 @@ struct winstonApp: App {
   @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
   let persistenceController = PersistenceController.shared
   
-  @Default(.themesPresets) private var themesPresets
-  @Default(.selectedThemeID) private var selectedThemeID
-  @Default(.redditCredentialSelectedID) private var redditCredentialSelectedID
+  @Default(.ThemesDefSettings) private var themesDefSettings
   
-  var selectedTheme: WinstonTheme { themesPresets.first { $0.id == selectedThemeID } ?? defaultTheme }
+  var selectedTheme: WinstonTheme { themesDefSettings.themesPresets.first { $0.id == themesDefSettings.selectedThemeID } ?? defaultTheme }
   
   var body: some Scene {
     WindowGroup {
       AppContent(selectedTheme: selectedTheme)
-        .onAppear { themesPresets = themesPresets.filter { $0.id != "default" } }
+        .onAppear { themesDefSettings.themesPresets = themesDefSettings.themesPresets.filter { $0.id != "default" } }
         .environment(\.managedObjectContext, persistenceController.container.viewContext)
+        .environment(\.primaryBGContext, persistenceController.primaryBGContext)
         .environment(
           \.whatsNew,
            WhatsNewEnvironment(currentVersion: .current(), whatsNewCollection: getCurrentChangelog())
         )
         .environment(\.useTheme, selectedTheme)
-        .onAppear {
-          cleanEntitiesWithNilCredentials()
-          if redditCredentialSelectedID == nil {
-            let validCreds = RedditCredentialsManager.shared.validCredentials
-            if validCreds.count > 0 { redditCredentialSelectedID = validCreds[0].id }
-          }
-        }
-        .onChange(of: redditCredentialSelectedID) { val in
-          Task(priority: .background) { await RedditAPI.shared.fetchMe(force: true) }
-          Task(priority: .background) { await RedditAPI.shared.fetchSubs() }
-          Task(priority: .background) { await RedditAPI.shared.fetchMyMultis() }
-        }
     }
   }
   
@@ -72,25 +60,30 @@ struct winstonApp: App {
 }
 
 struct AppContent: View {
-  @ObservedObject private var winstonAPI = WinstonAPI()
   var selectedTheme: WinstonTheme
   @StateObject private var themeStore = ThemeStoreAPI()
-  @Environment(\.colorScheme) private var cs
   @Environment(\.scenePhase) var scenePhase
   
   let biometrics = Biometrics()
   @State private var isAuthenticating = false
+  @State private var tabBarHeight: Double = 0
   @State private var lockBlur = UserDefaults.standard.bool(forKey: "useAuth") ? 50 : 0 // Set initial startup blur
+  
+  func setTabBarHeight(_ val: Double) {
+    tabBarHeight = val
+  }
   
   var body: some View {
     AccountSwitcherProvider {
-      Tabber(theme: selectedTheme, cs: cs).equatable()
+      GlobalDestinationsProvider {
+        Tabber(theme: selectedTheme).equatable()
+      }
     }
+    .environment(\.tabBarHeight, tabBarHeight)
+    .environment(\.setTabBarHeight, setTabBarHeight)
     .whatsNewSheet()
-    .environmentObject(winstonAPI)
     .environmentObject(themeStore)
     //        .alertToastRoot()
-    //        .tint(selectedTheme.general.accentColor.cs(cs).color())
     .onChange(of: scenePhase) { newPhase in
       let useAuth = UserDefaults.standard.bool(forKey: "useAuth") // Get fresh value
       
@@ -160,23 +153,3 @@ struct AppContent: View {
     
   }
 }
-
-private struct CurrentThemeKey: EnvironmentKey {
-  static let defaultValue = defaultTheme
-}
-
-private struct ContentWidthKey: EnvironmentKey {
-  static let defaultValue = UIScreen.screenWidth
-}
-
-extension EnvironmentValues {
-  var contentWidth: Double {
-    get { self[ContentWidthKey.self] }
-    set { self[ContentWidthKey.self] = newValue }
-  }
-  var useTheme: WinstonTheme {
-    get { self[CurrentThemeKey.self] }
-    set { self[CurrentThemeKey.self] = newValue }
-  }
-}
-

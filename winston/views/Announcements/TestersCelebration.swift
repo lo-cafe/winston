@@ -27,8 +27,8 @@ struct FAQCel: View {
 struct TestersCelebration: View {
   @Environment(\.scenePhase) var scenePhase
   @Environment(\.openURL) var openURL
-  @Default(.showTestersCelebrationModal) var showTestersCelebrationModal
-  @Default(.showTipJarModal) var showTipJarModal
+//  @Default(.showTestersCelebrationModal) var showTestersCelebrationModal
+//  @Default(.showTipJarModal) var showTipJarModal
   @State private var counter: Int = 0
   @State private var thanks = false
   @State private var plans = false
@@ -45,7 +45,7 @@ struct TestersCelebration: View {
           
           MasterButton(icon: "balloon.fill", label: "Dismiss modal", color: .green, colorHoverEffect: .animated, textSize: 18, height: 48, cornerRadius: 16, action: {
             withAnimation(spring) {
-              showTestersCelebrationModal = false
+//              showTestersCelebrationModal = false
             }
           })
         } else {
@@ -121,7 +121,7 @@ struct TestersCelebration: View {
       .padding(.bottom, 128)
       .padding(.horizontal, 32)
       .padding(.top, 64)
-      .frame(minHeight: UIScreen.screenHeight)
+      .frame(minHeight: .screenH)
     }
     .overlay(
       thanks
@@ -161,14 +161,14 @@ struct TestersCelebration: View {
     )
     .closeSheetBtn {
       withAnimation(spring) {
-        showTestersCelebrationModal = false
+//        showTestersCelebrationModal = false
       }
     }
     .ignoresSafeArea(.all)
     .multilineTextAlignment(.center)
-    .confettiCannon(counter: $counter, num: 30, openingAngle: Angle.degrees(60), closingAngle: Angle.degrees(120), radius: UIScreen.screenWidth)
+    .confettiCannon(counter: $counter, num: 30, openingAngle: Angle.degrees(60), closingAngle: Angle.degrees(120), radius: .screenW)
     .onAppear {
-      if showTipJarModal { showTipJarModal = false }
+//      if showTipJarModal { showTipJarModal = false }
       doThisAfter(1.0) { withAnimation { counter += 1 } }
     }
     .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in

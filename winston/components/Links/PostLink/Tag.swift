@@ -17,7 +17,6 @@ struct Tag: View {
   var fontSize: Double? = nil
   var backgroundColor: Color = .accentColor
   @Environment(\.useTheme) private var theme
-  @Environment(\.colorScheme) private var cs
   
   var body: some View {
     HStack(spacing: 4) {

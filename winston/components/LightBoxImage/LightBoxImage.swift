@@ -30,8 +30,6 @@ struct LightBoxImage: View {
   @State private var loading = false
   @State private var done = false
   @State private var showOverlay = true
-  @Default(.lightboxViewsPost) private var lightboxViewsPost
-  
   @State private var isPinching: Bool = false
   @State private var isZoomed: Bool = false
   @State private var scale: CGFloat = 1.0
@@ -61,7 +59,7 @@ struct LightBoxImage: View {
     }
     .fixedSize(horizontal: true, vertical: false)
     .offset(x: xPos + (dragAxis == .horizontal ? drag.width : 0))
-    .frame(maxWidth: UIScreen.screenWidth, maxHeight: UIScreen.screenHeight, alignment: .leading)
+    .frame(maxWidth: .screenW, maxHeight: .screenH, alignment: .leading)
     .highPriorityGesture(
       scale > 1
       ? nil
@@ -97,8 +95,8 @@ struct LightBoxImage: View {
             drag = .zero
             xPos += val.translation.width - (dragOffset?.width ?? 0)
             dragOffset = nil
-            let newActiveIndex = min(imagesArr.count - 1, max(0, activeIndex + (predictedEnd < -(UIScreen.screenWidth / 2) ? 1 : predictedEnd > UIScreen.screenWidth / 2 ? -1 : 0)))
-            let finalXPos = -(CGFloat(newActiveIndex) * (UIScreen.screenWidth + (SPACING)))
+            let newActiveIndex = min(imagesArr.count - 1, max(0, activeIndex + (predictedEnd < -(.screenW / 2) ? 1 : predictedEnd > .screenW / 2 ? -1 : 0)))
+            let finalXPos = -(CGFloat(newActiveIndex) * (.screenW + (SPACING)))
             let distance = abs(finalXPos - xPos)
             activeIndex = newActiveIndex
             var initialVel = abs(predictedEnd / distance)
@@ -175,8 +173,8 @@ struct LightBoxImage: View {
       }
     }
     .onAppear {
-      if lightboxViewsPost { Task(priority: .background) { await markAsSeen?() } }
-      xPos = -CGFloat(i) * (UIScreen.screenWidth + SPACING)
+      if let markAsSeen { Task(priority: .background) { await markAsSeen() } }
+      xPos = -CGFloat(i) * (.screenW + SPACING)
       activeIndex = i
       doThisAfter(0.0) {
         withAnimation(.easeOut) {

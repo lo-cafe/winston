@@ -422,9 +422,6 @@
         }
       }
     },
-    "ACTIVE" : {
-
-    },
     "Advanced" : {
       "localizations" : {
         "de" : {
@@ -458,6 +455,7 @@
       }
     },
     "Announcements" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -770,6 +768,9 @@
         }
       }
     },
+    "Compact" : {
+
+    },
     "Compact Mode" : {
       "localizations" : {
         "de" : {
@@ -852,6 +853,9 @@
           }
         }
       }
+    },
+    "Credential invalid" : {
+
     },
     "Credentials" : {
 
@@ -1044,6 +1048,9 @@
         }
       }
     },
+    "Do you really wanna delete this credential?" : {
+
+    },
     "Do you wanna reset this property?" : {
       "localizations" : {
         "de" : {
@@ -1149,6 +1156,9 @@
       }
     },
     "Edit credential" : {
+
+    },
+    "Edit filter" : {
 
     },
     "Enter a subreddit" : {
@@ -1262,6 +1272,7 @@
       }
     },
     "FAQ" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -1499,6 +1510,9 @@
         }
       }
     },
+    "Go to credentials settings" : {
+
+    },
     "Gotcha!" : {
       "localizations" : {
         "de" : {
@@ -1726,6 +1740,9 @@
           }
         }
       }
+    },
+    "IN USE" : {
+
     },
     "Inbox" : {
       "localizations" : {
@@ -1997,6 +2014,9 @@
         }
       }
     },
+    "LOAD MORE" : {
+
+    },
     "Lock Winston With %@" : {
       "localizations" : {
         "de" : {
@@ -2116,6 +2136,7 @@
       }
     },
     "Me" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -2289,6 +2310,9 @@
         }
       }
     },
+    "New filter" : {
+
+    },
     "New post" : {
       "localizations" : {
         "de" : {
@@ -2336,6 +2360,15 @@
           }
         }
       }
+    },
+    "No credential" : {
+
+    },
+    "No filtered posts" : {
+
+    },
+    "Normal" : {
+
     },
     "Now paste it here:" : {
       "localizations" : {
@@ -2551,6 +2584,9 @@
         }
       }
     },
+    "Pause background audio on fullscreen" : {
+
+    },
     "Placeholder image" : {
       "localizations" : {
         "de" : {
@@ -2600,6 +2636,7 @@
       }
     },
     "Post Link Body Size" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -2616,6 +2653,7 @@
       }
     },
     "Post Link Title Size" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -2648,6 +2686,7 @@
       }
     },
     "Post Page Body Size" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -2664,6 +2703,7 @@
       }
     },
     "Post Page Title Size" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -3104,6 +3144,9 @@
     "Show divider" : {
 
     },
+    "Show Divider at Top" : {
+
+    },
     "Show Self Text" : {
       "localizations" : {
         "de" : {
@@ -3121,6 +3164,7 @@
       }
     },
     "Show Subreddit at Top" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -3869,6 +3913,9 @@
         }
       }
     },
+    "We can't load this page 😔" : {
+
+    },
     "We hit 8500 testers on TestFlight and this couldn't make us happier. Thank you so much for using and supporting Winston." : {
       "localizations" : {
         "de" : {
@@ -3886,6 +3933,7 @@
       }
     },
     "Whats New" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -4012,6 +4060,9 @@
           }
         }
       }
+    },
+    "Yes, delete" : {
+
     },
     "Yes, reset" : {
       "localizations" : {

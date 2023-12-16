@@ -14,8 +14,12 @@ struct SharedVideo: Equatable {
   var url: URL
   var size: CGSize
   
-  static func get(url: URL, size: CGSize) -> SharedVideo {
+  static func get(url: URL, size: CGSize, resetCache: Bool = false) -> SharedVideo {
     let cacheKey =  SharedVideo.cacheKey(url: url, size: size)
+    
+    if resetCache {
+      Caches.videos.cache.removeValue(forKey: cacheKey)
+    }
     
     if let sharedVideo = Caches.videos.get(key: cacheKey) {
       return sharedVideo
@@ -26,11 +30,7 @@ struct SharedVideo: Equatable {
       return sharedVideo
     }
   }
-  
-  func resetPlayer() {
-    player.replaceCurrentItem(with: AVPlayerItem(url: url))
-  }
-  
+
   static func cacheKey(url: URL, size: CGSize) -> String {
     return "\(url.absoluteString):\(size.width)x\(size.height)"
   }
@@ -53,44 +53,45 @@ struct VideoPlayerPost: View, Equatable {
   var sharedVideo: SharedVideo?
   let markAsSeen: (() async -> ())?
   var compact = false
-  var overrideWidth: CGFloat?
+  var contentWidth: CGFloat
   var url: URL
   var size: CGSize
+  let resetVideo: ((SharedVideo) -> ())?
+  var maxMediaHeightScreenPercentage: CGFloat
   @State private var firstFullscreen = false
   @State private var fullscreen = false
-  @Default(.preferenceShowPostsCards) private var preferenceShowPostsCards
-  @Default(.maxPostLinkImageHeightPercentage) private var maxPostLinkImageHeightPercentage
-  @Default(.postLinksInnerHPadding) private var postLinksInnerHPadding
-  @Default(.cardedPostLinksOuterHPadding) private var cardedPostLinksOuterHPadding
-  @Default(.cardedPostLinksInnerHPadding) private var cardedPostLinksInnerHPadding
-  @Default(.autoPlayVideos) private var autoPlayVideos
-  @Default(.loopVideos) private var loopVideos
-  @Default(.lightboxViewsPost) private var lightboxViewsPost
-	@Default(.muteVideos) private var muteVideos
+  @Default(.VideoDefSettings) private var videoDefSettings
+  @Environment(\.scenePhase) private var scenePhase
   
-  init(controller: UIViewController?, cachedVideo: SharedVideo?, markAsSeen: (() async -> ())?, compact: Bool = false, overrideWidth: CGFloat? = nil, url: URL) {
+  private var autoPlayVideos: Bool { videoDefSettings.autoPlay }
+  private var loopVideos: Bool { videoDefSettings.loop }
+  private var muteVideos: Bool { videoDefSettings.mute }
+  private var pauseBackgroundAudioOnFullscreen: Bool { videoDefSettings.pauseBGAudioOnFullscreen }
+  
+  init(controller: UIViewController?, cachedVideo: SharedVideo?, markAsSeen: (() async -> ())?, compact: Bool = false, contentWidth: CGFloat, url: URL, resetVideo: ((SharedVideo) -> ())?, maxMediaHeightScreenPercentage: CGFloat) {
     self.controller = controller
     self.sharedVideo = cachedVideo
     self.markAsSeen = markAsSeen
     self.compact = compact
-    self.overrideWidth = overrideWidth
+    self.contentWidth = contentWidth
     self.url = url
     self.size = cachedVideo?.size ?? .zero
+    self.resetVideo = resetVideo
+    self.maxMediaHeightScreenPercentage = maxMediaHeightScreenPercentage
   }
   
   var safe: Double { getSafeArea().top + getSafeArea().bottom }
-  var rawContentWidth: CGFloat { UIScreen.screenWidth - ((preferenceShowPostsCards ? cardedPostLinksOuterHPadding : postLinksInnerHPadding) * 2) - (preferenceShowPostsCards ? (preferenceShowPostsCards ? cardedPostLinksInnerHPadding : 0) * 2 : 0) }
   
   
   var body: some View {
-    let contentWidth = overrideWidth ?? rawContentWidth
-    let maxHeight: CGFloat = (maxPostLinkImageHeightPercentage / 100) * (UIScreen.screenHeight)
+    let maxHeight: CGFloat = (maxMediaHeightScreenPercentage / 100) * (.screenH)
     let sourceWidth = size.width
     let sourceHeight = size.height
     let propHeight = (contentWidth * sourceHeight) / sourceWidth
-    let finalHeight = maxPostLinkImageHeightPercentage != 110 ? Double(min(maxHeight, propHeight)) : Double(propHeight)
+    let finalHeight = maxMediaHeightScreenPercentage != 110 ? Double(min(maxHeight, propHeight)) : Double(propHeight)
     
     if let sharedVideo = sharedVideo {
+			var hasAudio = sharedVideo.player.currentItem?.tracks.contains(where: {$0.assetTrack?.mediaType == AVMediaType.audio})
       if let controller = controller {
         AVPlayerRepresentable(fullscreen: $fullscreen, autoPlayVideos: autoPlayVideos, player: sharedVideo.player, aspect: .resizeAspectFill, controller: controller)
           .frame(width: compact ? scaledCompactModeThumbSize() : contentWidth, height: compact ? scaledCompactModeThumbSize() : CGFloat(finalHeight))
@@ -98,7 +99,7 @@ struct VideoPlayerPost: View, Equatable {
           .allowsHitTesting(false)
           .contentShape(Rectangle())
           .onTapGesture {
-            if lightboxViewsPost { Task(priority: .background) { await markAsSeen?() } }
+            if markAsSeen != nil { Task(priority: .background) { await markAsSeen?() } }
             withAnimation {
               fullscreen = true
             }
@@ -121,31 +122,18 @@ struct VideoPlayerPost: View, Equatable {
           .allowsHitTesting(false)
           .contentShape(Rectangle())
           .highPriorityGesture(TapGesture().onEnded({ _ in
-            if lightboxViewsPost { Task(priority: .background) { await markAsSeen?() } }
+            if markAsSeen != nil { Task(priority: .background) { await markAsSeen?() } }
             withAnimation {
               fullscreen = true
             }
           }))
-          .onChange(of: fullscreen) { val in
-            if !firstFullscreen {
-              firstFullscreen = true
-							sharedVideo.player.isMuted = muteVideos
-              sharedVideo.player.play()
-            }
-						if !val && !autoPlayVideos {
-							sharedVideo.player.seek(to: .zero)
-							sharedVideo.player.pause()
-							firstFullscreen = false
-						}
-            sharedVideo.player.volume = val ? 1.0 : 0.0
-          }
           .allowsHitTesting(false)
           .mask(RR(12, Color.black))
           .overlay(
             Color.clear
               .contentShape(Rectangle())
               .onTapGesture {
-                if lightboxViewsPost { Task(priority: .background) { await markAsSeen?() } }
+                if markAsSeen != nil { Task(priority: .background) { await markAsSeen?() } }
                 withAnimation {
                   fullscreen = true
                 }
@@ -158,8 +146,24 @@ struct VideoPlayerPost: View, Equatable {
           if loopVideos {
             addObserver()
           }
+          
+          if (sharedVideo.player.status == .failed) {
+            resetVideo?(sharedVideo)
+          }
+          
           if autoPlayVideos {
             sharedVideo.player.play()
+          }
+        }
+        .onChange(of: scenePhase) { newPhase in
+          if newPhase == .active {
+            if (sharedVideo.player.status == .failed) {
+              resetVideo?(sharedVideo)
+            }
+            
+            if autoPlayVideos {
+              sharedVideo.player.play()
+            }
           }
         }
         .onDisappear() {
@@ -180,6 +184,13 @@ struct VideoPlayerPost: View, Equatable {
 						sharedVideo.player.pause()
 						firstFullscreen = false
 					 }
+          
+          if pauseBackgroundAudioOnFullscreen && sharedVideo.player.isMuted == false && hasAudio == true {
+            Task(priority: .background) {
+              setAudioToMixWithOthers(val)
+            }
+          }
+          
           sharedVideo.player.volume = val ? 1.0 : 0.0
         }
         .fullScreenCover(isPresented: $fullscreen) {
@@ -206,9 +217,16 @@ struct VideoPlayerPost: View, Equatable {
         object: sharedVideo.player.currentItem,
         queue: nil) { notif in
           Task(priority: .background) {
-            DispatchQueue.main.async {
-              sharedVideo.resetPlayer()
-            }
+            resetVideo?(sharedVideo)
+          }
+        }
+      
+      NotificationCenter.default.addObserver(
+        forName: .AVPlayerItemPlaybackStalled,
+        object: sharedVideo.player.currentItem,
+        queue: nil) { notif in
+          Task(priority: .background) {
+            resetVideo?(sharedVideo)
           }
         }
     }
@@ -224,6 +242,11 @@ struct VideoPlayerPost: View, Equatable {
       NotificationCenter.default.removeObserver(
         self,
         name: .AVPlayerItemFailedToPlayToEndTime,
+        object: sharedVideo.player.currentItem)
+      
+      NotificationCenter.default.removeObserver(
+        self,
+        name: .AVPlayerItemPlaybackStalled,
         object: sharedVideo.player.currentItem)
     }
   }
@@ -332,7 +355,7 @@ class NiceAVPlayer: AVPlayerViewController, AVPlayerViewControllerDelegate {
   var autoPlayVideos: Bool
   var ida = UUID().uuidString
   var gone = true
-  @Default(.loopVideos) private var loopVideos
+  @Default(.VideoDefSettings) private var videoDefSettings
   override open var prefersStatusBarHidden: Bool {
     return true
   }
@@ -353,7 +376,7 @@ class NiceAVPlayer: AVPlayerViewController, AVPlayerViewControllerDelegate {
 
   override func viewDidAppear(_ animated: Bool) {
     super.viewDidAppear(animated)
-    if loopVideos, let player = self.player {
+    if videoDefSettings.loop, let player = self.player {
       NotificationCenter.default.addObserver(
         forName: .AVPlayerItemDidPlayToEndTime,
         object: player.currentItem,

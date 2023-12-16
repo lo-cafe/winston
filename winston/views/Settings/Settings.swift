@@ -10,151 +10,71 @@ import Defaults
 import WhatsNewKit
 //import SceneKit
 
-enum SettingsPages {
-  case behavior, appearance, account, about, commentSwipe, postSwipe, accessibility, faq, general, postFontSettings, themes, filteredSubreddits, appIcon, themeStore
-}
-
 struct Settings: View {
-  var reset: Bool
   @ObservedObject var router: Router
   @Environment(\.openURL) private var openURL
   @Default(.likedButNotSubbed) var likedButNotSubbed
   @Environment(\.useTheme) private var selectedTheme
-  @Environment(\.colorScheme) private var cs
   @State private var id = UUID().uuidString
-    
-  @EnvironmentObject var winstonAPI: WinstonAPI
-
+  
+  @ObservedObject var winstonAPI = WinstonAPI.shared
+  
   @State var presentingWhatsNew: Bool = false
   @State var presentingAnnouncement: Bool = false
   var body: some View {
-    NavigationStack(path: $router.path) {
-  
-      RouterProxyInjector(routerProxy: RouterProxy(router)) { routerProxy in
-        List {
-          Group {
-            Section {
-              WNavigationLink(value: SettingsPages.general) {
-                Label("General", systemImage: "gear")
-              }
-              WNavigationLink(value: SettingsPages.behavior) {
-                Label("Behavior", systemImage: "arrow.triangle.turn.up.right.diamond.fill")
-              }
-              WNavigationLink(value: SettingsPages.appearance) {
-                Label("Appearance", systemImage: "theatermask.and.paintbrush.fill")
-              }
-              WNavigationLink(value: SettingsPages.account) {
-                Label("Credentials", systemImage: "person.2.badge.key.fill")
-              }
+    NavigationStack(path: $router.fullPath) {
+      
+      List {
+        Group {
+          Section {
+            WSNavigationLink(.setting(.general), "General", icon: "gear")
+            WSNavigationLink(.setting(.behavior), "Behavior", icon: "arrow.triangle.turn.up.right.diamond.fill")
+            WSNavigationLink(.setting(.appearance), "Appearance", icon: "theatermask.and.paintbrush.fill")
+            WSNavigationLink(.setting(.credentials), "Credentials", icon: "key.horizontal.fill")
+          }
+          
+          Section {
+            WSNavigationLink(.setting(.faq), "FAQ", icon: "exclamationmark.questionmark")
+            WSNavigationLink(.setting(.about), "About", icon: "cup.and.saucer.fill")
+            WSListButton("Whats New", icon: "star") {
+              presentingWhatsNew.toggle()
+            }
+            .disabled(getCurrentChangelog().isEmpty)
+            
+            WSListButton("Announcements", icon: "newspaper") {
+              presentingAnnouncement.toggle()
             }
             
-            Section {
-              WNavigationLink(value: SettingsPages.faq){
-                Label("FAQ", systemImage: "exclamationmark.questionmark")
-              }
-              WNavigationLink(value: SettingsPages.about) {
-                Label("About", systemImage: "cup.and.saucer.fill")
-              }
-              
-              WListButton {
-                presentingWhatsNew.toggle()
-              } label: {
-                Label("Whats New", systemImage: "star")
-              }
-              .disabled(getCurrentChangelog().isEmpty)
-              
-              WListButton {
-                presentingAnnouncement.toggle()
-              } label: {
-                Label("Announcements", systemImage: "newspaper")
-              }
-              
-              WSListButton("Donate monthly", icon: "heart.fill") {
-                openURL(URL(string: "https://patreon.com/user?u=93745105")!)
-              }
-              
-              WListButton {
-                openURL(URL(string: "https://ko-fi.com/locafe")!)
-              } label: {
-                HStack {
-                  Image("jar")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 28, height: 32)
-                    .padding(.trailing, 9)
-                    .foregroundStyle(Color.accentColor)
-                  Text("Tip jar")
-                }
-              }
-              
+            WSListButton("Donate monthly", icon: "heart.fill") {
+              openURL(URL(string: "https://patreon.com/user?u=93745105")!)
             }
-          }
-          .themedListDividers()
-          
-        }
-        .sheet(isPresented: $presentingWhatsNew){
-          if let isNew = getCurrentChangelog().first {
-              WhatsNewView(whatsNew: isNew)
-          }
-        }
-        .sheet(isPresented: $presentingAnnouncement){
-          
-          if let announcement = winstonAPI.announcement {
-            AnnouncementSheet(showingAnnouncement: $presentingAnnouncement, announcement: announcement)
-          } else {
-            ProgressView()
-              .onAppear{
-                Task(priority: .userInitiated){
-                  winstonAPI.announcement = await winstonAPI.getAnnouncement()
-                }
+            
+            WListButton {
+              openURL(URL(string: "https://ko-fi.com/locafe")!)
+            } label: {
+              Label {
+                Text("Tip jar")
+              } icon: {
+                Image("jar")
+                  .resizable()
+                  .scaledToFit()
               }
-          }
-        }
-        .themedListBG(selectedTheme.lists.bg)
-        .scrollContentBackground(.hidden)
-        .navigationDestination(for: SettingsPages.self) { x in
-          Group {
-            switch x {
-            case .general:
-              GeneralPanel()
-            case .behavior:
-              BehaviorPanel()
-            case .appearance:
-              AppearancePanel()
-            case .account:
-              CredentialsPanel()
-            case .about:
-              AboutPanel()
-            case .commentSwipe:
-              CommentSwipePanel()
-            case .postSwipe:
-              PostSwipePanel()
-            case .accessibility:
-              AccessibilityPanel()
-            case .postFontSettings:
-              PostFontSettings()
-            case .filteredSubreddits:
-              FilteredSubredditsSettings()
-            case .faq:
-              FAQPanel()
-            case .themes:
-              ThemesPanel()
-            case .themeStore:
-              ThemeStore()
-            case .appIcon:
-              AppIconSetting()
             }
+
           }
-          .environmentObject(router)
-          .environmentObject(routerProxy)
         }
-        .environmentObject(router)
-        .environmentObject(routerProxy)
-        .navigationTitle("Settings")
-        .onChange(of: reset) { _ in router.path.removeLast(router.path.count) }
       }
+      .themedListSection()
+      .sheet(isPresented: $presentingWhatsNew){
+        if let isNew = getCurrentChangelog().first {
+          WhatsNewView(whatsNew: isNew)
+        }
+      }
+      .themedListBG(selectedTheme.lists.bg)
+      .scrollContentBackground(.hidden)
+      .navigationTitle("Settings")
+      .injectInTabDestinations()
     }
-    
   }
 }
 

@@ -46,7 +46,7 @@ func importTheme(at rawFileURL: URL) -> Bool {
     }
     
     DispatchQueue.main.async {
-      Defaults[.themesPresets].append(theme)
+      Defaults[.ThemesDefSettings].themesPresets.append(theme)
     }
     
     return true

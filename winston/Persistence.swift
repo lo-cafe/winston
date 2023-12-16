@@ -29,6 +29,7 @@ struct PersistenceController {
   //    }()
   
   let container: NSPersistentCloudKitContainer
+  let primaryBGContext: NSManagedObjectContext
   
   init(inMemory: Bool = false) {
     container = NSPersistentCloudKitContainer(name: "winston")
@@ -51,6 +52,10 @@ struct PersistenceController {
         fatalError("Unresolved error \(error), \(error.userInfo)")
       }
     })
+    
+    self.primaryBGContext = container.newBackgroundContext()
+    self.primaryBGContext.mergePolicy = NSMergePolicy.mergeByPropertyObjectTrump
+    self.primaryBGContext.automaticallyMergesChangesFromParent = true
     container.viewContext.mergePolicy = NSMergePolicy.mergeByPropertyObjectTrump
     container.viewContext.automaticallyMergesChangesFromParent = true
   }

@@ -7,6 +7,8 @@
 
 import Foundation
 import Alamofire
+import Defaults
+import UIKit
 
 extension RedditAPI {
   func getFlairs(_ subName: String) async -> [Flair]? {
@@ -21,7 +23,7 @@ extension RedditAPI {
   typealias FlairsResponse = [Flair]
 }
 
-struct Flair: GenericRedditEntityDataType, Identifiable {
+struct Flair: GenericRedditEntityDataType, Identifiable, Defaults.Serializable {
       let type: String?
       let text_editable: Bool?
       let allowable_content: String?

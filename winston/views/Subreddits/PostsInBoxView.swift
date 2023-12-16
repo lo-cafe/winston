@@ -10,7 +10,7 @@ import Defaults
 import Combine
 
 struct PostsInBoxView: View {
-  @Binding var selectedSub: FirstSelectable?
+  @Binding var initialSelected: Router.NavDest?
   @Default(.postsInBox) private var postsInBox
   
   var body: some View {
@@ -19,7 +19,7 @@ struct PostsInBoxView: View {
           ScrollView(.horizontal) {
             HStack(spacing: 12) {
               ForEach(postsInBox, id: \.self.id) { post in
-                PostInBoxLink(selectedSub: $selectedSub, postInBox: post, post: Post(id: post.id, api: RedditAPI.shared), sub: Subreddit(id: post.subredditName, api: RedditAPI.shared))
+                PostInBoxLink(initialSelected: $initialSelected, postInBox: post, post: Post(id: post.id, subID: post.subredditName), sub: Subreddit(id: post.subredditName))
                   .animation(spring, value: postsInBox)
               }
             }

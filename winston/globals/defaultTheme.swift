@@ -20,7 +20,7 @@ let defaultFancyDivider: LineTheme = .init(style: .fancy, thickness: 6, color: .
 let defaultThemeBG: ThemeBG = .color(defaultBG)
 
 let badgeTheme: BadgeTheme = .init(
-  avatar: AvatarTheme(size: 32, cornerRadius: 15, visible: true),
+  avatar: AvatarTheme(size: 32, cornerRadius: 16, visible: true),
   authorText: .init(size: 13, color: .init(light: .init(hex: "000000", alpha: 0.7), dark: .init(hex: "ffffff", alpha: 0.7)), weight: .semibold),
   subColor: .init(light: .init(hex: "0B84FE"), dark: .init(hex: "0B84FE")),
   flairText: .init(size: 12, color: .init(light: .init(hex: "999999"), dark: .init(hex: "767676")), weight: .bold),
@@ -58,7 +58,11 @@ let defaultTheme = WinstonTheme(
     ),
     spacing: 16,
     divider: .init(style: .no, thickness: 6, color: listSectionBGTheme),
-    bg: defaultThemeBG
+    bg: defaultThemeBG,
+    stickyFilters: false,
+    filterText: .init(size: 17, color: .init(light: .init(hex: "000000"), dark: .init(hex: "000000")), weight: .semibold),
+    filterPadding: .init(horizontal: 6, vertical: 8),
+    filterOpacity: 0.3
   ),
   posts: .init(
     padding: .init(horizontal: 8, vertical: 6),

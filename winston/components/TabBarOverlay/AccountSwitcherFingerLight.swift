@@ -22,12 +22,16 @@ struct AccountSwitcherFingerLight: View, Equatable {
 //  @StateObject private var morph = MorphingGradientCircleScene()
   var body: some View {
 //    SpriteView(scene: morph, transition: nil, isPaused: false, preferredFramesPerSecond: UIScreen.main.maximumFramesPerSecond, options: [.allowsTransparency, .ignoresSiblingOrder])
-    ZStack {
-      AccountSwitcherFingerLightLayer().equatable()
-      AccountSwitcherFingerLightLayer().equatable()
-      AccountSwitcherFingerLightLayer().equatable()
-      AccountSwitcherFingerLightLayer().equatable()
-    }
+//    ZStack {
+//      AccountSwitcherFingerLightLayer().equatable()
+//      AccountSwitcherFingerLightLayer().equatable()
+//      AccountSwitcherFingerLightLayer().equatable()
+//      AccountSwitcherFingerLightLayer().equatable()
+//    }
+    Image(.spotlight)
+      .resizable()
+      .aspectRatio(contentMode: .fit)
+      .frame(200)
 //    .drawingGroup()
 //    .offset(y: 25 - getSafeArea().bottom)
   }

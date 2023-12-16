@@ -55,29 +55,30 @@ struct AccountSwitcherGradientBackgroundLayer: View, Equatable {
     true
   }
   
-  @State private var radius = 750.0
-  @State private var opacity = 1.0
-  private let timer = Timer.publish(every: 0.5, on: .main, in: .common).autoconnect()
+//  @State private var radius = 1.0
+//  @State private var opacity = 1.0
+//  private let timer = Timer.publish(every: 0.5, on: .main, in: .common).autoconnect()
 
   var body: some View {
-    Circle()
-      .fill( RadialGradient(
-        gradient: Gradient(stops: generateGradient()),
-        center: .center,
-        startRadius: 0,
-        endRadius: radius
+    Rectangle()
+      .fill( EllipticalGradient(
+        stops: generateGradient(),
+        center: .bottom,
+        startRadiusFraction: 0,
+        endRadiusFraction: 1
       ))
-      .opacity(opacity)
-      .frame(maxWidth: .infinity, maxHeight: .infinity)
+//      .opacity(opacity)
+      .offset(y: .screenH / 4)
+//      .frame(maxWidth: .infinity, maxHeight: .infinity)
 //      .onDisappear {
 //        timer.d
 //      }
-      .onReceive(timer) { _ in
-        withAnimation(.smooth) {
-          radius = Double.random(in: 650...850)
-          opacity = Double.random(in: 0.8...1)
-        }
-      }
+//      .onReceive(timer) { _ in
+//        withAnimation(.smooth) {
+//          radius = Double.random(in: 0.5...1)
+//          opacity = Double.random(in: 0.8...1)
+//        }
+//      }
   }
 }
 
@@ -93,7 +94,7 @@ struct AccountSwitcherFlatennedBG: View, Equatable {
 //      TimelineView(.animation) { context in
 //        let time = context.date.timeIntervalSince1970 - date.timeIntervalSince1970
         Image(uiImage: screenshot)
-          .frame(width: UIScreen.screenWidth, height: UIScreen.screenHeight, alignment: .bottom)
+          .frame(.screenSize,  .bottom)
           .transition(.identity)
 //          .modifier(ComplexWaveModifierVFX(time: time))
 //      }
@@ -103,22 +104,30 @@ struct AccountSwitcherFlatennedBG: View, Equatable {
 
 struct AccountSwitcherGradientBackground: View, Equatable {
   static func == (lhs: AccountSwitcherGradientBackground, rhs: AccountSwitcherGradientBackground) -> Bool { true }
+  
+  @State private var timer = Timer.publish(every: 0.5, on: .main, in: .common).autoconnect()
+  @State private var opacities: [Double] = [1,1,1,1]
+  
   var body: some View {
     ZStack(alignment: .bottom) {
-        ZStack {
-          Rectangle().fill(.bar).opacity(0.15)
-          AccountSwitcherGradientBackgroundLayer().equatable().opacity(0.15)
-          AccountSwitcherGradientBackgroundLayer().equatable().blendMode(.plusLighter).opacity(0.05)
-          AccountSwitcherGradientBackgroundLayer().equatable().blendMode(.overlay)
-          AccountSwitcherGradientBackgroundLayer().equatable().blendMode(.overlay)
-        }
-        .frame(width: 1500, height: 2500)
-        .offset(y: 1250 + 50 - getSafeArea().bottom)
-        .zIndex(2)
+//      AccountSwitcherGradientBackgroundLayer().equatable().opacity(0.15 * opacities[0]).drawingGroup()
+      AccountSwitcherGradientBackgroundLayer().equatable().opacity(opacities[1]).drawingGroup().blendMode(.plusLighter)
+//      ZStack(alignment: .bottom) {
+//        AccountSwitcherGradientBackgroundLayer().equatable().opacity(opacities[2])
+//        AccountSwitcherGradientBackgroundLayer().equatable().opacity(opacities[3])
+//      }
+//      .drawingGroup()
+//      .blendMode(.overlay)
     }
-    .frame(width: UIScreen.screenWidth, height: UIScreen.screenHeight, alignment: .bottom)
-    .fixedSize()
-    .clipped()
+    .ignoresSafeArea(.all)
+    .frame(.screenSize,  .bottom)
+    .onReceive(timer) { _ in
+      withAnimation(.smooth) {
+        let min: Double = 0.5
+        opacities = [.random(in: min...1), .random(in: min...1), .random(in: min...1), .random(in: min...1)]
+//        opacities = [.random(in: min...1), .random(in: min...1)]
+      }
+    }
   }
 }
 
