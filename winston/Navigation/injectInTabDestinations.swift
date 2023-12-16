@@ -21,8 +21,6 @@ extension View {
           case .postHighlighted(let post, let highlightID):
             if let sub = post.winstonData?.subreddit {
               PostView(post: post, subreddit: sub, highlightID: highlightID)
-            } else {
-              Text("Mininu")
             }
           case .subFeed(let sub):
             SubredditPosts(subreddit: sub)
