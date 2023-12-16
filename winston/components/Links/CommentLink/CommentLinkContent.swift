@@ -179,8 +179,8 @@ struct CommentLinkContent: View {
           .opacity(collapsed ? 0.5 : 1)
           .offset(x: offsetX)
           .animation(draggingAnimation, value: offsetX)
-          .contentShape(Rectangle())
           .padding(.top, data.depth != 0 ? 6 : 0)
+          .contentShape(Rectangle())
           .swipyUI(
             controlledDragAmount: $offsetX,
             controlledIsSource: false,
