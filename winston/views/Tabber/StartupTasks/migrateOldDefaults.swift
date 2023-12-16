@@ -90,7 +90,15 @@ func migrateOldDefaults() {
     selectedThemeID: Defaults[._selectedThemeID]
   )
   
+  var newFilteredSubreddits = Defaults[.filteredSubreddits]
+  var newPostsInBox = Defaults[.postsInBox]
+  var newLikedButNotSubbed = Defaults[.likedButNotSubbed]
+  
   resetPreferences()
+  
+  Defaults[.filteredSubreddits] = newFilteredSubreddits
+  Defaults[.postsInBox] = newPostsInBox
+  Defaults[.likedButNotSubbed] = newLikedButNotSubbed
   
   Defaults[.PostLinkDefSettings] = newPostLinkDefSettings
   Defaults[.VideoDefSettings] = newVideoDefSettings
