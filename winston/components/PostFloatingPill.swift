@@ -10,7 +10,7 @@ import Defaults
 import AlertToast
 
 struct PostFloatingPill: View {
-  var post: Post
+  @ObservedObject var post: Post
   @ObservedObject var subreddit: Subreddit
   var updateComments: (()->())?
   var showUpVoteRatio: Bool
