@@ -12,7 +12,7 @@ import AlertToast
 
 struct PostView: View, Equatable {
   static func == (lhs: PostView, rhs: PostView) -> Bool {
-    lhs.post.id == rhs.post.id && lhs.subreddit.id == rhs.subreddit.id
+    lhs.post == rhs.post && lhs.subreddit.id == rhs.subreddit.id && lhs.hideElements == rhs.hideElements && lhs.ignoreSpecificComment == rhs.ignoreSpecificComment && lhs.sort == rhs.sort && lhs.update == rhs.update
   }
   
   @ObservedObject var post: Post
@@ -139,6 +139,11 @@ struct PostView: View, Equatable {
 //        }
 //      }
       .onAppear {
+        doThisAfter(0.5) {
+          print("maos", hideElements)
+          hideElements = false
+          print("maoso", hideElements)
+        }
         if post.data == nil {
           updatePost()
         }
@@ -150,9 +155,6 @@ struct PostView: View, Equatable {
         }
         
         Task(priority: .background) {
-          doThisAfter(0.5) {
-            hideElements = false
-          }
           if subreddit.data == nil && subreddit.id != "home" {
             await subreddit.refreshSubreddit()
           }
