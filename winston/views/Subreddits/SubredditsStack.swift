@@ -15,14 +15,14 @@ struct SubredditsStack: View {
   @State private var columnVisibility: NavigationSplitViewVisibility = .automatic
   @State private var sidebarSize: CGSize = .zero
   
-  var postContentWidth: CGFloat { UIScreen.screenWidth - (!IPAD || columnVisibility != .doubleColumn ? 0 : sidebarSize.width) }
+  var postContentWidth: CGFloat { .screenW - (!IPAD || columnVisibility != .doubleColumn ? 0 : sidebarSize.width) }
   
   @State private var loaded = false
   var body: some View {
     NavigationSplitView(columnVisibility: $columnVisibility) {
       if let redditCredentialSelectedID = redditCredentialSelectedID {
         Subreddits(selectedSub: $router.firstSelected, loaded: loaded, currentCredentialID: redditCredentialSelectedID)
-          .measure($sidebarSize)
+          .measure($sidebarSize).id("subreddits-list-\(redditCredentialSelectedID)")
       }
     } detail: {
       NavigationStack(path: $router.path) {
@@ -70,9 +70,7 @@ struct SubredditsStack: View {
               let tempSubreddit = Subreddit(id: preferenceDefaultFeed)
               router.navigateTo(.reddit(.subFeed(tempSubreddit)))
             }
-            
-            _ = await RedditAPI.shared.fetchSubs()
-            _ = await RedditAPI.shared.fetchMyMultis()
+
             withAnimation {
               loaded = true
             }

@@ -88,6 +88,7 @@ class RedditAPI: ObservableObject {
 
     let result = await req(headers)
     if case .failure(let error) = result {
+      print(error)
       if attempt < (authenticated ? 5 : 2) {
         return await self._doRequest(attempt: attempt + 1, forceAuth: authenticated && attempt == 2, authenticated: authenticated, altCredential: altCredential, saveToken: saveToken, req: req)
       }

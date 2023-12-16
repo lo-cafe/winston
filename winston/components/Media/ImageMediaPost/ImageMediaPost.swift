@@ -47,7 +47,7 @@ struct ImageMediaPost: View, Equatable {
   
   var body: some View {
 //    let maxPostLinkImageHeightPercentage = 100.0
-    let maxHeight: CGFloat = (maxPostLinkImageHeightPercentage / 100) * (UIScreen.screenHeight)
+    let maxHeight: CGFloat = (maxPostLinkImageHeightPercentage / 100) * (.screenH)
     VStack {
       if images.count == 1 || compact {
         let img = images[0]

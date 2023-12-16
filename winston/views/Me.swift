@@ -22,7 +22,7 @@ struct Me: View {
         } else {
           ProgressView()
             .progressViewStyle(.circular)
-            .frame(maxWidth: .infinity, minHeight: UIScreen.screenHeight - 200 )
+            .frame(maxWidth: .infinity, minHeight: .screenH - 200 )
             .onAppear {
               Task(priority: .background) {
                 await RedditAPI.shared.fetchMe(force: true)

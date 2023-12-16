@@ -29,7 +29,7 @@ struct PostContent: View, Equatable {
   
   @Default(.blurPostLinkNSFW) private var blurPostLinkNSFW
   
-  var contentWidth: CGFloat { UIScreen.screenWidth - (selectedTheme.posts.padding.horizontal * 2) }
+  var contentWidth: CGFloat { .screenW - (selectedTheme.posts.padding.horizontal * 2) }
   
   func openSubreddit() {
     if let subName = post.data?.subreddit {
@@ -48,7 +48,7 @@ struct PostContent: View, Equatable {
         VStack {
           ProgressView()
             .progressViewStyle(.circular)
-            .frame(maxWidth: .infinity, minHeight: UIScreen.screenHeight - 200 )
+            .frame(maxWidth: .infinity, minHeight: .screenH - 200 )
             .id("post-loading")
         }
       }

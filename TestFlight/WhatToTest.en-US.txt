@@ -1,7 +1,2 @@
 Alpha:
-- Fixed lists themes (inconsistent and broken padding)
-- Added .validate() to requests so errors like 404 doesn’t succeed
-- Added credentialess warning when no valid credential is available
-- Now if your refresh token is denied with 401 3 times, the credential turns invalid
-- Added add credential button to account switcher
-- Moved /utils/modifiers /extensions/modifiers
+- Basically perf optimizations to account switching.

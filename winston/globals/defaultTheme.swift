@@ -20,7 +20,7 @@ let defaultFancyDivider: LineTheme = .init(style: .fancy, thickness: 6, color: .
 let defaultThemeBG: ThemeBG = .color(defaultBG)
 
 let badgeTheme: BadgeTheme = .init(
-  avatar: AvatarTheme(size: 32, cornerRadius: 15, visible: true),
+  avatar: AvatarTheme(size: 32, cornerRadius: 16, visible: true),
   authorText: .init(size: 13, color: .init(light: .init(hex: "000000", alpha: 0.7), dark: .init(hex: "ffffff", alpha: 0.7)), weight: .semibold),
   subColor: .init(light: .init(hex: "0B84FE"), dark: .init(hex: "0B84FE")),
   flairText: .init(size: 12, color: .init(light: .init(hex: "999999"), dark: .init(hex: "767676")), weight: .bold),

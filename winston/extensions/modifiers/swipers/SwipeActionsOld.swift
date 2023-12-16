@@ -102,12 +102,6 @@ struct SwipeActionsModifier: ViewModifier {
           onTap: {
             onTapAction?()
           },
-//                    onPress: { val in
-////                      print("smao")
-//                      withAnimation(spring) {
-//                        pressing = val
-//                      }
-//                    },
           onDragChanged: disableSwipe
           ? nil
           : { cancel, translation, startLocation, velocity in

@@ -27,7 +27,7 @@ struct PreviewSheetModifier<T: View>: ViewModifier {
   @State private var initialDragOffset: CGFloat?
   @State private var currentStepIndex: Int = 0
   
-  var pointZero: CGFloat { UIScreen.screenHeight - handlerHeight }
+  var pointZero: CGFloat { .screenH - handlerHeight }
   var stepPoints: [CGFloat] { [pointZero - forcedOffset, pointZero - (sheetContentSize.height / 2) - max(0, forcedOffset - (sheetContentSize.height / 2)), pointZero - sheetContentSize.height] }
   
   func body(content: Content) -> some View {
@@ -45,7 +45,7 @@ struct PreviewSheetModifier<T: View>: ViewModifier {
         }
         if let initialDragOffset = initialDragOffset {
           trans.isContinuous = true
-          //          trans.animation = .interpolatingSpring(stiffness: 1000, damping: 100)
+          //          trans.animation = .interpolatingSpring(stiffness: 1000, damping: 100) 2349
           trans.animation = .interactiveSpring()
           withTransaction(trans) {
             state = y - initialDragOffset
@@ -69,15 +69,16 @@ struct PreviewSheetModifier<T: View>: ViewModifier {
       .overlay(
         VStack {
           sheetContent(handlerHeight)
-            .background(GeometryReader { g in Color.clear.onAppear { sheetContentSize = CGSize(width: g.size.width, height: g.size.height - handlerHeight) }.onChange(of: g.size) { sheetContentSize = CGSize(width: $0.width, height: $0.height - handlerHeight) } })
+            .measure($sheetContentSize)
+//            .background(GeometryReader { g in Color.clear.onAppear { sheetContentSize = CGSize(width: g.size.width, height: g.size.height - handlerHeight) }.onChange(of: g.size) { sheetContentSize = CGSize(width: $0.width, height: $0.height - handlerHeight) } })
           //            .measure($sheetContentSize)
         }
         //          .onChange(of: sheetContentSize, perform: { newValue in
-        //            print(newValue)
+        //            print(newValue) 103 / 69
         //          })
         //          .padding(.top, handlerHeight)
           .frame(.screenSize,  .top)
-          .mask(SheetShape(width: UIScreen.screenWidth, height: UIScreen.screenHeight).fill(.black))
+          .mask(SheetShape(width: .screenW, height: .screenH).fill(.black))
           .overlay(
             Capsule(style: .continuous).fill(.ultraThinMaterial)
               .overlay(Capsule(style: .continuous).fill(.primary.opacity(!isDragging ? 0.15 : 0.3)))
@@ -88,12 +89,12 @@ struct PreviewSheetModifier<T: View>: ViewModifier {
             , alignment: .top
           )
           .background(
-            SheetShape(width: UIScreen.screenWidth, height: UIScreen.screenHeight)
+            SheetShape(width: .screenW, height: .screenH)
               .fill(AnyShapeStyle(bg))
               .shadow(radius: 16)
               .allowsHitTesting(!disabled)
           )
-//          .contentShape(.contextMenuPreview, SheetShape(width: UIScreen.screenWidth, height: UIScreen.screenHeight))
+//          .contentShape(.contextMenuPreview, SheetShape(width: .screenW, height: .screenH))
 //          .contentShape()
           .scaleEffect(1)
           .compositingGroup()

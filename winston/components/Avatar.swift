@@ -66,7 +66,7 @@ struct AvatarRaw: View, Equatable {
     }
     .frame(width: avatarSize, height: avatarSize)
     .mask(RR(cornerRadius, .black).equatable())
-    .drawingGroup()
+//    .drawingGroup()
     .background(SavedFlag(cornerRadius: cornerRadius, saved: saved).equatable())
   }
 }

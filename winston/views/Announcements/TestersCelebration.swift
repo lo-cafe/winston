@@ -121,7 +121,7 @@ struct TestersCelebration: View {
       .padding(.bottom, 128)
       .padding(.horizontal, 32)
       .padding(.top, 64)
-      .frame(minHeight: UIScreen.screenHeight)
+      .frame(minHeight: .screenH)
     }
     .overlay(
       thanks
@@ -166,7 +166,7 @@ struct TestersCelebration: View {
     }
     .ignoresSafeArea(.all)
     .multilineTextAlignment(.center)
-    .confettiCannon(counter: $counter, num: 30, openingAngle: Angle.degrees(60), closingAngle: Angle.degrees(120), radius: UIScreen.screenWidth)
+    .confettiCannon(counter: $counter, num: 30, openingAngle: Angle.degrees(60), closingAngle: Angle.degrees(120), radius: .screenW)
     .onAppear {
       if showTipJarModal { showTipJarModal = false }
       doThisAfter(1.0) { withAnimation { counter += 1 } }

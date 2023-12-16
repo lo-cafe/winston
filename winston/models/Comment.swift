@@ -72,7 +72,7 @@ extension Comment {
     bodyAttr.addAttribute(.foregroundColor, value: UIColor(theme.bodyText.color.cs(cs).color()), range: NSRange(location: 0, length: bodyAttr.length))
     winstonData.bodyAttr = bodyAttr
     
-    let screenWidth = UIScreen.screenWidth - (!IPAD ? 0 : (UIScreen.screenWidth /  3))
+    let screenWidth = .screenW - (!IPAD ? 0 : (.screenW /  3))
     var bodyMaxWidth = Double(screenWidth - (theme.outerHPadding * 2) - (theme.innerPadding.horizontal * 2))
     if let depth = data.depth, depth > 0 {
       bodyMaxWidth -= Double(CommentLinkContent.indentLineContentSpacing)
@@ -157,24 +157,26 @@ extension Comment {
     let context = PersistenceController.shared.primaryBGContext
     let fetchRequest = NSFetchRequest<CollapsedComment>(entityName: "CollapsedComment")
     do {
-      let results = try context.fetch(fetchRequest)
-      let foundPost = results.first(where: { obj in obj.commentID == id })
-      
-      if let foundPost = foundPost {
-        if collapsed == nil || collapsed == false {
-          context.delete(foundPost)
-          if !optimistic {
-            data?.collapsed = false
+      try context.performAndWait {
+        let results = try context.fetch(fetchRequest)
+        let foundPost = results.first(where: { obj in obj.commentID == id })
+        
+        if let foundPost = foundPost {
+          if collapsed == nil || collapsed == false {
+            context.delete(foundPost)
+            if !optimistic {
+              data?.collapsed = false
+            }
           }
-        }
-      } else if collapsed == nil || collapsed == true {
-        let newSeenPost = CollapsedComment(context: context)
-        newSeenPost.commentID = id
-        context.performAndWait {
-          try? context.save()
-        }
-        if !optimistic {
-          data?.collapsed = true
+        } else if collapsed == nil || collapsed == true {
+          let newSeenPost = CollapsedComment(context: context)
+          newSeenPost.commentID = id
+          context.performAndWait {
+            try? context.save()
+          }
+          if !optimistic {
+            data?.collapsed = true
+          }
         }
       }
     } catch {

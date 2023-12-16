@@ -111,17 +111,22 @@ struct Subreddits: View, Equatable {
             .listRowBackground(Color.clear)
             .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
           }
+          
         }
         
         Group {
+          
           if searchText != "" {
+            
             Section("Found subs") {
               let foundSubs = Array(Array(subreddits.filter { ($0.display_name ?? "").lowercased().contains(searchText.lowercased()) }).enumerated())
               ForEach(foundSubs, id: \.self.element.uuid) { i, cachedSub in
                 SubItem(selectedSub: $selectedSub, sub: Subreddit(data: SubredditData(entity: cachedSub)), cachedSub: cachedSub)
               }
             }
+            
           } else {
+            
             let favs = subreddits.filter { $0.user_has_favorited && $0.user_is_subscriber }
             if favs.count > 0 {
               Section("Favorites") {
@@ -171,8 +176,6 @@ struct Subreddits: View, Equatable {
               
             }
             
-            
-            
           }
         }
         .themedListSection()
@@ -192,7 +195,6 @@ struct Subreddits: View, Equatable {
         AlphabetJumper(letters: sections.keys.sorted(), proxy: proxy)
         , alignment: .trailing
       )
-
       .refreshable {
         Task(priority: .background) {
           await updatePostsInBox(RedditAPI.shared, force: true)
@@ -203,7 +205,6 @@ struct Subreddits: View, Equatable {
         _ = await RedditAPI.shared.fetchSubs()
       }
       .navigationTitle("Subs")
-      .log(subreddits.count, subreddits.map { ($0.name, $0.display_name) })
     }
   }
   

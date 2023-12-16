@@ -34,7 +34,7 @@ struct CredentialsPanel: View {
     .toolbar {
       ToolbarItem {
         Button {
-          TempGlobalState.shared.editingCredential = .init()
+          Nav.present(.editingCredential(.init()))
         } label: {
           Image(systemName: "plus")
         }

@@ -128,7 +128,7 @@ struct FeedThemingPanel: View {
           .highPriorityGesture(DragGesture())
         }
       }
-      .frame(height: (UIScreen.screenHeight - getSafeArea().top - getSafeArea().bottom) / 2, alignment: .top)
+      .frame(height: (.screenH - getSafeArea().top - getSafeArea().bottom) / 2, alignment: .top)
       .clipped()
     }
     .onAppear { previewPostSample.setupWinstonData(winstonData: previewPostSample.winstonData, theme: theme) }

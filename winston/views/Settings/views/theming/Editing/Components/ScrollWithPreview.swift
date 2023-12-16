@@ -16,25 +16,37 @@ struct ScrollWithPreview<Content: View, Preview: View>: View {
   var theme: ThemeBG?
   @State private var previewBG: PreviewBG = .theme
   @State private var scrollOffset = CGFloat.zero
-  @State private var contentSize = CGSize(width: 0, height: UIScreen.screenHeight)
+  @State private var contentSize = CGSize(width: 0, height: .screenH)
   @State private var previewContentSize: CGSize = .zero
-  @ObservedObject private var tempGlobalState = TempGlobalState.shared
+  @State private var containerSize: CGSize = .screenSize
+  @State private var pro: Double = 0
+  @State private var safeArea = getSafeArea()
+  
+  @Environment(\.tabBarHeight) private var tabBarHeight
+  @Environment(\.sheetHeight) private var sheetHeight
   @Environment(\.colorScheme) private var cs
   @Environment(\.useTheme) private var currentTheme
   @ViewBuilder let content: () -> Content
   @ViewBuilder let preview: () -> Preview
     var body: some View {
-      let tabHeight = CGFloat(tempGlobalState.tabBarHeight ?? 0)
+      let tabHeight = CGFloat(tabBarHeight ?? 0)
+      let sheetDifference = .screenH - containerSize.height
+//      let interpolation = [
+//        -((.screenH - tabHeight) - ((contentSize.height + getSafeArea().top + tabHeight) - (previewContentSize.height + 40 + 16))) + sheetDifference,
+//         (contentSize.height + getSafeArea().top + tabHeight) - (.screenH - (getSafeArea().top)) - 20
+//      ]
       let interpolation = [
-        -((UIScreen.screenHeight - (tabHeight)) - ((contentSize.height + getSafeArea().top + tabHeight) - (previewContentSize.height + 40 + 16))),
-         (contentSize.height + getSafeArea().top + tabHeight) - (UIScreen.screenHeight - (getSafeArea().top)) - 20
+        ((contentSize.height + (pro - (.screenH - containerSize.height))) - containerSize.height) + (safeArea.bottom * 2) + 16,
+        ((contentSize.height + (pro - (.screenH - containerSize.height))) - containerSize.height) + (safeArea.bottom * 2) + previewContentSize.height + 16
       ]
       let interpolate = interpolatorBuilder(interpolation, value: scrollOffset)
       ObservedScrollView(offset: $scrollOffset, showsIndicators: false) {
         content()
-          .padding(.bottom, previewContentSize.height + 40 + 16)
           .measure($contentSize)
+          .padding(.bottom, previewContentSize.height + 16)
       }
+      .background(GeometryReader { geo in Color.clear.onChange(of: abs(geo.frame(in: .named("sheto")).minY)) { pro = $0 } })
+      .measure($containerSize)
       .previewSheet(handlerBGOnly: handlerBGOnly, scrollContentHeight: contentSize.height, sheetContentSize: $previewContentSize, forcedOffset: interpolate([0, previewContentSize.height], false), bg: defaultBG.cs(cs).color(), border: currentTheme.lists.bg == theme && previewBG == .theme) { handlerHeight in
         VStack(spacing: 12) {
           let opts = [
@@ -51,7 +63,7 @@ struct ScrollWithPreview<Content: View, Preview: View>: View {
         .padding(.top, 12)
         .padding(.bottom, 12)
         .padding(.top, handlerHeight)
-        .themedListBG(theme ?? defaultThemeBG, disable: theme == nil || previewBG != .theme)
+        .themedListBG(theme ?? defaultThemeBG, disable: theme == nil || previewBG != .theme, forceNonBrighter: true)
         .background(
           previewBG != .blur
           ? nil
@@ -62,7 +74,18 @@ struct ScrollWithPreview<Content: View, Preview: View>: View {
           ? nil
           : defaultBG.cs(cs).color().allowsHitTesting(false)
         )
-        
       }
     }
 }
+
+// scrollOffset 979 contentSize 1672 previewContentSize 525 containerSize 783 safeAreaTop 59 safeAreaBot 34 tabHeight 49 ScreenH 852.0 sheetHeight 749.0
+
+// scrollOffset 979 
+// contentSize 1521
+// previewContentSize 525
+// containerSize 783
+// safeAreaTop 59
+// safeAreaBot 34
+// tabHeight 49
+// ScreenH 852.0
+// sheetHeight 749.0

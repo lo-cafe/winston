@@ -68,7 +68,7 @@ struct AccountSwitcherGradientBackgroundLayer: View, Equatable {
         endRadiusFraction: 1
       ))
 //      .opacity(opacity)
-      .offset(y: UIScreen.screenHeight / 4)
+      .offset(y: .screenH / 4)
 //      .frame(maxWidth: .infinity, maxHeight: .infinity)
 //      .onDisappear {
 //        timer.d
@@ -110,10 +110,14 @@ struct AccountSwitcherGradientBackground: View, Equatable {
   
   var body: some View {
     ZStack(alignment: .bottom) {
-          AccountSwitcherGradientBackgroundLayer().equatable().opacity(0.15 * opacities[0])
-          AccountSwitcherGradientBackgroundLayer().equatable().opacity(opacities[1]).blendMode(.plusLighter)
-          AccountSwitcherGradientBackgroundLayer().equatable().opacity(opacities[2]).blendMode(.overlay)
-          AccountSwitcherGradientBackgroundLayer().equatable().opacity(opacities[3]).blendMode(.overlay)
+//      AccountSwitcherGradientBackgroundLayer().equatable().opacity(0.15 * opacities[0]).drawingGroup()
+      AccountSwitcherGradientBackgroundLayer().equatable().opacity(opacities[1]).drawingGroup().blendMode(.plusLighter)
+//      ZStack(alignment: .bottom) {
+//        AccountSwitcherGradientBackgroundLayer().equatable().opacity(opacities[2])
+//        AccountSwitcherGradientBackgroundLayer().equatable().opacity(opacities[3])
+//      }
+//      .drawingGroup()
+//      .blendMode(.overlay)
     }
     .ignoresSafeArea(.all)
     .frame(.screenSize,  .bottom)
@@ -121,6 +125,7 @@ struct AccountSwitcherGradientBackground: View, Equatable {
       withAnimation(.smooth) {
         let min: Double = 0.5
         opacities = [.random(in: min...1), .random(in: min...1), .random(in: min...1), .random(in: min...1)]
+//        opacities = [.random(in: min...1), .random(in: min...1)]
       }
     }
   }
