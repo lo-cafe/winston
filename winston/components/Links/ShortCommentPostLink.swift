@@ -52,7 +52,9 @@ struct ShortCommentPostLink: View {
       .contentShape(Rectangle())
       .highPriorityGesture (
         TapGesture().onEnded {
-          Nav.to(.reddit(.post(Post(id: data.link_id!, sub: Subreddit(id: data.subreddit!)))))
+          if let link_id = data.link_id, let subID = data.subreddit {
+            Nav.to(.reddit(.post(Post(id: link_id, subID: subID))))
+          }
         }
       )
       .foregroundColor(.primary)

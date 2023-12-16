@@ -49,7 +49,7 @@ struct LightBoxOverlay: View {
 //           if let post {
 //               LightBoxButton(icon: "bubble.right") {
 //             if let data = post.data {
-//                   Nav.to(.reddit(.post(Post(id: post.id, sub: Subreddit(id: data.subreddit)))))
+//                   Nav.to(.reddit(.post(Post(id: post.id, subID: data.subreddit))))
 //                   dismiss()
 //                 }
 //               }

@@ -19,7 +19,7 @@ struct PostsInBoxView: View {
           ScrollView(.horizontal) {
             HStack(spacing: 12) {
               ForEach(postsInBox, id: \.self.id) { post in
-                PostInBoxLink(initialSelected: $initialSelected, postInBox: post, post: Post(id: post.id), sub: Subreddit(id: post.subredditName))
+                PostInBoxLink(initialSelected: $initialSelected, postInBox: post, post: Post(id: post.id, subID: post.subredditName), sub: Subreddit(id: post.subredditName))
                   .animation(spring, value: postsInBox)
               }
             }
