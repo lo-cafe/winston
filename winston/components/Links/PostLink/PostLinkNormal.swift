@@ -50,8 +50,9 @@ struct PostLinkNormal: View, Equatable, Identifiable {
   }
   
   func openPost() {
-      withAnimation(nil) { isOpen = true }
-      Nav.to(.reddit(.post(post)))
+    withAnimation(nil) { isOpen = true }
+    doThisAfter(0.5, callback: { withAnimation { isOpen = false } })
+    Nav.to(.reddit(.post(post)))
   }
   
   func openSubreddit() {
