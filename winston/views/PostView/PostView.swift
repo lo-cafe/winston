@@ -61,6 +61,7 @@ struct PostView: View, Equatable {
   }
   
   var body: some View {
+		var navtitle: [String] = [ post.data?.title ?? "no title", "r/\(post.data?.subreddit ?? "no sub") \u{2022} " + String(localized:"\(post.data?.num_comments ?? 0) comments") ]
     let commentsHPad = selectedTheme.comments.theme.outerHPadding > 0 ? selectedTheme.comments.theme.outerHPadding : selectedTheme.comments.theme.innerPadding.horizontal
     ScrollViewReader { proxy in
       List {
@@ -128,8 +129,8 @@ struct PostView: View, Equatable {
           PostFloatingPill(post: post, subreddit: subreddit, showUpVoteRatio: defSettings.showUpVoteRatio)
         }
       }
-      .navigationBarTitle("\(post.data?.num_comments ?? 0) comments", displayMode: .inline)
-      .toolbar { Toolbar(hideElements: hideElements, subreddit: subreddit, post: post, sort: $sort) }
+      .navigationBarTitle("\(navtitle[0])", displayMode: .inline)
+			.toolbar { Toolbar(title: navtitle[0], subtitle: navtitle[1], hideElements: hideElements, subreddit: subreddit, post: post, sort: $sort) }
       .onChange(of: sort) { val in
         updatePost()
       }
@@ -165,41 +166,53 @@ struct PostView: View, Equatable {
   }
 }
 
-private struct Toolbar: View {
-  var hideElements: Bool
-  var subreddit: Subreddit
-  var post: Post
-  @Binding var sort: CommentSortOption
-  var body: some View {
-    HStack {
-      Menu {
-        if !hideElements {
-          ForEach(CommentSortOption.allCases) { opt in
-            Button {
-              sort = opt
-              Defaults[.PostPageDefSettings].postSorts[post.id] = opt
-            } label: {
-              HStack {
-                Text(opt.rawVal.value.capitalized)
-                Spacer()
-                Image(systemName: opt.rawVal.icon)
-                  .foregroundColor(Color.accentColor)
-                  .fontSize(17, .bold)
-              }
-            }
-          }
-        }
-      } label: {
-        Image(systemName: sort.rawVal.icon)
-          .foregroundColor(Color.accentColor)
-          .fontSize(17, .bold)
-      }
-      
-      if let data = subreddit.data, !feedsAndSuch.contains(subreddit.id) {
-        SubredditIcon(subredditIconKit: data.subredditIconKit)
-          .onTapGesture { Nav.to(.reddit(.subInfo(subreddit))) }
-      }
-    }
-    .animation(nil, value: sort)
-  }
+private struct Toolbar: ToolbarContent {
+	var title: String
+	var subtitle: String
+	var hideElements: Bool
+	var subreddit: Subreddit
+	var post: Post
+	@Binding var sort: CommentSortOption
+	var body: some ToolbarContent {
+	ToolbarItem(placement: .principal) {
+		VStack {
+			Text(title)
+				.font(.headline)
+			Text(subtitle)
+				.font(.subheadline)
+		}
+	}
+	ToolbarItem(placement: .navigationBarTrailing) {
+		HStack {
+			Menu {
+				if !hideElements {
+					ForEach(CommentSortOption.allCases) { opt in
+						Button {
+							sort = opt
+							Defaults[.PostPageDefSettings].postSorts[post.id] = opt
+						} label: {
+							HStack {
+								Text(opt.rawVal.value.capitalized)
+								Spacer()
+								Image(systemName: opt.rawVal.icon)
+									.foregroundColor(Color.accentColor)
+									.fontSize(17, .bold)
+							}
+						}
+					}
+				}
+			} label: {
+				Image(systemName: sort.rawVal.icon)
+					.foregroundColor(Color.accentColor)
+					.fontSize(17, .bold)
+			}
+			
+			if let data = subreddit.data, !feedsAndSuch.contains(subreddit.id) {
+				SubredditIcon(subredditIconKit: data.subredditIconKit)
+					.onTapGesture { Nav.to(.reddit(.subInfo(subreddit))) }
+			}
+		}
+		.animation(nil, value: sort)
+	}
+}
 }
