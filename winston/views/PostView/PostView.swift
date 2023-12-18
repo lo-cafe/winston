@@ -61,7 +61,8 @@ struct PostView: View, Equatable {
   }
   
   var body: some View {
-		var navtitle: [String] = [ post.data?.title ?? "no title", "r/\(post.data?.subreddit ?? "no sub") \u{2022} " + String(localized:"\(post.data?.num_comments ?? 0) comments") ]
+		var navtitle: String = post.data?.title.escape ?? "no title"
+		var subnavtitle: String =	"r/\(post.data?.subreddit ?? "no sub") \u{2022} " + String(localized:"\(post.data?.num_comments ?? 0) comments")
     let commentsHPad = selectedTheme.comments.theme.outerHPadding > 0 ? selectedTheme.comments.theme.outerHPadding : selectedTheme.comments.theme.innerPadding.horizontal
     ScrollViewReader { proxy in
       List {
@@ -129,8 +130,8 @@ struct PostView: View, Equatable {
           PostFloatingPill(post: post, subreddit: subreddit, showUpVoteRatio: defSettings.showUpVoteRatio)
         }
       }
-      .navigationBarTitle("\(navtitle[0])", displayMode: .inline)
-			.toolbar { Toolbar(title: navtitle[0], subtitle: navtitle[1], hideElements: hideElements, subreddit: subreddit, post: post, sort: $sort) }
+      .navigationBarTitle("\(navtitle)", displayMode: .inline)
+			.toolbar { Toolbar(title: navtitle, subtitle: subnavtitle, hideElements: hideElements, subreddit: subreddit, post: post, sort: $sort) }
       .onChange(of: sort) { val in
         updatePost()
       }
@@ -174,15 +175,17 @@ private struct Toolbar: ToolbarContent {
 	var post: Post
 	@Binding var sort: CommentSortOption
 	var body: some ToolbarContent {
-	ToolbarItem(placement: .principal) {
-		VStack {
-			Text(title)
-				.font(.headline)
-			Text(subtitle)
-				.font(.subheadline)
+		if !IPAD {
+			ToolbarItem(id: "postview-title", placement: .principal) {
+				VStack {
+					Text(title)
+						.font(.headline)
+					Text(subtitle)
+						.font(.subheadline)
+				}
+			}
 		}
-	}
-	ToolbarItem(placement: .navigationBarTrailing) {
+	ToolbarItem(id: "postview-sortandsub", placement: .navigationBarTrailing) {
 		HStack {
 			Menu {
 				if !hideElements {
