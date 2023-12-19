@@ -20,7 +20,7 @@ func createTitleTagsAttrString(titleTheme: ThemeText, postData: PostData, textCo
   let titleFont = UIFont.systemFont(ofSize: titleTheme.size, weight: titleTheme.weight.ut)
   let titleTagsImages = getTagsFromTitle(postData).compactMap { createTagImage(withTitle: $0.label, textColor: $0.textColor, backgroundColor: $0.bgColor, font: tagFont) }
   
-  let attrTitle = NSMutableAttributedString(string: postData.title.escape, attributes: [.font: titleFont, .foregroundColor: UIColor(textColor)])
+  let attrTitle = NSMutableAttributedString(string: postData.title.escape, attributes: [.font: titleFont, .foregroundColor: UIColor(textColor) ?? .white])
   
   titleTagsImages.forEach { img in
     let attach = NSTextAttachment(image: img)
