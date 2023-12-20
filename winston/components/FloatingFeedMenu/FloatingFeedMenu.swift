@@ -89,26 +89,26 @@ struct FloatingFeedMenu: View, Equatable {
             .transition(.identity)
         }
         
-        let sortedFlairs = filters.filter({ $0.type == "flair" }).sorted(by: {$0.occurences > $1.occurences })
-        let customFilters = filters.filter({ $0.type != "flair" })
+        let sortedFlairs = filters.filter({ $0.type == "flair" }).sorted(by: {$0.occurences < $1.occurences })
+        let customFilters = filters.filter({ $0.type != "flair" }).reversed()
         if menuOpen {
           ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 8) {
               
               //            FilterButton(filter: FilterData(text: "All", text_color: "000000", background_color: "D5D7D9"), filterFont: theme.postLinks.filterText, opacity: opacity, selected: selected, filterCallback: filterCallback, searchText: searchText, searchCallback: searchCallback)
               if showingFilters {
-                ForEach(Array(customFilters.enumerated()), id: \.element) {
-                  let isSelected = selected == $1.id
-                  FilterButton(filter: $1, isSelected: isSelected, filterCallback: filterCallback, searchText: searchText, searchCallback: searchCallback)
-                    .matchedGeometryEffect(id: "floating-\($1.id)", in: ns)
-                    .transition(isSelected ? .identity : .comeFrom(.trailing, index: sortedFlairs.count + $0, total: customFilters.count + sortedFlairs.count))
-                }
-                
                 ForEach(Array(sortedFlairs.enumerated()), id: \.element) {
                   let isSelected = selected == $1.id
                   FilterButton(filter: $1, isSelected: isSelected, filterCallback: filterCallback, searchText: searchText, searchCallback: searchCallback)
                     .matchedGeometryEffect(id: "floating-\($1.id)", in: ns, properties: .position)
-                    .transition(isSelected ? .identity : .comeFrom(.trailing, index: !menuOpen ? 0 : sortedFlairs.count - $0, total: customFilters.count + sortedFlairs.count, disableEndDelay: true))
+                    .transition(isSelected ? .identity : .comeFrom(.trailing, index: !menuOpen ? 0 : customFilters.count + sortedFlairs.count - $0, total: customFilters.count + sortedFlairs.count, disableEndDelay: true))
+                }
+                
+                ForEach(Array(customFilters.enumerated()), id: \.element) {
+                  let isSelected = selected == $1.id
+                  FilterButton(filter: $1, isSelected: isSelected, filterCallback: filterCallback, searchText: searchText, searchCallback: searchCallback)
+                    .matchedGeometryEffect(id: "floating-\($1.id)", in: ns)
+                    .transition(isSelected ? .identity : .comeFrom(.trailing, index: customFilters.count - $0, total: customFilters.count + sortedFlairs.count))
                 }
               }
               
