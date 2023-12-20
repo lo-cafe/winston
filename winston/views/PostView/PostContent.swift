@@ -67,7 +67,6 @@ struct PostContent: View, Equatable {
             MD2(winstonData.postBodyAttr == nil ? .str(data.selftext) : .nsAttr(winstonData.postBodyAttr!), onTap: { withAnimation(spring) { collapsed.toggle() } })
               .frame(width: winstonData.postViewBodySize.width, height: winstonData.postViewBodySize.height, alignment: .topLeading)
               .fixedSize()
-//              .foregroundColor(postsTheme.bodyText.color())
               .allowsHitTesting(!isCollapsed)
           }
         }
