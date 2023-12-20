@@ -185,37 +185,37 @@ private struct Toolbar: ToolbarContent {
 				}
 			}
 		}
-	ToolbarItem(id: "postview-sortandsub", placement: .navigationBarTrailing) {
-		HStack {
-			Menu {
-				if !hideElements {
-					ForEach(CommentSortOption.allCases) { opt in
-						Button {
-							sort = opt
-							Defaults[.PostPageDefSettings].postSorts[post.id] = opt
-						} label: {
-							HStack {
-								Text(opt.rawVal.value.capitalized)
-								Spacer()
-								Image(systemName: opt.rawVal.icon)
-									.foregroundColor(Color.accentColor)
-									.fontSize(17, .bold)
+		ToolbarItem(id: "postview-sortandsub", placement: .navigationBarTrailing) {
+			HStack {
+				Menu {
+					if !hideElements {
+						ForEach(CommentSortOption.allCases) { opt in
+							Button {
+								sort = opt
+								Defaults[.PostPageDefSettings].postSorts[post.id] = opt
+							} label: {
+								HStack {
+									Text(opt.rawVal.value.capitalized)
+									Spacer()
+									Image(systemName: opt.rawVal.icon)
+										.foregroundColor(Color.accentColor)
+										.fontSize(17, .bold)
+								}
 							}
 						}
 					}
+				} label: {
+					Image(systemName: sort.rawVal.icon)
+						.foregroundColor(Color.accentColor)
+						.fontSize(17, .bold)
 				}
-			} label: {
-				Image(systemName: sort.rawVal.icon)
-					.foregroundColor(Color.accentColor)
-					.fontSize(17, .bold)
+				
+				if let data = subreddit.data, !feedsAndSuch.contains(subreddit.id) {
+					SubredditIcon(subredditIconKit: data.subredditIconKit)
+						.onTapGesture { Nav.to(.reddit(.subInfo(subreddit))) }
+				}
 			}
-			
-			if let data = subreddit.data, !feedsAndSuch.contains(subreddit.id) {
-				SubredditIcon(subredditIconKit: data.subredditIconKit)
-					.onTapGesture { Nav.to(.reddit(.subInfo(subreddit))) }
-			}
+			.animation(nil, value: sort)
 		}
-		.animation(nil, value: sort)
 	}
-}
 }
