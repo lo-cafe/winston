@@ -13,17 +13,12 @@ struct FloatingModifier: ViewModifier {
   @Environment(\.useTheme) private var selectedTheme
   func body(content: Content) -> some View {
     content
-      .background(
-        Capsule(style: .continuous)
-          .fill(.bar.opacity(selectedTheme.general.floatingPanelsBG.blurry ? 1 : 0))
-          .shadow(radius: 8, y: 8)
-          .overlay(Circle().fill(selectedTheme.general.floatingPanelsBG.color()))
-      )
-      .overlay(
+      .background(ThemedForegroundRawBG(shape: Capsule(style: .continuous), theme: selectedTheme.general.floatingPanelsBG, shadowStyle: .drop(color: .black.opacity(0.33), radius: 16, x: 0, y: 12)))
+      .overlay {
         Capsule(style: .continuous)
           .stroke(Color.primary.opacity(0.05), lineWidth: 0.5)
           .padding(.all, 0.5)
-      )
+      }
   }
 }
 

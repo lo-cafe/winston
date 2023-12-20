@@ -73,7 +73,6 @@ extension Comment {
   }
   
   convenience init(message: Message) throws {
-    let rawMessage = message
     if let message = message.data {
       var commentData = CommentData(id: message.id)
       commentData.subreddit_id = nil
@@ -175,7 +174,7 @@ extension Comment {
   
   func loadChildren(parent: CommentParentElement, postFullname: String, avatarSize: Double, post: Post?) async {
     if let kind = kind, kind == "more", let data = data, let count = data.count, let parent_id = data.parent_id, let childrenIDS = data.children {
-      var actualID = id
+      let actualID = id
       //      if actualID.hasSuffix("-more") {
       //        actualID.removeLast(5)
       //      }

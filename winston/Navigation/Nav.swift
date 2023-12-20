@@ -23,7 +23,7 @@ class Nav: ObservableObject, Identifiable, Codable {
   /* </Util static functions for ease of use> */
   
   static private func newRouterForTab(_ tab: TabIdentifier, _ id: UUID) -> Router { Router(id: "\(tab.rawValue)TabRouter-\(id.uuidString)") }
-  
+    
   enum TabIdentifier: String, Codable, Hashable, CaseIterable {
     case posts, inbox, me, search, settings
   }
@@ -61,7 +61,7 @@ class Nav: ObservableObject, Identifiable, Codable {
   private var cancellables = Set<AnyCancellable>()
 
   
-  init(activeTab: TabIdentifier = .posts) {
+  private init(activeTab: TabIdentifier = .posts) {
     let id = UUID()
     self.id = id
     self.activeTab = activeTab

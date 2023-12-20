@@ -33,4 +33,8 @@ extension ColorSchemes<ThemeColor> {
   func color() -> Color {
     Color(light: self.light.color(), dark: self.dark.color())
   }
+  
+  func uiColor() -> UIColor {
+    UIColor(light: self.light.uiColor(), dark: self.dark.uiColor())
+  }
 }

@@ -145,6 +145,15 @@
       }
     },
     {
+      "identity" : "smoothgradient",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/raymondjavaxx/SmoothGradient.git",
+      "state" : {
+        "revision" : "61bf248fad31c7921c9985b418e6e9297cd7b861",
+        "version" : "1.0.0"
+      }
+    },
+    {
       "identity" : "swift-cmark",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-cmark.git",

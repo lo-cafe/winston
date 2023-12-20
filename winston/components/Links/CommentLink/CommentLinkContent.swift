@@ -174,12 +174,12 @@ struct CommentLinkContent: View {
               
             }
           }
-          .padding(.top, data.depth != 0 ? theme.theme.innerPadding.vertical + theme.theme.repliesSpacing : 0)
+          .padding(.top, max(0, theme.theme.innerPadding.vertical + (data.depth == 0 ? -theme.theme.cornerRadius : theme.theme.repliesSpacing)))
           .compositingGroup()
           .opacity(collapsed ? 0.5 : 1)
           .offset(x: offsetX)
           .animation(draggingAnimation, value: offsetX)
-          .padding(.top, data.depth != 0 ? 6 : 0)
+//          .padding(.top, data.depth != 0 ? 6 : 0)
           .contentShape(Rectangle())
           .swipyUI(
             controlledDragAmount: $offsetX,
@@ -193,7 +193,7 @@ struct CommentLinkContent: View {
           cell.layer.masksToBounds = false
         }
         .padding(.horizontal, horPad)
-        .frame(height: max(((theme.theme.badge.authorText.size * 1.2) + (theme.theme.badge.statsText.size * 1.2) + 2), theme.theme.badge.avatar.size) + (data.depth != 0 ? theme.theme.innerPadding.vertical + theme.theme.repliesSpacing : 0) + (data.depth != 0 ? 6 : 0), alignment: .leading)
+        .frame(height: max(((theme.theme.badge.authorText.size * 1.2) + (theme.theme.badge.statsText.size * 1.2) + 2), theme.theme.badge.avatar.size) + max(0, theme.theme.innerPadding.vertical + (data.depth == 0 ? -theme.theme.cornerRadius : theme.theme.repliesSpacing)), alignment: .leading)
         .mask(Color.black)
         .background(Color.accentColor.opacity(highlight ? 0.2 : 0))
         .background(!disableBG && showReplies ? theme.theme.bg() : .clear)
@@ -264,18 +264,17 @@ struct CommentLinkContent: View {
                   comment.data?.winstonBodyAttrEncoded = json
                 }
               }
-              //              .padding(.leading, 6)
               .frame(maxWidth: .infinity, alignment: .topLeading)
               .offset(x: offsetX)
               .animation(draggingAnimation, value: offsetX)
               .padding(.top, theme.theme.bodyAuthorSpacing)
-              .padding(.bottom, data.depth == 0 && comment.childrenWinston.data.count == 0 ? 0 : theme.theme.innerPadding.vertical)
+              .padding(.bottom, max(0, theme.theme.innerPadding.vertical + (data.depth == 0 && comment.childrenWinston.data.count == 0 ? -theme.theme.cornerRadius : theme.theme.innerPadding.vertical)))
               .scaleEffect(1)
               .contentShape(Rectangle())
               .swipyUI(
                 offsetYAction: -15,
                 controlledDragAmount: $offsetX,
-                //                onTap: { if !selectable { withAnimation(spring) { comment.toggleCollapsed(optimistic: true) } } },
+                // onTap: { if !selectable { withAnimation(spring) { comment.toggleCollapsed(optimistic: true) } } },
                 actionsSet: commentSwipeActions,
                 entity: comment
               )

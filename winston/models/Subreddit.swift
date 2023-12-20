@@ -128,7 +128,7 @@ extension Subreddit {
     if self.data?.winstonFlairs != nil { return self.data?.winstonFlairs }
     
     if let data = (await RedditAPI.shared.getFlairs(data?.display_name ?? id)) {
-      await MainActor.run {
+      _ = await MainActor.run {
         withAnimation {
           self.data?.winstonFlairs = data
           return data

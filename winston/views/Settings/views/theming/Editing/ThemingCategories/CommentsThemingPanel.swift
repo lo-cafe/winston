@@ -68,9 +68,6 @@ struct CommentsGeneralSettings: View {
         Divider()
         LabeledSlider(label: "Inner vertical padding", value: $theme.comments.theme.loadMoreInnerPadding.vertical, range: 0...64)
           .resetter($theme.comments.theme.innerPadding.vertical, defaultTheme.comments.theme.loadMoreInnerPadding.vertical)
-        Divider()
-        LabeledSlider(label: "Outer top padding", value: $theme.comments.theme.loadMoreOuterTopPadding, range: 0...64)
-          .resetter($theme.comments.theme.outerHPadding, defaultTheme.comments.theme.loadMoreOuterTopPadding)
       }
       
       FakeSection("Load More text") {

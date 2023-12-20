@@ -11,7 +11,7 @@ import Defaults
 struct CommentLinkMore: View {
   var arrowKinds: [ArrowKind]
   var comment: Comment
-  var post: Post?
+  weak var post: Post?
   var postFullname: String?
   var parentElement: CommentParentElement?
   var indentLines: Int?
@@ -20,7 +20,8 @@ struct CommentLinkMore: View {
   @Environment(\.useTheme) private var selectedTheme
   
   var body: some View {
-    let curveColor = selectedTheme.comments.theme.indentColor()
+    let theme = selectedTheme.comments
+//    let curveColor = selectedTheme.comments.theme.indentColor()
     let horPad = selectedTheme.comments.theme.innerPadding.horizontal
     if let data = comment.data, let count = data.count, let parentElement = parentElement, count > 0 {
       HStack(spacing: 0) {
@@ -30,8 +31,7 @@ struct CommentLinkMore: View {
             ForEach(shapes, id: \.self) { i in
               if arrowKinds.indices.contains(i - 1) {
                 let actualArrowKind = arrowKinds[i - 1]
-                Arrows(kind: actualArrowKind, offset: selectedTheme.comments.theme.loadMoreOuterTopPadding)
-
+                Arrows(kind: actualArrowKind, offset: theme.theme.innerPadding.vertical + theme.theme.repliesSpacing)
               }
             }
           }
@@ -61,12 +61,11 @@ struct CommentLinkMore: View {
         .opacity(loadMoreLoading ? 0.5 : 1)
         .mask(Capsule(style: .continuous).fill(.black))
         .background(Capsule(style: .continuous).fill(selectedTheme.comments.theme.loadMoreBackground()))
-        .padding(.vertical, 4)
+        .padding(.top, data.depth == 0 ? 0 : theme.theme.repliesSpacing)
+        .padding(.vertical, max(0, theme.theme.innerPadding.vertical - (data.depth == 0 ? theme.theme.cornerRadius : 0)))
         .compositingGroup()
         .fontSize(selectedTheme.comments.theme.loadMoreText.size, selectedTheme.comments.theme.loadMoreText.weight.t)
         .foregroundColor(selectedTheme.comments.theme.loadMoreText.color())
-        .padding(.top, selectedTheme.comments.theme.loadMoreOuterTopPadding)
-        .padding(.bottom, 2)
       }
       .padding(.horizontal, horPad)
       .frame(maxWidth: .infinity, alignment: .leading)

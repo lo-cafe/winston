@@ -10,7 +10,7 @@ import UIKit
 import SwiftUI
 
 extension UIColor {
-  convenience init(hex: String) {
+  convenience init(hex: String, alpha: Double = 1) {
     let trimHex = hex.trimmingCharacters(in: .whitespacesAndNewlines)
     let dropHash = String(trimHex.dropFirst()).trimmingCharacters(in: .whitespacesAndNewlines)
     let hexString = trimHex.starts(with: "#") ? dropHash : trimHex
@@ -21,7 +21,7 @@ extension UIColor {
       R: CGFloat((value >> 16) & 0xff) / 255,
       G: CGFloat((value >> 08) & 0xff) / 255,
       B: CGFloat((value >> 00) & 0xff) / 255,
-      a: CGFloat(1)
+      a: CGFloat(alpha)
     )
     if String(hexString).count == 8 {
       // #RRGGBBAA

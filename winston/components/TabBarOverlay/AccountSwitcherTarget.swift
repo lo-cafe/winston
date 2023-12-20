@@ -151,7 +151,6 @@ struct AccountSwitcherTarget: View, Equatable {
     .blur(radius: appear ? 0 : 30)
     .brightness(!isSelected && hovered && !isAddBtn ? 0.5 : 0)
     .offset(attractionOffset + appearingOffset)
-//    .animation(hovered ? .spring(response: 0.4, dampingFraction: 0.5) : .spring, value: hovered)
     .animation(hovered ? .snappy(duration: 0.15, extraBounce: 0.35) : .spring, value: hovered)
     .animation(.bouncy, value: attraction)
     .opacity(appear ? 1 : 0)

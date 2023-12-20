@@ -21,10 +21,10 @@ struct ShortPostLink: View {
         Text((data.selftext).md()).lineLimit(2)
           .fontSize(15).opacity(0.75)
         HStack {
-          if let fullname = data.author_fullname {
+//          if let fullname = data.author_fullname {
             Badge(showVotes: true, post: post, theme: selectedTheme.postLinks.theme.badge)
 //              .equatable()
-          }
+//          }
           Spacer()
           Tag(text: "r/\(data.subreddit)", color: selectedTheme.postLinks.theme.badge.subColor())
             .highPriorityGesture(TapGesture().onEnded {

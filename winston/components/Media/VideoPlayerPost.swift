@@ -91,7 +91,7 @@ struct VideoPlayerPost: View, Equatable {
     let finalHeight = maxMediaHeightScreenPercentage != 110 ? Double(min(maxHeight, propHeight)) : Double(propHeight)
     
     if let sharedVideo = sharedVideo {
-			var hasAudio = sharedVideo.player.currentItem?.tracks.contains(where: {$0.assetTrack?.mediaType == AVMediaType.audio})
+			let hasAudio = sharedVideo.player.currentItem?.tracks.contains(where: {$0.assetTrack?.mediaType == AVMediaType.audio})
       if let controller = controller {
         AVPlayerRepresentable(fullscreen: $fullscreen, autoPlayVideos: autoPlayVideos, player: sharedVideo.player, aspect: .resizeAspectFill, controller: controller)
           .frame(width: compact ? scaledCompactModeThumbSize() : contentWidth, height: compact ? scaledCompactModeThumbSize() : CGFloat(finalHeight))
@@ -370,7 +370,7 @@ class NiceAVPlayer: AVPlayerViewController, AVPlayerViewControllerDelegate {
 
   required init?(coder aDecoder: NSCoder) {
     self.autoPlayVideos = false
-    self._fullscreen = Binding(get: { true }, set: { _, _ in false })
+    self._fullscreen = Binding(get: { true }, set: { _, _ in return })
     super.init(coder: aDecoder)
   }
 
@@ -381,7 +381,7 @@ class NiceAVPlayer: AVPlayerViewController, AVPlayerViewControllerDelegate {
         forName: .AVPlayerItemDidPlayToEndTime,
         object: player.currentItem,
         queue: nil) { [weak self] notif in
-          guard let self = self else { return }
+          guard let _ = self else { return }
           player.seek(to: .zero)
           player.play()
         }

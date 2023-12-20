@@ -13,10 +13,10 @@ import Shiny
 
 let alphabetLetters = Array("ABCDEFGHIJKLMNOPQRSTUVWXYZ").map { String($0) }
 
-struct Subreddits: View, Equatable {
-  static func == (lhs: Subreddits, rhs: Subreddits) -> Bool {
-    return lhs.loaded == rhs.loaded && lhs.selectedSub == rhs.selectedSub && lhs.currentCredentialID == rhs.currentCredentialID
-  }
+struct Subreddits: View {
+//  static func == (lhs: Subreddits, rhs: Subreddits) -> Bool {
+//    return lhs.loaded == rhs.loaded && lhs.selectedSub == rhs.selectedSub && lhs.currentCredentialID == rhs.currentCredentialID
+//  }
   @Binding var selectedSub: Router.NavDest?
   var loaded: Bool
   var currentCredentialID: UUID
@@ -30,6 +30,12 @@ struct Subreddits: View, Equatable {
   
   @FetchRequest private var subreddits: FetchedResults<CachedSub>
   @FetchRequest private var multis: FetchedResults<CachedMulti>
+  
+//  @FetchRequest(sortDescriptors: [NSSortDescriptor(key: "display_name", ascending: true)])
+//  private var subreddits: FetchedResults<CachedSub>
+  
+//  @FetchRequest(sortDescriptors: [NSSortDescriptor(key: "display_name", ascending: true)])
+//  private var multis: FetchedResults<CachedMulti>
   
   @State private var searchText: String = ""
   @State private var favoritesArr: [Subreddit] = []
@@ -75,19 +81,18 @@ struct Subreddits: View, Equatable {
           .listRowBackground(Color.clear)
           .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
           
-          Section{
-            UpsellCard(upsellName: "themesUpsell_01", {
-                Text("Tired of Winstons current look? Try the theme editor in settings now!")
-                .winstonShiny()
-              .fontWeight(.semibold)
-              .font(.system(size: 15))
-            })
-            .padding()
-
-          }
-          .listRowSeparator(.hidden)
-//            .listRowBackground(Color.clear)
-          .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
+//          Section{
+//            UpsellCard(upsellName: "themesUpsell_01", {
+//                Text("Tired of Winstons current look? Try the theme editor in settings now!")
+//                .winstonShiny()
+//              .fontWeight(.semibold)
+//              .font(.system(size: 15))
+//            })
+//            .padding()
+//          }
+//          .listRowSeparator(.hidden)
+////            .listRowBackground(Color.clear)
+//          .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
           
           PostsInBoxView(initialSelected: $selectedSub)
             .scrollIndicators(.hidden)
@@ -133,7 +138,6 @@ struct Subreddits: View, Equatable {
 //                    .equatable()
                     .id("\(cachedSub.uuid ?? "")-fav")
                     .onAppear{
-//                      print("Adding" + cachedSub.display_name)
                       UIApplication.shared.shortcutItems?.append(UIApplicationShortcutItem(type: "subFav", localizedTitle: cachedSub.display_name ?? "Test", localizedSubtitle: "", icon: UIApplicationShortcutIcon(type: .love), userInfo: ["name" : "sub" as NSSecureCoding]))
                     }
                 }
@@ -162,7 +166,6 @@ struct Subreddits: View, Equatable {
                     }).enumerated())
                     ForEach(subs, id: \.self.element.uuid) { i, cachedSub in
                       SubItem(selectedSub: $selectedSub, sub: Subreddit(data: SubredditData(entity: cachedSub)), cachedSub: cachedSub)
-//                        .equatable()
                     }
                     .onDelete(perform: { i in
                       deleteFromList(at: i, letter: letter)
@@ -170,7 +173,6 @@ struct Subreddits: View, Equatable {
                   }
                 }
               }
-              
             }
             
           }

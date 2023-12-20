@@ -23,7 +23,7 @@ extension WinstonAPI {
         return data
       case .failure(let error):
         print(error)
-        print(response.response)
+//        print(response.response)
         return nil
       }
   }

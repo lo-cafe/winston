@@ -44,14 +44,17 @@ func resetCoreData() {
   let container = PersistenceController.shared.container
   let entities = container.managedObjectModel.entities
   for entity in entities {
-    delete(entityName: entity.name!)
+        delete(entityName: entity.name!)
   }
   
   func delete(entityName: String) {
     let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: entityName)
     let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
     do {
-      _ = try container.viewContext.performAndWait { try container.viewContext.execute(deleteRequest) }
+      _ = try container.viewContext.performAndWait {
+        try container.viewContext.executeAndMergeChanges(deleteRequest)
+//        try container.viewContext.save()
+      }
     } catch let error as NSError {
       debugPrint(error)
     }

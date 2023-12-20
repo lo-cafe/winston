@@ -231,24 +231,24 @@ struct SubredditPosts: View, Equatable {
     .listRowSeparator(.hidden)
     .listSectionSeparator(.hidden)
     .environment(\.defaultMinListRowHeight, 1)
-    .overlay(
-      isFeedsAndSuch
-      ? nil
-      : Button {
-        newPost = true
-      } label: {
-        Image(systemName: "newspaper.fill")
-          .fontSize(22, .bold)
-          .frame(width: 64, height: 64)
-          .foregroundColor(Color.accentColor)
-          .floating()
-          .contentShape(Circle())
-      }
-        .buttonStyle(NoBtnStyle())
-        .shrinkOnTap()
-        .padding(.all, 12)
-      , alignment: .bottomTrailing
-    )
+//    .overlay(
+//      isFeedsAndSuch
+//      ? nil
+//      : Button {
+//        newPost = true
+//      } label: {
+//        Image(systemName: "newspaper.fill")
+//          .fontSize(22, .bold)
+//          .frame(width: 64, height: 64)
+//          .foregroundColor(Color.accentColor)
+//          .floating()
+//          .contentShape(Circle())
+//      }
+//        .buttonStyle(NoBtnStyle())
+//        .shrinkOnTap()
+//        .padding(.all, 12)
+//      , alignment: .bottomTrailing
+//    )
     //    .sheet(isPresented: $newPost, content: {
     //      NewPostModal(subreddit: subreddit)
     //    })

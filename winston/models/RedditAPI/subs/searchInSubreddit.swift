@@ -16,7 +16,7 @@ extension RedditAPI {
     switch await self.doRequest("\(RedditAPI.redditApiURLBase)/r/\(subreddit)/search", method: .get, params: params, paramsLocation: .queryString, decodable: Listing<UserData>.self)  {
     case .success(let data):
       return data.data?.children?.compactMap { $0.data }
-    case .failure(let error):
+    case .failure(_):
       return nil
     }
   }

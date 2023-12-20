@@ -70,6 +70,7 @@ struct SubredditPostsIPAD: View, Equatable {
         theme: selectedTheme.postLinks
       )
       .ignoresSafeArea()
+//      .floatingMenu()
       //      .introspect(.scrollView, on: .iOS(.v13, .v14, .v15, .v16, .v17)) { scrollView in
       //        scrollView.backgroundColor = UIColor.systemGroupedBackground
       //      }

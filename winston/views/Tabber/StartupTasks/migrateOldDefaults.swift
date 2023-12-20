@@ -10,7 +10,7 @@ import Defaults
 
 func migrateOldDefaults() {
   guard !Defaults[.wereOldDefaultsMigrated] else { return }
-  var newPostLinkDefSettings = PostLinkDefSettings(
+  let newPostLinkDefSettings = PostLinkDefSettings(
     compactMode: .init(
       enabled: Defaults[._compactMode],
       thumbnailSize: Defaults[._compThumbnailSize],
@@ -33,13 +33,13 @@ func migrateOldDefaults() {
     titlePosition: Defaults[._showTitleAtTop] ? .top : .bottom,
     hideOnRead: Defaults[._hideReadPosts]
   )
-  var newVideoDefSettings = VideoDefSettings(
+  let newVideoDefSettings = VideoDefSettings(
     autoPlay: Defaults[._autoPlayVideos],
     mute: Defaults[._muteVideos],
     pauseBGAudioOnFullscreen: Defaults[._pauseBackgroundAudioOnFullscreen],
     loop: Defaults[._loopVideos]
   )
-  var newAppearanceDefSettings = AppearanceDefSettings(
+  let newAppearanceDefSettings = AppearanceDefSettings(
     replyModalBlurBackground: Defaults[._replyModalBlurBackground],
     newPostModalBlurBackground: Defaults[._newPostModalBlurBackground],
     showUsernameInTabBar: Defaults[._showUsernameInTabBar],
@@ -47,7 +47,7 @@ func migrateOldDefaults() {
     themeStoreTint: Defaults[._themeStoreTint],
     shinyTextAndButtons: Defaults[._shinyTextAndButtons]
   )
-  var newBehaviorDefSettings = BehaviorDefSettings(
+  let newBehaviorDefSettings = BehaviorDefSettings(
     openYoutubeApp: Defaults[._openYoutubeApp],
     openLinksInSafari: Defaults[._openLinksInSafari],
     enableSwipeAnywhere: Defaults[._enableSwipeAnywhere],
@@ -55,14 +55,14 @@ func migrateOldDefaults() {
     doLiveText: Defaults[._doLiveText],
     iCloudSyncCredentials: Defaults[._syncKeyChainAndSettings]
   )
-  var newGeneralDefSettings = GeneralDefSettings(
+  let newGeneralDefSettings = GeneralDefSettings(
     redditCredentialSelectedID: Defaults[._redditCredentialSelectedID],
     redditAPIUserAgent: Defaults[._redditAPIUserAgent],
     lastSeenAnnouncementTimeStamp: Defaults[._lastSeenAnnouncementTimeStamp],
     useAuth: Defaults[._useAuth],
     showingUpsellDict: Defaults[._showingUpsellDict]
   )
-  var newSubredditFeedDefSettings = SubredditFeedDefSettings(
+  let newSubredditFeedDefSettings = SubredditFeedDefSettings(
     preferredSort: Defaults[._preferredSort],
     preferredSearchSort: Defaults[._preferredSearchSort],
     compactPerSubreddit: Defaults[._compactPerSubreddit],
@@ -70,29 +70,29 @@ func migrateOldDefaults() {
     perSubredditSort: Defaults[._perSubredditSort],
     subredditSorts: Defaults[._subredditSorts]
   )
-  var newCommentLinkDefSettings = CommentLinkDefSettings(
+  let newCommentLinkDefSettings = CommentLinkDefSettings(
     swipeActions: Defaults[._commentSwipeActions],
     coloredNames: Defaults[._coloredCommentNames]
   )
-  var newCommentsSectionDefSettings = CommentsSectionDefSettings(
+  let newCommentsSectionDefSettings = CommentsSectionDefSettings(
     collapseAutoModerator: Defaults[._collapseAutoModerator],
     preferredSort: Defaults[._preferredCommentSort]
   )
-  var newPostPageDefSettings = PostPageDefSettings(
+  let newPostPageDefSettings = PostPageDefSettings(
     blurNSFW: Defaults[._blurPostNSFW],
     preferredSearchSort: Defaults[._preferredSearchSort],
     perPostSort: Defaults[._perPostSort],
     postSorts: Defaults[._postSorts],
     showUpVoteRatio: Defaults[._showUpvoteRatio]
   )
-  var newThemesDefSettings = ThemesDefSettings(
+  let newThemesDefSettings = ThemesDefSettings(
     themesPresets: Defaults[._themesPresets],
     selectedThemeID: Defaults[._selectedThemeID]
   )
   
-  var newFilteredSubreddits = Defaults[.filteredSubreddits]
-  var newPostsInBox = Defaults[.postsInBox]
-  var newLikedButNotSubbed = Defaults[.likedButNotSubbed]
+  let newFilteredSubreddits = Defaults[.filteredSubreddits]
+  let newPostsInBox = Defaults[.postsInBox]
+  let newLikedButNotSubbed = Defaults[.likedButNotSubbed]
   
   resetPreferences()
   

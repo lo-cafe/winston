@@ -136,7 +136,7 @@ struct Search: View {
             case .post:
               if let dummyAllSub = dummyAllSub {
                 ForEach(resultPosts.data) { post in
-                  if let postData = post.data, let winstonData = post.winstonData {
+                  if let winstonData = post.winstonData {
                     //                      SwipeRevolution(size: winstonData.postDimensions.size, actionsSet: postSwipeActions, entity: post) { controller in
                     PostLink(id: post.id, theme: theme.postLinks, showSub: true, contentWidth: contentWidth, defSettings: postLinkDefSettings)
 //                    .swipyRev(size: winstonData.postDimensions.size, actionsSet: postSwipeActions, entity: post)

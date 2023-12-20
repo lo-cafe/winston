@@ -140,9 +140,7 @@ struct PostView: View, Equatable {
 //      }
       .onAppear {
         doThisAfter(0.5) {
-          print("maos", hideElements)
           hideElements = false
-          print("maoso", hideElements)
         }
         if post.data == nil {
           updatePost()

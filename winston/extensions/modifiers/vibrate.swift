@@ -21,7 +21,7 @@ struct VibrateModifier<T: Equatable>: ViewModifier {
     self.value = trigger
     self.disabled = disabled
   }
-
+  
   @StateObject private var hapticHolder = HapticHolder()
   @Environment(\.scenePhase) private var scenePhase
   func body(content: Content) -> some View {
@@ -95,14 +95,14 @@ struct VibrateModifier<T: Equatable>: ViewModifier {
       if continuousHapticTimer == nil {
         self.startPlayingContinuousHaptics()
       }
-
-        let intensityParameter = CHHapticDynamicParameter(parameterID: .hapticIntensityControl, value: intensity * initialIntensity, relativeTime: 0)
-        let sharpnessParameter = CHHapticDynamicParameter(parameterID: .hapticSharpnessControl, value: sharpness * initialSharpness, relativeTime: 0)
-        
-        do {
-          try continuousPlayer.sendParameters([intensityParameter, sharpnessParameter], atTime: 0)
-        } catch let error {
-          print("Dynamic Parameter Error: \(error)")
+      
+      let intensityParameter = CHHapticDynamicParameter(parameterID: .hapticIntensityControl, value: intensity * initialIntensity, relativeTime: 0)
+      let sharpnessParameter = CHHapticDynamicParameter(parameterID: .hapticSharpnessControl, value: sharpness * initialSharpness, relativeTime: 0)
+      
+      do {
+        try continuousPlayer.sendParameters([intensityParameter, sharpnessParameter], atTime: 0)
+      } catch let error {
+        print("Dynamic Parameter Error: \(error)")
       }
       
       setupTimer()
@@ -218,7 +218,7 @@ struct VibrateModifier<T: Equatable>: ViewModifier {
         print("Pattern Player Creation Error: \(error)")
       }
     }
-
+    
   }
 }
 

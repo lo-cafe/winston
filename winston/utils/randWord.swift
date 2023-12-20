@@ -64,7 +64,7 @@ func randomWord(wordLength: Int = 6) -> String {
     }
     
     // check if random sign fits in word length
-    var tempWord = "\(word)\(rnd)"
+    let tempWord = "\(word)\(rnd)"
     if( tempWord.count <= wordLength ) {
       word = "\(word)\(rnd)"
       // alternate sounds
