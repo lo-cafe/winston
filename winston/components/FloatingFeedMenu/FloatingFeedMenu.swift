@@ -19,6 +19,7 @@ struct FloatingFeedMenu: View, Equatable {
   var filterCallback: ((String) -> ())
   var searchText: String
   var searchCallback: ((String?) -> ())
+  var customFilterCallback: ((FilterData) -> ())
   
   @GestureState private var pressingDown = false
   @State private var toggleTimer: Timer? = nil
@@ -81,7 +82,7 @@ struct FloatingFeedMenu: View, Equatable {
       
       HStack(alignment: .bottom, spacing: -8) {
         if !menuOpen, !selected.isEmpty, let selectedFilter = filters.first(where: { $0.id == selected }) {
-          FilterButton(filter: selectedFilter, isSelected: true, filterCallback: filterCallback, searchText: searchText, searchCallback: searchCallback)
+          FilterButton(filter: selectedFilter, isSelected: true, filterCallback: filterCallback, searchText: searchText, searchCallback: searchCallback, customFilterCallback: customFilterCallback)
             .matchedGeometryEffect(id: "floating-\(selectedFilter.id)", in: ns, properties: .position)
             .padding(.trailing, 20)
             .frame(height: 64)
@@ -99,14 +100,14 @@ struct FloatingFeedMenu: View, Equatable {
               if showingFilters {
                 ForEach(Array(sortedFlairs.enumerated()), id: \.element) {
                   let isSelected = selected == $1.id
-                  FilterButton(filter: $1, isSelected: isSelected, filterCallback: filterCallback, searchText: searchText, searchCallback: searchCallback)
+                  FilterButton(filter: $1, isSelected: isSelected, filterCallback: filterCallback, searchText: searchText, searchCallback: searchCallback, customFilterCallback: customFilterCallback)
                     .matchedGeometryEffect(id: "floating-\($1.id)", in: ns, properties: .position)
                     .transition(isSelected ? .identity : .comeFrom(.trailing, index: !menuOpen ? 0 : customFilters.count + sortedFlairs.count - $0, total: customFilters.count + sortedFlairs.count, disableEndDelay: true))
                 }
                 
                 ForEach(Array(customFilters.enumerated()), id: \.element) {
                   let isSelected = selected == $1.id
-                  FilterButton(filter: $1, isSelected: isSelected, filterCallback: filterCallback, searchText: searchText, searchCallback: searchCallback)
+                  FilterButton(filter: $1, isSelected: isSelected, filterCallback: filterCallback, searchText: searchText, searchCallback: searchCallback, customFilterCallback: customFilterCallback)
                     .matchedGeometryEffect(id: "floating-\($1.id)", in: ns)
                     .transition(isSelected ? .identity : .comeFrom(.trailing, index: customFilters.count - $0, total: customFilters.count + sortedFlairs.count))
                 }
@@ -143,10 +144,20 @@ struct FloatingFeedMenu: View, Equatable {
                 .foregroundColor(Color.accentColor)
                 .floating()
                 .transition(.comeFrom(.bottom, index: 0, total: 2))
+              
+              Image(systemName: "plus")
+                .fontSize(22, .bold)
+                .frame(width: 48, height: 48)
+                .foregroundColor(Color.accentColor)
+                .floating()
+                .transition(.comeFrom(.bottom, index: 0, total: 2))
+                .onTapGesture {
+                  customFilterCallback(FilterData())
+                }
             }
           }
           
-          Image(systemName: toggled || menuOpen ? "xmark" : "newspaper.fill")
+          Image(systemName: toggled || menuOpen ? "xmark" : "slider.vertical.3")
             .ifIOS17({ v in
               if #available(iOS 17, *) { v.contentTransition(.symbolEffect) }
             })
@@ -232,9 +243,9 @@ struct FloatingFeedMenu: View, Equatable {
 
 
 extension View {
-  func floatingMenu(filters: [FilterData], selected: String, filterCallback: @escaping ((String) -> ()), searchText: String, searchCallback: @escaping ((String?) -> ())) -> some View {
+  func floatingMenu(filters: [FilterData], selected: String, filterCallback: @escaping ((String) -> ()), searchText: String, searchCallback: @escaping ((String?) -> ()), customFilterCallback: @escaping ((FilterData) -> ())) -> some View {
     self
-      .overlay(FloatingFeedMenu(filters: filters, selected: selected, filterCallback: filterCallback, searchText: searchText, searchCallback: searchCallback).equatable(), alignment: .bottomTrailing)
+      .overlay(FloatingFeedMenu(filters: filters, selected: selected, filterCallback: filterCallback, searchText: searchText, searchCallback: searchCallback, customFilterCallback: customFilterCallback).equatable(), alignment: .bottomTrailing)
   }
 }
 

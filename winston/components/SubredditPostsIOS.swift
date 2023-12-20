@@ -136,6 +136,6 @@ struct SubredditPostsIOS: View, Equatable {
     .listStyle(.plain)
     .listRowSeparator(.hidden)
     .listSectionSeparator(.hidden)
-    .floatingMenu(filters: filters, selected: filter, filterCallback: filterCallback, searchText: searchText, searchCallback: searchCallback)
+    .floatingMenu(filters: filters, selected: filter, filterCallback: filterCallback, searchText: searchText, searchCallback: searchCallback, customFilterCallback: editCustomFilter)
   }
 }

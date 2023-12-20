@@ -13,6 +13,7 @@ struct FilterButton: View {
   var filterCallback: ((String) -> ())
   var searchText: String
   var searchCallback: ((String?) -> ())
+  var customFilterCallback: ((FilterData) -> ())
   
   var body: some View {
     let isSelected = filter.type == "search" ? searchText.lowercased() == filter.text.lowercased() : isSelected
@@ -57,6 +58,13 @@ struct FilterButton: View {
         }
       } else {
         filterCallback(isSelected ? "flair:All" : filter.id)
+      }
+    }
+    .onLongPressGesture {
+      UIImpactFeedbackGenerator(style: .rigid).impactOccurred()
+      
+      if filter.type != "flair" {
+        customFilterCallback(filter)
       }
     }
   }
