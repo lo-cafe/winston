@@ -9,10 +9,10 @@ import SwiftUI
 import Defaults
 
 struct RefetchMeListenerModifier: ViewModifier {
-  @Default(.redditCredentialSelectedID) private var redditCredentialSelectedID
+  @Default(.GeneralDefSettings) private var generalDefSettings
   func body(content: Content) -> some View {
     content
-      .onChange(of: redditCredentialSelectedID) { newCredID in
+      .onChange(of: generalDefSettings.redditCredentialSelectedID) { newCredID in
         if let newCredID, let newCred = RedditCredentialsManager.getById(newCredID) {
           RedditCredentialsManager.shared.updateMe(altCred: newCred)
         }

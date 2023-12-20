@@ -10,7 +10,7 @@ import Defaults
 
 struct TipJar: View {
   @Environment(\.openURL) private var openURL
-  @Default(.showTipJarModal) private var showTipJarModal
+//  @Default(.showTipJarModal) private var showTipJarModal
   var body: some View {
     ScrollView {
       VStack(spacing: 24) {
@@ -44,7 +44,7 @@ struct TipJar: View {
     .multilineTextAlignment(.center)
     .closeSheetBtn {
       withAnimation(spring) {
-        showTipJarModal = false
+//        showTipJarModal = false
       }
     }
   }

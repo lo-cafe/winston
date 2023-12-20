@@ -24,17 +24,10 @@ struct ScrollWithPreview<Content: View, Preview: View>: View {
   
   @Environment(\.tabBarHeight) private var tabBarHeight
   @Environment(\.sheetHeight) private var sheetHeight
-  @Environment(\.colorScheme) private var cs
   @Environment(\.useTheme) private var currentTheme
   @ViewBuilder let content: () -> Content
   @ViewBuilder let preview: () -> Preview
     var body: some View {
-      let tabHeight = CGFloat(tabBarHeight ?? 0)
-      let sheetDifference = .screenH - containerSize.height
-//      let interpolation = [
-//        -((.screenH - tabHeight) - ((contentSize.height + getSafeArea().top + tabHeight) - (previewContentSize.height + 40 + 16))) + sheetDifference,
-//         (contentSize.height + getSafeArea().top + tabHeight) - (.screenH - (getSafeArea().top)) - 20
-//      ]
       let interpolation = [
         ((contentSize.height + (pro - (.screenH - containerSize.height))) - containerSize.height) + (safeArea.bottom * 2) + 16,
         ((contentSize.height + (pro - (.screenH - containerSize.height))) - containerSize.height) + (safeArea.bottom * 2) + previewContentSize.height + 16
@@ -45,9 +38,9 @@ struct ScrollWithPreview<Content: View, Preview: View>: View {
           .measure($contentSize)
           .padding(.bottom, previewContentSize.height + 16)
       }
-      .background(GeometryReader { geo in Color.clear.onChange(of: abs(geo.frame(in: .named("sheto")).minY)) { pro = $0 } })
+      .background(GeometryReader { geo in Color.clear.onChange(of: abs(geo.frame(in: .named("sheet")).minY)) { pro = $0 } })
       .measure($containerSize)
-      .previewSheet(handlerBGOnly: handlerBGOnly, scrollContentHeight: contentSize.height, sheetContentSize: $previewContentSize, forcedOffset: interpolate([0, previewContentSize.height], false), bg: defaultBG.cs(cs).color(), border: currentTheme.lists.bg == theme && previewBG == .theme) { handlerHeight in
+      .previewSheet(handlerBGOnly: handlerBGOnly, scrollContentHeight: contentSize.height, sheetContentSize: $previewContentSize, forcedOffset: interpolate([0, previewContentSize.height], false), bg: defaultBG(), border: currentTheme.lists.bg == theme && previewBG == .theme) { handlerHeight in
         VStack(spacing: 12) {
           let opts = [
             CarouselTagElement(label: "Blur", icon: { Image(systemName: "circle.dotted") }, value: PreviewBG.blur),
@@ -72,7 +65,7 @@ struct ScrollWithPreview<Content: View, Preview: View>: View {
         .background(
           previewBG != .opaque
           ? nil
-          : defaultBG.cs(cs).color().allowsHitTesting(false)
+          : defaultBG().allowsHitTesting(false)
         )
       }
     }

@@ -33,11 +33,10 @@ class Router: ObservableObject, Hashable, Equatable, Codable {
   init(id: String) {
     self.id = id
     $fullPath.map { $0.isEmpty }.assign(to: \.isAtRoot, on: self).store(in: &cancellables)
-    
   }
   
-  func goBack() { self.path.removeLast() }
-  func resetNavPath() { self.path.removeAll() }
+  func goBack() { self.fullPath.removeLast() }
+  func resetNavPath() { self.fullPath.removeAll() }
   func navigateTo(_ dest: NavDest, _ reset: Bool = false) {
     self.path = reset ? [dest] : self.path + [dest]
   }
@@ -74,7 +73,7 @@ class Router: ObservableObject, Hashable, Equatable, Codable {
     }
     enum Setting: String, Hashable, Codable, Identifiable {
       var id: String { self.rawValue }
-      case behavior, appearance, credentials, about, commentSwipe, postSwipe, accessibility, faq, general, postFontSettings, themes, filteredSubreddits, appIcon, themeStore
+      case behavior, appearance, credentials, about, commentSwipe, postSwipe, accessibility, faq, general, themes, filteredSubreddits, appIcon, themeStore
     }
   }
   

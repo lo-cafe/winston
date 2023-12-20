@@ -12,8 +12,7 @@ import NukeUI
 
 struct OnlyURL: View {
   static let height: Double = 22
-  @Default(.postLinkTitleSize) var postLinkTitleSize
-	@Default(.openLinksInSafari) private var openLinksInSafari
+  @Default(.BehaviorDefSettings) private var behaviorDefSettings
   var url: URL
   @Environment(\.openURL) private var openURL
   var body: some View {
@@ -30,7 +29,7 @@ struct OnlyURL: View {
     .foregroundColor(.white)
     .highPriorityGesture(TapGesture().onEnded {
       if let newURL = URL(string: url.absoluteString.replacingOccurrences(of: "https://reddit.com/", with: "winstonapp://")) {
-				if openLinksInSafari {
+        if behaviorDefSettings.openLinksInSafari {
 					openURL(newURL)
 				} else {
 					Nav.openURL(newURL)
@@ -58,6 +57,7 @@ struct MediaPresenter: View, Equatable {
   var over18 = false
   let compact: Bool
   let contentWidth: CGFloat
+  let maxMediaHeightScreenPercentage: CGFloat
   let resetVideo: ((SharedVideo) -> ())?
   
   var body: some View {
@@ -65,10 +65,10 @@ struct MediaPresenter: View, Equatable {
     case .imgs(let imgsExtracted):
       if !showURLInstead {
         if imgsExtracted.count > 0 && imgsExtracted[0].url.absoluteString.hasSuffix(".gif") {
-          ImageMediaPost(postDimensions: $postDimensions, controller: controller, postTitle: postTitle, badgeKit: badgeKit, avatarImageRequest: avatarImageRequest, markAsSeen: markAsSeen, cornerRadius: cornerRadius, compact: compact, images: imgsExtracted, contentWidth: contentWidth)
+          ImageMediaPost(postDimensions: $postDimensions, controller: controller, postTitle: postTitle, badgeKit: badgeKit, avatarImageRequest: avatarImageRequest, markAsSeen: markAsSeen, cornerRadius: cornerRadius, compact: compact, images: imgsExtracted, contentWidth: contentWidth, maxMediaHeightScreenPercentage: maxMediaHeightScreenPercentage)
             .nsfw(over18 && blurPostLinkNSFW, smallIcon: compact, size: postDimensions.mediaSize)
         } else {
-          ImageMediaPost(postDimensions: $postDimensions, controller: controller, postTitle: postTitle, badgeKit: badgeKit, avatarImageRequest: avatarImageRequest, markAsSeen: markAsSeen, cornerRadius: cornerRadius, compact: compact, images: imgsExtracted, contentWidth: contentWidth)
+          ImageMediaPost(postDimensions: $postDimensions, controller: controller, postTitle: postTitle, badgeKit: badgeKit, avatarImageRequest: avatarImageRequest, markAsSeen: markAsSeen, cornerRadius: cornerRadius, compact: compact, images: imgsExtracted, contentWidth: contentWidth, maxMediaHeightScreenPercentage: maxMediaHeightScreenPercentage)
             .drawingGroup()
             .nsfw(over18 && blurPostLinkNSFW, smallIcon: compact, size: postDimensions.mediaSize)
           
@@ -76,7 +76,7 @@ struct MediaPresenter: View, Equatable {
       }
     case .video(let sharedVideo):
       if !showURLInstead {
-        VideoPlayerPost(controller: controller, cachedVideo: sharedVideo, markAsSeen: markAsSeen, compact: compact, overrideWidth: contentWidth, url: sharedVideo.url, resetVideo: resetVideo)
+        VideoPlayerPost(controller: controller, cachedVideo: sharedVideo, markAsSeen: markAsSeen, compact: compact, contentWidth: contentWidth, url: sharedVideo.url, resetVideo: resetVideo, maxMediaHeightScreenPercentage: maxMediaHeightScreenPercentage)
           .nsfw(over18 && blurPostLinkNSFW, smallIcon: compact, size: postDimensions.mediaSize)
       }
       

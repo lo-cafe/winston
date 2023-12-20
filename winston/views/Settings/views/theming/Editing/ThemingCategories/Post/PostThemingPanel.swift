@@ -21,8 +21,6 @@ struct PostThemingPanel: View {
   @State private var selectedCategory = Category.page.rawValue
   @State private var previewBG: PreviewBG = .blur
   @StateObject private var previewPostSample = Post(data: selfPostSampleData)
-  @Default(.themesPresets) private var themesPresets
-  @Environment(\.colorScheme) private var cs  
   
   var body: some View {
     ScrollWithPreview(theme: theme.posts.bg) {

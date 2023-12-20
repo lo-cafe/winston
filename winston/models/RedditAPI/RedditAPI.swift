@@ -19,14 +19,13 @@ class RedditAPI: ObservableObject {
   static let redditWWWApiURLBase = "https://www.reddit.com"
   static let appRedirectURI: String = "https://app.winston.cafe/auth-success"
   
-  @Published var loggedUser: UserCredential = UserCredential()
   var lastAuthState: String?
   @Published var me: User?
   
   // This is a replacement for getRequestHeader. We need to replace every instance of the former by this one
   func fetchRequestHeaders(force: Bool = false, includeAuth: Bool = true, altCredential: RedditCredential? = nil, saveToken: Bool = true) async -> HTTPHeaders? {
     var headers: HTTPHeaders = [
-      "User-Agent": Defaults[.redditAPIUserAgent]
+      "User-Agent": Defaults[.GeneralDefSettings].redditAPIUserAgent
     ]
     if includeAuth {
       if let selectedCredential = altCredential ?? RedditCredentialsManager.shared.selectedCredential, let accessToken = await selectedCredential.getUpToDateToken(forceRenew: force, saveToken: saveToken) {
@@ -191,77 +190,6 @@ class RedditAPI: ObservableObject {
     let code: String
     let redirect_uri = RedditAPI.appRedirectURI
   }
-  
-  struct UserCredential: Hashable {
-    static func == (lhs: RedditAPI.UserCredential, rhs: RedditAPI.UserCredential) -> Bool {
-      lhs.hashValue == rhs.hashValue
-    }
-    
-    let credentialsKeychain = Keychain(service: "lo.cafe.winston.reddit-credentials").synchronizable(Defaults[.syncKeyChainAndSettings])
-    
-    func hash(into hasher: inout Hasher) {
-      hasher.combine(modhash)
-      hasher.combine(apiAppID)
-      hasher.combine(apiAppSecret)
-      hasher.combine(accessToken)
-      hasher.combine(refreshToken)
-      hasher.combine(expiration)
-      hasher.combine(lastRefresh)
-    }
-    
-    var modhash: String?
-    var apiAppID: String? {
-      didSet {
-        credentialsKeychain["apiAppID"] = apiAppID
-      }
-    }
-    var apiAppSecret: String? {
-      didSet {
-        credentialsKeychain["apiAppSecret"] = apiAppSecret
-      }
-    }
-    var accessToken: String? {
-      didSet {
-        credentialsKeychain["accessToken"] = accessToken
-      }
-    }
-    var refreshToken: String? {
-      didSet {
-        credentialsKeychain["refreshToken"] = refreshToken
-      }
-    }
-    var expiration: Int? {
-      get {
-        Defaults[.redditAPITokenExpiration]
-      }
-      set {
-        Defaults[.redditAPITokenExpiration] = newValue
-      }
-    }
-    var lastRefresh: Date? {
-      get {
-        Defaults[.redditAPILastTokenRefreshDate]
-      }
-      set {
-        Defaults[.redditAPILastTokenRefreshDate] = newValue
-      }
-    }
-    var isSet: Bool {
-      return accessToken != nil && refreshToken != nil && expiration != nil && lastRefresh != nil
-    }
-    
-    init(apiAppID: String? = nil, apiAppSecret: String? = nil, accessToken: String? = nil, refreshToken: String? = nil, expiration: Int? = nil) {
-      self.apiAppID = apiAppID ?? credentialsKeychain["apiAppID"]
-      self.apiAppSecret = apiAppSecret ?? credentialsKeychain["apiAppSecret"]
-      self.refreshToken = refreshToken ?? credentialsKeychain["refreshToken"]
-      self.accessToken = self.refreshToken == nil ? nil : (accessToken ?? credentialsKeychain["accessToken"])
-      if let expiration = expiration {
-        self.expiration = expiration
-      }
-      self.lastRefresh = self.refreshToken == nil ? nil : (Defaults[.redditAPILastTokenRefreshDate] ?? Date(seconds: Date().timeIntervalSince1970 - Double(self.expiration ?? 86400 * 10)))
-    }
-  }
-  
 }
 
 struct ListingChild<T: Codable & Hashable>: Codable, Defaults.Serializable, Hashable {

@@ -46,16 +46,17 @@ struct SubredditPosts: View, Equatable {
   @State private var unfilteredreachedEndOfFeed: Bool = false
   
   @Environment(\.useTheme) private var selectedTheme
-  @Environment(\.colorScheme) private var cs
+//  @Environment(\.colorScheme) private var cs
   @Environment(\.contentWidth) private var contentWidth
   
-  @Default(.compactPerSubreddit) var compactPerSubreddit
+  @Default(.SubredditFeedDefSettings) var subredditFeedDefSettings
   
   let context = PersistenceController.shared.container.newBackgroundContext()
   
   init(subreddit: Subreddit) {
     self.subreddit = subreddit
-    _sort = State(initialValue: Defaults[.perSubredditSort] ? (Defaults[.subredditSorts][subreddit.id] ?? Defaults[.preferredSort]) : Defaults[.preferredSort])
+    let defSettings = Defaults[.SubredditFeedDefSettings]
+    _sort = State(initialValue: defSettings.perSubredditSort ? (defSettings.subredditSorts[subreddit.id] ?? defSettings.preferredSort) : defSettings.preferredSort)
   }
   
   var isFeedsAndSuch: Bool { feedsAndSuch.contains(subreddit.id) }
@@ -108,35 +109,6 @@ struct SubredditPosts: View, Equatable {
       await subreddit.refreshSubreddit()
     }
     
-//    if (searchText == nil || searchText!.isEmpty) && !loadMore && !forceRefresh && !unfilteredPosts.data.isEmpty {
-//      posts.data = unfilteredPosts.data
-//      lastPostAfter = unfilteredLastPostAfter
-//      reachedEndOfFeed = unfilteredreachedEndOfFeed
-//      return
-//    }
-//    
-//    if posts.data.count > 0 && lastPostAfter == nil && !force {
-//      reachedEndOfFeed = true
-//      return
-//    }
-//        
-//    if !loadMore && !subreddit.id.starts(with: "t5") {
-//      // Remove filters from home/all/popular so it only shows filters for current posts
-//      let context = PersistenceController.shared.container.newBackgroundContext()
-//      let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "CachedFilter")
-//      fetchRequest.predicate = NSPredicate(format: "subreddit_id == %@ && type == 'flair'", subreddit.id)
-//      let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
-//      
-//      do {
-//        try context.performAndWait {
-//          try context.execute(deleteRequest)
-//          try context.save()
-//        }
-//      } catch {
-//        print("Error resetting filters for \(subreddit.id)")
-//      }
-//    }
-    
     withAnimation {
       loading = true
     }
@@ -145,12 +117,6 @@ struct SubredditPosts: View, Equatable {
       if let result = await subreddit.fetchPosts(sort: sort, after: loadMore ? lastPostAfter : nil, searchText: searchText, contentWidth: contentWidth), let newPosts = result.0 {
         Task(priority: .background) { await RedditAPI.shared.updatePostsWithAvatar(posts: newPosts, avatarSize: selectedTheme.postLinks.theme.badge.avatar.size) }
         withAnimation {
-          subreddit.loadFlairs() { loaded in
-            DispatchQueue.main.async {
-              filters = loaded
-            }
-          }
-          
           let newPostsFiltered = newPosts.filter { !loadedPosts.contains($0.id) && !filteredSubreddits.contains($0.data?.subreddit ?? "") }
           
           if loadMore {
@@ -170,6 +136,12 @@ struct SubredditPosts: View, Equatable {
             unfilteredPosts.data = posts.data
             unfilteredLastPostAfter = lastPostAfter
             unfilteredreachedEndOfFeed = reachedEndOfFeed
+          }
+          
+          subreddit.loadFlairs() { loaded in
+            DispatchQueue.main.async {
+              filters = loaded
+            }
           }
         }
       }
@@ -251,12 +223,6 @@ struct SubredditPosts: View, Equatable {
       }
     }
     .onAppear {
-      subreddit.loadFlairs() { loaded in
-        DispatchQueue.main.async {
-          filters = loaded
-        }
-      }
-      
       if !hasViewLoaded {
         isSavedSubreddit = subreddit.id == "saved" // detect unique saved subreddit (saved posts and comments require unique logic)
         hasViewLoaded = true
@@ -265,24 +231,24 @@ struct SubredditPosts: View, Equatable {
     .listRowSeparator(.hidden)
     .listSectionSeparator(.hidden)
     .environment(\.defaultMinListRowHeight, 1)
-    .overlay(
-      isFeedsAndSuch
-      ? nil
-      : Button {
-        newPost = true
-      } label: {
-        Image(systemName: "newspaper.fill")
-          .fontSize(22, .bold)
-          .frame(width: 64, height: 64)
-          .foregroundColor(Color.accentColor)
-          .floating()
-          .contentShape(Circle())
-      }
-        .buttonStyle(NoBtnStyle())
-        .shrinkOnTap()
-        .padding(.all, 12)
-      , alignment: .bottomTrailing
-    )
+//    .overlay(
+//      isFeedsAndSuch
+//      ? nil
+//      : Button {
+//        newPost = true
+//      } label: {
+//        Image(systemName: "newspaper.fill")
+//          .fontSize(22, .bold)
+//          .frame(width: 64, height: 64)
+//          .foregroundColor(Color.accentColor)
+//          .floating()
+//          .contentShape(Circle())
+//      }
+//        .buttonStyle(NoBtnStyle())
+//        .shrinkOnTap()
+//        .padding(.all, 12)
+//      , alignment: .bottomTrailing
+//    )
     //    .sheet(isPresented: $newPost, content: {
     //      NewPostModal(subreddit: subreddit)
     //    })
@@ -306,8 +272,8 @@ struct SubredditPosts: View, Equatable {
     .onChange(of: sort) { val in
       clearAndLoadData(forceRefresh: true)
     }
-    .onChange(of: cs) { _ in updatePostsCalcs(selectedTheme) }
-    .onChange(of: compactPerSubreddit) { _ in updatePostsCalcs(selectedTheme) }
+//    .onChange(of: cs) { _ in updatePostsCalcs(selectedTheme) }
+    .onChange(of: subredditFeedDefSettings.compactPerSubreddit) { _ in updatePostsCalcs(selectedTheme) }
     .onChange(of: selectedTheme, perform: updatePostsCalcs)
     .onChange(of: searchText) { val in if searchText.isEmpty { clearAndLoadData() } }
     .sheet(item: $customFilter, onDismiss: {
@@ -337,7 +303,8 @@ struct SubredditPostsNavBtns: View, Equatable {
               ForEach(SubListingSortOption.TopListingSortOption.allCases, id: \.self) { topOpt in
                 Button {
                   sort = .top(topOpt)
-                  Defaults[.subredditSorts][subreddit.id] = .top(topOpt)
+//                  Defaults[.subredditSorts][subreddit.id] = .top(topOpt)
+                  Defaults[.SubredditFeedDefSettings].subredditSorts[subreddit.id] = .top(topOpt)
                 } label: {
                   HStack {
                     Text(topOpt.rawValue.capitalized)
@@ -356,7 +323,7 @@ struct SubredditPostsNavBtns: View, Equatable {
           } else {
             Button {
               sort = opt
-              Defaults[.subredditSorts][subreddit.id] = opt
+              Defaults[.SubredditFeedDefSettings].subredditSorts[subreddit.id] = opt
             } label: {
               HStack {
                 Text(opt.rawVal.value.capitalized)

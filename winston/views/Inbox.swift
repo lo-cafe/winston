@@ -13,7 +13,7 @@ struct Inbox: View {
   
   @StateObject private var messages = ObservableArray<Message>()
   @State private var loading = false
-  @Default(.redditCredentialSelectedID) private var redditCredentialSelectedID
+  @Default(.GeneralDefSettings) private var generalDefSettings
   @Environment(\.useTheme) private var selectedTheme
   
   func fetch(_ loadMore: Bool = false, _ force: Bool = false) async {
@@ -57,7 +57,7 @@ struct Inbox: View {
       .refreshable {
         await fetch(false, true)
       }
-      .onChange(of: redditCredentialSelectedID) { _ in
+      .onChange(of: generalDefSettings.redditCredentialSelectedID) { _ in
         messages.data = []
         Task(priority: .background) { await fetch(false, true) }
       }

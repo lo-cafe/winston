@@ -17,22 +17,8 @@ struct PostLinkThemingPanel: View {
   @State private var selectedCategory = "card"
   @StateObject var previewPostSample: Post
   @StateObject private var previewPostSubSample = Subreddit(id: postSampleData.subreddit)
-  @Default(.themesPresets) private var themesPresets
-  @Environment(\.colorScheme) private var cs
   
-  @Default(.blurPostLinkNSFW) private var blurPostLinkNSFW
-  @Default(.postSwipeActions) private var postSwipeActions
-  @Default(.compactMode) private var compactMode
-  @Default(.showVotes) private var showVotes
-  @Default(.showSelfText) private var showSelfText
-  @Default(.thumbnailPositionRight) private var thumbnailPositionRight
-  @Default(.voteButtonPositionRight) private var voteButtonPositionRight
-  @Default(.readPostOnScroll) private var readPostOnScroll
-  @Default(.hideReadPosts) private var hideReadPosts
-  @Default(.showUpvoteRatio) private var showUpvoteRatio
-  @Default(.showSubsAtTop) private var showSubsAtTop
-  @Default(.showTitleAtTop) private var showTitleAtTop
-  @Default(.showSelfPostThumbnails) private var showSelfPostThumbnails
+  @Default(.PostLinkDefSettings) private var postLinkDefSettings
   
   @Environment(\.contentWidth) private var contentWidth
   
@@ -62,28 +48,7 @@ struct PostLinkThemingPanel: View {
       
       VStack {
         if let winstonData = previewPostSample.winstonData {
-          PostLink(
-            id: previewPostSample.id,
-            controller: nil,
-            theme: theme.postLinks,
-            showSub: true,
-            secondary: false,
-            contentWidth: contentWidth,
-            blurPostLinkNSFW: blurPostLinkNSFW,
-            postSwipeActions: postSwipeActions,
-            showVotes: showVotes,
-            showSelfText: showSelfText,
-            readPostOnScroll: readPostOnScroll,
-            hideReadPosts: hideReadPosts,
-            showUpvoteRatio: showUpvoteRatio,
-            showSubsAtTop: showSubsAtTop,
-            showTitleAtTop: showTitleAtTop,
-            compact: compactMode,
-            thumbnailPositionRight: nil,
-            voteButtonPositionRight: nil,
-            showSelfPostThumbnails: showSelfPostThumbnails,
-            cs: cs
-          )
+          PostLink(id: previewPostSample.id, theme: theme.postLinks, showSub: true, secondary: false, contentWidth: contentWidth, defSettings: postLinkDefSettings)
 //          .equatable()
           .environmentObject(previewPostSample)
           .environmentObject(previewPostSubSample)

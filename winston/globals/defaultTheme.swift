@@ -77,9 +77,9 @@ let defaultTheme = WinstonTheme(
   ),
   comments: .init(
     theme: .init(
-      innerPadding: .init(horizontal: 13, vertical: 6),
+      innerPadding: .init(horizontal: 13, vertical: 2),
       outerHPadding: 8,
-      repliesSpacing: 0,
+      repliesSpacing: 5,
       indentCurve: 12,
       indentColor: defaultThemeDividerColor,
       cornerRadius: 10,
@@ -89,7 +89,6 @@ let defaultTheme = WinstonTheme(
       linespacing: 0,
       bg: listSectionBGTheme,
       loadMoreInnerPadding: .init(horizontal: 10, vertical: 6),
-      loadMoreOuterTopPadding: 12,
       loadMoreText: .init(size: 15, color: .init(light: .init(hex: "0B84FE"), dark: .init(hex: "0B84FE")), weight: .semibold),
       loadMoreBackground: defaultThemeDividerColor,
       unseenDot : .init(light: .init(hex: "0B84FE"), dark: .init(hex: "0B84FE"))

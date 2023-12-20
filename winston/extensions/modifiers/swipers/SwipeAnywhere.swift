@@ -19,7 +19,7 @@ struct SwipeAnywhere: ViewModifier {
   @ObservedObject private var tabsManager = Nav.shared
   var forceEnable: Bool = false
   
-  @Default(.enableSwipeAnywhere) private var enableSwipeAnywhere
+  @Default(.BehaviorDefSettings) private var behaviorDefSettings
   @GestureState private var dragState = SwipeAywhereState()
   @State private var staticOffset: CGSize = .zero
   let activatedAmount: CGFloat = 75
@@ -27,6 +27,7 @@ struct SwipeAnywhere: ViewModifier {
   @State private var soft = UIImpactFeedbackGenerator(style: .soft)
   
   func body(content: Content) -> some View {
+    let enableSwipeAnywhere = behaviorDefSettings.enableSwipeAnywhere
     let isAtRoot = tabsManager.activeRouter.isAtRoot
     let enabled = !isAtRoot && (enableSwipeAnywhere || forceEnable)
     let finalOffset = dragState.offset + staticOffset

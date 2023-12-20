@@ -17,7 +17,7 @@ struct SwipeRevolution<T: GenericRedditEntityDataType, B: Hashable>: ViewModifie
   }
   
   //struct SwipeRevolution: ViewModifier {
-  @Default(.enableSwipeAnywhere) private var enableSwipeAnywhere
+  @Default(.BehaviorDefSettings) private var behaviorDefSettings
   //  @State private var pressing: Bool = false
   @State private var dragAmount: CGFloat = 0
   @State private var triggeredAction: TriggeredAction = .none
@@ -153,6 +153,7 @@ struct SwipeRevolution<T: GenericRedditEntityDataType, B: Hashable>: ViewModifie
   }
   
   func body(content: Content) -> some View {
+    let enableSwipeAnywhere = behaviorDefSettings.enableSwipeAnywhere
     if let entity = entity {
       let actualOffsetX = controlledDragAmount?.wrappedValue ?? dragAmount
       let offsetXInterpolate = interpolatorBuilder([0, firstActionThreshold], value: actualOffsetX)

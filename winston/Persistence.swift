@@ -28,14 +28,19 @@ struct PersistenceController {
   ////        return result
   //    }()
   
+//  let container: NSPersistentContainer
   let container: NSPersistentCloudKitContainer
   let primaryBGContext: NSManagedObjectContext
   
   init(inMemory: Bool = false) {
+//    container = NSPersistentContainer(name: "winston")
     container = NSPersistentCloudKitContainer(name: "winston")
+        
     if inMemory {
       container.persistentStoreDescriptions.first!.url = URL(fileURLWithPath: "/dev/null")
     }
+    
+    
     container.loadPersistentStores(completionHandler: { (storeDescription, error) in
       if let error = error as NSError? {
         // Replace this implementation with code to handle the error appropriately.
@@ -59,4 +64,18 @@ struct PersistenceController {
     container.viewContext.mergePolicy = NSMergePolicy.mergeByPropertyObjectTrump
     container.viewContext.automaticallyMergesChangesFromParent = true
   }
+}
+
+extension NSManagedObjectContext {
+    
+    /// Executes the given `NSBatchDeleteRequest` and directly merges the changes to bring the given managed object context up to date.
+    ///
+    /// - Parameter batchDeleteRequest: The `NSBatchDeleteRequest` to execute.
+    /// - Throws: An error if anything went wrong executing the batch deletion.
+    public func executeAndMergeChanges(_ batchDeleteRequest: NSBatchDeleteRequest) throws {
+        batchDeleteRequest.resultType = .resultTypeObjectIDs
+        let result = try execute(batchDeleteRequest) as? NSBatchDeleteResult
+        let changes: [AnyHashable: Any] = [NSDeletedObjectsKey: result?.result as? [NSManagedObjectID] ?? []]
+        NSManagedObjectContext.mergeChanges(fromRemoteContextSave: changes, into: [self])
+    }
 }

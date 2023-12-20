@@ -26,7 +26,6 @@ struct ListBigBtn: View {
   
   @State private var pressed = false
   @Environment(\.useTheme) private var theme
-  @Environment(\.colorScheme) private var cs
   
   /// Initializes a `ListBigBtn`.
   ///

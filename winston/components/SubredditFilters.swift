@@ -13,8 +13,8 @@ struct SubredditFilters: View, Equatable {
     lhs.subId == rhs.subId && lhs.theme == rhs.theme && lhs.selected == rhs.selected && lhs.searchText == rhs.searchText && lhs.filters == rhs.filters
   }
     
-  @Default(.compactPerSubreddit) var compactPerSubreddit
-  @Default(.compactMode) var compactMode
+  @Default(.SubredditFeedDefSettings) var subredditFeedDefSettings
+  @Default(.PostLinkDefSettings) var postLinkDefSettings
   
   var subId: String
   var filters: [FilterData]
@@ -28,7 +28,6 @@ struct SubredditFilters: View, Equatable {
   
   var theme: WinstonTheme
 
-  @Environment(\.colorScheme) private var cs
   
   init(subId: String, filters: [FilterData], selected: String, filterCallback: @escaping ((String) -> ()), searchText: String, searchCallback: @escaping ((String?) -> ()), editCustomFilter: @escaping ((FilterData) -> ()), theme: WinstonTheme) {
     self.subId = subId
@@ -40,17 +39,17 @@ struct SubredditFilters: View, Equatable {
     self.editCustomFilter = editCustomFilter
     self.theme = theme
     
-    _compactOn = State(initialValue: (compactPerSubreddit[subId] ?? compactMode) ? "Compact": "Normal")
+    _compactOn = State(initialValue: (subredditFeedDefSettings.compactPerSubreddit[subId] ?? postLinkDefSettings.compactMode.enabled) ? "Compact": "Normal")
   }
   
   func toggleCompactMode(compact: Bool) {
-    compactPerSubreddit[self.subId] = compact
+    subredditFeedDefSettings.compactPerSubreddit[self.subId] = compact
   }
   
   func getBackgroundColor() -> Color {
     switch theme.postLinks.bg {
     case .color(let colorSchemes):
-      return colorSchemes.cs(cs).color()
+      return colorSchemes()
     case .img(_):
       return .black
     }
@@ -79,7 +78,7 @@ struct SubredditFilters: View, Equatable {
           } label: {
             Image(systemName: "slider.horizontal.3")
               .resizable()
-              .foregroundColor(ColorSchemes(light: ThemeColor(hex: "000000"), dark: ThemeColor(hex: "FFFFFF")).cs(cs).color())
+              .foregroundColor(ColorSchemes(light: ThemeColor(hex: "000000"), dark: ThemeColor(hex: "FFFFFF"))())
               .frame(width: theme.postLinks.filterText.size - 2, height: theme.postLinks.filterText.size - 2)
               .opacity(0.8)
           }

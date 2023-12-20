@@ -12,12 +12,11 @@ struct ThemedListRowModifier: ViewModifier {
   var isButton = false
   @State private var pressed = false
   @Environment(\.useTheme) private var theme
-  @Environment(\.colorScheme) private var cs
   
   func body(content: Content) -> some View {
     content
       .buttonStyle(ButtonPressingProviderStyle(pressed: $pressed, isButton: isButton))
-      .listRowBackground(ListRowBackground(theme: theme, active: active, pressed: pressed).equatable())
+      .listRowBackground(ThemedForegroundBG(theme: theme.lists.foreground, active: active, pressed: pressed).equatable())
   }
 }
 

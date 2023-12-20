@@ -73,7 +73,7 @@ struct AccountSwitcherProvider<Content: View>: View {
         transmitter.selectedCred = nil
         if #available(iOS 17.0, *) {
           withAnimation(.snappy(extraBounce: 0.1)) { accTransKit.focusCloser = true } completion: {
-            withAnimation(.linear(duration: 0.001)) { accTransKit.blurMain = true; Defaults[.redditCredentialSelectedID] = cred.id } completion: {
+            withAnimation(.linear(duration: 0.001)) { accTransKit.blurMain = true; Defaults[.GeneralDefSettings].redditCredentialSelectedID = cred.id } completion: {
               withAnimation(.spring) { accTransKit.passLens = true } completion: {
                 withAnimation(.spring) { transmitter.positionInfo = nil; accTransKit.blurMain = false; transmitter.screenshot = nil; accTransKit.focusCloser = false;  } completion: {
                   accTransKit.passLens = false

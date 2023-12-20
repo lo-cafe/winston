@@ -15,12 +15,12 @@ struct PrependTag: Hashable, Equatable {
   let textColor: UIColor
 }
 
-func createTitleTagsAttrString(titleTheme: ThemeText, postData: PostData, textColor: Color) -> NSAttributedString {
+func createTitleTagsAttrString(titleTheme: ThemeText, postData: PostData, textColor: UIColor) -> NSAttributedString {
   let tagFont = UIFont.systemFont(ofSize: Double(((titleTheme.size - 2) * 100) / 120), weight: .semibold)
   let titleFont = UIFont.systemFont(ofSize: titleTheme.size, weight: titleTheme.weight.ut)
   let titleTagsImages = getTagsFromTitle(postData).compactMap { createTagImage(withTitle: $0.label, textColor: $0.textColor, backgroundColor: $0.bgColor, font: tagFont) }
   
-  let attrTitle = NSMutableAttributedString(string: postData.title.escape, attributes: [.font: titleFont, .foregroundColor: UIColor(textColor)])
+  let attrTitle = NSMutableAttributedString(string: postData.title.escape, attributes: [.font: titleFont, .foregroundColor: textColor])
   
   titleTagsImages.forEach { img in
     let attach = NSTextAttachment(image: img)
@@ -71,7 +71,7 @@ func createTitleTagsAttrString(titleTheme: ThemeText, postData: PostData, textCo
   }
 }
 
-func buildTitleWithTags(attrString: NSAttributedString, title: String, tags: [PrependTag], fontSize: Double, fontWeight: UIFont.Weight, color: Color, size: CGSize) -> UILabel {
+func buildTitleWithTags(attrString: NSAttributedString, title: String, tags: [PrependTag], fontSize: Double, fontWeight: UIFont.Weight, color: UIColor, size: CGSize) -> UILabel {
   
 //  let text = UITextView(usingTextLayoutManager: false)
   let text = UILabel()
@@ -79,7 +79,7 @@ func buildTitleWithTags(attrString: NSAttributedString, title: String, tags: [Pr
 
 //  text.layer.shouldRasterize = true
 //  text.layer.rasterizationScale = UIScreen.main.scale
-  text.textColor = UIColor(color)
+  text.textColor = color
   text.backgroundColor = .clear
   text.numberOfLines = 0
   text.lineBreakMode = .byWordWrapping
@@ -100,7 +100,7 @@ struct Prepend: UIViewRepresentable, Equatable {
   var title: String
   var fontSize: CGFloat
   var fontWeight: UIFont.Weight
-  var color: Color
+  var color: UIColor
   var tags: [PrependTag]
   var size: CGSize
   

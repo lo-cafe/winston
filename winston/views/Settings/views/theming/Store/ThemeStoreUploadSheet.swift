@@ -9,11 +9,11 @@ import SwiftUI
 import Defaults
 
 struct ThemeStoreUploadSheet: View {
-  @Default(.themesPresets) private var themesPresets
+  @Default(.ThemesDefSettings) private var themesDefSettings
   @Environment(\.presentationMode) var presentationMode
   var body: some View {
     NavigationView {
-      if themesPresets.isEmpty {
+      if themesDefSettings.themesPresets.isEmpty {
         VStack {
           HStack {
             Text("You don't have any local themes")
@@ -21,7 +21,7 @@ struct ThemeStoreUploadSheet: View {
         }
       } else {
         List {
-          ForEach(themesPresets, id: \.self) { theme in
+          ForEach(themesDefSettings.themesPresets, id: \.self) { theme in
             LocalUploadThemeItem(theme: theme)
           }
         }

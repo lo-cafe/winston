@@ -20,7 +20,7 @@ struct MultiPostsView: View {
   @StateObject private var posts = NonObservableArray<Post>()
   @State private var lastPostAfter: String?
   @State private var searchText: String = ""
-  @State private var sort: SubListingSortOption = Defaults[.preferredSort]
+  @State private var sort: SubListingSortOption = Defaults[.SubredditFeedDefSettings].preferredSort
   @State private var newPost = false
   @State private var filter: String = "flair:All"
   @State private var customFilter: FilterData?
@@ -28,8 +28,8 @@ struct MultiPostsView: View {
   
   @Environment(\.useTheme) private var selectedTheme
   @Environment(\.contentWidth) private var contentWidth
-  @Environment(\.colorScheme) private var cs
-  @Default(.compactPerSubreddit) var compactPerSubreddit
+//  @Environment(\.colorScheme) private var cs
+  @Default(.SubredditFeedDefSettings) var subredditFeedDefSettings
   
   func searchCallback(str: String?) {
     searchText = str ?? ""
@@ -144,13 +144,10 @@ struct MultiPostsView: View {
         }
       }
     }
-    .onChange(of: sort) { val in
-      clearAndReloadData()
-      Defaults[.preferredSort] = sort
-    }
+    .onChange(of: sort) { _ in clearAndReloadData() }
 //    .searchable(text: $searchText, prompt: "Search r/\(subreddit.data?.display_name ?? subreddit.id)")
-    .onChange(of: cs) { _ in updatePostsCalcs(selectedTheme) }
-    .onChange(of: compactPerSubreddit) { _ in updatePostsCalcs(selectedTheme) }
+//    .onChange(of: cs) { _ in updatePostsCalcs(selectedTheme) }
+    .onChange(of: subredditFeedDefSettings.compactPerSubreddit) { _ in updatePostsCalcs(selectedTheme) }
     .onChange(of: selectedTheme, perform: updatePostsCalcs)
     .refreshable { await asyncFetch(force: true) }
     .navigationTitle(multi.data?.name ?? "MultiZ")

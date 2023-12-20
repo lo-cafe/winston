@@ -23,8 +23,8 @@ struct WinstonTheme: Codable, Identifiable, Hashable, Equatable, Defaults.Serial
   var general: GeneralTheme
   
   func save() {
-    guard let index = Defaults[.themesPresets].firstIndex(where: { $0.id == self.id }) else { return }
-    Defaults[.themesPresets][index] = self
+    guard let index = Defaults[.ThemesDefSettings].themesPresets.firstIndex(where: { $0.id == self.id }) else { return }
+    Defaults[.ThemesDefSettings].themesPresets[index] = self
   }
   
   func duplicate() -> WinstonTheme {

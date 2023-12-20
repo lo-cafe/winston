@@ -12,7 +12,6 @@ struct ShortPostLink: View {
   var noHPad = false
   var post: Post
   @Environment(\.useTheme) private var selectedTheme
-  @Environment(\.colorScheme) private var cs: ColorScheme
 
   var body: some View {
     if let data = post.data {
@@ -22,12 +21,12 @@ struct ShortPostLink: View {
         Text((data.selftext).md()).lineLimit(2)
           .fontSize(15).opacity(0.75)
         HStack {
-          if let fullname = data.author_fullname {
-            Badge(cs: cs, showVotes: true, post: post, theme: selectedTheme.postLinks.theme.badge)
+//          if let fullname = data.author_fullname {
+            Badge(showVotes: true, post: post, theme: selectedTheme.postLinks.theme.badge)
 //              .equatable()
-          }
+//          }
           Spacer()
-          Tag(text: "r/\(data.subreddit)", color: selectedTheme.postLinks.theme.badge.subColor.cs(cs).color())
+          Tag(text: "r/\(data.subreddit)", color: selectedTheme.postLinks.theme.badge.subColor())
             .highPriorityGesture(TapGesture().onEnded {
               Nav.to(.reddit(.subFeed(Subreddit(id: data.subreddit))))
             })

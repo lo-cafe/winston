@@ -17,7 +17,6 @@ struct PostReplies: View {
   var sort: CommentSortOption
   var proxy: ScrollViewProxy
   @Environment(\.useTheme) private var selectedTheme
-  @Environment(\.colorScheme) private var cs
   
   @StateObject private var comments = ObservableArray<Comment>()
   @State private var loading = true
@@ -70,7 +69,7 @@ struct PostReplies: View {
             
             Spacer()
               .frame(maxWidth: .infinity, minHeight: theme.theme.cornerRadius * 2, maxHeight: theme.theme.cornerRadius * 2, alignment: .top)
-              .background(CommentBG(cornerRadius: theme.theme.cornerRadius, pos: .top).fill(theme.theme.bg.cs(cs).color()))
+              .background(CommentBG(cornerRadius: theme.theme.cornerRadius, pos: .top).fill(theme.theme.bg()))
               .frame(maxWidth: .infinity, minHeight: theme.theme.cornerRadius, maxHeight: theme.theme.cornerRadius, alignment: .top)
               .clipped()
               .id("\(comment.id)-top-decoration")
@@ -82,7 +81,7 @@ struct PostReplies: View {
             
             Spacer()
               .frame(maxWidth: .infinity, minHeight: theme.theme.cornerRadius * 2, maxHeight: theme.theme.cornerRadius * 2, alignment: .top)
-              .background(CommentBG(cornerRadius: theme.theme.cornerRadius, pos: .bottom).fill(theme.theme.bg.cs(cs).color()))
+              .background(CommentBG(cornerRadius: theme.theme.cornerRadius, pos: .bottom).fill(theme.theme.bg()))
               .frame(maxWidth: .infinity, minHeight: theme.theme.cornerRadius, maxHeight: theme.theme.cornerRadius, alignment: .bottom)
               .clipped()
               .id("\(comment.id)-bot-decoration")

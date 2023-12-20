@@ -11,9 +11,7 @@ struct ShortCommentPostLink: View {
   var comment: Comment
   @State var openedPost = false
   @State var openedSub = false
-  @Default(.coloredCommentNames) var coloredCommentNames
   @Environment(\.useTheme) private var selectedTheme
-  @Environment(\.colorScheme) private var cs
   var body: some View {
     if let data = comment.data, let _ = data.link_id, let _ = data.subreddit {
       //      Button {
@@ -30,7 +28,7 @@ struct ShortCommentPostLink: View {
         
         VStack(alignment: .leading, spacing: 2) {
           if let author = data.author {
-            (Text(author).font(.system(size: selectedTheme.postLinks.theme.badge.authorText.size, weight: selectedTheme.postLinks.theme.badge.authorText.weight.t)).foregroundColor(author == "[deleted]" ? .red: selectedTheme.postLinks.theme.badge.authorText.color.cs(cs).color()))
+            (Text(author).font(.system(size: selectedTheme.postLinks.theme.badge.authorText.size, weight: selectedTheme.postLinks.theme.badge.authorText.weight.t)).foregroundColor(author == "[deleted]" ? .red: selectedTheme.postLinks.theme.badge.authorText.color()))
               .onTapGesture { Nav.to(.reddit(.user(User(id: data.author!)))) }
           }
           
@@ -54,7 +52,9 @@ struct ShortCommentPostLink: View {
       .contentShape(Rectangle())
       .highPriorityGesture (
         TapGesture().onEnded {
-          Nav.to(.reddit(.post(Post(id: data.link_id!, sub: Subreddit(id: data.subreddit!)))))
+          if let link_id = data.link_id, let subID = data.subreddit {
+            Nav.to(.reddit(.post(Post(id: link_id, subID: subID))))
+          }
         }
       )
       .foregroundColor(.primary)

@@ -8,7 +8,7 @@
 import SwiftUI
 import Defaults
 struct AccessibilityPanel: View {
-  @Default(.forceFeedbackModifiers) var forceFeedbackModifiers
+//  @Default(.forceFeedbackModifiers) var forceFeedbackModifiers
 //  @Default(.hapticFeedbackOnLPM) var hapticFeedbackOnLPM
     var body: some View {
       List {
@@ -35,26 +35,26 @@ struct AccessibilityPanel: View {
 }
 
 /// Enum of force feedback modifiers for accessibility
-enum ForceFeedbackModifiers:  Codable, CaseIterable, Identifiable, Defaults.Serializable{
-  var id: Float {
-    self.rawVal
-  }
-  
-  case none
-  case light
-  case medium
-  case strong
-  
-  var rawVal: Float {
-    switch self{
-    case .none:
-      return 0.0
-    case .light:
-      return 0.5
-    case .medium:
-      return 1.0
-    case .strong:
-      return 2.0
-    }
-  }
-}
+//enum ForceFeedbackModifiers:  Codable, CaseIterable, Identifiable, Defaults.Serializable{
+//  var id: Float {
+//    self.rawVal
+//  }
+//  
+//  case none
+//  case light
+//  case medium
+//  case strong
+//  
+//  var rawVal: Float {
+//    switch self{
+//    case .none:
+//      return 0.0
+//    case .light:
+//      return 0.5
+//    case .medium:
+//      return 1.0
+//    case .strong:
+//      return 2.0
+//    }
+//  }
+//}

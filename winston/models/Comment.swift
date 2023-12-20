@@ -33,15 +33,7 @@ extension Comment {
     }
     self.setupWinstonData()
     self.kind = kind
-//    if let body = self.data?.body {
-//      let theme = Defaults[.themesPresets].first(where: { $0.id == Defaults[.selectedThemeID] }) ?? defaultTheme
-//      let newWinstonBodyAttr = stringToAttr(body, fontSize: theme.comments.theme.bodyText.size)
-//      let encoder = JSONEncoder()
-//      if let jsonData = try? encoder.encode(newWinstonBodyAttr) {
-//        let json = String(decoding: jsonData, as: UTF8.self)
-//        self.data?.winstonBodyAttrEncoded = json
-//      }
-//    }
+
     if let replies = self.data?.replies {
       switch replies {
       case .first(_):
@@ -84,7 +76,6 @@ extension Comment {
   }
   
   convenience init(message: Message) throws {
-    let rawMessage = message
     if let message = message.data {
       var commentData = CommentData(id: message.id)
       commentData.subreddit_id = nil
@@ -186,7 +177,7 @@ extension Comment {
   
   func loadChildren(parent: CommentParentElement, postFullname: String, avatarSize: Double, post: Post?) async {
     if let kind = kind, kind == "more", let data = data, let count = data.count, let parent_id = data.parent_id, let childrenIDS = data.children {
-      var actualID = id
+      let actualID = id
       //      if actualID.hasSuffix("-more") {
       //        actualID.removeLast(5)
       //      }

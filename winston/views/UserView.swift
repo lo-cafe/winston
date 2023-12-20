@@ -28,7 +28,6 @@ struct UserView: View {
   @State private var loadNextData: Bool = false
   
   @ObservedObject var avatarCache = Caches.avatars
-  @Environment(\.colorScheme) private var cs
   //  @Environment(\.contentWidth) private var contentWidth
   
   func refresh() async {

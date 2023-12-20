@@ -13,22 +13,9 @@ struct FeedThemingPanel: View {
   @StateObject private var previewPostSample = Post(data: postSampleData)
   @StateObject private var previewPostSubSample = Subreddit(id: postSampleData.subreddit)
   
-  @Default(.blurPostLinkNSFW) private var blurPostLinkNSFW
-  @Default(.postSwipeActions) private var postSwipeActions
-  @Default(.compactMode) private var compactMode
-  @Default(.showVotes) private var showVotes
-  @Default(.showSelfText) private var showSelfText
-  @Default(.thumbnailPositionRight) private var thumbnailPositionRight
-  @Default(.voteButtonPositionRight) private var voteButtonPositionRight
-  @Default(.readPostOnScroll) private var readPostOnScroll
-  @Default(.hideReadPosts) private var hideReadPosts
-  @Default(.showUpvoteRatio) private var showUpvoteRatio
-  @Default(.showSubsAtTop) private var showSubsAtTop
-  @Default(.showTitleAtTop) private var showTitleAtTop
-  @Default(.showSelfPostThumbnails) private var showSelfPostThumbnails
+  @Default(.PostLinkDefSettings) private var postLinkDefSettings
   
   @Environment(\.contentWidth) private var contentWidth
-  @Environment(\.colorScheme) private var cs
   
   
   var body: some View {
@@ -66,56 +53,14 @@ struct FeedThemingPanel: View {
       ScrollView(showsIndicators: false) {
         if let winstonData = previewPostSample.winstonData {
           VStack(spacing: theme.postLinks.spacing) {
-            PostLink(
-              id: previewPostSample.id,
-              controller: nil,
-              theme: theme.postLinks,
-              showSub: true,
-              secondary: true,
-              contentWidth: contentWidth,
-              blurPostLinkNSFW: blurPostLinkNSFW,
-              postSwipeActions: postSwipeActions,
-              showVotes: showVotes,
-              showSelfText: showSelfText,
-              readPostOnScroll: readPostOnScroll,
-              hideReadPosts: hideReadPosts,
-              showUpvoteRatio: showUpvoteRatio,
-              showSubsAtTop: showSubsAtTop,
-              showTitleAtTop: showTitleAtTop,
-              compact: compactMode,
-              thumbnailPositionRight: nil,
-              voteButtonPositionRight: nil,
-              showSelfPostThumbnails: showSelfPostThumbnails,
-              cs: cs
-            )
+            PostLink(id: previewPostSample.id, theme: theme.postLinks, showSub: true, secondary: true, contentWidth: contentWidth, defSettings: postLinkDefSettings)
             .equatable()
             .environment(\.useTheme, theme)
             //            .allowsHitTesting(false)
             
             NiceDivider(divider: theme.postLinks.divider)
             
-            PostLink(
-              id: previewPostSample.id,
-              controller: nil,
-              theme: theme.postLinks,
-              showSub: true,
-              secondary: true,
-              contentWidth: contentWidth,
-              blurPostLinkNSFW: blurPostLinkNSFW,
-              postSwipeActions: postSwipeActions,
-              showVotes: showVotes,
-              showSelfText: showSelfText,
-              readPostOnScroll: readPostOnScroll,
-              hideReadPosts: hideReadPosts,
-              showUpvoteRatio: showUpvoteRatio,
-              showSubsAtTop: showSubsAtTop,
-              showTitleAtTop: showTitleAtTop,
-              compact: compactMode,
-              thumbnailPositionRight: nil,
-              voteButtonPositionRight: nil,
-              showSelfPostThumbnails: showSelfPostThumbnails,
-              cs: cs
-            )
+            PostLink(id: previewPostSample.id, theme: theme.postLinks, showSub: true, secondary: true, contentWidth: contentWidth, defSettings: postLinkDefSettings)
             .equatable()
             .environment(\.useTheme, theme)
           }

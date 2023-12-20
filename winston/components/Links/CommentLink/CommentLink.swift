@@ -79,8 +79,8 @@ struct CommentLink: View, Equatable {
   var postFullname: String?
   var showReplies = true
   var seenComments: String?
-  
   var parentElement: CommentParentElement? = nil
+  
   @ObservedObject var comment: Comment
   @ObservedObject var commentWinstonData: CommentWinstonData
   @ObservedObject var children: ObservableArray<Comment>

@@ -25,7 +25,7 @@ struct ThemeEditPanel: View {
   @Environment(\.dismiss) private var dismiss
   
   var anyChanges: Bool { theme != draftTheme }
-
+  
   var body: some View {
     NavigationStack(path: $navPath) {
       List {
@@ -65,21 +65,21 @@ struct ThemeEditPanel: View {
             }
             
             ThemeColorPicker("Icon background color", $draftTheme.metadata.color)
-              LabeledTextField("Name", $draftTheme.metadata.name)
-              LabeledTextField("Author", $draftTheme.metadata.author)
-              
-              VStack(alignment: .leading, spacing: 4) {
-                Text("Description:")
-                  .padding(.top, 8)
-                TextEditor(text: $draftTheme.metadata.description)
-                  .frame(maxWidth: .infinity, minHeight: 100)
-                  .padding(.horizontal, 6)
-                  .background(.primary.opacity(0.05))
-                  .mask(RR(8, .black))
-                  .padding(.bottom, 8)
-                  .fontSize(15)
-              }
-                      .themedListRowLikeBG(enablePadding: true, disableBG: true)
+            LabeledTextField("Name", $draftTheme.metadata.name)
+            LabeledTextField("Author", $draftTheme.metadata.author)
+            
+            VStack(alignment: .leading, spacing: 4) {
+              Text("Description:")
+                .padding(.top, 8)
+              TextEditor(text: $draftTheme.metadata.description)
+                .frame(maxWidth: .infinity, minHeight: 100)
+                .padding(.horizontal, 6)
+                .background(.primary.opacity(0.05))
+                .mask(RR(8, .black))
+                .padding(.bottom, 8)
+                .fontSize(15)
+            }
+            .themedListRowLikeBG(enablePadding: false, disableBG: true)
             
           }
           

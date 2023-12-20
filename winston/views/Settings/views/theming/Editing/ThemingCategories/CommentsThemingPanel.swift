@@ -68,9 +68,6 @@ struct CommentsGeneralSettings: View {
         Divider()
         LabeledSlider(label: "Inner vertical padding", value: $theme.comments.theme.loadMoreInnerPadding.vertical, range: 0...64)
           .resetter($theme.comments.theme.innerPadding.vertical, defaultTheme.comments.theme.loadMoreInnerPadding.vertical)
-        Divider()
-        LabeledSlider(label: "Outer top padding", value: $theme.comments.theme.loadMoreOuterTopPadding, range: 0...64)
-          .resetter($theme.comments.theme.outerHPadding, defaultTheme.comments.theme.loadMoreOuterTopPadding)
       }
       
       FakeSection("Load More text") {
@@ -134,13 +131,12 @@ struct CommentsThemingPanel: View {
 struct PreviewComment: View {
   var selectedTheme: WinstonTheme
   var comment: Comment
-  @Environment(\.colorScheme) private var cs
   var body: some View {
     let theme = selectedTheme.comments
     VStack(spacing: 0) {
       Spacer()
         .frame(maxWidth: .infinity, minHeight: theme.theme.cornerRadius * 2, maxHeight: theme.theme.cornerRadius * 2, alignment: .top)
-        .background(CommentBG(cornerRadius: theme.theme.cornerRadius, pos: .top).fill(theme.theme.bg.cs(cs).color()))
+        .background(CommentBG(cornerRadius: theme.theme.cornerRadius, pos: .top).fill(theme.theme.bg()))
         .frame(maxWidth: .infinity, minHeight: theme.theme.cornerRadius, maxHeight: theme.theme.cornerRadius, alignment: .top)
         .clipped()
       
@@ -150,7 +146,7 @@ struct PreviewComment: View {
       
       Spacer()
         .frame(maxWidth: .infinity, minHeight: theme.theme.cornerRadius * 2, maxHeight: theme.theme.cornerRadius * 2, alignment: .top)
-        .background(CommentBG(cornerRadius: theme.theme.cornerRadius, pos: .bottom).fill(theme.theme.bg.cs(cs).color()))
+        .background(CommentBG(cornerRadius: theme.theme.cornerRadius, pos: .bottom).fill(theme.theme.bg()))
         .frame(maxWidth: .infinity, minHeight: theme.theme.cornerRadius, maxHeight: theme.theme.cornerRadius, alignment: .bottom)
         .clipped()
     }

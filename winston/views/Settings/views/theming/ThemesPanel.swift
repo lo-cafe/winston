@@ -11,7 +11,7 @@ import Defaults
 import Zip
 
 struct ThemesPanel: View {
-  @Default(.themesPresets) private var themesPresets
+  @Default(.ThemesDefSettings) private var themesDefSettings
   @State private var isUnzipping = false
   @Environment(\.useTheme) private var theme
   var body: some View {
@@ -22,7 +22,7 @@ struct ThemesPanel: View {
           ThemeNavLink(theme: defaultTheme)
             .deleteDisabled(true)
           
-          ForEach(themesPresets) { theme in
+          ForEach(themesDefSettings.themesPresets) { theme in
             if theme.id != "default" {
               WListButton(showArrow: true) {
                 Nav.present(.editingTheme(theme))
@@ -32,7 +32,7 @@ struct ThemesPanel: View {
             }
           }
           .onDelete { index in
-            withAnimation { themesPresets.remove(atOffsets: index) }
+            withAnimation { themesDefSettings.themesPresets.remove(atOffsets: index) }
           }
         }
         
@@ -56,7 +56,7 @@ struct ThemesPanel: View {
     }
     .themedListBG(theme.lists.bg)
     .overlay(
-      themesPresets.count > 1
+      themesDefSettings.themesPresets.count > 1
       ? nil
       : VStack(spacing: 0) {
         Text("Start by duplicating the")
@@ -73,7 +73,7 @@ struct ThemesPanel: View {
     .toolbar {
       EditButton()
       Button {
-        withAnimation { themesPresets.append(defaultTheme.duplicate()) }
+        withAnimation { themesDefSettings.themesPresets.append(defaultTheme.duplicate()) }
       } label: {
         Image(systemName: "plus")
       }
@@ -84,8 +84,7 @@ struct ThemesPanel: View {
 }
 
 struct ThemeNavLink: View {
-  @Default(.selectedThemeID) private var selectedThemeID
-  @Default(.themesPresets) private var themesPresets
+  @Default(.ThemesDefSettings) private var themesDefSettings
   @State private var restartAlert = false
   
   @Environment(\.useTheme) private var selectedTheme
@@ -144,15 +143,15 @@ struct ThemeNavLink: View {
       Spacer()
       
       Toggle("", isOn: Binding(get: { selectedTheme == theme  }, set: { _ in
-        if themesPresets.first(where: { $0.id == selectedThemeID })?.general != theme.general { restartAlert = true  }
-        selectedThemeID = theme.id
+        if themesDefSettings.themesPresets.first(where: { $0.id == themesDefSettings.selectedThemeID })?.general != theme.general { restartAlert = true  }
+        themesDefSettings.selectedThemeID = theme.id
       }))
       .highPriorityGesture(TapGesture())
     }
     .padding(.vertical, 2)
     .contextMenu {
       Button {
-        withAnimation { themesPresets.append(theme.duplicate()) }
+        withAnimation { themesDefSettings.themesPresets.append(theme.duplicate()) }
       } label: {
         Label("Duplicate", systemImage: "plus.square.on.square")
       }

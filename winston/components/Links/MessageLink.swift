@@ -9,13 +9,11 @@ import SwiftUI
 import Defaults
 
 struct MessageLink: View {
-  @Default(.preferenceShowPostsCards) private var preferenceShowPostsCards
-  @Default(.preferenceShowPostsAvatars) private var preferenceShowPostsAvatars
   @State private var pressed = false
   @ObservedObject var message: Message
   
   var body: some View {
-    if let data = message.data, let context = data.context, let author = data.author, let subreddit = data.subreddit, let parentID = data.parent_id, let name = data.name {
+    if let data = message.data, let author = data.author, let subreddit = data.subreddit, let parentID = data.parent_id, let name = data.name {
       let actualParentID = parentID.hasPrefix("t3_") ? name : parentID
       HStack(alignment: .top) {
         Image(systemName: data.type == "post_reply" ? "message.circle.fill" : "arrowshape.turn.up.left.circle.fill")
