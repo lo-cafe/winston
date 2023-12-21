@@ -44,7 +44,23 @@ struct FloatingFeedMenu: View, Equatable {
   }
   
   func onTap() {
-    dismiss()
+    if menuOpen {
+      dismiss()
+    } else {
+      vibrationTimer?.invalidate()
+      
+      Hap.shared.stopContinuous()
+      Hap.shared.play(intensity: 0.75, sharpness: 0.4)
+      
+      withAnimation(.snappy(extraBounce: 0)) {
+        menuOpen = true
+        toggled = false
+      }
+      
+      doThisAfter(0) {
+        showingFilters = true
+      }
+    }
   }
   
   var body: some View {
