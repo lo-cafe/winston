@@ -39,7 +39,7 @@ struct SwipeActionsSet: Codable, Defaults.Serializable, Equatable, Hashable, Ide
 let allPostSwipeActions: [AnySwipeAction] = [AnySwipeAction(UpvotePostAction()), AnySwipeAction(DownvotePostAction()), AnySwipeAction(SavePostAction()), AnySwipeAction(ReplyPostAction()), AnySwipeAction(SeenPostAction()), AnySwipeAction(FilterSubredditAction())/**, AnySwipeAction(SharePostAction()) **/, AnySwipeAction(NoneAction())]
 
 let allCommentSwipeActions: [AnySwipeAction] = [
-  AnySwipeAction(UpvoteCommentAction()), AnySwipeAction(DownvoteCommentAction()), AnySwipeAction(EditCommentAction()), AnySwipeAction(ReplyCommentAction()), AnySwipeAction(SaveCommentAction()), AnySwipeAction(SelectTextCommentAction())/**, AnySwipeAction(ShareCommentAction())**/, AnySwipeAction(CopyCommentAction()), AnySwipeAction(DeleteCommentAction()), AnySwipeAction(NoneAction())]
+  AnySwipeAction(UpvoteCommentAction()), AnySwipeAction(DownvoteCommentAction()), AnySwipeAction(EditCommentAction()), AnySwipeAction(ReplyCommentAction()), AnySwipeAction(SaveCommentAction()), AnySwipeAction(SelectTextCommentAction())/**, AnySwipeAction(ShareCommentAction())**/, AnySwipeAction(CopyCommentAction()), AnySwipeAction(DeleteCommentAction()), AnySwipeAction(CollapseCommentAction()),AnySwipeAction(NoneAction())]
 
 let allSwipeActions = allPostSwipeActions + allCommentSwipeActions
 
@@ -349,6 +349,17 @@ struct DeleteCommentAction: SwipeAction {
   func action(_ entity: Comment) async { _ = await entity.del() }
   func active(_ entity: Comment) -> Bool { false }
   func enabled(_ entity: Comment) -> Bool { entity.data?.author == entity.redditAPI.me?.data?.name }
+}
+
+struct CollapseCommentAction: SwipeAction {
+  var id = "collapse-comment-swipe-action"
+  var label = "Collapse comment"
+  var icon = SwipeActionItem(normal: "eye.slash.fill")
+  var color = SwipeActionItem(normal: "FFFFFF")
+  var bgColor = SwipeActionItem(normal: "FEA00A", active: "FF463B")
+  func action(_ entity: Comment) async { entity.toggleCollapsed(optimistic: true) }
+  func active(_ entity: Comment) -> Bool { false }
+  func enabled(_ entity: Comment) -> Bool { true }
 }
 
 struct NoneAction: SwipeAction {
