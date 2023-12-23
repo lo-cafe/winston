@@ -204,7 +204,7 @@ struct SubredditPosts: View, Equatable {
           let filteredPosts = getFilteredPosts(posts: posts.data)
           
           if IPAD {
-            SubredditPostsIPAD(showSub: isFeedsAndSuch, subreddit: subreddit, posts: filteredPosts, filter: filter, filterCallback: filterCallback, searchText: searchText, searchCallback: searchCallback, editCustomFilter: editCustomFilter, fetch: fetch, selectedTheme: selectedTheme)
+            SubredditPostsIPAD(showSub: isFeedsAndSuch, lastPostAfter: lastPostAfter, subreddit: subreddit, filters: filters, posts: filteredPosts, filter: filter, filterCallback: filterCallback, searchText: searchText, searchCallback: searchCallback, editCustomFilter: editCustomFilter, fetch: fetch, selectedTheme: selectedTheme, loading: loading, reachedEndOfFeed: $reachedEndOfFeed)
           } else {
             SubredditPostsIOS(showSub: isFeedsAndSuch, lastPostAfter: lastPostAfter, subreddit: subreddit, filters: filters, posts: filteredPosts, filter: filter, filterCallback: filterCallback, searchText: searchText, searchCallback: searchCallback, editCustomFilter: editCustomFilter, fetch: fetch, selectedTheme: selectedTheme, loading: loading, reachedEndOfFeed: $reachedEndOfFeed)
           }

@@ -15,7 +15,7 @@ struct SubredditsStack: View {
   @State private var columnVisibility: NavigationSplitViewVisibility = .automatic
   @State private var sidebarSize: CGSize = .zero
   
-  var postContentWidth: CGFloat { .screenW - (!IPAD || columnVisibility != .doubleColumn ? 0 : sidebarSize.width) }
+  var postContentWidth: CGFloat { .screenW - (!IPAD || columnVisibility == .detailOnly ? 0 : sidebarSize.width) }
   
   @State private var loaded = false
   var body: some View {

@@ -91,7 +91,7 @@ struct MultiPostsView: View {
   var body: some View {
     Group {
       if IPAD {
-        SubredditPostsIPAD(showSub: true, posts: posts.data, filter: filter, filterCallback: filterCallback, searchText: searchText, searchCallback: searchCallback, editCustomFilter: editCustomFilter, fetch: fetch, selectedTheme: selectedTheme)
+        SubredditPostsIPAD(showSub: true, lastPostAfter: lastPostAfter, filters: [], posts: posts.data, filter: filter, filterCallback: filterCallback, searchText: searchText, searchCallback: searchCallback, editCustomFilter: editCustomFilter, fetch: fetch, selectedTheme: selectedTheme, loading: loading, reachedEndOfFeed: $reachedEndOfFeed)
       } else {
         SubredditPostsIOS(showSub: true, lastPostAfter: lastPostAfter, filters: [], posts: posts.data, filter: filter, filterCallback: filterCallback, searchText: searchText, searchCallback: searchCallback, editCustomFilter: editCustomFilter, fetch: fetch, selectedTheme: selectedTheme, loading: loading, reachedEndOfFeed: $reachedEndOfFeed)
       }
@@ -99,7 +99,7 @@ struct MultiPostsView: View {
     //.themedListBG(selectedTheme.postLinks.bg)
     .listStyle(.plain)
     .environment(\.defaultMinListRowHeight, 1)
-    .loader(loading && posts.data.count == 0 && !reachedEndOfFeed)
+    //.loader(loading && posts.data.count == 0 && !reachedEndOfFeed)
     .navigationBarItems(
       trailing:
         HStack {
