@@ -29,6 +29,8 @@ struct FloatingFeedMenu: View, Equatable {
   @State private var showingFilters = false
   
   @Namespace private var ns
+	
+	@Environment(\.contentWidth) var contentWidth
   
   private let longPressDuration: Double = 0.275
   
@@ -53,7 +55,7 @@ struct FloatingFeedMenu: View, Equatable {
         .ifIOS17({ view in
           if #available(iOS 17.0, *) {
             view
-              .frame(width: .screenW * 5, height: .screenW * 1.65, alignment: .bottomTrailing)
+              .frame(width: .screenW * 5, height: (!IPAD ? .screenW * 1.65 : .screenH * 0.75), alignment: .bottomTrailing)
               .mask(
                 EllipticalGradient(
                   gradient: .smooth(from: .black, to: .black.opacity(0), curve: .easeIn),
@@ -74,7 +76,7 @@ struct FloatingFeedMenu: View, Equatable {
         })
       
         .contentShape(Rectangle())
-        .frame(width: .screenW)
+        .frame(width: contentWidth)
         .simultaneousGesture(DragGesture(minimumDistance: 0).onChanged { _ in dismiss() } )
         .clipped()
         .allowsHitTesting(menuOpen)

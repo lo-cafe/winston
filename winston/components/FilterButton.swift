@@ -27,7 +27,7 @@ struct FilterButton: View {
         .transaction { trans in
           trans.animation = .bouncy
         }
-      Text(filter.text)
+      Text(filter.getFormattedText())
         .fontSize(15, .medium)
         .foregroundColor(isSelected ? contrastColor : .primary)
     }
