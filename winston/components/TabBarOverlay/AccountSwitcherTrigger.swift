@@ -103,7 +103,7 @@ struct RadialMenuTriggerButton: UIViewRepresentable {
     }
     
     @objc fileprivate func handleLongPress(_ sender: UILongPressGestureRecognizer) {
-      let location = sender.location(in: nil)
+      let location = sender.location(in: UIApplication.shared.windows.first?.rootViewController?.view)
       switch sender.state {
       case .began:
         // Long press recognized, but the finger that hasn't moved yet
