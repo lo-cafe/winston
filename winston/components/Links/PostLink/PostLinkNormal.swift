@@ -41,23 +41,19 @@ struct PostLinkNormal: View, Equatable, Identifiable {
   let contentWidth: CGFloat
   let defSettings: PostLinkDefSettings
     
-  //  @Environment(\.useTheme) private var selectedTheme
-  
-  @State private var isOpen = false
-  
   func markAsRead() async {
     Task(priority: .background) { await post.toggleSeen(true) }
   }
   
   func openPost() {
-    withAnimation(nil) { isOpen = true }
-    doThisAfter(0.5, callback: { withAnimation { isOpen = false } })
     Nav.to(.reddit(.post(post)))
   }
   
   func openSubreddit() {
     if let subName = post.data?.subreddit {
-      Nav.to(.reddit(.subFeed(Subreddit(id: subName))))
+      withAnimation {
+        Nav.to(.reddit(.subFeed(Subreddit(id: subName))))
+      }
     }
   }
   
@@ -66,7 +62,7 @@ struct PostLinkNormal: View, Equatable, Identifiable {
       let newVideo: MediaExtractedType = .video(SharedVideo.get(url: video.url, size: video.size, resetCache: true))
       post.winstonData?.extractedMedia = newVideo
       post.winstonData?.extractedMediaForcedNormal = newVideo
-
+      
     }
   }
   
@@ -145,7 +141,7 @@ struct PostLinkNormal: View, Equatable, Identifiable {
           
         }
       }
-      .postLinkStyle(post: post, sub: sub, theme: theme, size: winstonData.postDimensions.size, secondary: secondary, isOpen: $isOpen, openPost: openPost, readPostOnScroll: defSettings.readOnScroll, hideReadPosts: defSettings.hideOnRead)
+      .postLinkStyle(post: post, sub: sub, theme: theme, size: winstonData.postDimensions.size, secondary: secondary, openPost: openPost, readPostOnScroll: defSettings.readOnScroll, hideReadPosts: defSettings.hideOnRead)
       .swipyUI(onTap: openPost, actionsSet: defSettings.swipeActions, entity: post, secondary: secondary)
       .frame(width: winstonData.postDimensions.size.width, height: winstonData.postDimensions.size.height)
       .fixedSize()

@@ -23,6 +23,7 @@ struct SwipeUI<T: GenericRedditEntityDataType, B: Hashable>: ViewModifier {
   @State private var dragAmount: CGFloat = 0
   @State private var offset: CGFloat?
   @State private var triggeredAction: TriggeredAction = .none
+  @State private var pressed = false
   
   var secondary: Bool
   var offsetYAction: CGFloat = 0
@@ -79,11 +80,13 @@ struct SwipeUI<T: GenericRedditEntityDataType, B: Hashable>: ViewModifier {
     let offsetXInterpolate = interpolatorBuilder([0, firstActionThreshold], value: actualOffsetX)
     let offsetXNegativeInterpolate = interpolatorBuilder([0, -firstActionThreshold], value: actualOffsetX)
     let enableSwipeAnywhere = behaviorDefSettings.enableSwipeAnywhere
+    let actualOffset = controlledDragAmount != nil ? 0 : dragAmount
     
     content
-      .offset(x: controlledDragAmount != nil ? 0 : dragAmount)
+      .scaleEffect(pressed ? 0.975 : 1)
+      .offset(x: actualOffset)
       .background(
-        !controlledIsSource || enableSwipeAnywhere
+        !controlledIsSource || enableSwipeAnywhere || actualOffset == 0
         ? nil
         : HStack {
           
@@ -107,12 +110,18 @@ struct SwipeUI<T: GenericRedditEntityDataType, B: Hashable>: ViewModifier {
           .offset(y: offsetYAction)
           .allowsHitTesting(false)
       )
-      .highPriorityGesture(secondary && onTapAction != nil ? TapGesture().onEnded({ onTapAction?() }) : nil)
-      .gesture(secondary || onTapAction == nil ? nil : TapGesture().onEnded({ onTapAction?() }))
+      .onTapGesture {
+        onTapAction?()
+      }
+      .onLongPressGesture(minimumDuration: 0.3, maximumDistance: 30, perform: { }, onPressingChanged: { val in
+        withAnimation(.bouncy(duration: 0.325, extraBounce: 0.25)) {
+          pressed = val
+        }
+      })
       .gesture(
         enableSwipeAnywhere
         ? nil
-        : DragGesture(minimumDistance: 30, coordinateSpace: .local)
+        : DragGesture(minimumDistance: 30)
           .onChanged { val in
             let x = val.translation.width
             if offset == nil && x != 0 {
@@ -194,7 +203,6 @@ struct SwipeUI<T: GenericRedditEntityDataType, B: Hashable>: ViewModifier {
           }
         }
       }
-    //      .simultaneousGesture(DragGesture())
   }
 }
 

@@ -42,7 +42,7 @@ struct ThemedForegroundRawBG<S: Shape>: View, Equatable {
         Group {
           if let shadowStyle {
             shape
-              .fill(.bar.opacity(theme.blurry ? 1 : 0).shadow(shadowStyle))
+              .fill(.bar.opacity(theme.blurry ? 1 : 0).shadow(shadowStyle)).allowsHitTesting(false)
           } else {
             shape
               .fill(.bar.opacity(theme.blurry ? 1 : 0))

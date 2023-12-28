@@ -23,7 +23,7 @@ extension View {
               PostView(post: post, subreddit: sub, highlightID: highlightID)
             }
           case .subFeed(let sub):
-            SubredditPosts(subreddit: sub)
+            SubredditPosts(subreddit: sub).equatable()
           case .subInfo(let sub):
             SubredditInfo(subreddit: sub)
           case .multiFeed(let multi):
@@ -35,33 +35,33 @@ extension View {
           }
         case .setting(let settingsDest):
           switch settingsDest {
-            case .general:
-              GeneralPanel()
-            case .behavior:
-              BehaviorPanel()
-            case .appearance:
-              AppearancePanel()
-            case .credentials:
-              CredentialsPanel()
-            case .about:
-              AboutPanel()
-            case .commentSwipe:
-              CommentSwipePanel()
-            case .postSwipe:
-              PostSwipePanel()
-            case .accessibility:
-              AccessibilityPanel()
-            case .filteredSubreddits:
-              FilteredSubredditsSettings()
-            case .faq:
-              FAQPanel()
-            case .themes:
-              ThemesPanel()
-            case .themeStore:
-              ThemeStore()
-            case .appIcon:
-              AppIconSetting()
-            }
+          case .general:
+            GeneralPanel()
+          case .behavior:
+            BehaviorPanel()
+          case .appearance:
+            AppearancePanel()
+          case .credentials:
+            CredentialsPanel()
+          case .about:
+            AboutPanel()
+          case .commentSwipe:
+            CommentSwipePanel()
+          case .postSwipe:
+            PostSwipePanel()
+          case .accessibility:
+            AccessibilityPanel()
+          case .filteredSubreddits:
+            FilteredSubredditsSettings()
+          case .faq:
+            FAQPanel()
+          case .themes:
+            ThemesPanel()
+          case .themeStore:
+            ThemeStore()
+          case .appIcon:
+            AppIconSetting()
+          }
         }
       })
   }

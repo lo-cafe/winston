@@ -35,11 +35,9 @@ class Router: ObservableObject, Hashable, Equatable, Codable {
     $fullPath.map { $0.isEmpty }.assign(to: \.isAtRoot, on: self).store(in: &cancellables)
   }
   
-  func goBack() { self.fullPath.removeLast() }
-  func resetNavPath() { self.fullPath.removeAll() }
-  func navigateTo(_ dest: NavDest, _ reset: Bool = false) {
-    self.path = reset ? [dest] : self.path + [dest]
-  }
+  func goBack() { _ = withAnimation { self.fullPath.removeLast() } }
+  func resetNavPath() { withAnimation { self.fullPath.removeAll() } }
+  func navigateTo(_ dest: NavDest, _ reset: Bool = false) { withAnimation { self.path = reset ? [dest] : self.path + [dest] } }
   
   enum NavDest: Hashable, Codable, Identifiable {
     var id: String {

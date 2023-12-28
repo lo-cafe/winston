@@ -13,10 +13,10 @@ import Shiny
 
 let alphabetLetters = Array("ABCDEFGHIJKLMNOPQRSTUVWXYZ").map { String($0) }
 
-struct Subreddits: View {
-//  static func == (lhs: Subreddits, rhs: Subreddits) -> Bool {
-//    return lhs.loaded == rhs.loaded && lhs.selectedSub == rhs.selectedSub && lhs.currentCredentialID == rhs.currentCredentialID
-//  }
+struct Subreddits: View, Equatable {
+  static func == (lhs: Subreddits, rhs: Subreddits) -> Bool {
+    return lhs.loaded == rhs.loaded && lhs.selectedSub == rhs.selectedSub && lhs.currentCredentialID == rhs.currentCredentialID
+  }
   @Binding var selectedSub: Router.NavDest?
   var loaded: Bool
   var currentCredentialID: UUID

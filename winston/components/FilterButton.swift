@@ -7,12 +7,22 @@
 
 import SwiftUI
 
-struct FilterButton: View {
+struct FilterButton: View, Equatable {
+  static func == (lhs: FilterButton, rhs: FilterButton) -> Bool {
+    lhs.filter == rhs.filter && lhs.isSelected == rhs.isSelected
+  }
+  
   var filter: FilterData
   var isSelected: Bool
   var filterCallback: ((String) -> ())
   var searchText: String
   var searchCallback: ((String?) -> ())
+  let colorDotSize: Double = 8
+  let hPadding: Double = 14
+  let height: Double = 32
+  
+//  @GestureState private var pressingDown = false
+  @State private var pressingDown = false
   
   var body: some View {
     let isSelected = filter.type == "search" ? searchText.lowercased() == filter.text.lowercased() : isSelected
@@ -20,44 +30,52 @@ struct FilterButton: View {
     let brightness = bgColor.brightness()
     let contrastColor = brightness > 0.7 ? bgColor.darken(0.65) : bgColor.lighten(0.9)
     HStack(spacing: 6) {
-      Circle()
-        .fill(contrastColor)
-        .frame(width: 8, height: 8)
+      Image(systemName: "xmark")
+        .fontSize(11, .semibold)
+        .foregroundStyle(contrastColor)
         .scaleEffect(isSelected ? 1 : 0.01)
         .transaction { trans in
           trans.animation = .bouncy
         }
-      Text(filter.getFormattedText())
+
+      Text(filter.text)
         .fontSize(15, .medium)
         .foregroundColor(isSelected ? contrastColor : .primary)
     }
-    .padding(.horizontal, 14)
-    .frame(height: 32)
+    .padding(.horizontal, hPadding)
+    .frame(height: height)
     .background(alignment: .leading) {
       GeometryReader { geo in
         Circle()
           .fill(Color.hex(filter.background_color))
-          .frame(width: isSelected ? geo.size.width : 8, height: isSelected ? geo.size.width : 8, alignment: .leading)
-          .position(x: isSelected ? geo.size.width / 2 : 14, y: 16)
+          .frame(width: geo.size.width, height: geo.size.width, alignment: .leading)
+          .scaleEffect(isSelected ? 1 : colorDotSize / geo.size.width)
+          .position(x: isSelected ? geo.size.width / 2 : hPadding + (colorDotSize / 2), y: height / 2)
           .transaction { trans in
             trans.animation = .snappy
           }
       }
       .frame(maxWidth: .infinity)
     }
-    .mask { Capsule().fill(.black) }
+    .clipShape(Capsule(style: .continuous))
+    .drawingGroup()
     .floating()
-    .scaleEffect(1)
+    .scaleEffect(pressingDown ? 0.95 : 1)
+    .animation(.bouncy(duration: 0.3, extraBounce: 0.225), value: pressingDown)
     .onTapGesture {
+      Hap.shared.play(intensity: 0.5, sharpness: 0.5)
       if filter.type == "search" {
         if searchText != filter.text {
           searchCallback(filter.text)
         } else {
-          searchCallback(nil)
+            searchCallback(nil)
         }
       } else {
-        filterCallback(isSelected ? "flair:All" : filter.id)
+          filterCallback(isSelected ? "flair:All" : filter.id)
       }
     }
+    .onLongPressGesture(minimumDuration: .infinity, maximumDistance: 10, perform: {}, onPressingChanged: { val in
+      pressingDown = val
+    })
   }
 }
