@@ -133,7 +133,7 @@ func getPostDimensions(post: Post, winstonData: PostWinstonData? = nil, columnWi
     
     if let extractedMedia = extractedMedia {
       switch extractedMedia {
-      case .link(_), .post(_), .comment(_), .subreddit(_), .user(_):
+      case .link(_), .post(_), .comment(_), .subreddit(_), .user(_), .repost(_):
         urlTagHeight = OnlyURL.height
       default:
         break
@@ -146,16 +146,16 @@ func getPostDimensions(post: Post, winstonData: PostWinstonData? = nil, columnWi
     
     var appendStr = ""
     let titleAttr = NSMutableAttributedString(string: title, attributes: [.font: UIFont.systemFont(ofSize: theme.titleText.size + 0.35, weight: theme.titleText.weight.ut)])
-    let titleAttrBlankSpace = NSAttributedString(string: " ", attributes: [.font: UIFont.systemFont(ofSize: theme.titleText.size + 0.35, weight: theme.titleText.weight.ut)])
+    let titleAttrBlankSpace = NSAttributedString(string: "   ", attributes: [.font: UIFont.systemFont(ofSize: theme.titleText.size + 0.35, weight: theme.titleText.weight.ut)])
     if data.over_18 ?? false {
       titleAttr.append(titleAttrBlankSpace)
       appendStr += "NSFW"
     }
-    if let flair = data.link_flair_text, !flair.isEmpty {
+    if let flair = flairWithoutEmojis(str: data.link_flair_text)?.first, !flair.isEmpty {
       titleAttr.append(titleAttrBlankSpace)
       appendStr += flair
     }
-    let append = NSMutableAttributedString(string: appendStr, attributes: [.font: UIFont.systemFont(ofSize: ((theme.titleText.size - 1) * 100) / 120, weight: theme.titleText.weight.ut)])
+    let append = NSMutableAttributedString(string: appendStr, attributes: [.font: UIFont.systemFont(ofSize: ((theme.titleText.size - 2) * 100) / 120, weight: .semibold)])
     if !appendStr.isEmpty {
       titleAttr.append(append)
       titleAttr.append(titleAttrBlankSpace)

@@ -32,6 +32,7 @@ struct SubredditPostsIOS: View, Equatable {
   @Binding var reachedEndOfFeed: Bool
   
   @Default(.PostLinkDefSettings) private var postLinkDefSettings
+  @Default(.SubredditFeedDefSettings) private var feedDefSettings
     
   @Environment(\.contentWidth) private var contentWidth
   
@@ -69,7 +70,7 @@ struct SubredditPostsIOS: View, Equatable {
       Section {
         ForEach(Array(posts.enumerated()), id: \.self.element.id) { i, post in
           if let sub = subreddit ?? post.winstonData?.subreddit, let winstonData = post.winstonData {
-            PostLink(id: post.id, theme: selectedTheme.postLinks, showSub: showSub, contentWidth: contentWidth, defSettings: postLinkDefSettings)
+            PostLink(id: post.id, theme: selectedTheme.postLinks, showSub: showSub, compactPerSubreddit: feedDefSettings.compactPerSubreddit[sub.id], contentWidth: contentWidth, defSettings: postLinkDefSettings)
             .environmentObject(sub)
             .environmentObject(post)
             .environmentObject(winstonData)
@@ -135,6 +136,6 @@ struct SubredditPostsIOS: View, Equatable {
     .listStyle(.plain)
     .listRowSeparator(.hidden)
     .listSectionSeparator(.hidden)
-    .floatingMenu(filters: filters, selected: filter, filterCallback: filterCallback, searchText: searchText, searchCallback: searchCallback)
+    .floatingMenu(subId: subreddit?._id ?? "", filters: filters, selected: filter, filterCallback: filterCallback, searchText: searchText, searchCallback: searchCallback, customFilterCallback: editCustomFilter)
   }
 }

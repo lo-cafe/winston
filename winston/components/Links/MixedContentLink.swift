@@ -24,7 +24,7 @@ struct MixedContentLink: View, Equatable {
     switch content {
     case .first(let post):
       if let winstonData = post.winstonData, let postSub = winstonData.subreddit {
-        PostLink(id: post.id, theme: theme, showSub: true, contentWidth: contentWidth, defSettings: postLinkDefSettings)
+        PostLink(id: post.id, theme: theme, showSub: true, compactPerSubreddit: nil, contentWidth: contentWidth, defSettings: postLinkDefSettings)
         .environmentObject(post)
         .environmentObject(postSub)
         .environmentObject(winstonData)

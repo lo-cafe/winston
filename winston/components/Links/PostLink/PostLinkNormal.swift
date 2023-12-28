@@ -94,6 +94,7 @@ struct PostLinkNormal: View, Equatable, Identifiable {
               theme: theme,
               showSub: true,
               secondary: true,
+              compactPerSubreddit: false,
               contentWidth: contentWidth,
               defSettings: defSettings
             )

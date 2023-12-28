@@ -81,7 +81,7 @@ extension RedditAPI {
       subID += "&restrict_sr=on"
       
       // Add preferred sort to search url
-      subID += "&sort=\(Defaults[.SubredditFeedDefSettings].preferredSort)"
+      subID += "&sort=\(Defaults[.SubredditFeedDefSettings].preferredSearchSort)"
     }
     
     if let after = after {

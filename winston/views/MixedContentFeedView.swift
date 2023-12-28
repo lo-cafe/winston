@@ -14,10 +14,11 @@ struct MixedContentFeedView: View {
   @Binding var loadNextData: Bool
   
   @StateObject var user: User
+  weak var subreddit: Subreddit?
   @State private var loadingOverview = true
   @State private var lastItemId: String? = nil
   @Environment(\.useTheme) private var selectedTheme
-  
+
   
   @State private var dataTypeFilter: String = "" // Handles filtering for only posts or only comments.
   
@@ -30,7 +31,7 @@ struct MixedContentFeedView: View {
       mixedMediaLinks.forEach {
         switch $0 {
         case .first(let post):
-          post.setupWinstonData(data: post.data, winstonData: post.winstonData, theme: newTheme, fetchAvatar: false)
+          post.setupWinstonData(data: post.data, winstonData: post.winstonData, theme: newTheme, sub: subreddit, fetchAvatar: false)
         case .second(let comment):
           comment.setupWinstonData()
           break
