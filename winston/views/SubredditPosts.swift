@@ -110,6 +110,25 @@ struct SubredditPosts: View, Equatable {
       await subreddit.refreshSubreddit()
     }
     
+    if (searchText == nil || searchText!.isEmpty) && !loadMore && !forceRefresh && !unfilteredPosts.data.isEmpty {
+      posts.data = unfilteredPosts.data
+      lastPostAfter = unfilteredLastPostAfter
+      reachedEndOfFeed = unfilteredreachedEndOfFeed
+      return
+    }
+    
+    if posts.data.count > 0 && lastPostAfter == nil && !force {
+      reachedEndOfFeed = true
+      return
+    }
+  
+    if !loadMore && !subreddit.id.starts(with: "t5") {
+      // Remove filters from home/all/popular so it only shows filters for current posts
+      Task(priority: .userInitiated) {
+        subreddit.resetFlairs()
+      }
+    }
+    
     withAnimation {
       loading = true
     }
@@ -132,7 +151,18 @@ struct SubredditPosts: View, Equatable {
           
           loading = false
           lastPostAfter = result.1
-//          reachedEndOfFeed = newPostsFiltered.count == 0
+          
+//        reachedEndOfFeed = newPostsFiltered.count == 0
+          
+          Task(priority: .background) {
+            self.subreddit.loadFlairs( { loaded in
+              DispatchQueue.main.async {
+                withAnimation {
+                  filters = loaded
+                }
+              }
+            })
+          }
                     
           // Save posts if no searchText
           if searchText == nil || searchText!.isEmpty {
@@ -215,7 +245,7 @@ struct SubredditPosts: View, Equatable {
         .searchable(text: $searchText, prompt: "Search r/\(subreddit.data?.display_name ?? subreddit.id)")
       } else {
         if let savedMixedMediaLinks = savedMixedMediaLinks, let user = redditAPI.me {
-          MixedContentFeedView(mixedMediaLinks: savedMixedMediaLinks, loadNextData: $loadNextSavedData, user: user, reachedEndOfFeed: $reachedEndOfFeed)
+          MixedContentFeedView(mixedMediaLinks: savedMixedMediaLinks, loadNextData: $loadNextSavedData, user: user, subreddit: subreddit, reachedEndOfFeed: $reachedEndOfFeed)
             .onChange(of: loadNextSavedData) { shouldLoad in
               if shouldLoad {
                 fetch(shouldLoad)

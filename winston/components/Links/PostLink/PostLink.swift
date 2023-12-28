@@ -16,7 +16,7 @@ let POSTLINK_INNER_H_PAD: CGFloat = 16
 
 struct PostLink: View, Equatable, Identifiable {
   static func == (lhs: PostLink, rhs: PostLink) -> Bool {
-    return lhs.id == rhs.id && lhs.repostAvatarRequest?.url == rhs.repostAvatarRequest?.url && lhs.theme == rhs.theme && lhs.defSettings == rhs.defSettings
+    return lhs.id == rhs.id && lhs.repostAvatarRequest?.url == rhs.repostAvatarRequest?.url && lhs.theme == rhs.theme && lhs.defSettings == rhs.defSettings && lhs.compactPerSubreddit == rhs.compactPerSubreddit
   }
   
   //  var disableOuterVSpacing = false
@@ -26,13 +26,14 @@ struct PostLink: View, Equatable, Identifiable {
   var theme: SubPostsListTheme
   var showSub = false
   var secondary = false
+  let compactPerSubreddit: Bool?
   let contentWidth: CGFloat
   var defSettings: PostLinkDefSettings = Defaults[.PostLinkDefSettings]
     
   var body: some View {
     
     Group {
-      if defSettings.compactMode.enabled {
+      if compactPerSubreddit ?? defSettings.compactMode.enabled {
         PostLinkCompact(
           id: id,
           controller: controller,
