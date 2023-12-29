@@ -64,7 +64,7 @@ struct PostContent: View, Equatable {
           
           if data.selftext != "" {
 
-            MD2(winstonData.postBodyAttr == nil ? .str(data.selftext) : .nsAttr(winstonData.postBodyAttr!), onTap: { withAnimation(spring) { collapsed.toggle() } })
+            MD2(winstonData.postBodyAttr == nil ? .str(data.selftext) : .nsAttr(winstonData.postBodyAttr!))
               .frame(width: winstonData.postViewBodySize.width, height: winstonData.postViewBodySize.height, alignment: .topLeading)
               .fixedSize()
               .allowsHitTesting(!isCollapsed)
@@ -112,6 +112,9 @@ struct PostContent: View, Equatable {
       SubsNStuffLine()
         .id("post-flair-divider")
         .listRowInsets(EdgeInsets(top: 0, leading: postsTheme.padding.horizontal, bottom: postsTheme.commentsDistance / 2, trailing: postsTheme.padding.horizontal))
+    }
+    .onTapGesture {
+      withAnimation(spring) { collapsed.toggle() }
     }
     .frame(maxWidth: .infinity, alignment: .leading)
     .multilineTextAlignment(.leading)

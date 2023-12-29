@@ -82,8 +82,7 @@ struct CommentLinkContent: View {
     
     if let data = comment.data {
       let collapsed = data.collapsed ?? false
-      Group {
-        
+      VStack {
         HStack(spacing: CommentLinkContent.indentLineContentSpacing) {
           if data.depth != 0 && indentLines != 0 {
             HStack(alignment:. bottom, spacing: CommentLinkContent.indentLinesSpacing) {
@@ -177,40 +176,12 @@ struct CommentLinkContent: View {
           .padding(.top, max(0, theme.theme.innerPadding.vertical + (data.depth == 0 ? -theme.theme.cornerRadius : theme.theme.repliesSpacing)))
           .compositingGroup()
           .opacity(collapsed ? 0.5 : 1)
-          .offset(x: offsetX)
-          .animation(draggingAnimation, value: offsetX)
-//          .padding(.top, data.depth != 0 ? 6 : 0)
           .contentShape(Rectangle())
-          .swipyUI(
-            controlledDragAmount: $offsetX,
-            controlledIsSource: false,
-            onTap: { withAnimation(spring) { comment.toggleCollapsed(optimistic: true) } },
-            actionsSet: commentSwipeActions,
-            entity: comment
-          )
-        }
-        .introspect(.listCell, on: .iOS(.v16, .v17)) { cell in
-          cell.layer.masksToBounds = false
         }
         .padding(.horizontal, horPad)
         .frame(height: max(((theme.theme.badge.authorText.size * 1.2) + (theme.theme.badge.statsText.size * 1.2) + 2), theme.theme.badge.avatar.size) + max(0, theme.theme.innerPadding.vertical + (data.depth == 0 ? -theme.theme.cornerRadius : theme.theme.repliesSpacing)), alignment: .leading)
         .mask(Color.black)
-        .background(Color.accentColor.opacity(highlight ? 0.2 : 0))
-        .background(!disableBG && showReplies ? theme.theme.bg() : .clear)
         .onAppear {
-          let newCommentSwipeActions = Defaults[.CommentLinkDefSettings].swipeActions
-          if commentSwipeActions != newCommentSwipeActions {
-            commentSwipeActions = newCommentSwipeActions
-          }
-          if var specificID = highlightID {
-            specificID = specificID.hasPrefix("t1_") ? String(specificID.dropFirst(3)) : specificID
-            if specificID == data.id { withAnimation { highlight = true } }
-            doThisAfter(0.1) {
-              withAnimation(.easeOut(duration: 4)) { highlight = false }
-            }
-          }
-        }
-        .onAppear() {
           if !commentViewLoaded && sectionDefSettings.collapseAutoModerator {
             if data.depth == 0 && data.author == "AutoModerator" && !(data.collapsed ?? false) {
               comment.toggleCollapsed(optimistic: true)
@@ -242,7 +213,7 @@ struct CommentLinkContent: View {
                     Text(body.md())
                       .lineLimit(lineLimit)
                   } else {
-                    MD2(winstonData.bodyAttr == nil ? .str(body) : .nsAttr(winstonData.bodyAttr!), fontSize: theme.theme.bodyText.size, onTap: { if !selectable { withAnimation(spring) { comment.toggleCollapsed(optimistic: true) } } })
+                    MD2(winstonData.bodyAttr == nil ? .str(body) : .nsAttr(winstonData.bodyAttr!), fontSize: theme.theme.bodyText.size)
                       .frame(width: winstonData.commentBodySize.width, height: winstonData.commentBodySize.height, alignment: .topLeading)
                       .fixedSize()
                       .overlay(
@@ -265,32 +236,45 @@ struct CommentLinkContent: View {
                 }
               }
               .frame(maxWidth: .infinity, alignment: .topLeading)
-              .offset(x: offsetX)
-              .animation(draggingAnimation, value: offsetX)
               .padding(.top, theme.theme.bodyAuthorSpacing)
               .padding(.bottom, max(0, theme.theme.innerPadding.vertical + (data.depth == 0 && comment.childrenWinston.data.count == 0 ? -theme.theme.cornerRadius : theme.theme.innerPadding.vertical)))
               .scaleEffect(1)
               .contentShape(Rectangle())
-              .swipyUI(
-                offsetYAction: -15,
-                controlledDragAmount: $offsetX,
-                // onTap: { if !selectable { withAnimation(spring) { comment.toggleCollapsed(optimistic: true) } } },
-                actionsSet: commentSwipeActions,
-                entity: comment
-              )
               .background(forcedBodySize != nil ? nil : GeometryReader { geo in Color.clear.onAppear { sizer.size = geo.size } } )
             } else {
               Spacer()
             }
           }
-          .introspect(.listCell, on: .iOS(.v16, .v17)) { cell in
-            cell.layer.masksToBounds = false
-          }
           .padding(.horizontal, horPad)
           .mask(Color.black.padding(.top, -(data.depth != 0 ? 42 : 30)).padding(.bottom, -8))
-          .background(Color.accentColor.opacity(highlight ? 0.2 : 0))
-          .background(showReplies ? theme.theme.bg() : .clear)
           .id("\(data.id)-body\(forcedBodySize == nil ? "" : "-preview")")
+        }
+      }
+      .introspect(.listCell, on: .iOS(.v16, .v17)) { cell in
+        cell.layer.masksToBounds = false
+      }
+      .offset(x: offsetX)
+      .animation(draggingAnimation, value: offsetX)
+      .swipyUI(
+        controlledDragAmount: $offsetX,
+        onTap: { if !selectable { withAnimation(.smooth) { comment.toggleCollapsed(optimistic: true) } } },
+        actionsSet: commentSwipeActions,
+        entity: comment,
+        skipAnimation: true
+      )
+      .background(Color.accentColor.opacity(highlight ? 0.2 : 0))
+      .background(showReplies ? theme.theme.bg() : .clear)
+      .onAppear {
+        let newCommentSwipeActions = Defaults[.CommentLinkDefSettings].swipeActions
+        if commentSwipeActions != newCommentSwipeActions {
+          commentSwipeActions = newCommentSwipeActions
+        }
+        if var specificID = highlightID {
+          specificID = specificID.hasPrefix("t1_") ? String(specificID.dropFirst(3)) : specificID
+          if specificID == data.id { withAnimation { highlight = true } }
+          doThisAfter(0.1) {
+            withAnimation(.easeOut(duration: 4)) { highlight = false }
+          }
         }
       }
       .contextMenu {

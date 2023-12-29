@@ -47,17 +47,6 @@ struct MD2: UIViewRepresentable {
     textView.setContentCompressionResistancePriority(.defaultLow, for: .horizontal) // Adjust horizontal
     textView.textContainerInset = .zero
     textView.delegate = context.coordinator // Set the delegate
-    let tapGesture = UITapGestureRecognizer(target: context.coordinator, action: #selector(context.coordinator.tap(gesture:)))
-    tapGesture.delegate = context.coordinator
-    textView.addGestureRecognizer(tapGesture)
-    
-    if let recognizers = textView.gestureRecognizers {
-      for recognizer in recognizers {
-        if recognizer.name == "UITextInteractionNameLinkTap" {
-          tapGesture.require(toFail: recognizer)
-        }
-      }
-    }
     
     return textView
   }
@@ -80,9 +69,9 @@ struct MD2: UIViewRepresentable {
       self.parent = parent
     }
     
-    @objc func tap(gesture: UITapGestureRecognizer) {
-      parent.onTap?()
-    }
+//    @objc func tap(gesture: UITapGestureRecognizer) {
+//      parent.onTap?()
+//    }
     
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
       return false
