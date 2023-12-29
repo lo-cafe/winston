@@ -82,7 +82,7 @@ struct CommentLinkContent: View {
     
     if let data = comment.data {
       let collapsed = data.collapsed ?? false
-      VStack {
+      Group {
         HStack(spacing: CommentLinkContent.indentLineContentSpacing) {
           if data.depth != 0 && indentLines != 0 {
             HStack(alignment:. bottom, spacing: CommentLinkContent.indentLinesSpacing) {
@@ -177,6 +177,15 @@ struct CommentLinkContent: View {
           .compositingGroup()
           .opacity(collapsed ? 0.5 : 1)
           .contentShape(Rectangle())
+          .offset(x: offsetX)
+          .animation(draggingAnimation, value: offsetX)
+          .swipyUI(
+            controlledDragAmount: $offsetX,
+            controlledIsSource: false,
+            onTap: { withAnimation(spring) { comment.toggleCollapsed(optimistic: true) } },
+            actionsSet: commentSwipeActions,
+            entity: comment
+          )
         }
         .padding(.horizontal, horPad)
         .frame(height: max(((theme.theme.badge.authorText.size * 1.2) + (theme.theme.badge.statsText.size * 1.2) + 2), theme.theme.badge.avatar.size) + max(0, theme.theme.innerPadding.vertical + (data.depth == 0 ? -theme.theme.cornerRadius : theme.theme.repliesSpacing)), alignment: .leading)
@@ -213,7 +222,7 @@ struct CommentLinkContent: View {
                     Text(body.md())
                       .lineLimit(lineLimit)
                   } else {
-                    MD2(winstonData.bodyAttr == nil ? .str(body) : .nsAttr(winstonData.bodyAttr!), fontSize: theme.theme.bodyText.size)
+                    MD2(winstonData.bodyAttr == nil ? .str(body) : .nsAttr(winstonData.bodyAttr!), fontSize: theme.theme.bodyText.size, onTap: { if !selectable { withAnimation(spring) { comment.toggleCollapsed(optimistic: true) } } })
                       .frame(width: winstonData.commentBodySize.width, height: winstonData.commentBodySize.height, alignment: .topLeading)
                       .fixedSize()
                       .overlay(
@@ -228,6 +237,15 @@ struct CommentLinkContent: View {
                 .fontSize(theme.theme.bodyText.size, theme.theme.bodyText.weight.t)
                 .foregroundColor(theme.theme.bodyText.color())
               }
+              .offset(x: offsetX)
+              .animation(draggingAnimation, value: offsetX)
+              .swipyUI(
+                offsetYAction: -15,
+                controlledDragAmount: $offsetX,
+                // onTap: { if !selectable { withAnimation(spring) { comment.toggleCollapsed(optimistic: true) } } },
+                actionsSet: commentSwipeActions,
+                entity: comment
+              )
               .onChange(of: theme) { newTheme in
                 let encoder = JSONEncoder()
                 if let jsonData = try? encoder.encode(stringToAttr(body, fontSize: newTheme.theme.bodyText.size)) {
@@ -253,15 +271,6 @@ struct CommentLinkContent: View {
       .introspect(.listCell, on: .iOS(.v16, .v17)) { cell in
         cell.layer.masksToBounds = false
       }
-      .offset(x: offsetX)
-      .animation(draggingAnimation, value: offsetX)
-      .swipyUI(
-        controlledDragAmount: $offsetX,
-        onTap: { if !selectable { withAnimation(.smooth) { comment.toggleCollapsed(optimistic: true) } } },
-        actionsSet: commentSwipeActions,
-        entity: comment,
-        skipAnimation: true
-      )
       .background(Color.accentColor.opacity(highlight ? 0.2 : 0))
       .background(showReplies ? theme.theme.bg() : .clear)
       .onAppear {
