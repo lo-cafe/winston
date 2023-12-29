@@ -11,6 +11,8 @@ struct FloatingBGBlur: View, Equatable {
   static func == (lhs: FloatingBGBlur, rhs: FloatingBGBlur) -> Bool {
     lhs.active == rhs.active
   }
+	
+	@Environment(\.contentWidth) var contentWidth
   
   let active: Bool
   let dismiss: ()->()
@@ -20,7 +22,7 @@ struct FloatingBGBlur: View, Equatable {
         .ifIOS17({ view in
           if #available(iOS 17.0, *) {
             view
-              .frame(width: .screenW * 5, height: .screenW * 1.65, alignment: .bottomTrailing)
+              .frame(width: .screenW * 5, height: (!IPAD ? .screenW * 1.65 : .screenH * 0.75), alignment: .bottomTrailing)
               .mask(
                 EllipticalGradient(
                   gradient: .smooth(from: .black, to: .black.opacity(0), curve: .easeIn),
@@ -40,7 +42,7 @@ struct FloatingBGBlur: View, Equatable {
           }
         })
         .contentShape(Rectangle())
-        .frame(width: .screenW)
+        .frame(width: contentWidth)
         .simultaneousGesture(DragGesture(minimumDistance: 0).onChanged { _ in dismiss() } )
         .clipped()
         .allowsHitTesting(active)
