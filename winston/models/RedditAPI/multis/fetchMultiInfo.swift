@@ -10,22 +10,11 @@ import Alamofire
 
 extension RedditAPI {
   func fetchMultiInfo(_ url: String) async -> MultiData? {
-    await refreshToken()
-    //    await getModHash()
-    if let headers = self.getRequestHeaders() {
-      let response = await AF.request(
-        "\(RedditAPI.redditApiURLBase)/api/multi\(url)",
-        method: .get,
-        headers: headers
-      ).serializingDecodable(MultiContainerResponse.self).response
-      switch response.result {
-      case .success(let data):
-        return data.data
-      case .failure:
-        //        print(error)
-        return nil
-      }
-    } else {
+    switch await self.doRequest("\(RedditAPI.redditApiURLBase)/api/multi\(url)", method: .get, decodable: MultiContainerResponse.self) {
+    case .success(let data):
+      return data.data
+    case .failure:
+      //        print(error)
       return nil
     }
   }

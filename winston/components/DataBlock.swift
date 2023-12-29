@@ -26,7 +26,7 @@ struct DataBlock: View {
     }
     .padding(.all, 8)
     .frame(maxWidth: .infinity, maxHeight: .infinity)
-    .themedListRowBG()
+    .themedListRowLikeBG()
     .mask(RR(20, Color.black))
   }
 }

@@ -17,12 +17,12 @@ struct PostReplies: View {
   var sort: CommentSortOption
   var proxy: ScrollViewProxy
   @Environment(\.useTheme) private var selectedTheme
-  @Environment(\.colorScheme) private var cs
   
   @StateObject private var comments = ObservableArray<Comment>()
-  @ObservedObject private var globalLoader = TempGlobalState.shared.globalLoader
   @State private var loading = true
   @State var seenComments : String?
+  
+  @Environment(\.globalLoaderDismiss) private var globalLoaderDismiss
   
   func asyncFetch(_ full: Bool, _ altIgnoreSpecificComment: Bool? = nil) async {
     if let result = await post.refreshPost(commentID: (altIgnoreSpecificComment ?? ignoreSpecificComment) ? nil : highlightID, sort: sort, after: nil, subreddit: subreddit.data?.display_name ?? subreddit.id, full: full), let newComments = result.0 {
@@ -69,11 +69,10 @@ struct PostReplies: View {
             
             Spacer()
               .frame(maxWidth: .infinity, minHeight: theme.theme.cornerRadius * 2, maxHeight: theme.theme.cornerRadius * 2, alignment: .top)
-              .background(CommentBG(cornerRadius: theme.theme.cornerRadius, pos: .top).fill(theme.theme.bg.cs(cs).color()))
+              .background(CommentBG(cornerRadius: theme.theme.cornerRadius, pos: .top).fill(theme.theme.bg()))
               .frame(maxWidth: .infinity, minHeight: theme.theme.cornerRadius, maxHeight: theme.theme.cornerRadius, alignment: .top)
               .clipped()
               .id("\(comment.id)-top-decoration")
-              .listRowInsets(EdgeInsets(top: 0, leading: horPad, bottom: 0, trailing: horPad))
             
             if let commentWinstonData = comment.winstonData {
               CommentLink(highlightID: ignoreSpecificComment ? nil : highlightID, post: post, subreddit: subreddit, postFullname: postFullname, seenComments: seenComments, parentElement: .post(comments), comment: comment, commentWinstonData: commentWinstonData, children: comment.childrenWinston)
@@ -82,11 +81,10 @@ struct PostReplies: View {
             
             Spacer()
               .frame(maxWidth: .infinity, minHeight: theme.theme.cornerRadius * 2, maxHeight: theme.theme.cornerRadius * 2, alignment: .top)
-              .background(CommentBG(cornerRadius: theme.theme.cornerRadius, pos: .bottom).fill(theme.theme.bg.cs(cs).color()))
+              .background(CommentBG(cornerRadius: theme.theme.cornerRadius, pos: .bottom).fill(theme.theme.bg()))
               .frame(maxWidth: .infinity, minHeight: theme.theme.cornerRadius, maxHeight: theme.theme.cornerRadius, alignment: .bottom)
               .clipped()
               .id("\(comment.id)-bot-decoration")
-              .listRowInsets(EdgeInsets(top: 0, leading: horPad, bottom: 0, trailing: horPad))
             
             Spacer()
               .frame(maxWidth: .infinity, minHeight: theme.spacing / 2, maxHeight: theme.spacing / 2)
@@ -113,7 +111,7 @@ struct PostReplies: View {
             .onChange(of: ignoreSpecificComment) { val in
               Task(priority: .background) {
                 await asyncFetch(post.data == nil, val)
-                globalLoader.dismiss()
+                globalLoaderDismiss()
               }
               if val {
                 withAnimation(spring) {
@@ -147,7 +145,7 @@ struct PostReplies: View {
           .id("no-comments-placeholder")
       }
     }.onAppear() {
-      seenComments = post.data?.winstonSeenComments
+      seenComments = post.winstonData?.seenComments
     }
   }
 }

@@ -10,8 +10,7 @@ import NukeUI
 import Defaults
 
 struct PostInBoxLink: View {
-  @EnvironmentObject private var routerProxy: RouterProxy
-  @Binding var selectedSub: FirstSelectable?
+  @Binding var initialSelected: Router.NavDest?
   @Default(.postsInBox) private var postsInBox
   
   var postInBox: PostInBox
@@ -52,10 +51,9 @@ struct PostInBoxLink: View {
             Text(formatBigNumber(postInBox.commentsCount ?? 0))
               .contentTransition(.numericText())
             
-            if let seenComments = post.data?.winstonSeenCommentCount {
-              let unseenComments = Int(postInBox.commentsCount ?? 0) - seenComments
-              if unseenComments > 0 {
-                Text("(\(Int(unseenComments)))").foregroundColor(.accentColor)
+            if let newComments = postInBox.newCommentsCount {
+              if newComments > 0 {
+                Text("(\(Int(newComments)))").foregroundColor(.accentColor)
               }
             }
           }
@@ -76,10 +74,10 @@ struct PostInBoxLink: View {
         HStack(alignment: .center, spacing: 4) {
           
           Image(systemName: "arrow.up")
-            .foregroundColor(.orange)
+            .foregroundColor(.gray)
           
           Text(formatBigNumber(postInBox.score ?? 0))
-            .foregroundColor((postInBox.score ?? 0) > 0 ? .orange : postInBox.score == 0 ? .gray : .blue)
+            .foregroundColor(.gray)
             .fontSize(13, .semibold)
             .transition(.asymmetric(insertion: .offset(y: 16), removal: .offset(y: -16)).combined(with: .opacity))
 //            .id(post.score)
@@ -96,18 +94,18 @@ struct PostInBoxLink: View {
     }
     .padding(.horizontal, 13)
     .padding(.vertical, 11)
-    .frame(width: (UIScreen.screenWidth / 1.75), height: 120, alignment: .topLeading)
+    .frame(width: (.screenW / 1.75), height: 120, alignment: .topLeading)
     .background(
       postInBox.img != nil && postInBox.img != ""
       
       ? URLImage(url: URL(string: postInBox.img!)!)
         .scaledToFill()
         .opacity(0.15)
-        .frame(width: (UIScreen.screenWidth / 1.75), height: 120)
+        .frame(width: (.screenW / 1.75), height: 120)
         .clipped()
       : nil
     )
-    .themedListRowBG()
+    .themedListRowLikeBG()
     .mask(RR(20, Color.listBG))
     .offset(y: offsetY ?? 0)
     .scaleEffect(dragging ? 0.975 : 1)
@@ -120,7 +118,7 @@ struct PostInBoxLink: View {
         .scaleEffect(deleting ? 1 : 0.85)
     )
     .onTapGesture {
-      selectedSub = .post(PostViewPayload(post: post, postSelfAttr: nil, sub: sub))
+      initialSelected = .reddit(.post(post))
     }
     .gesture(
       LongPressGesture(minimumDuration: 0.5, maximumDistance: 10)

@@ -10,8 +10,6 @@ import Alamofire
 
 extension RedditAPI {
   func fetchUserOverview(_ userName: String, _ dataTypeFilter: String? = nil, _ after: String? = nil) async -> [Either<PostData, CommentData>]? {
-    await refreshToken()
-    if let headers = self.getRequestHeaders() {
       var endpoint: String
 
       if let dataTypeFilter = dataTypeFilter, !dataTypeFilter.isEmpty {
@@ -38,21 +36,12 @@ extension RedditAPI {
         return nil
       }
 
-      let response = await AF.request(
-        requestURL,
-        method: .get,
-        headers: headers
-      )
-      .serializingDecodable(Listing<Either<PostData, CommentData>>.self).response
-      switch response.result {
+    switch await self.doRequest(requestURL.absoluteString, method: .get, decodable: Listing<Either<PostData, CommentData>>.self)  {
       case .success(let data):
         return data.data?.children?.map { $0.data }.compactMap { $0 }
       case .failure(let error):
         print(error)
         return nil
       }
-    } else {
-      return nil
-    }
   }
 }

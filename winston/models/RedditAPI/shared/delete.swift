@@ -10,24 +10,11 @@ import Alamofire
 
 extension RedditAPI {
   func delete(fullname: String) async -> Bool? {
-    await refreshToken()
-    if let headers = self.getRequestHeaders() {
-      let params = ["id": fullname]
-      let dataTask = AF.request(
-        "\(RedditAPI.redditApiURLBase)/api/del",
-        method: .post,
-        parameters: params,
-        encoder: URLEncodedFormParameterEncoder(destination: .httpBody),
-        headers: headers
-      ).serializingString()
-      let result = await dataTask.result
-      switch result {
-      case .success:
-        return true
-      case .failure:
-        return nil
-      }
-    } else {
+    let params = ["id": fullname]
+    switch await self.doRequest("\(RedditAPI.redditApiURLBase)/api/del", method: .post, params: params)  {
+    case .success:
+      return true
+    case .failure:
       return nil
     }
   }

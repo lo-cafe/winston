@@ -50,7 +50,7 @@ struct MD2: UIViewRepresentable {
     let tapGesture = UITapGestureRecognizer(target: context.coordinator, action: #selector(context.coordinator.tap(gesture:)))
     tapGesture.delegate = context.coordinator
     textView.addGestureRecognizer(tapGesture)
-    
+
     if let recognizers = textView.gestureRecognizers {
       for recognizer in recognizers {
         if recognizer.name == "UITextInteractionNameLinkTap" {
@@ -92,7 +92,7 @@ struct MD2: UIViewRepresentable {
     func textView(_ textView: UITextView, shouldInteractWith url: URL, in characterRange: NSRange, interaction: UITextItemInteraction) -> Bool {
       switch interaction {
       case .invokeDefaultAction:
-          if Defaults[.openLinksInSafari] || url.scheme?.lowercased().contains(/http(s)?/)==false {
+        if Defaults[.BehaviorDefSettings].openLinksInSafari || url.scheme?.lowercased().contains(/http(s)?/)==false {
           return true
         }
         if isImageUrl(url.absoluteString)  {
@@ -101,7 +101,7 @@ struct MD2: UIViewRepresentable {
           hostingController.overrideUserInterfaceStyle = .dark
           UIApplication.shared.firstKeyWindow?.rootViewController?.present(hostingController, animated: true)
         } else {
-          openInBuiltInBrowser(url)
+          Nav.openURL(url)
         }
         return false
         //      case .presentActions:

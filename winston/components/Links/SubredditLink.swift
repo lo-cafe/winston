@@ -10,7 +10,7 @@ import Defaults
 
 struct SubredditLinkContainer: View {
   var noHPad = false
-  @StateObject var sub: Subreddit
+  @ObservedObject var sub: Subreddit
   var body: some View {
     SubredditLink(noHPad: true, sub: sub)
   }
@@ -19,14 +19,13 @@ struct SubredditLinkContainer: View {
 struct SubredditLink: View {
   var noHPad = false
   var sub: Subreddit
-  @State var opened = false
-  @EnvironmentObject private var routerProxy: RouterProxy
+  @State private var opened = false
   var body: some View {
-    if var data = sub.data {
+    if let data = sub.data {
       @State var isSubbed = data.user_is_subscriber ?? false
       HStack(spacing: 12) {
         SubredditIcon(subredditIconKit: data.subredditIconKit, size: 64)
-          .nsfw(Defaults[.blurPostLinkNSFW] ? data.over18 ?? false : false, smallIcon: true)
+          .nsfw(Defaults[.PostLinkDefSettings].blurNSFW ? data.over18 ?? false : false, smallIcon: true)
         
         VStack(alignment: .leading) {
           HStack{
@@ -48,10 +47,10 @@ struct SubredditLink: View {
       .padding(.horizontal, noHPad ? 0 : 16)
       .padding(.vertical, 14)
       .frame(maxWidth: .infinity, alignment: .leading)
-      .themedListRowBG(disableBG: noHPad)
+      .themedListRowLikeBG(disableBG: noHPad)
       .mask(RR(20, .black))
       .onTapGesture {
-        routerProxy.router.path.append(SubViewType.posts(sub))
+        Nav.to(.reddit(.subFeed(sub)))
       }
     }
   }

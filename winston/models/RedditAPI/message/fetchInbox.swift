@@ -10,26 +10,12 @@ import Alamofire
 
 extension RedditAPI {
   func fetchInbox() async -> [MessageData]? {
-    await refreshToken()
-    //    await getModHash()
-    if let headers = self.getRequestHeaders() {
-      let params = FetchInboxPayload()
-      let response = await AF.request(
-        "\(RedditAPI.redditApiURLBase)/message/inbox.json",
-        method: .get,
-        parameters: params,
-        encoder: URLEncodedFormParameterEncoder(destination: .queryString),
-        headers: headers
-      )
-        .serializingDecodable(Listing<MessageData>.self).response
-      switch response.result {
-      case .success(let data):
-        return data.data?.children?.map { $0.data }.compactMap { $0 }
-      case .failure(let error):
-        print(error)
-        return nil
-      }
-    } else {
+    let params = FetchInboxPayload()
+    switch await self.doRequest("\(RedditAPI.redditApiURLBase)/message/inbox.json", method: .get, params: params, paramsLocation: .queryString, decodable: Listing<MessageData>.self) {
+    case .success(let data):
+      return data.data?.children?.map { $0.data }.compactMap { $0 }
+    case .failure(let error):
+      print(error)
       return nil
     }
   }

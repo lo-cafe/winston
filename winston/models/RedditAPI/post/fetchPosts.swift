@@ -10,30 +10,17 @@ import Alamofire
 
 extension RedditAPI {
   func fetchPosts(postFullnames: [String]) async -> [PostData]? {
-    await refreshToken()
-    if let headers = self.getRequestHeaders() {
-      let params = FetchPostsPayload(id: postFullnames.joined(separator: ","))
-      let response = await AF.request(
-        "\(RedditAPI.redditApiURLBase)/api/info",
-        method: .get,
-        parameters: params,
-        encoder: URLEncodedFormParameterEncoder(destination: .queryString),
-        headers: headers
-      )
-        .serializingDecodable(Listing<PostData>.self).response
-      switch response.result {
-      case .success(let data):
-        return data.data?.children?.compactMap { $0.data }
-      case .failure(let error):
-        print(error)
-        return nil
-      }
-    } else {
+    let params = FetchPostsPayload(id: postFullnames.joined(separator: ","))
+    switch await self.doRequest("\(RedditAPI.redditApiURLBase)/api/info", method: .get, params: params, paramsLocation: .queryString, decodable: Listing<PostData>.self)  {
+    case .success(let data):
+      return data.data?.children?.compactMap { $0.data }
+    case .failure(let error):
+      print(error)
       return nil
     }
   }
   
-//  typealias FetchPostCommentsResponse = [Either<Listing<PostData>, Listing<CommentData>>?]
+  //  typealias FetchPostCommentsResponse = [Either<Listing<PostData>, Listing<CommentData>>?]
   
   struct FetchPostsPayload: Codable {
     var id: String

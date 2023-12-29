@@ -115,181 +115,113 @@ struct CopiableValue: View {
   }
 }
 
-struct ChangeAuthAPIKey: View {
-  @Environment(\.openURL) var openURL
-  @Binding var open: Bool
-  @State var appID: String = ""
-  @State var appSecret: String = ""
-  @State var step = 1
-  @State var loadingCallback = false
-  
-  
-  var body: some View {
-    ScrollView {
-      VStack(alignment: .leading) {
-        Text("API Credentials Setup")
-          .fontSize(28, .bold)
-        
-        VStack(alignment: .leading, spacing: 16) {
-          
-          CardStep(currentStep: 1, title: "Getting credentials", subTitle: "Generating your own API credentials", step: $step) {
-            VStack (alignment: .leading) {
-              Text("In order to be able to use Reddit, you'll need to provide your own API credentials.")
-              Text("Don't worry, there will be no costs, there's a free tier of 100 requests/minute and it's kinda impossible for you to go beyond that.")
-              
-              SmallStep {
-                VStack (alignment: .leading) {
-                  Text("Open Reddit's apps settings by clicking this button:")
-                  MasterButton(label: "Reddit apps settings", height: 40, fullWidth: true) {
-                    openURL(URL(string: "https://www.reddit.com/prefs/apps")!)
-                  }
-                }
-              }
-              .fixedSize(horizontal: false, vertical: true)
-                SmallStep {
-                  VStack (alignment: .leading) {
-                    Text("Scroll down and click")
-                    Image("createAppButton")
-                      .resizable()
-                      .scaledToFit()
-                      .frame(maxWidth: .infinity)
-                      .mask(RR(12, Color.black))
-                    
-                  }
-                }
-                .fixedSize(horizontal: false, vertical: true)
-                SmallStep {
-                  VStack (alignment: .leading) {
-                    Text("Check \"web app\":")
-                    Image("webAppRadio")
-                      .resizable()
-                      .scaledToFill()
-                      .frame(maxWidth: .infinity, maxHeight: 72, alignment: .top)
-                      .mask(RR(12, Color.black))
-                  }
-                }
-              .fixedSize(horizontal: false, vertical: true)
-              
-              SmallStep {
-                VStack (alignment: .leading) {
-                  Text("Tap the URL below to copy and paste it in the \"redirect uri\" field:")
-                  CopiableValue(value: "https://winston.cafe/auth-success")
-                }
-              }
-              .fixedSize(horizontal: false, vertical: true)
-              
-              SmallStep {
-                HStack (alignment: .top) {
-                  Text("Fill the other fields however you want and click:")
-                  Image("saveAppButton")
-                    .resizable()
-                    .scaledToFill()
-                    .frame(maxWidth: 150)
-                    .mask(RR(12, Color.black))
-                }
-              }
-              .fixedSize(horizontal: false, vertical: true)
-              
-              MasterButton(label: "Next", height: 44, fullWidth: true) {
-                withAnimation(spring) {
-                  step += 1
-                }
-              }
-            }
-          }
-          
-          CardStep(currentStep: 2, title: "Granting access", subTitle: "Input your API credentials:", step: $step) {
-            Group {
-              SmallStep {
-                VStack (alignment: .leading) {
-//                  HStack {
-                  Image("appIDLocation")
-                    .resizable()
-                    .scaledToFill()
-                    .frame(maxWidth: .infinity, maxHeight: 72)
-                    .mask(RR(12, Color.black))
-                    .frame(maxWidth: .infinity)
-                    Text("In the new app you created, find the app ID and paste it below:")
+//struct ChangeAuthAPIKey: View {
+//  @Environment(\.openURL) var openURL
+//  @Binding var open: Bool
+//  @State var appID: String = ""
+//  @State var appSecret: String = ""
+//  @State var step = 1
+//  @State var loadingCallback = false
+//  
+//  
+//  var body: some View {
+//    ScrollView {
+//      VStack(alignment: .leading) {
+//        Text("API Credentials Setup")
+//          .fontSize(28, .bold)
+//        
+//        VStack(alignment: .leading, spacing: 16) {
+//          
+//          CardStep(currentStep: 1, title: "Getting credentials", subTitle: "Generating your own API credentials", step: $step) {
+//            VStack (alignment: .leading) {
+//              Text("In order to be able to use Reddit, you'll need to provide your own API credentials.")
+//              Text("Don't worry, there will be no costs, there's a free tier of 100 requests/minute and it's kinda impossible for you to go beyond that.")
+//              
+//              SmallStep {
+//                VStack (alignment: .leading) {
+//                  Text("Open Reddit's apps settings by clicking this button:")
+//                  MasterButton(label: "Reddit apps settings", height: 40, fullWidth: true) {
+//                    openURL(redditApiSettingsUrl)
 //                  }
-                  TextField("App ID", text: $appID)
-                }
-              }
-              .fixedSize(horizontal: false, vertical: true)
+//                   TextField("App ID", text: $appID)
+//                 }
+//               }
+//               .fixedSize(horizontal: false, vertical: true)
               
-              SmallStep {
-                VStack (alignment: .leading) {
-                  HStack {
-                    Text("Now, your \"secret\" (don't worry, it'll be saved in your keychain):")
-                  }
-                  TextField("App secret", text: $appSecret)
-                }
-              }
-              .fixedSize(horizontal: false, vertical: true)
+//               SmallStep {
+//                 VStack (alignment: .leading) {
+//                   HStack {
+//                     Text("Now, your \"secret\" (don't worry, it'll be saved locally in your keychain):")
+//                   }
+//                   TextField("App secret", text: $appSecret)
+//                 }
+//               }
+//               .fixedSize(horizontal: false, vertical: true)
               
-              Text("Now click the button below and grant full access to the app you created:")
-              HStack {
-                MasterButton(label: "Back", mode: .soft, color: .gray, height: 44, fullWidth: true) {
-                  withAnimation(spring) {
-                    step = 1
-                  }
-                }
-                MasterButton(label: "Grant access", height: 44, fullWidth: true) {
-                  dismissKeyboard()
-                  RedditAPI.shared.loggedUser.apiAppID = appID.trimmingCharacters(in: .whitespaces)
-                  RedditAPI.shared.loggedUser.apiAppSecret = appSecret.trimmingCharacters(in: .whitespaces)
-                  openURL(RedditAPI.shared.getAuthorizationCodeURL(appID))
-                }
-              }
-            }
-          }
-          .blur(radius: loadingCallback ? 24 : 0)
-          .allowsHitTesting(!loadingCallback)
-          .overlay(
-            !loadingCallback
-            ? nil
-            : VStack (alignment: .leading) {
-              ProgressView()
-              Text("Hold up, we're getting your access token!")
-            }
-              .frame(maxWidth: .infinity, maxHeight: .infinity)
-          )
-          .onOpenURL { url in
-            withAnimation(spring) {
-              loadingCallback = true
-            }
-            RedditAPI.shared.monitorAuthCallback(url) { success in
-              withAnimation(spring) {
-                loadingCallback = false
-                if success {
-                  step = 3
-                }
-              }
-            }
-          }
+//               Text("Now click the button below and grant full access to the app you created:")
+//               HStack {
+//                 MasterButton(label: "Back", mode: .soft, color: .gray, height: 44, fullWidth: true) {
+//                   withAnimation(spring) {
+//                     step = 1
+//                   }
+//                 }
+//                 MasterButton(label: "Grant access", height: 44, fullWidth: true) {
+//                   dismissKeyboard()
+//                   RedditAPI.shared.loggedUser.apiAppID = appID.trimmingCharacters(in: .whitespaces)
+//                   RedditAPI.shared.loggedUser.apiAppSecret = appSecret.trimmingCharacters(in: .whitespaces)
+//                   openURL(RedditAPI.shared.getAuthorizationCodeURL(appID))
+//                 }
+//               }
+//             }
+//           }
+//           .blur(radius: loadingCallback ? 24 : 0)
+//           .allowsHitTesting(!loadingCallback)
+//           .overlay(
+//             !loadingCallback
+//             ? nil
+//             : VStack (alignment: .leading) {
+//               ProgressView()
+//               Text("Hold up, we're getting your access token!")
+//             }
+//               .frame(maxWidth: .infinity, maxHeight: .infinity)
+//           )
+//           .onOpenURL { url in
+//             withAnimation(spring) {
+//               loadingCallback = true
+//             }
+//             RedditAPI.shared.monitorAuthCallback(url) { success in
+//               withAnimation(spring) {
+//                 loadingCallback = false
+//                 if success {
+//                   step = 3
+//                 }
+//               }
+//             }
+//           }
           
-          CardStep(currentStep: 3, title: "Done!", subTitle: "I hope you love winston!", step: $step) {
-            VStack (alignment: .leading) {
-              Text("That's it! Your API credentials are setup and you don't need to worry about these boring details anymore.")
-              MasterButton(icon: "hand.thumbsup.fill", label: "Nice!", height: 44, fullWidth: true) {
-                withAnimation(spring) {
-                  open = false
-                }
-              }
-            }
-          }
+//           CardStep(currentStep: 3, title: "Done!", subTitle: "I hope you love winston!", step: $step) {
+//             VStack (alignment: .leading) {
+//               Text("That's it! Your API credentials are setup and you don't need to worry about these boring details anymore.")
+//               MasterButton(icon: "hand.thumbsup.fill", label: "Nice!", height: 44, fullWidth: true) {
+//                 withAnimation(spring) {
+//                   open = false
+//                 }
+//               }
+//             }
+//           }
           
-        }
-      }
-      .padding(.top, 32)
-      .padding(.horizontal, 16)
-      .multilineTextAlignment(.leading)
-    }
-  }
-  func dismissKeyboard() {
-    let resign = #selector(UIResponder.resignFirstResponder)
-     UIApplication.shared.sendAction(resign, to: nil, from: nil, for: nil)
-  }
-}
+//         }
+//       }
+//       .padding(.top, 32)
+//       .padding(.horizontal, 16)
+//       .multilineTextAlignment(.leading)
+//     }
+//   }
+//   func dismissKeyboard() {
+//     let resign = #selector(UIResponder.resignFirstResponder)
+//      UIApplication.shared.sendAction(resign, to: nil, from: nil, for: nil)
+//   }
+// }
 //
 //struct ChangeAuthAPIKey_Previews: PreviewProvider {
 //  static var previews: some View {

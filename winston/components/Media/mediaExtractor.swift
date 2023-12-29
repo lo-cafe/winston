@@ -60,6 +60,20 @@ struct StreamableExtracted: Equatable {
   }
 }
 
+struct StreamableCached: Equatable {
+  static func == (lhs: StreamableCached, rhs: StreamableCached) -> Bool {
+    lhs.url == rhs.url && lhs.size == rhs.size
+  }
+  
+  let url: URL
+  let size: CGSize
+  
+  init(url: URL, size: CGSize) {
+    self.url = url
+    self.size = size
+  }
+}
+
 enum MediaExtractedType: Equatable {
   case link(PreviewModel)
   case video(SharedVideo)
@@ -69,13 +83,13 @@ enum MediaExtractedType: Equatable {
   case repost(Post)
   case post(EntityExtracted<PostData, PostWinstonData>?)
   case comment(EntityExtracted<CommentData, CommentWinstonData>?)
-  case subreddit(EntityExtracted<SubredditData, AnyHashable>?)
+  case subreddit(EntityExtracted<SubredditData, SubredditWinstonData>?)
   case user(EntityExtracted<UserData, AnyHashable>?)
 }
 
 
 // ORDER MATTERS!
-func mediaExtractor(compact: Bool, contentWidth: Double = UIScreen.screenWidth, _ data: PostData, theme: WinstonTheme? = nil) -> MediaExtractedType? {
+func mediaExtractor(compact: Bool, contentWidth: Double = .screenW, _ data: PostData, theme: WinstonTheme? = nil) -> MediaExtractedType? {
   guard !data.is_self else { return nil }
 
   if let is_gallery = data.is_gallery, is_gallery, let galleryData = data.gallery_data?.items, let metadata = data.media_metadata {
@@ -96,11 +110,11 @@ func mediaExtractor(compact: Bool, contentWidth: Double = UIScreen.screenWidth, 
   }
   
   if let videoPreview = data.preview?.reddit_video_preview, let url = videoPreview.hls_url, let videoURL = URL(string: url), let width = videoPreview.width, let height = videoPreview.height  {
-    return .video(SharedVideo(url: videoURL, size: CGSize(width: CGFloat(width), height: CGFloat(height))))
+    return .video(SharedVideo.get(url: videoURL, size: CGSize(width: CGFloat(width), height: CGFloat(height))))
   }
   
   if let redditVideo = data.media?.reddit_video, let url = redditVideo.hls_url, let videoURL = URL(string: url), let width = redditVideo.width, let height = redditVideo.height {
-    return .video(SharedVideo(url: videoURL, size: CGSize(width: CGFloat(width), height: CGFloat(height))))
+    return .video(SharedVideo.get(url: videoURL, size: CGSize(width: CGFloat(width), height: CGFloat(height))))
   }
   
   if data.media?.type == "youtube.com", let oembed = data.media?.oembed, let html = oembed.html, let ytID = extractYoutubeIdFromOEmbed(html), let width = oembed.width, let height = oembed.height, let author_name = oembed.author_name, let author_url = oembed.author_url, let authorURL = URL(string: author_url), let thumb = oembed.thumbnail_url, let thumbURL = URL(string: thumb) {
@@ -113,8 +127,7 @@ func mediaExtractor(compact: Bool, contentWidth: Double = UIScreen.screenWidth, 
   }
   
   if let postEmbed = data.crosspost_parent_list?.first {
-//    return .repost(Post(data: postEmbed, api: RedditAPI.shared, fetchSub: true, contentWidth: getPostContentWidth(contentWidth: contentWidth, secondary: true) ))
-    return .repost(Post(data: postEmbed, api: RedditAPI.shared, fetchSub: true, contentWidth: contentWidth, secondary: true, theme: theme))
+    return .repost(Post(data: postEmbed, contentWidth: contentWidth, secondary: true, theme: theme))
   }
   
   if IMAGES_FORMATS.contains(where: { data.url.hasSuffix($0) }), let url = rootURL(data.url) {
@@ -145,7 +158,7 @@ func mediaExtractor(compact: Bool, contentWidth: Double = UIScreen.screenWidth, 
   }
   
   if VIDEOS_FORMATS.contains(where: { data.url.hasSuffix($0) }), let url = URL(string: data.url) {
-    return .video(SharedVideo(url: url, size: CGSize(width: 0, height: 0)))
+    return .video(SharedVideo.get(url: url, size: CGSize(width: 0, height: 0)))
   }
   
   if data.url.contains("streamable.com") {
@@ -159,7 +172,7 @@ func mediaExtractor(compact: Bool, contentWidth: Double = UIScreen.screenWidth, 
   
   let pathComponents = urlComponents.path.components(separatedBy: "/").filter({ !$0.isEmpty })
   
-  if urlComponents.host?.hasSuffix("reddit.com") == true || urlComponents.host?.hasSuffix("winston.cafe") == true, pathComponents.count > 1 {
+  if urlComponents.host?.hasSuffix("reddit.com") == true || urlComponents.host?.hasSuffix("app.winston.cafe") == true, pathComponents.count > 1 {
     switch pathComponents[0] {
     case "r":
       let subredditName = pathComponents[1]
@@ -167,18 +180,18 @@ func mediaExtractor(compact: Bool, contentWidth: Double = UIScreen.screenWidth, 
         let postId = pathComponents[3]
         if pathComponents.count >= 6 {
           let commentId = pathComponents[5]
-          let comment = Comment(id: commentId, api: RedditAPI.shared, typePrefix: Comment.prefix)
+          let comment = Comment(id: commentId, typePrefix: Comment.prefix)
           comment.fetchItself()
           let entityExtracted = EntityExtracted(subredditID: subredditName, postID: postId, commentID: commentId, entity: comment)
           return .comment(entityExtracted)
         }
-        let post = Post(id: postId, api: RedditAPI.shared, typePrefix: Post.prefix)
+        let post = Post(id: postId, typePrefix: Post.prefix)
         post.fetchItself()
         let entityExtracted = EntityExtracted(subredditID: subredditName, postID: postId, entity: post)
         return .post(entityExtracted)
 //        return .post(id: postId, subreddit: subredditName)
       }
-      let sub = Subreddit(id: subredditName, api: RedditAPI.shared)
+      let sub = Subreddit(id: subredditName)
       Task(priority: .background) {
         await sub.refreshSubreddit()
       }
@@ -187,7 +200,7 @@ func mediaExtractor(compact: Bool, contentWidth: Double = UIScreen.screenWidth, 
       
     case "user", "u":
       let username = pathComponents[1]
-      let user = User(id: username, api: RedditAPI.shared, typePrefix: User.prefix)
+      let user = User(id: username, typePrefix: User.prefix)
       user.fetchItself()
       let entityExtracted = EntityExtracted(userID: username, entity: user)
       return .user(entityExtracted)
@@ -195,13 +208,13 @@ func mediaExtractor(compact: Bool, contentWidth: Double = UIScreen.screenWidth, 
       
     default:
       if !data.is_self, let linkURL = URL(string: data.url) {
-        return .link(PreviewModel(linkURL))
+        return .link(PreviewModel.get(linkURL, compact: compact))
       }
     }
   }
   
-  if data.post_hint == "link", let linkURL = URL(string: data.url) {
-    return .link(PreviewModel(linkURL))
+  if data.post_hint == "link" || !data.domain.isEmpty, let linkURL = URL(string: data.url) {
+    return .link(PreviewModel.get(linkURL, compact: compact))
   }
   
   return nil

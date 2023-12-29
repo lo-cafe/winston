@@ -79,8 +79,8 @@ struct CommentLink: View, Equatable {
   var postFullname: String?
   var showReplies = true
   var seenComments: String?
-  
   var parentElement: CommentParentElement? = nil
+  
   @ObservedObject var comment: Comment
   @ObservedObject var commentWinstonData: CommentWinstonData
   @ObservedObject var children: ObservableArray<Comment>
@@ -93,8 +93,8 @@ struct CommentLink: View, Equatable {
         Group {
           if let kind = comment.kind, kind == "more" {
             if comment.id == "_" {
-              if let post = post, let subreddit = subreddit {
-                CommentLinkFull(post: post, subreddit: subreddit, arrowKinds: arrowKinds, comment: comment, indentLines: indentLines)
+              if let post = post {
+                CommentLinkFull(post: post, arrowKinds: arrowKinds, comment: comment, indentLines: indentLines)
               }
             } else {
               CommentLinkMore(arrowKinds: arrowKinds, comment: comment, post: post, postFullname: postFullname, parentElement: parentElement, indentLines: indentLines)

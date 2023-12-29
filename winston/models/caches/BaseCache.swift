@@ -18,6 +18,7 @@ struct CacheItem<T>: Identifiable, Equatable {
   let data: T
   let createdAt: Date
   let eternal: Bool = false
+  var expires: Date? = nil
 }
 
 
@@ -30,11 +31,19 @@ class BaseCache<T: Any>: ObservableObject {
     self.cache = cache
   }
   
-  func addKeyValue(key: String, data: @escaping () -> T) {
+  func get(key: String) -> T? {
+    if let cacheItem = cache[key], cacheItem.expires == nil || Date() < cacheItem.expires! {
+      return cacheItem.data
+    }
+    
+    return nil
+  }
+  
+  func addKeyValue(key: String, data: @escaping () -> T, expires: Date? = nil) {
     if cache[key] != nil { return }
     Task(priority: .background) {
       let itemData = data()
-      let item = CacheItem(data: itemData, createdAt: Date())
+      let item = CacheItem(data: itemData, createdAt: Date(), expires: expires)
       let allowedToRemoveCacheList = cache.filter { !$0.value.eternal }
       let oldestKey = cache.count > cacheLimit ? allowedToRemoveCacheList.min { a, b in a.value.createdAt < b.value.createdAt }?.key : nil
       
@@ -71,12 +80,16 @@ class BaseObservableCache<T: ObservableObject>: ObservableObject {
     self.cache = cache
   }
   
-  func addKeyValue(key: String, data: @escaping () -> T) {
+  func get(key: String) -> T? {
+    return cache[key]?.data
+  }
+  
+  func addKeyValue(key: String, data: @escaping () -> T, expires: Date? = nil) {
     if cache[key] != nil { return }
     Task(priority: .background) {
       let itemData = data()
       // Create a new CacheItem with the current date
-      let item = CacheItem(data: itemData, createdAt: Date())
+      let item = CacheItem(data: itemData, createdAt: Date(), expires: expires)
       let allowedToRemoveCacheList = cache.filter { !$0.value.eternal }
       let oldestKey = cache.count > cacheLimit ? allowedToRemoveCacheList.min { a, b in a.value.createdAt < b.value.createdAt }?.key : nil
       

@@ -9,7 +9,7 @@ import Foundation
 import SwiftUI
 import Defaults
 
-func getPostContentWidth(contentWidth: Double = UIScreen.screenWidth, secondary: Bool = false, theme: WinstonTheme? = nil) -> CGFloat {
+func getPostContentWidth(contentWidth: Double = .screenW, secondary: Bool = false, theme: WinstonTheme? = nil) -> CGFloat {
   let selectedTheme = theme ?? getEnabledTheme()
   let theme = selectedTheme.postLinks.theme
   var value: CGFloat = 0
@@ -48,7 +48,7 @@ struct PostDimensions: Hashable, Equatable {
   
   init(contentWidth: Double, compact: Bool? = nil, theme: PostLinkTheme? = nil, titleSize: CGSize, bodySize: CGSize? = nil, urlTagHeight: Double? = nil, mediaSize: CGSize? = nil, dividerSize: CGSize? = nil, badgeSize: CGSize, spacingHeight: Double) {
     self.contentWidth = contentWidth
-    self.compact = compact ?? Defaults[.compactMode]
+    self.compact = compact ?? Defaults[.PostLinkDefSettings].compactMode.enabled
     self.theme = theme ?? getEnabledTheme().postLinks.theme
     self.titleSize = titleSize
     self.bodySize = bodySize
@@ -60,14 +60,14 @@ struct PostDimensions: Hashable, Equatable {
   }
 }
 
-func getPostDimensions(post: Post, winstonData: PostWinstonData? = nil, columnWidth: Double = UIScreen.screenWidth, secondary: Bool = false, rawTheme: WinstonTheme? = nil, compact: Bool? = nil) -> PostDimensions {
+func getPostDimensions(post: Post, winstonData: PostWinstonData? = nil, columnWidth: Double = .screenW, secondary: Bool = false, rawTheme: WinstonTheme? = nil, compact: Bool? = nil, subId: String? = nil) -> PostDimensions {
   if let data = post.data {
     let selectedTheme = rawTheme ?? getEnabledTheme()
-    let showSelfPostThumbnails = Defaults[.showSelfPostThumbnails]
-    let compact = compact ?? Defaults[.compactMode]
-    let showAuthorOnPostLinks = Defaults[.showAuthorOnPostLinks]
-    let maxDefaultHeight: CGFloat = Defaults[.maxPostLinkImageHeightPercentage]
-    let maxHeight: CGFloat = (maxDefaultHeight / 100) * (UIScreen.screenHeight)
+    let showSelfPostThumbnails = Defaults[.PostLinkDefSettings].compactMode.showPlaceholderThumbnail
+    let compact = compact ?? Defaults[.SubredditFeedDefSettings].compactPerSubreddit[subId ?? data.subreddit_id ?? ""] ?? Defaults[.PostLinkDefSettings].compactMode.enabled
+    let showAuthorOnPostLinks = Defaults[.PostLinkDefSettings].showAuthor
+    let maxDefaultHeight: CGFloat = Defaults[.PostLinkDefSettings].maxMediaHeightScreenPercentage
+    let maxHeight: CGFloat = (maxDefaultHeight / 100) * (.screenH)
     let extractedMedia = compact ? winstonData?.extractedMedia : winstonData?.extractedMediaForcedNormal
     let compactImgSize = scaledCompactModeThumbSize()
     let theme = selectedTheme.postLinks.theme
@@ -140,7 +140,7 @@ func getPostDimensions(post: Post, winstonData: PostWinstonData? = nil, columnWi
       }
     }
     
-    let compactTitleWidth = postGeneralSpacing + VotesCluster.verticalWidth + (showSelfPostThumbnails || extractedMedia != nil ? postGeneralSpacing + compactMediaSize.width : 0)
+    let compactTitleWidth = postGeneralSpacing + VotesCluster.verticalWidth + postGeneralSpacing + compactMediaSize.width
     
     let titleContentWidth = contentWidth - (compact ? compactTitleWidth : 0)
     
@@ -185,7 +185,7 @@ func getPostDimensions(post: Post, winstonData: PostWinstonData? = nil, columnWi
     let theresTitle = true
     let theresSelftext = !compact && !data.selftext.isEmpty
     let theresMedia = extractedMedia != nil
-    let theresSubDivider = !compact
+    let theresSubDivider = !compact && theme.showDivider
     let theresBadge = true
     let elements = [theresTitle, theresSelftext, !compact && theresMedia, theresSubDivider, theresBadge]
     let ACC_allSpacingsHeight = Double(elements.filter { $0 }.count - 1) * postGeneralSpacing

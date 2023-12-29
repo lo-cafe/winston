@@ -24,7 +24,7 @@ class GenericRedditEntity<T: GenericRedditEntityDataType, B: Hashable>: Identifi
   }
   
   static func placeholder() -> GenericRedditEntity<T, B> {
-    GenericRedditEntity<T, B>(id: "none", api: RedditAPI.shared, typePrefix: nil)
+    GenericRedditEntity<T, B>(id: "none", typePrefix: nil)
   }
   
   static func == (lhs: GenericRedditEntity<T, B>, rhs: GenericRedditEntity<T, B>) -> Bool {
@@ -66,7 +66,6 @@ class GenericRedditEntity<T: GenericRedditEntityDataType, B: Hashable>: Identifi
     typePrefix = try container.decodeIfPresent(String.self, forKey: .typePrefix)
     kind = try container.decodeIfPresent(String.self, forKey: .kind)
     data = try container.decodeIfPresent(T.self, forKey: .data)
-    self.redditAPI = RedditAPI.shared // provide a default value
   }
   
   func encode(to encoder: Encoder) throws {
@@ -78,7 +77,7 @@ class GenericRedditEntity<T: GenericRedditEntityDataType, B: Hashable>: Identifi
     try container.encode(data, forKey: .data)
   }
   
-  let redditAPI: RedditAPI
+  let redditAPI: RedditAPI = .shared
   var anyCancellables: [AnyCancellable]? = nil
   @Published var childrenWinston: ObservableArray<GenericRedditEntity<T, B>> = ObservableArray<GenericRedditEntity<T, B>>(array: [])
   var parentWinston: ObservableArray<GenericRedditEntity<T, B>>?
@@ -89,32 +88,29 @@ class GenericRedditEntity<T: GenericRedditEntityDataType, B: Hashable>: Identifi
     })
   }
   
-  required init(id: String, api: RedditAPI, typePrefix: String?) {
+  required init(id: String, typePrefix: String?) {
     self._id = id
-    self.redditAPI = api
     self.typePrefix = typePrefix
 //    self.setupWatchers()
   }
 
-  required init(data: T, api: RedditAPI, typePrefix: String?) {
+  required init(data: T, typePrefix: String?) {
     self.data = data
     self._id = data.id
-    self.redditAPI = api
     self.typePrefix = typePrefix
 //    self.setupWatchers()
   }
   
-  init(data: T, api: RedditAPI, typePrefix: String?, kind: String? = nil) {
+  init(data: T, typePrefix: String?, kind: String? = nil) {
     self.data = data
     self.kind = kind
     self._id = data.id
-    self.redditAPI = api
     self.typePrefix = typePrefix
 //    self.setupWatchers()
   }
   
   func duplicate() -> GenericRedditEntity<T, B> {
-    let copy = GenericRedditEntity<T, B>(id: id, api: RedditAPI.shared, typePrefix: typePrefix)
+    let copy = GenericRedditEntity<T, B>(id: id, typePrefix: typePrefix)
     copy.data = data
     copy.kind = kind
     copy.childrenWinston = childrenWinston

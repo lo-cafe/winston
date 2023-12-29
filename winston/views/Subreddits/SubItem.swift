@@ -8,31 +8,35 @@
 import SwiftUI
 import Defaults
 
-struct SubItemButton: View {
-  @Binding var selectedSub: FirstSelectable?
-  var sub: Subreddit
+struct SubItemButton: View, Equatable {
+  static func == (lhs: SubItemButton, rhs: SubItemButton) -> Bool {
+    lhs.data == rhs.data
+  }
+  
+  var data: SubredditData
+  var action: () -> ()
   var body: some View {
-    if let data = sub.data {
-      Button {
-        selectedSub = .sub(sub)
-      } label: {
+    Button(action: action) {
         HStack {
           Text(data.display_name ?? "")
           SubredditIcon(subredditIconKit: data.subredditIconKit)
         }
       }
-    }
   }
 }
 
-struct SubItem: View {
-  var forcedMaskType: CommentBGSide = .middle
-  @Binding var selectedSub: FirstSelectable?
-  @StateObject var sub: Subreddit
+struct SubItem: View, Equatable {
+  static func == (lhs: SubItem, rhs: SubItem) -> Bool {
+    lhs.sub == rhs.sub
+  }
+  
+  @Binding var selectedSub: Router.NavDest?
+  @ObservedObject var sub: Subreddit
   var cachedSub: CachedSub
   @Default(.likedButNotSubbed) private var likedButNotSubbed
   
   func favoriteToggle() {
+//    guard let sub = sub else { return }
     if likedButNotSubbed.contains(sub) {
       _ = sub.localFavoriteToggle()
     } else {
@@ -44,14 +48,17 @@ struct SubItem: View {
     if let data = sub.data {
       let favorite = cachedSub.user_has_favorited
       let localFav = likedButNotSubbed.contains(sub)
-      let isActive = selectedSub == .sub(sub)
+      let isActive = selectedSub == .reddit(.subFeed(sub))
       WListButton(showArrow: !IPAD, active: isActive) {
-        selectedSub = .sub(sub)
+        selectedSub = .reddit(.subFeed(sub))
       } label: {
         HStack {
-          SubredditIcon(subredditIconKit: data.subredditIconKit)
-          Text(data.display_name ?? "")
-            .foregroundStyle(isActive ? .white : .primary)
+          Label {
+            Text(data.display_name ?? "")
+              .foregroundStyle(isActive ? .white : .primary)
+          } icon: {
+            SubredditIcon(subredditIconKit: data.subredditIconKit)
+          }
           
           Spacer()
           

@@ -11,11 +11,11 @@ import SwiftUI
 typealias Message = GenericRedditEntity<MessageData, AnyHashable>
 
 extension Message {
-  convenience init(data: T, api: RedditAPI) {
-    self.init(data: data, api: api, typePrefix: "t1_")
+  convenience init(data: T) {
+    self.init(data: data, typePrefix: "t1_")
   }
-  convenience init(id: String, api: RedditAPI) {
-    self.init(id: id, api: api, typePrefix: "t1_")
+  convenience init(id: String) {
+    self.init(id: id, typePrefix: "t1_")
   }
   
   func toggleRead() async -> Bool {

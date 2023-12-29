@@ -36,10 +36,9 @@ struct FilteredSubredditsSettings: View {
                 }
                 .tint(Color.green)
               }
-            .themedListRowBG(enablePadding: true)
           }
         }
-        .themedListDividers()
+        .themedListSection()
       }
       .themedListBG(theme.lists.bg)
       .navigationTitle("Filtered Subreddits")

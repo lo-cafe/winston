@@ -14,7 +14,6 @@ private let HANG_ANIM = Animation.spring(response: 0.3, dampingFraction: 0.5)
 private let ROT_ANIM = Animation.spring(response: 0.4, dampingFraction: 0.25)
 
 struct Onboarding: View {
-  @Binding var open: Bool
   @State private var currentTab = 0
   @State var showStars = false
   @State var hanging = true
@@ -79,7 +78,7 @@ struct Onboarding: View {
         .contentShape(Rectangle())
         .simultaneousGesture(DragGesture())
         .tag(7)
-      Onboarding7Ending(open: $open)
+      Onboarding7Ending()
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .contentShape(Rectangle())
         .simultaneousGesture(DragGesture())
@@ -174,7 +173,7 @@ struct Star: View {
       }
       .onAppear {
         timer.upstream.connect().cancel()
-        position.x = (((UIScreen.screenWidth - 48) / CGFloat(starsCount - 1)) * CGFloat(number)) + 24 + (CGFloat.rand(0...24) * ([-1, 1].randomElement())!)
+        position.x = (((.screenW - 48) / CGFloat(starsCount - 1)) * CGFloat(number)) + 24 + (CGFloat.rand(0...24) * ([-1, 1].randomElement())!)
         DispatchQueue.main.asyncAfter(deadline: .now() + CGFloat.random(in: 0...0.75)) {
           timer = Timer.publish(every: duration, on: .current, in: .common).autoconnect()
           move()

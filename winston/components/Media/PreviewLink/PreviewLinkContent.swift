@@ -22,11 +22,9 @@ struct PreviewLinkContent: View {
   var url: URL
   static let height: CGFloat = 88
   @Environment(\.openURL) private var openURL
-  @EnvironmentObject private var routerProxy: RouterProxy
-  @ObservedObject private var tempGlobalState = TempGlobalState.shared
-  @Default(.openLinksInSafari) private var openLinksInSafari
+  @Default(.BehaviorDefSettings) private var behaviorDefSettings
   var body: some View {
-    PreviewLinkContentRaw(compact: compact, image: viewModel.image, title: viewModel.title, description: viewModel.description, loading: viewModel.loading, url: url, openURL: openURL, routerProxy: routerProxy, globalURL: $tempGlobalState.inAppBrowserURL, openLinksInSafari: openLinksInSafari)
+    PreviewLinkContentRaw(compact: compact, image: viewModel.image, title: viewModel.title, description: viewModel.description, loading: viewModel.loading, url: url, openURL: openURL, openLinksInSafari: behaviorDefSettings.openLinksInSafari)
   }
 }
 
@@ -44,8 +42,6 @@ struct PreviewLinkContentRaw: View, Equatable {
   var loading: Bool
   var url: URL
   var openURL: OpenURLAction
-  weak var routerProxy: RouterProxy?
-  @Binding var globalURL: URL?
   var openLinksInSafari: Bool
     
   var body: some View {
@@ -96,13 +92,13 @@ struct PreviewLinkContentRaw: View, Equatable {
       .frame(width:  compact ? scaledCompactModeThumbSize() : 76, height:  compact ? scaledCompactModeThumbSize() : 76)
       .clipped()
       .mask(RR(12, Color.black))
-      .background(RR(12, Color.primary.opacity(0.05)))
+      .background(RR(12, Color.primary.opacity(0.1)))
     }
     .padding(.vertical, compact ? 0 : 6)
     .padding(.leading, compact ? 0 : 10)
     .padding(.trailing, compact ? 0 : 6)
     .frame(maxWidth: compact ? nil : .infinity, minHeight: compact ? nil : PreviewLinkContent.height, maxHeight: compact ? nil : PreviewLinkContent.height)
-    .background(compact ? nil : RR(16, Color.primary.opacity(0.05)))
+    .background(compact ? nil : RR(16, Color.primary.opacity(0.1)))
     .contextMenu {
       Button {
         UIPasteboard.general.string = url.absoluteString
@@ -115,7 +111,7 @@ struct PreviewLinkContentRaw: View, Equatable {
         if openLinksInSafari {
           openURL(newURL)
         } else {
-          openInBuiltInBrowser(newURL)
+          Nav.openURL(newURL)
         }
       }
     })

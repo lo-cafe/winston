@@ -1,76 +1,76 @@
 {
-    "title": "What's new in Winston",
-    "version": "1.1.0",
-    "features": [
-        {
-            "subtitle": "Huge performance upgrade!",
-            "systemImage": "hare",
-            "title": "Performance Upgrade"
-        },
-        {
-            "subtitle": "With the new saved posts feed you can finally look at all the cute cat pics you saved so long ago",
-            "systemImage": "bookmark",
-            "title": "Saved Posts Feed"
-        },
-        {
-            "subtitle": "You can finally look at those spicy opinions.",
-            "systemImage": "figure.fencing",
-            "title": "Add Controversial Sort"
-        },
-        {
-            "subtitle": "Add subscribed indicator / button to search",
-            "systemImage": "checkmark.square",
-            "title": "Subscribed Indicator in Search"
-        },
-        {
-            "subtitle": "Added option to use inline post toolbar in place of floating toolbar in the post page. (Theme -> Post page -> Inline upvote toolbar - at bottom)",
-            "systemImage": "rectangle.and.pencil.and.ellipsis",
-            "title": "Inline Post Toolbar Option"
-        },
-        {
-            "subtitle": "Added ability to sort by only posts or only comments in a user profile. (Click the corresponding karma button)",
-            "systemImage": "arrow.up.arrow.down.square",
-            "title": "User Profile Sorting"
-        },
-        {
-            "subtitle": "Tweaked look of UI in many areas (mainly compact mode improvements).",
-            "systemImage": "rectangle.3.group",
-            "title": "UI Tweaks"
-        },
-        {
-            "subtitle": "Images in comments now open in the app.",
-            "systemImage": "photo",
-            "title": "In-App Image Viewer"
-        },
-        {
-            "subtitle": "In-app safari support improved.",
-            "systemImage": "safari",
-            "title": "Improved In-App Safari Support"
-        },
-        {
-            "subtitle": "Implemented iCloud syncing for credentials.",
-            "systemImage": "icloud",
-            "title": "iCloud Syncing for Credentials"
-        },
-        {
-            "subtitle": "Removed deprecated bug reporting functionality.",
-            "systemImage": "xmark.octagon",
-            "title": "Bug Reporting Removal"
-        },
-        {
-            "subtitle": "Enhanced stability for the video player and made minor performance tweaks.",
-            "systemImage": "play.rectangle",
-            "title": "Video Player Stability and Performance"
-        },
-        {
-            "subtitle": "Deployed fix for user flairs and new comment indicators.",
-            "systemImage": "wrench.and.screwdriver",
-            "title": "Fix for User Flairs and Comment Indicators"
-        },
-        {
-            "subtitle": "Various bug fixes, stability improvements and QOL tweaks.",
-            "systemImage": "hammer",
-            "title": "Bug Fixes and QOL Tweaks"
-        }
-    ]
+  "title": "What's new in Winston",
+  "version": "1.1.1",
+  "features": [
+    {
+      "subtitle": "Easily switch between accounts with the new Account Switcher.",
+      "systemImage": "arrow.triangle.branch",
+      "title": "Account Switcher"
+    },
+    {
+      "subtitle": "Benefit from a refined UI, especially in compact mode.",
+      "systemImage": "rectangle.3.group",
+      "title": "UI Tweaks"
+    },
+    {
+      "subtitle": "Receive important announcements with reduced API spam.",
+      "systemImage": "megaphone",
+      "title": "Announcements and Spam Reduction"
+    },
+    {
+      "subtitle": "Enjoy improved appearance settings and framework for upsells.",
+      "systemImage": "paintbrush",
+      "title": "Improved Appearance Settings"
+    },
+    {
+      "subtitle": "Cache preview models and shared videos for faster loading.",
+      "systemImage": "square.and.arrow.up",
+      "title": "Caching Optimization"
+    },
+    {
+      "subtitle": "Experience Winston Everywhere as a React app.",
+      "systemImage": "arrow.triangle.branch",
+      "title": "Reformulated Winston Everywhere"
+    },
+    {
+      "subtitle": "Witness a smooth credential transition effect.",
+      "systemImage": "arrow.right.square",
+      "title": "Credential Transition Effect"
+    },
+    {
+      "subtitle": "Customize your experience with custom filters and Core Data support.",
+      "systemImage": "slider.horizontal.3",
+      "title": "Custom Filters and Core Data Support"
+    },
+    {
+      "subtitle": "Switch between accounts seamlessly with the first version of Switch Accounts.",
+      "systemImage": "arrow.triangle.branch",
+      "title": "Switch Accounts"
+    },
+    {
+      "subtitle": "Toggle audio changes with the new behavior option.",
+      "systemImage": "speaker.3",
+      "title": "Audio Behavior Toggle"
+    },
+    {
+      "subtitle": "Organize default settings into user-friendly categories.",
+      "systemImage": "list.bullet.rectangle",
+      "title": "Grouped Defaults"
+    },
+    {
+      "subtitle": "Collapse comments effortlessly with a new swipe action.",
+      "systemImage": "text.bubble",
+      "title": "Collapse Comments Swipe Action"
+    },
+    {
+      "subtitle": "Experience finished flairs animation.",
+      "systemImage": "sparkles",
+      "title": "Finished Flairs Animation"
+    },
+    {
+      "subtitle": "Open old.reddit links directly inside the app.",
+      "systemImage": "arrow.right.square",
+      "title": "Open old.reddit Links"
+    }
+  ]
 }

@@ -22,6 +22,11 @@ struct WinstonTheme: Codable, Identifiable, Hashable, Equatable, Defaults.Serial
   var lists: ListsTheme
   var general: GeneralTheme
   
+  func save() {
+    guard let index = Defaults[.ThemesDefSettings].themesPresets.firstIndex(where: { $0.id == self.id }) else { return }
+    Defaults[.ThemesDefSettings].themesPresets[index] = self
+  }
+  
   func duplicate() -> WinstonTheme {
     var copy = self
     copy.id = UUID().uuidString

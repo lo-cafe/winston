@@ -15,50 +15,16 @@ struct MixedContentLink: View, Equatable {
   
   var content: Either<Post, Comment>
   var theme: SubPostsListTheme
-  weak var routerProxy: RouterProxy?
   
-  @Default(.blurPostLinkNSFW) private var blurPostLinkNSFW
-  @Default(.postSwipeActions) private var postSwipeActions
-  @Default(.compactMode) private var compactMode
-  @Default(.showVotes) private var showVotes
-  @Default(.showSelfText) private var showSelfText
-  @Default(.thumbnailPositionRight) private var thumbnailPositionRight
-  @Default(.voteButtonPositionRight) private var voteButtonPositionRight
-  @Default(.readPostOnScroll) private var readPostOnScroll
-  @Default(.hideReadPosts) private var hideReadPosts
-  @Default(.showUpvoteRatio) private var showUpvoteRatio
-  @Default(.showSubsAtTop) private var showSubsAtTop
-  @Default(.showTitleAtTop) private var showTitleAtTop
-  @Default(.showSelfPostThumbnails) private var showSelfPostThumbnails
+  @Default(.PostLinkDefSettings) private var postLinkDefSettings
+  @Default(.CommentLinkDefSettings) private var commentLinkDefSettings
   @Environment(\.contentWidth) private var contentWidth
-  @Environment(\.colorScheme) private var cs
   
   var body: some View {
     switch content {
     case .first(let post):
       if let winstonData = post.winstonData, let postSub = winstonData.subreddit {
-        PostLink(
-          id: post.id,
-          controller: nil,
-          theme: theme,
-          showSub: true,
-          routerProxy: routerProxy,
-          contentWidth: contentWidth,
-          blurPostLinkNSFW: blurPostLinkNSFW,
-          postSwipeActions: postSwipeActions,
-          showVotes: showVotes,
-          showSelfText: showSelfText,
-          readPostOnScroll: readPostOnScroll,
-          hideReadPosts: hideReadPosts,
-          showUpvoteRatio: showUpvoteRatio,
-          showSubsAtTop: showSubsAtTop,
-          showTitleAtTop: showTitleAtTop,
-          compact: compactMode,
-          thumbnailPositionRight: thumbnailPositionRight,
-          voteButtonPositionRight: voteButtonPositionRight,
-          showSelfPostThumbnails: showSelfPostThumbnails,
-          cs: cs
-        )
+        PostLink(id: post.id, theme: theme, showSub: true, contentWidth: contentWidth, defSettings: postLinkDefSettings)
         .environmentObject(post)
         .environmentObject(postSub)
         .environmentObject(winstonData)
@@ -73,7 +39,7 @@ struct MixedContentLink: View, Equatable {
       .padding(.horizontal, 12)
       .padding(.top, 12)
       .padding(.bottom, 10)
-      .background(PostLinkBG(theme: theme, stickied: false, secondary: false, cs: cs).equatable())
+      .background(PostLinkBG(theme: theme, stickied: false, secondary: false).equatable())
       .mask(RR(theme.theme.cornerRadius, Color.black).equatable())
     }
   }

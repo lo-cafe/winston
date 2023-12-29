@@ -11,19 +11,18 @@ import Defaults
 struct CommentLinkMore: View {
   var arrowKinds: [ArrowKind]
   var comment: Comment
-  var post: Post?
+  weak var post: Post?
   var postFullname: String?
   var parentElement: CommentParentElement?
   var indentLines: Int?
   @State var loadMoreLoading = false
   
   @Environment(\.useTheme) private var selectedTheme
-  @Environment(\.colorScheme) private var cs
   
   var body: some View {
-    let curveColor = selectedTheme.comments.theme.indentColor.cs(cs).color()
-    let cardedCommentsInnerHPadding = selectedTheme.comments.theme.innerPadding.horizontal
-    let horPad = cardedCommentsInnerHPadding
+    let theme = selectedTheme.comments
+//    let curveColor = selectedTheme.comments.theme.indentColor()
+    let horPad = selectedTheme.comments.theme.innerPadding.horizontal
     if let data = comment.data, let count = data.count, let parentElement = parentElement, count > 0 {
       HStack(spacing: 0) {
         if data.depth != 0 && indentLines != 0 {
@@ -32,8 +31,7 @@ struct CommentLinkMore: View {
             ForEach(shapes, id: \.self) { i in
               if arrowKinds.indices.contains(i - 1) {
                 let actualArrowKind = arrowKinds[i - 1]
-                Arrows(kind: actualArrowKind, offset: selectedTheme.comments.theme.loadMoreOuterTopPadding)
-
+                Arrows(kind: actualArrowKind, offset: theme.theme.innerPadding.vertical + theme.theme.repliesSpacing)
               }
             }
           }
@@ -62,17 +60,16 @@ struct CommentLinkMore: View {
         .padding(.horizontal, selectedTheme.comments.theme.loadMoreInnerPadding.horizontal)
         .opacity(loadMoreLoading ? 0.5 : 1)
         .mask(Capsule(style: .continuous).fill(.black))
-        .background(Capsule(style: .continuous).fill(selectedTheme.comments.theme.loadMoreBackground.cs(cs).color()))
-        .padding(.vertical, 4)
+        .background(Capsule(style: .continuous).fill(selectedTheme.comments.theme.loadMoreBackground()))
+        .padding(.top, data.depth == 0 ? 0 : theme.theme.repliesSpacing)
+        .padding(.vertical, max(0, theme.theme.innerPadding.vertical - (data.depth == 0 ? theme.theme.cornerRadius : 0)))
         .compositingGroup()
         .fontSize(selectedTheme.comments.theme.loadMoreText.size, selectedTheme.comments.theme.loadMoreText.weight.t)
-        .foregroundColor(selectedTheme.comments.theme.loadMoreText.color.cs(cs).color())
-        .padding(.top, selectedTheme.comments.theme.loadMoreOuterTopPadding)
-        .padding(.bottom, 2)
+        .foregroundColor(selectedTheme.comments.theme.loadMoreText.color())
       }
       .padding(.horizontal, horPad)
       .frame(maxWidth: .infinity, alignment: .leading)
-      .background(selectedTheme.comments.theme.bg.cs(cs).color())
+      .background(selectedTheme.comments.theme.bg())
       .contentShape(Rectangle())
       .onTapGesture {
         if let postFullname = postFullname {
