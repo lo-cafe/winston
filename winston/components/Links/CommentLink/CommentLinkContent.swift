@@ -184,7 +184,8 @@ struct CommentLinkContent: View {
             controlledIsSource: false,
             onTap: { withAnimation(spring) { comment.toggleCollapsed(optimistic: true) } },
             actionsSet: commentSwipeActions,
-            entity: comment
+            entity: comment,
+            skipAnimation: true
           )
         }
         .padding(.horizontal, horPad)
@@ -244,7 +245,8 @@ struct CommentLinkContent: View {
                 controlledDragAmount: $offsetX,
                 // onTap: { if !selectable { withAnimation(spring) { comment.toggleCollapsed(optimistic: true) } } },
                 actionsSet: commentSwipeActions,
-                entity: comment
+                entity: comment,
+                skipAnimation: true
               )
               .onChange(of: theme) { newTheme in
                 let encoder = JSONEncoder()

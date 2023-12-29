@@ -37,7 +37,8 @@ struct MDEditor: View {
             .padding(.leading, 5)
         }
         TextEditor(text: $text)
-          .background(Color.clear)
+          .scrollContentBackground(.hidden)
+          .background(.clear)
         // The HighlightedTextEditor package currently does not integrate well with iOS 17's predictive text. It will be disabled until that issue is remedied.
         // HighlightedTextEditor(text: $text, highlightRules: winstonMDEditorPreset)
 //          .introspect { editor in
