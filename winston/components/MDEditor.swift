@@ -36,10 +36,13 @@ struct MDEditor: View {
             .padding(.top, 8)
             .padding(.leading, 5)
         }
-        HighlightedTextEditor(text: $text, highlightRules: winstonMDEditorPreset)
-          .introspect { editor in
-            editor.textView.backgroundColor = .clear
-          }
+        TextEditor(text: $text)
+          .background(Color.clear)
+        // The HighlightedTextEditor package currently does not integrate well with iOS 17's predictive text. It will be disabled until that issue is remedied.
+        // HighlightedTextEditor(text: $text, highlightRules: winstonMDEditorPreset)
+//          .introspect { editor in
+//            editor.textView.backgroundColor = .clear
+//          }
       }
       .animation(nil, value: text.isEmpty)
     }
