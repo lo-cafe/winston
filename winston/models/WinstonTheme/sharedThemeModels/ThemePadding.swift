@@ -20,6 +20,10 @@ struct ThemeColor: Codable, Hashable, Equatable {
   var alpha: CGFloat = 1.0
   
   func color() -> Color {
-    return Color.hex(hex).opacity(alpha)
+    return Color(uiColor: UIColor(hex: hex, alpha: alpha))
+  }
+  
+  func uiColor() -> UIColor {
+    return UIColor(hex: hex, alpha: Double(alpha))
   }
 }

@@ -472,12 +472,12 @@ public func applyUrlDetector(attributedString: NSMutableAttributedString, text: 
 public func replaceRedditURL(_ urlString: String) -> String? {
 
     var replacedURLString = ""
-    if urlString.starts(with: /http(s)?:\/\/(www\.)?reddit\.com\//) && urlString.contains(/\/wiki\//)==false {
+    if urlString.starts(with: /http(s)?:\/\/(www\.|old\.)?reddit\.com\//) && urlString.contains(/\/wiki\//)==false {
         if urlString.contains(/\/media\?url=/) {
-            replacedURLString = urlString.replacingOccurrences(of: #"http(s)?:\/\/(www\.)?reddit\.com\/media\?url="#, with: "", options: .regularExpression)
+            replacedURLString = urlString.replacingOccurrences(of: #"http(s)?:\/\/(www\.|old\.)?reddit\.com\/media\?url="#, with: "", options: .regularExpression)
             replacedURLString = replacedURLString.removingPercentEncoding ?? ""
         } else {
-            replacedURLString = urlString.replacingOccurrences(of: #"http(s)?:\/\/(www\.)?reddit\.com"#, with: "winstonapp://", options: .regularExpression)
+            replacedURLString = urlString.replacingOccurrences(of: #"http(s)?:\/\/(www\.|old\.)?reddit\.com"#, with: "winstonapp://", options: .regularExpression)
         }
     }
   

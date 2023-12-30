@@ -34,11 +34,11 @@ struct PillTab: View {
             .saturation(active ? 1 : 0)
             .opacity(active ? 1 : 0.5)
             .background(
-                Capsule()
+              Capsule(style: .continuous)
                   .strokeBorder(.white.opacity(0.05), lineWidth: 0.5)
             )
             .background(
-                Capsule()
+              Capsule(style: .continuous)
                     .fill(.ultraThinMaterial)
                     .shadow(color: .black.opacity(0.25), radius: 8, y: 6)
             )

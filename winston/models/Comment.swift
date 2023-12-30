@@ -55,10 +55,13 @@ extension Comment {
     
     guard let winstonData = self.winstonData, let data = self.data else { return }
     let theme = getEnabledTheme().comments.theme
+    let cs: ColorScheme = UIScreen.main.traitCollection.userInterfaceStyle == .dark ? .dark : .light
+
     let bodyAttr = NSMutableAttributedString(attributedString: stringToNSAttr(data.body ?? "", fontSize: theme.bodyText.size))
     let style = NSMutableParagraphStyle()
     style.lineSpacing = theme.linespacing
     bodyAttr.addAttribute(.paragraphStyle, value: style, range: NSRange(location: 0, length: bodyAttr.length))
+    bodyAttr.addAttribute(.foregroundColor, value: UIColor(theme.bodyText.color.cs(cs).color()), range: NSRange(location: 0, length: bodyAttr.length))
     winstonData.bodyAttr = bodyAttr
     
     let screenWidth = .screenW - (!IPAD ? 0 : (.screenW /  3))
@@ -73,7 +76,6 @@ extension Comment {
   }
   
   convenience init(message: Message) throws {
-    let rawMessage = message
     if let message = message.data {
       var commentData = CommentData(id: message.id)
       commentData.subreddit_id = nil
@@ -137,45 +139,52 @@ extension Comment {
     return []
   }
   
-  func toggleCollapsed(_ collapsed: Bool? = nil, optimistic: Bool = false) -> Void {
+  func toggleCollapsed(_ collapsed: Bool? = nil, optimistic: Bool = false) {
     if optimistic {
-      let prev = data?.collapsed ?? false
-      let new = collapsed == nil ? !prev : collapsed
-      if prev != new { data?.collapsed = new }
+      let previousState = data?.collapsed ?? false
+      let newState = collapsed ?? !previousState
+      
+      if previousState != newState {
+        data?.collapsed = newState
+      }
     }
+
     let context = PersistenceController.shared.primaryBGContext
-    let fetchRequest = NSFetchRequest<CollapsedComment>(entityName: "CollapsedComment")
-    do {
-      try context.performAndWait {
+
+    context.performAndWait {
+      let fetchRequest = NSFetchRequest<CollapsedComment>(entityName: "CollapsedComment")
+      fetchRequest.predicate = NSPredicate(format: "commentID == %@", id as CVarArg)
+
+      do {
         let results = try context.fetch(fetchRequest)
-        let foundPost = results.first(where: { obj in obj.commentID == id })
-        
-        if let foundPost = foundPost {
+
+        if let foundPost = results.first {
           if collapsed == nil || collapsed == false {
             context.delete(foundPost)
+            try? context.save()
             if !optimistic {
               data?.collapsed = false
             }
           }
         } else if collapsed == nil || collapsed == true {
-          let newSeenPost = CollapsedComment(context: context)
-          newSeenPost.commentID = id
-          context.performAndWait {
-            try? context.save()
-          }
+          let newCollapsedComment = CollapsedComment(context: context)
+          newCollapsedComment.commentID = id
+
+          try? context.save()
+
           if !optimistic {
             data?.collapsed = true
           }
         }
+      } catch {
+        print("Error fetching or updating data in Core Data: \(error)")
       }
-    } catch {
-      print("Error fetching data from Core Data: \(error)")
-    }
+    }    
   }
   
   func loadChildren(parent: CommentParentElement, postFullname: String, avatarSize: Double, post: Post?) async {
     if let kind = kind, kind == "more", let data = data, let count = data.count, let parent_id = data.parent_id, let childrenIDS = data.children {
-      var actualID = id
+      let actualID = id
       //      if actualID.hasSuffix("-more") {
       //        actualID.removeLast(5)
       //      }

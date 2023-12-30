@@ -17,21 +17,16 @@ struct winstonApp: App {
   @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
   let persistenceController = PersistenceController.shared
   
-  @Default(.ThemesDefSettings) private var themesDefSettings
-  
-  var selectedTheme: WinstonTheme { themesDefSettings.themesPresets.first { $0.id == themesDefSettings.selectedThemeID } ?? defaultTheme }
-  
   var body: some Scene {
     WindowGroup {
-      AppContent(selectedTheme: selectedTheme)
-        .onAppear { themesDefSettings.themesPresets = themesDefSettings.themesPresets.filter { $0.id != "default" } }
+      AppContent()
         .environment(\.managedObjectContext, persistenceController.container.viewContext)
         .environment(\.primaryBGContext, persistenceController.primaryBGContext)
         .environment(
           \.whatsNew,
            WhatsNewEnvironment(currentVersion: .current(), whatsNewCollection: getCurrentChangelog())
         )
-        .environment(\.useTheme, selectedTheme)
+        
     }
   }
   
@@ -60,9 +55,12 @@ struct winstonApp: App {
 }
 
 struct AppContent: View {
-  var selectedTheme: WinstonTheme
   @StateObject private var themeStore = ThemeStoreAPI()
   @Environment(\.scenePhase) var scenePhase
+  
+  @Default(.ThemesDefSettings) private var themesDefSettings
+  
+  var selectedTheme: WinstonTheme { themesDefSettings.themesPresets.first { $0.id == themesDefSettings.selectedThemeID } ?? defaultTheme }
   
   let biometrics = Biometrics()
   @State private var isAuthenticating = false
@@ -79,11 +77,12 @@ struct AppContent: View {
         Tabber(theme: selectedTheme).equatable()
       }
     }
+    .whatsNewSheet()
     .environment(\.tabBarHeight, tabBarHeight)
     .environment(\.setTabBarHeight, setTabBarHeight)
-    .whatsNewSheet()
     .environmentObject(themeStore)
-    //        .alertToastRoot()
+    .environment(\.useTheme, selectedTheme)
+    .onAppear { themesDefSettings.themesPresets = themesDefSettings.themesPresets.filter { $0.id != "default" } }
     .onChange(of: scenePhase) { newPhase in
       let useAuth = UserDefaults.standard.bool(forKey: "useAuth") // Get fresh value
       

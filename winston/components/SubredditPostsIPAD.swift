@@ -12,11 +12,13 @@ import NukeUI
 
 struct SubredditPostsIPAD: View, Equatable {
   static func == (lhs: SubredditPostsIPAD, rhs: SubredditPostsIPAD) -> Bool {
-    lhs.posts.count == rhs.posts.count && lhs.subreddit?.id == rhs.subreddit?.id && lhs.searchText == rhs.searchText && lhs.selectedTheme == rhs.selectedTheme && lhs.filter == rhs.filter
+    lhs.posts.count == rhs.posts.count && lhs.subreddit?.id == rhs.subreddit?.id && lhs.searchText == rhs.searchText && lhs.selectedTheme == rhs.selectedTheme && lhs.lastPostAfter == rhs.lastPostAfter && lhs.filter == rhs.filter && lhs.loading == rhs.loading && lhs.filters == rhs.filters
   }
   
   var showSub = false
+	var lastPostAfter: String?
   var subreddit: Subreddit?
+	var filters: [FilterData]
   var posts: [Post]
   var filter: String
   var filterCallback: ((String) -> ())
@@ -25,19 +27,51 @@ struct SubredditPostsIPAD: View, Equatable {
   var editCustomFilter: ((FilterData) -> ())
   var fetch: (Bool, String?, Bool) -> ()
   var selectedTheme: WinstonTheme
+	var loading: Bool
   
   @State var lastPostOnRefreshRequest = ""
+	@Binding var reachedEndOfFeed: Bool
   
   @Environment(\.contentWidth) var contentWidth
   
   @Default(.PostLinkDefSettings) private var postLinkDefSettings
+	
+	func loadMorePosts() {
+		if !searchText.isEmpty {
+			fetch(true, searchText, true)
+		} else {
+			fetch(true, nil, true)
+		}
+	}
     
   var body: some View {
+		let isFiltered = filter != "flair:All"
     VStack(spacing: 8) {
       
-      if let sub = subreddit {
-        SubredditFilters(subId: sub.id, filters: sub.winstonData?.flairs ?? [], selected: filter, filterCallback: filterCallback, searchText: searchText, searchCallback: searchCallback, editCustomFilter: editCustomFilter, theme: selectedTheme)
-      }
+//      if let sub = subreddit {
+//        SubredditFilters(subId: sub.id, filters: sub.winstonData?.flairs ?? [], selected: filter, filterCallback: filterCallback, searchText: searchText, searchCallback: searchCallback, editCustomFilter: editCustomFilter, theme: selectedTheme)
+//      }
+		if isFiltered && posts.count == 0 {
+				Text("No filtered posts")
+					.frame(maxWidth: .infinity)
+					.font(Font.system(size: 22, weight: .semibold))
+					.opacity(0.5)
+					.padding(.vertical, 24)
+					.background(RR(12, Color.primary.opacity(0.1)))
+				if !reachedEndOfFeed {
+						Button(action: {
+							loadMorePosts()
+						}) {
+							Label("LOAD MORE", systemImage: "arrow.clockwise.circle.fill")
+								.frame(maxWidth: .infinity)
+								.font(Font.system(size: 16, weight: .bold))
+								.foregroundStyle(selectedTheme.general.accentColor())
+								.padding(.top, 12)
+								.padding(.bottom, 48)
+							}
+				}
+		}
+
       
       Waterfall(
         collection: posts,
@@ -56,23 +90,46 @@ struct SubredditPostsIPAD: View, Equatable {
               .environmentObject(sub)
               .environmentObject(winstonData)
               .onAppear {
-                if(posts.count - 7 == i) {
-                  if !searchText.isEmpty {
-                    fetch(true, searchText, true)
-                  } else {
-                    fetch(true, nil, true)
-                  }
-                }
+                if(posts.count - 7 == i && !isFiltered && !loading) { loadMorePosts() }
               }
             }
+						if isFiltered && !loading && !reachedEndOfFeed && i == posts.count - 1  {
+								Button(action: {
+									loadMorePosts()
+								}) {
+										Label("LOAD MORE", systemImage: "arrow.clockwise.circle.fill")
+											.frame(maxWidth: .infinity, minHeight: 50, alignment: .top)
+											.font(Font.system(size: 16, weight: .bold))
+											.foregroundStyle(selectedTheme.general.accentColor())
+											//.padding(.top, 12)
+											//.padding(.bottom, 48)
+										}
+							}
+												
+							if reachedEndOfFeed && i == posts.count - 1 {
+									EndOfFeedView()
+										.frame(maxWidth: .infinity, maxHeight: 50)
+							}
           }
         },
         theme: selectedTheme.postLinks
       )
       .ignoresSafeArea()
+//      .floatingMenu()
       //      .introspect(.scrollView, on: .iOS(.v13, .v14, .v15, .v16, .v17)) { scrollView in
       //        scrollView.backgroundColor = UIColor.systemGroupedBackground
       //      }
+			if loading {
+					ProgressView()
+						.progressViewStyle(.circular)
+						.frame(maxWidth: .infinity, minHeight: (posts.count > 0 || isFiltered) ? 50 : .screenH - 200 )
+						.listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
+						.listRowSeparator(.hidden)
+						.listSectionSeparator(.hidden)
+						.listRowBackground(Color.clear)
+						.id(UUID())
+				}
     }
+		.floatingMenu(filters: filters, selected: filter, filterCallback: filterCallback, searchText: searchText, searchCallback: searchCallback)
   }
 }

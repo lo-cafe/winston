@@ -64,10 +64,9 @@ struct PostContent: View, Equatable {
           
           if data.selftext != "" {
 
-            MD2(winstonData.postBodyAttr == nil ? .str(data.selftext) : .nsAttr(winstonData.postBodyAttr!), onTap: { withAnimation(spring) { collapsed.toggle() } })
+            MD2(winstonData.postBodyAttr == nil ? .str(data.selftext) : .nsAttr(winstonData.postBodyAttr!), onTap: { withAnimation(spring) { collapsed.toggle() }})
               .frame(width: winstonData.postViewBodySize.width, height: winstonData.postViewBodySize.height, alignment: .topLeading)
               .fixedSize()
-//              .foregroundColor(postsTheme.bodyText.color())
               .allowsHitTesting(!isCollapsed)
           }
         }

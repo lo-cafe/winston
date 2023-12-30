@@ -1089,6 +1089,9 @@
         }
       }
     },
+    "Download" : {
+
+    },
     "Drag Left" : {
       "localizations" : {
         "de" : {
@@ -2314,6 +2317,7 @@
 
     },
     "New post" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -2720,6 +2724,7 @@
       }
     },
     "Post title" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -3555,6 +3560,9 @@
         }
       }
     },
+    "Theme Store" : {
+
+    },
     "Theme Store Tint" : {
       "localizations" : {
         "de" : {
@@ -3618,6 +3626,9 @@
           }
         }
       }
+    },
+    "There was an error importing this theme" : {
+
     },
     "This is not working yet :(" : {
       "localizations" : {
@@ -3732,6 +3743,7 @@
       }
     },
     "Tired of Winstons current look? Try the theme editor in settings now!" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -3748,6 +3760,7 @@
       }
     },
     "Title" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {

@@ -46,14 +46,12 @@ struct PostLinkCompact: View, Equatable, Identifiable {
   let contentWidth: CGFloat
   let defSettings: PostLinkDefSettings
     
-  @State private var isOpen = false
   
   func markAsRead() async {
     Task(priority: .background) { await post.toggleSeen(true) }
   }
   
   func openPost() {
-    withAnimation(nil) { isOpen = true }
     Nav.to(.reddit(.post(post)))
   }
   
@@ -156,7 +154,7 @@ struct PostLinkCompact: View, Equatable, Identifiable {
         .frame(maxWidth: .infinity, alignment: .topLeading)
         
       }
-      .postLinkStyle(showSubBottom: showSub && theme.theme.badge.avatar.visible, post: post, sub: sub, theme: theme, size: winstonData.postDimensions.size, secondary: secondary, isOpen: $isOpen, openPost: openPost, readPostOnScroll: defSettings.readOnScroll, hideReadPosts: defSettings.hideOnRead)
+      .postLinkStyle(showSubBottom: showSub && theme.theme.badge.avatar.visible, post: post, sub: sub, theme: theme, size: winstonData.postDimensions.size, secondary: secondary, openPost: openPost, readPostOnScroll: defSettings.readOnScroll, hideReadPosts: defSettings.hideOnRead)
       .swipyUI(onTap: openPost, actionsSet: defSettings.swipeActions, entity: post)
 //      .frame(width: winstonData.postDimensions.size.width, height: winstonData.postDimensions.size.height)
     }

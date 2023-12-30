@@ -104,7 +104,7 @@ struct Tabber: View, Equatable {
 //        Nav.present(.announcement(ann))
 //      }
     }
-    .accentColor(currentTheme.general.accentColor.cs(colorScheme).color())
+    .accentColor(currentTheme.general.accentColor())
   }
 }
 

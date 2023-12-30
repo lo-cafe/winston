@@ -50,7 +50,7 @@ struct MD2: UIViewRepresentable {
     let tapGesture = UITapGestureRecognizer(target: context.coordinator, action: #selector(context.coordinator.tap(gesture:)))
     tapGesture.delegate = context.coordinator
     textView.addGestureRecognizer(tapGesture)
-    
+
     if let recognizers = textView.gestureRecognizers {
       for recognizer in recognizers {
         if recognizer.name == "UITextInteractionNameLinkTap" {

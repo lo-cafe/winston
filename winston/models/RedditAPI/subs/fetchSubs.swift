@@ -48,7 +48,7 @@ extension RedditAPI {
       
       finalSubs = finalSubs.filter { $0.data?.subreddit_type != "user" }
 //      print("aosmao", finalSubs.map { ($0.data?.name, $0.data?.display_name) })
-      let context = PersistenceController.shared.primaryBGContext
+      let context = PersistenceController.shared.container.viewContext
       
       let fetchRequest = NSFetchRequest<CachedSub>(entityName: "CachedSub")
       fetchRequest.predicate = NSPredicate(format: "winstonCredentialID == %@", currentCredentialID as CVarArg)

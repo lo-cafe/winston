@@ -51,21 +51,22 @@ struct SubredditPostsIOS: View, Equatable {
     
     List {
       
-      if !selectedTheme.postLinks.stickyFilters, let sub = subreddit {
-        SubredditFilters(subId: sub.id, filters: filters, selected: filter, filterCallback: filterCallback, searchText: searchText, searchCallback: searchCallback, editCustomFilter: editCustomFilter, theme: selectedTheme)
-          .equatable()
-          .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
-          .listRowSeparator(.hidden)
-      }
+//      if !selectedTheme.postLinks.stickyFilters, let sub = subreddit {
+//        SubredditFilters(subId: sub.id, filters: filters, selected: filter, filterCallback: filterCallback, searchText: searchText, searchCallback: searchCallback, editCustomFilter: editCustomFilter, theme: selectedTheme)
+//          .equatable()
+//          .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
+//          .listRowSeparator(.hidden)
+//      }
       
-      Section(
-        header: subreddit != nil && selectedTheme.postLinks.stickyFilters ?
-        SubredditFilters(subId: subreddit!.id, filters: filters, selected: filter, filterCallback: filterCallback, searchText: searchText, searchCallback: searchCallback, editCustomFilter: editCustomFilter, theme: selectedTheme)
-          .equatable()
-          .listRowSeparator(.hidden)
-          .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
-        : nil
-      ) {
+//      Section(
+//        header: subreddit != nil && selectedTheme.postLinks.stickyFilters ?
+//        SubredditFilters(subId: subreddit!.id, filters: filters, selected: filter, filterCallback: filterCallback, searchText: searchText, searchCallback: searchCallback, editCustomFilter: editCustomFilter, theme: selectedTheme)
+//          .equatable()
+//          .listRowSeparator(.hidden)
+//          .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
+//        : nil
+//      ) {
+      Section {
         ForEach(Array(posts.enumerated()), id: \.self.element.id) { i, post in
           if let sub = subreddit ?? post.winstonData?.subreddit, let winstonData = post.winstonData {
             PostLink(id: post.id, theme: selectedTheme.postLinks, showSub: showSub, contentWidth: contentWidth, defSettings: postLinkDefSettings)
@@ -134,6 +135,6 @@ struct SubredditPostsIOS: View, Equatable {
     .listStyle(.plain)
     .listRowSeparator(.hidden)
     .listSectionSeparator(.hidden)
-    .background(.blue)
+    .floatingMenu(filters: filters, selected: filter, filterCallback: filterCallback, searchText: searchText, searchCallback: searchCallback)
   }
 }

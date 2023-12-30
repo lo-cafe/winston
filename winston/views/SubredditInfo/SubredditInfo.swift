@@ -74,7 +74,7 @@ struct SubredditInfo: View {
                       addedToFavs.toggle()
                     }
                   } else {
-                    await subreddit.favoriteToggle()
+                    subreddit.favoriteToggle()
                   }
                 }
               } label: {

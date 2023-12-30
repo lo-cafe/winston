@@ -15,7 +15,7 @@ struct SubredditsStack: View {
   @State private var columnVisibility: NavigationSplitViewVisibility = .automatic
   @State private var sidebarSize: CGSize = .zero
   
-  var postContentWidth: CGFloat { .screenW - (!IPAD || columnVisibility != .doubleColumn ? 0 : sidebarSize.width) }
+  var postContentWidth: CGFloat { .screenW - (!IPAD || columnVisibility == .detailOnly ? 0 : sidebarSize.width) }
   
   @State private var loaded = false
   var body: some View {
@@ -34,6 +34,7 @@ struct SubredditsStack: View {
                 .id("\(multi.id)-multi-first-tab")
             case .reddit(.subFeed(let sub)):
               SubredditPosts(subreddit: sub)
+                .equatable()
                 .id("\(sub.id)-sub-first-tab")
             case .reddit(.post(let post)):
               if let sub = post.winstonData?.subreddit {

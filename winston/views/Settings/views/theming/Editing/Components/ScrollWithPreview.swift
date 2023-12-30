@@ -28,12 +28,6 @@ struct ScrollWithPreview<Content: View, Preview: View>: View {
   @ViewBuilder let content: () -> Content
   @ViewBuilder let preview: () -> Preview
     var body: some View {
-      let tabHeight = CGFloat(tabBarHeight ?? 0)
-      let sheetDifference = .screenH - containerSize.height
-//      let interpolation = [
-//        -((.screenH - tabHeight) - ((contentSize.height + getSafeArea().top + tabHeight) - (previewContentSize.height + 40 + 16))) + sheetDifference,
-//         (contentSize.height + getSafeArea().top + tabHeight) - (.screenH - (getSafeArea().top)) - 20
-//      ]
       let interpolation = [
         ((contentSize.height + (pro - (.screenH - containerSize.height))) - containerSize.height) + (safeArea.bottom * 2) + 16,
         ((contentSize.height + (pro - (.screenH - containerSize.height))) - containerSize.height) + (safeArea.bottom * 2) + previewContentSize.height + 16

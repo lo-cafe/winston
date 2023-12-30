@@ -1,2 +1,31 @@
-Alpha:
-- Basically perf optimizations to account switching.
+Features and Enhancements
+
+    Implemented accounts manager
+    Improved appearance settings and framework for upsells
+    Added announcements and reduced API spam
+    Implemented caching for preview models and shared videos
+    Reformulated Winston Everywhere to be a React app
+    Implemented new credential transition effect
+    Introduced custom filters and Core Data support
+    Finished first version of switch accounts
+    Added behavior toggle for audio changes
+    Grouped defaults into categories
+    Added "Collapse Comments" swipe action
+    Finished flairs animation
+    Open old.reddit links inside the app
+
+Bug Fixes and Optimization
+
+    Fixed compact mode links and audio issues
+    Fixed issues with account management
+    Fixed various bugs in video playback
+    Fixed various issues with announcements and voting
+    Fixed problems with comment collapsing and links
+    Fixed comments loading bug
+    Fixed post opening issues
+    Fixed issues with post links and hitboxes
+    Fixed issues with theme editing and preview
+    Fixed problems with comments and voting
+    Fixed various crashes and performance improvements
+    Fixed issues with feed load times
+    Fixed bugs in flairs animation

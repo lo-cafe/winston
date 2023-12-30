@@ -213,7 +213,7 @@ func mediaExtractor(compact: Bool, contentWidth: Double = .screenW, _ data: Post
     }
   }
   
-  if data.post_hint == "link", let linkURL = URL(string: data.url) {
+  if data.post_hint == "link" || !data.domain.isEmpty, let linkURL = URL(string: data.url) {
     return .link(PreviewModel.get(linkURL, compact: compact))
   }
   

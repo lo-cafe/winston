@@ -60,7 +60,7 @@ struct PostLink: View, Equatable, Identifiable {
 }
 
 extension View {
-  func postLinkStyle(showSubBottom: Bool = false, post: Post, sub: Subreddit, theme: SubPostsListTheme, size: CGSize, secondary: Bool, isOpen: Binding<Bool>, openPost: @escaping () -> (), readPostOnScroll: Bool, hideReadPosts: Bool) -> some View {
+  func postLinkStyle(showSubBottom: Bool = false, post: Post, sub: Subreddit, theme: SubPostsListTheme, size: CGSize, secondary: Bool, openPost: @escaping () -> (), readPostOnScroll: Bool, hideReadPosts: Bool) -> some View {
     let seen = (post.data?.winstonSeen ?? false)
 //    let size = CGSize(width: winstonData.postDimensions.size.width, height: winstonData.postDimensions.size.height)
     let fadeReadPosts = theme.theme.unseenType == .fade
@@ -69,15 +69,12 @@ extension View {
       .frame(width: size.width, height: size.height + (showSubBottom ? Tag.height + theme.theme.verticalElementsSpacing : 0), alignment: .top)
       .fixedSize()
       .background(PostLinkBG(theme: theme, stickied: post.data?.stickied, secondary: secondary).equatable())
-//      .mask(RR(theme.theme.cornerRadius, Color.black).equatable())
       .overlay(PostLinkGlowDot(unseenType: theme.theme.unseenType, seen: seen, badge: false).equatable(), alignment: .topTrailing)
-      .scaleEffect(1)
       .contentShape(Rectangle())
-//      .gesture(TapGesture().onEnded(openPost))
       .compositingGroup()
-      .brightness(isOpen.wrappedValue ? 0.075 : 0)
+//      .brightness(isOpen.wrappedValue ? 0.075 : 0)
       .opacity(fadeReadPosts && seen ? theme.theme.unseenFadeOpacity : 1)
-      .contextMenu(menuItems: { PostLinkContext(post: post) }, preview: { PostLinkContextPreview(post: post, sub: sub) })
+//      .contextMenu(menuItems: { PostLinkContext(post: post) }, preview: { PostLinkContextPreview(post: post, sub: sub) })
       .foregroundStyle(.primary)
       .multilineTextAlignment(.leading)
       .onDisappear {

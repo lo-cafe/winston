@@ -23,6 +23,7 @@ struct SwipeUI<T: GenericRedditEntityDataType, B: Hashable>: ViewModifier {
   @State private var dragAmount: CGFloat = 0
   @State private var offset: CGFloat?
   @State private var triggeredAction: TriggeredAction = .none
+  @State private var pressed = false
   
   var secondary: Bool
   var offsetYAction: CGFloat = 0
@@ -32,6 +33,7 @@ struct SwipeUI<T: GenericRedditEntityDataType, B: Hashable>: ViewModifier {
   var actionsSet: SwipeActionsSet
   weak var entity: GenericRedditEntity<T, B>?
   var disabled: Bool = false
+  var skipAnimation: Bool
   
   private let firstActionThreshold: CGFloat = 75
   private let secondActionThreshold: CGFloat = 150
@@ -79,9 +81,11 @@ struct SwipeUI<T: GenericRedditEntityDataType, B: Hashable>: ViewModifier {
     let offsetXInterpolate = interpolatorBuilder([0, firstActionThreshold], value: actualOffsetX)
     let offsetXNegativeInterpolate = interpolatorBuilder([0, -firstActionThreshold], value: actualOffsetX)
     let enableSwipeAnywhere = behaviorDefSettings.enableSwipeAnywhere
+    let actualOffset = controlledDragAmount != nil ? 0 : dragAmount
     
     content
-      .offset(x: controlledDragAmount != nil ? 0 : dragAmount)
+      .scaleEffect(pressed ? 0.975 : 1)
+      .offset(x: actualOffset)
       .background(
         !controlledIsSource || enableSwipeAnywhere
         ? nil
@@ -107,8 +111,24 @@ struct SwipeUI<T: GenericRedditEntityDataType, B: Hashable>: ViewModifier {
           .offset(y: offsetYAction)
           .allowsHitTesting(false)
       )
-      .highPriorityGesture(secondary && onTapAction != nil ? TapGesture().onEnded({ onTapAction?() }) : nil)
-      .gesture(secondary || onTapAction == nil ? nil : TapGesture().onEnded({ onTapAction?() }))
+      .onTapGesture {
+        if let onTapAction {
+          onTapAction()
+        }
+        
+        if !skipAnimation {
+          withAnimation(.bouncy(duration: 0.325, extraBounce: 0.25)) {
+            pressed = true
+          }
+          pressed.toggle()
+        }
+      }
+    // commenting this out since it is interfering with the on tap. i moved the animation of pressed to that.
+//      .onLongPressGesture(minimumDuration: 0.3, maximumDistance: 30, perform: { }, onPressingChanged: { val in
+//        withAnimation(.bouncy(duration: 0.325, extraBounce: 0.25)) {
+//          pressed = val
+//        }
+//      })
       .gesture(
         enableSwipeAnywhere
         ? nil
@@ -194,7 +214,6 @@ struct SwipeUI<T: GenericRedditEntityDataType, B: Hashable>: ViewModifier {
           }
         }
       }
-    //      .simultaneousGesture(DragGesture())
   }
 }
 
@@ -242,7 +261,8 @@ extension View {
     actionsSet: SwipeActionsSet,
     entity: GenericRedditEntity<T, B>,
     disabled: Bool = false,
-    secondary: Bool = false
+    secondary: Bool = false,
+    skipAnimation: Bool = false
   ) -> some View {
     self.modifier(SwipeUI(
       secondary: secondary,
@@ -252,6 +272,7 @@ extension View {
       onTapAction: onTap,
       actionsSet: actionsSet,
       entity: entity,
-      disabled: disabled))
+      disabled: disabled,
+      skipAnimation: skipAnimation))
   }
 }

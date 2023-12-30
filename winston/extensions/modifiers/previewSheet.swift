@@ -56,12 +56,10 @@ struct PreviewSheetModifier<T: View>: ViewModifier {
         dragOffsetPersist = val.translation.height - (initialDragOffset ?? 0)
         guard let nextI = stepPoints.closest(to: stepPoints[currentStepIndex] + val.predictedEndTranslation.height) else { return }
         let newI = nextI
-        let newY = stepPoints[newI]
         withAnimation(.spring()) {
           currentStepIndex = newI
           dragOffsetPersist = 0
         }
-        
       })
     
     

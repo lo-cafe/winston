@@ -15,7 +15,7 @@ extension RedditAPI {
     switch await self.doRequest("\(RedditAPI.redditApiURLBase)/r/\(subName)/api/link_flair_v2", method: .get, decodable: FlairsResponse.self)  {
     case .success(let data):
       return data
-    case .failure(let error):
+    case .failure(_):
       return nil
     }
   }

@@ -17,13 +17,13 @@ class Nav: ObservableObject, Identifiable, Codable {
   /* <Util static functions for ease of use> */
   static func back() { Nav.shared.activeRouter.goBack() }
   static func to(_ dest: Router.NavDest, _ reset: Bool = false) { Nav.shared.activeRouter.navigateTo(dest, reset) }
-  static func fullTo(_ tab: TabIdentifier, _ dest: Router.NavDest, _ reset: Bool = true) { Nav.shared.navigateTo(tab, dest, reset) }
+  static func fullTo(_ tab: TabIdentifier, _ dest: Router.NavDest, _ reset: Bool = false) { Nav.shared.navigateTo(tab, dest, reset) }
   static func present(_ content: PresentingSheet) { Nav.shared.presentingSheet = content }
   static func resetStack() { Nav.shared.activeRouter.resetNavPath() }
   /* </Util static functions for ease of use> */
   
   static private func newRouterForTab(_ tab: TabIdentifier, _ id: UUID) -> Router { Router(id: "\(tab.rawValue)TabRouter-\(id.uuidString)") }
-  
+    
   enum TabIdentifier: String, Codable, Hashable, CaseIterable {
     case posts, inbox, me, search, settings
   }
@@ -61,7 +61,7 @@ class Nav: ObservableObject, Identifiable, Codable {
   private var cancellables = Set<AnyCancellable>()
 
   
-  init(activeTab: TabIdentifier = .posts) {
+  private init(activeTab: TabIdentifier = .posts) {
     let id = UUID()
     self.id = id
     self.activeTab = activeTab
