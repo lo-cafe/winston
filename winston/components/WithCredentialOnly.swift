@@ -25,7 +25,7 @@ struct WithCredentialOnly<Content: View>: View {
             }
           }
           Button("Go to credentials settings", systemImage: "gear") {
-            Nav.to(.setting(.credentials))
+            Nav.fullTo(.settings, .setting(.credentials))
           }
           .buttonStyle(SecondaryButton())
         }
