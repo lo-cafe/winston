@@ -1145,7 +1145,7 @@
 			isa = PBXGroup;
 			children = (
 				EC1AB2CA2B0EF17600247971 /* Credentials */,
-				ECE08B6E2AA9F5B000F84DC9 /* theming */,
+				ECE08B6E2AA9F5B000F84DC9 /* Theming */,
 				EC1906EC2A55293500A0300E /* AppearancePanel.swift */,
 				EC1906F02A552A6800A0300E /* BehaviorPanel.swift */,
 				EC6373622A7934F8000A03A3 /* AboutPanel.swift */,
@@ -2026,14 +2026,14 @@
 			path = WinstonTheme;
 			sourceTree = "<group>";
 		};
-		ECE08B6E2AA9F5B000F84DC9 /* theming */ = {
+		ECE08B6E2AA9F5B000F84DC9 /* Theming */ = {
 			isa = PBXGroup;
 			children = (
 				EC77EC052B243A220053B966 /* Store */,
 				EC77EC062B2441870053B966 /* Editing */,
 				ECC2C7B12AAB48D1000E196C /* ThemesPanel.swift */,
 			);
-			path = theming;
+			path = Theming;
 			sourceTree = "<group>";
 		};
 		ECE449752A68893E00E2A3B7 /* SubredditInfo */ = {
