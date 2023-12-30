@@ -112,9 +112,7 @@ struct SwipeUI<T: GenericRedditEntityDataType, B: Hashable>: ViewModifier {
           .allowsHitTesting(false)
       )
       .onTapGesture {
-        if let onTapAction {
-          onTapAction()
-        }
+        if let onTapAction { onTapAction() }
         
         if !skipAnimation {
           withAnimation(.bouncy(duration: 0.325, extraBounce: 0.25)) {
