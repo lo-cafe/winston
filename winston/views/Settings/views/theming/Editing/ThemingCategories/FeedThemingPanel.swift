@@ -53,14 +53,14 @@ struct FeedThemingPanel: View {
       ScrollView(showsIndicators: false) {
         if let winstonData = previewPostSample.winstonData {
           VStack(spacing: theme.postLinks.spacing) {
-            PostLink(id: previewPostSample.id, theme: theme.postLinks, showSub: true, secondary: true, contentWidth: contentWidth, defSettings: postLinkDefSettings)
+            PostLink(id: previewPostSample.id, theme: theme.postLinks, showSub: true, secondary: true, compactPerSubreddit: nil, contentWidth: contentWidth, defSettings: postLinkDefSettings)
             .equatable()
             .environment(\.useTheme, theme)
             //            .allowsHitTesting(false)
             
             NiceDivider(divider: theme.postLinks.divider)
             
-            PostLink(id: previewPostSample.id, theme: theme.postLinks, showSub: true, secondary: true, contentWidth: contentWidth, defSettings: postLinkDefSettings)
+            PostLink(id: previewPostSample.id, theme: theme.postLinks, showSub: true, secondary: true, compactPerSubreddit: nil, contentWidth: contentWidth, defSettings: postLinkDefSettings)
             .equatable()
             .environment(\.useTheme, theme)
           }

@@ -73,16 +73,10 @@ struct CustomFilterView: View {
         VStack(alignment: .leading, spacing: 20) {
           Text(newFilter ? "New filter" : "Edit filter").fontSize(24, .semibold)
           
-          BigInput(l: "Filter text", t: Binding(get: { draftFilter.text }, set: { draftFilter.text = $0 }), placeholder: "Ex: filter")
-          
-          HStack (alignment: .top, spacing: 10) {
-            BigColorPicker(title: "Background", initialValue: filter.background_color, color:  Binding(get: { ThemeColor(hex: draftFilter.background_color) }, set: { draftFilter.background_color = $0.hex }))
+          HStack(alignment: .top, spacing: 8) {
+            BigInput(l: "Filter text", t: Binding(get: { draftFilter.text }, set: { draftFilter.text = $0 }), placeholder: "Ex: filter")
             
-            BigColorPicker(title: "Text", initialValue: filter.text_color, color:  Binding(get: { ThemeColor(hex: draftFilter.text_color) }, set: { draftFilter.text_color = $0.hex }))
-            
-            Spacer().frame(maxWidth: .infinity)
-            
-            BigToggle(title: "Search", initialValue: filter.type == "search", isOn: Binding(get: { draftFilter.type == "search" }, set: { draftFilter.type = $0 ? "search" : "filter" }))
+            BigColorPicker(title: "Color", initialValue: filter.background_color, color:  Binding(get: { ThemeColor(hex: draftFilter.background_color) }, set: { draftFilter.background_color = $0.hex }))
             
           }
         }
@@ -142,27 +136,9 @@ struct BigColorPicker: View {
               .padding(.trailing, 44)
           ).labelsHidden()
       }
-      .padding(.vertical, 16)
-      .padding(.horizontal, 16)
+      .padding(.vertical, 14)
+      .padding(.horizontal, 14)
       .frame(minWidth: title.uppercased().width(font: UIFont.systemFont(ofSize: 12, weight: .semibold)) + 40)
-      .background(RR(16, Color("acceptableBlack")))
-    }
-  }
-}
-
-struct BigToggle: View {
-  var title: String
-  var initialValue: Bool
-  @Binding var isOn: Bool
-  var body: some View {
-    VStack(alignment: .leading, spacing: 5) {
-      Text(title.uppercased()).frame(maxWidth: .infinity, alignment: .leading).lineLimit(1).fontSize(12, .semibold).padding(.leading, 12).opacity(0.5)
-      
-      VStack (alignment: .leading) {
-        Toggle("", isOn: $isOn).labelsHidden()
-      }
-      .padding(.vertical, 16)
-      .padding(.horizontal, 16)
       .background(RR(16, Color("acceptableBlack")))
     }
   }

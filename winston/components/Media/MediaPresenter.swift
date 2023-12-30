@@ -23,7 +23,7 @@ struct OnlyURL: View {
     .padding(.horizontal, 6)
     .padding(.vertical, 2)
     .frame(maxHeight: OnlyURL.height)
-    .background(Capsule(style: .continuous).fill(Color.accentColor.opacity(0.2)))
+    .background(Capsule(style: .continuous).fill(Color.accentColor.opacity(0.3)))
     .fontSize(15, .medium)
     .lineLimit(1)
     .foregroundColor(.white)
