@@ -1,21 +1,11 @@
 //
-//  Scacity.swift
+//  ComingFrom.swift
 //  winston
 //
-//  Created by Igor Marcossi on 16/12/23.
+//  Created by Igor Marcossi on 31/12/23.
 //
 
 import SwiftUI
-
-extension AnyTransition {
-  public static var scacity: AnyTransition = .scale.combined(with: .opacity)
-  public func delayInOrder(_ index: Int, total: Int, delay: Double = 1.125) -> AnyTransition {
-    .asymmetric(
-      insertion: self.animation(.bouncy.delay(delay * Double(index))),
-      removal: self.animation(.bouncy.delay(Double(total - 1 - index) * delay))
-    )
-  }
-}
 
 extension AnyTransition {
   static func comeFrom(_ side: Edge, index: Int, total: Int, delay: Double = 0.125, disableEndDelay: Bool = false) -> AnyTransition {

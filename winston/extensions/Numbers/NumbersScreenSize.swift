@@ -18,6 +18,3 @@ extension CGFloat {
   static let screenH = UIScreen.main.bounds.size.height
 }
 
-extension CGSize {
-  static let screenSize = CGSize(width: .screenW, height: .screenH)
-}
