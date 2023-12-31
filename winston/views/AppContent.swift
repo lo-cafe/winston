@@ -13,14 +13,15 @@ struct AppContent: View {
   @Environment(\.scenePhase) var scenePhase
   
   @Default(.ThemesDefSettings) private var themesDefSettings
-  
+  @Default(.GeneralDefSettings) private var generalDefSettings
+
   var selectedTheme: WinstonTheme { themesDefSettings.themesPresets.first { $0.id == themesDefSettings.selectedThemeID } ?? defaultTheme }
   
   let biometrics = Biometrics()
   @State private var isAuthenticating = false
   @State private var tabBarHeight: Double = 0
-  @State private var lockBlur = UserDefaults.standard.bool(forKey: "useAuth") ? 50 : 0 // Set initial startup blur
-  
+  @State private var lockBlur: Int = 50 // Set initial startup blur
+    
   func setTabBarHeight(_ val: Double) {
     tabBarHeight = val
   }
@@ -38,10 +39,10 @@ struct AppContent: View {
     .environment(\.useTheme, selectedTheme)
     .onAppear { themesDefSettings.themesPresets = themesDefSettings.themesPresets.filter { $0.id != "default" } }
     .onChange(of: scenePhase) { newPhase in
-      let useAuth = UserDefaults.standard.bool(forKey: "useAuth") // Get fresh value
+      let useAuth = generalDefSettings.useAuth // Get fresh value
       
-      if (useAuth && !isAuthenticating) {
-        if (newPhase == .active && lockBlur == 50){
+      if (useAuth) {
+        if (!isAuthenticating && newPhase == .active && lockBlur != 0){
           // Not authing, active and blur visible = Need to auth
           isAuthenticating = true
           biometrics.authenticateUser { success in
@@ -51,9 +52,13 @@ struct AppContent: View {
           }
         }
         else if (newPhase != .active) {
+          // Auth enabled but not active = blur
           lockBlur = 50
         }
         isAuthenticating = false
+      } else {
+          // Auth not enabled = No blur
+          lockBlur = 0
       }
       
       switch newPhase {

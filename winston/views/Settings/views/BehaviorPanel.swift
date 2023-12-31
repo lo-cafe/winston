@@ -31,7 +31,7 @@ struct BehaviorPanel: View {
           Toggle("Open Youtube Videos Externally", isOn: $behaviorDefSettings.openYoutubeApp)
           let auth_type = Biometrics().biometricType()
           Toggle("Lock Winston With \(auth_type)", isOn: $generalDefSettings.useAuth)
-//
+
           VStack{
             Toggle("Live Text Analyzer", isOn: $behaviorDefSettings.doLiveText)
               .disabled(!imageAnalyzerSupport)
