@@ -55,7 +55,7 @@ struct Settings: View {
               Label {
                 Text("Tip jar")
               } icon: {
-                Image("jar")
+                Image(.jar)
                   .resizable()
                   .scaledToFit()
               }

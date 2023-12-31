@@ -295,8 +295,10 @@
 		EC7FBE1F2B4115610082FA44 /* antagonist.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC7FBE1E2B4115610082FA44 /* antagonist.swift */; };
 		EC7FBE232B4118460082FA44 /* CGSizeScreenSize.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC7FBE222B4118460082FA44 /* CGSizeScreenSize.swift */; };
 		EC7FBE2A2B41193D0082FA44 /* ComingFrom.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC7FBE292B41193D0082FA44 /* ComingFrom.swift */; };
+		EC7FBE2D2B411AAD0082FA44 /* CredentialsPanelEmptyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC7FBE2C2B411AAD0082FA44 /* CredentialsPanelEmptyView.swift */; };
+		EC7FBE2F2B411C810082FA44 /* AppContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC7FBE2E2B411C810082FA44 /* AppContent.swift */; };
+		EC7FBE312B411FD60082FA44 /* checkForOnboardingStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC7FBE302B411FD60082FA44 /* checkForOnboardingStatus.swift */; };
 		EC828EA72A904E0A009478B1 /* ConfettiSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = EC828EA62A904E0A009478B1 /* ConfettiSwiftUI */; };
-		EC828EA92A904E56009478B1 /* TestersCelebration.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC828EA82A904E56009478B1 /* TestersCelebration.swift */; };
 		EC8B779A2AB3A27300875C98 /* ThemeBGPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC8B77992AB3A27300875C98 /* ThemeBGPicker.swift */; };
 		EC8B779C2AB3A45800875C98 /* ImageThemePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC8B779B2AB3A45800875C98 /* ImageThemePicker.swift */; };
 		EC8B779E2AB3A9C500875C98 /* SchemesBGImagesPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC8B779D2AB3A9C500875C98 /* SchemesBGImagesPicker.swift */; };
@@ -812,7 +814,9 @@
 		EC7FBE1E2B4115610082FA44 /* antagonist.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = antagonist.swift; sourceTree = "<group>"; };
 		EC7FBE222B4118460082FA44 /* CGSizeScreenSize.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CGSizeScreenSize.swift; sourceTree = "<group>"; };
 		EC7FBE292B41193D0082FA44 /* ComingFrom.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComingFrom.swift; sourceTree = "<group>"; };
-		EC828EA82A904E56009478B1 /* TestersCelebration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestersCelebration.swift; sourceTree = "<group>"; };
+		EC7FBE2C2B411AAD0082FA44 /* CredentialsPanelEmptyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CredentialsPanelEmptyView.swift; sourceTree = "<group>"; };
+		EC7FBE2E2B411C810082FA44 /* AppContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppContent.swift; sourceTree = "<group>"; };
+		EC7FBE302B411FD60082FA44 /* checkForOnboardingStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = checkForOnboardingStatus.swift; sourceTree = "<group>"; };
 		EC8B77992AB3A27300875C98 /* ThemeBGPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeBGPicker.swift; sourceTree = "<group>"; };
 		EC8B779B2AB3A45800875C98 /* ImageThemePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageThemePicker.swift; sourceTree = "<group>"; };
 		EC8B779D2AB3A9C500875C98 /* SchemesBGImagesPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SchemesBGImagesPicker.swift; sourceTree = "<group>"; };
@@ -1169,9 +1173,8 @@
 		EC1AB2CA2B0EF17600247971 /* Credentials */ = {
 			isa = PBXGroup;
 			children = (
-				ECB155172B25A1E30069CA2C /* NiceCredentialSection.swift */,
-				ECB155132B25A1B60069CA2C /* BigInfoCredential.swift */,
-				EC1AB2CB2B0EF23100247971 /* CredentialEditView.swift */,
+				EC7FBE2B2B411A940082FA44 /* EditView */,
+				EC7FBE2C2B411AAD0082FA44 /* CredentialsPanelEmptyView.swift */,
 				ECF82A1C2B218EBE00CBF45D /* CredentialPanelItem.swift */,
 				EC1906EE2A552A3100A0300E /* CredentialsPanel.swift */,
 			);
@@ -1473,6 +1476,7 @@
 				EC3188202A92D6D900CB3738 /* MultiPostsView.swift */,
 				BB0D15262B0698FD00668448 /* MixedContentFeedView.swift */,
 				BB53CA992B0D827F003D3332 /* EndOfFeedView.swift */,
+				EC7FBE2E2B411C810082FA44 /* AppContent.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -1752,6 +1756,16 @@
 			path = Transitions;
 			sourceTree = "<group>";
 		};
+		EC7FBE2B2B411A940082FA44 /* EditView */ = {
+			isa = PBXGroup;
+			children = (
+				ECB155172B25A1E30069CA2C /* NiceCredentialSection.swift */,
+				ECB155132B25A1B60069CA2C /* BigInfoCredential.swift */,
+				EC1AB2CB2B0EF23100247971 /* CredentialEditView.swift */,
+			);
+			path = EditView;
+			sourceTree = "<group>";
+		};
 		EC8B814C2AC96506000DC827 /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
@@ -1939,6 +1953,7 @@
 				ECB549D42B189392004E9A96 /* cleanEntitiesWithNilCredentials.swift */,
 				ECB549D82B18C3C5004E9A96 /* removeDefaultThemeFromThemes.swift */,
 				ECA5AF5B2B22C85F0084954B /* autoSelectCredentialIfNil.swift */,
+				EC7FBE302B411FD60082FA44 /* checkForOnboardingStatus.swift */,
 			);
 			path = StartupTasks;
 			sourceTree = "<group>";
@@ -2177,7 +2192,6 @@
 		ECF974412AA1706800C3BC75 /* Announcements */ = {
 			isa = PBXGroup;
 			children = (
-				EC828EA82A904E56009478B1 /* TestersCelebration.swift */,
 				ECF974422AA170D300C3BC75 /* TipJar.swift */,
 				655065572B120E6000C796E7 /* AnnouncementSheet.swift */,
 			);
@@ -2537,6 +2551,7 @@
 				EC77EC162B2577580053B966 /* themeFetchingListener.swift in Sources */,
 				ECF82A172B21664100CBF45D /* ThemedForegroundBG.swift in Sources */,
 				EC91C8542AB9601000F2AD30 /* TabBarOverlay.swift in Sources */,
+				EC7FBE2D2B411AAD0082FA44 /* CredentialsPanelEmptyView.swift in Sources */,
 				657643802ACF20F100805641 /* ExpandableText.swift in Sources */,
 				ECD1FC072A56D46D00723016 /* ObservableArray.swift in Sources */,
 				ECF82A1D2B218EBE00CBF45D /* CredentialPanelItem.swift in Sources */,
@@ -2572,6 +2587,7 @@
 				EC3AC9CF2AACB2A30078EC78 /* LabeledSlider.swift in Sources */,
 				ECD5EE932B11D564002CA158 /* AccountSwitcherGradientBackground.swift in Sources */,
 				659F68022A84E32300989300 /* VotesCluster.swift in Sources */,
+				EC7FBE312B411FD60082FA44 /* checkForOnboardingStatus.swift in Sources */,
 				ECA86A812AB94DA200C31EC6 /* SubredditsStack.swift in Sources */,
 				EC63734D2A79133E000A03A3 /* Onboarding1OpeningSettings.swift in Sources */,
 				ECD2B7192B3D2CF0008E2663 /* FloatingMainTrigger.swift in Sources */,
@@ -2806,7 +2822,6 @@
 				EC3188102A92A40600CB3738 /* fetchMyMultis.swift in Sources */,
 				EC8B779E2AB3A9C500875C98 /* SchemesBGImagesPicker.swift in Sources */,
 				EC4C7CA62B2C67B70007A4DA /* oldDefaults.swift in Sources */,
-				EC828EA92A904E56009478B1 /* TestersCelebration.swift in Sources */,
 				65A5FFF22ACED3BF000D1ADA /* getPreviewImages.swift in Sources */,
 				ECE08B862AAA43F400F84DC9 /* NiceDivider.swift in Sources */,
 				EC12D7182A59C7A800C300B3 /* Arrows.swift in Sources */,
@@ -2846,6 +2861,7 @@
 				EC3188322A94770700CB3738 /* GalleryThumb.swift in Sources */,
 				EC4C7CB22B2DA2030007A4DA /* FloatingFeedMenu.swift in Sources */,
 				EC7DBDF32A86C92200D7C123 /* PostSwipePanel.swift in Sources */,
+				EC7FBE2F2B411C810082FA44 /* AppContent.swift in Sources */,
 				BB0D15292B069A9700668448 /* getItemId.swift in Sources */,
 				EC0854432A4D6A4800E88389 /* MasterButton.swift in Sources */,
 				ECAA23822A9EC34100874731 /* inlineSymbol.swift in Sources */,

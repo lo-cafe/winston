@@ -18,7 +18,7 @@ class Nav: ObservableObject, Identifiable, Codable {
   static func back() { Nav.shared.activeRouter.goBack() }
   static func to(_ dest: Router.NavDest, _ reset: Bool = false) { Nav.shared.activeRouter.navigateTo(dest, reset) }
   static func fullTo(_ tab: TabIdentifier, _ dest: Router.NavDest, _ reset: Bool = false) { Nav.shared.navigateTo(tab, dest, reset) }
-  static func present(_ content: PresentingSheet) { Nav.shared.presentingSheet = content }
+  static func present(_ content: PresentingSheet?) { Nav.shared.presentingSheet = content }
   static func resetStack() { Nav.shared.activeRouter.resetNavPath() }
   /* </Util static functions for ease of use> */
   
@@ -28,7 +28,7 @@ class Nav: ObservableObject, Identifiable, Codable {
     case posts, inbox, me, search, settings
   }
   
-  enum PresentingSheet: Codable, Hashable, Identifiable {
+  enum PresentingSheet: Codable, Hashable, Identifiable, Equatable {
     case tipJar
     case onboarding
     case editingCredential(RedditCredential)
@@ -56,7 +56,15 @@ class Nav: ObservableObject, Identifiable, Codable {
   @Published var presentingSheetsQueue: [PresentingSheet] = []
   var presentingSheet: PresentingSheet? {
     get { presentingSheetsQueue.isEmpty ? nil : presentingSheetsQueue[0] }
-    set { if let newValue = newValue { presentingSheetsQueue.insert(newValue, at: 0) } else if !presentingSheetsQueue.isEmpty { presentingSheetsQueue.removeFirst() } }
+    set {
+      if let newValue {
+        if !presentingSheetsQueue.isEmpty && presentingSheetsQueue.first == newValue {
+          presentingSheetsQueue[0] = newValue
+        } else {
+          presentingSheetsQueue.insert(newValue, at: 0)
+        }
+      } else if !presentingSheetsQueue.isEmpty { presentingSheetsQueue.removeFirst() }
+    }
   }
   private var cancellables = Set<AnyCancellable>()
 

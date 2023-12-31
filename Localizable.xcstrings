@@ -46,6 +46,7 @@
       }
     },
     " testers! (but it needs help)" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -90,6 +91,7 @@
       }
     },
     "...unfortunately, lo.cafe (the team/group of friends behind Winston) isn't self sustainable yet.\nEven though we have other software for sale, we still have dayjobs." : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -326,6 +328,7 @@
       }
     },
     "🥳" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -342,6 +345,7 @@
       }
     },
     "7000" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -421,6 +425,9 @@
           }
         }
       }
+    },
+    "Add a new credential" : {
+
     },
     "Advanced" : {
       "localizations" : {
@@ -518,6 +525,9 @@
           }
         }
       }
+    },
+    "Are you sure?" : {
+
     },
     "Authorized" : {
 
@@ -1051,6 +1061,9 @@
     "Do you really wanna delete this credential?" : {
 
     },
+    "Do you really wanna dismiss the oboarding? You can reopen it later." : {
+
+    },
     "Do you wanna reset this property?" : {
       "localizations" : {
         "de" : {
@@ -1074,6 +1087,7 @@
       }
     },
     "Don't worry if you can't or simply don't wanna donate, we're gonna keep developing Winston anyway and we already love you for being using it ❤️" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -1088,9 +1102,6 @@
           }
         }
       }
-    },
-    "Download" : {
-
     },
     "Drag Left" : {
       "localizations" : {
@@ -1613,6 +1624,7 @@
       }
     },
     "However..." : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -1846,6 +1858,7 @@
       }
     },
     "It's a long text, we won't spam you with that without your consent." : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -1922,6 +1935,7 @@
       }
     },
     "Know more about winston" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -2085,6 +2099,7 @@
       }
     },
     "Many of you is not aware about our patreon, which has a 1U$ tier. If each of our testers would donate 1U$/month, it'd be more than enough to allow us to focus all our time on Winston and other amazing projects." : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -2437,6 +2452,9 @@
           }
         }
       }
+    },
+    "Omg, no credentials!" : {
+
     },
     "on " : {
       "localizations" : {
@@ -2902,6 +2920,9 @@
           }
         }
       }
+    },
+    "Restart welcome tutorial" : {
+
     },
     "Right" : {
       "localizations" : {
@@ -3497,6 +3518,7 @@
       }
     },
     "Tap to read" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -3529,6 +3551,7 @@
       }
     },
     "Thank you so much!" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -3559,9 +3582,6 @@
           }
         }
       }
-    },
-    "Theme Store" : {
-
     },
     "Theme Store Tint" : {
       "localizations" : {
@@ -3626,9 +3646,6 @@
           }
         }
       }
-    },
-    "There was an error importing this theme" : {
-
     },
     "This is not working yet :(" : {
       "localizations" : {
@@ -3911,6 +3928,7 @@
       }
     },
     "Wanna learn more about Winston's situation before donating? Press the button below" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -3930,6 +3948,7 @@
 
     },
     "We hit 8500 testers on TestFlight and this couldn't make us happier. Thank you so much for using and supporting Winston." : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -3944,6 +3963,9 @@
           }
         }
       }
+    },
+    "Well, you got 2 options:" : {
+
     },
     "Whats New" : {
       "extractionState" : "stale",
@@ -3995,6 +4017,7 @@
       }
     },
     "Winston hit " : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {

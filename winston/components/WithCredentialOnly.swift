@@ -21,13 +21,13 @@ struct WithCredentialOnly<Content: View>: View {
               Text(credential == nil ? "No credential" : "Credential invalid")
                 .fontSize(24, .bold)
                 .opacity(0.5)
-              Text("We can't load this page 😔").opacity(0.35)
+              Text("We can't load this page 😔").fontSize(16, .medium).opacity(0.35)
             }
           }
           Button("Go to credentials settings", systemImage: "gear") {
             Nav.fullTo(.settings, .setting(.credentials))
           }
-          .buttonStyle(SecondaryButton())
+          .buttonStyle(.actionSecondary)
         }
         .compositingGroup()
         .multilineTextAlignment(.center)
