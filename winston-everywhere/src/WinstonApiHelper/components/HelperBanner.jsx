@@ -43,7 +43,7 @@ const HelperBanner = () => {
   const [showCredentials, setShowCredentials] = useState(false)
   const [dimBG, setDimBG] = useState(false)
   const [title, setTitle] = useState("Hey!")
-  const [description, setDescription] = useState("I noticed you're generating an API. I can help with that!")
+  const [description, setDescription] = useState("I noticed you're generating an API key. I can help with that!")
   const [arrowPointingUp, setArrowPointingUp] = useState(null)
   const [buttons, setButtons] = useState(null)
   const [positionBanner, setPositionBanner] = useState({ bottom: "-100%" })
@@ -282,6 +282,7 @@ const HelperBanner = () => {
 }
 
 export default HelperBanner
+
 
 
 
