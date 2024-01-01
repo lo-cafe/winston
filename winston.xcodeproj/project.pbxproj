@@ -20,7 +20,6 @@
 		652F24082B0E219700BB95A3 /* Pixelate.metal in Sources */ = {isa = PBXBuildFile; fileRef = 652F24072B0E219700BB95A3 /* Pixelate.metal */; };
 		652F240A2B0E222B00BB95A3 /* SpoilerModifer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 652F24092B0E222B00BB95A3 /* SpoilerModifer.swift */; };
 		653E2DA52A8E278800833556 /* GeneralPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 653E2DA42A8E278800833556 /* GeneralPanel.swift */; };
-		6543D8892A8D10B900A1FFF9 /* scaleEffectButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6543D8882A8D10B900A1FFF9 /* scaleEffectButtonStyle.swift */; };
 		654559042B0E418B0080E27F /* UpsellCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 654559032B0E418B0080E27F /* UpsellCard.swift */; };
 		654559072B0E456A0080E27F /* Shiny in Frameworks */ = {isa = PBXBuildFile; productRef = 654559062B0E456A0080E27F /* Shiny */; };
 		655065542B12035100C796E7 /* WinstonAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 655065532B12035100C796E7 /* WinstonAPI.swift */; };
@@ -243,6 +242,8 @@
 		EC5EDA752A4E937700140A08 /* GenericRedditEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC5EDA742A4E937700140A08 /* GenericRedditEntity.swift */; };
 		EC5EDA772A4EA03800140A08 /* subscribeSubs.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC5EDA762A4EA03800140A08 /* subscribeSubs.swift */; };
 		EC5EDA792A4F4D4200140A08 /* vote.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC5EDA782A4F4D4200140A08 /* vote.swift */; };
+		EC6081162B434B19001A1077 /* NoBtnStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC6081152B434B19001A1077 /* NoBtnStyle.swift */; };
+		EC6081182B434B9A001A1077 /* ButtonPressingProviderStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC6081172B434B9A001A1077 /* ButtonPressingProviderStyle.swift */; };
 		EC620EDC2B0CD4BE00206A66 /* SubPostsListTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC620EDB2B0CD4BE00206A66 /* SubPostsListTheme.swift */; };
 		EC620EDE2B0CD4FF00206A66 /* WinstonThemeMeta.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC620EDD2B0CD4FF00206A66 /* WinstonThemeMeta.swift */; };
 		EC620EE42B0CD53E00206A66 /* CodableFontWeight.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC620EE32B0CD53E00206A66 /* CodableFontWeight.swift */; };
@@ -540,7 +541,6 @@
 		652F24072B0E219700BB95A3 /* Pixelate.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = Pixelate.metal; sourceTree = "<group>"; };
 		652F24092B0E222B00BB95A3 /* SpoilerModifer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpoilerModifer.swift; sourceTree = "<group>"; };
 		653E2DA42A8E278800833556 /* GeneralPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneralPanel.swift; sourceTree = "<group>"; };
-		6543D8882A8D10B900A1FFF9 /* scaleEffectButtonStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = scaleEffectButtonStyle.swift; sourceTree = "<group>"; };
 		654559032B0E418B0080E27F /* UpsellCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpsellCard.swift; sourceTree = "<group>"; };
 		655065532B12035100C796E7 /* WinstonAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WinstonAPI.swift; sourceTree = "<group>"; };
 		655065552B1205DB00C796E7 /* getAnnouncement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = getAnnouncement.swift; sourceTree = "<group>"; };
@@ -763,6 +763,8 @@
 		EC5EDA742A4E937700140A08 /* GenericRedditEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericRedditEntity.swift; sourceTree = "<group>"; };
 		EC5EDA762A4EA03800140A08 /* subscribeSubs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = subscribeSubs.swift; sourceTree = "<group>"; };
 		EC5EDA782A4F4D4200140A08 /* vote.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = vote.swift; sourceTree = "<group>"; };
+		EC6081152B434B19001A1077 /* NoBtnStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoBtnStyle.swift; sourceTree = "<group>"; };
+		EC6081172B434B9A001A1077 /* ButtonPressingProviderStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonPressingProviderStyle.swift; sourceTree = "<group>"; };
 		EC620EDB2B0CD4BE00206A66 /* SubPostsListTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubPostsListTheme.swift; sourceTree = "<group>"; };
 		EC620EDD2B0CD4FF00206A66 /* WinstonThemeMeta.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WinstonThemeMeta.swift; sourceTree = "<group>"; };
 		EC620EE32B0CD53E00206A66 /* CodableFontWeight.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodableFontWeight.swift; sourceTree = "<group>"; };
@@ -924,7 +926,6 @@
 		ECDEBD1E2B31C8A200A8AC78 /* EasingFunction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EasingFunction.swift; sourceTree = "<group>"; };
 		ECDEBD202B31C8D300A8AC78 /* CGGradient+.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CGGradient+.swift"; sourceTree = "<group>"; };
 		ECDEBD252B31CA6700A8AC78 /* fadeOnEdges.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = fadeOnEdges.swift; sourceTree = "<group>"; };
-		ECE00EE12A8D68FE000A6E21 /* scaleEffectButtonStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = scaleEffectButtonStyle.swift; sourceTree = "<group>"; };
 		ECE00EE62A8D6A20000A6E21 /* TabBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBar.swift; sourceTree = "<group>"; };
 		ECE08B582AA9A3C300F84DC9 /* WinstonTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WinstonTheme.swift; sourceTree = "<group>"; };
 		ECE08B5A2AA9C43B00F84DC9 /* saveAndLoadImages.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = saveAndLoadImages.swift; sourceTree = "<group>"; };
@@ -1519,6 +1520,16 @@
 			path = Globals;
 			sourceTree = "<group>";
 		};
+		EC6081142B434AEF001A1077 /* ButtonStyles */ = {
+			isa = PBXGroup;
+			children = (
+				EC6081152B434B19001A1077 /* NoBtnStyle.swift */,
+				ECF82A142B214DE300CBF45D /* ActionButton.swift */,
+				EC6081172B434B9A001A1077 /* ButtonPressingProviderStyle.swift */,
+			);
+			path = ButtonStyles;
+			sourceTree = "<group>";
+		};
 		EC620EE22B0CD52A00206A66 /* sharedThemeModels */ = {
 			isa = PBXGroup;
 			children = (
@@ -1750,6 +1761,7 @@
 		EC7FBE282B4118B40082FA44 /* Transitions */ = {
 			isa = PBXGroup;
 			children = (
+				EC0854492A4D6EAE00E88389 /* blurTransitions.swift */,
 				ECF3ED552B2E5ADE008D2EF7 /* Scacity.swift */,
 				EC7FBE292B41193D0082FA44 /* ComingFrom.swift */,
 			);
@@ -1973,8 +1985,6 @@
 				ECAEFF672A77DDF60052FCD3 /* Emojize */,
 				65D265402ABEC6FF009E01F9 /* urlCleaner.swift */,
 				EC08543E2A4D0C0700E88389 /* doThisAfter.swift */,
-				6543D8882A8D10B900A1FFF9 /* scaleEffectButtonStyle.swift */,
-				EC0854492A4D6EAE00E88389 /* blurTransitions.swift */,
 				EC1906F42A55B88500A0300E /* nestComments.swift */,
 				ECEFC2682A5DFA4B0003C6C4 /* formatBigNumber.swift */,
 				ECEFC2722A5F70B70003C6C4 /* saveMedia.swift */,
@@ -1990,7 +2000,6 @@
 				EC63735E2A7921C4000A03A3 /* dismissKeyboard.swift */,
 				ECF064EC2A7F405C0088C2C0 /* KeyWindow.swift */,
 				EC9ECA092A88602F00470F89 /* debounce.swift */,
-				ECE00EE12A8D68FE000A6E21 /* scaleEffectButtonStyle.swift */,
 				ECAA23812A9EC34100874731 /* inlineSymbol.swift */,
 				EC77B1842AA434DD00C482DF /* stringToAttr.swift */,
 				ECA5E6472AA5D36E00F6C7A5 /* resetApp.swift */,
@@ -2017,6 +2026,7 @@
 		ECC10C752A4A8746009124BE /* Components */ = {
 			isa = PBXGroup;
 			children = (
+				EC6081142B434AEF001A1077 /* ButtonStyles */,
 				EC4C7CB02B2DA1D70007A4DA /* FloatingFeedMenu */,
 				ECD5EE8F2B11D523002CA158 /* TabBarOverlay */,
 				EC3188302A9476BE00CB3738 /* Media */,
@@ -2085,7 +2095,6 @@
 				654559032B0E418B0080E27F /* UpsellCard.swift */,
 				ECF82A162B21664100CBF45D /* ThemedForegroundBG.swift */,
 				EC1AC9B92B21283F00674B31 /* WithCredentialOnly.swift */,
-				ECF82A142B214DE300CBF45D /* ActionButton.swift */,
 				EC143B2A2B223DC3008A567F /* AVLooperPlayer.swift */,
 				ECB155112B25A18D0069CA2C /* BigInput.swift */,
 				CE0EC5D72B1A9E9600C6E210 /* SubredditFilters.swift */,
@@ -2531,6 +2540,8 @@
 				EC2497102A82DF3B00AA1CF8 /* GlobalLoader.swift in Sources */,
 				ECF0B7DD2A53DD5C002B9FAD /* ImageMediaPost.swift in Sources */,
 				ECE4497B2A68898100E2A3B7 /* SubredditMyPostsTab.swift in Sources */,
+				EC6081162B434B19001A1077 /* NoBtnStyle.swift in Sources */,
+				EC6081182B434B9A001A1077 /* ButtonPressingProviderStyle.swift in Sources */,
 				EC8F34792A6CE79B00EB8249 /* PostInBoxLink.swift in Sources */,
 				EC1AB2CE2B0FE20800247971 /* StringJSONConversions.swift in Sources */,
 				EC22A3222A5C97D70062A112 /* readMessage.swift in Sources */,
@@ -2557,7 +2568,6 @@
 				ECF82A1D2B218EBE00CBF45D /* CredentialPanelItem.swift in Sources */,
 				EC8F34A12A6FC99000EB8249 /* updatePostsInBox.swift in Sources */,
 				EC4C7CA82B2C69620007A4DA /* migrateOldDefaults.swift in Sources */,
-				6543D8892A8D10B900A1FFF9 /* scaleEffectButtonStyle.swift in Sources */,
 				ECD5EE992B11E7A1002CA158 /* TakeSnapshotView.swift in Sources */,
 				EC3AC9EB2AB34E6A0078EC78 /* ClosestNumber.swift in Sources */,
 				EC50B0E42A84563C00AB8F72 /* SwipeAction.swift in Sources */,
