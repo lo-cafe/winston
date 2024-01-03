@@ -66,8 +66,8 @@ extension View {
     let fadeReadPosts = theme.theme.unseenType == .fade
     return self
       .padding(EdgeInsets(top: theme.theme.innerPadding.vertical, leading: theme.theme.innerPadding.horizontal, bottom: theme.theme.innerPadding.vertical, trailing: theme.theme.innerPadding.horizontal))
-      .frame(width: size.width, height: size.height + (showSubBottom ? Tag.height + theme.theme.verticalElementsSpacing : 0), alignment: .top)
-      .fixedSize()
+//      .frame(width: size.width, height: size.height + (showSubBottom ? Tag.height + theme.theme.verticalElementsSpacing : 0), alignment: .top)
+//      .fixedSize()
       .background(PostLinkBG(theme: theme, stickied: post.data?.stickied, secondary: secondary).equatable())
       .overlay(PostLinkGlowDot(unseenType: theme.theme.unseenType, seen: seen, badge: false).equatable(), alignment: .topTrailing)
       .contentShape(Rectangle())
