@@ -17,7 +17,8 @@ let questions: [PeakQuestion] = [
 struct GuidedTutorialScene: View {
   @State private var player = AVLooperPlayer(url: Bundle.main.url(forResource: "auth-ext", withExtension: "mov")!)
   @Environment(\.openURL) private var openURL
-
+  @Environment(\.useTheme) private var theme
+  
   
   var body: some View {
     ScrollView {
@@ -26,7 +27,7 @@ struct GuidedTutorialScene: View {
         Image(.winstonSide).size(104, .fit)
         
         VStack(alignment: .center, spacing: 4) {
-            Text("Enabling the extension").fontSize(32, .bold)
+          Text("Enabling the extension").fontSize(32, .bold)
           Text("We built a Safari extension to help you generating the credentials. Let's enable it!")
         }
         .padding(.horizontal, 24)
@@ -56,20 +57,21 @@ struct GuidedTutorialScene: View {
                 .padding(EdgeInsets(top: 0.5, leading: 1, bottom: 0.5, trailing: 1))
             }
             .onAppear { player.play() }
-//            .allowsHitTesting(false)
-//            .contentShape(Rectangle())
-//            .onTapGesture { player.togglePlaying() }
+          //            .allowsHitTesting(false)
+          //            .contentShape(Rectangle())
+          //            .onTapGesture { player.togglePlaying() }
         }
         .themedListRowLikeBG()
         .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
         .padding(.horizontal, 16)
         
-//        PeakQuestionsScroller(peakQuestions: questions)
-//          .padding(.horizontal, 24)
+        //        PeakQuestionsScroller(peakQuestions: questions)
+        //          .padding(.horizontal, 24)
         
       }
       .padding(EdgeInsets(top: 8, leading: 0, bottom: 72, trailing: 0))
     }
+    .themedListBG(theme.lists.bg)
     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
     .background(Color.hitbox)
     .overlay(alignment: .bottom) {
@@ -78,11 +80,11 @@ struct GuidedTutorialScene: View {
       }
       .ignoresSafeArea(.all)
     }
-//    .gesture(selectedQuestion == nil ? nil : TapGesture().onEnded { withAnimation(.snappy) { selectedQuestion = nil } })
+    //    .gesture(selectedQuestion == nil ? nil : TapGesture().onEnded { withAnimation(.snappy) { selectedQuestion = nil } })
     .contentShape(Rectangle())
     .multilineTextAlignment(.center)
-
+    
   }
 }
-  
-  
+
+

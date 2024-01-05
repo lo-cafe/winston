@@ -99,7 +99,7 @@ struct PeakQuestionsOverlay: View {
     .frame(width: open ? .screenW - 16 : nil, alignment: .bottom)
     .padding(.bottom, open ? 20 : 0)
     .clipShape(RoundedRectangle(cornerRadius: open ? 32 : 24, style: .continuous))
-    .background(RoundedRectangle(cornerRadius: open ? 32 : 24, style: .continuous).fill(Material.ultraThin).scaleEffect(scaledDown ? 0.95 : 1))
+    .background(RoundedRectangle(cornerRadius: open ? 32 : 24, style: .continuous).fill(Material.bar).scaleEffect(scaledDown ? 0.95 : 1))
     .overlay {
       RoundedRectangle(cornerRadius: open ? 32 : 24, style: .continuous)
         .stroke(Color.primary.opacity(0.05), lineWidth: 0.5)
