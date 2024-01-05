@@ -11,15 +11,12 @@ import Shiny
 
 /// A view modifier to apply a themed background to a list row.
 struct ThemedListRowLikeBGModifier: ViewModifier {
-  /// Whether to enable horizontal and vertical padding.
   var enablePadding = false
-  /// Whether to disable the background.
   var disableBG = false
-  /// Whether the row is active.
   var active = false
   var pressed = false
-  /// The shiny gradient applied to the background.
   var shiny: Gradient? = nil
+  var opacity: Double = 1
   
   /// The theme environment.
   @Environment(\.useTheme) private var theme
@@ -33,7 +30,7 @@ struct ThemedListRowLikeBGModifier: ViewModifier {
       .padding(.horizontal, enablePadding ? 16 : 0)
       .padding(.vertical, enablePadding ? 8 : 0)
       .frame(maxWidth: .infinity, minHeight: 45, alignment: .leading)
-      .background(disableBG ? nil : ThemedForegroundBG(theme: theme.lists.foreground, active: isActive, pressed: pressed, shiny: shiny).equatable())
+      .background(disableBG ? nil : ThemedForegroundBG(theme: theme.lists.foreground, active: isActive, pressed: pressed, shiny: shiny).equatable().opacity(opacity))
   }
 }
 
@@ -44,8 +41,9 @@ extension View {
   ///   - disableBG: Whether to disable the background (default is `false`).
   ///   - active: Whether the row is active (default is `false`).
   ///   - shiny: The shiny gradient applied to the background (default is `nil`).
+  ///   - opacity: The opacity of the background (default is `1`).
   /// - Returns: A modified version of the view with the themed background applied.
-  func themedListRowLikeBG(enablePadding: Bool = false, disableBG: Bool = false, active: Bool = false, pressed: Bool = false, shiny: Gradient? = nil) -> some View {
-    self.modifier(ThemedListRowLikeBGModifier(enablePadding: enablePadding, disableBG: disableBG, active: active, pressed: pressed, shiny: shiny))
+  func themedListRowLikeBG(enablePadding: Bool = false, disableBG: Bool = false, active: Bool = false, pressed: Bool = false, shiny: Gradient? = nil, opacity: Double = 1) -> some View {
+    self.modifier(ThemedListRowLikeBGModifier(enablePadding: enablePadding, disableBG: disableBG, active: active, pressed: pressed, shiny: shiny, opacity: opacity))
   }
 }

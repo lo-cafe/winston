@@ -478,6 +478,9 @@
         }
       }
     },
+    "Any questions" : {
+
+    },
     "App icon" : {
       "localizations" : {
         "de" : {
@@ -527,6 +530,9 @@
       }
     },
     "Are you sure?" : {
+
+    },
+    "Authorize" : {
 
     },
     "Authorized" : {
@@ -692,6 +698,9 @@
         }
       }
     },
+    "Click the button and follow the video" : {
+
+    },
     "Collapse AutoModerator comments" : {
       "localizations" : {
         "de" : {
@@ -847,6 +856,9 @@
           }
         }
       }
+    },
+    "Create Credential" : {
+
     },
     "Created %@" : {
       "localizations" : {
@@ -1103,6 +1115,9 @@
         }
       }
     },
+    "Download" : {
+
+    },
     "Drag Left" : {
       "localizations" : {
         "de" : {
@@ -1169,10 +1184,16 @@
         }
       }
     },
+    "EASY" : {
+
+    },
     "Edit credential" : {
 
     },
     "Edit filter" : {
+
+    },
+    "Enabling the extension" : {
 
     },
     "Enter a subreddit" : {
@@ -1527,6 +1548,9 @@
     "Go to credentials settings" : {
 
     },
+    "Go to Reddit API settings" : {
+
+    },
     "Gotcha!" : {
       "localizations" : {
         "de" : {
@@ -1733,6 +1757,9 @@
           }
         }
       }
+    },
+    "If it's taking too long, tap cancel and try again." : {
+
     },
     "Import Settings" : {
       "localizations" : {
@@ -2327,6 +2354,12 @@
           }
         }
       }
+    },
+    "NERD" : {
+
+    },
+    "New credential" : {
+
     },
     "New filter" : {
 
@@ -3302,6 +3335,9 @@
         }
       }
     },
+    "Something went wrong" : {
+
+    },
     "Something went wrong, you probably didn't enter the correct information in the previous steps." : {
       "localizations" : {
         "de" : {
@@ -3317,6 +3353,12 @@
           }
         }
       }
+    },
+    "Something wrong with the information we received from Reddit. Please tap the error button and try again." : {
+
+    },
+    "Something's wrong with the credentials we have for this account." : {
+
     },
     "Start by duplicating the" : {
 
@@ -3567,6 +3609,12 @@
         }
       }
     },
+    "The authorization flow didn't work. Please tap the error button and try again or use another credential." : {
+
+    },
+    "The credentials we have seem to be valid, but we need you to authorize the credentials to access your account (yeah, it sounds redundand, sorry)." : {
+
+    },
     "The theme was imported successfully. Enable it in \"Themes\" section in the Settings tab." : {
       "localizations" : {
         "de" : {
@@ -3582,6 +3630,9 @@
           }
         }
       }
+    },
+    "Theme Store" : {
+
     },
     "Theme Store Tint" : {
       "localizations" : {
@@ -3646,6 +3697,12 @@
           }
         }
       }
+    },
+    "There are two ways for doing that:" : {
+
+    },
+    "There was an error importing this theme" : {
+
     },
     "This is not working yet :(" : {
       "localizations" : {
@@ -3944,6 +4001,9 @@
         }
       }
     },
+    "We built a Safari extension to help you generating the credentials. Let's enable it!" : {
+
+    },
     "We can't load this page 😔" : {
 
     },
@@ -3964,7 +4024,16 @@
         }
       }
     },
+    "We recommend you to use another key using the \"**Guided replace**\" button below, but you can do it manually by tapping the \"**Advanced settings**\" if you want." : {
+
+    },
     "Well, you got 2 options:" : {
+
+    },
+    "What else can you do" : {
+
+    },
+    "What to do now?" : {
 
     },
     "Whats New" : {
@@ -4115,6 +4184,9 @@
           }
         }
       }
+    },
+    "You can tap the video to pause it." : {
+
     },
     "You don't have any local themes" : {
       "localizations" : {

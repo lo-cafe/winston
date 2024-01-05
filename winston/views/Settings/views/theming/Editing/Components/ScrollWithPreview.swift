@@ -48,7 +48,7 @@ struct ScrollWithPreview<Content: View, Preview: View>: View {
           ]
           TagsOptions($previewBG, options: opts + (theme == nil ? [] : [
             CarouselTagElement(label: "Theme", icon: {
-              Circle().fill(.clear).themedListBG(theme!).frame(width: 16, height: 16).mask(Circle().fill(.black))
+              Circle().fill(.clear).themedListBG(theme!).frame(width: 16, height: 16).clipShape(Circle())
             }, value: PreviewBG.theme)
           ]))
           preview()

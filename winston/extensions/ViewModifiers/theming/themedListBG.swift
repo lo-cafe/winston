@@ -19,8 +19,9 @@ struct ThemedListBGModifier: ViewModifier {
   func updateImg(_ bg: ThemeBG, _ cs: ColorScheme) {
     uiImage = returnImg(bg: bg, cs: cs)
   }
-
+  
   func body(content: Content) -> some View {
+    let actuallyBrighter = brighter && !forceNonBrighter
     content
       .onAppear {
         updateImg(bg, cs)
@@ -31,8 +32,26 @@ struct ThemedListBGModifier: ViewModifier {
       .onChange(of: cs) { val in
         updateImg(bg, val)
       }
-      .background(disable ? nil : GeometryReader { geo in returnColor(bg: bg, cs: cs).brightness(brighter && !forceNonBrighter ? 0.11 : 0).frame(width: geo.size.width, height: geo.size.height) }.edgesIgnoringSafeArea(.all).allowsHitTesting(false))
-      .background(disable ? nil : GeometryReader { geo in Image(uiImage: uiImage).antialiased(true).resizable().scaledToFill().frame(width: geo.size.width, height: geo.size.height) }.edgesIgnoringSafeArea(.all).allowsHitTesting(false))
+      .background(
+        disable || uiImage == nil
+        ? nil
+        : GeometryReader { geo in
+          Image(uiImage: uiImage)
+            .antialiased(true).resizable()
+            .aspectRatio(contentMode: .fill)
+            .saturation(!actuallyBrighter ? 1 : 0.75)
+            .contrast(!actuallyBrighter ? 1 : 0.6)
+            .brightness(!actuallyBrighter ? 0 : cs == .dark ? 0.25 : 0)
+            .frame(width: geo.size.width, height: geo.size.height)
+        }.edgesIgnoringSafeArea(.all).allowsHitTesting(false)
+      )
+      .background(
+        disable || uiImage != nil
+        ? nil
+        : GeometryReader { geo in
+          returnColor(bg: bg, cs: cs, brighter: actuallyBrighter)
+            .frame(width: geo.size.width, height: geo.size.height)
+        }.edgesIgnoringSafeArea(.all).allowsHitTesting(false))
       .scrollContentBackground(.hidden)
   }
 }
@@ -43,10 +62,10 @@ extension View {
   }
 }
 
-private func returnColor(bg: ThemeBG, cs: ColorScheme) -> Color {
+private func returnColor(bg: ThemeBG, cs: ColorScheme, brighter: Bool) -> Color {
   switch bg {
   case .color(let color):
-    return color()
+    return color(brighter: brighter)
   default:
     return Color.clear
   }
@@ -55,7 +74,7 @@ private func returnColor(bg: ThemeBG, cs: ColorScheme) -> Color {
 private func returnImg(bg: ThemeBG, cs: ColorScheme) -> UIImage? {
   switch bg {
   case .img(let img):
-      return loadImage(fileName: img.cs(cs))
+    return loadImage(fileName: img.cs(cs))
   default:
     return nil
   }

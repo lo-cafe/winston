@@ -26,7 +26,7 @@ struct CredentialPanelItem: View {
             if let profilePicture = cred.profilePicture, let url = URL(string: profilePicture) {
               URLImage(url: url, processors: [.resize(size: .init(width: 32, height: 32))])
                 .scaledToFill()
-                .mask(Circle().fill(.black))
+                .clipShape(Circle())
             } else {
               Image(systemName: "person.text.rectangle.fill")
                 .foregroundStyle(Color.accentColor)

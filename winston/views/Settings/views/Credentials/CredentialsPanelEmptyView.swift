@@ -41,6 +41,7 @@ struct CredentialsPanelEmptyView: View {
           }
         })
         .buttonStyle(.actionSecondary)
+        .opacity(0.5)
       }
       
     }

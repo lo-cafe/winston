@@ -10,178 +10,78 @@ import NukeUI
 
 struct CredentialEditView: View {
   var credential: RedditCredential
-  @State private var draftCredential = RedditCredential()
-  @State private var waitingForCallback: Bool? = nil
+  @Binding var draftCredential: RedditCredential
+  @Binding var navPath: NavigationPath
   
   @Environment(\.useTheme) private var theme
+  @Environment(\.colorScheme) private var cs
   @Environment(\.dismiss) private var dismiss
-  @Environment(\.openURL) var openURL
   
-  func renewAccessToken() async {
-    let newToken = await draftCredential.getUpToDateToken(forceRenew: true)
-    draftCredential.accessToken = newToken
+  var creating: Bool { !draftCredential.isInKeychain() }
+    
+  var currentStatusInfo: EditCredentialProfile.StatusInfo {
+    return switch draftCredential.validationStatus {
+    case .authorized: .init(color: .green, lottieIcon: "thumbup", label: "Perfect", description: "This means you can use this account normally.")
+    case .maybeValid, .valid: .init(color: .orange, lottieIcon: "warning-appear", label: "Unauthorized", description: "This means you need to allow your credentials to access your account.")
+    case .invalid: .init(color: .red, lottieIcon: "thumbdown", label: "Invalid", description: "This means that you credential info is wrong.")
+    }
+  }
+  
+  @ViewBuilder
+  func showBtns() -> some View {
+    VStack(spacing: creating ? 16 : 14) {
+      BigCredBtn(nav: $navPath, img: { Image(.winstonSide).size(56) }, title: !creating ? "Guided replace" : "Guided mode", description: "A guided walkthrough to \(!creating ? "replace this credential by another" : "generate or select a credential").", page: .assistant, recommended: true)
+      BigCredBtn(nav: $navPath, img: { Image(systemName: "gear").fontSize(44, .semibold).foregroundStyle(Color.accentColor) }, title: !creating ? "Advanced settings" : "Advanced mode", description: "Manually \(creating ? "enter" : "edit") your credentials and get nerd info.", page: .advanced)
+    }
+    .frame(maxWidth: .infinity)
   }
   
   var body: some View {
-    let verified = draftCredential.refreshToken != nil
-    //    let anyChanges = credential.apiAppID != draftAppID || credential.apiAppSecret != draftAppSecret || credential.refreshToken != draftRefreshToken || credential.accessToken != draftAccessToken
     let anyChanges = credential != draftCredential
-    NavigationStack {
-      ScrollView {
-        VStack(spacing: 20) {
-          VStack {
-            if let profilePicture = draftCredential.profilePicture, let url = URL(string: profilePicture) {
-              URLImage(url: url)
-                .scaledToFill()
-                .frame(72)
-                .mask(Circle().fill(.black))
-            } else {
-              Image(systemName: "person.text.rectangle.fill")
-                .fontSize(28)
-                .frame(72)
-                .background(Circle().fill(Color.accentColor.opacity(0.25)))
-            }
-            Text(credential.userName ?? "New credential").fontSize(24, .semibold)
-          }
-          .listRowInsets(.none)
-          .listRowSeparator(.hidden)
-          .listRowBackground(Color.clear)
-          
-          HStack {
-            HStack(spacing: 4) {
-              Image(systemName: verified ? "checkmark.circle.fill" : "exclamationmark.triangle.fill")
-                .fontSize(38)
-                .foregroundStyle(verified ? .green : .orange)
-                .transition(.scaleAndBlur)
-                .id("verified-icon-\(verified ? "1" : "0")")
-              VStack(alignment: .leading, spacing: -1) {
-                Text("Status").fontSize(13, .medium).opacity(0.75)
-                Text(verified ? "Authorized" : "Unauthorized")
-                  .fontSize(17, .semibold)
-                  .foregroundStyle(verified ? .green : .orange)
-                  .transition(.scaleAndBlur)
-                  .id("verified-icon-\(verified ? "1" : "0")")
-              }
-            }
+    let accentColor = theme.general.accentColor.cs(cs).color()
+    
+    Group {
+      if creating {
+        VStack(spacing: 32) {
+          VStack(spacing: 16) {
+            BetterLottieView("keys", size: 120, color: accentColor)
             
-            Spacer()
-            
-            Button {
-              if !draftCredential.apiAppID.isEmpty {
-                if waitingForCallback == true { return withAnimation(.spring) { waitingForCallback = false } }
-                if waitingForCallback == false { return withAnimation(.spring) { waitingForCallback = nil } }
-                withAnimation(.spring) { waitingForCallback = true }
-                openURL(RedditAPI.shared.getAuthorizationCodeURL(draftCredential.apiAppID))
-              }
-            } label: {
-              HStack(spacing: 4) {
-                if waitingForCallback == true {
-                  ProgressView()
-                    .transition(.scaleAndBlur)
-                } else {
-                  Image(systemName: waitingForCallback == false ? "xmark.circle.fill" : verified ? "checkmark.gobackward" : "arrowshape.right.fill")
-                    .transition(.scaleAndBlur)
-                }
-                let label = waitingForCallback == true ? "Waiting..." : waitingForCallback == false ? "Try again" : verified ? "Reauthorize" : "Authorize"
-                Text(label)
-                  .transition(.scaleAndBlur)
-                  .id(label)
-              }
-              .fontSize(16, .semibold)
-              .padding(.horizontal, 14)
-              .padding(.vertical, 10)
-              .background(RR(12, waitingForCallback == true ? .gray : waitingForCallback == false ? .red : verified ? Color("acceptablePrimary") : .green))
-              .foregroundStyle(waitingForCallback == true ? Color.primary : Color.white)
-            }
-            .buttonStyle(.plain)
-            .fixedSize(horizontal: true, vertical: false)
-            .disabled(draftCredential.apiAppID.isEmpty || draftCredential.apiAppSecret.isEmpty)
-          }
-          
-          NiceCredentialSection("Credentials") {
-            VStack(alignment: .leading, spacing: 16) {
-              
-              BigInput(l: "App ID", t: Binding(get: {
-                draftCredential.apiAppID
-              }, set: { draftCredential.apiAppID = $0.replacingOccurrences(of: " ", with: "")
-              }), placeholder: "Ex: aijsd78_UN4iuq8dm7m@mr")
-              
-              BigInput(l: "App Secret", t: Binding(get: {
-                draftCredential.apiAppSecret
-              }, set: { draftCredential.apiAppSecret = $0.replacingOccurrences(of: " ", with: "")
-              }), placeholder: "Ex: JS9amd9imaims98ajmsi-_000_md2")
+            VStack(spacing: 4) {
+              Text("Create Credential").fontSize(32, .bold)
+              Text("There are two ways for doing that:")
             }
           }
           
-          NiceCredentialSection("Tokens") {
-            HStack {
-              BigInfoCredential(label: "Refresh", value: draftCredential.refreshToken)
-              BigInfoCredential(label: "Access", value: draftCredential.accessToken?.token, refresh: renewAccessToken)
-            }.frame(height: 108)
-          }
-          
-          Button {
-            openURL(redditApiSettingsUrl)
-          } label: {
-            HStack(spacing: 0) {
-              Image(.redditLogo)
-                .resizable()
-                .scaledToFit()
-                .frame(height: 24)
-              Text("Open Reddit API page")
-            }
-          }
-          .padding(.horizontal, 12)
-          .frame(maxWidth: .infinity, alignment: .trailing)
-          
+          showBtns()
         }
-        .padding(.top, 16)
+        .padding(.top, 48)
         .padding(.horizontal, 16)
-      }
-      .themedListBG(theme.lists.bg)
-      .navigationTitle("Edit credential")
-      .navigationBarTitleDisplayMode(.inline)
-      .toolbar {
-        ToolbarItem(placement: .topBarLeading) {
-          Button("Cancel", role: .destructive) {
-            dismiss()
-          }
-        }
-        ToolbarItem(placement: .topBarTrailing) {
-          Button("Save") {
-            draftCredential.save()
-            dismiss()
-          }
-          .disabled(!anyChanges)
-        }
-      }
-      .onAppear {
-        draftCredential = credential
-      }
-      .onOpenURL { url in
-        
-        if let queryParams = url.queryParameters, let appID = queryParams["appID"], let appSecret = queryParams["appSecret"] {
-          draftCredential.apiAppID = appID
-          draftCredential.apiAppSecret = appSecret
-        }
-        
-        
-        if waitingForCallback == true {
-          Task(priority: .background) {
-            var tempCred = draftCredential
-            let success = await RedditAPI.shared.monitorAuthCallback(credential: &tempCred, url)
-            await MainActor.run {
-              if success {
-                withAnimation { draftCredential = tempCred }
-              }
-              withAnimation {
-                waitingForCallback = success ? nil : false
-              }
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+      } else {
+        ScrollView {
+          VStack(alignment: .leading, spacing: 24) {
+            
+            EditCredentialProfile(pictureURL: draftCredential.profilePicture, username: draftCredential.userName ?? "New credential", statusInfo: currentStatusInfo)
+            
+            EditCredWhatToDoBanner(draftCredential: $draftCredential)
+            
+            VStack(alignment: .leading, spacing: 10) {
+              Text("What else can you do").fontSize(21, .semibold)
+              showBtns()
             }
           }
+          .padding(.all, 16)
         }
       }
-      .interactiveDismissDisabled(anyChanges)
     }
+    .themedListBG(theme.lists.bg)
+    .toolbar {
+      ToolbarItem(placement: .topBarLeading) { Button("Cancel", role: .destructive) { dismiss() } }
+      ToolbarItem(placement: .topBarTrailing) { Button("Save") { draftCredential.save(); dismiss() } .disabled(!anyChanges) }
+    }
+    .multilineTextAlignment(.center)
+    .navigationTitle(creating ? "New credential" : "Edit credential")
+    .navigationBarTitleDisplayMode(.inline)
   }
 }
+
