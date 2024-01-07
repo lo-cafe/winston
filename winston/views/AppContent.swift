@@ -39,9 +39,15 @@ struct AppContent: View {
     .environment(\.useTheme, selectedTheme)
     .onAppear { themesDefSettings.themesPresets = themesDefSettings.themesPresets.filter { $0.id != "default" } }
     .onChange(of: scenePhase) { newPhase in
+      // No auth on MacOS
+      var runningOnMac = false
+      #if os(macOS)
+        runningOnMac = true
+      #endif
+
       let useAuth = generalDefSettings.useAuth // Get fresh value
       
-      if (useAuth) {
+      if (useAuth && !runningOnMac) {
         if (!isAuthenticating && newPhase == .active && lockBlur != 0){
           // Not authing, active and blur visible = Need to auth
           isAuthenticating = true
