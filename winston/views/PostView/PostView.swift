@@ -61,8 +61,8 @@ struct PostView: View, Equatable {
   }
   
   var body: some View {
-    var navtitle: String = post.data?.title.escape ?? "no title"
-    var subnavtitle: String = "r/\(post.data?.subreddit ?? "no sub") \u{2022} " + String(localized:"\(post.data?.num_comments ?? 0) comments")
+    let navtitle: String = post.data?.title.escape ?? "no title"
+    let subnavtitle: String = "r/\(post.data?.subreddit ?? "no sub") \u{2022} " + String(localized:"\(post.data?.num_comments ?? 0) comments")
     let commentsHPad = selectedTheme.comments.theme.outerHPadding > 0 ? selectedTheme.comments.theme.outerHPadding : selectedTheme.comments.theme.innerPadding.horizontal
     ScrollViewReader { proxy in
       List {

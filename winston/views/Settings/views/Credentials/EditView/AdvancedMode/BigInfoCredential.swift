@@ -34,12 +34,7 @@ struct BigInfoCredential: View {
             Image(systemName: "doc.on.clipboard")
               .symbolRenderingMode(.hierarchical)
               .brightness(copied ? 0.2 : 0)
-              .ifIOS17({ img in
-                if #available(iOS 17, *) {
-                  img
-                    .symbolEffect(.bounce, value: bounce)
-                }
-              })
+              .symbolEffect(.bounce, value: bounce)
           }
           
           if let refresh = refresh {

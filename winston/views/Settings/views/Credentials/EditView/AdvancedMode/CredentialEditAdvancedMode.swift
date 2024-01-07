@@ -159,7 +159,7 @@ struct CredentialEditAdvancedMode: View {
       } else if waitingForCallback == true {
         Task(priority: .background) {
           var tempCred = draftCredential
-          let success = await RedditAPI.shared.monitorAuthCallback(credential: &tempCred, url)
+//          if let authCode = await RedditAPI.shared.monitorAuthCallback( url)
           await MainActor.run {
 //            if success {
 //              withAnimation { draftCredential = tempCred }

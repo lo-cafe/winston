@@ -11,7 +11,7 @@ import NukeUI
 struct CredentialEditView: View {
   var credential: RedditCredential
   @Binding var draftCredential: RedditCredential
-  @Binding var navPath: NavigationPath
+  @Binding var navPath: [CredentialEditStack.Mode]
   
   @Environment(\.useTheme) private var theme
   @Environment(\.colorScheme) private var cs
@@ -23,7 +23,7 @@ struct CredentialEditView: View {
     return switch draftCredential.validationStatus {
     case .authorized: .init(color: .green, lottieIcon: "thumbup", label: "Perfect", description: "This means you can use this account normally.")
     case .maybeValid, .valid: .init(color: .orange, lottieIcon: "warning-appear", label: "Unauthorized", description: "This means you need to allow your credentials to access your account.")
-    case .invalid: .init(color: .red, lottieIcon: "thumbdown", label: "Invalid", description: "This means that you credential info is wrong.")
+    case .empty, .invalid: .init(color: .red, lottieIcon: "thumbdown", label: "Invalid", description: "This means that you credential info is wrong.")
     }
   }
   

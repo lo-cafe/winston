@@ -461,6 +461,9 @@
         }
       }
     },
+    "Almost there, 1 sec!" : {
+
+    },
     "Announcements" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -649,6 +652,9 @@
           }
         }
       }
+    },
+    "Bring the previous screen back" : {
+
     },
     "by %@" : {
       "localizations" : {
@@ -880,6 +886,9 @@
 
     },
     "Credentials" : {
+
+    },
+    "Credentials registered!" : {
 
     },
     "Current Theme" : {
@@ -1115,9 +1124,6 @@
         }
       }
     },
-    "Download" : {
-
-    },
     "Drag Left" : {
       "localizations" : {
         "de" : {
@@ -1261,6 +1267,9 @@
           }
         }
       }
+    },
+    "Everything went well. You can start using Winston now!" : {
+
     },
     "Export" : {
       "localizations" : {
@@ -1481,6 +1490,9 @@
         }
       }
     },
+    "Go back" : {
+
+    },
     "Go back to Safari and copy your new \"app\"'s ID that's probably somewhere like this:" : {
       "localizations" : {
         "de" : {
@@ -1692,6 +1704,9 @@
         }
       }
     },
+    "I wanna do it manually" : {
+
+    },
     "I'm " : {
       "localizations" : {
         "de" : {
@@ -1735,6 +1750,9 @@
           }
         }
       }
+    },
+    "I'm lost" : {
+
     },
     "Icon" : {
       "localizations" : {
@@ -1929,6 +1947,9 @@
         }
       }
     },
+    "Join the Discord server" : {
+
+    },
     "Join the Discord Server" : {
       "localizations" : {
         "de" : {
@@ -2076,6 +2097,9 @@
           }
         }
       }
+    },
+    "Loggin in..." : {
+
     },
     "Long Drag Left" : {
       "localizations" : {
@@ -2453,6 +2477,9 @@
           }
         }
       }
+    },
+    "Now we need you to authorize your API credentials to access your own account. I know, it's redundant." : {
+
     },
     "NSFW" : {
       "localizations" : {
@@ -2974,6 +3001,9 @@
       }
     },
     "Save" : {
+
+    },
+    "Save and let's rock!" : {
 
     },
     "Save comment sort per post" : {
@@ -3511,6 +3541,9 @@
         }
       }
     },
+    "Sweeeet!" : {
+
+    },
     "Sync API Key" : {
       "localizations" : {
         "de" : {
@@ -3526,6 +3559,9 @@
           }
         }
       }
+    },
+    "Take me there!" : {
+
     },
     "Tap to copy" : {
       "localizations" : {
@@ -3576,6 +3612,9 @@
         }
       }
     },
+    "Tap to start a demo video" : {
+
+    },
     "Tap to unblur" : {
       "localizations" : {
         "de" : {
@@ -3609,6 +3648,9 @@
         }
       }
     },
+    "The assistant should've brought you here, but you came by yourself, what happened?" : {
+
+    },
     "The authorization flow didn't work. Please tap the error button and try again or use another credential." : {
 
     },
@@ -3630,9 +3672,6 @@
           }
         }
       }
-    },
-    "Theme Store" : {
-
     },
     "Theme Store Tint" : {
       "localizations" : {
@@ -3699,9 +3738,6 @@
       }
     },
     "There are two ways for doing that:" : {
-
-    },
-    "There was an error importing this theme" : {
 
     },
     "This is not working yet :(" : {
@@ -4069,6 +4105,9 @@
         }
       }
     },
+    "Why are you here?" : {
+
+    },
     "Winston" : {
       "localizations" : {
         "de" : {
@@ -4184,6 +4223,9 @@
           }
         }
       }
+    },
+    "You can go back to the tutorial screen again or try the advanced mode, but if you're truly lost, I recommend you to join our Discord server." : {
+
     },
     "You can tap the video to pause it." : {
 

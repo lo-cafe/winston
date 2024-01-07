@@ -13,9 +13,14 @@ struct PeakQuestion: Identifiable, Equatable {
     lhs.id == rhs.id
   }
   
+  init(question: String, answer: String) {
+    self.question = question
+    self.answer = answer.fixWidowedLines().md()
+  }
+  
   var id: String { self.question }
   let question: String
-  let answer: String
+  let answer: AttributedString
 }
 
 struct PeakQuestionView: View, Equatable {
@@ -59,7 +64,7 @@ struct PeakQuestionView: View, Equatable {
           if size != nil || isAnswer {
             VStack(alignment: .center, spacing: 8) {
               Divider()
-              Text(peakQuestion.answer.fixWidowedLines().md())
+              Text(peakQuestion.answer)
                 .fixedSize(horizontal: false, vertical: true)
                 .padding(EdgeInsets(top: 0, leading: 16, bottom: 12, trailing: 16))
                 .opacity(0.9)
@@ -71,7 +76,7 @@ struct PeakQuestionView: View, Equatable {
         .matchedGeometryEffect(id: "question-\(peakQuestion.id)-frame", in: ns, anchor: .top)
         .frame(width: isAnswer ? .screenW - 16 : size?.width, height: !isAnswer ? size?.height : nil, alignment: .top)
         .mask { RoundedRectangle(cornerRadius: 24, style: .continuous).fill(.black).matchedGeometryEffect(id: "question-\(peakQuestion.id)-mask", in: ns) }
-        .background { RoundedRectangle(cornerRadius: 24, style: .continuous).fill(.thinMaterial).matchedGeometryEffect(id: "question-\(peakQuestion.id)-bg", in: ns) }
+        .background { RoundedRectangle(cornerRadius: 24, style: .continuous).fill(Color(uiColor: .secondarySystemGroupedBackground)).matchedGeometryEffect(id: "question-\(peakQuestion.id)-bg", in: ns) }
         .overlay {
           RoundedRectangle(cornerRadius: 24, style: .continuous)
             .stroke(Color.primary.opacity(0.05), lineWidth: 0.5)
@@ -86,6 +91,7 @@ struct PeakQuestionView: View, Equatable {
         .onLongPressGesture(minimumDuration: 0.3, maximumDistance: .infinity, perform: { }, onPressingChanged: { val in
           withAnimation(.spring(duration: 0.25)) { pressed = val }
         })
+        .allowsHitTesting(!(isAnswer && !isSelected))
         .onAppear {
           if isAnswer && !shadow { withAnimation { shadow = true } }
 //          if !isAnswer && shadow { withAnimation { shadow = false } }

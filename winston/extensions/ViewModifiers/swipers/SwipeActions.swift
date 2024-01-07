@@ -231,15 +231,7 @@ struct SwipeUIBtn<T: GenericRedditEntityDataType, B: Hashable>: View, Equatable 
       let active = info.3 ? secondActiveFunc(entity!) : firstActiveFunc(entity!)
       Image(systemName: active ? info.0.active : info.0.normal)
       //      Image(systemName: "square.and.arrow.up.circle.fill")
-        .ifIOS17({ img in
-          if #available(iOS 17, *) {
-            img.contentTransition(.symbolEffect)
-          } else {
-            img
-              .transition(.scaleAndBlur)
-              .id(active ? info.0.active : info.0.normal)
-          }
-        })
+        .contentTransition(.symbolEffect)
         .frame(36)
         .background(Circle().fill(Color.hex(active ? info.2.active : info.2.normal)))
         .foregroundStyle(Color.hex(active ? info.1.active : info.1.normal))

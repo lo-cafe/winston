@@ -24,7 +24,7 @@ struct RedditCredential: Identifiable, Equatable, Hashable, Codable {
   var profilePicture: String? = nil
   func isInKeychain() -> Bool { RedditCredentialsManager.shared.credentials.contains { $0.id == self.id } }
   var validationStatus: CredentialValidationState {
-    var newRedditAPIPairState: CredentialValidationState = .invalid
+    var newRedditAPIPairState: CredentialValidationState = .empty
     
     if self.apiAppID.count == 22 && self.apiAppSecret.count == 30 {
       newRedditAPIPairState = .valid
@@ -35,6 +35,7 @@ struct RedditCredential: Identifiable, Equatable, Hashable, Codable {
     guard self.refreshToken != nil else { return newRedditAPIPairState }
     return .authorized
   }
+  
   init(apiAppID: String = "", apiAppSecret: String = "", accessToken: String? = nil, refreshToken: String? = nil, expiration: Int? = nil, lastRefresh: Date? = nil, userName: String? = nil, profilePicture: String? = nil) {
     self.id = UUID()
     self.apiAppID = apiAppID
@@ -148,5 +149,5 @@ struct RedditCredential: Identifiable, Equatable, Hashable, Codable {
     let lastRefresh: Date
   }
   
-  enum CredentialValidationState { case authorized, valid, invalid, maybeValid }
+  enum CredentialValidationState { case authorized, valid, invalid, maybeValid, empty }
 }

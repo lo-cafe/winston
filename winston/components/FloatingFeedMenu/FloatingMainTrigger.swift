@@ -28,9 +28,7 @@ struct FloatingMainTrigger: View, Equatable {
   
   var body: some View {
     Image(systemName: toggled || menuOpen ? "xmark" : "newspaper.fill")
-      .ifIOS17({ v in
-        if #available(iOS 17, *) { v.contentTransition(.symbolEffect) }
-      })
+      .contentTransition(.symbolEffect)
       .transaction { trans in
         trans.animation = .easeInOut(duration: longPressDuration)
       }

@@ -97,7 +97,8 @@ struct FloatingFeedMenu: View, Equatable {
               .background(Color.hitbox)
               .contentShape(Rectangle())
             }
-            .ifIOS17 { if #available(iOS 17, *) { $0.defaultScrollAnchor(.trailing).scrollClipDisabled() } }
+            .defaultScrollAnchor(.trailing)
+            .scrollClipDisabled()
             .padding(.bottom, screenEdgeMargin)
             .fadeOnEdges(.horizontal, disableSide: .leading)
             .transition(.offset(x: 0.01))

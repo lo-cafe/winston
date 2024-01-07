@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct BigCredBtn<C: View>: View {
-  @Binding var nav: NavigationPath
+  @Binding var nav: [CredentialEditStack.Mode]
   var img: () -> C
   var title: String
   var description: String
@@ -16,7 +16,7 @@ struct BigCredBtn<C: View>: View {
   var recommended: Bool = false
   
   var body: some View {
-    PressableButton {
+    PressableButton(animation: .easeIn(duration: 0.15)) {
       nav.append(page)
     } label: { pressed in
       HStack(alignment: .top, spacing: 10) {

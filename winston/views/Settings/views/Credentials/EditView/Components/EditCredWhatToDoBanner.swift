@@ -75,7 +75,7 @@ struct EditCredWhatToDoBanner: View {
               .foregroundStyle(completionStatus == .waitingForCallback ? Color.primary : (completionStatus == .success || completionStatus == .onHold) ? Color.white : Color.pink)
               .brightness(!pressed ? 0 : cs == .dark ? 0.05 : -0.05)
             }
-          case .authorized: EmptyView()
+          case .empty, .authorized: EmptyView()
           }
           
           Group {
@@ -101,19 +101,22 @@ struct EditCredWhatToDoBanner: View {
         if completionStatus == .waitingForCallback {
           Task(priority: .background) {
             var tempCred = draftCredential
-            let success = await RedditAPI.shared.monitorAuthCallback(credential: &tempCred, url)
-            await MainActor.run {
-              withAnimation(.spring) {
-                completionStatus = switch success {
-                case true: .success
-                case false: .fetchError
-                case nil: .wrongUrl
-                default: .onHold
+            if let authToken = RedditAPI.shared.getAuthCodeFromURL(url) {
+              let success = await RedditAPI.shared.injectFirstAccessTokenInto(&tempCred, authCode: authToken)
+              await MainActor.run {
+                withAnimation(.spring) {
+                  completionStatus = success ? .success : .fetchError
+                }
+                if completionStatus == .success {
+                  doThisAfter(2) {
+                    withAnimation { draftCredential = tempCred }
+                  }
                 }
               }
-              if completionStatus == .success {
-                doThisAfter(2) {
-                  withAnimation { draftCredential = tempCred }
+            } else {
+              await MainActor.run {
+                withAnimation(.spring) {
+                  completionStatus = .wrongUrl
                 }
               }
             }

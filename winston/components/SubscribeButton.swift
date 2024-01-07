@@ -49,11 +49,7 @@ struct SubscribeButton: View {
         .transition(.scaleAndBlur)
         
       }
-      .ifIOS17{ view in
-        if #available(iOS 17.0, *) {
-          view.contentTransition(.symbolEffect)
-        }
-      }
+      contentTransition(.symbolEffect)
       .fontSize(16, isSmall ? .medium : .semibold)
       .foregroundColor(subscribed ? .white : isSmall ? .accentColor : .primary)
       .padding(.horizontal, isSmall ? 0 : 16)

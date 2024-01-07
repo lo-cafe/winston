@@ -130,10 +130,6 @@ class RedditAPI: ObservableObject {
           }
           return true
         }
-//              Task(priority: .low) {
-//                _ = await self.fetchSubs()
-//                _ = await self.fetchMyMultis()
-//              }
         return true
       case .failure(let error):
         print(error)
@@ -143,17 +139,18 @@ class RedditAPI: ObservableObject {
     return false
   }
   
-  func monitorAuthCallback( credential: inout RedditCredential, _ rawUrl: URL) async -> Bool? {
+  func getAuthCodeFromURL(_ rawUrl: URL) -> String? {
     if let url = URL(string: rawUrl.absoluteString.replacingOccurrences(of: "winstonapp://", with: "https://app.winston.cafe/")), url.lastPathComponent == "auth-success", let query = URLComponents(url: url, resolvingAgainstBaseURL: false), let state = query.queryItems?.first(where: { $0.name == "state" })?.value, let code = query.queryItems?.first(where: { $0.name == "code" })?.value, state == lastAuthState {
-      let res = await injectFirstAccessTokenInto(&credential, authCode: code)
-      lastAuthState = nil
-      return res
+//      let res = await injectFirstAccessTokenInto(&credential, authCode: code)
+//      lastAuthState = nil
+//      return res
+      return code
     } else {
       return nil
     }
   }
   
-  func getAuthorizationCodeURL(_ appID: String) -> URL {
+  func  getAuthorizationCodeURL(_ appID: String) -> URL {
     let response_type: String = "code"
     let state: String = UUID().uuidString
     let redirect_uri: String = RedditAPI.appRedirectURI
