@@ -11,7 +11,7 @@ struct WithCredentialOnly<Content: View>: View {
   let credential: RedditCredential?
   @ViewBuilder let content: () -> Content
     var body: some View {
-      if !(credential?.isAuthorized ?? false) {
+      if !((credential?.validationStatus ?? .invalid) == .authorized) {
         VStack(spacing: 20) {
           VStack(spacing: 12) {
             Image(systemName: credential == nil ? "questionmark.key.filled" : "key.slash.fill")
@@ -21,13 +21,14 @@ struct WithCredentialOnly<Content: View>: View {
               Text(credential == nil ? "No credential" : "Credential invalid")
                 .fontSize(24, .bold)
                 .opacity(0.5)
-              Text("We can't load this page 😔").opacity(0.35)
+              Text("We can't load this page 😔").fontSize(16, .medium).opacity(0.35)
             }
           }
           Button("Go to credentials settings", systemImage: "gear") {
-            Nav.to(.setting(.credentials))
+            Nav.fullTo(.settings, .setting(.credentials))
           }
-          .buttonStyle(SecondaryButton())
+          .buttonStyle(.actionSecondary)
+          .opacity(0.5)
         }
         .compositingGroup()
         .multilineTextAlignment(.center)

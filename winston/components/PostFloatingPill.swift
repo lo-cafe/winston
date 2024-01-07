@@ -25,15 +25,15 @@ struct PostFloatingPill: View {
   var body: some View {
     Group {
       if let data = post.data {
+        let permalink = "https://reddit.com\(data.permalink.escape.urlEncoded)"
+        
         if !selectedTheme.posts.inlineFloatingPill {
           Group {
             HStack(spacing: 2) {
               Group {
                 HStack(spacing: -12) {
-                  if let perma = URL(string: "https://reddit.com\(data.permalink.escape.urlEncoded)") {
-                    ShareLink(item: perma) {
-                      LightBoxButton(icon: "square.and.arrow.up.fill", disabled: true)
-                    }
+                  LightBoxButton(icon: "square.and.arrow.up.fill") {
+                    ShareUtils.shareItem(item: permalink)
                   }
                   
                   
@@ -108,20 +108,14 @@ struct PostFloatingPill: View {
               }
               
               // ShareLink button
-              if let perma = URL(string: "https://reddit.com\(data.permalink.escape.urlEncoded)") {
-                Spacer()
-                
-                
-                
-                
-                
-                ShareLink(item: perma) {
-                  LightBoxButton(icon: "square.and.arrow.up.fill", disabled: true)
-                }
-                .padding(.vertical, -2)
-                
-                Spacer()
+              Spacer()
+              
+              LightBoxButton(icon: "square.and.arrow.up.fill") {
+                ShareUtils.shareItem(item: permalink)
               }
+              .padding(.vertical, -2)
+              
+              Spacer()
               
               // LightBoxButton for pinned post
               LightBoxButton(icon: !thisPinnedPost ? "shippingbox" : "shippingbox.and.arrow.backward.fill") {

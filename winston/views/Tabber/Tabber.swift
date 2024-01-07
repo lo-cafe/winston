@@ -96,6 +96,7 @@ struct Tabber: View, Equatable {
       cleanCredentialOrphanEntities()
       autoSelectCredentialIfNil()
       removeDefaultThemeFromThemes()
+      checkForOnboardingStatus()
       if RedditCredentialsManager.shared.selectedCredential != nil {
         RedditCredentialsManager.shared.updateMe()
         Task(priority: .background) { await updatePostsInBox(RedditAPI.shared) }

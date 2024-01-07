@@ -9,6 +9,7 @@ import Foundation
 import UIKit
 import SwiftUI
 import HighlightedTextEditor
+import Lottie
 
 let IPAD = UIDevice.current.userInterfaceIdiom == .pad
 let spring = Animation.interpolatingSpring(stiffness: 300, damping: 30, initialVelocity: 0)
@@ -17,6 +18,7 @@ let collapsedPresentation = PresentationDetent.height(75)
 let redditApiSettingsUrl = URL(string: "https://www.reddit.com/prefs/apps")!
 let compactModeThumbSize: CGFloat = 75
 let screenScale = UIScreen.main.scale
+let colorLottieKeypath = AnimationKeypath(keypath: "**.Color")
 let feedsAndSuch = ["home", "saved", "all", "popular"]
 let IMAGES_FORMATS = [".gif", ".png", ".jpg", ".jpeg", ".webp", ".bmp", ".tiff", ".svg", ".ico", ".heic", ".heif"]
 let VIDEOS_FORMATS = [".mov", ".mp4", ".avi", ".mkv", ".flv", ".wmv", ".mpg", ".mpeg", ".webm"]

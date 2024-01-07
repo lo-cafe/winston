@@ -24,7 +24,7 @@ struct AccountSwitcherOverlayView: View, Equatable {
   private let targetsContainerSize: CGSize = .init(width: 250, height: 150)
 
   var body: some View {
-    let validCredentials = credentialsManager.credentials.filter { $0.isAuthorized }.reversed()
+    let validCredentials = credentialsManager.credentials.filter { $0.validationStatus == .authorized }.reversed()
     let showAddBtn = validCredentials.count < 3
     let targetsCount = validCredentials.count + (showAddBtn ? 1 : 0)
     let lastsUntilEndOfAllTransitions = transmitter.selectedCred != nil ? (transmitter.positionInfo != nil || appear) : appear

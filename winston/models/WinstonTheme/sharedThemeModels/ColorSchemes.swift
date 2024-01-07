@@ -24,17 +24,26 @@ struct ColorSchemes<Thing: Codable & Hashable>: Codable, Hashable, Equatable {
   }
 }
 
+private func getSystemBrighterColor(_ hex: String) -> Color? {
+  return switch hex.lowercased() {
+    case "1c1c1e": Color.hex("2c2c2e")
+    case "000000": Color.hex("1c1c1e")
+    default: nil
+    }
+}
+
 
 extension ColorSchemes<ThemeColor> {
-  func callAsFunction() -> Color {
-    Color(light: self.light.color(), dark: self.dark.color())
+  func callAsFunction(brighter: Bool = false, brighterRatio: Double = 0.11) -> Color { self.color(brighter: brighter, brighterRatio: brighterRatio) }
+  
+  func color(brighter: Bool = false, brighterRatio: Double = 0.11) -> Color {
+    let systemBrighter = brighter ? getSystemBrighterColor(self.dark.hex) : nil
+    return Color(light: self.light.color(), dark: systemBrighter ?? self.dark.color().lighten(brighter ? brighterRatio : 0))
   }
   
-  func color() -> Color {
-    Color(light: self.light.color(), dark: self.dark.color())
-  }
-  
-  func uiColor() -> UIColor {
-    UIColor(light: self.light.uiColor(), dark: self.dark.uiColor())
+  func uiColor(brighter: Bool = false, brighterRatio: Double = 0.11) -> UIColor {
+    let systemBrighter = brighter ? getSystemBrighterColor(self.dark.hex) : nil
+    let finalDarkColor = systemBrighter == nil ? self.dark.uiColor().lighter(by: brighter ? brighterRatio : 0) : UIColor(systemBrighter!)
+    return UIColor(light: self.light.uiColor(), dark: finalDarkColor)
   }
 }

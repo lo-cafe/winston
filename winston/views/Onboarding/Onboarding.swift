@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Defaults
 
 private let starsCount = 7
 private let BG_GRAD_DARK = Color.hex("FFB13D")
@@ -22,6 +23,8 @@ struct Onboarding: View {
   @State var appID = ""
   @State var appSecret = ""
   @Environment (\.colorScheme) var colorScheme: ColorScheme
+  
+  @State var tryingToDismiss = false
   
   func nextStep() {
     withAnimation(.spring()) {
@@ -84,6 +87,22 @@ struct Onboarding: View {
         .simultaneousGesture(DragGesture())
         .tag(8)
     }
+    .alert(
+      "Are you sure?",
+      isPresented: $tryingToDismiss
+    ) {
+      Button(role: .destructive) {
+        Defaults[.GeneralDefSettings].onboardingState = .dismissed
+        Nav.present(nil)
+      } label: {
+        Text("Yes").fontWeight(.medium)
+      }
+    } message: {
+      Text("Do you really wanna dismiss the oboarding? You can reopen it later.")
+    }
+    .closeSheetBtn {
+      tryingToDismiss = true
+    }
     .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
     //    .padding(.bottom, 16)
     .onChange(of: currentTab) { _ in withAnimation { UIApplication.shared.dismissKeyboard() } }
@@ -120,6 +139,7 @@ struct Onboarding: View {
         twisted = true
       }
     }
+    .interactiveDismissDisabled(true)
   }
 }
 

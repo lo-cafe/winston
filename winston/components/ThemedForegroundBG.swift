@@ -17,7 +17,6 @@ struct ThemedForegroundBG: View, Equatable {
   var shiny: Gradient? = nil
   var shape: any Shape = Rectangle()
   var shadowStyle: ShadowStyle? = nil
-  @Environment(\.brighterBG) private var brighter
   var body: some View {
     ThemedForegroundRawBG(shape: Rectangle(), theme: theme, active: active, pressed: pressed, shiny: shiny, shadowStyle: shadowStyle)
   }
@@ -48,8 +47,7 @@ struct ThemedForegroundRawBG<S: Shape>: View, Equatable {
               .fill(.bar.opacity(theme.blurry ? 1 : 0))
           }
         }
-        .overlay(shape.fill(isActive ? .accentColor : theme.color()))
-        .brightness(!theme.blurry && brighter ? 0.075 : 0)
+        .overlay(shape.fill(isActive ? .accentColor : theme.color(brighter: !theme.blurry && brighter, brighterRatio: 0.075)))
       } else {
         Rectangle().winstonShiny(shiny)
       }

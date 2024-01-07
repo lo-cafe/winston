@@ -91,6 +91,15 @@
       }
     },
     {
+      "identity" : "lottie-spm",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/airbnb/lottie-spm.git",
+      "state" : {
+        "revision" : "96790253c1a82223bd43da651121abfd7e96d0f3",
+        "version" : "4.3.4"
+      }
+    },
+    {
       "identity" : "nuke",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/kean/Nuke.git",
@@ -223,6 +232,15 @@
       "state" : {
         "revision" : "238dadc14dd58885f51037e63d08baf4275c480e",
         "version" : "2.1.0"
+      }
+    },
+    {
+      "identity" : "wrappinghstack",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/dkk/WrappingHStack",
+      "state" : {
+        "revision" : "425d9488ba55f58f0b34498c64c054c77fc2a44b",
+        "version" : "2.2.11"
       }
     },
     {

@@ -46,6 +46,7 @@
       }
     },
     " testers! (but it needs help)" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -90,6 +91,7 @@
       }
     },
     "...unfortunately, lo.cafe (the team/group of friends behind Winston) isn't self sustainable yet.\nEven though we have other software for sale, we still have dayjobs." : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -326,6 +328,7 @@
       }
     },
     "🥳" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -342,6 +345,7 @@
       }
     },
     "7000" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -422,6 +426,9 @@
         }
       }
     },
+    "Add a new credential" : {
+
+    },
     "Advanced" : {
       "localizations" : {
         "de" : {
@@ -471,6 +478,9 @@
         }
       }
     },
+    "Any questions" : {
+
+    },
     "App icon" : {
       "localizations" : {
         "de" : {
@@ -518,6 +528,12 @@
           }
         }
       }
+    },
+    "Are you sure?" : {
+
+    },
+    "Authorize" : {
+
     },
     "Authorized" : {
 
@@ -682,6 +698,9 @@
         }
       }
     },
+    "Click the button and follow the video" : {
+
+    },
     "Collapse AutoModerator comments" : {
       "localizations" : {
         "de" : {
@@ -837,6 +856,9 @@
           }
         }
       }
+    },
+    "Create Credential" : {
+
     },
     "Created %@" : {
       "localizations" : {
@@ -1051,6 +1073,9 @@
     "Do you really wanna delete this credential?" : {
 
     },
+    "Do you really wanna dismiss the oboarding? You can reopen it later." : {
+
+    },
     "Do you wanna reset this property?" : {
       "localizations" : {
         "de" : {
@@ -1074,6 +1099,7 @@
       }
     },
     "Don't worry if you can't or simply don't wanna donate, we're gonna keep developing Winston anyway and we already love you for being using it ❤️" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -1158,10 +1184,16 @@
         }
       }
     },
+    "EASY" : {
+
+    },
     "Edit credential" : {
 
     },
     "Edit filter" : {
+
+    },
+    "Enabling the extension" : {
 
     },
     "Enter a subreddit" : {
@@ -1516,6 +1548,9 @@
     "Go to credentials settings" : {
 
     },
+    "Go to Reddit API settings" : {
+
+    },
     "Gotcha!" : {
       "localizations" : {
         "de" : {
@@ -1613,6 +1648,7 @@
       }
     },
     "However..." : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -1721,6 +1757,9 @@
           }
         }
       }
+    },
+    "If it's taking too long, tap cancel and try again." : {
+
     },
     "Import Settings" : {
       "localizations" : {
@@ -1846,6 +1885,7 @@
       }
     },
     "It's a long text, we won't spam you with that without your consent." : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -1922,6 +1962,7 @@
       }
     },
     "Know more about winston" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -2085,6 +2126,7 @@
       }
     },
     "Many of you is not aware about our patreon, which has a 1U$ tier. If each of our testers would donate 1U$/month, it'd be more than enough to allow us to focus all our time on Winston and other amazing projects." : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -2313,6 +2355,12 @@
         }
       }
     },
+    "NERD" : {
+
+    },
+    "New credential" : {
+
+    },
     "New filter" : {
 
     },
@@ -2437,6 +2485,9 @@
           }
         }
       }
+    },
+    "Omg, no credentials!" : {
+
     },
     "on " : {
       "localizations" : {
@@ -2903,6 +2954,9 @@
         }
       }
     },
+    "Restart welcome tutorial" : {
+
+    },
     "Right" : {
       "localizations" : {
         "de" : {
@@ -3281,6 +3335,9 @@
         }
       }
     },
+    "Something went wrong" : {
+
+    },
     "Something went wrong, you probably didn't enter the correct information in the previous steps." : {
       "localizations" : {
         "de" : {
@@ -3296,6 +3353,12 @@
           }
         }
       }
+    },
+    "Something wrong with the information we received from Reddit. Please tap the error button and try again." : {
+
+    },
+    "Something's wrong with the credentials we have for this account." : {
+
     },
     "Start by duplicating the" : {
 
@@ -3497,6 +3560,7 @@
       }
     },
     "Tap to read" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -3529,6 +3593,7 @@
       }
     },
     "Thank you so much!" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -3543,6 +3608,12 @@
           }
         }
       }
+    },
+    "The authorization flow didn't work. Please tap the error button and try again or use another credential." : {
+
+    },
+    "The credentials we have seem to be valid, but we need you to authorize the credentials to access your account (yeah, it sounds redundand, sorry)." : {
+
     },
     "The theme was imported successfully. Enable it in \"Themes\" section in the Settings tab." : {
       "localizations" : {
@@ -3626,6 +3697,9 @@
           }
         }
       }
+    },
+    "There are two ways for doing that:" : {
+
     },
     "There was an error importing this theme" : {
 
@@ -3911,6 +3985,7 @@
       }
     },
     "Wanna learn more about Winston's situation before donating? Press the button below" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -3926,10 +4001,14 @@
         }
       }
     },
+    "We built a Safari extension to help you generating the credentials. Let's enable it!" : {
+
+    },
     "We can't load this page 😔" : {
 
     },
     "We hit 8500 testers on TestFlight and this couldn't make us happier. Thank you so much for using and supporting Winston." : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -3944,6 +4023,18 @@
           }
         }
       }
+    },
+    "We recommend you to use another key using the \"**Guided replace**\" button below, but you can do it manually by tapping the \"**Advanced settings**\" if you want." : {
+
+    },
+    "Well, you got 2 options:" : {
+
+    },
+    "What else can you do" : {
+
+    },
+    "What to do now?" : {
+
     },
     "Whats New" : {
       "extractionState" : "stale",
@@ -3995,6 +4086,7 @@
       }
     },
     "Winston hit " : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -4092,6 +4184,9 @@
           }
         }
       }
+    },
+    "You can tap the video to pause it." : {
+
     },
     "You don't have any local themes" : {
       "localizations" : {

@@ -51,7 +51,7 @@ struct AccountSwitcherTarget: View, Equatable {
   private let distanceMaxSelectedVibrating: Double = 100
   private let verticalOffset = -50.0
   private let textSpace = (AccountSwitcherTarget.fontSize * 1.2) + AccountSwitcherTarget.vStackSpacing
-  private var isAddBtn: Bool { !cred.isAuthorized }
+  private var isAddBtn: Bool { cred.validationStatus != .authorized }
   private var isSelected: Bool { !isAddBtn && Defaults[.GeneralDefSettings].redditCredentialSelectedID == cred.id }
   private var radiusX: Double { (containerSize.width / 2) }
   private var radiusY: Double { (containerSize.height / 2) }
@@ -99,7 +99,7 @@ struct AccountSwitcherTarget: View, Equatable {
       }
     }
     .frame(Self.size - (Self.strokeWidth * 2))
-    .mask(Circle().fill(.black))
+    .clipShape(Circle())
     .overlay(
       !isAddBtn
       ? nil

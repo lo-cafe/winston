@@ -143,13 +143,13 @@ class RedditAPI: ObservableObject {
     return false
   }
   
-  func monitorAuthCallback( credential: inout RedditCredential, _ rawUrl: URL) async -> Bool {
+  func monitorAuthCallback( credential: inout RedditCredential, _ rawUrl: URL) async -> Bool? {
     if let url = URL(string: rawUrl.absoluteString.replacingOccurrences(of: "winstonapp://", with: "https://app.winston.cafe/")), url.lastPathComponent == "auth-success", let query = URLComponents(url: url, resolvingAgainstBaseURL: false), let state = query.queryItems?.first(where: { $0.name == "state" })?.value, let code = query.queryItems?.first(where: { $0.name == "code" })?.value, state == lastAuthState {
       let res = await injectFirstAccessTokenInto(&credential, authCode: code)
       lastAuthState = nil
       return res
     } else {
-      return false
+      return nil
     }
   }
   
