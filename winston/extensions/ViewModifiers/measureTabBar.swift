@@ -37,6 +37,6 @@ struct TabBarMeasurerAccessor: UIViewControllerRepresentable {
 extension View {
   func measureTabBar(_ setTabBarHeight: @escaping (Double) -> Void) -> some View {
     self
-      .background(TabBarMeasurerAccessor(setTabBarHeight: setTabBarHeight))
+      .background(TabBarMeasurerAccessor(setTabBarHeight: setTabBarHeight).allowsHitTesting(false))
   }
 }

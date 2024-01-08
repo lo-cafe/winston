@@ -2405,9 +2405,9 @@
 				ECFDEACF2A7F151500DF102D /* PostsInBoxView.swift */,
 				ECFDEAD12A7F154C00DF102D /* SubItem.swift */,
 				EC3188242A92F42800CB3738 /* MultiLink.swift */,
+				CECA71EA2B1E358700852DAD /* CustomFilterView.swift */,
 				EC593AF12A47AD97002D6454 /* Subreddits.swift */,
 				ECA86A802AB94DA200C31EC6 /* SubredditsStack.swift */,
-				CECA71EA2B1E358700852DAD /* CustomFilterView.swift */,
 			);
 			path = Subreddits;
 			sourceTree = "<group>";

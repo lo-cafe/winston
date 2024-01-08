@@ -48,10 +48,11 @@ struct CredentialEditAdvancedMode: View {
               .padding(.horizontal, 12)
               
               if draftCredential.validationStatus != .empty {
-                EditCredWhatToDoBanner(draftCredential: $draftCredential, padding: EdgeInsets(top: 0, leading: 16, bottom: 4, trailing: 16), advanced: true)
+                EditCredWhatToDoBanner(draftCredential: $draftCredential, padding: EdgeInsets(top: 0, leading: 16, bottom: 2, trailing: 16), advanced: true)
               }
             }
             .padding(.vertical, 10)
+            .padding(EdgeInsets(top: 10, leading: 0, bottom: 12, trailing: 0))
             .themedListRowLikeBG()
             .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
           } trailing: {

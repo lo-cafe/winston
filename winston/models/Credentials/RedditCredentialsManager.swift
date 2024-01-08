@@ -97,6 +97,9 @@ class RedditCredentialsManager: ObservableObject {
   
   func saveCred(_ cred: RedditCredential, forceCreate: Bool = true) {
     DispatchQueue.main.async {
+      if Defaults[.GeneralDefSettings].onboardingState != .dismissed {
+        Defaults[.GeneralDefSettings].onboardingState = .dismissed
+      }
       if let i = self.credentials.firstIndex(where: { $0.id == cred.id }) {
         self.credentials[i] = cred
       } else if forceCreate {
