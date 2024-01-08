@@ -52,8 +52,8 @@ struct GuidedTutorialScene: View {
           
           if let player {
             VideoPlayer(player: player)
-              .aspectRatio(16/9, contentMode: .fill)
               .frame(maxWidth: .infinity)
+              .aspectRatio(16/9, contentMode: .fill)
               .overlay(Color.black.opacity(seeingPlayer ? 0 : 0.5).allowsHitTesting(false))
               .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
               .overlay {

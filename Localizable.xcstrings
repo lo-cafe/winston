@@ -139,6 +139,18 @@
         }
       }
     },
+    "**1.** Open Reddit API settings" : {
+
+    },
+    "**2.** Check the **\"web app\"** option" : {
+
+    },
+    "**3.** Fill the **\"redirect uri\"** with this:" : {
+
+    },
+    "**4.** Fill up the form below and follow next instructions." : {
+
+    },
     "**u/%@** %@ in **r/%@**" : {
       "localizations" : {
         "de" : {
@@ -535,10 +547,10 @@
     "Are you sure?" : {
 
     },
-    "Authorize" : {
+    "Ask in the Discord server" : {
 
     },
-    "Authorized" : {
+    "Authorize" : {
 
     },
     "Autoplay videos (muted)" : {
@@ -652,9 +664,6 @@
           }
         }
       }
-    },
-    "Bring the previous screen back" : {
-
     },
     "by %@" : {
       "localizations" : {
@@ -843,6 +852,9 @@
           }
         }
       }
+    },
+    "Copy **redirect uri**" : {
+
     },
     "Copy access token" : {
 
@@ -1123,6 +1135,9 @@
           }
         }
       }
+    },
+    "Download" : {
+
     },
     "Drag Left" : {
       "localizations" : {
@@ -1490,9 +1505,6 @@
         }
       }
     },
-    "Go back" : {
-
-    },
     "Go back to Safari and copy your new \"app\"'s ID that's probably somewhere like this:" : {
       "localizations" : {
         "de" : {
@@ -1558,6 +1570,9 @@
       }
     },
     "Go to credentials settings" : {
+
+    },
+    "Go to previous screen" : {
 
     },
     "Go to Reddit API settings" : {
@@ -1682,6 +1697,9 @@
         }
       }
     },
+    "I got an OAuth error" : {
+
+    },
     "I mean, hello!" : {
       "localizations" : {
         "de" : {
@@ -1751,7 +1769,7 @@
         }
       }
     },
-    "I'm lost" : {
+    "I'm lost!" : {
 
     },
     "Icon" : {
@@ -1879,6 +1897,9 @@
           }
         }
       }
+    },
+    "Instructions" : {
+
     },
     "It worked!" : {
       "localizations" : {
@@ -2516,6 +2537,9 @@
     "Omg, no credentials!" : {
 
     },
+    "OMG!" : {
+
+    },
     "on " : {
       "localizations" : {
         "de" : {
@@ -2949,6 +2973,9 @@
     "Refresh access token" : {
 
     },
+    "Repeat tutorial" : {
+
+    },
     "Reset preferences" : {
       "localizations" : {
         "de" : {
@@ -2980,6 +3007,9 @@
           }
         }
       }
+    },
+    "Restart tutorial" : {
+
     },
     "Restart welcome tutorial" : {
 
@@ -3387,7 +3417,7 @@
     "Something wrong with the information we received from Reddit. Please tap the error button and try again." : {
 
     },
-    "Something's wrong with the credentials we have for this account." : {
+    "Something's wrong with the credentials for this account." : {
 
     },
     "Start by duplicating the" : {
@@ -3409,9 +3439,6 @@
           }
         }
       }
-    },
-    "Status" : {
-
     },
     "Status:" : {
       "localizations" : {
@@ -3648,13 +3675,16 @@
         }
       }
     },
+    "That error seems happen randomly. It usually helps if you create another credential in Reddit site and try again." : {
+
+    },
     "The assistant should've brought you here, but you came by yourself, what happened?" : {
 
     },
     "The authorization flow didn't work. Please tap the error button and try again or use another credential." : {
 
     },
-    "The credentials we have seem to be valid, but we need you to authorize the credentials to access your account (yeah, it sounds redundand, sorry)." : {
+    "The credentials seem to be valid, but we need you to authorize the credentials to access your account *(yeah, it sounds redundand, sorry)*." : {
 
     },
     "The theme was imported successfully. Enable it in \"Themes\" section in the Settings tab." : {
@@ -3672,6 +3702,9 @@
           }
         }
       }
+    },
+    "Theme Store" : {
+
     },
     "Theme Store Tint" : {
       "localizations" : {
@@ -3738,6 +3771,9 @@
       }
     },
     "There are two ways for doing that:" : {
+
+    },
+    "There was an error importing this theme" : {
 
     },
     "This is not working yet :(" : {
@@ -3921,9 +3957,6 @@
         }
       }
     },
-    "Unauthorized" : {
-
-    },
     "Unseen type" : {
       "localizations" : {
         "de" : {
@@ -4061,6 +4094,9 @@
       }
     },
     "We recommend you to use another key using the \"**Guided replace**\" button below, but you can do it manually by tapping the \"**Advanced settings**\" if you want." : {
+
+    },
+    "We recommend you to use another key." : {
 
     },
     "Well, you got 2 options:" : {

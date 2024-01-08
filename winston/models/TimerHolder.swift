@@ -19,6 +19,13 @@ class TimerHolder {
     }
   }
   
+  func every(_ secs: Double, _ cb: @escaping ()->()) {
+    timer?.invalidate()
+    timer = Timer.scheduledTimer(withTimeInterval: secs, repeats: true) { _ in
+      cb()
+    }
+  }
+  
   func invalidate() {
     timer?.invalidate()
   }

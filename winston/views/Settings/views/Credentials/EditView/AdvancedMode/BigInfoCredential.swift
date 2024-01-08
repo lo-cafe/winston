@@ -16,6 +16,7 @@ struct BigInfoCredential: View {
   @State private var bounce = 0
   @State private var spin = false
   @State private var loading = false
+  @State private var timer = TimerHolder()
   var body: some View {
     let empty = value == nil || (value?.isEmpty ?? false)
     VStack(alignment: .leading, spacing: 6) {
@@ -29,7 +30,11 @@ struct BigInfoCredential: View {
           Button {
             UIPasteboard.general.string = value
             withAnimation(.bouncy) { copied = true; bounce += 1 }
-            doThisAfter(0.3) { withAnimation { copied = false } }
+            doThisAfter(0.3) { withAnimation {
+              copied = false
+              Hap.shared.play(intensity: 1, sharpness: 1)
+            } }
+            Hap.shared.play(intensity: 0.75, sharpness: 0.35)
           } label: {
             Image(systemName: "doc.on.clipboard")
               .symbolRenderingMode(.hierarchical)
@@ -40,16 +45,25 @@ struct BigInfoCredential: View {
           if let refresh = refresh {
             Button {
               withAnimation(.bouncy) { refreshed = true; spin = true }
+              withAnimation { loading = true }
               doThisAfter(0.3) { refreshed = false }
               doThisAfter(0.5) { spin = false }
-              withAnimation { loading = true }
+              Hap.shared.play(intensity: 0.75, sharpness: 0.35)
+              Hap.shared.updateContinuous(intensity: 0.5, sharpness: 0.01)
+              Hap.shared.startContinuous()
+              timer.every(0.2) {
+                Hap.shared.play(intensity: 0.5, sharpness: 0.35)
+              }
               Task(priority: .background) {
                 await refresh()
+                Hap.shared.stopContinuous()
+                timer.invalidate()
+                Hap.shared.play(intensity: 1, sharpness: 1)
                 await MainActor.run { withAnimation { loading = false } }
               }
             } label: {
               Image(systemName: "arrow.clockwise")
-                .brightness(copied ? 0.2 : 0)
+                .brightness(refreshed ? 0.2 : 0)
                 .rotationEffect(.degrees(spin ? 360 : 0))
             }
           }
@@ -73,8 +87,9 @@ struct BigInfoCredential: View {
     .padding(.horizontal, 12)
     .padding(.vertical, 8)
     .frame(maxWidth: .infinity, maxHeight: .infinity)
-    .mask(RR(16, .black))
-    .background(RR(16, Color("acceptableBlack")))
-    .scrollDismissesKeyboard(.interactively)
+    .themedListRowLikeBG()
+    .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+    .compositingGroup()
+    .opacity(empty ? 0.75 : 1)
   }
 }

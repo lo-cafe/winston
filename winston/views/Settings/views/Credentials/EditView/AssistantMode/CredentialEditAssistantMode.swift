@@ -8,8 +8,9 @@
 import SwiftUI
 
 let questions: [PeakQuestion] = [
-  .init(question: "Why do I need an extension?", answer: "To make easy the process of generating a new API credentials in your Reddit account."),
-  .init(question: "What permissions are required?", answer: "The extension have 2 jobs, to allow reddit links to open in Winston, which requires access to all sites, and to show an assistant in your API credentials settings page."),
+  .init(question: "Why do I need an extension?", answer: "To make the process of generating a new API credentials in your Reddit account."),
+  .init(question: "What does the extension do?", answer: "It fills the form for you and clicks save basically. The problem is that Reddit's web panel is not optimized for phone devices, so it's hard to use it."),
+  .init(question: "What permissions are required?", answer: "The extension have 2 jobs, to allow reddit links to open in Winston, which requires access to all sites, and to show an assistant in your API credentials settings page, which requires access to that page alone.."),
   .init(question: "Will it steal my data?", answer: "No. But the code is open source, so you can check yourself if you want, or ask about it in our Discord server. Links for both the code and the server are in **About** section in **Settings** tab.")
 ]
 
@@ -46,18 +47,21 @@ struct CredentialEditAssistantMode: View {
           case .credsCaptured:
             GuidedCredsCapturedScene(draftCredential: draftCredential, enableEmptyView: enableEmptyView)
           case .authError:
-            GuidedAuthErrorScene()
+            GuidedErrorScene(text: "It seems that your credentials aren't working!", nav: $nav, scene: $scene)
           case .authSuccess:
             GuidedAuthSuccessScene(draftCredential: draftCredential)
           case .tutorial:
             GuidedTutorialScene(player: player, enableEmptyView: enableEmptyView)
           case .urlError:
-            GuidedURLErrorScene()
+            GuidedErrorScene(text: "Something happened with your journey from Safari to the app. You have 2 choices:", nav: $nav, scene: $scene)
           }
         }
       }
       .transition(.scaleAndBlur)
     }
+    .interactiveDismissDisabled()
+//    .padding(.top, scene != .tutorial || commonScene != nil ? 40 : 0)
+//    .navigationBarBackButtonHidden(scene != .tutorial || commonScene != nil)
     .frame(maxWidth: .infinity, maxHeight: .infinity)
     .overlay(alignment: .bottom) {
       GeometryReader { _ in
@@ -66,7 +70,7 @@ struct CredentialEditAssistantMode: View {
       .ignoresSafeArea(.all)
     }
     .onReceive(NotificationCenter.default.publisher(for: UIScene.willEnterForegroundNotification)) { _ in
-      if commonScene != .waiting && scene != .authSuccess {
+      if commonScene == .empty {
         timer.fireAt(0.125) { withAnimation(.spring) { commonScene = .waiting } }
       }
     }

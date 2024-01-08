@@ -12,7 +12,10 @@ struct GuidedWaitingScene: View {
   @Binding var scene: CredentialEditAssistantMode.AssistantScene
   @Binding var commonScene: CredentialEditAssistantMode.AssistantCommonScene?
   @State private var imLost = false
+  @State private var state: WaitingState = .start
   @Environment(\.openURL) private var openURL
+  
+  enum WaitingState { case oauth, lost, start }
   
   var body: some View {
     VStack(spacing: 24) {
@@ -23,36 +26,57 @@ struct GuidedWaitingScene: View {
       }
       VStack(spacing: 16) {
         
-        if !imLost {
+        switch state {
+        case .start:
+          if scene == .credsCaptured {
+            WinstonButton(config: .secondary) {
+              withAnimation(.spring) { state = .oauth }
+            } label: {
+              Label("I got an OAuth error", systemImage: "xmark.circle.fill")
+            }
+          }
           
           WinstonButton(config: .secondary) {
-            withAnimation(.spring) { imLost = true }
+            withAnimation(.spring) { state = .lost }
           } label: {
-            Text("I'm lost")
+            Label("I'm lost!", systemImage: "location.slash.fill")
           }
           
           WinstonButton(config: .secondary) {
             withAnimation(.spring) { commonScene = nil }
           } label: {
-            Text("Bring the previous screen back")
+            Label("Go to previous screen", systemImage: "arrowshape.left.fill")
           }
           
           WinstonButton(config: .secondary) {
             nav.append(.advanced)
           } label: {
-            Text("I wanna do it manually")
+            Label("I wanna do it manually", systemImage: "hand.raised.fingers.spread.fill")
           }
           
-        } else {
-          Text("You can go back to the tutorial screen again or try the advanced mode, but if you're truly lost, I recommend you to join our Discord server.").fontSize(20, .semibold, design: .serif).opacity(0.85).padding(.bottom, 16)
+        case .oauth:
+          Text("That error seems happen randomly. It usually helps if you create another credential in Reddit site and try again.").fontSize(19, .semibold, design: .serif).opacity(0.85).padding(.bottom, 16)
             .transition(.scaleAndBlur.animation(.spring.delay(0.1)))
+          
+        case .lost:
+          Text("You can go back to the tutorial screen again or try the advanced mode, but if you're truly lost, I recommend you to join our Discord server.").fontSize(19, .semibold, design: .serif).opacity(0.85).padding(.bottom, 16)
+            .transition(.scaleAndBlur.animation(.spring.delay(0.1)))
+        }
+        
+        if state != .start {
+          WinstonButton(config: .secondary) {
+            withAnimation(.spring) { commonScene = nil }
+          } label: {
+            Label("Go to previous screen", systemImage: "arrowshape.left.fill")
+          }
+          .transition(.scaleAndBlur.animation(.spring.delay(0.2)))
           
           WinstonButton(config: .secondary) {
             withAnimation(.spring) { scene = .tutorial; commonScene = nil }
           } label: {
-            Label("Go back", systemImage: "arrowshape.backward.fill")
+            Label("Restart tutorial", systemImage: "arrow.clockwise")
           }
-          .transition(.scaleAndBlur.animation(.spring.delay(0.2)))
+          .transition(.scaleAndBlur.animation(.spring.delay(0.3)))
           
           WinstonButton(config: .secondary) {
             openURL(URL(string: "https://discord.gg/Jw3Syb3nrz")!)
@@ -62,8 +86,7 @@ struct GuidedWaitingScene: View {
               Text("Join the Discord server")
             }
           }
-          .transition(.scaleAndBlur.animation(.spring.delay(0.3)))
-          
+          .transition(.scaleAndBlur.animation(.spring.delay(0.4)))
         }
         
       }

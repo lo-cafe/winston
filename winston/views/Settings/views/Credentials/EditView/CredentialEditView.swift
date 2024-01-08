@@ -18,14 +18,6 @@ struct CredentialEditView: View {
   @Environment(\.dismiss) private var dismiss
   
   var creating: Bool { !draftCredential.isInKeychain() }
-    
-  var currentStatusInfo: EditCredentialProfile.StatusInfo {
-    return switch draftCredential.validationStatus {
-    case .authorized: .init(color: .green, lottieIcon: "thumbup", label: "Perfect", description: "This means you can use this account normally.")
-    case .maybeValid, .valid: .init(color: .orange, lottieIcon: "warning-appear", label: "Unauthorized", description: "This means you need to allow your credentials to access your account.")
-    case .empty, .invalid: .init(color: .red, lottieIcon: "thumbdown", label: "Invalid", description: "This means that you credential info is wrong.")
-    }
-  }
   
   @ViewBuilder
   func showBtns() -> some View {
@@ -61,7 +53,7 @@ struct CredentialEditView: View {
         ScrollView {
           VStack(alignment: .leading, spacing: 24) {
             
-            EditCredentialProfile(pictureURL: draftCredential.profilePicture, username: draftCredential.userName ?? "New credential", statusInfo: currentStatusInfo)
+            EditCredentialProfile(pictureURL: draftCredential.profilePicture, username: draftCredential.userName ?? "New credential", statusInfo: draftCredential.validationStatus.getMeta())
             
             EditCredWhatToDoBanner(draftCredential: $draftCredential)
             
@@ -70,6 +62,7 @@ struct CredentialEditView: View {
               showBtns()
             }
           }
+          .animation(.spring, value: draftCredential.validationStatus)
           .padding(.all, 16)
         }
       }

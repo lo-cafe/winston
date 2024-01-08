@@ -39,7 +39,7 @@ struct GuidedAuthSuccessScene: View {
     .frame(maxHeight: .infinity, alignment: .top)
     .onAppear {
       Task {
-        // SHAME ON ME FOR THIS PROFANITY BELOW
+        // SHAME ON ME (KINARK) FOR THIS PROFANITY BELOW
         // but I wasn't into learning .haap files syntax
         // nor modifiying my haptics class lol
         // but it works... so.........

@@ -13,6 +13,8 @@ struct CredentialPanelItem: View {
   var inUse: Bool
   @State private var deleteAlertOpened = false
     var body: some View {
+      let statusMeta = cred.validationStatus.getMeta()
+      
       WListButton(showArrow: true) {
         Nav.present(.editingCredential(cred))
       } label: {
@@ -35,18 +37,20 @@ struct CredentialPanelItem: View {
           
           Spacer()
           
-          if inUse {
-            Text("IN USE")
-              .foregroundStyle(.white)
-              .shadow(color: .black.opacity(0.5), radius: 8, y: 4)
-              .fontSize(12, .semibold)
-              .padding(.vertical, 1)
-              .padding(.horizontal, 4)
-              .background(RR(4, Color.accentColor))
-          }
-          
-          if cred.refreshToken == nil {
-            Image(systemName: "exclamationmark.triangle.fill").foregroundStyle(.orange)
+          HStack(spacing: 8) {
+            if inUse {
+              Text("IN USE")
+                .foregroundStyle(.white)
+                .shadow(color: .black.opacity(0.5), radius: 8, y: 4)
+                .fontSize(12, .semibold)
+                .padding(.vertical, 1)
+                .padding(.horizontal, 4)
+                .background(RR(4, Color.accentColor))
+            }
+            
+            if cred.validationStatus != .authorized {
+              StillLottieView(statusMeta.lottieIcon, color: statusMeta.color)
+            }
           }
         }
       }

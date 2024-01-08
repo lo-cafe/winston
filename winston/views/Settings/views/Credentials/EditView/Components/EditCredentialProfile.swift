@@ -10,7 +10,7 @@ import SwiftUI
 struct EditCredentialProfile: View {
   let pictureURL: String?
   let username: String
-  let statusInfo: StatusInfo
+  let statusInfo: RedditCredential.CredentialValidationState.Meta
   
   struct StatusInfo: Equatable {
     let color: Color
@@ -39,15 +39,7 @@ struct EditCredentialProfile: View {
         Text(username).fontSize(24, .bold)
         
         VStack(alignment: .leading, spacing: 2) {
-          HStack(spacing: 3) {
-            BetterLottieView(statusInfo.lottieIcon, size: 19, initialDelay: 0.315, color: statusInfo.color)
-            
-            Text(statusInfo.label)
-              .fontSize(16, .semibold)
-              .foregroundStyle(statusInfo.color)
-              .transition(.scaleAndBlur)
-              .id("verified-icon-\(statusInfo.label)")
-          }
+          CredentialStatusMetaView(statusInfo)
           
           Text(statusInfo.description.fixWidowedLines())
             .fontSize(13)
