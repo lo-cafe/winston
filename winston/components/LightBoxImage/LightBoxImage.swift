@@ -123,13 +123,11 @@ struct LightBoxImage: View {
           }
         }
     )
-    .overlay(
-      Group {
-        if let postTitle = postTitle, let badgeKit = badgeKit {
-          LightBoxOverlay(postTitle: postTitle, badgeKit: badgeKit, avatarImageRequest: avatarImageRequest, opacity: !showOverlay || isPinching ? 0 : interpolate([1, 0], false), imagesArr: imagesArr, activeIndex: activeIndex, loading: $loading, done: $done)
-        }
+    .overlay {
+      if let postTitle = postTitle, let badgeKit = badgeKit {
+        LightBoxOverlay(postTitle: postTitle, badgeKit: badgeKit, avatarImageRequest: avatarImageRequest, opacity: !showOverlay || isPinching ? 0 : interpolate([1, 0], false), imagesArr: imagesArr, activeIndex: activeIndex, loading: $loading, done: $done)
       }
-    )
+    }
     .background(
       !appearBlack
       ? nil
@@ -143,22 +141,22 @@ struct LightBoxImage: View {
         .allowsHitTesting(appearBlack)
         .transition(.opacity)
     )
-    .overlay(
-      !loading && !done
-      ? nil
-      : ZStack {
-        if done {
-          Image(systemName: "checkmark.circle.fill")
-            .fontSize(40)
-            .transition(.scaleAndBlur)
-        } else {
-          ProgressView()
-            .transition(.scaleAndBlur)
+    .overlay {
+      if loading || done {
+        ZStack {
+          if done {
+            Image(systemName: "checkmark.circle.fill")
+              .fontSize(40)
+              .transition(.scaleAndBlur)
+          } else {
+            ProgressView()
+              .transition(.scaleAndBlur)
+          }
         }
-      }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(.black.opacity(0.25))
-    )
+      }
+    }
     .ignoresSafeArea(edges: .all)
     .compositingGroup()
     .opacity(appearContent ? 1 : 0)
