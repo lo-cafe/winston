@@ -33,7 +33,7 @@ struct MixedContentLink: View, Equatable {
       VStack {
         ShortCommentPostLink(comment: comment)
         if let commentWinstonData = comment.winstonData {
-          CommentLink(lineLimit: 3, showReplies: false, comment: comment, commentWinstonData: commentWinstonData, children: comment.childrenWinston)
+          CommentLink(showReplies: false, comment: comment, commentWinstonData: commentWinstonData, children: comment.childrenWinston)
         }
       }
       .padding(.horizontal, 12)
