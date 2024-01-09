@@ -66,12 +66,10 @@ struct PostContent: View, Equatable {
 
             MD2(winstonData.postBodyAttr == nil ? .str(data.selftext) : .nsAttr(winstonData.postBodyAttr!), onTap: { withAnimation(spring) { collapsed.toggle() }})
               .frame(width: winstonData.postViewBodySize.width, height: winstonData.postViewBodySize.height, alignment: .topLeading)
-              .fixedSize()
               .allowsHitTesting(!isCollapsed)
           }
         }
         .modifier(AnimatingCellHeight(height: isCollapsed ? 175 : winstonData.postViewBodySize.height + (winstonData.postDimensionsForcedNormal.mediaSize?.height ?? 0), disable: false))
-        .fixedSize(horizontal: false, vertical: true)
         .clipped()
         .opacity(isCollapsed ? 0.3 : 1)
         .mask(
