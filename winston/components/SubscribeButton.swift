@@ -49,7 +49,7 @@ struct SubscribeButton: View {
         .transition(.scaleAndBlur)
         
       }
-      contentTransition(.symbolEffect)
+      .contentTransition(.symbolEffect)
       .fontSize(16, isSmall ? .medium : .semibold)
       .foregroundColor(subscribed ? .white : isSmall ? .accentColor : .primary)
       .padding(.horizontal, isSmall ? 0 : 16)
