@@ -54,11 +54,13 @@ struct PreviewLinkContentRaw: View, Equatable {
               .fontSize(17, .medium)
               .lineLimit(1)
               .truncationMode(.tail)
+              .fixedSize(horizontal: false, vertical: true)
             
             Text(cleanURL(url: url))
               .fontSize(13)
               .opacity(0.5)
               .lineLimit(1)
+              .fixedSize(horizontal: false, vertical: true)
           }
           .frame(maxWidth: .infinity, alignment: .leading)
           
@@ -66,7 +68,10 @@ struct PreviewLinkContentRaw: View, Equatable {
             .fontSize(14)
             .lineLimit(2)
             .opacity(0.75)
+            .fixedSize(horizontal: false, vertical: true)
         }
+//        .skeleton(with: viewModel.loading)
+//        .multiline(lines: 4, scales: [1: 1, 2: 0.5, 3: 0.75, 4: 0.75])
         .frame(maxWidth: .infinity, alignment: .leading)
         .multilineTextAlignment(.leading)
       }
