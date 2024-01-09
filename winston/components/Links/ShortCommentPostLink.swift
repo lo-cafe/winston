@@ -53,7 +53,7 @@ struct ShortCommentPostLink: View {
       .highPriorityGesture (
         TapGesture().onEnded {
           if let link_id = data.link_id, let subID = data.subreddit {
-            Nav.to(.reddit(.post(Post(id: link_id, subID: subID))))
+            Nav.to(.reddit(.postHighlighted(Post(id: link_id, subID: subID), comment.id)))
           }
         }
       )

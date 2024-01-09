@@ -143,10 +143,14 @@ struct PostView: View, Equatable {
       .onAppear {
         doThisAfter(0.5) {
           hideElements = false
+          doThisAfter(0.1) {
+            if highlightID != nil { withAnimation { proxy.scrollTo("loading-comments") } }
+          }
         }
         if post.data == nil {
           updatePost()
         }
+        
         
         Task(priority: .background) {          
           if let numComments = post.data?.num_comments {

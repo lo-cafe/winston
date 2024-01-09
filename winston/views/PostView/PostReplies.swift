@@ -135,6 +135,7 @@ struct PostReplies: View {
                 await asyncFetch(post.data == nil)
               }
             }
+            withAnimation { seenComments = post.winstonData?.seenComments }
           }
           .id("loading-comments")
       } else if commentsData.count == 0 {
@@ -144,8 +145,6 @@ struct PostReplies: View {
           .listRowBackground(Color.clear)
           .id("no-comments-placeholder")
       }
-    }.onAppear() {
-      seenComments = post.winstonData?.seenComments
     }
   }
 }
