@@ -25,15 +25,24 @@ struct MixedContentLink: View, Equatable {
     case .first(let post):
       if let winstonData = post.winstonData, let postSub = winstonData.subreddit {
         PostLink(id: post.id, theme: theme, showSub: true, contentWidth: contentWidth, defSettings: postLinkDefSettings)
-        .environmentObject(post)
-        .environmentObject(postSub)
-        .environmentObject(winstonData)
+          .environmentObject(post)
+          .environmentObject(postSub)
+          .environmentObject(winstonData)
       }
     case .second(let comment):
       VStack {
-        ShortCommentPostLink(comment: comment)
-        if let commentWinstonData = comment.winstonData {
-          CommentLink(showReplies: false, comment: comment, commentWinstonData: commentWinstonData, children: comment.childrenWinston)
+        Group {
+          ShortCommentPostLink(comment: comment)
+          if let commentWinstonData = comment.winstonData {
+            CommentLink(showReplies: false, comment: comment, commentWinstonData: commentWinstonData, children: comment.childrenWinston)
+          }
+        }
+        .allowsHitTesting(false)
+      }
+      .contentShape(Rectangle())
+      .onTapGesture {
+        if let data = comment.data, let link_id = data.link_id, let subID = data.subreddit {
+          Nav.to(.reddit(.postHighlighted(Post(id: link_id, subID: subID), comment.id)))
         }
       }
       .padding(.horizontal, 12)

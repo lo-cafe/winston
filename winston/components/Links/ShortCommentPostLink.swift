@@ -50,13 +50,6 @@ struct ShortCommentPostLink: View {
       )
       .mask(RR(14, Color.black))
       .contentShape(Rectangle())
-      .highPriorityGesture (
-        TapGesture().onEnded {
-          if let link_id = data.link_id, let subID = data.subreddit {
-            Nav.to(.reddit(.postHighlighted(Post(id: link_id, subID: subID), comment.id)))
-          }
-        }
-      )
       .foregroundColor(.primary)
       .multilineTextAlignment(.leading)
     } else {
