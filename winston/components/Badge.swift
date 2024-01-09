@@ -167,7 +167,6 @@ struct BadgeView: View, Equatable {
           }
           
         }
-        .fixedSize(horizontal: true, vertical: false)
         .foregroundStyle(defaultIconColor)
         .font(.system(size: theme.statsText.size, weight: theme.statsText.weight.t))
       }
