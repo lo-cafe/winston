@@ -10,7 +10,7 @@ import Combine
 import SafariServices
 import UIKit
 
-class Nav: ObservableObject, Identifiable, Codable {
+class Nav: ObservableObject, Identifiable, Equatable {
   static let shared = Nav()
   static let router = Nav.shared.activeRouter
   
@@ -18,9 +18,12 @@ class Nav: ObservableObject, Identifiable, Codable {
   static func back() { Nav.shared.activeRouter.goBack() }
   static func to(_ dest: Router.NavDest, _ reset: Bool = false) { Nav.shared.activeRouter.navigateTo(dest, reset) }
   static func fullTo(_ tab: TabIdentifier, _ dest: Router.NavDest, _ reset: Bool = false) { Nav.shared.navigateTo(tab, dest, reset) }
+  static func toTab(_ tab: TabIdentifier, _ dest: Router.NavDest, _ reset: Bool = false) { Nav.shared.navigateTo(tab, dest, reset) }
   static func present(_ content: PresentingSheet?) { Nav.shared.presentingSheet = content }
   static func resetStack() { Nav.shared.activeRouter.resetNavPath() }
   /* </Util static functions for ease of use> */
+  
+  static let swipeAnywhereGestureName = "swipe-anywhere-winston"
   
   static private func newRouterForTab(_ tab: TabIdentifier, _ id: UUID) -> Router { Router(id: "\(tab.rawValue)TabRouter-\(id.uuidString)") }
     
@@ -66,10 +69,18 @@ class Nav: ObservableObject, Identifiable, Codable {
       } else if !presentingSheetsQueue.isEmpty { presentingSheetsQueue.removeFirst() }
     }
   }
+  var activeRouter: Router { Nav.shared[activeTab] }
   private var cancellables = Set<AnyCancellable>()
 
   
   private init(activeTab: TabIdentifier = .posts) {
+    let newSwipeAnywhereGesture: UIPanGestureRecognizer = {
+      let gesture = UIPanGestureRecognizer()
+      gesture.name = Self.swipeAnywhereGestureName
+      gesture.isEnabled = true
+      return gesture
+    }()
+    
     let id = UUID()
     self.id = id
     self.activeTab = activeTab
@@ -83,9 +94,6 @@ class Nav: ObservableObject, Identifiable, Codable {
     }
   }
   
-  var activeRouter: Router { Nav.shared[activeTab] }
-  
-  
   func navigateTo(_ tab: TabIdentifier, _ dest: Router.NavDest, _ reset: Bool = true) {
     routers[tab]?.navigateTo(dest, reset)
     activeTab = tab
@@ -94,26 +102,13 @@ class Nav: ObservableObject, Identifiable, Codable {
   func resetStack() { activeRouter.resetNavPath() }
   
   subscript(tab: TabIdentifier) -> Router {
-    if self.routers[tab] == nil { self.routers[tab] = Self.newRouterForTab(tab, id) }
-    return self.routers[tab]!
+    let router = self.routers[tab] ?? Self.newRouterForTab(tab, id)
+    if self.routers[tab] == nil { self.routers[tab] = router }
+    return router
   }
   
   enum CodingKeys: String, CodingKey {
     case id, activeTab, routers
-  }
-  
-  func encode(to encoder: Encoder) throws {
-    var container = encoder.container(keyedBy: CodingKeys.self)
-    try container.encode(id, forKey: .id)
-    try container.encode(activeTab, forKey: .activeTab)
-    try container.encode(routers, forKey: .routers)
-  }
-  
-  required init(from decoder: Decoder) throws {
-    let container = try decoder.container(keyedBy: CodingKeys.self)
-    self.id = try container.decode(UUID.self, forKey: .id)
-    self.activeTab = try container.decode(TabIdentifier.self, forKey: .activeTab)
-    self.routers = try container.decode([TabIdentifier:Router].self, forKey: .routers)
   }
   
   static func == (lhs: Nav, rhs: Nav) -> Bool {

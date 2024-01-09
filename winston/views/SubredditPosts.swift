@@ -25,7 +25,7 @@ struct SubredditPosts: View, Equatable {
   @Default(.filteredSubreddits) private var filteredSubreddits
   @State private var loading = true
   @StateObject private var posts = NonObservableArray<Post>()
-  @State private var loadedPosts: Set<String> = []
+//  @State private var loadedPosts: Set<String> = []
   @State private var lastPostAfter: String?
   @State private var searchText: String = ""
   @State private var sort: SubListingSortOption
@@ -117,19 +117,21 @@ struct SubredditPosts: View, Equatable {
       if let result = await subreddit.fetchPosts(sort: sort, after: loadMore ? lastPostAfter : nil, searchText: searchText, contentWidth: contentWidth), let newPosts = result.0 {
         Task(priority: .background) { await RedditAPI.shared.updatePostsWithAvatar(posts: newPosts, avatarSize: selectedTheme.postLinks.theme.badge.avatar.size) }
         withAnimation {
-          let newPostsFiltered = newPosts.filter { !loadedPosts.contains($0.id) && !filteredSubreddits.contains($0.data?.subreddit ?? "") }
+//          let newPostsFiltered = newPosts.filter { !loadedPosts.contains($0.id) && !filteredSubreddits.contains($0.data?.subreddit ?? "") }
           
           if loadMore {
-            posts.data.append(contentsOf: newPostsFiltered)
+//            posts.data.append(contentsOf: newPostsFiltered)
+            posts.data.append(contentsOf: newPosts)
           } else {
-            posts.data = newPostsFiltered
+//            posts.data = newPostsFiltered
+            posts.data = newPosts
           }
           
-          newPostsFiltered.forEach { loadedPosts.insert($0.id) }
+//          newPostsFiltered.forEach { loadedPosts.insert($0.id) }
           
           loading = false
           lastPostAfter = result.1
-          reachedEndOfFeed = newPostsFiltered.count == 0
+//          reachedEndOfFeed = newPostsFiltered.count == 0
                     
           // Save posts if no searchText
           if searchText == nil || searchText!.isEmpty {
@@ -178,7 +180,7 @@ struct SubredditPosts: View, Equatable {
   func clearAndLoadData(withSearchText searchText: String? = nil, forceRefresh: Bool = false) {
     withAnimation {
       posts.data.removeAll()
-      loadedPosts.removeAll()
+//      loadedPosts.removeAll()
       reachedEndOfFeed = false
       
       if isSavedSubreddit {

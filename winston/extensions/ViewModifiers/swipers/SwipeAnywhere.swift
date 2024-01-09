@@ -9,95 +9,67 @@ import SwiftUI
 import Defaults
 import Combine
 
-struct SwipeAywhereState {
-  var activated = false
-  var offset: CGSize = .zero
-  var dragging: Bool? = nil
-}
-
-struct SwipeAnywhere: ViewModifier {
-  @ObservedObject private var tabsManager = Nav.shared
-  var forceEnable: Bool = false
-  
-  @Default(.BehaviorDefSettings) private var behaviorDefSettings
-  @GestureState private var dragState = SwipeAywhereState()
-  @State private var staticOffset: CGSize = .zero
-  let activatedAmount: CGFloat = 75
-  @State private var rigid = UIImpactFeedbackGenerator(style: .rigid)
-  @State private var soft = UIImpactFeedbackGenerator(style: .soft)
-  
+struct SwipeAnywhereTrigger: ViewModifier {
+  var size: CGSize
+  @ObservedObject private var nav = Nav.shared
   func body(content: Content) -> some View {
-    let enableSwipeAnywhere = behaviorDefSettings.enableSwipeAnywhere
-    let isAtRoot = tabsManager.activeRouter.isAtRoot
-    let enabled = !isAtRoot && (enableSwipeAnywhere || forceEnable)
-    let finalOffset = dragState.offset + staticOffset
-    let interpolate = interpolatorBuilder([0, activatedAmount], value: (abs(finalOffset.width) + abs(finalOffset.height)) / 2)
-    content
-      .gesture(
-        !enabled
-        ? nil
-        : DragGesture()
-          .updating($dragState) { val, state, trans in
-            if state.dragging == nil { state.dragging = abs(val.translation.width) > abs(val.translation.height) }
-            guard let dragging = state.dragging, dragging else { return }
-            let translation = val.translation
-            trans.isContinuous = true
-            var newDragState = state
-            let newActivated = translation.width > 0 && ((abs(translation.width) + abs(translation.height)) / 2) >= activatedAmount
-            trans.animation = newActivated != newDragState.activated ? .interpolatingSpring(stiffness: 200, damping: 15, initialVelocity: newActivated ? 35 : 0) : .interpolatingSpring(stiffness: 1000, damping: 100)
-            
-            
-            newDragState.activated = newActivated
-            newDragState.offset = translation
-            state = newDragState
-          }
-          .onEnded { val in
-            let predictedEnd = val.predictedEndTranslation
-            staticOffset = val.translation
-            let distance = (abs(staticOffset.width) + abs(staticOffset.height)) / 2
-            var initialVel = abs(((abs(predictedEnd.width) + abs(predictedEnd.height)) / 2) / distance)
-            initialVel = initialVel < 3.75 ? 0 : initialVel * 3
-            withAnimation(.interpolatingSpring(stiffness: 125, damping: 15, initialVelocity: -initialVel)) {
-              staticOffset = .zero
-            }
-            if !isAtRoot && val.translation.width > 0 && ((abs(val.translation.width) + abs(val.translation.height)) / 2) >= activatedAmount {
-              Nav.back()
-            }
-          }
-      )
-      .onChange(of: dragState.activated) { val in
-        Task(priority: .background) {
-          if !(dragState.dragging ?? false) { return }
-          let impact = val ? rigid : soft
-          impact.prepare()
-          impact.impactOccurred()
-        }
-      }
-      .overlay(
-        !enableSwipeAnywhere && !forceEnable
-        ? nil
-        : Image(systemName: "arrowshape.left\(dragState.activated ? ".fill" : "")")
-          .fontSize(24, .semibold)
-          .foregroundColor(dragState.activated ? .blue : .primary)
-          .animation(.easeOut(duration: 0.2), value: dragState.activated)
-          .frame(width: 56, height: 56)
-          .background(
-            Circle().fill(.bar).shadow(radius: 8)
-              .overlay(Circle().stroke(Color.primary.opacity(0.05), lineWidth: 0.5).padding(.all, 0.5))
-          )
-          .scaleEffect(interpolate([0.5, dragState.activated ? 1 : 0.9], true))
-          .offset(x: -76 + finalOffset.width, y: finalOffset.height)
-          .frame(.screenSize,  .leading)
-          .ignoresSafeArea()
-          .allowsHitTesting(false)
-        //          .drawingGroup()
-        , alignment: .bottomLeading
-      )
+    FullSwipeNavigationStack(router: nav.activeRouter, size: size) {
+      content
+    }
   }
 }
 
 extension View {
-  func swipeAnywhere(forceEnable: Bool = false) -> some View {
-    self.modifier(SwipeAnywhere(forceEnable: forceEnable))
+  func swipeAnywhere(size: CGSize) -> some View {
+    self.modifier(SwipeAnywhereTrigger(size: size))
+  }
+}
+
+struct FullSwipeNavigationStack<C: View>: UIViewRepresentable {
+  var router: Router
+  var size: CGSize
+  @ViewBuilder var content: () -> C
+  func makeCoordinator() -> Coordinator {
+    Coordinator()
+  }
+  
+  fileprivate func setupConstraints(_ view: UIView) {
+    view.translatesAutoresizingMaskIntoConstraints = false
+    view.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
+    view.bottomAnchor.constraint (equalTo: view.bottomAnchor).isActive = true
+    view.leftAnchor.constraint (equalTo: view.leftAnchor).isActive = true
+    view.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
+  }
+  
+  func makeUIView(context: Context) -> UIView {
+    let hostingController = UIHostingController<C>(rootView: content())
+    setupConstraints(hostingController.view)
+    hostingController.view.frame.size = self.size
+    hostingController.view.isOpaque = false
+    hostingController.view.isUserInteractionEnabled = true
+    hostingController.view.backgroundColor = .clear
+    hostingController.view.isExclusiveTouch = false
+    hostingController.view.isMultipleTouchEnabled = true
+    return hostingController.view
+  }
+  
+  func updateUIView(_ uiView: UIView, context: Context) {
+    if let controller = uiView.parentController as? UIHostingController<C> {
+      controller.rootView = content()
+    }
+    setupConstraints(uiView)
+    let newSize = self.size
+    uiView.frame.size = newSize
+    
+    if context.coordinator.prevRouterID == router.id { return }
+    uiView.gestureRecognizers?.forEach { gesture in
+      uiView.removeGestureRecognizer(gesture)
+    }
+    uiView.addGestureRecognizer(router.navController.globalGesture)
+    uiView.addGestureRecognizer(UITapGestureRecognizer())
+  }
+  
+  class Coordinator: NSObject {
+    var prevRouterID: String?
   }
 }

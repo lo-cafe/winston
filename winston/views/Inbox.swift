@@ -47,7 +47,7 @@ struct Inbox: View {
         .themedListBG(selectedTheme.lists.bg)
         .scrollContentBackground(.hidden)
       }
-      .injectInTabDestinations()
+      .injectInTabDestinations(viewControllerHolder: router.navController)
       .loader(loading)
       .onAppear {
         Task(priority: .background) {
@@ -63,7 +63,7 @@ struct Inbox: View {
       }
       .navigationTitle("Inbox")
     }
-    .swipeAnywhere()
+//    .swipeAnywhere()
   }
 }
 

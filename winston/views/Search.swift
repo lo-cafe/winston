@@ -159,7 +159,7 @@ struct Search: View {
       .themedListBG(theme.lists.bg)
       .listStyle(.plain)
       .loader(loading, hideSpinner && !searchQuery.text.isEmpty)
-      .injectInTabDestinations()
+      .injectInTabDestinations(viewControllerHolder: router.navController)
       .scrollDismissesKeyboard(.automatic)
       .searchable(text: $searchQuery.text, placement: .toolbar)
       .autocorrectionDisabled(true)
@@ -183,6 +183,6 @@ struct Search: View {
         }
       }
     }
-    .swipeAnywhere()
+//    .swipeAnywhere()
   }
 }

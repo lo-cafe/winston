@@ -6,10 +6,23 @@
 //
 
 import SwiftUI
+import Defaults
+
+struct AttachViewControllerToRouterModifier: ViewModifier {
+  var viewControllerHolder: ViewControllerHolder
+  
+  @Default(.BehaviorDefSettings) private var behaviorDefSettings
+  
+  func body(content: Content) -> some View {
+    content
+      .background { AttachViewControllerToRouterView(viewControllerHolder: viewControllerHolder, disable: !behaviorDefSettings.enableSwipeAnywhere) }
+  }
+}
 
 extension View {
-  func injectInTabDestinations() -> some View {
+  func injectInTabDestinations(viewControllerHolder: ViewControllerHolder) -> some View {
     self
+      .modifier(AttachViewControllerToRouterModifier(viewControllerHolder: viewControllerHolder))
       .navigationDestination(for: Router.NavDest.self, destination: { dest in
         switch dest {
         case .reddit(let reddDest):
@@ -64,5 +77,35 @@ extension View {
           }
         }
       })
+  }
+}
+
+
+fileprivate struct AttachViewControllerToRouterView: UIViewRepresentable {
+  var viewControllerHolder: ViewControllerHolder
+  var disable: Bool
+  func makeUIView(context: Context) -> some UIView {
+    return UIView()
+  }
+  
+  func updateUIView(_ uiView: UIViewType, context: Context) {
+    DispatchQueue.main.async {
+      if let controller = uiView.parentViewController {
+        viewControllerHolder.controller = controller
+      }
+      if disable {
+        viewControllerHolder.removeGestureFromViews()
+      } else {
+        viewControllerHolder.addGestureToViews()
+      }
+    }
+  }
+}
+
+fileprivate extension UIView {
+  var parentViewController: UIViewController? {
+    sequence(first: self) {
+      $0.next
+    }.first(where: { $0 is UIViewController }) as? UIViewController
   }
 }

@@ -23,6 +23,7 @@ struct SubredditsStack: View {
       if let redditCredentialSelectedID = generalDefSettings.redditCredentialSelectedID {
         Subreddits(selectedSub: $router.firstSelected, loaded: loaded, currentCredentialID: redditCredentialSelectedID)
           .measure($sidebarSize).id("subreddits-list-\(redditCredentialSelectedID)")
+          .injectInTabDestinations(viewControllerHolder: router.navController)
       }
     } detail: {
       NavigationStack(path: $router.path) {
@@ -63,7 +64,7 @@ struct SubredditsStack: View {
             }
           }
         }
-        .injectInTabDestinations()
+        .injectInTabDestinations(viewControllerHolder: router.navController)
         .task(priority: .background) {
           if !loaded {
             // MARK: Route to default feed
@@ -80,7 +81,7 @@ struct SubredditsStack: View {
       }
       .environment(\.contentWidth, postContentWidth)
     }
-    .swipeAnywhere()
+//    .swipeAnywhere()
     .environment(\.contentWidth, postContentWidth)
   }
 }

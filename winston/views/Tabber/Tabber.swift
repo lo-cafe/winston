@@ -64,22 +64,26 @@ struct Tabber: View, Equatable {
       WithCredentialOnly(credential: redditCredentialsManager.selectedCredential) {
         Inbox(router: nav[.inbox])
       }
+      .measureTabBar(setTabBarHeight)
       .tag(Nav.TabIdentifier.inbox)
       .tabItem { Label("Inbox", systemImage: "bell.fill") }
       
       WithCredentialOnly(credential: redditCredentialsManager.selectedCredential) {
         Me(router: nav[.me])
       }
+      .measureTabBar(setTabBarHeight)
       .tag(Nav.TabIdentifier.me)
       .tabItem { Label(appearanceDefSettings.showUsernameInTabBar ? RedditAPI.shared.me?.data?.name ?? "Me" : "Me", systemImage: "person.fill") }
       
       WithCredentialOnly(credential: redditCredentialsManager.selectedCredential) {
         Search(router: nav[.search])
       }
+      .measureTabBar(setTabBarHeight)
       .tag(Nav.TabIdentifier.search)
       .tabItem { Label("Search", systemImage: "magnifyingglass") }
       
       Settings(router: nav[.settings])
+        .measureTabBar(setTabBarHeight)
         .tag(Nav.TabIdentifier.settings)
         .tabItem { Label("Settings", systemImage: "gearshape.fill") }
       
@@ -101,9 +105,9 @@ struct Tabber: View, Equatable {
         RedditCredentialsManager.shared.updateMe()
         Task(priority: .background) { await updatePostsInBox(RedditAPI.shared) }
       }
-//      if let ann = await WinstonAPI.shared.getAnnouncement() {
-//        Nav.present(.announcement(ann))
-//      }
+      //      if let ann = await WinstonAPI.shared.getAnnouncement() {
+      //        Nav.present(.announcement(ann))
+      //      }
     }
     .accentColor(currentTheme.general.accentColor())
   }
