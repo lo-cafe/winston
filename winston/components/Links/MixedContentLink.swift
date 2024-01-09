@@ -31,13 +31,12 @@ struct MixedContentLink: View, Equatable {
       }
     case .second(let comment):
       VStack {
-        Group {
-          ShortCommentPostLink(comment: comment)
-          if let commentWinstonData = comment.winstonData {
-            CommentLink(showReplies: false, comment: comment, commentWinstonData: commentWinstonData, children: comment.childrenWinston)
-          }
+        ShortCommentPostLink(comment: comment)
+          .allowsHitTesting(false)
+        if let commentWinstonData = comment.winstonData {
+          CommentLink(showReplies: false, comment: comment, commentWinstonData: commentWinstonData, children: comment.childrenWinston)
+            .allowsHitTesting(false)
         }
-        .allowsHitTesting(false)
       }
       .contentShape(Rectangle())
       .onTapGesture {
