@@ -53,7 +53,11 @@ class Nav: ObservableObject, Identifiable, Equatable {
   }
   
   var id: UUID
-  @Published var activeTab: TabIdentifier
+  @Published var activeTab: TabIdentifier {
+    willSet {
+      if activeTab == newValue { self.activeRouter.resetNavPath() }
+    }
+  }
   private var routers: [TabIdentifier:Router]
   @Published var presentingSheetsQueue: [PresentingSheet] = []
   var presentingSheet: PresentingSheet? {
