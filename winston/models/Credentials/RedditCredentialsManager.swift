@@ -99,6 +99,7 @@ class RedditCredentialsManager: ObservableObject {
     DispatchQueue.main.async {
       if Defaults[.GeneralDefSettings].onboardingState != .dismissed {
         Defaults[.GeneralDefSettings].onboardingState = .dismissed
+        Nav.shared.presentingSheetsQueue = Nav.shared.presentingSheetsQueue.filter { $0 != .onboarding }
       }
       if let i = self.credentials.firstIndex(where: { $0.id == cred.id }) {
         self.credentials[i] = cred
