@@ -11,8 +11,12 @@ import Combine
 
 class ViewControllerHolder {
   let globalGesture: UIPanGestureRecognizer
+  let tabBarGesture: UIPanGestureRecognizer
   var controller: UIViewController? {
-    didSet { controller?.navigationController?.addFullSwipeGesture(globalGesture) }
+    didSet {
+      controller?.navigationController?.addFullSwipeGesture(globalGesture)
+      controller?.navigationController?.addFullSwipeGesture(tabBarGesture)
+    }
   }
   
   init(routerID: String) {
@@ -20,7 +24,12 @@ class ViewControllerHolder {
     gesture.name = "swipe-anywhere-gesture:router-\(routerID)"
     gesture.isEnabled = true
     gesture.cancelsTouchesInView = false
+    let tabBarGesture = UIPanGestureRecognizer()
+    tabBarGesture.name = "swipe-tabbar-gesture:router-\(routerID)"
+    tabBarGesture.isEnabled = true
+    tabBarGesture.cancelsTouchesInView = false
     self.globalGesture = gesture
+    self.tabBarGesture = tabBarGesture
   }
   
   var isGestureEnabled: Bool {

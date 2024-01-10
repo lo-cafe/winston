@@ -65,7 +65,7 @@ struct FullSwipeNavigationStack<C: View>: UIViewRepresentable {
     uiView.gestureRecognizers?.forEach { gesture in
       uiView.removeGestureRecognizer(gesture)
     }
-    uiView.addGestureRecognizer(router.navController.globalGesture)
+    uiView.addGestureRecognizer(router.navController.tabBarGesture)
     uiView.addGestureRecognizer(UITapGestureRecognizer())
   }
   
