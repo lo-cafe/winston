@@ -12,7 +12,7 @@ class TimerHolder {
   
   init() {}
   
-  func fireAt(_ secs: Double, _ cb: @escaping ()->()) {
+  func fireIn(_ secs: Double, _ cb: @escaping ()->()) {
     timer?.invalidate()
     timer = Timer.scheduledTimer(withTimeInterval: secs, repeats: false) { _ in
       cb()

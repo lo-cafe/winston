@@ -71,7 +71,7 @@ struct CredentialEditAssistantMode: View {
     }
     .onReceive(NotificationCenter.default.publisher(for: UIScene.willEnterForegroundNotification)) { _ in
       if commonScene == .empty {
-        timer.fireAt(0.125) { withAnimation(.spring) { commonScene = .waiting } }
+        timer.fireIn(0.125) { withAnimation(.spring) { commonScene = .waiting } }
       }
     }
     .onOpenURL { url in
