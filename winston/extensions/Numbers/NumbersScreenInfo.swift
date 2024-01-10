@@ -11,10 +11,12 @@ import UIKit
 extension Double {
   static let screenW = UIScreen.main.bounds.size.width
   static let screenH = UIScreen.main.bounds.size.height
+  static let screenScale = UIScreen.main.scale
 }
 
 extension CGFloat {
   static let screenW = UIScreen.main.bounds.size.width
   static let screenH = UIScreen.main.bounds.size.height
+  static let screenScale = UIScreen.main.scale
 }
 

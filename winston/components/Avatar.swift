@@ -17,15 +17,10 @@ struct Avatar: View {
   var theme: AvatarTheme?
   var avatarSize: CGFloat?
   var avatarRequest: ImageRequest?
-//  @ObservedObject var avatarCache: BaseCache<ImageRequest>
   
   var body: some View {
     let avatarSize = avatarSize ?? theme?.size ?? 0
-    
-      //    let newURL = avatarRequest == nil ? URL(string: String(url?.split(separator: "?")[0] ?? "")) : nil
-      AvatarRaw(saved: saved, avatarImgRequest: avatarRequest, userID: userID, fullname: fullname, theme: theme, avatarSize: avatarSize)
-//          .equatable()
-    //      .task { if avatarRequest == nil, let url = url { RedditAPI.shared.addImgReqToAvatarCache(id, url, avatarSize: avatarSize) } }
+    AvatarRaw(saved: saved, avatarImgRequest: avatarRequest, userID: userID, fullname: fullname, theme: theme, avatarSize: avatarSize)
   }
 }
 
@@ -48,25 +43,21 @@ struct AvatarRaw: View, Equatable {
         Image(systemName: "trash")
           .foregroundColor(.red)
           .background(
-            RR(cornerRadius, Color.gray.opacity(0.5)).equatable()
+            RR(cornerRadius, .acceptablePrimary).equatable()
               .frame(width: avatarSize, height: avatarSize)
           )
       } else {
-        if let avatarImgRequest = avatarImgRequest {
-          ThumbReqImage(imgRequest: avatarImgRequest)
+    if let avatarImgRequest = avatarImgRequest {
+      ThumbReqImage(imgRequest: avatarImgRequest, size: CGSize(width: avatarSize, height: avatarSize))
         } else {
           Text(userID.prefix(1).uppercased())
             .fontSize(avatarSize / 2)
-//            .background(
-//              RR(cornerRadius, .gray.opacity(0.5)).equatable()
-//                .frame(width: avatarSize, height: avatarSize)
-//            )
         }
       }
     }
     .frame(width: avatarSize, height: avatarSize)
-    .mask(RR(cornerRadius, .black).equatable())
-//    .drawingGroup()
+    .clipShape(RoundedRectangle(cornerRadius: cornerRadius, style: .continuous))
+    //    .drawingGroup()
     .background(SavedFlag(cornerRadius: cornerRadius, saved: saved).equatable())
   }
 }
@@ -84,7 +75,7 @@ struct SavedFlag: View, Equatable {
       Image(systemName: "bookmark.fill")
         .foregroundColor(.green)
         .offset(y: saved ? flagY : 0)
-
+      
       RR(cornerRadius, .gray).equatable()
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }

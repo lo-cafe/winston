@@ -52,7 +52,8 @@ func flairWithoutEmojis(str: String?) -> [String]? {
 struct BadgeView: View, Equatable {
   static let authorStatsSpacing: Double = 2
   static func == (lhs: BadgeView, rhs: BadgeView) -> Bool {
-    return lhs.avatarURL == rhs.avatarURL && lhs.saved == rhs.saved && lhs.avatarRequest?.url == rhs.avatarRequest?.url && lhs.theme == rhs.theme && lhs.commentsCount == rhs.commentsCount && lhs.newCommentsCount == rhs.newCommentsCount && lhs.votesCount == rhs.votesCount && lhs.likes == rhs.likes
+    return lhs.avatarRequest?.imageId == rhs.avatarRequest?.imageId
+//    return lhs.avatarURL == rhs.avatarURL && lhs.saved == rhs.saved && lhs.avatarRequest?.url == rhs.avatarRequest?.url && lhs.theme == rhs.theme && lhs.commentsCount == rhs.commentsCount && lhs.newCommentsCount == rhs.newCommentsCount && lhs.votesCount == rhs.votesCount && lhs.likes == rhs.likes
   }
   
   var avatarRequest: ImageRequest?
@@ -83,13 +84,13 @@ struct BadgeView: View, Equatable {
     let defaultIconColor = theme.statsText.color()
     HStack(spacing: theme.spacing) {
       
-      if saved && !showAvatar {
-        Image(systemName: "bookmark.fill")
-          .fontSize(16)
-          .foregroundColor(.green)
-          .transition(.scale.combined(with: .opacity))
-          .drawingGroup()
-      }
+//      if saved && !showAvatar {
+//        Image(systemName: "bookmark.fill")
+//          .fontSize(16)
+//          .foregroundColor(.green)
+//          .transition(.scale.combined(with: .opacity))
+//          .drawingGroup()
+//      }
       
       if showAvatar {
         AvatarRaw(saved: saved, avatarImgRequest: avatarRequest, userID: author, fullname: fullname, theme: theme.avatar)
@@ -170,7 +171,7 @@ struct BadgeView: View, Equatable {
         .foregroundStyle(defaultIconColor)
         .font(.system(size: theme.statsText.size, weight: theme.statsText.weight.t))
       }
-      .drawingGroup()
+//      .drawingGroup()
     }
     .scaleEffect(1)
     .animation(showAvatar ? nil : spring.delay(0.4), value: saved)

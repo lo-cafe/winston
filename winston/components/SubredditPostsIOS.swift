@@ -73,7 +73,7 @@ struct SubredditPostsIOS: View, Equatable {
             .environmentObject(sub)
             .environmentObject(post)
             .environmentObject(winstonData)
-            .onAppear {
+            .task(priority: .background) {
               if(posts.count - 7 == i && !isFiltered && !loading) { loadMorePosts() }
             }
             .listRowInsets(EdgeInsets(top: paddingV, leading: paddingH, bottom: paddingV, trailing: paddingH))

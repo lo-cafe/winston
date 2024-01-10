@@ -344,6 +344,7 @@
 		EC8B77A42AB4D89A00875C98 /* Dividers.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC8B77A32AB4D89A00875C98 /* Dividers.swift */; };
 		EC8B814B2AC9546C000DC827 /* frame.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC8B814A2AC9546C000DC827 /* frame.swift */; };
 		EC8B814E2AC9650E000DC827 /* AddingStrings.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC8B814D2AC9650E000DC827 /* AddingStrings.swift */; };
+		EC8C707B2B4E4EB7004DBA75 /* ScaleFixer.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC8C707A2B4E4EB7004DBA75 /* ScaleFixer.swift */; };
 		EC8F34662A6A348F00EB8249 /* SwipeActions.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC8F34652A6A348F00EB8249 /* SwipeActions.swift */; };
 		EC8F34792A6CE79B00EB8249 /* PostInBoxLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC8F34782A6CE79B00EB8249 /* PostInBoxLink.swift */; };
 		EC8F347C2A6CEBD600EB8249 /* winston.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = EC8F347A2A6CEBD600EB8249 /* winston.xcdatamodeld */; };
@@ -389,7 +390,7 @@
 		ECA3700D2B47DC3600C73CB0 /* PeakQuestionsScroller.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECA3700C2B47DC3600C73CB0 /* PeakQuestionsScroller.swift */; };
 		ECA370102B480FC900C73CB0 /* WrappingHStack in Frameworks */ = {isa = PBXBuildFile; productRef = ECA3700F2B480FC900C73CB0 /* WrappingHStack */; };
 		ECA5AF562B22A29E0084954B /* EdgeInsetZero.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECA5AF552B22A29E0084954B /* EdgeInsetZero.swift */; };
-		ECA5AF582B22B0620084954B /* NumbersScreenSize.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECA5AF572B22B0620084954B /* NumbersScreenSize.swift */; };
+		ECA5AF582B22B0620084954B /* NumbersScreenInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECA5AF572B22B0620084954B /* NumbersScreenInfo.swift */; };
 		ECA5AF5A2B22B26E0084954B /* log.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECA5AF592B22B26E0084954B /* log.swift */; };
 		ECA5AF5C2B22C85F0084954B /* autoSelectCredentialIfNil.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECA5AF5B2B22C85F0084954B /* autoSelectCredentialIfNil.swift */; };
 		ECA5E6482AA5D36E00F6C7A5 /* resetApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECA5E6472AA5D36E00F6C7A5 /* resetApp.swift */; };
@@ -908,6 +909,7 @@
 		EC8B77A32AB4D89A00875C98 /* Dividers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dividers.swift; sourceTree = "<group>"; };
 		EC8B814A2AC9546C000DC827 /* frame.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = frame.swift; sourceTree = "<group>"; };
 		EC8B814D2AC9650E000DC827 /* AddingStrings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddingStrings.swift; sourceTree = "<group>"; };
+		EC8C707A2B4E4EB7004DBA75 /* ScaleFixer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScaleFixer.swift; sourceTree = "<group>"; };
 		EC8F34652A6A348F00EB8249 /* SwipeActions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwipeActions.swift; sourceTree = "<group>"; };
 		EC8F34782A6CE79B00EB8249 /* PostInBoxLink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostInBoxLink.swift; sourceTree = "<group>"; };
 		EC8F347B2A6CEBD600EB8249 /* winston.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = winston.xcdatamodel; sourceTree = "<group>"; };
@@ -947,7 +949,7 @@
 		ECA3700A2B47D68900C73CB0 /* auth-ext.mov */ = {isa = PBXFileReference; lastKnownFileType = video.quicktime; path = "auth-ext.mov"; sourceTree = "<group>"; };
 		ECA3700C2B47DC3600C73CB0 /* PeakQuestionsScroller.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeakQuestionsScroller.swift; sourceTree = "<group>"; };
 		ECA5AF552B22A29E0084954B /* EdgeInsetZero.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EdgeInsetZero.swift; sourceTree = "<group>"; };
-		ECA5AF572B22B0620084954B /* NumbersScreenSize.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NumbersScreenSize.swift; sourceTree = "<group>"; };
+		ECA5AF572B22B0620084954B /* NumbersScreenInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NumbersScreenInfo.swift; sourceTree = "<group>"; };
 		ECA5AF592B22B26E0084954B /* log.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = log.swift; sourceTree = "<group>"; };
 		ECA5AF5B2B22C85F0084954B /* autoSelectCredentialIfNil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = autoSelectCredentialIfNil.swift; sourceTree = "<group>"; };
 		ECA5E6472AA5D36E00F6C7A5 /* resetApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = resetApp.swift; sourceTree = "<group>"; };
@@ -1871,7 +1873,7 @@
 		EC7FBE1B2B4114120082FA44 /* Numbers */ = {
 			isa = PBXGroup;
 			children = (
-				ECA5AF572B22B0620084954B /* NumbersScreenSize.swift */,
+				ECA5AF572B22B0620084954B /* NumbersScreenInfo.swift */,
 				ECED2EB82B282B7800F4D25F /* UIScreen+ScreenCorners..swift */,
 			);
 			path = Numbers;
@@ -1962,6 +1964,7 @@
 		EC8B814C2AC96506000DC827 /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
+				EC8C70792B4E4EA8004DBA75 /* Nuke */,
 				EC982A302B4A3E4300FFE582 /* Timer */,
 				EC2D275A2A4FBEF7006444D6 /* ViewModifiers */,
 				EC7FBE282B4118B40082FA44 /* Transitions */,
@@ -1979,6 +1982,14 @@
 				ECDEBD202B31C8D300A8AC78 /* CGGradient+.swift */,
 			);
 			path = Extensions;
+			sourceTree = "<group>";
+		};
+		EC8C70792B4E4EA8004DBA75 /* Nuke */ = {
+			isa = PBXGroup;
+			children = (
+				EC8C707A2B4E4EB7004DBA75 /* ScaleFixer.swift */,
+			);
+			path = Nuke;
 			sourceTree = "<group>";
 		};
 		EC8F34942A6F55C800EB8249 /* Links */ = {
@@ -2864,6 +2875,7 @@
 				ECE08B5B2AA9C43B00F84DC9 /* saveAndLoadImages.swift in Sources */,
 				EC5EDA732A4E8EC400140A08 /* fetchSub.swift in Sources */,
 				EC46E9282ABA3B05001BC068 /* WNavigationLink.swift in Sources */,
+				EC8C707B2B4E4EB7004DBA75 /* ScaleFixer.swift in Sources */,
 				EC60811C2B438DB7001A1077 /* CredentialEditStack.swift in Sources */,
 				EC08543F2A4D0C0700E88389 /* doThisAfter.swift in Sources */,
 				EC0854302A4CDF8A00E88389 /* LightBoxImage.swift in Sources */,
@@ -3015,7 +3027,7 @@
 				ECE08B602AA9C95F00F84DC9 /* PostLinkTheme.swift in Sources */,
 				CECA71EB2B1E358700852DAD /* CustomFilterView.swift in Sources */,
 				ECC68D4B2A7A9554005BC7B4 /* nsfw.swift in Sources */,
-				ECA5AF582B22B0620084954B /* NumbersScreenSize.swift in Sources */,
+				ECA5AF582B22B0620084954B /* NumbersScreenInfo.swift in Sources */,
 				EC22A3202A5C7FB50062A112 /* Message.swift in Sources */,
 				EC593AFD2A47AEBC002D6454 /* RedditAPI.swift in Sources */,
 				EC6373492A78E49A000A03A3 /* OnboardingWelcome.swift in Sources */,

@@ -45,6 +45,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     let defaultPipeline = ImagePipeline { config in
       let dataCache = try? DataCache(name: "lo.cafe.winston.datacache")
+      dataCache?.sizeLimit = 1024 * 1024 * 300
       config.dataCache = dataCache
       let dataLoader: DataLoader = {
         let config = URLSessionConfiguration.default
@@ -53,12 +54,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
       }()
       config.dataLoader = dataLoader
       config.dataCachePolicy = .storeAll
-      config.isUsingPrepareForDisplay = false
-      
-//      let imgCache = ImageCache(costLimit: Int.max, countLimit: Int.max)
-//      imgCache.ttl = nil
-//      imgCache.entryCostLimit = 1
-//      config.isRateLimiterEnabled = false
     }
     ImagePipeline.shared = defaultPipeline
   }

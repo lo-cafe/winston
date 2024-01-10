@@ -120,7 +120,9 @@ struct ThumbReqImage: View, Equatable {
 //                  AltImage(image: response.image, size: size)
 //                }
       if let image = state.image {
-        image.resizable().aspectRatio(contentMode: .fill)
+        image
+      } else {
+        Color.acceptablePrimary
       }
 //      } else if state.error != nil {
 //        Color.red.opacity(0.1)

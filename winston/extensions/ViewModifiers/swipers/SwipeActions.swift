@@ -86,31 +86,32 @@ struct SwipeUI<T: GenericRedditEntityDataType, B: Hashable>: ViewModifier {
     content
       .scaleEffect(pressed ? 0.975 : 1)
       .offset(x: actualOffset)
-      .background(
-        !controlledIsSource || enableSwipeAnywhere
-        ? nil
-        : HStack {
-          
-          SwipeUIBtn(info: infoRight(), secondActiveFunc: actionsSet.rightSecond.active, firstActiveFunc: actionsSet.rightFirst.active, entity: entity!)
-          //            .equatable()
-            .scaleEffect(triggeredAction == .rightSecond ? 1.1 : triggeredAction == .rightFirst ? 1 : max(0.001, offsetXInterpolate([-0.9, 0.85], false)))
-            .opacity(max(0, offsetXInterpolate([-0.9, 1], false)))
-            .frame(width: actualOffsetX < 0 ? 10 : abs(actualOffsetX))
-            .offset(x: -8)
-          
-          Spacer()
-          
-          SwipeUIBtn(info: infoLeft(), secondActiveFunc: actionsSet.leftSecond.active, firstActiveFunc: actionsSet.leftFirst.active, entity: entity!)
-          //            .equatable()
-            .scaleEffect(triggeredAction == .leftSecond ? 1.1 : triggeredAction == .leftFirst ? 1 : max(0.001, offsetXNegativeInterpolate([-0.9, 0.85], false)))
-            .opacity(max(0, offsetXNegativeInterpolate([-0.9, 1], false)))
-            .frame(width: actualOffsetX > 0 ? 10 : abs(actualOffsetX))
-            .offset(x: 8)
-        }
+      .background {
+        if !enableSwipeAnywhere && controlledIsSource {
+          HStack {
+            
+            SwipeUIBtn(info: infoRight(), secondActiveFunc: actionsSet.rightSecond.active, firstActiveFunc: actionsSet.rightFirst.active, entity: entity!)
+            //            .equatable()
+              .scaleEffect(triggeredAction == .rightSecond ? 1.1 : triggeredAction == .rightFirst ? 1 : max(0.001, offsetXInterpolate([-0.9, 0.85], false)))
+              .opacity(max(0, offsetXInterpolate([-0.9, 1], false)))
+              .frame(width: actualOffsetX < 0 ? 10 : abs(actualOffsetX))
+              .offset(x: -8)
+            
+            Spacer()
+            
+            SwipeUIBtn(info: infoLeft(), secondActiveFunc: actionsSet.leftSecond.active, firstActiveFunc: actionsSet.leftFirst.active, entity: entity!)
+            //            .equatable()
+              .scaleEffect(triggeredAction == .leftSecond ? 1.1 : triggeredAction == .leftFirst ? 1 : max(0.001, offsetXNegativeInterpolate([-0.9, 0.85], false)))
+              .opacity(max(0, offsetXNegativeInterpolate([-0.9, 1], false)))
+              .frame(width: actualOffsetX > 0 ? 10 : abs(actualOffsetX))
+              .offset(x: 8)
+          }
           .frame(maxWidth: .infinity, maxHeight: .infinity)
           .offset(y: offsetYAction)
           .allowsHitTesting(false)
-      )
+          .transition(.identity)
+        }
+      }
       .onTapGesture {
         if let onTapAction { onTapAction() }
         
@@ -122,11 +123,11 @@ struct SwipeUI<T: GenericRedditEntityDataType, B: Hashable>: ViewModifier {
         }
       }
     // commenting this out since it is interfering with the on tap. i moved the animation of pressed to that.
-//      .onLongPressGesture(minimumDuration: 0.3, maximumDistance: 30, perform: { }, onPressingChanged: { val in
-//        withAnimation(.bouncy(duration: 0.325, extraBounce: 0.25)) {
-//          pressed = val
-//        }
-//      })
+    //      .onLongPressGesture(minimumDuration: 0.3, maximumDistance: 30, perform: { }, onPressingChanged: { val in
+    //        withAnimation(.bouncy(duration: 0.325, extraBounce: 0.25)) {
+    //          pressed = val
+    //        }
+    //      })
       .gesture(
         enableSwipeAnywhere
         ? nil
