@@ -188,11 +188,13 @@ extension Post {
       
       Task(priority: .background) { await RedditAPI.shared.updatePostsWithAvatar(posts: repostsAvatars, avatarSize: getEnabledTheme().postLinks.theme.badge.avatar.size) }
       
-      let imgRequests = posts.reduce(into: []) { prev, curr in
-        prev = prev + (curr.winstonData?.mediaImageRequest ?? [])
+      let imgRequests: [ImageRequest] = posts.reduce(into: []) { prev, curr in
+        if case .imgs(let imgsExtracted) = curr.winstonData?.extractedMedia {
+          let reqs = imgsExtracted.map { $0.request }
+          prev = prev + reqs
+        }
       }
-      
-      //      Post.prefetcher.startPrefetching(with: imgRequests)
+      Post.prefetcher.startPrefetching(with: imgRequests)
       return posts
     }
     
