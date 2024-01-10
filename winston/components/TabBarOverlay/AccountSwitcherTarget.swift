@@ -158,10 +158,11 @@ struct AccountSwitcherTarget: View, Equatable {
     .vibrate(.continuous(sharpness: hovered ? 0 : interpolateVibration([0.3, 0], false), intensity: hovered ? 0 : interpolateVibration([0.3, 0], false)), trigger: isSelected && !hovered ? distance : 0, disabled: !appear)
     .vibrate(.transient(sharpness: !isSelected && !hovered ? 1.0 : 0, intensity: isSelected && hovered ? 0 : 1.0), trigger: hovered, disabled: !appear)
     .onChange(of: hovered) {
-      if transmitter.selectedCred == nil && $0 { transmitter.selectedCred = cred }
-      else if transmitter.selectedCred == cred && !$0 { transmitter.selectedCred = nil }
+      if !isSelected {
+        if transmitter.selectedCred == nil && $0 { transmitter.selectedCred = cred }
+        else if transmitter.selectedCred == cred && !$0 { transmitter.selectedCred = nil }
+      } else if $0 { jump += 1 }
     }
-    .onChange(of: hovered) { if $0 && isSelected { jump += 1 } }
     .transition(.identity)
   }
 }
