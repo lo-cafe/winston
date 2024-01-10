@@ -32,16 +32,8 @@ struct MixedContentLink: View, Equatable {
     case .second(let comment):
       VStack {
         ShortCommentPostLink(comment: comment)
-          .allowsHitTesting(false)
         if let commentWinstonData = comment.winstonData {
           CommentLink(showReplies: false, comment: comment, commentWinstonData: commentWinstonData, children: comment.childrenWinston)
-            .allowsHitTesting(false)
-        }
-      }
-      .contentShape(Rectangle())
-      .onTapGesture {
-        if let data = comment.data, let link_id = data.link_id, let subID = data.subreddit {
-          Nav.to(.reddit(.postHighlighted(Post(id: link_id, subID: subID), comment.id)))
         }
       }
       .padding(.horizontal, 12)
