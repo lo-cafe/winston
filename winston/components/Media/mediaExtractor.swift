@@ -92,17 +92,31 @@ enum MediaExtractedType: Equatable {
 func mediaExtractor(compact: Bool, contentWidth: Double = .screenW, _ data: PostData, theme: WinstonTheme? = nil) -> MediaExtractedType? {
   guard !data.is_self else { return nil }
 
+  let contentWidth = contentWidth - ((theme?.postLinks.theme.innerPadding.horizontal ?? 0) * 2) - ((theme?.postLinks.theme.outerHPadding ?? 0) * 2)
+  
   if let is_gallery = data.is_gallery, is_gallery, let galleryData = data.gallery_data?.items, let metadata = data.media_metadata {
-    let galleryArr = galleryData.compactMap { item in
+    
+    let halfWidth = (contentWidth - ImageMediaPost.gallerySpacing) / 2
+    let sizes = [
+      1: [0: contentWidth],
+      2: [0: halfWidth, 1: halfWidth],
+      3: [0: halfWidth, 1: halfWidth, 2: contentWidth]
+    ]
+    
+    let galleryArr = Array(galleryData.enumerated()).compactMap { i, item in
       let id = item.media_id
       if let itemMeta = metadata[String(id)], let extArr = itemMeta?.m?.split(separator: "/"), let size = itemMeta?.s, let imgURL = URL(string: "https://i.redd.it/\(id).\(extArr[extArr.count - 1])") {
         
-        let processors: [ImageProcessing] = contentWidth == 0 ? [] : [.resize(width: compact ? scaledCompactModeThumbSize() : contentWidth)]
+        var actualWidth = contentWidth
+        if let sizeInstructions = sizes[galleryData.count], let mySize = sizeInstructions[i] { actualWidth = mySize } else { actualWidth = halfWidth }
+        
+        let sizeSimple = compact ? scaledCompactModeThumbSize() : actualWidth
+        let processors: [ImageProcessing] = contentWidth == 0 ? [] : [ImageProcessors.Resize(size: .init(width: sizeSimple, height: sizeSimple), unit: .points, contentMode: .aspectFill, crop: false, upscale: false)]
         var userInfo: [ImageRequest.UserInfoKey : Any] = [:]
         if compact && !imgURL.absoluteString.hasSuffix(".gif") {
           userInfo[.thumbnailKey] = ImageRequest.ThumbnailOptions(size: .init(width: scaledCompactModeThumbSize(), height: scaledCompactModeThumbSize()), unit: .points, contentMode: .aspectFill)
         }
-        return ImgExtracted(url: imgURL, size: CGSize(width: size.x, height: size.y), request: ImageRequest(url: imgURL, processors: processors, userInfo: userInfo))
+        return ImgExtracted(url: imgURL, size: CGSize(width: size.x, height: size.y), request: ImageRequest(url: imgURL, processors: processors + [ImageProcessors.ScaleFixer()], userInfo: userInfo))
       }
       return nil
     }
@@ -122,7 +136,6 @@ func mediaExtractor(compact: Bool, contentWidth: Double = .screenW, _ data: Post
     Post.prefetcher.startPrefetching(with: [thumbReq])
     let size = CGSize(width: CGFloat(width), height: CGFloat(height))
     let newExtracted = YTMediaExtracted(videoID: ytID, size: size, thumbnailURL: thumbURL, thumbnailRequest: thumbReq, player: YouTubePlayer(source: .video(id: ytID)), author: author_name, authorURL: authorURL)
-//    Caches.ytPlayers.addKeyValue(key: ytID, data: { newExtracted } )
     return .yt(newExtracted)
   }
   
@@ -138,22 +151,25 @@ func mediaExtractor(compact: Bool, contentWidth: Double = .screenW, _ data: Post
       actualHeight = height
     }
     
-    let processors: [ImageProcessing] = contentWidth == 0 ? [] : [.resize(width: compact ? scaledCompactModeThumbSize() : contentWidth)]
+    let size = compact ? scaledCompactModeThumbSize() : contentWidth
+    let processors: [ImageProcessing] = contentWidth == 0 ? [] : [ImageProcessors.Resize(size: CGSize(width: size, height: size), unit: .points, contentMode: .aspectFill, crop: false, upscale: false)]
     var userInfo: [ImageRequest.UserInfoKey : Any] = [:]
     if compact && !url.absoluteString.hasSuffix(".gif") {
       userInfo[.thumbnailKey] = ImageRequest.ThumbnailOptions(size: .init(width: scaledCompactModeThumbSize(), height: scaledCompactModeThumbSize()), unit: .points, contentMode: .aspectFill)
     }
-    let imgExtracted = ImgExtracted(url: url, size: CGSize(width: actualWidth, height: actualHeight), request: ImageRequest(url: url, processors: processors, userInfo: userInfo))
+    let imgExtracted = ImgExtracted(url: url, size: CGSize(width: actualWidth, height: actualHeight), request: ImageRequest(url: url, processors: processors + [ImageProcessors.ScaleFixer()], userInfo: userInfo))
     return .imgs([imgExtracted])
   }
   
   if let images = data.preview?.images, images.count > 0, let image = images[0].source, let src = image.url?.replacing("/preview.", with: "/i."), !src.contains("external-preview"), let imgURL = rootURL(src.escape), let width = image.width, let height = image.height {
-    let processors: [ImageProcessing] = contentWidth == 0 ? [] : [.resize(width: compact ? scaledCompactModeThumbSize() : contentWidth)]
+    
+    let size = compact ? scaledCompactModeThumbSize() : contentWidth
+    let processors: [ImageProcessing] = contentWidth == 0 ? [] : [ImageProcessors.Resize(size: CGSize(width: size, height: size), unit: .points, contentMode: .aspectFill, crop: false, upscale: false)]
     var userInfo: [ImageRequest.UserInfoKey : Any] = [:]
     if compact {
       userInfo[.thumbnailKey] = ImageRequest.ThumbnailOptions(size: .init(width: scaledCompactModeThumbSize(), height: scaledCompactModeThumbSize()), unit: .points, contentMode: .aspectFill)
     }
-    let imgExtracted = ImgExtracted(url: imgURL, size: CGSize(width: width, height: height), request: ImageRequest(url: imgURL, processors: processors, userInfo: userInfo))
+    let imgExtracted = ImgExtracted(url: imgURL, size: CGSize(width: width, height: height), request: ImageRequest(url: imgURL, processors: processors + [ImageProcessors.ScaleFixer()], userInfo: userInfo))
     return .imgs([imgExtracted])
   }
   

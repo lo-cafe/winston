@@ -63,8 +63,8 @@ struct URLImage: View, Equatable {
                 .scaledToFill()
             } else {
               image
-                .resizable()
-                .scaledToFit()
+//                .resizable()
+//                .scaledToFit()
             }
           // } else if state.error != nil {
           //   Color.red.opacity(0.1)

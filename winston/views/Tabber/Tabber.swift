@@ -74,7 +74,7 @@ struct Tabber: View, Equatable {
       .measureTabBar(setTabBarHeight)
       .tag(Nav.TabIdentifier.me)
       .tabItem { Label(appearanceDefSettings.showUsernameInTabBar ? RedditAPI.shared.me?.data?.name ?? "Me" : "Me", systemImage: "person.fill") }
-      
+//      
       WithCredentialOnly(credential: redditCredentialsManager.selectedCredential) {
         Search(router: nav[.search])
       }
@@ -105,9 +105,6 @@ struct Tabber: View, Equatable {
         RedditCredentialsManager.shared.updateMe()
         Task(priority: .background) { await updatePostsInBox(RedditAPI.shared) }
       }
-      //      if let ann = await WinstonAPI.shared.getAnnouncement() {
-      //        Nav.present(.announcement(ann))
-      //      }
     }
     .accentColor(currentTheme.general.accentColor())
   }

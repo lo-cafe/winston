@@ -22,6 +22,7 @@ struct SubredditsStack: View {
     NavigationSplitView(columnVisibility: $columnVisibility) {
       if let redditCredentialSelectedID = generalDefSettings.redditCredentialSelectedID {
         Subreddits(selectedSub: $router.firstSelected, loaded: loaded, currentCredentialID: redditCredentialSelectedID)
+          .equatable()
           .measure($sidebarSize).id("subreddits-list-\(redditCredentialSelectedID)")
           .injectInTabDestinations(viewControllerHolder: router.navController)
       }

@@ -17,6 +17,8 @@ extension ImageProcessors {
             image.draw(in: CGRect(origin: .zero, size: CGSize(width: image.size.width/scale, height: image.size.height/scale)))
           }
         }
+      
+      public init() {}
 
         public var identifier: String {
             return "com.github.kean/nuke/scale-fixer"
