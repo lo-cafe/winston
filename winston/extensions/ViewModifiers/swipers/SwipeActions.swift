@@ -84,7 +84,8 @@ struct SwipeUI<T: GenericRedditEntityDataType, B: Hashable>: ViewModifier {
     let actualOffset = controlledDragAmount != nil ? 0 : dragAmount
     
     content
-      .scaleEffect(pressed ? 0.975 : 1)
+    //      .scaleEffect(pressed ? 0.975 : 1)
+      .overlay { Color.primary.opacity(pressed ? 0.1 : 0) }
       .offset(x: actualOffset)
       .background {
         if !enableSwipeAnywhere && controlledIsSource {
@@ -113,19 +114,22 @@ struct SwipeUI<T: GenericRedditEntityDataType, B: Hashable>: ViewModifier {
         }
       }
       .onTapGesture {
-        if let onTapAction { onTapAction() }
-        
+        onTapAction?()
         if !skipAnimation {
-          withAnimation(.bouncy(duration: 0.325, extraBounce: 0.25)) {
+          withAnimation(.easeIn(duration: 0.15)) {
             pressed = true
           }
-          pressed.toggle()
+          doThisAfter(0.5) {
+            withAnimation(.easeIn(duration: 0.15)) { pressed = false }
+          }
         }
       }
     // commenting this out since it is interfering with the on tap. i moved the animation of pressed to that.
-    //      .onLongPressGesture(minimumDuration: 0.3, maximumDistance: 30, perform: { }, onPressingChanged: { val in
-    //        withAnimation(.bouncy(duration: 0.325, extraBounce: 0.25)) {
-    //          pressed = val
+    //      .onLongPressGesture(minimumDuration: 0.3, maximumDistance: 5, perform: { }, onPressingChanged: { val in
+    //        if !skipAnimation {
+    //          if val { timer.fireIn(0.025) { withAnimation(.smooth(duration: 0.325, extraBounce: 0.25)) { pressed = val } } }
+    //          else if pressed { timer.fireIn(0.1) { withAnimation(.bouncy(duration: 0.325, extraBounce: 0.25)) { pressed = val } } }
+    //          else { timer.invalidate() }
     //        }
     //      })
       .gesture(
