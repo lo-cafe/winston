@@ -111,7 +111,7 @@ func mediaExtractor(compact: Bool, contentWidth: Double = .screenW, _ data: Post
         if let sizeInstructions = sizes[galleryData.count], let mySize = sizeInstructions[i] { actualWidth = mySize } else { actualWidth = halfWidth }
         
         let sizeSimple = compact ? scaledCompactModeThumbSize() : actualWidth
-        let processors: [ImageProcessing] = contentWidth == 0 ? [] : [ImageProcessors.Resize(size: .init(width: sizeSimple, height: sizeSimple), unit: .points, contentMode: .aspectFill, crop: false, upscale: false)]
+        let processors: [ImageProcessing] = contentWidth == 0 ? [] : [ImageProcessors.Resize(size: .init(width: sizeSimple, height: sizeSimple), unit: .points, contentMode: .aspectFill, crop: false, upscale: true)]
         var userInfo: [ImageRequest.UserInfoKey : Any] = [:]
         if compact && !imgURL.absoluteString.hasSuffix(".gif") {
           userInfo[.thumbnailKey] = ImageRequest.ThumbnailOptions(size: .init(width: scaledCompactModeThumbSize(), height: scaledCompactModeThumbSize()), unit: .points, contentMode: .aspectFill)
@@ -152,7 +152,7 @@ func mediaExtractor(compact: Bool, contentWidth: Double = .screenW, _ data: Post
     }
     
     let size = compact ? scaledCompactModeThumbSize() : contentWidth
-    let processors: [ImageProcessing] = contentWidth == 0 ? [] : [ImageProcessors.Resize(size: CGSize(width: size, height: size), unit: .points, contentMode: .aspectFill, crop: false, upscale: false)]
+    let processors: [ImageProcessing] = contentWidth == 0 ? [] : [ImageProcessors.Resize(size: CGSize(width: size, height: size), unit: .points, contentMode: .aspectFill, crop: false, upscale: true)]
     var userInfo: [ImageRequest.UserInfoKey : Any] = [:]
     if compact && !url.absoluteString.hasSuffix(".gif") {
       userInfo[.thumbnailKey] = ImageRequest.ThumbnailOptions(size: .init(width: scaledCompactModeThumbSize(), height: scaledCompactModeThumbSize()), unit: .points, contentMode: .aspectFill)
@@ -164,7 +164,7 @@ func mediaExtractor(compact: Bool, contentWidth: Double = .screenW, _ data: Post
   if let images = data.preview?.images, images.count > 0, let image = images[0].source, let src = image.url?.replacing("/preview.", with: "/i."), !src.contains("external-preview"), let imgURL = rootURL(src.escape), let width = image.width, let height = image.height {
     
     let size = compact ? scaledCompactModeThumbSize() : contentWidth
-    let processors: [ImageProcessing] = contentWidth == 0 ? [] : [ImageProcessors.Resize(size: CGSize(width: size, height: size), unit: .points, contentMode: .aspectFill, crop: false, upscale: false)]
+    let processors: [ImageProcessing] = contentWidth == 0 ? [] : [ImageProcessors.Resize(size: CGSize(width: size, height: size), unit: .points, contentMode: .aspectFill, crop: false, upscale: true)]
     var userInfo: [ImageRequest.UserInfoKey : Any] = [:]
     if compact {
       userInfo[.thumbnailKey] = ImageRequest.ThumbnailOptions(size: .init(width: scaledCompactModeThumbSize(), height: scaledCompactModeThumbSize()), unit: .points, contentMode: .aspectFill)
