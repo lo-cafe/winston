@@ -18,7 +18,6 @@ class Nav: ObservableObject, Identifiable, Equatable {
   static func back() { Nav.shared.activeRouter.goBack() }
   static func to(_ dest: Router.NavDest, _ reset: Bool = false) { Nav.shared.activeRouter.navigateTo(dest, reset) }
   static func fullTo(_ tab: TabIdentifier, _ dest: Router.NavDest, _ reset: Bool = false) { Nav.shared.navigateTo(tab, dest, reset) }
-  static func toTab(_ tab: TabIdentifier, _ dest: Router.NavDest, _ reset: Bool = false) { Nav.shared.navigateTo(tab, dest, reset) }
   static func present(_ content: PresentingSheet?) { Nav.shared.presentingSheet = content }
   static func resetStack() { Nav.shared.activeRouter.resetNavPath() }
   /* </Util static functions for ease of use> */
