@@ -114,7 +114,7 @@ struct SubredditPostsIPAD: View, Equatable {
         },
         theme: selectedTheme.postLinks
       )
-      .ignoresSafeArea()
+      //.ignoresSafeArea()
 //      .floatingMenu()
       //      .introspect(.scrollView, on: .iOS(.v13, .v14, .v15, .v16, .v17)) { scrollView in
       //        scrollView.backgroundColor = UIColor.systemGroupedBackground
@@ -131,5 +131,6 @@ struct SubredditPostsIPAD: View, Equatable {
 				}
     }
 		.floatingMenu(filters: filters, selected: filter, filterCallback: filterCallback, searchText: searchText, searchCallback: searchCallback)
+		.navigationBarTitleDisplayMode(.inline)
   }
 }
