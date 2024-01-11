@@ -98,18 +98,6 @@ extension Post {
           await RedditAPI.shared.updatePostsWithAvatar(posts: [self], avatarSize: theme.postLinks.theme.badge.avatar.size)
         }
       }
-      
-      let bodyAttr = NSMutableAttributedString(attributedString: stringToNSAttr(data.selftext, fontSize: theme.posts.bodyText.size))
-      let style = NSMutableParagraphStyle()
-      style.lineSpacing = theme.posts.linespacing
-      bodyAttr.addAttribute(.paragraphStyle, value: style, range: NSRange(location: 0, length: bodyAttr.length))
-      bodyAttr.addAttribute(.foregroundColor, value: theme.posts.bodyText.color.uiColor(), range: NSRange(location: 0, length: bodyAttr.length))
-      self.winstonData?.postBodyAttr = bodyAttr
-      let postViewBodyMaxWidth = .screenW - (!IPAD ? 0 : (.screenW / 3)) - (theme.posts.padding.horizontal * 2)
-      
-      let postViewBodyHeight = bodyAttr.boundingRect(with: CGSize(width: postViewBodyMaxWidth, height: .infinity), options: [.usesLineFragmentOrigin], context: nil).height
-      self.winstonData?.postViewBodySize = .init(width: postViewBodyMaxWidth, height: postViewBodyHeight)
-      
     }
   }
   
@@ -506,33 +494,34 @@ extension Post {
   
   func refreshPost(commentID: String? = nil, sort: CommentSortOption = .confidence, after: String? = nil, subreddit: String? = nil, full: Bool = true, subId: String? = nil) async -> ([Comment]?, String?)? {
     if let subreddit = data?.subreddit ?? subreddit, let response = await RedditAPI.shared.fetchPost(subreddit: subreddit, postID: id, commentID: commentID, sort: sort) {
-      if let post = response[0] {
-        switch post {
-        case .first(let actualData):
-          if full {
-            await MainActor.run {
-              let newData = actualData.data?.children?[0].data
-              self.data = newData
-              setupWinstonData(data: newData, secondary: false, theme: getEnabledTheme())
+      if response.count >= 2 {
+        if let post = response[0] {
+          switch post {
+          case .first(let actualData):
+            if full {
+              await MainActor.run {
+                let newData = actualData.data?.children?[0].data
+                self.data = newData
+                setupWinstonData(data: newData, secondary: false, theme: getEnabledTheme())
+              }
             }
+          case .second(_):
+            break
           }
-        case .second(_):
-          break
         }
-      }
-      if let comments = response[1] {
-        switch comments {
-        case .first(_):
-          return nil
-        case .second(let actualData):
-          if let data = actualData.data {
-            await saveSeenComments(comments: data)
-            
-            if let dataArr = data.children?.compactMap({ $0 }) {
-              let comments = Comment.initMultiple(datas: dataArr);
-              return ( comments, data.after )
-            }
+        
+        if let comments = response[1] {
+          switch comments {
+          case .first(_):
             return nil
+          case .second(let actualData):
+            if let data = actualData.data, let children = data.children {
+              await saveSeenComments(comments: data)
+              
+              let dataArr = children.compactMap { $0 }
+              let comments = Comment.initMultiple(datas: dataArr)
+              return (comments, data.after)
+            }
           }
         }
       }
@@ -626,7 +615,6 @@ class PostWinstonData: Hashable, ObservableObject {
   @Published var avatarImageRequest: ImageRequest? = nil
   @Published var postDimensions: PostDimensions = .zero
   @Published var postDimensionsForcedNormal: PostDimensions = .zero
-  @Published var postViewBodySize: CGSize = .zero
   @Published var titleAttr: NSAttributedString?
   @Published var linkMedia: PreviewModel?
   @Published var videoMedia: SharedVideo?
@@ -647,7 +635,7 @@ class PostWinstonData: Hashable, ObservableObject {
 
 struct PostData: GenericRedditEntityDataType {
   let subreddit: String
-  let selftext: String
+  var selftext: String
   var author_fullname: String? = nil
   var saved: Bool
   let gilded: Int

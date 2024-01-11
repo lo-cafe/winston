@@ -56,23 +56,6 @@ extension Comment {
     guard let winstonData = self.winstonData, let data = self.data else { return }
     let theme = getEnabledTheme().comments.theme
     let cs: ColorScheme = UIScreen.main.traitCollection.userInterfaceStyle == .dark ? .dark : .light
-
-    let bodyAttr = NSMutableAttributedString(attributedString: stringToNSAttr(data.body ?? "", fontSize: theme.bodyText.size))
-    let style = NSMutableParagraphStyle()
-    style.lineSpacing = theme.linespacing
-    bodyAttr.addAttribute(.paragraphStyle, value: style, range: NSRange(location: 0, length: bodyAttr.length))
-    bodyAttr.addAttribute(.foregroundColor, value: UIColor(theme.bodyText.color.cs(cs).color()), range: NSRange(location: 0, length: bodyAttr.length))
-    winstonData.bodyAttr = bodyAttr
-    
-    let screenWidth = .screenW - (!IPAD ? 0 : (.screenW /  3))
-    var bodyMaxWidth = Double(screenWidth - (theme.outerHPadding * 2) - (theme.innerPadding.horizontal * 2))
-    if let depth = data.depth, depth > 0 {
-      bodyMaxWidth -= Double(CommentLinkContent.indentLineContentSpacing)
-      bodyMaxWidth -= CommentLinkContent.indentLinesSpacing * Double(depth - 1)
-      bodyMaxWidth -= theme.indentCurve * Double(depth)
-    }
-    let bodyHeight = bodyAttr.boundingRect(with: CGSize(width: bodyMaxWidth, height: .infinity), options: [.usesLineFragmentOrigin], context: nil).height
-    winstonData.commentBodySize = .init(width: bodyMaxWidth, height: bodyHeight + 1)
   }
   
   convenience init(message: Message) throws {
@@ -447,7 +430,6 @@ struct CommentData: GenericRedditEntityDataType {
   //  let all_awardings: [String]?
   var collapsed: Bool?
   var body: String?
-  var winstonBodyAttrEncoded: String?
   //  let edited: Bool?
   var top_awarded_type: String?
   //  let author_flair_css_class: String?

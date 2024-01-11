@@ -16,13 +16,6 @@ extension RedditAPI {
         return data.json.data?.things
       case .failure(let err):
         print(err)
-//        var errorString: String?
-//        if let data = response.data {
-//          if let json = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: String] {
-//            errorString = json["error"]
-//          }
-//        }
-//        print(errorString)
         return nil
       }
   }

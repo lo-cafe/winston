@@ -9,6 +9,7 @@ import SwiftUI
 import Defaults
 import AVKit
 import AVFoundation
+import MarkdownView
 
 struct PostContent: View, Equatable {
   static func == (lhs: PostContent, rhs: PostContent) -> Bool {
@@ -21,7 +22,7 @@ struct PostContent: View, Equatable {
   var forceCollapse: Bool = false
   @State private var collapsed = false
   @Default(.PostPageDefSettings) private var defSettings
-  @Environment(\.useTheme) private var selectedTheme  
+  @Environment(\.useTheme) private var selectedTheme
   
   var contentWidth: CGFloat { .screenW - (selectedTheme.posts.padding.horizontal * 2) }
   
@@ -47,65 +48,45 @@ struct PostContent: View, Equatable {
         }
       }
       
-      Text(data.title)
-        .fontSize(postsTheme.titleText.size, .semibold)
-        .foregroundColor(postsTheme.titleText.color())
-        .fixedSize(horizontal: false, vertical: true)
-        .id("post-title")
-        .onAppear { Task { await post.toggleSeen(true) } }
-        .listRowInsets(EdgeInsets(top: postsTheme.padding.vertical, leading: postsTheme.padding.horizontal, bottom: postsTheme.spacing / 2, trailing: selectedTheme.posts.padding.horizontal))
-//      
-      VStack(spacing: 0) {
-        VStack(spacing: selectedTheme.posts.spacing) {
-          
-          if let extractedMedia = winstonData.extractedMediaForcedNormal {
-            MediaPresenter(postDimensions: $winstonData.postDimensionsForcedNormal, controller: nil, postTitle: data.title, badgeKit: data.badgeKit, avatarImageRequest: winstonData.avatarImageRequest, markAsSeen: {}, cornerRadius: selectedTheme.postLinks.theme.mediaCornerRadius, blurPostLinkNSFW: defSettings.blurNSFW, media: extractedMedia, over18: over18, compact: false, contentWidth: winstonData.postDimensionsForcedNormal.mediaSize?.width ?? 0, maxMediaHeightScreenPercentage: Defaults[.PostLinkDefSettings].maxMediaHeightScreenPercentage, resetVideo: nil)
-          }
-          
-          if data.selftext != "" {
+      Group {
+        Text(data.title)
+          .fontSize(postsTheme.titleText.size, .semibold)
+          .foregroundColor(postsTheme.titleText.color())
+          .fixedSize(horizontal: false, vertical: true)
+          .id("post-title")
+          .onAppear { Task { await post.toggleSeen(true) } }
+          .listRowInsets(EdgeInsets(top: postsTheme.padding.vertical, leading: postsTheme.padding.horizontal, bottom: postsTheme.spacing / 2, trailing: selectedTheme.posts.padding.horizontal))
 
-            MD2(winstonData.postBodyAttr == nil ? .str(data.selftext) : .nsAttr(winstonData.postBodyAttr!), onTap: { withAnimation(spring) { collapsed.toggle() }})
-              .frame(width: winstonData.postViewBodySize.width, height: winstonData.postViewBodySize.height, alignment: .topLeading)
-              .allowsHitTesting(!isCollapsed)
+        Group {
+          if !isCollapsed {
+            VStack(spacing: 0) {
+              VStack(spacing: selectedTheme.posts.spacing) {
+                if let extractedMedia = winstonData.extractedMediaForcedNormal {
+                  MediaPresenter(postDimensions: $winstonData.postDimensionsForcedNormal, controller: nil, postTitle: data.title, badgeKit: data.badgeKit, avatarImageRequest: winstonData.avatarImageRequest, markAsSeen: {}, cornerRadius: selectedTheme.postLinks.theme.mediaCornerRadius, blurPostLinkNSFW: defSettings.blurNSFW, media: extractedMedia, over18: over18, compact: false, contentWidth: winstonData.postDimensionsForcedNormal.mediaSize?.width ?? 0, maxMediaHeightScreenPercentage: Defaults[.PostLinkDefSettings].maxMediaHeightScreenPercentage, resetVideo: nil)
+                }
+                
+                if !data.selftext.isEmpty {
+                  MarkdownView(text: MarkdownUtil.replaceURLsWithWinstonAppScheme(data.selftext))
+                    .font(.system(size: selectedTheme.posts.bodyText.size))
+                    .lineSpacing(selectedTheme.posts.linespacing)
+                }
+              }
+              .nsfw(over18 && defSettings.blurNSFW)
+            }
+          } else {
+            Text("*Collapsed...*").foregroundStyle(.secondary).font(.caption)
           }
         }
-        .modifier(AnimatingCellHeight(height: isCollapsed ? 175 : winstonData.postViewBodySize.height + (winstonData.postDimensionsForcedNormal.mediaSize?.height ?? 0), disable: false))
-        .clipped()
-        .opacity(isCollapsed ? 0.3 : 1)
-        .mask(
-          Rectangle()
-            .fill(LinearGradient(
-              gradient: Gradient(stops: [
-                .init(color: Color.black.opacity(isCollapsed ? 0.75 : 1), location: 0),
-                .init(color: Color.black.opacity(isCollapsed ? 0 : 1), location: 1)
-              ]),
-              startPoint: .top,
-              endPoint: .bottom
-            ))
-        )
-        .overlay(
-          HStack {
-            Image(systemName: "eye.fill")
-            Text("Tap to expand").allowsHitTesting(false)
-          }
-            .padding(.top, 50)
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .contentShape(Rectangle())
-            .onTapGesture { withAnimation(spring) { collapsed.toggle() } }
-            .foregroundColor(.accentColor)
-            .allowsHitTesting(isCollapsed)
-            .opacity(isCollapsed ? 1 : 0)
-          , alignment: .bottom
-        )
-        .nsfw(over18 && defSettings.blurNSFW)
+        .id("post-content")
+        .listRowInsets(EdgeInsets(top: postsTheme.spacing / 2, leading: postsTheme.padding.horizontal, bottom: postsTheme.spacing / 2, trailing: postsTheme.spacing / 2))
       }
-      .id("post-content")
-      .listRowInsets(EdgeInsets(top: postsTheme.spacing / 2, leading: postsTheme.padding.horizontal, bottom: postsTheme.spacing / 2, trailing: postsTheme.spacing / 2))
+      .contentShape(Rectangle())
+      .onTapGesture { withAnimation(.smooth) { collapsed.toggle() }}
       
       BadgeOpt(avatarRequest: winstonData.avatarImageRequest, badgeKit: data.badgeKit, showVotes: false, theme: postsTheme.badge,
                openSub: openSubreddit, subName: data.subreddit)
-        .id("post-badge")
-        .listRowInsets(EdgeInsets(top: postsTheme.spacing / 2, leading: postsTheme.padding.horizontal, bottom: postsTheme.spacing * 0.75, trailing: postsTheme.padding.horizontal))
+      .id("post-badge")
+      .listRowInsets(EdgeInsets(top: postsTheme.spacing / 2, leading: postsTheme.padding.horizontal, bottom: postsTheme.spacing * 0.75, trailing: postsTheme.padding.horizontal))
       
       SubsNStuffLine()
         .id("post-flair-divider")
