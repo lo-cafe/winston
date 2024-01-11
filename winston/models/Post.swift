@@ -98,18 +98,6 @@ extension Post {
           await RedditAPI.shared.updatePostsWithAvatar(posts: [self], avatarSize: theme.postLinks.theme.badge.avatar.size)
         }
       }
-      
-      let bodyAttr = NSMutableAttributedString(attributedString: stringToNSAttr(data.selftext, fontSize: theme.posts.bodyText.size))
-      let style = NSMutableParagraphStyle()
-      style.lineSpacing = theme.posts.linespacing
-      bodyAttr.addAttribute(.paragraphStyle, value: style, range: NSRange(location: 0, length: bodyAttr.length))
-      bodyAttr.addAttribute(.foregroundColor, value: theme.posts.bodyText.color.uiColor(), range: NSRange(location: 0, length: bodyAttr.length))
-      self.winstonData?.postBodyAttr = bodyAttr
-      let postViewBodyMaxWidth = .screenW - (!IPAD ? 0 : (.screenW / 3)) - (theme.posts.padding.horizontal * 2)
-      
-      let postViewBodyHeight = bodyAttr.boundingRect(with: CGSize(width: postViewBodyMaxWidth, height: .infinity), options: [.usesLineFragmentOrigin], context: nil).height
-      self.winstonData?.postViewBodySize = .init(width: postViewBodyMaxWidth, height: postViewBodyHeight)
-      
     }
   }
   
@@ -626,7 +614,6 @@ class PostWinstonData: Hashable, ObservableObject {
   @Published var avatarImageRequest: ImageRequest? = nil
   @Published var postDimensions: PostDimensions = .zero
   @Published var postDimensionsForcedNormal: PostDimensions = .zero
-  @Published var postViewBodySize: CGSize = .zero
   @Published var titleAttr: NSAttributedString?
   @Published var linkMedia: PreviewModel?
   @Published var videoMedia: SharedVideo?

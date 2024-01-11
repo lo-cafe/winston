@@ -8,6 +8,7 @@
 import SwiftUI
 import Defaults
 import SwiftUIIntrospect
+import MarkdownView
 
 class Sizer: ObservableObject {
   @Published var size: CGSize = .zero
@@ -223,16 +224,10 @@ struct CommentLinkContent: View {
                     Text(body.md())
                       .lineLimit(lineLimit)
                   } else {
-                    MD2(winstonData.bodyAttr == nil ? .str(body) : .nsAttr(winstonData.bodyAttr!), fontSize: theme.theme.bodyText.size, onTap: { if !selectable { withAnimation(spring) { comment.toggleCollapsed(optimistic: true) } } })
-                      .frame(width: winstonData.commentBodySize.width, height: winstonData.commentBodySize.height, alignment: .topLeading)
-                      .fixedSize()
-                      .overlay(
-                        !selectable
-                        ? nil
-                        : TextViewWrapper(attributedText: NSAttributedString(body.md()), maxLayoutWidth: sizer.size.width)
-                          .frame(width: sizer.size.width, height: sizer.size.height, alignment: .topLeading)
-                          .background(Rectangle().fill(theme.theme.bg()))
-                      )
+                    MarkdownView(text: body)
+                      .font(.system(size: theme.theme.bodyText.size))
+                      .lineSpacing(theme.theme.linespacing)
+                      .selectionDisabled(!selectable)
                   }
                 }
                 .fontSize(theme.theme.bodyText.size, theme.theme.bodyText.weight.t)
@@ -243,7 +238,7 @@ struct CommentLinkContent: View {
               .swipyUI(
                 offsetYAction: -15,
                 controlledDragAmount: $offsetX,
-                // onTap: { if !selectable { withAnimation(spring) { comment.toggleCollapsed(optimistic: true) } } },
+                onTap: { if !selectable { withAnimation(spring) { comment.toggleCollapsed(optimistic: true) } } },
                 actionsSet: commentSwipeActions,
                 entity: comment,
                 skipAnimation: true
