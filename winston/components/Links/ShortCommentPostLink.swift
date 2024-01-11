@@ -15,10 +15,10 @@ struct ShortCommentPostLink: View {
   var body: some View {
     if let data = comment.data, let _ = data.link_id, let _ = data.subreddit {
       VStack(alignment: .leading, spacing: 6) {
-        if let author = data.author, let subreddit = data.subreddit {
-          (Text(data.link_title ?? "Error").font(.system(size: 15, weight: .medium)).foregroundColor(.primary.opacity(0.75)) +
-           Text(" · ").font(.system(size: 13, weight: .medium)).foregroundColor(.primary.opacity(0.5)) +
-            Text("r/\(subreddit)").font(.system(size: 14, weight: .semibold)).foregroundColor(.primary.opacity(0.75)))
+        if let subreddit = data.subreddit {
+          (Text(data.link_title ?? "Error").font(.system(size: 15)).foregroundColor(.primary.opacity(0.75)) +
+           Text(" · ").font(.system(size: 13)).foregroundColor(.primary.opacity(0.5)) +
+           Text("r/\(subreddit)").italic().font(.system(size: 14)).foregroundColor(.primary.opacity(0.75)))
         }
       }
       .multilineTextAlignment(.leading)

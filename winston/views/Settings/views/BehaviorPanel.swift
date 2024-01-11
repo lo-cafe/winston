@@ -27,7 +27,6 @@ struct BehaviorPanel: View {
       
       Group {
         Section("General") {
-          Toggle("Open links in Safari", isOn: $behaviorDefSettings.openLinksInSafari)
           Toggle("Open Youtube Videos Externally", isOn: $behaviorDefSettings.openYoutubeApp)
           let auth_type = Biometrics().biometricType()
           Toggle("Lock Winston With \(auth_type)", isOn: $generalDefSettings.useAuth)

@@ -24,14 +24,14 @@ struct PreviewLinkContent: View {
   @Environment(\.openURL) private var openURL
   @Default(.BehaviorDefSettings) private var behaviorDefSettings
   var body: some View {
-    PreviewLinkContentRaw(compact: compact, image: viewModel.image, title: viewModel.title, description: viewModel.description, loading: viewModel.loading, url: url, openURL: openURL, openLinksInSafari: behaviorDefSettings.openLinksInSafari)
+    PreviewLinkContentRaw(compact: compact, image: viewModel.image, title: viewModel.title, description: viewModel.description, loading: viewModel.loading, url: url, openURL: openURL)
   }
 }
 
 
 struct PreviewLinkContentRaw: View, Equatable {
   static func == (lhs: PreviewLinkContentRaw, rhs: PreviewLinkContentRaw) -> Bool {
-    lhs.image == rhs.image && lhs.title == rhs.title && lhs.compact == rhs.compact && lhs.description == rhs.description && lhs.loading == rhs.loading && lhs.url == rhs.url && lhs.openLinksInSafari == rhs.openLinksInSafari
+    lhs.image == rhs.image && lhs.title == rhs.title && lhs.compact == rhs.compact && lhs.description == rhs.description && lhs.loading == rhs.loading && lhs.url == rhs.url
   }
   
   static let height: CGFloat = 88
@@ -42,7 +42,6 @@ struct PreviewLinkContentRaw: View, Equatable {
   var loading: Bool
   var url: URL
   var openURL: OpenURLAction
-  var openLinksInSafari: Bool
     
   var body: some View {
     HStack(spacing: 16) {
@@ -103,11 +102,7 @@ struct PreviewLinkContentRaw: View, Equatable {
     }
     .highPriorityGesture(TapGesture().onEnded {
       if let newURL = URL(string: url.absoluteString.replacingOccurrences(of: "https://reddit.com/", with: "winstonapp://")) {
-        if openLinksInSafari {
-          openURL(newURL)
-        } else {
-          Nav.openURL(newURL)
-        }
+        Nav.openURL(newURL)
       }
     })
   }

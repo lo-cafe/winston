@@ -66,7 +66,7 @@ struct PostContent: View, Equatable {
                 }
                 
                 if !data.selftext.isEmpty {
-                  MarkdownView(text: data.selftext)
+                  MarkdownView(text: MarkdownUtil.replaceURLsWithWinstonAppScheme(data.selftext))
                     .font(.system(size: selectedTheme.posts.bodyText.size))
                     .lineSpacing(selectedTheme.posts.linespacing)
                 }

@@ -29,11 +29,7 @@ struct OnlyURL: View {
     .foregroundColor(.white)
     .highPriorityGesture(TapGesture().onEnded {
       if let newURL = URL(string: url.absoluteString.replacingOccurrences(of: "https://reddit.com/", with: "winstonapp://")) {
-        if behaviorDefSettings.openLinksInSafari {
-					openURL(newURL)
-				} else {
-					Nav.openURL(newURL)
-				}
+        Nav.openURL(newURL)
       }
     })
   }

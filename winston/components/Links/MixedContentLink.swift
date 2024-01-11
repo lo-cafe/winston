@@ -32,13 +32,11 @@ struct MixedContentLink: View, Equatable {
     case .second(let comment):
       VStack {
         ShortCommentPostLink(comment: comment)
+          .padding()
         if let commentWinstonData = comment.winstonData {
           CommentLink(showReplies: false, comment: comment, commentWinstonData: commentWinstonData, children: comment.childrenWinston)
         }
       }
-      .padding(.horizontal, 12)
-      .padding(.top, 12)
-      .padding(.bottom, 10)
       .background(PostLinkBG(theme: theme, stickied: false, secondary: false).equatable())
       .mask(RR(theme.theme.cornerRadius, Color.black).equatable())
     }

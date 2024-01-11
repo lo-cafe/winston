@@ -21,7 +21,18 @@ extension View {
           case .user(let username):
             Nav.fullTo(.posts, .reddit(.user(User(id: username))))
           default:
-            break
+            let urlStringWithoutScheme = url.absoluteString.replacingOccurrences(of: "winstonapp://", with: "")
+            
+            if let safariURL = URL(string: "https://" + urlStringWithoutScheme) {
+              if isImageUrl(safariURL.absoluteString) {
+                let imageView = ImageView(url: safariURL)
+                let hostingController = UIHostingController(rootView: imageView)
+                hostingController.overrideUserInterfaceStyle = .dark
+                UIApplication.shared.firstKeyWindow?.rootViewController?.present(hostingController, animated: true)
+              } else {
+                Nav.openURL(safariURL)
+              }
+            }
           }
         }
       }

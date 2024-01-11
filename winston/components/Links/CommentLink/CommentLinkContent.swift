@@ -224,7 +224,7 @@ struct CommentLinkContent: View {
                     Text(body.md())
                       .lineLimit(lineLimit)
                   } else {
-                    MarkdownView(text: body)
+                    MarkdownView(text: MarkdownUtil.replaceURLsWithWinstonAppScheme(body))
                       .font(.system(size: theme.theme.bodyText.size))
                       .lineSpacing(theme.theme.linespacing)
                       .selectionDisabled(!selectable)
@@ -243,13 +243,6 @@ struct CommentLinkContent: View {
                 entity: comment,
                 skipAnimation: true
               )
-              .onChange(of: theme) { newTheme in
-                let encoder = JSONEncoder()
-                if let jsonData = try? encoder.encode(stringToAttr(body, fontSize: newTheme.theme.bodyText.size)) {
-                  let json = String(decoding: jsonData, as: UTF8.self)
-                  comment.data?.winstonBodyAttrEncoded = json
-                }
-              }
               .frame(maxWidth: .infinity, alignment: .topLeading)
               .padding(.top, theme.theme.bodyAuthorSpacing)
               .padding(.bottom, max(0, theme.theme.innerPadding.vertical + (data.depth == 0 && comment.childrenWinston.data.count == 0 ? -theme.theme.cornerRadius : theme.theme.innerPadding.vertical)))

@@ -119,23 +119,14 @@ class Nav: ObservableObject, Identifiable, Equatable {
   }
   
   static func openURL(_ url: URL) {
-    if url.scheme?.lowercased().contains(/http(s)?/) == true {
-      let vc = SFSafariViewController(url: url)
-      UIApplication.shared.firstKeyWindow?.rootViewController?.present(vc, animated: true)
-    } else {
-       UIApplication.shared.open(url)
-    }
+    let vc = SFSafariViewController(url: url)
+    UIApplication.shared.firstKeyWindow?.rootViewController?.present(vc, animated: true)
   }
 
 
   static func openURL(_ urlStr: String) {
     if let url = URL(string: urlStr)  {
-      if url.scheme?.lowercased().contains(/http(s)?/) == true {
-        let vc = SFSafariViewController(url: url)
-        UIApplication.shared.firstKeyWindow?.rootViewController?.present(vc, animated: true)
-      } else {
-        UIApplication.shared.open(url)
-      }
+      openURL(url)
     }
   }
 }

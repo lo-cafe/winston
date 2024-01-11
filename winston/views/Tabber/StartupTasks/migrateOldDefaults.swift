@@ -49,7 +49,6 @@ func migrateOldDefaults() {
   )
   let newBehaviorDefSettings = BehaviorDefSettings(
     openYoutubeApp: Defaults[._openYoutubeApp],
-    openLinksInSafari: Defaults[._openLinksInSafari],
     enableSwipeAnywhere: Defaults[._enableSwipeAnywhere],
     preferenceDefaultFeed: Defaults[._preferenceDefaultFeed],
     doLiveText: Defaults[._doLiveText],
