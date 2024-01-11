@@ -225,7 +225,7 @@ struct CommentLinkContent: View {
                       .lineLimit(lineLimit)
                   } else {
                     MarkdownView(text: MarkdownUtil.replaceURLsWithWinstonAppScheme(body))
-                      .font(.system(size: theme.theme.bodyText.size))
+                      .font(.system(size: theme.theme.bodyText.size), for: .body)
                       .lineSpacing(theme.theme.linespacing)
                       .selectionDisabled(!selectable)
                   }

@@ -47,7 +47,7 @@ struct SubredditRulesTab: View {
                   
                   let text = MarkdownUtil.replaceURLsWithWinstonAppScheme(rule.description ?? "")
                   MarkdownView(text: text.isEmpty ? "Rule without description." : text)
-                    .font(.system(size: 16))
+                    .font(.system(size: 16), for: .body)
                 }
               }
               .multilineTextAlignment(.leading)

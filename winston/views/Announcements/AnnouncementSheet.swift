@@ -28,7 +28,7 @@ struct AnnouncementSheet: View {
             Section {
               let text = MarkdownUtil.replaceURLsWithWinstonAppScheme(announcement.description ?? "")
               MarkdownView(text: text.isEmpty ? "Announcement without description." : text)
-                .font(.system(size: 16))
+                .font(.system(size: 16), for: .body)
             }
             .padding(.top)
             
