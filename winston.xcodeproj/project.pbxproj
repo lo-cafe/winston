@@ -56,12 +56,13 @@
 		BB0D15292B069A9700668448 /* getItemId.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0D15282B069A9700668448 /* getItemId.swift */; };
 		BB53CA9A2B0D827F003D3332 /* EndOfFeedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB53CA992B0D827F003D3332 /* EndOfFeedView.swift */; };
 		BB978B3C2B4F3BE200BE90D1 /* MDEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB978B382B4F3BE200BE90D1 /* MDEditor.swift */; };
-		BB978B412B4F3D6400BE90D1 /* MarkdownView in Frameworks */ = {isa = PBXBuildFile; productRef = BB978B402B4F3D6400BE90D1 /* MarkdownView */; };
 		BB978B432B4F756400BE90D1 /* External to Internal Links.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB978B422B4F756400BE90D1 /* External to Internal Links.swift */; };
 		BB978B452B4FA4A500BE90D1 /* ImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB978B442B4FA4A500BE90D1 /* ImageView.swift */; };
 		BBD6E9D72B50F37200901C1C /* Quirky Msg Util.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBD6E9D62B50F37200901C1C /* Quirky Msg Util.swift */; };
 		BBD6E9D92B50F53000901C1C /* CommentSkipper.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBD6E9D82B50F53000901C1C /* CommentSkipper.swift */; };
 		BBD6E9DB2B50F5D300901C1C /* Comment util.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBD6E9DA2B50F5D300901C1C /* Comment util.swift */; };
+		BBD6E9DE2B51B03600901C1C /* MarkdownUI in Frameworks */ = {isa = PBXBuildFile; productRef = BBD6E9DD2B51B03600901C1C /* MarkdownUI */; };
+		BBD6E9E02B51B45D00901C1C /* Winston MD.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBD6E9DF2B51B45D00901C1C /* Winston MD.swift */; };
 		CE0EC5D82B1A9E9600C6E210 /* SubredditFilters.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE0EC5D72B1A9E9600C6E210 /* SubredditFilters.swift */; };
 		CECA71EB2B1E358700852DAD /* CustomFilterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CECA71EA2B1E358700852DAD /* CustomFilterView.swift */; };
 		EC051C472ACAF2DC00E9D9ED /* themeFileIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = EC051C462ACAF2DC00E9D9ED /* themeFileIcon.png */; };
@@ -409,8 +410,6 @@
 		ECAA8B872A76473A00D9D636 /* PreviewLinkContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECAA8B862A76473A00D9D636 /* PreviewLinkContent.swift */; };
 		ECAA8B892A764A3C00D9D636 /* YTMediaPost.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECAA8B882A764A3C00D9D636 /* YTMediaPost.swift */; };
 		ECAA8B8B2A766E3900D9D636 /* ListBigBtn.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECAA8B8A2A766E3900D9D636 /* ListBigBtn.swift */; };
-		ECAD0F2C2A8B4CD4001C88B5 /* Markdownosaur.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECAD0F2B2A8B4CD4001C88B5 /* Markdownosaur.swift */; };
-		ECAD0F2F2A8B4D4B001C88B5 /* Markdown in Frameworks */ = {isa = PBXBuildFile; productRef = ECAD0F2E2A8B4D4B001C88B5 /* Markdown */; };
 		ECAD0F312A8C1261001C88B5 /* delete.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECAD0F302A8C1261001C88B5 /* delete.swift */; };
 		ECAD0F332A8C1360001C88B5 /* edit.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECAD0F322A8C1360001C88B5 /* edit.swift */; };
 		ECAEFF5E2A77A03E0052FCD3 /* RedditMediaPost.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECAEFF5D2A77A03E0052FCD3 /* RedditMediaPost.swift */; };
@@ -632,6 +631,7 @@
 		BBD6E9D62B50F37200901C1C /* Quirky Msg Util.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "Quirky Msg Util.swift"; path = "winston/components/Quirky Msg Util.swift"; sourceTree = SOURCE_ROOT; };
 		BBD6E9D82B50F53000901C1C /* CommentSkipper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommentSkipper.swift; sourceTree = "<group>"; };
 		BBD6E9DA2B50F5D300901C1C /* Comment util.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "Comment util.swift"; path = "winston/utils/Comment util.swift"; sourceTree = SOURCE_ROOT; };
+		BBD6E9DF2B51B45D00901C1C /* Winston MD.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "Winston MD.swift"; path = "winston/components/Markdown Handling/Winston MD.swift"; sourceTree = SOURCE_ROOT; };
 		CE0EC5D72B1A9E9600C6E210 /* SubredditFilters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubredditFilters.swift; sourceTree = "<group>"; };
 		CECA71EA2B1E358700852DAD /* CustomFilterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomFilterView.swift; sourceTree = "<group>"; };
 		EC051C2A2ACAEFC500E9D9ED /* QuickLookThumbnailing.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuickLookThumbnailing.framework; path = System/Library/Frameworks/QuickLookThumbnailing.framework; sourceTree = SDKROOT; };
@@ -967,7 +967,6 @@
 		ECAA8B862A76473A00D9D636 /* PreviewLinkContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewLinkContent.swift; sourceTree = "<group>"; };
 		ECAA8B882A764A3C00D9D636 /* YTMediaPost.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YTMediaPost.swift; sourceTree = "<group>"; };
 		ECAA8B8A2A766E3900D9D636 /* ListBigBtn.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListBigBtn.swift; sourceTree = "<group>"; };
-		ECAD0F2B2A8B4CD4001C88B5 /* Markdownosaur.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Markdownosaur.swift; sourceTree = "<group>"; };
 		ECAD0F302A8C1261001C88B5 /* delete.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = delete.swift; sourceTree = "<group>"; };
 		ECAD0F322A8C1360001C88B5 /* edit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = edit.swift; sourceTree = "<group>"; };
 		ECAEFF5D2A77A03E0052FCD3 /* RedditMediaPost.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RedditMediaPost.swift; sourceTree = "<group>"; };
@@ -1123,8 +1122,8 @@
 				EC593B092A47B42D002D6454 /* KeychainAccess in Frameworks */,
 				EC3E7B242B0542EA004B4F21 /* Pow in Frameworks */,
 				ECE285972A4FD6FC009CF9DD /* SwiftDate in Frameworks */,
-				BB978B412B4F3D6400BE90D1 /* MarkdownView in Frameworks */,
 				EC9BB1C62A8B05AA0070CD97 /* NukeVideo in Frameworks */,
+				BBD6E9DE2B51B03600901C1C /* MarkdownUI in Frameworks */,
 				EC6081262B43A766001A1077 /* Lottie in Frameworks */,
 				EC9BB1C42A8B05AA0070CD97 /* NukeUI in Frameworks */,
 				ECE449742A67648E00E2A3B7 /* Popovers in Frameworks */,
@@ -1138,7 +1137,6 @@
 				6514FFEC2AFD01520051D264 /* WhatsNewKit in Frameworks */,
 				EC9269F22A51A732003F33B1 /* HighlightedTextEditor in Frameworks */,
 				ECA370102B480FC900C73CB0 /* WrappingHStack in Frameworks */,
-				ECAD0F2F2A8B4D4B001C88B5 /* Markdown in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1191,6 +1189,7 @@
 			children = (
 				BB978B382B4F3BE200BE90D1 /* MDEditor.swift */,
 				BB978B422B4F756400BE90D1 /* External to Internal Links.swift */,
+				BBD6E9DF2B51B45D00901C1C /* Winston MD.swift */,
 			);
 			path = "Markdown Handling";
 			sourceTree = "<group>";
@@ -2276,7 +2275,6 @@
 				659F68012A84E32300989300 /* VotesCluster.swift */,
 				EC50B0E52A8460CD00AB8F72 /* replyModalPresenter.swift */,
 				EC9BB1BC2A8ACD300070CD97 /* AlphabetJumper.swift */,
-				ECAD0F2B2A8B4CD4001C88B5 /* Markdownosaur.swift */,
 				EC3188052A918FF300CB3738 /* URLImage.swift */,
 				EC50A5A92A9EF59200DE8122 /* EnhancedVideoPlayer.swift */,
 				ECE08B852AAA43F400F84DC9 /* NiceDivider.swift */,
@@ -2477,7 +2475,6 @@
 				EC9BB1C12A8B05AA0070CD97 /* NukeExtensions */,
 				EC9BB1C32A8B05AA0070CD97 /* NukeUI */,
 				EC9BB1C52A8B05AA0070CD97 /* NukeVideo */,
-				ECAD0F2E2A8B4D4B001C88B5 /* Markdown */,
 				EC828EA62A904E0A009478B1 /* ConfettiSwiftUI */,
 				EC3188082A91991900CB3738 /* AlertToast */,
 				ECE08B8C2AAB44DC00F84DC9 /* SymbolPicker */,
@@ -2492,7 +2489,7 @@
 				ECDEBD232B31C91D00A8AC78 /* SmoothGradient */,
 				EC6081252B43A766001A1077 /* Lottie */,
 				ECA3700F2B480FC900C73CB0 /* WrappingHStack */,
-				BB978B402B4F3D6400BE90D1 /* MarkdownView */,
+				BBD6E9DD2B51B03600901C1C /* MarkdownUI */,
 			);
 			productName = winston;
 			productReference = EC593AD42A4673B2002D6454 /* winston.app */;
@@ -2561,7 +2558,6 @@
 				ECDD51602A748DF600FD9498 /* XCRemoteSwiftPackageReference "SkeletonUI" */,
 				ECAA8B822A76421000D9D636 /* XCRemoteSwiftPackageReference "YouTubePlayerKit" */,
 				EC9BB1BE2A8B05AA0070CD97 /* XCRemoteSwiftPackageReference "Nuke" */,
-				ECAD0F2D2A8B4D4B001C88B5 /* XCRemoteSwiftPackageReference "swift-markdown" */,
 				EC828EA52A904E0A009478B1 /* XCRemoteSwiftPackageReference "ConfettiSwiftUI" */,
 				EC3188072A91991900CB3738 /* XCRemoteSwiftPackageReference "AlertToast" */,
 				ECE08B8B2AAB44DC00F84DC9 /* XCRemoteSwiftPackageReference "SymbolPicker" */,
@@ -2576,8 +2572,7 @@
 				ECDEBD222B31C91D00A8AC78 /* XCRemoteSwiftPackageReference "SmoothGradient" */,
 				EC6081242B43A766001A1077 /* XCRemoteSwiftPackageReference "lottie-spm" */,
 				ECA3700E2B480FC900C73CB0 /* XCRemoteSwiftPackageReference "WrappingHStack" */,
-				BB978B302B4F3AE800BE90D1 /* XCRemoteSwiftPackageReference "Ink" */,
-				BB978B3F2B4F3D1C00BE90D1 /* XCRemoteSwiftPackageReference "MarkdownView" */,
+				BBD6E9DC2B51B01B00901C1C /* XCRemoteSwiftPackageReference "swift-markdown-ui" */,
 			);
 			productRefGroup = EC593AD52A4673B2002D6454 /* Products */;
 			projectDirPath = "";
@@ -2994,7 +2989,6 @@
 				EC0854222A4BFF1500E88389 /* fetchSubs.swift in Sources */,
 				ECEF41232B239ADC005FE84E /* Nav.swift in Sources */,
 				EC49A8ED2B49D81000000EBD /* GuidedAuthSuccessScene.swift in Sources */,
-				ECAD0F2C2A8B4CD4001C88B5 /* Markdownosaur.swift in Sources */,
 				EC1906ED2A55293500A0300E /* AppearancePanel.swift in Sources */,
 				CE0EC5D82B1A9E9600C6E210 /* SubredditFilters.swift in Sources */,
 				EC8B779C2AB3A45800875C98 /* ImageThemePicker.swift in Sources */,
@@ -3052,6 +3046,7 @@
 				EC3BC5EC2ACC21AA0050CA8F /* SwipeRevolution.swift in Sources */,
 				ECAEFF662A77C43B0052FCD3 /* isVideoPlayer.swift in Sources */,
 				EC982A322B4A3E4B00FFE582 /* Timer.swift in Sources */,
+				BBD6E9E02B51B45D00901C1C /* Winston MD.swift in Sources */,
 				EC63E7252ACCC0C500918260 /* CollectionView.swift in Sources */,
 				653E2DA52A8E278800833556 /* GeneralPanel.swift in Sources */,
 				EC620EEE2B0CD59700206A66 /* ThemeBG.swift in Sources */,
@@ -3340,8 +3335,7 @@
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -3384,8 +3378,7 @@
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -3518,20 +3511,12 @@
 				kind = branch;
 			};
 		};
-		BB978B302B4F3AE800BE90D1 /* XCRemoteSwiftPackageReference "Ink" */ = {
+		BBD6E9DC2B51B01B00901C1C /* XCRemoteSwiftPackageReference "swift-markdown-ui" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/JohnSundell/Ink";
+			repositoryURL = "https://github.com/gonzalezreal/swift-markdown-ui";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 0.6.0;
-			};
-		};
-		BB978B3F2B4F3D1C00BE90D1 /* XCRemoteSwiftPackageReference "MarkdownView" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/LiYanan2004/MarkdownView";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.5.0;
+				minimumVersion = 2.3.0;
 			};
 		};
 		EC08543B2A4CFE1C00E88389 /* XCRemoteSwiftPackageReference "swiftui-introspect" */ = {
@@ -3670,14 +3655,6 @@
 				minimumVersion = 1.0.0;
 			};
 		};
-		ECAD0F2D2A8B4D4B001C88B5 /* XCRemoteSwiftPackageReference "swift-markdown" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/apple/swift-markdown.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 0.2.0;
-			};
-		};
 		ECDD515D2A748C5800FD9498 /* XCRemoteSwiftPackageReference "OpenGraph" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/satoshi-takano/OpenGraph.git";
@@ -3739,10 +3716,10 @@
 			package = 654559052B0E456A0080E27F /* XCRemoteSwiftPackageReference "shiny" */;
 			productName = Shiny;
 		};
-		BB978B402B4F3D6400BE90D1 /* MarkdownView */ = {
+		BBD6E9DD2B51B03600901C1C /* MarkdownUI */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = BB978B3F2B4F3D1C00BE90D1 /* XCRemoteSwiftPackageReference "MarkdownView" */;
-			productName = MarkdownView;
+			package = BBD6E9DC2B51B01B00901C1C /* XCRemoteSwiftPackageReference "swift-markdown-ui" */;
+			productName = MarkdownUI;
 		};
 		EC08543C2A4CFE1C00E88389 /* SwiftUIIntrospect */ = {
 			isa = XCSwiftPackageProductDependency;
@@ -3848,11 +3825,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = ECAA8B822A76421000D9D636 /* XCRemoteSwiftPackageReference "YouTubePlayerKit" */;
 			productName = YouTubePlayerKit;
-		};
-		ECAD0F2E2A8B4D4B001C88B5 /* Markdown */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = ECAD0F2D2A8B4D4B001C88B5 /* XCRemoteSwiftPackageReference "swift-markdown" */;
-			productName = Markdown;
 		};
 		ECDD515E2A748C5800FD9498 /* OpenGraph */ = {
 			isa = XCSwiftPackageProductDependency;

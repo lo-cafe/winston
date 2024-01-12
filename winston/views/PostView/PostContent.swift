@@ -9,7 +9,7 @@ import SwiftUI
 import Defaults
 import AVKit
 import AVFoundation
-import MarkdownView
+import MarkdownUI
 
 struct PostContent: View, Equatable {
   static func == (lhs: PostContent, rhs: PostContent) -> Bool {
@@ -66,9 +66,8 @@ struct PostContent: View, Equatable {
                 }
                 
                 if !data.selftext.isEmpty {
-                  MarkdownView(text: MarkdownUtil.replaceURLsWithWinstonAppScheme(data.selftext))
-                    .font(.system(size: selectedTheme.posts.bodyText.size), for: .body)
-                    .lineSpacing(selectedTheme.posts.linespacing)
+                  Markdown(MarkdownUtil.replaceURLsWithWinstonAppScheme(data.selftext))
+                    .markdownTheme(.winstonMarkdown(fontSize: selectedTheme.posts.bodyText.size, lineSpacing: selectedTheme.posts.linespacing))
                 }
               }
               .nsfw(over18 && defSettings.blurNSFW)

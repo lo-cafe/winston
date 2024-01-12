@@ -8,7 +8,7 @@
 import SwiftUI
 import Defaults
 import SwiftUIIntrospect
-import MarkdownView
+import MarkdownUI
 
 class Sizer: ObservableObject {
   @Published var size: CGSize = .zero
@@ -110,21 +110,6 @@ struct CommentLinkContent: View {
                 .transition(.scale.combined(with: .opacity))
             }
             
-            if selectable {
-              HStack(spacing: 2) {
-                Circle()
-                  .fill(.white)
-                  .frame(width: 8, height: 8)
-                Text("SELECTING")
-              }
-              .fontSize(13, .medium)
-              .foregroundColor(.white)
-              .padding(.horizontal, 6)
-              .padding(.vertical, 1)
-              .background(.orange, in: Capsule(style: .continuous))
-              .onTapGesture { withAnimation { comment.data?.winstonSelecting = false } }
-            }
-            
             if let ups = data.ups {
               HStack(alignment: .center, spacing: 4) {
                 Image(systemName: "arrow.up")
@@ -224,10 +209,8 @@ struct CommentLinkContent: View {
                     Text(body.md())
                       .lineLimit(lineLimit)
                   } else {
-                    MarkdownView(text: MarkdownUtil.replaceURLsWithWinstonAppScheme(body))
-                      .font(.system(size: theme.theme.bodyText.size), for: .body)
-                      .lineSpacing(theme.theme.linespacing)
-                      .selectionDisabled(!selectable)
+                    Markdown(MarkdownUtil.replaceURLsWithWinstonAppScheme(body))
+                      .markdownTheme(.winstonMarkdown(fontSize: theme.theme.bodyText.size, lineSpacing: theme.theme.linespacing, textSelection: selectable))
                   }
                 }
                 .fontSize(theme.theme.bodyText.size, theme.theme.bodyText.weight.t)

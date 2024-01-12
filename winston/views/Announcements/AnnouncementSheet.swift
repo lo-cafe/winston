@@ -7,7 +7,7 @@
 
 import SwiftUI
 import Defaults
-import MarkdownView
+import MarkdownUI
 
 struct AnnouncementSheet: View {
   var announcement: Announcement?
@@ -27,8 +27,8 @@ struct AnnouncementSheet: View {
             
             Section {
               let text = MarkdownUtil.replaceURLsWithWinstonAppScheme(announcement.description ?? "")
-              MarkdownView(text: text.isEmpty ? "Announcement without description." : text)
-                .font(.system(size: 16), for: .body)
+              Markdown(text.isEmpty ? "Announcement without description." : text)
+                .markdownTheme(.winstonMarkdown(fontSize: 16))
             }
             .padding(.top)
             

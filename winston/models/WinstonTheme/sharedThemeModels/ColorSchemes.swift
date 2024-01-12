@@ -38,7 +38,7 @@ extension ColorSchemes<ThemeColor> {
   
   func color(brighter: Bool = false, brighterRatio: Double = 0.11) -> Color {
     let systemBrighter = brighter ? getSystemBrighterColor(self.dark.hex) : nil
-    return Color(light: self.light.color(), dark: systemBrighter ?? self.dark.color().lighten(brighter ? brighterRatio : 0))
+    return Color(uiColor: self.uiColor(brighter: brighter, brighterRatio: brighterRatio))
   }
   
   func uiColor(brighter: Bool = false, brighterRatio: Double = 0.11) -> UIColor {

@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-import MarkdownView
+import MarkdownUI
 
 struct SubredditRulesTab: View {
   @ObservedObject var subreddit: Subreddit
@@ -46,8 +46,8 @@ struct SubredditRulesTab: View {
                     .fontSize(22, .bold)
                   
                   let text = MarkdownUtil.replaceURLsWithWinstonAppScheme(rule.description ?? "")
-                  MarkdownView(text: text.isEmpty ? "Rule without description." : text)
-                    .font(.system(size: 16), for: .body)
+                  Markdown(text.isEmpty ? "Rule without description." : text)
+                    .markdownTheme(.winstonMarkdown(fontSize: 16))
                 }
               }
               .multilineTextAlignment(.leading)
