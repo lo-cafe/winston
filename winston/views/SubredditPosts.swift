@@ -48,7 +48,8 @@ struct SubredditPosts: View, Equatable {
   @Environment(\.useTheme) private var selectedTheme
 //  @Environment(\.colorScheme) private var cs
   @Environment(\.contentWidth) private var contentWidth
-  
+  @Environment(\.horizontalSizeClass) private var hSizeClass
+	
   @Default(.SubredditFeedDefSettings) var subredditFeedDefSettings
   
   let context = PersistenceController.shared.container.newBackgroundContext()
@@ -205,7 +206,7 @@ struct SubredditPosts: View, Equatable {
         Group {
           let filteredPosts = getFilteredPosts(posts: posts.data)
           
-          if IPAD {
+          if IPAD && hSizeClass == .regular {
             SubredditPostsIPAD(showSub: isFeedsAndSuch, lastPostAfter: lastPostAfter, subreddit: subreddit, filters: filters, posts: filteredPosts, filter: filter, filterCallback: filterCallback, searchText: searchText, searchCallback: searchCallback, editCustomFilter: editCustomFilter, fetch: fetch, selectedTheme: selectedTheme, loading: loading, reachedEndOfFeed: $reachedEndOfFeed)
           } else {
             SubredditPostsIOS(showSub: isFeedsAndSuch, lastPostAfter: lastPostAfter, subreddit: subreddit, filters: filters, posts: filteredPosts, filter: filter, filterCallback: filterCallback, searchText: searchText, searchCallback: searchCallback, editCustomFilter: editCustomFilter, fetch: fetch, selectedTheme: selectedTheme, loading: loading, reachedEndOfFeed: $reachedEndOfFeed)
