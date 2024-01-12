@@ -17,7 +17,7 @@ extension Theme {
       }
       .paragraph { configuration in
         configuration.label
-          .relativeLineSpacing(.em(lineSpacing))
+          .lineSpacing(lineSpacing)
           .fontSize(fontSize)
           .textSelection(WinstonTextSelectability(allowsSelection: textSelection))
       }

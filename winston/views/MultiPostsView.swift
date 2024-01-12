@@ -29,6 +29,7 @@ struct MultiPostsView: View {
   @Environment(\.useTheme) private var selectedTheme
   @Environment(\.contentWidth) private var contentWidth
 //  @Environment(\.colorScheme) private var cs
+	@Environment(\.horizontalSizeClass) private var hSizeClass
   @Default(.SubredditFeedDefSettings) var subredditFeedDefSettings
   
   func searchCallback(str: String?) {
@@ -90,7 +91,7 @@ struct MultiPostsView: View {
   
   var body: some View {
     Group {
-      if IPAD {
+      if IPAD && hSizeClass == .regular {
         SubredditPostsIPAD(showSub: true, lastPostAfter: lastPostAfter, filters: [], posts: posts.data, filter: filter, filterCallback: filterCallback, searchText: searchText, searchCallback: searchCallback, editCustomFilter: editCustomFilter, fetch: fetch, selectedTheme: selectedTheme, loading: loading, reachedEndOfFeed: $reachedEndOfFeed)
       } else {
         SubredditPostsIOS(showSub: true, lastPostAfter: lastPostAfter, filters: [], posts: posts.data, filter: filter, filterCallback: filterCallback, searchText: searchText, searchCallback: searchCallback, editCustomFilter: editCustomFilter, fetch: fetch, selectedTheme: selectedTheme, loading: loading, reachedEndOfFeed: $reachedEndOfFeed)
