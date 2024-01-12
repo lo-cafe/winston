@@ -144,7 +144,7 @@ struct FloatingFeedMenu: View, Equatable {
               
               Image(systemName: compact ? "doc.text.image" : "doc.plaintext")
                 .fontSize(22, .bold)
-                .frame(width: 48, height: 48)
+                .frame(width: actionsSize, height: actionsSize)
                 .foregroundColor(Color.accentColor)
                 .floating()
                 .transition(.comeFrom(.bottom, index: 0, total: 2))
@@ -155,7 +155,7 @@ struct FloatingFeedMenu: View, Equatable {
               
               Image(systemName: "plus")
                 .fontSize(22, .bold)
-                .frame(width: 48, height: 48)
+                .frame(width: actionsSize, height: actionsSize)
                 .foregroundColor(Color.accentColor)
                 .floating()
                 .transition(.comeFrom(.bottom, index: 0, total: 2))

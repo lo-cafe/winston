@@ -82,7 +82,7 @@ struct FilterButton: View, Equatable {
       
       if val && filter.type != "flair" {
         editTimer = Timer.scheduledTimer(withTimeInterval: longPressDuration, repeats: false) { _ in
-          UIImpactFeedbackGenerator(style: .rigid).impactOccurred()
+          Hap.shared.play(intensity: 0.75, sharpness: 0.9)
           customFilterCallback(filter)
         }
       } else {
