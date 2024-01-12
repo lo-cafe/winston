@@ -17,12 +17,15 @@ struct FilterButton: View, Equatable {
   var filterCallback: ((String) -> ())
   var searchText: String
   var searchCallback: ((String?) -> ())
+  var customFilterCallback: ((FilterData) -> ())
   let colorDotSize: Double = 8
   let hPadding: Double = 14
   let height: Double = 32
+ let longPressDuration: Double = 0.275
   
 //  @GestureState private var pressingDown = false
   @State private var pressingDown = false
+  @State private var editTimer: Timer? = nil
   
   var body: some View {
     let isSelected = filter.type == "search" ? searchText.lowercased() == filter.text.lowercased() : isSelected
@@ -76,6 +79,15 @@ struct FilterButton: View, Equatable {
     }
     .onLongPressGesture(minimumDuration: .infinity, maximumDistance: 10, perform: {}, onPressingChanged: { val in
       pressingDown = val
+      
+      if val && filter.type != "flair" {
+        editTimer = Timer.scheduledTimer(withTimeInterval: longPressDuration, repeats: false) { _ in
+          Hap.shared.play(intensity: 0.75, sharpness: 0.9)
+          customFilterCallback(filter)
+        }
+      } else {
+        editTimer?.invalidate()
+      }
     })
   }
 }

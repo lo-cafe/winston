@@ -35,6 +35,7 @@ struct SubredditPostsIPAD: View, Equatable {
   @Environment(\.contentWidth) var contentWidth
   
   @Default(.PostLinkDefSettings) private var postLinkDefSettings
+  @Default(.SubredditFeedDefSettings) private var feedDefSettings
 	
 	func loadMorePosts() {
 		if !searchText.isEmpty {
@@ -84,7 +85,7 @@ struct SubredditPostsIPAD: View, Equatable {
         contentForData: { post, i in
           Group {
             if let sub = subreddit ?? post.winstonData?.subreddit, let winstonData = post.winstonData {
-              PostLink(id: post.id, theme: selectedTheme.postLinks, showSub: showSub, contentWidth: contentWidth, defSettings: postLinkDefSettings)
+              PostLink(id: post.id, theme: selectedTheme.postLinks, showSub: showSub, compactPerSubreddit: feedDefSettings.compactPerSubreddit[sub.id], contentWidth: contentWidth, defSettings: postLinkDefSettings)
 //              .swipyRev(size: winstonData.postDimensions.size, actionsSet: postLinkDefSettings.swipeActions, entity: post)
               .environmentObject(post)
               .environmentObject(sub)
@@ -130,7 +131,7 @@ struct SubredditPostsIPAD: View, Equatable {
 						.id(UUID())
 				}
     }
-		.floatingMenu(filters: filters, selected: filter, filterCallback: filterCallback, searchText: searchText, searchCallback: searchCallback)
+    .floatingMenu(subId: subreddit?.id ?? "", filters: filters, selected: filter, filterCallback: filterCallback, searchText: searchText, searchCallback: searchCallback, customFilterCallback: editCustomFilter)
 		.navigationBarTitleDisplayMode(.inline)
   }
 }

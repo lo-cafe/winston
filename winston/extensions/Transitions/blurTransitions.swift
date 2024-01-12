@@ -83,8 +83,12 @@ extension AnyTransition {
       identity: BlurAndSlideH(isActive: true, left: false)
     )
   }
-  static var scaleAndBlur: AnyTransition { AnyTransition(.blurReplace) }
-  
+  static var scaleAndBlur: AnyTransition {
+    .modifier(
+      active: ScaleAndBlurEffect(isActive: false),
+      identity: ScaleAndBlurEffect(isActive: true)
+    )
+  }
   static var fadeBlur: AnyTransition {
     .modifier(
       active: BlurAndFadeEffect(isActive: false),

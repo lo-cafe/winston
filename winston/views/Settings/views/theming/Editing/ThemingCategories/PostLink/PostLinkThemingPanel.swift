@@ -48,7 +48,7 @@ struct PostLinkThemingPanel: View {
       
       VStack {
         if let winstonData = previewPostSample.winstonData {
-          PostLink(id: previewPostSample.id, theme: theme.postLinks, showSub: true, secondary: false, contentWidth: contentWidth, defSettings: postLinkDefSettings)
+          PostLink(id: previewPostSample.id, theme: theme.postLinks, showSub: true, secondary: false, compactPerSubreddit: nil, contentWidth: contentWidth, defSettings: postLinkDefSettings)
 //          .equatable()
           .environmentObject(previewPostSample)
           .environmentObject(previewPostSubSample)
