@@ -11,7 +11,7 @@ struct CommentSkipper: ViewModifier {
   @Binding var showJumpToNextCommentButton: Bool
   @Binding var topVisibleCommentId: String?
   @Binding var previousScrollTarget: String?
-  @Binding var comments: ObservableArray<Comment>
+  var comments: ObservableArray<Comment>
   var reader: ScrollViewProxy
   
   func body(content: Content) -> some View {
@@ -70,7 +70,7 @@ extension View {
     showJumpToNextCommentButton: Binding<Bool>,
     topVisibleCommentId: Binding<String?>,
     previousScrollTarget: Binding<String?>,
-    comments: Binding<ObservableArray<Comment>>,
+    comments: ObservableArray<Comment>,
 
     reader: ScrollViewProxy
   ) -> some View {

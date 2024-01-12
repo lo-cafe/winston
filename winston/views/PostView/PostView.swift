@@ -30,7 +30,7 @@ struct PostView: View, Equatable {
   
   @State private var topVisibleCommentId: String? = nil
   @State private var previousScrollTarget: String? = nil
-  @State private var comments = ObservableArray<Comment>()
+  @StateObject private var comments = ObservableArray<Comment>()
 
   init(post: Post, subreddit: Subreddit, forceCollapse: Bool = false, highlightID: String? = nil) {
     self.post = post
@@ -93,7 +93,7 @@ struct PostView: View, Equatable {
             .listRowBackground(Color.clear)
             
             if !hideElements {
-              PostReplies(update: update, post: post, subreddit: subreddit, ignoreSpecificComment: ignoreSpecificComment, highlightID: highlightID, sort: sort, proxy: proxy, geometryReader: geometryReader, topVisibleCommentId: $topVisibleCommentId, previousScrollTarget: $previousScrollTarget, comments: $comments)
+              PostReplies(update: update, post: post, subreddit: subreddit, ignoreSpecificComment: ignoreSpecificComment, highlightID: highlightID, sort: sort, proxy: proxy, geometryReader: geometryReader, topVisibleCommentId: $topVisibleCommentId, previousScrollTarget: $previousScrollTarget, comments: comments)
             }
             
             if !ignoreSpecificComment && highlightID != nil {
@@ -141,11 +141,6 @@ struct PostView: View, Equatable {
         .onChange(of: sort) { val in
           updatePost()
         }
-        //      .onChange(of: cs) { _ in
-        //        Task(priority: .background) {
-        //          post.setupWinstonData(data: post.data, winstonData: post.winstonData, theme: selectedTheme, fetchAvatar: false)
-        //        }
-        //      }
         .onAppear {
           doThisAfter(0.5) {
             hideElements = false
@@ -178,7 +173,7 @@ struct PostView: View, Equatable {
         .commentSkipper(showJumpToNextCommentButton: $commentsSectionDefSettings.commentSkipper,
                         topVisibleCommentId: $topVisibleCommentId,
                         previousScrollTarget: $previousScrollTarget,
-                        comments: $comments,
+                        comments: comments,
                         reader: proxy)
       }
     }
