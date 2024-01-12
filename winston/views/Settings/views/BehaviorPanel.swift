@@ -197,6 +197,7 @@ struct BehaviorPanel: View {
           }
           
           Toggle("Collapse AutoModerator comments", isOn: $commentsSectionDefSettings.collapseAutoModerator)
+          Toggle("Comment skipper button", isOn: $commentsSectionDefSettings.commentSkipper)
           Toggle("Save comment sort per post", isOn: $postPageDefSettings.perPostSort)
         }
         

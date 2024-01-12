@@ -16,11 +16,15 @@ struct PostReplies: View {
   var highlightID: String?
   var sort: CommentSortOption
   var proxy: ScrollViewProxy
+  var geometryReader: GeometryProxy
   @Environment(\.useTheme) private var selectedTheme
   
-  @StateObject private var comments = ObservableArray<Comment>()
   @State private var loading = true
   @State var seenComments : String?
+  
+  @Binding var topVisibleCommentId: String?
+  @Binding var previousScrollTarget: String?
+  @Binding var comments: ObservableArray<Comment>
   
   @Environment(\.globalLoaderDismiss) private var globalLoaderDismiss
   
@@ -35,6 +39,7 @@ struct PostReplies: View {
           comments.data = newComments
           loading = false
         }
+
         if var specificID = highlightID {
           specificID = specificID.hasPrefix("t1_") ? String(specificID.dropFirst(3)) : specificID
           doThisAfter(0.1) {
@@ -76,8 +81,13 @@ struct PostReplies: View {
             
             if let commentWinstonData = comment.winstonData {
               CommentLink(highlightID: ignoreSpecificComment ? nil : highlightID, post: post, subreddit: subreddit, postFullname: postFullname, seenComments: seenComments, parentElement: .post(comments), comment: comment, commentWinstonData: commentWinstonData, children: comment.childrenWinston)
+                .if(commentsData.firstIndex(of: comment) != nil) { view in
+                  view.anchorPreference(
+                    key: CommentUtils.AnchorsKey.self,
+                    value: .center
+                  ) { [comment.id: $0] }
+                }
             }
-            //                .equatable()
             
             Spacer()
               .frame(maxWidth: .infinity, minHeight: theme.theme.cornerRadius * 2, maxHeight: theme.theme.cornerRadius * 2, alignment: .top)
@@ -124,6 +134,7 @@ struct PostReplies: View {
         .listRowBackground(Color.clear)
         .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
       }
+      
       if loading {
         ProgressView()
           .progressViewStyle(.circular)
@@ -139,7 +150,7 @@ struct PostReplies: View {
           }
           .id("loading-comments")
       } else if commentsData.count == 0 {
-        Text("No comments around...")
+        Text(QuirkyMessageUtil.noCommentsFoundMessage())
           .frame(maxWidth: .infinity, minHeight: 300)
           .opacity(0.25)
           .listRowBackground(Color.clear)
