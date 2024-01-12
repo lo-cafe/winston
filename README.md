@@ -19,6 +19,7 @@ Step into Winston's embracing world! Winston is an elegant, open-source, native 
 ## 🛠️ How to Install
 
 At the moment, Winston hasn't made its grand appearance on the App Store. But worry not! Here's how you can get your hands on Winston:
+*Please note, Winston's minimum version is now iOS 17.*
 
 1. **TestFlight**: Take part in Winston's journey by joining our TestFlight [here](https://testflight.apple.com/join/3UF8bAUN). Be aware that this could be full or unavailable due to TestFlight's occasional downtimes.
 
