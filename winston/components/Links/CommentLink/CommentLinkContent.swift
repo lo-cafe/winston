@@ -110,6 +110,21 @@ struct CommentLinkContent: View {
                 .transition(.scale.combined(with: .opacity))
             }
             
+            if selectable {
+              HStack(spacing: 2) {
+                Circle()
+                  .fill(.white)
+                  .frame(width: 8, height: 8)
+                Text("SELECTING")
+              }
+              .fontSize(13, .medium)
+              .foregroundColor(.white)
+              .padding(.horizontal, 6)
+              .padding(.vertical, 1)
+              .background(.orange, in: Capsule(style: .continuous))
+              .onTapGesture { withAnimation { comment.data?.winstonSelecting = false } }
+            }
+            
             if let ups = data.ups {
               HStack(alignment: .center, spacing: 4) {
                 Image(systemName: "arrow.up")
