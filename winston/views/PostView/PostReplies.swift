@@ -62,7 +62,7 @@ struct PostReplies: View {
     let theme = selectedTheme.comments
     let horPad = theme.theme.outerHPadding
     Group {
-      let commentsData = comments.data
+      var commentsData = comments.data
       let postFullname = post.data?.name ?? ""
       Group {
         ForEach(Array(commentsData.enumerated()), id: \.element.id) { i, comment in
