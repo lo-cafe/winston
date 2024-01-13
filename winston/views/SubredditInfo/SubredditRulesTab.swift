@@ -45,7 +45,7 @@ struct SubredditRulesTab: View {
                   Text(rule.short_name ?? "Unamed rule")
                     .fontSize(22, .bold)
                   
-                  let text = MarkdownUtil.replaceURLsWithWinstonAppScheme(rule.description ?? "")
+                  let text = MarkdownUtil.formatForMarkdown(rule.description ?? "")
                   Markdown(text.isEmpty ? "Rule without description." : text)
                     .markdownTheme(.winstonMarkdown(fontSize: 16))
                 }
