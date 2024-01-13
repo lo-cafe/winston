@@ -148,10 +148,11 @@ struct FloatingFeedMenu: View, Equatable {
                 .foregroundColor(Color.accentColor)
                 .floating()
                 .transition(.comeFrom(.bottom, index: 0, total: 2))
-                .onTapGesture {
+                .increaseHitboxOf(actionsSize, by: 1.125, shape: Circle(), disable: menuOpen)
+                .highPriorityGesture(TapGesture().onEnded({
                   compact = !compact
                   subredditFeedDefSettings.compactPerSubreddit[self.subId] = compact
-                }
+                }))
               
               Image(systemName: "plus")
                 .fontSize(22, .bold)
@@ -159,9 +160,10 @@ struct FloatingFeedMenu: View, Equatable {
                 .foregroundColor(Color.accentColor)
                 .floating()
                 .transition(.comeFrom(.bottom, index: 0, total: 2))
-                .onTapGesture {
+                .increaseHitboxOf(actionsSize, by: 1.125, shape: Circle(), disable: menuOpen)
+                .highPriorityGesture(TapGesture().onEnded({
                   customFilterCallback(FilterData())
-                }
+                }))
             }
           }
           
