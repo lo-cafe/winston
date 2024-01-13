@@ -38,6 +38,13 @@ class MarkdownUtil {
       with: " [$2](winstonapp://$2) ",
       options: [.regularExpression, .caseInsensitive]
     )
+		
+		// Replace &#x200B; and &nbsp; with a space
+		processedText = processedText.replacingOccurrences(
+			of: "&amp;#x200B;|&amp;nbsp;",
+			with: " ",
+			options: [.regularExpression, .caseInsensitive]
+		)
     
     return processedText
   }
