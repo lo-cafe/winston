@@ -51,6 +51,7 @@ extension Theme {
         configuration.label
           .markdownTextStyle {
             FontSize(.em(0.85))
+						FontFamilyVariant(.monospaced)
           }
           .padding()
           .background(Color(.secondarySystemBackground))
@@ -58,6 +59,41 @@ extension Theme {
           .markdownMargin(top: .zero, bottom: .em(0.8))
           .textSelection(WinstonTextSelectability(allowsSelection: textSelection))
       }
+		  .blockquote { configuration in
+				configuration.label
+					.markdownTextStyle {
+						FontSize(.em(0.85))
+						FontFamilyVariant(.monospaced)
+					}
+					.padding()
+					.background(Color(.secondarySystemBackground))
+					.clipShape(RoundedRectangle(cornerRadius: 8))
+					.markdownMargin(top: .zero, bottom: .em(0.8))
+					.textSelection(WinstonTextSelectability(allowsSelection: textSelection))
+			}
+			.table { configuration in
+				ScrollView (.horizontal) {
+						configuration.label
+							.fixedSize(horizontal: false, vertical: true)
+							.markdownTableBackgroundStyle(
+								.alternatingRows(Color(.systemBackground), Color(.secondarySystemBackground))
+							)
+							.markdownMargin(top: 0, bottom: 16)
+					}
+					}
+					.tableCell { configuration in
+						configuration.label
+							.markdownTextStyle {
+								if configuration.row == 0 {
+									FontWeight(.semibold)
+								}
+								BackgroundColor(nil)
+							}
+							.fixedSize(horizontal: false, vertical: true)
+							.padding(.vertical, 6)
+							.padding(.horizontal, 13)
+							.relativeLineSpacing(.em(0.25))
+					}
     return theme
   }
 }
