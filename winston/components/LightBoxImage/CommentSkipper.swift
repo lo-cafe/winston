@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct CommentSkipper: ViewModifier {
+  @Environment(\.useTheme) private var selectedTheme
   @Binding var showJumpToNextCommentButton: Bool
   @Binding var topVisibleCommentId: String?
   @Binding var previousScrollTarget: String?
@@ -18,6 +19,11 @@ struct CommentSkipper: ViewModifier {
     content.overlay {
       if showJumpToNextCommentButton {
         HStack {
+        
+          if selectedTheme.posts.inlineFloatingPill {
+            Spacer()
+          }
+          
           VStack {
             Spacer()
             Button {
@@ -37,7 +43,9 @@ struct CommentSkipper: ViewModifier {
           }
           .padding()
           
-          Spacer()
+          if !selectedTheme.posts.inlineFloatingPill {
+            Spacer()
+          }
         }
       }
     }

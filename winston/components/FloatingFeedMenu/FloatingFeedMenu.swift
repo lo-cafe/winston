@@ -150,6 +150,7 @@ struct FloatingFeedMenu: View, Equatable {
                 .transition(.comeFrom(.bottom, index: 0, total: 2))
                 .increaseHitboxOf(actionsSize, by: 1.125, shape: Circle(), disable: menuOpen)
                 .highPriorityGesture(TapGesture().onEnded({
+                  Hap.shared.play(intensity: 0.75, sharpness: 0.9)
                   compact = !compact
                   subredditFeedDefSettings.compactPerSubreddit[self.subId] = compact
                 }))
@@ -162,6 +163,7 @@ struct FloatingFeedMenu: View, Equatable {
                 .transition(.comeFrom(.bottom, index: 0, total: 2))
                 .increaseHitboxOf(actionsSize, by: 1.125, shape: Circle(), disable: menuOpen)
                 .highPriorityGesture(TapGesture().onEnded({
+                  Hap.shared.play(intensity: 0.75, sharpness: 0.9)
                   customFilterCallback(FilterData())
                 }))
             }

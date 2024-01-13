@@ -213,6 +213,12 @@ struct VideoPlayerPost: View, Equatable {
         }
       
       NotificationCenter.default.addObserver(
+        forName: UIApplication.willResignActiveNotification,
+        object: nil, queue: nil) { notif in
+          sharedVideo.player.pause()
+        }
+
+      NotificationCenter.default.addObserver(
         forName: .AVPlayerItemFailedToPlayToEndTime,
         object: sharedVideo.player.currentItem,
         queue: nil) { notif in
@@ -238,6 +244,11 @@ struct VideoPlayerPost: View, Equatable {
         self,
         name: .AVPlayerItemDidPlayToEndTime,
         object: sharedVideo.player.currentItem)
+      
+      NotificationCenter.default.removeObserver(
+        self,
+        name: UIApplication.willResignActiveNotification,
+        object: nil)
       
       NotificationCenter.default.removeObserver(
         self,
