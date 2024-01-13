@@ -8,7 +8,12 @@
 import Foundation
 
 class MarkdownUtil {
-  static func formatForMarkdown(_ text: String) -> String {
+  static func containsSpoiler(_ text: String) -> Bool {
+    return text.contains("&gt;!") && text.contains("!&lt;") ||
+    text.contains(">!") && text.contains("!<")
+  }
+  
+  static func formatForMarkdown(_ text: String, showSpoiler: Bool = false) -> String {
     var processedText = text
     
     // Replace http:// or https:// in existing markdown links
@@ -48,23 +53,40 @@ class MarkdownUtil {
     
     processedText = processedText.replacingOccurrences(
       of: "&gt;",
-      with: ">",
-      options: []
+      with: ">"
     )
     
     processedText = processedText.replacingOccurrences(
       of: "&lt;",
-      with: "<",
-      options: []
+      with: "<"
     )
     
     processedText = processedText.replacingOccurrences(
       of: "&Hat;",
-      with: "^",
-      options: []
+      with: "^"
     )
 
-    
+    if containsSpoiler(processedText) {
+      if showSpoiler {
+        processedText = processedText.replacingOccurrences(
+          of: ">!",
+          with: ""
+        )
+        
+        processedText = processedText.replacingOccurrences(
+          of: "!<",
+          with: ""
+        )
+      } else {
+        processedText = processedText.replacingOccurrences(
+          of: ">!(.*?)!<",
+          with: "■",
+          options: .regularExpression
+        )
+      }
+      
+    }
+        
     return processedText
   }
 }
