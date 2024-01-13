@@ -58,6 +58,7 @@ struct CommentLinkContent: View {
   @State private var offsetX: CGFloat = 0
   @State private var bodySize: CGSize = .zero
   @State private var highlight = false
+  @State private var showSpoiler = false
   @State private var commentSwipeActions: SwipeActionsSet = Defaults[.CommentLinkDefSettings].swipeActions
   
   @Default(.CommentLinkDefSettings) private var defSettings
@@ -224,8 +225,20 @@ struct CommentLinkContent: View {
                     Text(body.md())
                       .lineLimit(lineLimit)
                   } else {
-                    Markdown(MarkdownUtil.formatForMarkdown(body))
-                      .markdownTheme(.winstonMarkdown(fontSize: theme.theme.bodyText.size, lineSpacing: theme.theme.linespacing, textSelection: selectable))
+                    HStack {
+                      Markdown(MarkdownUtil.formatForMarkdown(body, showSpoiler: showSpoiler))
+                        .markdownTheme(.winstonMarkdown(fontSize: theme.theme.bodyText.size, lineSpacing: theme.theme.linespacing, textSelection: selectable))
+                      
+                      if MarkdownUtil.containsSpoiler(body) {
+                        Spacer()
+                        Image(systemName: showSpoiler ? "eye.slash.fill" : "eye.fill")
+                          .onTapGesture {
+                            withAnimation {
+                              showSpoiler = !showSpoiler
+                            }
+                          }
+                      }
+                    }
                   }
                 }
                 .fontSize(theme.theme.bodyText.size, theme.theme.bodyText.weight.t)
