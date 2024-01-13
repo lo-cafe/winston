@@ -59,18 +59,6 @@ extension Theme {
           .markdownMargin(top: .zero, bottom: .em(0.8))
           .textSelection(WinstonTextSelectability(allowsSelection: textSelection))
       }
-		  .blockquote { configuration in
-				configuration.label
-					.markdownTextStyle {
-						FontSize(.em(0.85))
-						FontFamilyVariant(.monospaced)
-					}
-					.padding()
-					.background(Color(.secondarySystemBackground))
-					.clipShape(RoundedRectangle(cornerRadius: 8))
-					.markdownMargin(top: .zero, bottom: .em(0.8))
-					.textSelection(WinstonTextSelectability(allowsSelection: textSelection))
-			}
 			.table { configuration in
 				ScrollView (.horizontal) {
 						configuration.label
@@ -94,6 +82,17 @@ extension Theme {
 							.padding(.horizontal, 13)
 							.relativeLineSpacing(.em(0.25))
 					}
+     .blockquote { configuration in
+       HStack(spacing: 0) {
+         RoundedRectangle(cornerRadius: 6)
+           .fill(Color(rgba: 0x4244_4eff))
+           .relativeFrame(width: .em(0.2))
+         configuration.label
+           .markdownTextStyle { ForegroundColor(Color(rgba: 0x9294_a0ff)) }
+           .relativePadding(.horizontal, length: .em(1))
+       }
+       .fixedSize(horizontal: false, vertical: true)
+      }
     return theme
   }
 }

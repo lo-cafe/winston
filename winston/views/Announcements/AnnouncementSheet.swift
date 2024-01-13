@@ -26,7 +26,7 @@ struct AnnouncementSheet: View {
             Divider()
             
             Section {
-              let text = MarkdownUtil.replaceURLsWithWinstonAppScheme(announcement.description ?? "")
+              let text = MarkdownUtil.formatForMarkdown(announcement.description ?? "")
               Markdown(text.isEmpty ? "Announcement without description." : text)
                 .markdownTheme(.winstonMarkdown(fontSize: 16))
             }

@@ -8,7 +8,7 @@
 import Foundation
 
 class MarkdownUtil {
-  static func replaceURLsWithWinstonAppScheme(_ text: String) -> String {
+  static func formatForMarkdown(_ text: String) -> String {
     var processedText = text
     
     // Replace http:// or https:// in existing markdown links
@@ -45,6 +45,25 @@ class MarkdownUtil {
 			with: " ",
 			options: [.regularExpression, .caseInsensitive]
 		)
+    
+    processedText = processedText.replacingOccurrences(
+      of: "&gt;",
+      with: ">",
+      options: []
+    )
+    
+    processedText = processedText.replacingOccurrences(
+      of: "&lt;",
+      with: "<",
+      options: []
+    )
+    
+    processedText = processedText.replacingOccurrences(
+      of: "&Hat;",
+      with: "^",
+      options: []
+    )
+
     
     return processedText
   }
