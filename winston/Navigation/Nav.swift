@@ -55,7 +55,7 @@ class Nav: ObservableObject, Identifiable, Equatable {
   var id: UUID
   @Published var activeTab: TabIdentifier {
     willSet {
-      if activeTab != newValue { self.activeRouter.resetNavPath() }
+      if activeTab == newValue { self.activeRouter.resetNavPath() }
     }
   }
   private var routers: [TabIdentifier:Router]
@@ -99,7 +99,7 @@ class Nav: ObservableObject, Identifiable, Equatable {
   
   func navigateTo(_ tab: TabIdentifier, _ dest: Router.NavDest, _ reset: Bool = true) {
     routers[tab]?.navigateTo(dest, reset)
-    activeTab = tab
+    if tab != activeTab {	activeTab = tab }
   }
   
   func resetStack() { activeRouter.resetNavPath() }
