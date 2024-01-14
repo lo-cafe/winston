@@ -42,7 +42,13 @@ struct AboutPanel: View {
           WListButton {
             openURL(URL(string: "https://discord.gg/Jw3Syb3nrz")!)
           } label: {
-            Label("Join the Discord Server", systemImage: "person.3.fill").foregroundStyle(Color.accentColor)
+            Label {
+              Text("Join the Discord Server")
+            } icon: {
+              Image(.discordLogo)
+                .resizable()
+                .scaledToFit()
+            }
           }
           
           WListButton {

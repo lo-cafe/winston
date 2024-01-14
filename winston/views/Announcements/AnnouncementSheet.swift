@@ -7,6 +7,7 @@
 
 import SwiftUI
 import Defaults
+import MarkdownUI
 
 struct AnnouncementSheet: View {
   var announcement: Announcement?
@@ -25,7 +26,9 @@ struct AnnouncementSheet: View {
             Divider()
             
             Section {
-              MD(.str(announcement.description ?? ""))
+              let text = MarkdownUtil.formatForMarkdown(announcement.description ?? "")
+              Markdown(text.isEmpty ? "Announcement without description." : text)
+                .markdownTheme(.winstonMarkdown(fontSize: 16))
             }
             .padding(.top)
             

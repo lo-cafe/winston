@@ -8,6 +8,7 @@
 import SwiftUI
 import Defaults
 import SwiftUIIntrospect
+import MarkdownUI
 
 class Sizer: ObservableObject {
   @Published var size: CGSize = .zero
@@ -57,6 +58,7 @@ struct CommentLinkContent: View {
   @State private var offsetX: CGFloat = 0
   @State private var bodySize: CGSize = .zero
   @State private var highlight = false
+  @State private var showSpoiler = false
   @State private var commentSwipeActions: SwipeActionsSet = Defaults[.CommentLinkDefSettings].swipeActions
   
   @Default(.CommentLinkDefSettings) private var defSettings
@@ -223,16 +225,20 @@ struct CommentLinkContent: View {
                     Text(body.md())
                       .lineLimit(lineLimit)
                   } else {
-                    MD2(winstonData.bodyAttr == nil ? .str(body) : .nsAttr(winstonData.bodyAttr!), fontSize: theme.theme.bodyText.size, onTap: { if !selectable { withAnimation(spring) { comment.toggleCollapsed(optimistic: true) } } })
-                      .frame(width: winstonData.commentBodySize.width, height: winstonData.commentBodySize.height, alignment: .topLeading)
-                      .fixedSize()
-                      .overlay(
-                        !selectable
-                        ? nil
-                        : TextViewWrapper(attributedText: NSAttributedString(body.md()), maxLayoutWidth: sizer.size.width)
-                          .frame(width: sizer.size.width, height: sizer.size.height, alignment: .topLeading)
-                          .background(Rectangle().fill(theme.theme.bg()))
-                      )
+                    HStack {
+                      Markdown(MarkdownUtil.formatForMarkdown(body, showSpoiler: showSpoiler))
+                        .markdownTheme(.winstonMarkdown(fontSize: theme.theme.bodyText.size, lineSpacing: theme.theme.linespacing, textSelection: selectable))
+                      
+                      if MarkdownUtil.containsSpoiler(body) {
+                        Spacer()
+                        Image(systemName: showSpoiler ? "eye.slash.fill" : "eye.fill")
+                          .onTapGesture {
+                            withAnimation {
+                              showSpoiler = !showSpoiler
+                            }
+                          }
+                      }
+                    }
                   }
                 }
                 .fontSize(theme.theme.bodyText.size, theme.theme.bodyText.weight.t)
@@ -243,18 +249,11 @@ struct CommentLinkContent: View {
               .swipyUI(
                 offsetYAction: -15,
                 controlledDragAmount: $offsetX,
-                // onTap: { if !selectable { withAnimation(spring) { comment.toggleCollapsed(optimistic: true) } } },
+                onTap: { if !selectable { withAnimation(spring) { comment.toggleCollapsed(optimistic: true) } } },
                 actionsSet: commentSwipeActions,
                 entity: comment,
                 skipAnimation: true
               )
-              .onChange(of: theme) { newTheme in
-                let encoder = JSONEncoder()
-                if let jsonData = try? encoder.encode(stringToAttr(body, fontSize: newTheme.theme.bodyText.size)) {
-                  let json = String(decoding: jsonData, as: UTF8.self)
-                  comment.data?.winstonBodyAttrEncoded = json
-                }
-              }
               .frame(maxWidth: .infinity, alignment: .topLeading)
               .padding(.top, theme.theme.bodyAuthorSpacing)
               .padding(.bottom, max(0, theme.theme.innerPadding.vertical + (data.depth == 0 && comment.childrenWinston.data.count == 0 ? -theme.theme.cornerRadius : theme.theme.innerPadding.vertical)))

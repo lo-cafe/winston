@@ -98,12 +98,13 @@ extension RedditAPI {
           //          let userInfoKey = ImageRequest.UserInfoKey()
           //          ImageProcessing
           let thumbOpt = ImageRequest.ThumbnailOptions(size: .init(width: avatarSize, height: avatarSize), unit: .points, contentMode: .aspectFill)
-          let req = ImageRequest(url: url, priority: .veryHigh, userInfo: [.thumbnailKey: thumbOpt])
+          let req = ImageRequest(url: url, processors: [ImageProcessors.ScaleFixer()], priority: .veryHigh, userInfo: [.thumbnailKey: thumbOpt])
           reqs.append(req)
           return req
         }
         return nil
       }
+
       Post.prefetcher.startPrefetching(with: reqs)
       return newDict.merging(returnDict) { x, _ in x }
     }

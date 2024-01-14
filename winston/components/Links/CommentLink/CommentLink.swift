@@ -84,8 +84,7 @@ struct CommentLink: View, Equatable {
   @ObservedObject var comment: Comment
   @ObservedObject var commentWinstonData: CommentWinstonData
   @ObservedObject var children: ObservableArray<Comment>
-  //  @State var collapsed = false
-  
+
   var body: some View {
     if let data = comment.data {
       let collapsed = data.collapsed ?? false

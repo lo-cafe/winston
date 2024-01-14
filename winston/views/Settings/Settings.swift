@@ -13,7 +13,7 @@ import WhatsNewKit
 struct Settings: View {
   @ObservedObject var router: Router
   @Environment(\.openURL) private var openURL
-  @Default(.likedButNotSubbed) var likedButNotSubbed
+//  @Default(.likedButNotSubbed) var likedButNotSubbed
   @Environment(\.useTheme) private var selectedTheme
   @State private var id = UUID().uuidString
   
@@ -55,7 +55,7 @@ struct Settings: View {
               Label {
                 Text("Tip jar")
               } icon: {
-                Image("jar")
+                Image(.jar)
                   .resizable()
                   .scaledToFit()
               }
@@ -73,7 +73,7 @@ struct Settings: View {
       .themedListBG(selectedTheme.lists.bg)
       .scrollContentBackground(.hidden)
       .navigationTitle("Settings")
-      .injectInTabDestinations()
+      .injectInTabDestinations(viewControllerHolder: router.navController)
     }
   }
 }

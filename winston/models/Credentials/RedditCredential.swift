@@ -22,7 +22,21 @@ struct RedditCredential: Identifiable, Equatable, Hashable, Codable {
   var refreshToken: String? = nil
   var userName: String? = nil
   var profilePicture: String? = nil
-  var isAuthorized: Bool { refreshToken != nil }
+  func isInKeychain() -> Bool { RedditCredentialsManager.shared.credentials.contains { $0.id == self.id } }
+  var validationStatus: CredentialValidationState {
+    var newRedditAPIPairState: CredentialValidationState = .empty
+    
+    if self.apiAppID.count == 22 && self.apiAppSecret.count == 30 {
+      newRedditAPIPairState = .valid
+    } else if self.apiAppID.count > 10 && self.apiAppSecret.count > 20 {
+      newRedditAPIPairState = .maybeValid
+    } else if self.apiAppID.count > 0 || self.apiAppSecret.count > 0 {
+      newRedditAPIPairState = .invalid
+    }
+    
+    guard self.refreshToken != nil else { return newRedditAPIPairState }
+    return .authorized
+  }
   
   init(apiAppID: String = "", apiAppSecret: String = "", accessToken: String? = nil, refreshToken: String? = nil, expiration: Int? = nil, lastRefresh: Date? = nil, userName: String? = nil, profilePicture: String? = nil) {
     self.id = UUID()
@@ -77,7 +91,6 @@ struct RedditCredential: Identifiable, Equatable, Hashable, Codable {
   
   func getUpToDateToken(forceRenew: Bool = false, saveToken: Bool = true) async -> AccessToken? {
     guard let refreshToken = self.refreshToken, !apiAppID.isEmpty && !apiAppSecret.isEmpty else { return nil }
-//    print(refreshToken, forceRenew, self.accessToken)
     if !forceRenew, let accessToken = self.accessToken {
       let lastRefresh = Double(accessToken.lastRefresh.timeIntervalSince1970)
       let expiration = Double(max(0, accessToken.expiration - 100))
@@ -131,10 +144,29 @@ struct RedditCredential: Identifiable, Equatable, Hashable, Codable {
       }
     }
   }
-  
+    
   struct AccessToken: Equatable, Hashable, Codable {
     let token: String
     let expiration: Int
     let lastRefresh: Date
+  }
+  
+  enum CredentialValidationState: String {
+    case authorized, valid, invalid, maybeValid, empty
+    
+    func getMeta() -> Meta {
+        return switch self {
+        case .authorized: .init(color: .green, lottieIcon: "thumbup", label: "Perfect", description: "This means you can use this account normally.")
+        case .maybeValid, .valid: .init(color: .orange, lottieIcon: "warning-appear", label: "Unauthorized", description: "This means you need to allow your credentials to access your account.")
+        case .empty, .invalid: .init(color: .red, lottieIcon: "thumbdown", label: "Invalid", description: "This means that you credential info is wrong.")
+        }
+      }
+    
+    struct Meta: Equatable {
+      let color: Color
+      let lottieIcon: String
+      let label: String
+      let description: String
+    }
   }
 }

@@ -17,7 +17,6 @@ struct ThemedForegroundBG: View, Equatable {
   var shiny: Gradient? = nil
   var shape: any Shape = Rectangle()
   var shadowStyle: ShadowStyle? = nil
-  @Environment(\.brighterBG) private var brighter
   var body: some View {
     ThemedForegroundRawBG(shape: Rectangle(), theme: theme, active: active, pressed: pressed, shiny: shiny, shadowStyle: shadowStyle)
   }
@@ -38,20 +37,21 @@ struct ThemedForegroundRawBG<S: Shape>: View, Equatable {
   var body: some View {
     let isActive = active && IPAD
     Group {
-      if shiny == nil {
-        Group {
-          if let shadowStyle {
-            shape
-              .fill(.bar.opacity(theme.blurry ? 1 : 0).shadow(shadowStyle)).allowsHitTesting(false)
-          } else {
-            shape
-              .fill(.bar.opacity(theme.blurry ? 1 : 0))
+      ZStack {
+        if shiny == nil {
+          Group {
+            if let shadowStyle {
+              shape
+                .fill(.bar.opacity(theme.blurry ? 1 : 0).shadow(shadowStyle)).allowsHitTesting(false)
+            } else {
+              shape
+                .fill(.bar.opacity(theme.blurry ? 1 : 0))
+            }
           }
+          .overlay(shape.fill(isActive ? .accentColor : theme.color(brighter: !theme.blurry && brighter, brighterRatio: 0.075)))
+        } else {
+          Rectangle().winstonShiny(shiny)
         }
-        .overlay(shape.fill(isActive ? .accentColor : theme.color()))
-        .brightness(!theme.blurry && brighter ? 0.075 : 0)
-      } else {
-        Rectangle().winstonShiny(shiny)
       }
     }
     .overlay(shape.fill(isActive ? Color.accentColor : .primary.opacity(pressed || (!IPAD && active) ? 0.1 : 0)).brightness(brighter ? 0.075 : 0).animation(.default.speed(2), value: active))

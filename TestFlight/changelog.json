@@ -1,76 +1,36 @@
 {
   "title": "What's new in Winston",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "features": [
     {
-      "subtitle": "Easily switch between accounts with the new Account Switcher.",
+      "subtitle": "Tables, spoilers, and quotes are now supported.",
+      "systemImage": "square.and.line.vertical.and.square",
+      "title": "Markdown Overhaul"
+    },
+    {
+      "subtitle": null,
+      "systemImage": "arrow.right.circle",
+      "title": "Comment Skipper Button"
+    },
+    {
+      "subtitle": "Drag the page as you drag your finger for a seamless experience.",
       "systemImage": "arrow.triangle.branch",
-      "title": "Account Switcher"
+      "title": "Apollo Style 'Navigation Anywhere'"
     },
     {
-      "subtitle": "Benefit from a refined UI, especially in compact mode.",
-      "systemImage": "rectangle.3.group",
-      "title": "UI Tweaks"
-    },
-    {
-      "subtitle": "Receive important announcements with reduced API spam.",
-      "systemImage": "megaphone",
-      "title": "Announcements and Spam Reduction"
-    },
-    {
-      "subtitle": "Enjoy improved appearance settings and framework for upsells.",
-      "systemImage": "paintbrush",
-      "title": "Improved Appearance Settings"
-    },
-    {
-      "subtitle": "Cache preview models and shared videos for faster loading.",
-      "systemImage": "square.and.arrow.up",
-      "title": "Caching Optimization"
-    },
-    {
-      "subtitle": "Experience Winston Everywhere as a React app.",
-      "systemImage": "arrow.triangle.branch",
-      "title": "Reformulated Winston Everywhere"
-    },
-    {
-      "subtitle": "Witness a smooth credential transition effect.",
-      "systemImage": "arrow.right.square",
-      "title": "Credential Transition Effect"
-    },
-    {
-      "subtitle": "Customize your experience with custom filters and Core Data support.",
+      "subtitle": "Easily find posts that contain specific text with custom filters.",
       "systemImage": "slider.horizontal.3",
-      "title": "Custom Filters and Core Data Support"
+      "title": "Custom Filters"
     },
     {
-      "subtitle": "Switch between accounts seamlessly with the first version of Switch Accounts.",
-      "systemImage": "arrow.triangle.branch",
-      "title": "Switch Accounts"
+      "subtitle": "Enjoy a refined UI, especially in compact mode, tailored for each subreddit.",
+      "systemImage": "rectangle.3.group",
+      "title": "Compact Mode per Subreddit"
     },
     {
-      "subtitle": "Toggle audio changes with the new behavior option.",
-      "systemImage": "speaker.3",
-      "title": "Audio Behavior Toggle"
-    },
-    {
-      "subtitle": "Organize default settings into user-friendly categories.",
-      "systemImage": "list.bullet.rectangle",
-      "title": "Grouped Defaults"
-    },
-    {
-      "subtitle": "Collapse comments effortlessly with a new swipe action.",
-      "systemImage": "text.bubble",
-      "title": "Collapse Comments Swipe Action"
-    },
-    {
-      "subtitle": "Experience finished flairs animation.",
-      "systemImage": "sparkles",
-      "title": "Finished Flairs Animation"
-    },
-    {
-      "subtitle": "Open old.reddit links directly inside the app.",
-      "systemImage": "arrow.right.square",
-      "title": "Open old.reddit Links"
+      "subtitle": null,
+      "systemImage": "wrench.and.screwdriver",
+      "title": "Misc. Bug Fixes and Performance Improvements"
     }
   ]
 }

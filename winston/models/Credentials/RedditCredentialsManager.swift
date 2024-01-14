@@ -20,7 +20,7 @@ class RedditCredentialsManager: ObservableObject {
   static let keychainServiceString = "lo.cafe.winston.reddit-multi-credentials"
   static let keychain = Keychain(service: RedditCredentialsManager.keychainServiceString).synchronizable(Defaults[.BehaviorDefSettings].iCloudSyncCredentials)
   @Published private(set) var credentials: [RedditCredential] = []
-  var validCredentials: [RedditCredential] { credentials.filter { $0.isAuthorized } }
+  var validCredentials: [RedditCredential] { credentials.filter { $0.validationStatus == .authorized } }
   var cancelables: [Defaults.Observation] = []
     
   var selectedCredential: RedditCredential? {
@@ -97,6 +97,10 @@ class RedditCredentialsManager: ObservableObject {
   
   func saveCred(_ cred: RedditCredential, forceCreate: Bool = true) {
     DispatchQueue.main.async {
+      if Defaults[.GeneralDefSettings].onboardingState != .dismissed {
+        Defaults[.GeneralDefSettings].onboardingState = .dismissed
+        Nav.shared.presentingSheetsQueue = Nav.shared.presentingSheetsQueue.filter { $0 != .onboarding }
+      }
       if let i = self.credentials.firstIndex(where: { $0.id == cred.id }) {
         self.credentials[i] = cred
       } else if forceCreate {

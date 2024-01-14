@@ -40,7 +40,7 @@
       transform: scale(1);
       transition-timing-function: ease;
       transition-property: opacity, background-color, transform;
-      will-change: transform, background-color, ;
+      will-change: transform, background-color;
 
       // @include keyframes(gradient) {
       //   0% {

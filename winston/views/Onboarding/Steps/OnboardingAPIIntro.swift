@@ -57,7 +57,9 @@ struct OnboardingAPIIntro: View {
           Feature(icon: "eye.slash.fill", title: "Safe and private", description: "The key is **only** stored in your iCloud keychain, we can't read it.")
         }
         
-        MasterButton(label: "Ok then, guide me", colorHoverEffect: .animated, textSize: 18, height: 48, fullWidth: true, cornerRadius: 16, action: nextStep)
+        MasterButton(label: "Ok then, guide me", colorHoverEffect: .animated, textSize: 18, height: 48, fullWidth: true, cornerRadius: 16, action: {
+          Nav.present(.editingCredential(.init()))
+        })
           .padding(.top, 32)
       }
       .padding(.top, 64)

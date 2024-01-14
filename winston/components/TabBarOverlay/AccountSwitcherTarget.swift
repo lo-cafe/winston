@@ -51,7 +51,7 @@ struct AccountSwitcherTarget: View, Equatable {
   private let distanceMaxSelectedVibrating: Double = 100
   private let verticalOffset = -50.0
   private let textSpace = (AccountSwitcherTarget.fontSize * 1.2) + AccountSwitcherTarget.vStackSpacing
-  private var isAddBtn: Bool { !cred.isAuthorized }
+  private var isAddBtn: Bool { cred.validationStatus != .authorized }
   private var isSelected: Bool { !isAddBtn && Defaults[.GeneralDefSettings].redditCredentialSelectedID == cred.id }
   private var radiusX: Double { (containerSize.width / 2) }
   private var radiusY: Double { (containerSize.height / 2) }
@@ -99,7 +99,7 @@ struct AccountSwitcherTarget: View, Equatable {
       }
     }
     .frame(Self.size - (Self.strokeWidth * 2))
-    .mask(Circle().fill(.black))
+    .clipShape(Circle())
     .overlay(
       !isAddBtn
       ? nil
@@ -158,10 +158,11 @@ struct AccountSwitcherTarget: View, Equatable {
     .vibrate(.continuous(sharpness: hovered ? 0 : interpolateVibration([0.3, 0], false), intensity: hovered ? 0 : interpolateVibration([0.3, 0], false)), trigger: isSelected && !hovered ? distance : 0, disabled: !appear)
     .vibrate(.transient(sharpness: !isSelected && !hovered ? 1.0 : 0, intensity: isSelected && hovered ? 0 : 1.0), trigger: hovered, disabled: !appear)
     .onChange(of: hovered) {
-      if transmitter.selectedCred == nil && $0 { transmitter.selectedCred = cred }
-      else if transmitter.selectedCred == cred && !$0 { transmitter.selectedCred = nil }
+      if !isSelected {
+        if transmitter.selectedCred == nil && $0 { transmitter.selectedCred = cred }
+        else if transmitter.selectedCred == cred && !$0 { transmitter.selectedCred = nil }
+      } else if $0 { jump += 1 }
     }
-    .onChange(of: hovered) { if $0 && isSelected { jump += 1 } }
     .transition(.identity)
   }
 }

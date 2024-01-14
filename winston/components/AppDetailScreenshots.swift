@@ -20,42 +20,25 @@ public struct AppDetailScreenshots: View {
   
   
   public var body: some View {
-    if #available(iOS 17.0, *) {
-      ScrollView(.horizontal, showsIndicators: false) {
-        HStack(spacing: 10){
-          ForEach(screenshots, id:\.self){ screenshot in
-            URLImage(url: URL(string: screenshot)!)
-              .clipShape(RoundedRectangle(cornerSize: CGSize(width: 15, height: 15)))
-              .scaledToFit()
-              .frame(maxHeight: AppDetailScreenshots.maxHeight)
-          }
+    ScrollView(.horizontal, showsIndicators: false) {
+      HStack(spacing: 10){
+        ForEach(screenshots, id:\.self){ screenshot in
+          URLImage(url: URL(string: screenshot)!)
+            .clipShape(RoundedRectangle(cornerSize: CGSize(width: 15, height: 15)))
+            .scaledToFit()
+            .frame(maxHeight: AppDetailScreenshots.maxHeight)
         }
-        .padding(.horizontal)
-        .scrollViewContentRTLFriendly()
       }
-      .frame(height: galleryHeight)
-      .scrollViewRTLFriendly()
-      .scrollTargetBehavior(.paging)
-    } else {
-      ScrollView(.horizontal, showsIndicators: false) {
-        HStack(spacing: 10){
-          ForEach(screenshots, id:\.self){ screenshot in
-            URLImage(url: URL(string: screenshot)!)
-              .clipShape(RoundedRectangle(cornerSize: CGSize(width: 15, height: 15)))
-              .scaledToFit()
-              .frame(maxHeight: AppDetailScreenshots.maxHeight)
-          }
-        }
-        .padding(.horizontal)
-        .scrollViewContentRTLFriendly()
-      }
-      .frame(height: galleryHeight)
-      .scrollViewRTLFriendly()
+      .padding(.horizontal)
+      .scrollViewContentRTLFriendly()
     }
+    .frame(height: galleryHeight)
+    .scrollViewRTLFriendly()
+    .scrollTargetBehavior(.paging)
   }
   
   private var galleryHeight: CGFloat {
-     Self.maxHeight
+    Self.maxHeight
   }
 }
 

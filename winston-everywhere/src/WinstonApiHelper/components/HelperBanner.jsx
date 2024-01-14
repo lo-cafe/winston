@@ -5,7 +5,7 @@ import { CgClose } from "@react-icons/all-files/cg/CgClose"
 
 import getCredentials from "../domInteraction/getCredentials"
 import fillWinstonApp from "../domInteraction/fillWinstonApp"
-import zoomRecaptcha from "../domInteraction/zoomRecaptcha"
+import zoomRecaptcha, { unzoomRecaptcha } from "../domInteraction/zoomRecaptcha"
 import submitCreateAppForm from "../domInteraction/submitCreateAppForm"
 import selectCredential from "../utils/selectCredential"
 import makeCredentialFromNode from "../utils/makeCredentialFromNode"
@@ -43,7 +43,9 @@ const HelperBanner = () => {
   const [showCredentials, setShowCredentials] = useState(false)
   const [dimBG, setDimBG] = useState(false)
   const [title, setTitle] = useState("Hey!")
-  const [description, setDescription] = useState("I noticed you're generating an API. I can help with that!")
+  const [description, setDescription] = useState(
+    "I noticed you're generating an API key. I can help with that!"
+  )
   const [arrowPointingUp, setArrowPointingUp] = useState(null)
   const [buttons, setButtons] = useState(null)
   const [positionBanner, setPositionBanner] = useState({ bottom: "-100%" })
@@ -83,7 +85,7 @@ const HelperBanner = () => {
     if (showHelperOnBottom) {
       setPositionBanner({ top: `${recaptchaScaledTop + scaledHeight - 24}px` })
     } else {
-      setPositionBanner({ bottom: `${recaptchaBottomHeight + 24}px` })
+      setPositionBanner({ bottom: `${recaptchaBottomHeight + scaledHeight + 24}px` })
     }
   }
 
@@ -145,10 +147,17 @@ const HelperBanner = () => {
 
   function dismiss() {
     if (confirm("Are you sure you want to dismiss Winston API keys assistant?")) {
+      unzoomRecaptcha()
       setIsWatchingCreds(false)
       setIsWatchingGCaptcha(false)
       setDimBG(false)
       setPositionBanner({ bottom: "-100%" })
+      setTimeout(() => {
+        const winstonBanner = document.querySelector("#winston-api-helper-react-container")
+        if (winstonBanner) {
+          winstonBanner.remove()
+        }
+      }, 500)
     }
   }
 
@@ -282,12 +291,4 @@ const HelperBanner = () => {
 }
 
 export default HelperBanner
-
-
-
-
-
-
-
-
 

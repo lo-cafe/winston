@@ -9,7 +9,47 @@ import Foundation
 import SwiftUI
 import Combine
 
-class Router: ObservableObject, Hashable, Equatable, Codable {
+class ViewControllerHolder {
+  let globalGesture: UIPanGestureRecognizer
+  let tabBarGesture: UIPanGestureRecognizer
+  var controller: UIViewController? {
+    didSet {
+      controller?.navigationController?.addFullSwipeGesture(globalGesture)
+      controller?.navigationController?.addFullSwipeGesture(tabBarGesture)
+    }
+  }
+  
+  init(routerID: String) {
+    let gesture = UIPanGestureRecognizer()
+    gesture.name = "swipe-anywhere-gesture:router-\(routerID)"
+    gesture.isEnabled = true
+    gesture.cancelsTouchesInView = false
+    let tabBarGesture = UIPanGestureRecognizer()
+    tabBarGesture.name = "swipe-tabbar-gesture:router-\(routerID)"
+    tabBarGesture.isEnabled = true
+    tabBarGesture.cancelsTouchesInView = false
+    self.globalGesture = gesture
+    self.tabBarGesture = tabBarGesture
+  }
+  
+  var isGestureEnabled: Bool {
+    get { globalGesture.isEnabled }
+    set { globalGesture.isEnabled = newValue }
+  }
+  
+  func addGestureToViews() {
+    removeGestureFromViews();
+    controller?.navigationController?.view.addGestureRecognizer(globalGesture)
+  }
+  
+  func removeGestureFromViews() {
+    if let existingGesture = controller?.navigationController?.view.gestureRecognizers?.first(where: { $0.name == (globalGesture.name ?? "none") }) {
+      controller?.navigationController?.view.removeGestureRecognizer(existingGesture)
+    }
+  }
+}
+
+class Router: ObservableObject, Hashable, Equatable, Identifiable {
   let id: String
   
   var firstSelected: NavDest? {
@@ -26,12 +66,18 @@ class Router: ObservableObject, Hashable, Equatable, Codable {
       if fullPath.isEmpty { self.fullPath = newValue } else { self.fullPath = [fullPath[0]] + newValue }
     }
   }
-  @Published private(set) var isAtRoot = false
+  @Published private(set) var isAtRoot = false {
+    willSet {
+      self.navController.isGestureEnabled = !newValue
+    }
+  }
+  var navController: ViewControllerHolder
   
   private var cancellables = Set<AnyCancellable>()
   
   init(id: String) {
     self.id = id
+    self.navController = ViewControllerHolder(routerID: id)
     $fullPath.map { $0.isEmpty }.assign(to: \.isAtRoot, on: self).store(in: &cancellables)
   }
   
@@ -79,21 +125,6 @@ class Router: ObservableObject, Hashable, Equatable, Codable {
     case id, firstSelected, path
   }
   
-  func encode(to encoder: Encoder) throws {
-    var container = encoder.container(keyedBy: CodingKeys.self)
-    try container.encode(id, forKey: .id)
-    try container.encodeIfPresent(firstSelected, forKey: .firstSelected)
-    try container.encode(path, forKey: .path)
-  }
-  
-  required init(from decoder: Decoder) throws {
-    let container = try decoder.container(keyedBy: CodingKeys.self)
-    self.id = try container.decode(String.self, forKey: .id)
-    self.firstSelected = try container.decodeIfPresent(NavDest.self, forKey: .firstSelected)
-    self.path = try container.decode([NavDest].self, forKey: .path)
-    self.isAtRoot = self.firstSelected == nil && self.path.count == 0
-  }
-  
   static func == (lhs: Router, rhs: Router) -> Bool {
     lhs.id == rhs.id
   }
@@ -103,4 +134,12 @@ class Router: ObservableObject, Hashable, Equatable, Codable {
     hasher.combine(firstSelected)
     hasher.combine(path)
   }
+}
+
+extension UINavigationController {
+    func addFullSwipeGesture(_ gesture: UIPanGestureRecognizer) {
+        guard let gestureSelector = interactivePopGestureRecognizer?.value(forKey: "targets") else { return }
+        
+        gesture.setValue(gestureSelector, forKey: "targets")
+    }
 }

@@ -23,17 +23,13 @@ struct OnlyURL: View {
     .padding(.horizontal, 6)
     .padding(.vertical, 2)
     .frame(maxHeight: OnlyURL.height)
-    .background(Capsule(style: .continuous).fill(Color.accentColor.opacity(0.2)))
+    .background(Capsule(style: .continuous).fill(Color.accentColor.opacity(0.3)))
     .fontSize(15, .medium)
     .lineLimit(1)
     .foregroundColor(.white)
     .highPriorityGesture(TapGesture().onEnded {
       if let newURL = URL(string: url.absoluteString.replacingOccurrences(of: "https://reddit.com/", with: "winstonapp://")) {
-        if behaviorDefSettings.openLinksInSafari {
-					openURL(newURL)
-				} else {
-					Nav.openURL(newURL)
-				}
+        Nav.openURL(newURL)
       }
     })
   }
@@ -69,7 +65,6 @@ struct MediaPresenter: View, Equatable {
             .nsfw(over18 && blurPostLinkNSFW, smallIcon: compact, size: postDimensions.mediaSize)
         } else {
           ImageMediaPost(postDimensions: $postDimensions, controller: controller, postTitle: postTitle, badgeKit: badgeKit, avatarImageRequest: avatarImageRequest, markAsSeen: markAsSeen, cornerRadius: cornerRadius, compact: compact, images: imgsExtracted, contentWidth: contentWidth, maxMediaHeightScreenPercentage: maxMediaHeightScreenPercentage)
-            .drawingGroup()
             .nsfw(over18 && blurPostLinkNSFW, smallIcon: compact, size: postDimensions.mediaSize)
           
         }

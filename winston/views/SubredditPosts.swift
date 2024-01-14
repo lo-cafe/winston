@@ -48,7 +48,8 @@ struct SubredditPosts: View, Equatable {
   @Environment(\.useTheme) private var selectedTheme
 //  @Environment(\.colorScheme) private var cs
   @Environment(\.contentWidth) private var contentWidth
-  
+  @Environment(\.horizontalSizeClass) private var hSizeClass
+	
   @Default(.SubredditFeedDefSettings) var subredditFeedDefSettings
   
   let context = PersistenceController.shared.container.newBackgroundContext()
@@ -109,6 +110,25 @@ struct SubredditPosts: View, Equatable {
       await subreddit.refreshSubreddit()
     }
     
+    if (searchText == nil || searchText!.isEmpty) && !loadMore && !forceRefresh && !unfilteredPosts.data.isEmpty {
+      posts.data = unfilteredPosts.data
+      lastPostAfter = unfilteredLastPostAfter
+      reachedEndOfFeed = unfilteredreachedEndOfFeed
+      return
+    }
+    
+    if posts.data.count > 0 && lastPostAfter == nil && !force {
+      reachedEndOfFeed = true
+      return
+    }
+  
+    if !loadMore && !subreddit.id.starts(with: "t5") {
+      // Remove filters from home/all/popular so it only shows filters for current posts
+      Task(priority: .userInitiated) {
+        subreddit.resetFlairs()
+      }
+    }
+    
     withAnimation {
       loading = true
     }
@@ -121,15 +141,28 @@ struct SubredditPosts: View, Equatable {
           
           if loadMore {
             posts.data.append(contentsOf: newPostsFiltered)
+//            posts.data.append(contentsOf: newPosts)
           } else {
             posts.data = newPostsFiltered
+//            posts.data = newPosts
           }
           
           newPostsFiltered.forEach { loadedPosts.insert($0.id) }
           
           loading = false
           lastPostAfter = result.1
-          reachedEndOfFeed = newPostsFiltered.count == 0
+          
+//        reachedEndOfFeed = newPostsFiltered.count == 0
+          
+          Task(priority: .background) {
+            self.subreddit.loadFlairs( { loaded in
+              DispatchQueue.main.async {
+                withAnimation {
+                  filters = loaded
+                }
+              }
+            })
+          }
                     
           // Save posts if no searchText
           if searchText == nil || searchText!.isEmpty {
@@ -177,7 +210,7 @@ struct SubredditPosts: View, Equatable {
   
   func clearAndLoadData(withSearchText searchText: String? = nil, forceRefresh: Bool = false) {
     withAnimation {
-      posts.data.removeAll()
+//      posts.data.removeAll()
       loadedPosts.removeAll()
       reachedEndOfFeed = false
       
@@ -203,7 +236,7 @@ struct SubredditPosts: View, Equatable {
         Group {
           let filteredPosts = getFilteredPosts(posts: posts.data)
           
-          if IPAD {
+          if IPAD && hSizeClass == .regular {
             SubredditPostsIPAD(showSub: isFeedsAndSuch, lastPostAfter: lastPostAfter, subreddit: subreddit, filters: filters, posts: filteredPosts, filter: filter, filterCallback: filterCallback, searchText: searchText, searchCallback: searchCallback, editCustomFilter: editCustomFilter, fetch: fetch, selectedTheme: selectedTheme, loading: loading, reachedEndOfFeed: $reachedEndOfFeed)
           } else {
             SubredditPostsIOS(showSub: isFeedsAndSuch, lastPostAfter: lastPostAfter, subreddit: subreddit, filters: filters, posts: filteredPosts, filter: filter, filterCallback: filterCallback, searchText: searchText, searchCallback: searchCallback, editCustomFilter: editCustomFilter, fetch: fetch, selectedTheme: selectedTheme, loading: loading, reachedEndOfFeed: $reachedEndOfFeed)
@@ -212,7 +245,7 @@ struct SubredditPosts: View, Equatable {
         .searchable(text: $searchText, prompt: "Search r/\(subreddit.data?.display_name ?? subreddit.id)")
       } else {
         if let savedMixedMediaLinks = savedMixedMediaLinks, let user = redditAPI.me {
-          MixedContentFeedView(mixedMediaLinks: savedMixedMediaLinks, loadNextData: $loadNextSavedData, user: user, reachedEndOfFeed: $reachedEndOfFeed)
+          MixedContentFeedView(mixedMediaLinks: savedMixedMediaLinks, loadNextData: $loadNextSavedData, user: user, subreddit: subreddit, reachedEndOfFeed: $reachedEndOfFeed)
             .onChange(of: loadNextSavedData) { shouldLoad in
               if shouldLoad {
                 fetch(shouldLoad)

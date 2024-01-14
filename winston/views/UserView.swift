@@ -166,12 +166,39 @@ struct UserView: View {
           
           if let lastActivities = lastActivities {
             ForEach(Array(lastActivities.enumerated()), id: \.element) { i, item in
-              MixedContentLink(content: item, theme: selectedTheme.postLinks)
-                .onAppear {
-                  if(lastActivities.count - 7 == i) {
-                    getNextData()
-                  }
+              let isComment: Bool = {
+                switch item {
+                case .second: // is comment
+                  return true
+                default:
+                  return false
                 }
+              }()
+                
+              Group {
+                MixedContentLink(content: item, theme: selectedTheme.postLinks)
+                  .onAppear {
+                    if(lastActivities.count - 7 == i) {
+                      getNextData()
+                    }
+                  }
+                  .allowsHitTesting(!isComment)
+              }
+              .contentShape(Rectangle())
+              .onTapGesture {
+                guard isComment else {
+                  return
+                }
+                
+                switch item {
+                case .second(let comment):
+                  if let data = comment.data, let link_id = data.link_id, let subID = data.subreddit {
+                    Nav.to(.reddit(.postHighlighted(Post(id: link_id, subID: subID), comment.id)))
+                  }
+                default:
+                  return
+                }
+              }
               
               if selectedTheme.postLinks.divider.style != .no && i != (lastActivities.count - 1) {
                 NiceDivider(divider: selectedTheme.postLinks.divider)

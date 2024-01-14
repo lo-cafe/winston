@@ -24,7 +24,7 @@ struct MixedContentLink: View, Equatable {
     switch content {
     case .first(let post):
       if let winstonData = post.winstonData, let postSub = winstonData.subreddit {
-        PostLink(id: post.id, theme: theme, showSub: true, contentWidth: contentWidth, defSettings: postLinkDefSettings)
+        PostLink(id: post.id, theme: theme, showSub: true, compactPerSubreddit: nil, contentWidth: contentWidth, defSettings: postLinkDefSettings)
         .environmentObject(post)
         .environmentObject(postSub)
         .environmentObject(winstonData)
@@ -32,13 +32,11 @@ struct MixedContentLink: View, Equatable {
     case .second(let comment):
       VStack {
         ShortCommentPostLink(comment: comment)
+          .padding()
         if let commentWinstonData = comment.winstonData {
-          CommentLink(lineLimit: 3, showReplies: false, comment: comment, commentWinstonData: commentWinstonData, children: comment.childrenWinston)
+          CommentLink(showReplies: false, comment: comment, commentWinstonData: commentWinstonData, children: comment.childrenWinston)
         }
       }
-      .padding(.horizontal, 12)
-      .padding(.top, 12)
-      .padding(.bottom, 10)
       .background(PostLinkBG(theme: theme, stickied: false, secondary: false).equatable())
       .mask(RR(theme.theme.cornerRadius, Color.black).equatable())
     }

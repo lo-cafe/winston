@@ -20,6 +20,7 @@ struct PostView: View, Equatable {
   var forceCollapse: Bool
   var highlightID: String?
   @Default(.PostPageDefSettings) private var defSettings
+  @Default(.CommentsSectionDefSettings) var commentsSectionDefSettings
   @Environment(\.useTheme) private var selectedTheme
   @Environment(\.globalLoaderStart) private var globalLoaderStart
   @State private var ignoreSpecificComment = false
@@ -27,6 +28,10 @@ struct PostView: View, Equatable {
   @State private var sort: CommentSortOption
   @State private var update = false
   
+  @State private var topVisibleCommentId: String? = nil
+  @State private var previousScrollTarget: String? = nil
+  @StateObject private var comments = ObservableArray<Comment>()
+
   init(post: Post, subreddit: Subreddit, forceCollapse: Bool = false, highlightID: String? = nil) {
     self.post = post
     self.subreddit = subreddit
@@ -61,107 +66,117 @@ struct PostView: View, Equatable {
   }
   
   var body: some View {
-    var navtitle: String = post.data?.title.escape ?? "no title"
-    var subnavtitle: String = "r/\(post.data?.subreddit ?? "no sub") \u{2022} " + String(localized:"\(post.data?.num_comments ?? 0) comments")
+    let navtitle: String = post.data?.title.escape ?? "no title"
+    let subnavtitle: String = "r/\(post.data?.subreddit ?? "no sub") \u{2022} " + String(localized:"\(post.data?.num_comments ?? 0) comments")
     let commentsHPad = selectedTheme.comments.theme.outerHPadding > 0 ? selectedTheme.comments.theme.outerHPadding : selectedTheme.comments.theme.innerPadding.horizontal
-    ScrollViewReader { proxy in
-      List {
-        Group {
-          Section {
-            if let winstonData = post.winstonData {
-              PostContent(post: post, winstonData: winstonData, sub: subreddit, forceCollapse: forceCollapse)
-            }
-            //              .equatable()
-            
-            if selectedTheme.posts.inlineFloatingPill {
-              PostFloatingPill(post: post, subreddit: subreddit, showUpVoteRatio: defSettings.showUpVoteRatio)
-                    .padding(-10)
-            }
-            
-            Text("Comments")
-              .fontSize(20, .bold)
-              .frame(maxWidth: .infinity, alignment: .leading)
-              .id("comments-header")
-              .listRowInsets(EdgeInsets(top: selectedTheme.posts.commentsDistance / 2, leading:commentsHPad, bottom: 8, trailing: commentsHPad))
-          }
-          .listRowBackground(Color.clear)
-          
-          if !hideElements {
-            PostReplies(update: update, post: post, subreddit: subreddit, ignoreSpecificComment: ignoreSpecificComment, highlightID: highlightID, sort: sort, proxy: proxy)
-          }
-          
-          if !ignoreSpecificComment && highlightID != nil {
+    GeometryReader { geometryReader in
+      ScrollViewReader { proxy in
+        List {
+          Group {
             Section {
-              Button {
-                globalLoaderStart("Loading full post...")
-                withAnimation {
-                  ignoreSpecificComment = true
-                }
-              } label: {
-                HStack {
-                  Image(systemName: "arrow.up.left.and.arrow.down.right")
-                  Text("View full conversation")
+              if let winstonData = post.winstonData {
+                PostContent(post: post, winstonData: winstonData, sub: subreddit, forceCollapse: forceCollapse)
+              }
+              //              .equatable()
+              
+              if selectedTheme.posts.inlineFloatingPill {
+                PostFloatingPill(post: post, subreddit: subreddit, showUpVoteRatio: defSettings.showUpVoteRatio)
+                  .padding(-10)
+              }
+              
+              Text("Comments")
+                .fontSize(20, .bold)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .id("comments-header")
+                .listRowInsets(EdgeInsets(top: selectedTheme.posts.commentsDistance / 2, leading:commentsHPad, bottom: 8, trailing: commentsHPad))
+            }
+            .listRowBackground(Color.clear)
+            
+            if !hideElements {
+              PostReplies(update: update, post: post, subreddit: subreddit, ignoreSpecificComment: ignoreSpecificComment, highlightID: highlightID, sort: sort, proxy: proxy, geometryReader: geometryReader, topVisibleCommentId: $topVisibleCommentId, previousScrollTarget: $previousScrollTarget, comments: comments)
+            }
+            
+            if !ignoreSpecificComment && highlightID != nil {
+              Section {
+                Button {
+                  globalLoaderStart("Loading full post...")
+                  withAnimation {
+                    ignoreSpecificComment = true
+                  }
+                } label: {
+                  HStack {
+                    Image(systemName: "arrow.up.left.and.arrow.down.right")
+                    Text("View full conversation")
+                  }
                 }
               }
+              .listRowBackground(Color.primary.opacity(0.1))
             }
-            .listRowBackground(Color.primary.opacity(0.1))
+            
+            Section {
+              Spacer()
+                .frame(maxWidth: .infinity, minHeight: 72)
+                .listRowBackground(Color.clear)
+                .id("end-spacer")
+            }
           }
-          
-          Section {
-            Spacer()
-              .frame(maxWidth: .infinity, minHeight: 72)
-              .listRowBackground(Color.clear)
-              .id("end-spacer")
+          .listRowSeparator(.hidden)
+        }
+        .scrollIndicators(.never)
+        .themedListBG(selectedTheme.posts.bg)
+        .transition(.opacity)
+        .environment(\.defaultMinListRowHeight, 1)
+        .listStyle(.plain)
+        .refreshable {
+          withAnimation { update.toggle() }
+          await asyncFetch(true)
+        }
+        .overlay(alignment: .bottomTrailing) {
+          if !selectedTheme.posts.inlineFloatingPill {
+            PostFloatingPill(post: post, subreddit: subreddit, showUpVoteRatio: defSettings.showUpVoteRatio)
           }
         }
-        .listRowSeparator(.hidden)
-      }
-      .scrollIndicators(.never)
-      .themedListBG(selectedTheme.posts.bg)
-      .transition(.opacity)
-      .environment(\.defaultMinListRowHeight, 1)
-      .listStyle(.plain)
-      .refreshable {
-        withAnimation { update.toggle() }
-        await asyncFetch(true)
-      }
-      .overlay(alignment: .bottomTrailing) {
-        if !selectedTheme.posts.inlineFloatingPill {
-          PostFloatingPill(post: post, subreddit: subreddit, showUpVoteRatio: defSettings.showUpVoteRatio)
-        }
-      }
-      .navigationBarTitle("\(navtitle)", displayMode: .inline)
-      .toolbar { Toolbar(title: navtitle, subtitle: subnavtitle, hideElements: hideElements, subreddit: subreddit, post: post, sort: $sort) }
-      .onChange(of: sort) { val in
-        updatePost()
-      }
-//      .onChange(of: cs) { _ in
-//        Task(priority: .background) {
-//          post.setupWinstonData(data: post.data, winstonData: post.winstonData, theme: selectedTheme, fetchAvatar: false)
-//        }
-//      }
-      .onAppear {
-        doThisAfter(0.5) {
-          hideElements = false
-        }
-        if post.data == nil {
+        .navigationBarTitle("\(navtitle)", displayMode: .inline)
+        .toolbar { Toolbar(title: navtitle, subtitle: subnavtitle, hideElements: hideElements, subreddit: subreddit, post: post, sort: $sort) }
+        .onChange(of: sort) { val in
           updatePost()
         }
-        
-        Task(priority: .background) {          
-          if let numComments = post.data?.num_comments {
-            await post.saveCommentsCount(numComments: numComments)
+        .onAppear {
+          doThisAfter(0.5) {
+            hideElements = false
+            doThisAfter(0.1) {
+              if highlightID != nil { withAnimation { proxy.scrollTo("loading-comments") } }
+            }
+          }
+          if post.data == nil {
+            updatePost()
+          }
+          
+          
+          Task(priority: .background) {
+            if let numComments = post.data?.num_comments {
+              await post.saveCommentsCount(numComments: numComments)
+            }
+          }
+          
+          Task(priority: .background) {
+            if subreddit.data == nil && subreddit.id != "home" {
+              await subreddit.refreshSubreddit()
+            }
           }
         }
-        
-        Task(priority: .background) {
-          if subreddit.data == nil && subreddit.id != "home" {
-            await subreddit.refreshSubreddit()
+        .onPreferenceChange(CommentUtils.AnchorsKey.self) { anchors in
+          DispatchQueue.main.async {
+            topVisibleCommentId = CommentUtils.shared.topCommentRow(of: anchors, in: geometryReader)
           }
         }
+        .commentSkipper(showJumpToNextCommentButton: $commentsSectionDefSettings.commentSkipper,
+                        topVisibleCommentId: $topVisibleCommentId,
+                        previousScrollTarget: $previousScrollTarget,
+                        comments: comments,
+                        reader: proxy)
       }
     }
-    
   }
 }
 

@@ -138,7 +138,7 @@ struct Search: View {
                 ForEach(resultPosts.data) { post in
                   if let winstonData = post.winstonData {
                     //                      SwipeRevolution(size: winstonData.postDimensions.size, actionsSet: postSwipeActions, entity: post) { controller in
-                    PostLink(id: post.id, theme: theme.postLinks, showSub: true, contentWidth: contentWidth, defSettings: postLinkDefSettings)
+                    PostLink(id: post.id, theme: theme.postLinks, showSub: true, compactPerSubreddit: nil, contentWidth: contentWidth, defSettings: postLinkDefSettings)
 //                    .swipyRev(size: winstonData.postDimensions.size, actionsSet: postSwipeActions, entity: post)
                     //                      }
                     .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
@@ -159,7 +159,7 @@ struct Search: View {
       .themedListBG(theme.lists.bg)
       .listStyle(.plain)
       .loader(loading, hideSpinner && !searchQuery.text.isEmpty)
-      .injectInTabDestinations()
+      .injectInTabDestinations(viewControllerHolder: router.navController)
       .scrollDismissesKeyboard(.automatic)
       .searchable(text: $searchQuery.text, placement: .toolbar)
       .autocorrectionDisabled(true)
@@ -183,6 +183,6 @@ struct Search: View {
         }
       }
     }
-    .swipeAnywhere()
+//    .swipeAnywhere()
   }
 }
