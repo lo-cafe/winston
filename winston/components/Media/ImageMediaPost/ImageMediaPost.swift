@@ -49,7 +49,7 @@ struct ImageMediaPost: View, Equatable {
 //    let maxMediaHeightScreenPercentage = 100.0
     let maxHeight: CGFloat = (maxMediaHeightScreenPercentage / 100) * (.screenH)
     VStack {
-      if images.count == 1 || compact {
+      if images.count == 1 || compact && images.count > 0 {
         let img = images[0]
         let sourceHeight = img.size.height
         let sourceWidth = img.size.width
