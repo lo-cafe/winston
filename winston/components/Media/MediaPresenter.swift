@@ -29,7 +29,7 @@ struct OnlyURL: View {
     .foregroundColor(.white)
     .highPriorityGesture(TapGesture().onEnded {
       if let newURL = URL(string: url.absoluteString.replacingOccurrences(of: "https://reddit.com/", with: "winstonapp://")) {
-        Nav.openURL(newURL)
+        openURL(newURL)
       }
     })
   }
