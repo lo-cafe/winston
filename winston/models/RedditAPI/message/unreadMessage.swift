@@ -11,7 +11,7 @@ import Alamofire
 extension RedditAPI {
   func unreadMessage(_ fullname: String) async -> Bool? {
     let params = UnreadMessagePayload(id: fullname)
-    switch await self.doRequest("\(RedditAPI.redditApiURLBase)/api/unread_message", method: .post, params: params) {
+    switch await self.doRequest("\(RedditAPI.redditApiURLBase)/api/unread_message?raw_json=1", method: .post, params: params) {
     case .success:
       return true
     case .failure:

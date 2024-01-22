@@ -11,7 +11,7 @@ import Alamofire
 extension RedditAPI {
   func vote(_ action: VoteAction, id: String) async -> Bool? {
     let params = VotePayload(dir: action.rawValue, id: id)
-    switch await self.doRequest("\(RedditAPI.redditApiURLBase)/api/vote", method: .post, params: params)  {
+    switch await self.doRequest("\(RedditAPI.redditApiURLBase)/api/vote?raw_json=1", method: .post, params: params)  {
     case .success:
       return true
     case .failure:

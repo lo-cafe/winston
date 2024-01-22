@@ -116,7 +116,7 @@ struct PostLinkNormal: View, Equatable, Identifiable {
         if defSettings.titlePosition == .bottom { mediaComponentCall() }
         
         VStack(alignment: .leading, spacing: theme.theme.verticalElementsSpacing / 2.5) {
-          PostLinkTitle(attrString: winstonData.titleAttr, label: data.title.escape, theme: theme.theme.titleText, size: winstonData.postDimensions.titleSize, nsfw: over18, flair: data.link_flair_text)
+          PostLinkTitle(attrString: winstonData.titleAttr, label: data.title, theme: theme.theme.titleText, size: winstonData.postDimensions.titleSize)
           
           if !data.selftext.isEmpty && defSettings.showSelfText {
             PostLinkNormalSelftext(selftext: data.selftext, theme: theme.theme.bodyText)

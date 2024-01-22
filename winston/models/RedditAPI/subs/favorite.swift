@@ -22,5 +22,6 @@ extension RedditAPI {
   struct FavoritePayload: Codable {
     var make_favorite: Bool
     var sr_name: String
+    var raw_json = 1
   }
 }

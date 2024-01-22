@@ -21,7 +21,7 @@ func createTitleTagsAttrString(titleTheme: ThemeText, postData: PostData, textCo
   let titleFont = UIFont.systemFont(ofSize: titleTheme.size, weight: titleTheme.weight.ut)
   let titleTagsImages = getTagsFromTitle(postData).compactMap { createTagImage(withTitle: $0.label, textColor: $0.textColor, backgroundColor: $0.bgColor, font: tagFont) }
   
-  let attrTitle = NSMutableAttributedString(string: postData.title.escape, attributes: [.font: titleFont, .foregroundColor: textColor])
+  let attrTitle = NSMutableAttributedString(string: postData.title, attributes: [.font: titleFont, .foregroundColor: textColor])
   
   titleTagsImages.forEach { img in
     let attach = NSTextAttachment(image: img)
@@ -72,7 +72,7 @@ func createTitleTagsAttrString(titleTheme: ThemeText, postData: PostData, textCo
   }
 }
 
-func buildTitleWithTags(attrString: NSAttributedString, title: String, tags: [PrependTag], fontSize: Double, fontWeight: UIFont.Weight, color: UIColor, size: CGSize) -> SwiftyLabel {
+func buildTitleWithTags(attrString: NSAttributedString, title: String, fontSize: Double, fontWeight: UIFont.Weight, color: UIColor, size: CGSize) -> SwiftyLabel {
   
 //  let text = UITextView(usingTextLayoutManager: false)
   let text = SwiftyLabel()
@@ -103,11 +103,10 @@ struct Prepend: UIViewRepresentable, Equatable {
   var fontSize: CGFloat
   var fontWeight: UIFont.Weight
   var color: UIColor
-  var tags: [PrependTag]
   var size: CGSize
   
   func makeUIView(context: Context) -> SwiftyLabel {
-    let view = buildTitleWithTags(attrString: attrString, title: title, tags: tags, fontSize: fontSize, fontWeight: fontWeight, color: color, size: size)
+    let view = buildTitleWithTags(attrString: attrString, title: title, fontSize: fontSize, fontWeight: fontWeight, color: color, size: size)
     return view
   }
   

@@ -46,5 +46,6 @@ extension RedditAPI {
     var typeahead_active = true
     var sr_detail = true
     var sort = "relevance"
+    var raw_json = 1
   }
 }

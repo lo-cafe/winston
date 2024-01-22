@@ -28,6 +28,7 @@ extension RedditAPI {
     var link_id: String
     var sort: String
     var id: String = ""
+    var raw_json = 1
   }
   
   struct MoreRepliesResponse: Codable {

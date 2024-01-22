@@ -11,21 +11,14 @@ struct PostLinkTitle: View, Equatable {
   static func == (lhs: PostLinkTitle, rhs: PostLinkTitle) -> Bool {
     lhs.label == rhs.label && lhs.size == rhs.size
   }
-  var attrString: NSAttributedString?
+  var attrString: NSAttributedString? = nil
   var label: String
   var theme: ThemeText
   var size: CGSize
-  var tags: [PrependTag] = []
   
-  init(attrString: NSAttributedString? = nil, label: String, theme: ThemeText, size: CGSize, nsfw: Bool = false, flair: String? = nil) {
-    self.label = label
-    self.theme = theme
-    self.size = size
-    self.attrString = attrString
-  }
   var body: some View {
     if let attrString = attrString {
-      Prepend(attrString: attrString, title: label, fontSize: theme.size, fontWeight: theme.weight.ut, color: theme.color.uiColor(), tags: tags, size: size)
+      Prepend(attrString: attrString, title: label, fontSize: theme.size, fontWeight: theme.weight.ut, color: theme.color.uiColor(), size: size)
         .frame(width: size.width, height: size.height, alignment: .topLeading)
         .fixedSize(horizontal: false, vertical: true)
     }

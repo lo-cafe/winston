@@ -36,15 +36,7 @@ class RedditAPI {
       }
     }
     
-    //    for (protectionSpace, credentials) in URLCredentialStorage.shared.allCredentials {
-    //        for (_, credential) in credentials {
-//          // Even though the values are not optionals, it seems to crash at some points if you don't do the check
-//          if URLCredentialStorage.shared != nil && credential != nil && protectionSpace != nil {
-//            URLCredentialStorage.shared.remove(credential, for: protectionSpace)
-//          }
-//        }
-//    }
-    HTTPCookieStorage.shared.cookies?.forEach(HTTPCookieStorage.shared.deleteCookie)    
+    HTTPCookieStorage.shared.cookies?.forEach(HTTPCookieStorage.shared.deleteCookie)
     
     return headers
   }
@@ -64,7 +56,7 @@ class RedditAPI {
   
   func doRequest<D: Decodable>(_ url: String, authenticated: Bool = true, method: HTTPMethod, decodable: D.Type, altCredential: RedditCredential? = nil, attempt: Int = 0, saveToken: Bool = true) async -> Result<D, AFError> {
     return await self._doRequest(authenticated: authenticated, altCredential: altCredential, saveToken: saveToken) { headers in
-      let req = AF.request(url, method: method, headers: headers, requestModifier: reqModifier).validate()
+      let req = AF.request(url, method: method, parameters: ["raw_json": 1], headers: headers, requestModifier: reqModifier).validate()
       return await req.serializingDecodable(decodable).response.result
     }
   }
@@ -78,14 +70,14 @@ class RedditAPI {
   
   func doRequest(_ url: String, authenticated: Bool = true, method: HTTPMethod, paramsLocation: URLEncodedFormParameterEncoder.Destination = .httpBody, altCredential: RedditCredential? = nil, attempt: Int = 0, saveToken: Bool = true) async -> Result<String, AFError> {
     return await self._doRequest(authenticated: authenticated, altCredential: altCredential, saveToken: saveToken) { headers in
-      let req = AF.request(url, method: method, headers: headers).validate()
+      let req = AF.request(url, method: method, parameters: ["raw_json": 1], headers: headers).validate()
       return await req.serializingString().result
     }
   }
   
   func _doRequest<D: Decodable>(attempt: Int = 0, forceAuth: Bool = false, authenticated: Bool = true, altCredential: RedditCredential? = nil, saveToken: Bool = true, req: (HTTPHeaders) async -> Result<D, AFError>) async -> Result<D, AFError> {
     guard let headers = await fetchRequestHeaders(force: forceAuth, includeAuth: authenticated, altCredential: altCredential, saveToken: saveToken) else { return .failure(.serverTrustEvaluationFailed(reason: .noPublicKeysFound)) }
-
+    
     let result = await req(headers)
     if case .failure(let error) = result {
       print(error)

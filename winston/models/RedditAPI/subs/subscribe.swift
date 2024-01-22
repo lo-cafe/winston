@@ -24,6 +24,7 @@ extension RedditAPI {
     var action_source = "o"
     var skip_initial_defaults = false
     var sr: String
+    var raw_json = 1
   }
   
   enum SubscribeAction: String, Codable {

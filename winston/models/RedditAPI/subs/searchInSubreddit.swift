@@ -34,6 +34,7 @@ extension RedditAPI {
     var sort: SearchInSubredditSort = .relevance
     var type: String = "sr,link,user"
     var category: String = ""
+    var raw_json = 1
   }
   
   enum SearchInSubredditSort: String, Codable {

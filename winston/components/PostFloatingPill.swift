@@ -25,7 +25,7 @@ struct PostFloatingPill: View {
   var body: some View {
     Group {
       if let data = post.data {
-        let permalink = "https://reddit.com\(data.permalink.escape.urlEncoded)"
+        let permalink = "https://reddit.com\(data.permalink.urlEncoded)"
         
         if !selectedTheme.posts.inlineFloatingPill {
           Group {

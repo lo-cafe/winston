@@ -32,7 +32,7 @@ struct PostInBoxLink: View {
         Text(postInBox.subredditName)
           .fontSize(13,.medium)
       }
-      Text(postInBox.title.escape)
+      Text(postInBox.title)
         .lineLimit(2)
         .fontSize(16, .semibold)
         .fixedSize(horizontal: false, vertical: true)

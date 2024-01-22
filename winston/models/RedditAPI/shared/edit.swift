@@ -11,7 +11,7 @@ import Alamofire
 extension RedditAPI {
   func edit(fullname: String, newText: String) async -> Bool? {
     let params = EditUserTextPayload(text: newText, thing_id: fullname)
-    switch await self.doRequest("\(RedditAPI.redditApiURLBase)/api/editusertext", method: .post, params: params)  {
+    switch await self.doRequest("\(RedditAPI.redditApiURLBase)/api/editusertext?raw_json=1", method: .post, params: params)  {
     case .success:
       return true
     case .failure:

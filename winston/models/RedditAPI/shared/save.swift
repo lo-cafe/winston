@@ -11,7 +11,7 @@ import Alamofire
 extension RedditAPI {
   func save(_ action: Bool, id: String) async -> Bool? {
     let params = SavePayload(id: id)
-    switch await self.doRequest("\(RedditAPI.redditApiURLBase)/api/\(action ? "save" : "unsave")", method: .post, params: params)  {
+    switch await self.doRequest("\(RedditAPI.redditApiURLBase)/api/\(action ? "save" : "unsave")?raw_json=1", method: .post, params: params)  {
     case .success:
       return true
     case .failure:

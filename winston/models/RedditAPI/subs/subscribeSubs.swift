@@ -25,6 +25,7 @@ extension RedditAPI {
     var action_source = "o"
     var skip_initial_defaults = true
     let sr_name: String
+    var raw_json = 1
     //    let uh: String
   }
   

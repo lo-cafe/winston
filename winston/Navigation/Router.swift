@@ -57,6 +57,7 @@ class Router: Hashable, Equatable, Identifiable {
     get { fullPath.isEmpty ? nil : fullPath[0] }
     set {
       if let newValue = newValue {
+        print(fullPath.count)
         if fullPath.count == 0 { fullPath.append(newValue) } else { fullPath[0] = newValue } } else { fullPath = [] }
     }
   }
@@ -84,7 +85,7 @@ class Router: Hashable, Equatable, Identifiable {
   
   func goBack() { _ = withAnimation { self.fullPath.removeLast() } }
   func resetNavPath() { withAnimation { self.fullPath.removeAll() } }
-  func navigateTo(_ dest: NavDest, _ reset: Bool = false) { withAnimation { self.path = reset ? [dest] : self.path + [dest] } }
+  func navigateTo(_ dest: NavDest, _ reset: Bool = false) { self.path = reset ? [dest] : self.path + [dest] }
   
   enum NavDest: Hashable, Codable, Identifiable {
     var id: String {

@@ -16,7 +16,7 @@ struct ShortPostLink: View {
   var body: some View {
     if let data = post.data {
       VStack(alignment: .leading) {
-        Text("\(data.title.escape)")
+        Text("\(data.title)")
           .fontSize(18, .semibold)
         Text((data.selftext).md()).lineLimit(2)
           .fontSize(15).opacity(0.75)

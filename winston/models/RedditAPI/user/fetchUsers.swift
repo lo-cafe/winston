@@ -122,6 +122,7 @@ extension RedditAPI {
   
   struct FetchUsersByIDPayload: Codable {
     let ids: String
+    var raw_json = 1
   }
   
   typealias MultipleUsersDictionary = [String: MultipleUsersUser]

@@ -30,5 +30,6 @@ extension RedditAPI {
     var limit = 25
     var show = "all"
     var sr_detail = 1
+    var raw_json = 1
   }
 }

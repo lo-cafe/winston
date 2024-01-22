@@ -45,7 +45,7 @@ extension Post {
       let compact = Defaults[.SubredditFeedDefSettings].compactPerSubreddit[sub?.id ?? data.subreddit_id ?? ""] ?? Defaults[.PostLinkDefSettings].compactMode.enabled
       if self.winstonData == nil { self.winstonData = .init() }
       
-      self.winstonData?.permaURL = URL(string: "https://reddit.com\(data.permalink.escape.urlEncoded)")
+      self.winstonData?.permaURL = URL(string: "https://reddit.com\(data.permalink.urlEncoded)")
       
       var extractedMedia = mediaExtractor(compact: compact, contentWidth: contentWidth, data, theme: theme)
       var extractedMediaForcedNormal = mediaExtractor(compact: false, contentWidth: contentWidth, data, theme: theme)

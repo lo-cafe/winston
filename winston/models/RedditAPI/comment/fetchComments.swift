@@ -31,5 +31,6 @@ extension RedditAPI {
     var limit: Int
     var depth: Int
     var comment: String?
+    var raw_json = 1
   }
 }

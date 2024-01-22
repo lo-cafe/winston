@@ -49,7 +49,7 @@ struct PreviewLinkContentRaw: View, Equatable {
       if !compact {
         VStack(alignment: .leading, spacing: 2) {
           VStack(alignment: .leading, spacing: 0) {
-            Text(title?.escape ?? "No title detected")
+            Text(title ?? "No title detected")
               .fontSize(17, .medium)
               .lineLimit(1)
               .truncationMode(.tail)
@@ -61,7 +61,7 @@ struct PreviewLinkContentRaw: View, Equatable {
           }
           .frame(maxWidth: .infinity, alignment: .leading)
           
-          Text(description?.escape ?? "No description detected")
+          Text(description ?? "No description detected")
             .fontSize(14)
             .lineLimit(2)
             .opacity(0.75)
