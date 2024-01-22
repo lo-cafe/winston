@@ -30,7 +30,7 @@ struct ThemedListRowLikeBGModifier: ViewModifier {
       .padding(.horizontal, enablePadding ? 16 : 0)
       .padding(.vertical, enablePadding ? 8 : 0)
       .frame(maxWidth: .infinity, minHeight: 45, alignment: .leading)
-      .background(disableBG ? nil : ThemedForegroundBG(theme: theme.lists.foreground, active: isActive, pressed: pressed, shiny: shiny).equatable().opacity(opacity))
+      .background(disableBG ? nil : ThemedForegroundBG(theme: theme.lists.foreground, active: isActive, pressed: pressed, shiny: shiny).opacity(opacity))
   }
 }
 

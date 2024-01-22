@@ -420,6 +420,7 @@
 		ECAEFF6B2A77DE490052FCD3 /* emojiCodes.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECAEFF6A2A77DE490052FCD3 /* emojiCodes.swift */; };
 		ECAEFF6D2A77E8CA0052FCD3 /* Onboarding.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECAEFF6C2A77E8CA0052FCD3 /* Onboarding.swift */; };
 		ECB03BFB2AEC2D090090674A /* AltImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECB03BFA2AEC2D090090674A /* AltImage.swift */; };
+		ECB0D46E2B5ED1DE00F90B9B /* SwiftyUI in Frameworks */ = {isa = PBXBuildFile; productRef = ECB0D46D2B5ED1DE00F90B9B /* SwiftyUI */; };
 		ECB155122B25A18D0069CA2C /* BigInput.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECB155112B25A18D0069CA2C /* BigInput.swift */; };
 		ECB155142B25A1B60069CA2C /* BigInfoCredential.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECB155132B25A1B60069CA2C /* BigInfoCredential.swift */; };
 		ECB155182B25A1E30069CA2C /* NiceCredentialSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECB155172B25A1E30069CA2C /* NiceCredentialSection.swift */; };
@@ -1132,6 +1133,7 @@
 				EC9BB1C02A8B05AA0070CD97 /* Nuke in Frameworks */,
 				EC2D72B32AC5335E002601E0 /* CHTCollectionViewWaterfallLayout in Frameworks */,
 				ECDD515F2A748C5800FD9498 /* OpenGraph in Frameworks */,
+				ECB0D46E2B5ED1DE00F90B9B /* SwiftyUI in Frameworks */,
 				EC6650EA2AB7E21E006B83A4 /* Zip in Frameworks */,
 				ECDD51622A748DF600FD9498 /* SkeletonUI in Frameworks */,
 				6514FFEC2AFD01520051D264 /* WhatsNewKit in Frameworks */,
@@ -2498,6 +2500,7 @@
 				EC6081252B43A766001A1077 /* Lottie */,
 				ECA3700F2B480FC900C73CB0 /* WrappingHStack */,
 				BBD6E9DD2B51B03600901C1C /* MarkdownUI */,
+				ECB0D46D2B5ED1DE00F90B9B /* SwiftyUI */,
 			);
 			productName = winston;
 			productReference = EC593AD42A4673B2002D6454 /* winston.app */;
@@ -2581,6 +2584,7 @@
 				EC6081242B43A766001A1077 /* XCRemoteSwiftPackageReference "lottie-spm" */,
 				ECA3700E2B480FC900C73CB0 /* XCRemoteSwiftPackageReference "WrappingHStack" */,
 				BBD6E9DC2B51B01B00901C1C /* XCRemoteSwiftPackageReference "swift-markdown-ui" */,
+				ECB0D46C2B5ED1DE00F90B9B /* XCRemoteSwiftPackageReference "SwiftyUI" */,
 			);
 			productRefGroup = EC593AD52A4673B2002D6454 /* Products */;
 			projectDirPath = "";
@@ -3663,6 +3667,14 @@
 				minimumVersion = 1.0.0;
 			};
 		};
+		ECB0D46C2B5ED1DE00F90B9B /* XCRemoteSwiftPackageReference "SwiftyUI" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/haoking/SwiftyUI.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.8.0;
+			};
+		};
 		ECDD515D2A748C5800FD9498 /* XCRemoteSwiftPackageReference "OpenGraph" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/satoshi-takano/OpenGraph.git";
@@ -3833,6 +3845,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = ECAA8B822A76421000D9D636 /* XCRemoteSwiftPackageReference "YouTubePlayerKit" */;
 			productName = YouTubePlayerKit;
+		};
+		ECB0D46D2B5ED1DE00F90B9B /* SwiftyUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = ECB0D46C2B5ED1DE00F90B9B /* XCRemoteSwiftPackageReference "SwiftyUI" */;
+			productName = SwiftyUI;
 		};
 		ECDD515E2A748C5800FD9498 /* OpenGraph */ = {
 			isa = XCSwiftPackageProductDependency;

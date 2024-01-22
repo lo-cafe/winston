@@ -10,6 +10,7 @@ import NukeUI
 import Nuke
 import NukeExtensions
 import VisionKit
+import SwiftyUI
 
 struct URLImage: View, Equatable {
   static func == (lhs: URLImage, rhs: URLImage) -> Bool {
@@ -38,18 +39,6 @@ struct URLImage: View, Equatable {
       }
       .onDisappear(.cancel)
       .processors(processors)
-//      GIFImage(url: url)
-//        .scaledToFill()
-//      AsyncGiffy(url: url) { phase in
-//        switch phase {
-//        case .loading:
-//          ProgressView()
-//        case .error:
-//          Text("Failed to load GIF")
-//        case .success(let giffy):
-//          giffy.scaledToFit()
-//        }
-//      }
     } else {
       if let imgRequest = imgRequest {
         LazyImage(request: imgRequest) { state in
@@ -63,8 +52,6 @@ struct URLImage: View, Equatable {
                 .scaledToFill()
             } else {
               image
-//                .resizable()
-//                .scaledToFit()
             }
           // } else if state.error != nil {
           //   Color.red.opacity(0.1)
@@ -111,7 +98,7 @@ struct ThumbReqImage: View, Equatable {
   }
   
   var imgRequest: ImageRequest
-  var size: CGSize?
+  var size: CGSize
   
   var body: some View {
     LazyImage(request: imgRequest) { state in
@@ -119,10 +106,11 @@ struct ThumbReqImage: View, Equatable {
 ////                  Image(uiImage: response.image).resizable()
 //                  AltImage(image: response.image, size: size)
 //                }
+//      if let image = state.imageContainer?.image {
       if let image = state.image {
         image
       } else {
-        Color.acceptablePrimary
+        Color.acceptablePrimary.opacity(0.3)
       }
 //      } else if state.error != nil {
 //        Color.red.opacity(0.1)
@@ -154,14 +142,15 @@ struct URLImageLoader: View, Equatable {
   }
 }
 
-//extension ImageRequest: Equatable {
-//  public static func == (lhs: Nuke.ImageRequest, rhs: Nuke.ImageRequest) -> Bool {
-//    lhs.imageId == rhs.imageId
+//struct BetterImageView: UIViewRepresentable {
+//  var uiImage: UIImage
+//  var size: CGSize
+//  
+//  func makeUIView(context: Context) -> UIView {
+//    let view = SwiftyImageView(uiImage)
+//    view.frame.size = size
+//    return view
 //  }
-//}
-
-//extension FetchImage: Equatable {
-//  public static func == (lhs: FetchImage, rhs: FetchImage) -> Bool {
-//    lhs.id == rhs.id
-//  }
+//  
+//  func updateUIView(_ uiView: UIView, context: Context) { }
 //}

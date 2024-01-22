@@ -39,7 +39,6 @@ struct SubredditsStack: View {
                 .id("\(multi.id)-multi-first-tab")
             case .reddit(.subFeed(let sub)):
               SubredditPosts(subreddit: sub)
-                .equatable()
                 .id("\(sub.id)-sub-first-tab")
             case .reddit(.post(let post)):
               if let sub = post.winstonData?.subreddit {

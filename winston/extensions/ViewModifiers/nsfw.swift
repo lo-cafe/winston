@@ -26,7 +26,7 @@ struct NSFWMod: ViewModifier {
         .overlay(
           !blur
           ? nil
-          : NSFWOverlay(smallIcon: smallIcon).equatable().transition(.scaleAndBlur).highPriorityGesture(blur ? TapGesture().onEnded { withAnimation(.spring) { unblur = true } } : nil )
+          : NSFWOverlay(smallIcon: smallIcon).transition(.scaleAndBlur).highPriorityGesture(blur ? TapGesture().onEnded { withAnimation(.spring) { unblur = true } } : nil )
         )
     } else {
       content
@@ -35,7 +35,7 @@ struct NSFWMod: ViewModifier {
 }
 
 struct NSFWOverlay: View, Equatable {
-  static func == (lhs: NSFWOverlay, rhs: NSFWOverlay) -> Bool { true }
+  static func == (lhs: NSFWOverlay, rhs: NSFWOverlay) -> Bool { lhs.smallIcon == rhs.smallIcon }
 
   var smallIcon: Bool = false
   var body: some View {

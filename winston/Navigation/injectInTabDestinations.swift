@@ -36,7 +36,7 @@ extension View {
               PostView(post: post, subreddit: sub, highlightID: highlightID)
             }
           case .subFeed(let sub):
-            SubredditPosts(subreddit: sub).equatable()
+            SubredditPosts(subreddit: sub)
           case .subInfo(let sub):
             SubredditInfo(subreddit: sub)
           case .multiFeed(let multi):

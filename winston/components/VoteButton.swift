@@ -9,13 +9,8 @@ import SwiftUI
 
 @available(iOS 17.0, *)
 struct VoteButton: View, Equatable {
-  static func == (lhs: VoteButton, rhs: VoteButton) -> Bool {
-    return lhs.active == rhs.active
-  }
-  
   var active: Bool
   var color: Color
-//  var voteAction: () -> ()
   var image: String
   
   var body: some View {

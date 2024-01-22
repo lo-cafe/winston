@@ -9,23 +9,8 @@ import SwiftUI
 import NukeUI
 import Nuke
 
-struct Avatar: View {
-  var saved = false
-  var url:  String?
-  let userID: String
-  var fullname: String?
-  var theme: AvatarTheme?
-  var avatarSize: CGFloat?
-  var avatarRequest: ImageRequest?
-  
-  var body: some View {
-    let avatarSize = avatarSize ?? theme?.size ?? 0
-    AvatarRaw(saved: saved, avatarImgRequest: avatarRequest, userID: userID, fullname: fullname, theme: theme, avatarSize: avatarSize)
-  }
-}
-
-struct AvatarRaw: View, Equatable {
-  static func == (lhs: AvatarRaw, rhs: AvatarRaw) -> Bool {
+struct AvatarView: View, Equatable {
+  static func == (lhs: AvatarView, rhs: AvatarView) -> Bool {
     lhs.saved == rhs.saved && lhs.avatarImgRequest?.url == rhs.avatarImgRequest?.url && lhs.theme == rhs.theme && rhs.avatarSize == lhs.avatarSize
   }
   var saved: Bool
@@ -35,6 +20,33 @@ struct AvatarRaw: View, Equatable {
   var theme: AvatarTheme?
   var avatarSize: CGFloat?
   
+  init(saved: Bool, avatarImgRequest: ImageRequest? = nil, userID: String, fullname: String? = nil, theme: AvatarTheme? = nil, avatarSize: CGFloat? = nil) {
+    self.saved = saved
+    self.avatarImgRequest = avatarImgRequest
+    self.userID = userID
+    self.fullname = fullname
+    self.theme = theme
+    self.avatarSize = avatarSize
+  }  
+  
+  init(saved: Bool, url: URL?, userID: String, fullname: String? = nil, theme: AvatarTheme? = nil, avatarSize: CGFloat? = nil) {
+    self.saved = saved
+    self.avatarImgRequest = .init(url: url)
+    self.userID = userID
+    self.fullname = fullname
+    self.theme = theme
+    self.avatarSize = avatarSize
+  }  
+  
+  init(saved: Bool, url: String, userID: String, fullname: String? = nil, theme: AvatarTheme? = nil, avatarSize: CGFloat? = nil) {
+    self.saved = saved
+    self.avatarImgRequest = .init(stringLiteral: url)
+    self.userID = userID
+    self.fullname = fullname
+    self.theme = theme
+    self.avatarSize = avatarSize
+  }
+  
   var body: some View {
     let avatarSize = avatarSize ?? theme?.size ?? 0
     let cornerRadius = (theme?.cornerRadius ?? (avatarSize / 2))
@@ -42,10 +54,6 @@ struct AvatarRaw: View, Equatable {
       if userID == "[deleted]" {
         Image(systemName: "trash")
           .foregroundColor(.red)
-          .background(
-            RR(cornerRadius, .acceptablePrimary).equatable()
-              .frame(width: avatarSize, height: avatarSize)
-          )
       } else {
     if let avatarImgRequest = avatarImgRequest {
       ThumbReqImage(imgRequest: avatarImgRequest, size: CGSize(width: avatarSize, height: avatarSize))
@@ -56,6 +64,7 @@ struct AvatarRaw: View, Equatable {
       }
     }
     .frame(width: avatarSize, height: avatarSize)
+    .background(RR(cornerRadius, .primary.opacity(0.15)).frame(avatarSize))
     .clipShape(RoundedRectangle(cornerRadius: cornerRadius, style: .continuous))
     //    .drawingGroup()
     .background(SavedFlag(cornerRadius: cornerRadius, saved: saved).equatable())
@@ -74,12 +83,8 @@ struct SavedFlag: View, Equatable {
     ZStack {
       Image(systemName: "bookmark.fill")
         .foregroundColor(.green)
-        .offset(y: saved ? flagY : 0)
-      
-      RR(cornerRadius, .gray).equatable()
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .animation(.easeOut(duration: 0.15).delay(saved ? 0 : 0.5)) { $0.opacity(saved ? 1 : 0) }
+        .animation(.interpolatingSpring(stiffness: 150, damping: 12).delay(0.4)) { $0.offset(y: saved ? flagY : 0) }
     }
-    .compositingGroup()
-    .animation(.interpolatingSpring(stiffness: 150, damping: 12).delay(0.4), value: saved)
   }
 }

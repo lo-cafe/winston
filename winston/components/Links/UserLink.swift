@@ -21,7 +21,9 @@ struct UserLink: View {
     var body: some View {
       if let data = user.data {
         HStack(spacing: 12) {
-          Avatar(url: data.icon_img, userID: data.name, avatarSize: 64)
+          if let icon = data.icon_img {
+            AvatarView(saved: false, url: icon, userID: data.name, avatarSize: 64)
+          }
           
           VStack(alignment: .leading) {
             Text("u/\(data.name)")

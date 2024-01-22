@@ -69,7 +69,6 @@ struct ReplyModalComment: View {
         if let commentWinstonData = comment.winstonData {
           CommentLink(indentLines: 0, showReplies: false, comment: comment, commentWinstonData: commentWinstonData, children: comment.childrenWinston)
         }
-//          .equatable()
       }
     }
   }
@@ -136,7 +135,8 @@ struct ReplyModal<Content: View>: View {
           
           VStack(alignment: .leading) {
             if let me = RedditAPI.shared.me?.data, let avatarLink = me.icon_img ?? me.snoovatar_img, let rootURL = rootURLString(avatarLink), let avatarURL = URL(string: rootURL) {
-              BadgeOpt(avatarRequest: ImageRequest(url: avatarURL), badgeKit: .init(numComments: 0, ups: 0, saved: false, author: me.name, authorFullname: "t2_\(me.id)", userFlair: "", created: Date().timeIntervalSince1970), avatarURL: me.icon_img ?? me.snoovatar_img, theme: selectedTheme.comments.theme.badge)
+              BadgeView(avatarRequest: ImageRequest(url: avatarURL), saved: false, author: me.name, fullname: "t2_\(me.id)", userFlair: "", created: Date().timeIntervalSince1970, avatarURL: me.icon_img ?? me.snoovatar_img, theme: selectedTheme.comments.theme.badge, commentsCount: "0", votesCount: "0")
+//              BadgeOpt(avatarRequest: ImageRequest(url: avatarURL), badgeKit: .init(numComments: 0, ups: 0, saved: false, author: me.name, authorFullname: "t2_\(me.id)", userFlair: "", created: Date().timeIntervalSince1970), avatarURL: me.icon_img ?? me.snoovatar_img, theme: selectedTheme.comments.theme.badge)
             }
             MDEditor(text: $textWrapper.replyText)
           }

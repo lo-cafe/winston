@@ -30,6 +30,16 @@ struct UserFlair: View, Equatable {
   }
 }
 
+struct BadgeKit: Equatable {
+  let numComments: Int
+  let ups: Int
+  let saved: Bool
+  let author: String
+  let authorFullname: String
+  let userFlair: String
+  let created: Double
+}
+
 func flairWithoutEmojis(str: String?) -> [String]? {
   do {
     let emojiRegex = try NSRegularExpression(pattern: ":(.*?):")
@@ -52,8 +62,7 @@ func flairWithoutEmojis(str: String?) -> [String]? {
 struct BadgeView: View, Equatable {
   static let authorStatsSpacing: Double = 2
   static func == (lhs: BadgeView, rhs: BadgeView) -> Bool {
-    return lhs.avatarRequest?.imageId == rhs.avatarRequest?.imageId
-//    return lhs.avatarURL == rhs.avatarURL && lhs.saved == rhs.saved && lhs.avatarRequest?.url == rhs.avatarRequest?.url && lhs.theme == rhs.theme && lhs.commentsCount == rhs.commentsCount && lhs.newCommentsCount == rhs.newCommentsCount && lhs.votesCount == rhs.votesCount && lhs.likes == rhs.likes
+    return lhs.avatarURL == rhs.avatarURL && lhs.saved == rhs.saved && lhs.avatarRequest?.url == rhs.avatarRequest?.url && lhs.theme == rhs.theme && lhs.commentsCount == rhs.commentsCount && lhs.newCommentsCount == rhs.newCommentsCount && lhs.votesCount == rhs.votesCount && lhs.likes == rhs.likes
   }
   
   var avatarRequest: ImageRequest?
@@ -84,17 +93,17 @@ struct BadgeView: View, Equatable {
     let defaultIconColor = theme.statsText.color()
     HStack(spacing: theme.spacing) {
       
-//      if saved && !showAvatar {
-//        Image(systemName: "bookmark.fill")
-//          .fontSize(16)
-//          .foregroundColor(.green)
-//          .transition(.scale.combined(with: .opacity))
-//          .drawingGroup()
-//      }
+      if saved && !showAvatar {
+        Image(systemName: "bookmark.fill")
+          .fontSize(16)
+          .foregroundColor(.green)
+          .transition(.scale.combined(with: .opacity))
+          .drawingGroup()
+      }
       
       if showAvatar {
-        AvatarRaw(saved: saved, avatarImgRequest: avatarRequest, userID: author, fullname: fullname, theme: theme.avatar)
-          .equatable()
+        AvatarView(saved: saved, avatarImgRequest: avatarRequest, userID: author, fullname: fullname, theme: theme.avatar)
+//          .equatable()
           .highPriorityGesture(TapGesture().onEnded(openUser))
       }
       
@@ -134,7 +143,7 @@ struct BadgeView: View, Equatable {
         }
         
         
-        HStack(alignment: .center, spacing: theme.statsText.size * 0.416666667 /* Yes, absurd number, I thought it was funny */) {
+        HStack(alignment: .center, spacing: theme.statsText.size * 0.41) {
           
           if let openSub = openSub, let subName = subName, !showAuthorOnPostLinks {
             Tag(subredditIconKit: nil, text: "r/\(subName)", color: theme.subColor(), fontSize: theme.statsText.size, backgroundColor: theme.subColor())
@@ -189,20 +198,9 @@ struct Badge: View {
   
   var body: some View {
     if let data = post.data {
-      //      let extraInfo = showVotes ? [BadgeExtraInfo(systemImage: "message.fill", text: "\(formatBigNumber(data.num_comments))"), BadgeExtraInfo(systemImage: "arrow.up", text: "\(formatBigNumber(data.ups))")] : [BadgeExtraInfo(systemImage: "message.fill", text: "\(formatBigNumber(data.num_comments))")]
       BadgeView(saved: data.saved, usernameColor: usernameColor, author: data.author, fullname: data.author_fullname, userFlair: data.author_flair_text, created: data.created, avatarURL: avatarURL, theme: theme, commentsCount: formatBigNumber(data.num_comments), votesCount: !showVotes ? nil : formatBigNumber(data.ups))
     }
   }
-}
-
-struct BadgeKit: Equatable {
-  let numComments: Int
-  let ups: Int
-  let saved: Bool
-  let author: String
-  let authorFullname: String
-  let userFlair: String
-  let created: Double
 }
 
 struct BadgeOpt: View, Equatable {
@@ -220,7 +218,7 @@ struct BadgeOpt: View, Equatable {
   var subName: String? = nil
   
   var body: some View {
-      BadgeView(avatarRequest: avatarRequest ?? Caches.avatars.cache[badgeKit.authorFullname]?.data, saved: badgeKit.saved, usernameColor: usernameColor, author: badgeKit.author, fullname: badgeKit.authorFullname, userFlair: badgeKit.userFlair, created: badgeKit.created, avatarURL: avatarURL, theme: theme, commentsCount: formatBigNumber(badgeKit.numComments), votesCount: !showVotes ? nil : formatBigNumber(badgeKit.ups), openSub: openSub, subName: subName)
+      BadgeView(avatarRequest: avatarRequest, saved: badgeKit.saved, usernameColor: usernameColor, author: badgeKit.author, fullname: badgeKit.authorFullname, userFlair: badgeKit.userFlair, created: badgeKit.created, avatarURL: avatarURL, theme: theme, commentsCount: formatBigNumber(badgeKit.numComments), votesCount: !showVotes ? nil : formatBigNumber(badgeKit.ups), openSub: openSub, subName: subName)
   }
 }
 

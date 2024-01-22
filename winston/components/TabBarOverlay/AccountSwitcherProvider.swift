@@ -144,7 +144,7 @@ struct AccountSwitcherProvider<Content: View>: View {
       .animation(.spring, value: transmitter.showing)
       
       if let positionInfo = transmitter.positionInfo {
-        AccountSwitcherOverlayView(fingerPosition: positionInfo, appear: transmitter.showing, transmitter: transmitter).equatable().zIndex(3).allowsHitTesting(false)
+        AccountSwitcherOverlayView(fingerPosition: positionInfo, appear: transmitter.showing, transmitter: transmitter).zIndex(3).allowsHitTesting(false)
           .zIndex(3)
           .onAppear { transmitter.showing = true }
           .onChange(of: transmitter.showing) { if !$0 { selectCredential() } }

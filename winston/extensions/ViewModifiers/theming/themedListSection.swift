@@ -16,7 +16,7 @@ struct ThemedListSectionModifier: ViewModifier {
     
   func body(content: Content) -> some View {
     content
-      .listRowBackground(ThemedForegroundBG(theme: theme.lists.foreground).equatable())
+      .listRowBackground(ThemedForegroundBG(theme: theme.lists.foreground))
       .listRowSeparatorTint(theme.lists.dividersColors())
   }
 }
