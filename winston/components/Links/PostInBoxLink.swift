@@ -13,8 +13,8 @@ struct PostInBoxLink: View {
   @Default(.postsInBox) private var postsInBox
   
   var postInBox: PostInBox
-  @StateObject var post: Post
-  @StateObject var sub: Subreddit
+  var post: Post
+  var sub: Subreddit
   @State private var dragging = false
   @State private var deleting = false
   @State private var offsetY: CGFloat?

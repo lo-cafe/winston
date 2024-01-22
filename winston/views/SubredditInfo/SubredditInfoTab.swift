@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct SubredditInfoTab: View {
-  @ObservedObject var subreddit: Subreddit
+  var subreddit: Subreddit
   @State var loading = true
     var body: some View {
       if let data = subreddit.data {

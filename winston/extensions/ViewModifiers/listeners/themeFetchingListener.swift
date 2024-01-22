@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct ThemeFetchingListenerModifier: ViewModifier {
-  @ObservedObject private var redditCredentialsManager = RedditCredentialsManager.shared
   @EnvironmentObject var themeStoreAPI: ThemeStoreAPI
   func body(content: Content) -> some View {
     content

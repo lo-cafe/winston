@@ -14,10 +14,11 @@ protocol GenericRedditEntityDataType: Codable, Hashable, Identifiable {
   var id: String { get }
 }
 
+@Observable
 class GenericRedditEntity<T: GenericRedditEntityDataType, B: Hashable>: Identifiable, Hashable, ObservableObject, Observable, Codable,  _DefaultsSerializable {
   func hash(into hasher: inout Hasher) {
 //    hasher.combine(data)
-//    hasher.combine(childrenWinston.data)
+//    hasher.combine(childrenWinston)
     hasher.combine(id)
     hasher.combine(typePrefix)
 //    hasher.combine(data)
@@ -31,7 +32,7 @@ class GenericRedditEntity<T: GenericRedditEntityDataType, B: Hashable>: Identifi
     return lhs.id == rhs.id && lhs.kind == rhs.kind && lhs.data?.id == rhs.data?.id
   }
   
-  @Published var data: T? {
+  var data: T? {
     didSet {
       if let newID = data?.id, id != newID {
         self.id =  newID
@@ -41,8 +42,8 @@ class GenericRedditEntity<T: GenericRedditEntityDataType, B: Hashable>: Identifi
   
   var selfPrefix: String { "" }
   
-  @Published var winstonData: B? = nil
-  @Published var _id: String
+  var winstonData: B? = nil
+  var _id: String
   var id: String {
     get {
       return self._id + self.kind
@@ -51,8 +52,8 @@ class GenericRedditEntity<T: GenericRedditEntityDataType, B: Hashable>: Identifi
       self._id = newValue
     }
   }
-  @Published var loading = false
-  @Published var typePrefix: String?
+  var loading = false
+  var typePrefix: String?
   var kind: String?
   
   enum CodingKeys: CodingKey {
@@ -79,26 +80,18 @@ class GenericRedditEntity<T: GenericRedditEntityDataType, B: Hashable>: Identifi
   
   let redditAPI: RedditAPI = .shared
   var anyCancellables: [AnyCancellable]? = nil
-  @Published var childrenWinston: ObservableArray<GenericRedditEntity<T, B>> = ObservableArray<GenericRedditEntity<T, B>>(array: [])
-  var parentWinston: ObservableArray<GenericRedditEntity<T, B>>?
-  
-  private func setupWatchers() {
-    anyCancellables?.append(childrenWinston.objectWillChange.sink { [weak self] (_) in
-        self?.objectWillChange.send()
-    })
-  }
+  var childrenWinston: [GenericRedditEntity<T, B>] = []
+  var parentWinston: [GenericRedditEntity<T, B>]?
   
   required init(id: String, typePrefix: String?) {
     self._id = id
     self.typePrefix = typePrefix
-//    self.setupWatchers()
   }
 
   required init(data: T, typePrefix: String?) {
     self.data = data
     self._id = data.id
     self.typePrefix = typePrefix
-//    self.setupWatchers()
   }
   
   init(data: T, typePrefix: String?, kind: String? = nil) {
@@ -106,7 +99,6 @@ class GenericRedditEntity<T: GenericRedditEntityDataType, B: Hashable>: Identifi
     self.kind = kind
     self._id = data.id
     self.typePrefix = typePrefix
-//    self.setupWatchers()
   }
   
   func duplicate() -> GenericRedditEntity<T, B> {

@@ -9,7 +9,7 @@ import SwiftUI
 
 struct UserLinkContainer: View {
   var noHPad = false
-  @StateObject var user: User
+  @State var user: User
   var body: some View {
     UserLink(noHPad: noHPad, user: user)
   }

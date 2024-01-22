@@ -18,7 +18,7 @@ struct PostLinkContextPreview: View {
 }
 
 struct PostLinkContext: View {
-  @ObservedObject var post: Post
+  var post: Post
   var body: some View {
     //        if let perma = post.winstonData?.permaURL {
     //          ShareLink(item: perma) { Label("Share", systemImage: "square.and.arrow.up") }

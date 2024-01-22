@@ -10,7 +10,7 @@ import Defaults
 
 struct SubredditLinkContainer: View {
   var noHPad = false
-  @ObservedObject var sub: Subreddit
+  var sub: Subreddit
   var body: some View {
     SubredditLink(noHPad: true, sub: sub)
   }

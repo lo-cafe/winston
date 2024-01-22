@@ -87,9 +87,9 @@ struct SubredditPostsIPAD: View, Equatable {
             if let sub = subreddit ?? post.winstonData?.subreddit, let winstonData = post.winstonData {
               PostLink(id: post.id, theme: selectedTheme.postLinks, showSub: showSub, compactPerSubreddit: feedDefSettings.compactPerSubreddit[sub.id], contentWidth: contentWidth, defSettings: postLinkDefSettings)
 //              .swipyRev(size: winstonData.postDimensions.size, actionsSet: postLinkDefSettings.swipeActions, entity: post)
-              .environmentObject(post)
-              .environmentObject(sub)
-              .environmentObject(winstonData)
+              .environment(\.contextPost, post)
+              .environment(\.contextSubreddit, sub)
+              .environment(\.contextPostWinstonData, winstonData)
               .onAppear {
                 if(posts.count - 7 == i && !isFiltered && !loading) { loadMorePosts() }
               }

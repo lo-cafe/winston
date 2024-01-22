@@ -40,7 +40,8 @@ struct MediaPresenter: View, Equatable {
     lhs.compact == rhs.compact && lhs.contentWidth == rhs.contentWidth && lhs.badgeKit == rhs.badgeKit && lhs.cornerRadius == rhs.cornerRadius && lhs.media == rhs.media
   }
   
-  @Binding var postDimensions: PostDimensions
+  var winstonData: PostWinstonData
+  var fullPage = false
   weak var controller: UIViewController?
   let postTitle: String
   let badgeKit: BadgeKit
@@ -57,22 +58,23 @@ struct MediaPresenter: View, Equatable {
   let resetVideo: ((SharedVideo) -> ())?
   
   var body: some View {
+    let mediaSize = (fullPage ? winstonData.postDimensionsForcedNormal : winstonData.postDimensions).mediaSize
     switch media {
     case .imgs(let imgsExtracted):
       if !showURLInstead {
         if imgsExtracted.count > 0 && imgsExtracted[0].url.absoluteString.hasSuffix(".gif") {
-          ImageMediaPost(postDimensions: $postDimensions, controller: controller, postTitle: postTitle, badgeKit: badgeKit, avatarImageRequest: avatarImageRequest, markAsSeen: markAsSeen, cornerRadius: cornerRadius, compact: compact, images: imgsExtracted, contentWidth: contentWidth, maxMediaHeightScreenPercentage: maxMediaHeightScreenPercentage)
-            .nsfw(over18 && blurPostLinkNSFW, smallIcon: compact, size: postDimensions.mediaSize)
+          ImageMediaPost(winstonData: winstonData, controller: controller, postTitle: postTitle, badgeKit: badgeKit, avatarImageRequest: avatarImageRequest, markAsSeen: markAsSeen, cornerRadius: cornerRadius, compact: compact, images: imgsExtracted, contentWidth: contentWidth, maxMediaHeightScreenPercentage: maxMediaHeightScreenPercentage)
+            .nsfw(over18 && blurPostLinkNSFW, smallIcon: compact, size: mediaSize)
         } else {
-          ImageMediaPost(postDimensions: $postDimensions, controller: controller, postTitle: postTitle, badgeKit: badgeKit, avatarImageRequest: avatarImageRequest, markAsSeen: markAsSeen, cornerRadius: cornerRadius, compact: compact, images: imgsExtracted, contentWidth: contentWidth, maxMediaHeightScreenPercentage: maxMediaHeightScreenPercentage)
-            .nsfw(over18 && blurPostLinkNSFW, smallIcon: compact, size: postDimensions.mediaSize)
+          ImageMediaPost(winstonData: winstonData, controller: controller, postTitle: postTitle, badgeKit: badgeKit, avatarImageRequest: avatarImageRequest, markAsSeen: markAsSeen, cornerRadius: cornerRadius, compact: compact, images: imgsExtracted, contentWidth: contentWidth, maxMediaHeightScreenPercentage: maxMediaHeightScreenPercentage)
+            .nsfw(over18 && blurPostLinkNSFW, smallIcon: compact, size: mediaSize)
           
         }
       }
     case .video(let sharedVideo):
       if !showURLInstead {
         VideoPlayerPost(controller: controller, cachedVideo: sharedVideo, markAsSeen: markAsSeen, compact: compact, contentWidth: contentWidth, url: sharedVideo.url, resetVideo: resetVideo, maxMediaHeightScreenPercentage: maxMediaHeightScreenPercentage)
-          .nsfw(over18 && blurPostLinkNSFW, smallIcon: compact, size: postDimensions.mediaSize)
+          .nsfw(over18 && blurPostLinkNSFW, smallIcon: compact, size: mediaSize)
       }
       
     case .streamable(_):

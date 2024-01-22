@@ -20,7 +20,7 @@ struct PostThemingPanel: View {
   @Binding var theme: WinstonTheme
   @State private var selectedCategory = Category.page.rawValue
   @State private var previewBG: PreviewBG = .blur
-  @StateObject private var previewPostSample = Post(data: selfPostSampleData)
+  @State private var previewPostSample = Post(data: selfPostSampleData)
   
   var body: some View {
     ScrollWithPreview(theme: theme.posts.bg) {

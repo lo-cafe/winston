@@ -12,10 +12,10 @@ import AlertToast
 
 struct PostView: View, Equatable {
   static func == (lhs: PostView, rhs: PostView) -> Bool {
-    lhs.post == rhs.post && lhs.subreddit.id == rhs.subreddit.id && lhs.hideElements == rhs.hideElements && lhs.ignoreSpecificComment == rhs.ignoreSpecificComment && lhs.sort == rhs.sort && lhs.update == rhs.update
+    lhs.post == rhs.post && lhs.subreddit.id == rhs.subreddit.id && lhs.hideElements == rhs.hideElements && lhs.ignoreSpecificComment == rhs.ignoreSpecificComment && lhs.sort == rhs.sort && lhs.update == rhs.update && lhs.comments.count == rhs.comments.count
   }
   
-  @ObservedObject var post: Post
+  var post: Post
   var subreddit: Subreddit
   var forceCollapse: Bool
   var highlightID: String?
@@ -28,10 +28,10 @@ struct PostView: View, Equatable {
   @State private var sort: CommentSortOption
   @State private var update = false
   
-  @State private var topVisibleCommentId: String? = nil
-  @State private var previousScrollTarget: String? = nil
-  @StateObject private var comments = ObservableArray<Comment>()
-
+  @SilentState private var topVisibleCommentId: String? = nil
+  @SilentState private var previousScrollTarget: String? = nil
+  @State private var comments: [Comment] = []
+  
   init(post: Post, subreddit: Subreddit, forceCollapse: Bool = false, highlightID: String? = nil) {
     self.post = post
     self.subreddit = subreddit
@@ -93,7 +93,7 @@ struct PostView: View, Equatable {
             .listRowBackground(Color.clear)
             
             if !hideElements {
-              PostReplies(update: update, post: post, subreddit: subreddit, ignoreSpecificComment: ignoreSpecificComment, highlightID: highlightID, sort: sort, proxy: proxy, geometryReader: geometryReader, topVisibleCommentId: $topVisibleCommentId, previousScrollTarget: $previousScrollTarget, comments: comments)
+              PostReplies(update: update, post: post, subreddit: subreddit, ignoreSpecificComment: ignoreSpecificComment, highlightID: highlightID, sort: sort, proxy: proxy, geometryReader: geometryReader, topVisibleCommentId: $topVisibleCommentId, previousScrollTarget: $previousScrollTarget, comments: $comments)
             }
             
             if !ignoreSpecificComment && highlightID != nil {
@@ -170,11 +170,13 @@ struct PostView: View, Equatable {
             topVisibleCommentId = CommentUtils.shared.topCommentRow(of: anchors, in: geometryReader)
           }
         }
-        .commentSkipper(showJumpToNextCommentButton: $commentsSectionDefSettings.commentSkipper,
-                        topVisibleCommentId: $topVisibleCommentId,
-                        previousScrollTarget: $previousScrollTarget,
-                        comments: comments,
-                        reader: proxy)
+        .commentSkipper(
+          showJumpToNextCommentButton: $commentsSectionDefSettings.commentSkipper,
+          topVisibleCommentId: $topVisibleCommentId,
+          previousScrollTarget: $previousScrollTarget,
+          comments: comments,
+          reader: proxy
+        )
       }
     }
   }
@@ -187,7 +189,7 @@ private struct Toolbar: ToolbarContent {
   var subreddit: Subreddit
   var post: Post
   @Binding var sort: CommentSortOption
-
+  
   var body: some ToolbarContent {
     if !IPAD {
       ToolbarItem(id: "postview-title", placement: .principal) {
@@ -199,7 +201,7 @@ private struct Toolbar: ToolbarContent {
         }
       }
     }
-
+    
     ToolbarItem(id: "postview-sortandsub", placement: .navigationBarTrailing) {
       HStack {
         Menu {
@@ -224,7 +226,7 @@ private struct Toolbar: ToolbarContent {
             .foregroundColor(Color.accentColor)
             .fontSize(17, .bold)
         }
-
+        
         if let data = subreddit.data, !feedsAndSuch.contains(subreddit.id) {
           SubredditIcon(subredditIconKit: data.subredditIconKit)
             .onTapGesture { Nav.to(.reddit(.subInfo(subreddit))) }

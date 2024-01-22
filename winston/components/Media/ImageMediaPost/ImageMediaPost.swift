@@ -31,7 +31,8 @@ struct ImageMediaPost: View, Equatable {
     return lhs.postTitle == rhs.postTitle && lhs.compact == rhs.compact && lhs.contentWidth == rhs.contentWidth && lhs.badgeKit == rhs.badgeKit && lhs.cornerRadius == rhs.cornerRadius
   }
     
-  @Binding var postDimensions: PostDimensions
+  var winstonData: PostWinstonData
+  var fullPage = false
   weak var controller: UIViewController?
   let postTitle: String
   let badgeKit: BadgeKit
@@ -58,7 +59,7 @@ struct ImageMediaPost: View, Equatable {
         let finalHeight = maxMediaHeightScreenPercentage != 110 ? Double(min(maxHeight, propHeight)) : Double(propHeight)
         
         GalleryThumb(cornerRadius: cornerRadius, width: compact ? scaledCompactModeThumbSize() : contentWidth, height: compact ? scaledCompactModeThumbSize() : sourceHeight > 0 ? finalHeight : nil, url: img.url, imgRequest: images.count > 0 ? images[0].request : nil)
-          .background(sourceHeight > 0 || compact ? nil : GeometryReader { geo in Color.clear.onAppear { postDimensions.mediaSize = geo.size }.onChange(of: geo.size) { postDimensions.mediaSize = $0 } })
+          .background(sourceHeight > 0 || compact ? nil : GeometryReader { geo in Color.clear.onAppear { winstonData.postDimensions.mediaSize = geo.size }.onChange(of: geo.size) { winstonData.postDimensions.mediaSize = $0 } })
           .onTapGesture { withAnimation(spring) { fullscreenIndex = 0 } }
           .overlay(
             !compact || images.count <= 1

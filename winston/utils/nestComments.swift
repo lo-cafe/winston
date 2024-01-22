@@ -24,7 +24,7 @@ func nestComments(_ inputComments: [ListingChild<CommentData>], parentID: String
     return nil
   }.forEach { x in
     if let data = x.data, let parentName = data.parent_id, let parent = commentsMap[parentName] {
-      parent.childrenWinston.data.append(x)
+      parent.childrenWinston.append(x)
     }
   }
   return rootComments

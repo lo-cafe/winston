@@ -12,7 +12,7 @@ import SpriteKit
 struct Tabber: View, Equatable {
   static func == (lhs: Tabber, rhs: Tabber) -> Bool { true }
   
-  @ObservedObject private var redditCredentialsManager = RedditCredentialsManager.shared
+  var redditCredentialsManager = RedditCredentialsManager.shared
   @State var nav = Nav.shared
   
   @State var tabBarHeight: Double? = nil

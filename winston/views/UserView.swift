@@ -17,7 +17,7 @@ struct UserViewContextPreview: View {
 }
 
 struct UserView: View {
-  @StateObject var user: User
+  var user: User
   @State private var lastActivities: [Either<Post, Comment>]?
   @State private var contentWidth: CGFloat = 0
   @State private var loadingOverview = true
@@ -27,7 +27,6 @@ struct UserView: View {
   @State private var dataTypeFilter: String = "" // Handles filtering for only posts or only comments.
   @State private var loadNextData: Bool = false
   
-  @ObservedObject var avatarCache = Caches.avatars
   //  @Environment(\.contentWidth) private var contentWidth
   
   func refresh() async {
@@ -64,13 +63,6 @@ struct UserView: View {
         }
       }
     }
-  }
-  
-  func getRepostAvatarRequest(_ post: Post?) -> ImageRequest? {
-    if let post = post, case .repost(let repost) = post.winstonData?.extractedMedia, let repostAuthorFullname = repost.data?.author_fullname {
-      return avatarCache.cache[repostAuthorFullname]?.data
-    }
-    return nil
   }
   
   var body: some View {

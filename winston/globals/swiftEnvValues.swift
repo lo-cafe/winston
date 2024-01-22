@@ -9,6 +9,22 @@ import Foundation
 import SwiftUI
 import CoreData
 
+fileprivate let samplePost = Post(data: postSampleData)
+fileprivate let sampleSub = Subreddit(id: postSampleData.subreddit)
+fileprivate let samplePostWinstonData = samplePost.winstonData ?? PostWinstonData()
+
+private struct ContextPostKey: EnvironmentKey {
+  static let defaultValue: Post = samplePost
+}
+
+private struct ContextSubredditKey: EnvironmentKey {
+  static let defaultValue: Subreddit = sampleSub
+}
+
+private struct ContextPostWinstonDataKey: EnvironmentKey {
+  static let defaultValue: PostWinstonData = samplePostWinstonData
+}
+
 private struct SheetHeightKey: EnvironmentKey {
   static let defaultValue: Double = 0
 }
@@ -38,6 +54,18 @@ private struct ContentWidthKey: EnvironmentKey {
 }
 
 extension EnvironmentValues {
+  var contextPost: Post {
+    get { self[ContextPostKey.self] }
+    set { self[ContextPostKey.self] = newValue }
+  }
+  var contextSubreddit: Subreddit {
+    get { self[ContextSubredditKey.self] }
+    set { self[ContextSubredditKey.self] = newValue }
+  }
+  var contextPostWinstonData: PostWinstonData {
+    get { self[ContextPostWinstonDataKey.self] }
+    set { self[ContextPostWinstonDataKey.self] = newValue }
+  }
   var sheetHeight: Double {
     get { self[SheetHeightKey.self] }
     set { self[SheetHeightKey.self] = newValue }

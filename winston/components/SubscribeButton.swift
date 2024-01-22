@@ -12,7 +12,7 @@ struct SubscribeButton: View {
   
   @Environment(\.colorScheme) var colorScheme: ColorScheme
   @FetchRequest(sortDescriptors: [], animation: .default) var subs: FetchedResults<CachedSub>
-  @ObservedObject var subreddit: Subreddit
+  var subreddit: Subreddit
   var isSmall: Bool = false
   @State var loading = false
   @GestureState var pressing = false

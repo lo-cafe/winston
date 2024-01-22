@@ -42,7 +42,7 @@ struct AccountSwitcherTarget: View, Equatable {
   let targetsCount: Int
   var cred: RedditCredential
   
-  @ObservedObject var transmitter: AccountSwitcherTransmitter
+  var transmitter: AccountSwitcherTransmitter
   
   private var appear: Bool { transmitter.showing }
   private var fingerPos: CGPoint { transmitter.positionInfo?.location ?? .zero }

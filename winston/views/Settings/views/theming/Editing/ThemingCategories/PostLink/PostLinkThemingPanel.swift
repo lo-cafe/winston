@@ -14,9 +14,9 @@ private enum Category: String, CaseIterable {
 
 struct PostLinkThemingPanel: View {
   @Binding var theme: WinstonTheme
+  var previewPostSample: Post
   @State private var selectedCategory = "card"
-  @StateObject var previewPostSample: Post
-  @StateObject private var previewPostSubSample = Subreddit(id: postSampleData.subreddit)
+  @State private var previewPostSubSample = Subreddit(id: postSampleData.subreddit)
   
   @Default(.PostLinkDefSettings) private var postLinkDefSettings
   
@@ -50,9 +50,9 @@ struct PostLinkThemingPanel: View {
         if let winstonData = previewPostSample.winstonData {
           PostLink(id: previewPostSample.id, theme: theme.postLinks, showSub: true, secondary: false, compactPerSubreddit: nil, contentWidth: contentWidth, defSettings: postLinkDefSettings)
 //          .equatable()
-          .environmentObject(previewPostSample)
-          .environmentObject(previewPostSubSample)
-          .environmentObject(winstonData)
+            .environment(\.contextPost, previewPostSample)
+            .environment(\.contextSubreddit, previewPostSubSample)
+            .environment(\.contextPostWinstonData, winstonData)
 //          .environment(\.useTheme, theme)
           .allowsHitTesting(false)
         }

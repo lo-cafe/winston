@@ -11,16 +11,17 @@ import OpenGraph
 import NukeUI
 import Defaults
 
-final class PreviewModel: ObservableObject, Equatable {
+@Observable
+final class PreviewModel: Equatable {
   static func == (lhs: PreviewModel, rhs: PreviewModel) -> Bool {
     lhs.url == rhs.url
   }
   
-  @Published var image: String?
-  @Published var title: String?
-  @Published var url: URL?
-  @Published var description: String?
-  @Published var loading = true
+  var image: String?
+  var title: String?
+  var url: URL?
+  var description: String?
+  var loading = true
   
   var previewURL: URL?
   

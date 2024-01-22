@@ -9,7 +9,7 @@ import SwiftUI
 import MarkdownUI
 
 struct SubredditRulesTab: View {
-  @ObservedObject var subreddit: Subreddit
+  var subreddit: Subreddit
   @State var loading = true
   @State var data: RedditAPI.FetchSubRulesResponse?
     var body: some View {

@@ -25,7 +25,7 @@ class TextFieldObserver : ObservableObject {
 }
 
 struct EditReplyModalComment: View {
-  @ObservedObject var comment: Comment
+  var comment: Comment
   
   func action(_ endLoading: (@escaping (Bool) -> ()), text: String) {
     if let _ = comment.typePrefix {
@@ -48,7 +48,7 @@ struct EditReplyModalComment: View {
 }
 
 struct ReplyModalComment: View {
-  @ObservedObject var comment: Comment
+  var comment: Comment
   
   func action(_ endLoading: (@escaping (Bool) -> ()), text: String) {
     if let _ = comment.typePrefix {
@@ -118,7 +118,6 @@ struct ReplyModal<Content: View>: View {
   @FetchRequest(sortDescriptors: []) var drafts: FetchedResults<ReplyDraft>
   @Environment(\.globalLoaderStart) private var globalLoaderStart
   @Environment(\.globalLoaderDismiss) private var globalLoaderDismiss
-  @ObservedObject var redditAPI = RedditAPI.shared
   
   init(title: String = "Replying", loadingLabel: String = "Commenting...", submitBtnLabel: String = "Send", thingFullname: String, action: @escaping (@escaping (Bool) -> Void, String) -> Void, text: String? = nil, content: (() -> Content)?) {
     self.title = title
@@ -136,7 +135,7 @@ struct ReplyModal<Content: View>: View {
         VStack(spacing: 12) {
           
           VStack(alignment: .leading) {
-            if let me = redditAPI.me?.data, let avatarLink = me.icon_img ?? me.snoovatar_img, let rootURL = rootURLString(avatarLink), let avatarURL = URL(string: rootURL) {
+            if let me = RedditAPI.shared.me?.data, let avatarLink = me.icon_img ?? me.snoovatar_img, let rootURL = rootURLString(avatarLink), let avatarURL = URL(string: rootURL) {
               BadgeOpt(avatarRequest: ImageRequest(url: avatarURL), badgeKit: .init(numComments: 0, ups: 0, saved: false, author: me.name, authorFullname: "t2_\(me.id)", userFlair: "", created: Date().timeIntervalSince1970), avatarURL: me.icon_img ?? me.snoovatar_img, theme: selectedTheme.comments.theme.badge)
             }
             MDEditor(text: $textWrapper.replyText)
