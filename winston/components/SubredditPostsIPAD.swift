@@ -90,7 +90,7 @@ struct SubredditPostsIPAD: View, Equatable {
               .environment(\.contextPost, post)
               .environment(\.contextSubreddit, sub)
               .environment(\.contextPostWinstonData, winstonData)
-              .onAppear {
+              .task (priority: .background) {
                 if(posts.count - 7 == i && !isFiltered && !loading) { loadMorePosts() }
               }
             }

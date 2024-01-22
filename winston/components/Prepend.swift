@@ -111,6 +111,6 @@ struct Prepend: UIViewRepresentable, Equatable {
   
   func updateUIView(_ uiLabel: UILabel, context: Context) {
 //    if size != uiLabel.frame.size { uiLabel.frame.size = size }
-//    if !(uiLabel.attributedText?.isEqual(to: attrString) ?? false) { uiLabel.attributedText = attrString }
+    if !(uiLabel.attributedText?.isEqual(to: attrString) ?? false) { uiLabel.attributedText = attrString }
   }
 }
