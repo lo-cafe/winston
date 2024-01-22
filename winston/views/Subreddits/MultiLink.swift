@@ -9,12 +9,12 @@ import SwiftUI
 import Popovers
 
 struct MultiLink: View {
-  @StateObject var multi: Multi
-  @StateObject private var subs = NonObservableArray<Subreddit>()
+  var multi: Multi
+  @State private var subs: [Subreddit] = []
   
   var body: some View {
     Menu {
-      ForEach(subs.data) { sub in
+      ForEach(subs) { sub in
         if let data = sub.data {
           SubItemButton(data: data, action: { Nav.to(.reddit(.subFeed(sub))) })
         }
@@ -37,8 +37,8 @@ struct MultiLink: View {
       Nav.to(.reddit(.multiFeed(multi)))
     }
     .onAppear {
-      if subs.data.count == 0 {
-        subs.data = multi.data?.subreddits?.compactMap { sub in
+      if subs.count == 0 {
+        subs = multi.data?.subreddits?.compactMap { sub in
           if let data = sub.data { return Subreddit(data: data) }
           return nil
         } ?? []

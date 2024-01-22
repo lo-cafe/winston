@@ -71,9 +71,9 @@ struct SubredditPostsIOS: View, Equatable {
         ForEach(Array(posts.enumerated()), id: \.self.element.id) { i, post in
           if let sub = subreddit ?? post.winstonData?.subreddit, let winstonData = post.winstonData {
             PostLink(id: post.id, theme: selectedTheme.postLinks, showSub: showSub, compactPerSubreddit: feedDefSettings.compactPerSubreddit[sub.id], contentWidth: contentWidth, defSettings: postLinkDefSettings)
-            .environmentObject(sub)
-            .environmentObject(post)
-            .environmentObject(winstonData)
+              .environment(\.contextPost, post)
+              .environment(\.contextSubreddit, sub)
+              .environment(\.contextPostWinstonData, winstonData)
             .task(priority: .background) {
               if(posts.count - 7 == i && !isFiltered && !loading) { loadMorePosts() }
             }

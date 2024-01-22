@@ -482,7 +482,7 @@ extension Post {
         //          )
         //          await MainActor.run {
         //            withAnimation {
-        //              childrenWinston.data.append(Comment(data: newComment))
+        //              childrenWinston.append(Comment(data: newComment))
         //            }
         //          }
         //        }
@@ -599,29 +599,30 @@ enum PostWinstonDataMedia {
   case user(username: String)
 }
 
-class PostWinstonData: Hashable, ObservableObject {
+@Observable
+class PostWinstonData: Hashable {
   static func == (lhs: PostWinstonData, rhs: PostWinstonData) -> Bool { lhs.permaURL == rhs.permaURL }
   
   var permaURL: URL? = nil
-  @Published var extractedMedia: MediaExtractedType? = nil
-  @Published var extractedMediaForcedNormal: MediaExtractedType? = nil
-  @Published var _strongSubreddit: Subreddit?
+  var extractedMedia: MediaExtractedType? = nil
+  var extractedMediaForcedNormal: MediaExtractedType? = nil
+  var _strongSubreddit: Subreddit?
   weak var _weakSubreddit: Subreddit?
   var subreddit: Subreddit? {
     get { _weakSubreddit ?? _strongSubreddit }
     set { _weakSubreddit = newValue }
   }
-  @Published var mediaImageRequest: [ImageRequest] = []
-  @Published var avatarImageRequest: ImageRequest? = nil
-  @Published var postDimensions: PostDimensions = .zero
-  @Published var postDimensionsForcedNormal: PostDimensions = .zero
-  @Published var titleAttr: NSAttributedString?
-  @Published var linkMedia: PreviewModel?
-  @Published var videoMedia: SharedVideo?
-  @Published var postBodyAttr: NSAttributedString?
-  @Published var media: PostWinstonDataMedia?
-  @Published var seenCommentsCount: Int? = nil
-  @Published var seenComments: String? = nil
+  var mediaImageRequest: [ImageRequest] = []
+  var avatarImageRequest: ImageRequest? = nil
+  var postDimensions: PostDimensions = .zero
+  var postDimensionsForcedNormal: PostDimensions = .zero
+  var titleAttr: NSAttributedString?
+  var linkMedia: PreviewModel?
+  var videoMedia: SharedVideo?
+  var postBodyAttr: NSAttributedString?
+  var media: PostWinstonDataMedia?
+  var seenCommentsCount: Int? = nil
+  var seenComments: String? = nil
   
   func hash(into hasher: inout Hasher) {
     hasher.combine(permaURL)

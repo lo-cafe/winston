@@ -68,7 +68,7 @@ extension RedditAPI {
           comment.winstonData?.avatarImageRequest = avatarsDict[authorFullname]
         }
       }
-      Task { [avatarsDict] in await self.updateCommentsWithAvatar(comments: comment.childrenWinston.data, avatarSize: avatarSize, presentAvatarsDict: avatarsDict) }
+      Task { [avatarsDict] in await self.updateCommentsWithAvatar(comments: comment.childrenWinston, avatarSize: avatarSize, presentAvatarsDict: avatarsDict) }
     }
   }
   
@@ -143,7 +143,7 @@ func getNamesFromComments(_ comments: [Comment]) -> [String] {
     if let fullname = comment.data?.author_fullname {
       namesArr.append(fullname)
     }
-    namesArr += getNamesFromComments(comment.childrenWinston.data)
+    namesArr += getNamesFromComments(comment.childrenWinston)
   }
   return namesArr
 }

@@ -10,12 +10,13 @@ import Defaults
 import SwiftUIIntrospect
 import MarkdownUI
 
-class Sizer: ObservableObject {
-  @Published var size: CGSize = .zero
+@Observable
+class Sizer {
+  var size: CGSize = .zero
 }
 
 struct CommentLinkContentPreview: View {
-  @ObservedObject var sizer: Sizer
+  var sizer: Sizer
   var forcedBodySize: CGSize?
   var showReplies = true
   var arrowKinds: [ArrowKind]
@@ -47,8 +48,8 @@ struct CommentLinkContent: View {
   var indentLines: Int? = nil
   var lineLimit: Int?
   var post: Post?
-  @ObservedObject var comment: Comment
-  @ObservedObject var winstonData: CommentWinstonData
+  var comment: Comment
+  var winstonData: CommentWinstonData
   var avatarsURL: [String:String]?
 
   @State private var sizer = Sizer()
@@ -256,7 +257,7 @@ struct CommentLinkContent: View {
               )
               .frame(maxWidth: .infinity, alignment: .topLeading)
               .padding(.top, theme.theme.bodyAuthorSpacing)
-              .padding(.bottom, max(0, theme.theme.innerPadding.vertical + (data.depth == 0 && comment.childrenWinston.data.count == 0 ? -theme.theme.cornerRadius : theme.theme.innerPadding.vertical)))
+              .padding(.bottom, max(0, theme.theme.innerPadding.vertical + (data.depth == 0 && comment.childrenWinston.count == 0 ? -theme.theme.cornerRadius : theme.theme.innerPadding.vertical)))
               .scaleEffect(1)
               .contentShape(Rectangle())
               .background(forcedBodySize != nil ? nil : GeometryReader { geo in Color.clear.onAppear { sizer.size = geo.size } } )

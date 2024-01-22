@@ -30,9 +30,9 @@ struct PostLinkNormal: View, Equatable, Identifiable {
     return lhs.id == rhs.id && lhs.theme == rhs.theme && lhs.contentWidth == rhs.contentWidth && lhs.secondary == rhs.secondary && lhs.defSettings == rhs.defSettings
   }
   
-  @EnvironmentObject var post: Post
-  @EnvironmentObject var winstonData: PostWinstonData
-  @EnvironmentObject var sub: Subreddit
+  @Environment(\.contextPost) var post
+  @Environment(\.contextSubreddit) var sub
+  @Environment(\.contextPostWinstonData) var winstonData
   var id: String
   weak var controller: UIViewController?
   var theme: SubPostsListTheme
@@ -83,7 +83,7 @@ struct PostLinkNormal: View, Equatable, Identifiable {
   func mediaComponentCall() -> some View {
     if let data = post.data {
       if let extractedMedia = winstonData.extractedMedia {
-        MediaPresenter(postDimensions: $winstonData.postDimensions, controller: controller, postTitle: data.title, badgeKit: data.badgeKit, avatarImageRequest: winstonData.avatarImageRequest, markAsSeen: !defSettings.lightboxReadsPost ? nil : markAsRead, cornerRadius: theme.theme.mediaCornerRadius, blurPostLinkNSFW: defSettings.blurNSFW, media: extractedMedia, over18: over18, compact: false, contentWidth: winstonData.postDimensions.mediaSize?.width ?? 0, maxMediaHeightScreenPercentage: defSettings.maxMediaHeightScreenPercentage, resetVideo: resetVideo)
+        MediaPresenter(winstonData: winstonData, controller: controller, postTitle: data.title, badgeKit: data.badgeKit, avatarImageRequest: winstonData.avatarImageRequest, markAsSeen: !defSettings.lightboxReadsPost ? nil : markAsRead, cornerRadius: theme.theme.mediaCornerRadius, blurPostLinkNSFW: defSettings.blurNSFW, media: extractedMedia, over18: over18, compact: false, contentWidth: winstonData.postDimensions.mediaSize?.width ?? 0, maxMediaHeightScreenPercentage: defSettings.maxMediaHeightScreenPercentage, resetVideo: resetVideo)
           .allowsHitTesting(defSettings.isMediaTappable)
         
         if case .repost(let repost) = extractedMedia {
@@ -102,9 +102,9 @@ struct PostLinkNormal: View, Equatable, Identifiable {
             .cornerRadius(theme.theme.mediaCornerRadius)
             //                }
             //            .swipyRev(size: repostWinstonData.postDimensions.size, actionsSet: postSwipeActions, entity: repost)
-            .environmentObject(repost)
-            .environmentObject(repostWinstonData)
-            .environmentObject(repostSub)
+            .environment(\.contextPost, repost)
+            .environment(\.contextSubreddit, repostSub)
+            .environment(\.contextPostWinstonData, repostWinstonData)
           }
         }
       }

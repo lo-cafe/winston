@@ -9,7 +9,6 @@ import SwiftUI
 
 struct Me: View {
   @State var router: Router
-  @ObservedObject var redditAPI = RedditAPI.shared
   
   init(router: Router) {
     self._router = .init(initialValue: router)
@@ -19,7 +18,7 @@ struct Me: View {
   var body: some View {
     NavigationStack(path: $router.fullPath) {
       Group {
-        if let user = redditAPI.me {
+        if let user = RedditAPI.shared.me {
           UserView(user: user)
             .id("me-user-view-\(user.id)")
           

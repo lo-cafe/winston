@@ -16,8 +16,8 @@ struct PostContent: View, Equatable {
     lhs.post.id == rhs.post.id
   }
   
-  @ObservedObject var post: Post
-  @ObservedObject var winstonData: PostWinstonData
+  var post: Post
+  var winstonData: PostWinstonData
   var sub: Subreddit
   var forceCollapse: Bool = false
   @State private var collapsed = false
@@ -62,7 +62,7 @@ struct PostContent: View, Equatable {
             VStack(spacing: 0) {
               VStack(spacing: selectedTheme.posts.spacing) {
                 if let extractedMedia = winstonData.extractedMediaForcedNormal {
-                  MediaPresenter(postDimensions: $winstonData.postDimensionsForcedNormal, controller: nil, postTitle: data.title, badgeKit: data.badgeKit, avatarImageRequest: winstonData.avatarImageRequest, markAsSeen: {}, cornerRadius: selectedTheme.postLinks.theme.mediaCornerRadius, blurPostLinkNSFW: defSettings.blurNSFW, media: extractedMedia, over18: over18, compact: false, contentWidth: winstonData.postDimensionsForcedNormal.mediaSize?.width ?? 0, maxMediaHeightScreenPercentage: Defaults[.PostLinkDefSettings].maxMediaHeightScreenPercentage, resetVideo: nil)
+                  MediaPresenter(winstonData: winstonData, fullPage: true, controller: nil, postTitle: data.title, badgeKit: data.badgeKit, avatarImageRequest: winstonData.avatarImageRequest, markAsSeen: {}, cornerRadius: selectedTheme.postLinks.theme.mediaCornerRadius, blurPostLinkNSFW: defSettings.blurNSFW, media: extractedMedia, over18: over18, compact: false, contentWidth: winstonData.postDimensionsForcedNormal.mediaSize?.width ?? 0, maxMediaHeightScreenPercentage: Defaults[.PostLinkDefSettings].maxMediaHeightScreenPercentage, resetVideo: nil)
                 }
                 
                 if !data.selftext.isEmpty {

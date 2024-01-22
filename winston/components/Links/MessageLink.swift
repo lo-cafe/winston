@@ -10,7 +10,7 @@ import Defaults
 
 struct MessageLink: View {
   @State private var pressed = false
-  @ObservedObject var message: Message
+  var message: Message
   
   var body: some View {
     if let data = message.data, let author = data.author, let subreddit = data.subreddit, let parentID = data.parent_id, let name = data.name {

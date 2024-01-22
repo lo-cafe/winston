@@ -13,7 +13,7 @@ struct MixedContentFeedView: View {
   var mixedMediaLinks: [Either<Post, Comment>]
   @Binding var loadNextData: Bool
   
-  @StateObject var user: User
+  var user: User
   weak var subreddit: Subreddit?
   @State private var loadingOverview = true
   @State private var lastItemId: String? = nil

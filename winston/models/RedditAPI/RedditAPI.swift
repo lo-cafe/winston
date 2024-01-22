@@ -12,7 +12,8 @@ import SwiftUI
 import Defaults
 import Combine
 
-class RedditAPI: ObservableObject {
+@Observable
+class RedditAPI {
   static let shared = RedditAPI()
   static let winstonAPIBase = "https://winston.lo.cafe/api"
   static let redditApiURLBase = "https://oauth.reddit.com"
@@ -20,7 +21,7 @@ class RedditAPI: ObservableObject {
   static let appRedirectURI: String = "https://app.winston.cafe/auth-success"
   
   var lastAuthState: String?
-  @Published var me: User?
+  var me: User?
   
   // This is a replacement for getRequestHeader. We need to replace every instance of the former by this one
   func fetchRequestHeaders(force: Bool = false, includeAuth: Bool = true, altCredential: RedditCredential? = nil, saveToken: Bool = true) async -> HTTPHeaders? {

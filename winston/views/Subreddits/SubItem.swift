@@ -31,7 +31,7 @@ struct SubItem: View, Equatable {
   }
   
   var isActive: Bool
-  @ObservedObject var sub: Subreddit
+  var sub: Subreddit
   var cachedSub: CachedSub
 //  @Default(.likedButNotSubbed) private var likedButNotSubbed
   

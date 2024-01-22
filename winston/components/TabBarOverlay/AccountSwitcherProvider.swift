@@ -9,15 +9,16 @@ import SwiftUI
 import Combine
 import Defaults
 
-class AccountSwitcherTransmitter: ObservableObject {
+@Observable
+class AccountSwitcherTransmitter {
   enum SwitchingState {
     case showing, hidden, selectedCred(RedditCredential)
   }
   private var cancellable: Timer? = nil
-  @Published var positionInfo: PositionInfo? { willSet { self.cancellable?.invalidate() } }
-  @Published var showing = false { willSet { if newValue { self.cancellable?.invalidate() } } }
-  @Published var selectedCred: RedditCredential? = nil
-  @Published var screenshot: UIImage? = nil
+  var positionInfo: PositionInfo? { willSet { self.cancellable?.invalidate() } }
+  var showing = false { willSet { if newValue { self.cancellable?.invalidate() } } }
+  var selectedCred: RedditCredential? = nil
+  var screenshot: UIImage? = nil
   
   func scheduleReset(_ secs: Double) {
     cancellable = Timer.scheduledTimer(withTimeInterval: secs, repeats: false) { _ in
@@ -57,7 +58,7 @@ struct AccountSwitcherProvider<Content: View>: View {
     var blurMain: Bool = false
   }
   
-  @StateObject private var transmitter = AccountSwitcherTransmitter()
+  @Environment(\.accountSwitcherTransmitter) private var transmitter
   //  @State private var credIDToSelect: UUID? = nil
   @State private var accTransKit: AccountTransitionKit = .init()
   
@@ -104,7 +105,6 @@ struct AccountSwitcherProvider<Content: View>: View {
         content()
           .blur(radius: accTransKit.blurMain ? 10 : 0)
         //          .offset(x: accTransKit.passLens ? 0 : accTransKit.focusCloser ? (parallaxW * (accTransKit.willLensHeadLeft ? -1 : 1)) : 0)
-          .environmentObject(transmitter)
           .zIndex(1)
         
         if let screenshot = transmitter.screenshot {
@@ -175,5 +175,16 @@ struct SideBySideWindow<C: View>: View {
     .allowsHitTesting(false)
     .clipped()
     .drawingGroup()
+  }
+}
+
+private struct AccountSwitcherTransmitterKey: EnvironmentKey {
+  static let defaultValue = AccountSwitcherTransmitter()
+}
+
+extension EnvironmentValues {
+  var accountSwitcherTransmitter: AccountSwitcherTransmitter {
+    get { self[AccountSwitcherTransmitterKey.self] }
+    set { self[AccountSwitcherTransmitterKey.self] = newValue }
   }
 }

@@ -36,9 +36,9 @@ struct PostLinkCompact: View, Equatable, Identifiable {
     return lhs.id == rhs.id && lhs.theme == rhs.theme && lhs.contentWidth == rhs.contentWidth && lhs.defSettings == rhs.defSettings
   }
   var id: String
-  @EnvironmentObject var post: Post
-  @EnvironmentObject var winstonData: PostWinstonData
-  @EnvironmentObject var sub: Subreddit
+  @Environment(\.contextPost) var post
+  @Environment(\.contextSubreddit) var sub
+  @Environment(\.contextPostWinstonData) var winstonData
   weak var controller: UIViewController?
   var theme: SubPostsListTheme
   var showSub = false
@@ -86,7 +86,7 @@ struct PostLinkCompact: View, Equatable, Identifiable {
   @ViewBuilder
   func mediaComponentCall(showURLInstead: Bool = false) -> some View {
     if let data = post.data, let extractedMedia = post.winstonData?.extractedMedia {
-      MediaPresenter(postDimensions: $winstonData.postDimensions, controller: controller, postTitle: data.title, badgeKit: data.badgeKit, avatarImageRequest: winstonData.avatarImageRequest, markAsSeen: !defSettings.lightboxReadsPost ? nil : markAsRead, cornerRadius: theme.theme.mediaCornerRadius, blurPostLinkNSFW: defSettings.blurNSFW, showURLInstead: showURLInstead, media: extractedMedia, over18: over18, compact: true, contentWidth: winstonData.postDimensions.mediaSize?.width ?? 0, maxMediaHeightScreenPercentage: defSettings.maxMediaHeightScreenPercentage, resetVideo: resetVideo)
+      MediaPresenter(winstonData: winstonData, controller: controller, postTitle: data.title, badgeKit: data.badgeKit, avatarImageRequest: winstonData.avatarImageRequest, markAsSeen: !defSettings.lightboxReadsPost ? nil : markAsRead, cornerRadius: theme.theme.mediaCornerRadius, blurPostLinkNSFW: defSettings.blurNSFW, showURLInstead: showURLInstead, media: extractedMedia, over18: over18, compact: true, contentWidth: winstonData.postDimensions.mediaSize?.width ?? 0, maxMediaHeightScreenPercentage: defSettings.maxMediaHeightScreenPercentage, resetVideo: resetVideo)
         .allowsHitTesting(defSettings.isMediaTappable)
     }
   }

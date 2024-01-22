@@ -22,7 +22,7 @@ struct VibrateModifier<T: Equatable>: ViewModifier {
     self.disabled = disabled
   }
   
-  @StateObject private var hapticHolder = HapticHolder()
+  @State private var hapticHolder = HapticHolder()
   @Environment(\.scenePhase) private var scenePhase
   func body(content: Content) -> some View {
     content
@@ -56,12 +56,13 @@ struct VibrateModifier<T: Equatable>: ViewModifier {
     case transient(sharpness: Double, intensity: Double)
   }
   
-  class HapticHolder: ObservableObject {
+  @Observable
+  class HapticHolder {
     private var engine: CHHapticEngine? = nil
     private var continuousHapticTimer: Timer? = nil
     private var engineNeedsStart = true
     private var continuousPlayer: CHHapticAdvancedPatternPlayer? = nil
-    private lazy var supportsHaptics: Bool = {
+    private var supportsHaptics: Bool = {
       return AppDelegate.instance?.supportsHaptics ?? false
     }()
     private let initialIntensity: Float = 1.0

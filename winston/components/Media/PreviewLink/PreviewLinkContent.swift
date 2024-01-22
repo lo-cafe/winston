@@ -18,7 +18,7 @@ import SafariServices
 
 struct PreviewLinkContent: View {
   var compact: Bool
-  @ObservedObject var viewModel: PreviewModel
+  var viewModel: PreviewModel
   var url: URL
   static let height: CGFloat = 88
   @Environment(\.openURL) private var openURL

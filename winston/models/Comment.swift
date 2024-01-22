@@ -18,7 +18,7 @@ enum RandomErr: Error {
 }
 
 enum CommentParentElement {
-  case post(ObservableArray<Comment>)
+  case post(Binding<[Comment]>)
   case comment(Comment)
 }
 
@@ -26,7 +26,7 @@ extension Comment {
   static var prefix = "t1"
   var selfPrefix: String { Self.prefix }
   
-  convenience init(data: T, kind: String? = nil, parent: ObservableArray<GenericRedditEntity<T, B>>? = nil) {
+  convenience init(data: T, kind: String? = nil, parent: [GenericRedditEntity<T, B>]? = nil) {
     self.init(data: data, typePrefix: "\(Comment.prefix)_")
     if let parent = parent {
       self.parentWinston = parent
@@ -39,7 +39,7 @@ extension Comment {
       case .first(_):
         break
       case.second(let listing):
-        self.childrenWinston.data = listing.data?.children?.compactMap { x in
+        self.childrenWinston = listing.data?.children?.compactMap { x in
           if let innerData = x.data {
             let newComment = Comment(data: innerData, kind: x.kind, parent: self.childrenWinston)
             return newComment
@@ -52,10 +52,9 @@ extension Comment {
   
   func setupWinstonData() {
     self.winstonData = .init()
-    
-    guard let winstonData = self.winstonData, let data = self.data else { return }
-    let theme = getEnabledTheme().comments.theme
-    let cs: ColorScheme = UIScreen.main.traitCollection.userInterfaceStyle == .dark ? .dark : .light
+//    guard let winstonData = self.winstonData, let data = self.data else { return }
+//    let theme = getEnabledTheme().comments.theme
+//    let cs: ColorScheme = UIScreen.main.traitCollection.userInterfaceStyle == .dark ? .dark : .light
   }
   
   convenience init(message: Message) throws {
@@ -103,7 +102,7 @@ extension Comment {
     }
   }
   
-  static func initMultiple(datas: [ListingChild<T>], parent: ObservableArray<GenericRedditEntity<T, B>>? = nil) -> [Comment] {
+  static func initMultiple(datas: [ListingChild<T>], parent: [GenericRedditEntity<T, B>]? = nil) -> [Comment] {
     let context = PersistenceController.shared.primaryBGContext
     let fetchRequest = NSFetchRequest<CollapsedComment>(entityName: "CollapsedComment")
     if let results = (context.performAndWait { try? context.fetch(fetchRequest) }) {
@@ -198,31 +197,31 @@ extension Comment {
         await MainActor.run { [loadedComments] in
           switch parent {
           case .comment(let comment):
-            if let index = comment.childrenWinston.data.firstIndex(where: { $0.id == id }) {
+            if let index = comment.childrenWinston.firstIndex(where: { $0.id == id }) {
               withAnimation {
                 if (self.data?.children?.count ?? 0) <= 25 {
-                  comment.childrenWinston.data.remove(at: index)
+                  comment.childrenWinston.remove(at: index)
                 } else {
                   self.data?.children?.removeFirst(childrensLimit)
                   if let _ = self.data?.count {
                     self.data?.count! -= children.count
                   }
                 }
-                comment.childrenWinston.data.insert(contentsOf: loadedComments, at: index)
+                comment.childrenWinston.insert(contentsOf: loadedComments, at: index)
               }
             }
           case .post(let postArr):
-            if let index = postArr.data.firstIndex(where: { $0.id == id }) {
+            if let index = postArr.wrappedValue.firstIndex(where: { $0.id == id }) {
               withAnimation {
                 if (self.data?.children?.count ?? 0) <= 25 {
-                  postArr.data.remove(at: index)
+                  postArr.wrappedValue.remove(at: index)
                 } else {
                   self.data?.children?.removeFirst(childrensLimit)
                   if let _ = self.data?.count {
                     self.data?.count! -= children.count
                   }
                 }
-                postArr.data.insert(contentsOf: loadedComments, at: index)
+                postArr.wrappedValue.insert(contentsOf: loadedComments, at: index)
               }
             }
           }
@@ -271,7 +270,7 @@ extension Comment {
         newComment.ups = 1
         await MainActor.run { [newComment] in
           withAnimation {
-            childrenWinston.data.append(Comment(data: newComment))
+            childrenWinston.append(Comment(data: newComment))
           }
         }
       }
@@ -358,10 +357,10 @@ extension Comment {
       let result = await RedditAPI.shared.delete(fullname: name)
       if (result ?? false) {
         if let parentWinston = self.parentWinston {
-          let newParent = parentWinston.data.filter { $0.id != id }
+          let newParent = parentWinston.filter { $0.id != id }
           await MainActor.run {
             withAnimation {
-              self.parentWinston?.data = newParent
+              self.parentWinston = newParent
             }
           }
         }
@@ -372,16 +371,17 @@ extension Comment {
   }
 }
 
-class CommentWinstonData: Hashable, ObservableObject {
+@Observable
+class CommentWinstonData: Hashable {
   static func == (lhs: CommentWinstonData, rhs: CommentWinstonData) -> Bool { lhs.avatarImageRequest?.url == rhs.avatarImageRequest?.url }
   
   //  var permaURL: URL? = nil
   //  @Published var extractedMedia: MediaExtractedType? = nil
   //  var subreddit: Subreddit?
   //  @Published var mediaImageRequest: [ImageRequest] = []
-  @Published var avatarImageRequest: ImageRequest? = nil
-  @Published var commentBodySize: CGSize = .zero
-  @Published var bodyAttr: NSAttributedString?
+  var avatarImageRequest: ImageRequest? = nil
+  var commentBodySize: CGSize = .zero
+  var bodyAttr: NSAttributedString?
   
   func hash(into hasher: inout Hasher) {
     hasher.combine(avatarImageRequest?.description)

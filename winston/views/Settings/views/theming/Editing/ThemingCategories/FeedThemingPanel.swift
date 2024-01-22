@@ -10,8 +10,8 @@ import Defaults
 
 struct FeedThemingPanel: View {
   @Binding var theme: WinstonTheme
-  @StateObject private var previewPostSample = Post(data: postSampleData)
-  @StateObject private var previewPostSubSample = Subreddit(id: postSampleData.subreddit)
+  @State private var previewPostSample = Post(data: postSampleData)
+  @State private var previewPostSubSample = Subreddit(id: postSampleData.subreddit)
   
   @Default(.PostLinkDefSettings) private var postLinkDefSettings
   
@@ -64,9 +64,9 @@ struct FeedThemingPanel: View {
             .equatable()
             .environment(\.useTheme, theme)
           }
-          .environmentObject(previewPostSample)
-          .environmentObject(previewPostSubSample)
-          .environmentObject(winstonData)
+          .environment(\.contextPost, previewPostSample)
+          .environment(\.contextSubreddit, previewPostSubSample)
+          .environment(\.contextPostWinstonData, winstonData)
           .padding(.horizontal, theme.postLinks.theme.outerHPadding)
           .allowsHitTesting(false)
           .contentShape(Rectangle())

@@ -224,24 +224,6 @@ struct BadgeOpt: View, Equatable {
   }
 }
 
-struct BadgeComment: View, Equatable {
-  static func == (lhs: BadgeComment, rhs: BadgeComment) -> Bool {
-    return lhs.badgeKit == rhs.badgeKit && lhs.theme == rhs.theme && lhs.unseen == rhs.unseen
-  }
-  
-  let badgeKit: BadgeKit
-  var showVotes = false
-  var unseen: Bool
-  var usernameColor: Color?
-  var avatarURL: String?
-  var theme: BadgeTheme
-  @ObservedObject private var avatarCache = Caches.avatars
-  
-  var body: some View {
-    BadgeView(avatarRequest: avatarCache.cache[badgeKit.authorFullname]?.data, saved: badgeKit.saved, unseen: unseen, usernameColor: usernameColor, author: badgeKit.author, fullname: badgeKit.authorFullname, userFlair: badgeKit.userFlair, created: badgeKit.created, avatarURL: avatarURL, theme: theme, commentsCount: formatBigNumber(badgeKit.numComments), votesCount: !showVotes ? nil : formatBigNumber(badgeKit.ups))
-  }
-}
-
 struct BadgeExtraInfo: Hashable, Equatable, Identifiable {
   static func == (lhs: BadgeExtraInfo, rhs: BadgeExtraInfo) -> Bool {
     lhs.id == rhs.id

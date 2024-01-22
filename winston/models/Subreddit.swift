@@ -240,10 +240,11 @@ extension Subreddit {
 //
 //}
 
-class SubredditWinstonData: Hashable, ObservableObject {
+@Observable
+class SubredditWinstonData: Hashable {
   static func == (lhs: SubredditWinstonData, rhs: SubredditWinstonData) -> Bool { lhs.flairs == rhs.flairs }
   
-  @Published var flairs: [FilterData] = []
+  var flairs: [FilterData] = []
   
   func hash(into hasher: inout Hasher) {
     hasher.combine(flairs)

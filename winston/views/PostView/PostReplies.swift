@@ -7,11 +7,11 @@
 
 import SwiftUI
 import Defaults
-
+  
 struct PostReplies: View {
   var update: Bool
-  @ObservedObject var post: Post
-  @ObservedObject var subreddit: Subreddit
+  var post: Post
+  var subreddit: Subreddit
   var ignoreSpecificComment: Bool
   var highlightID: String?
   var sort: CommentSortOption
@@ -19,14 +19,14 @@ struct PostReplies: View {
   var geometryReader: GeometryProxy
   @Environment(\.useTheme) private var selectedTheme
   
-  @State private var loading = true
-  @State var seenComments : String?
   
   // MARK: Properties related to comment skipper
   @Binding var topVisibleCommentId: String?
   @Binding var previousScrollTarget: String?
-  @ObservedObject var comments: ObservableArray<Comment>
+  @Binding var comments: [Comment]
   
+  @State private var seenComments: String?
+  @State private var loading = true
   @Environment(\.globalLoaderDismiss) private var globalLoaderDismiss
   
   func asyncFetch(_ full: Bool, _ altIgnoreSpecificComment: Bool? = nil) async {
@@ -37,7 +37,7 @@ struct PostReplies: View {
       newComments.forEach { $0.parentWinston = comments }
       await MainActor.run {
         withAnimation {
-          comments.data = newComments
+          comments = newComments
           loading = false
         }
 
@@ -65,7 +65,7 @@ struct PostReplies: View {
     Group {
       let postFullname = post.data?.name ?? ""
       Group {
-        ForEach(Array(comments.data.enumerated()), id: \.element.id) { i, comment in
+        ForEach(Array(comments.enumerated()), id: \.element.id) { i, comment in
           Section {
             
             Spacer()
@@ -80,8 +80,8 @@ struct PostReplies: View {
               .id("\(comment.id)-top-decoration")
             
             if let commentWinstonData = comment.winstonData {
-              CommentLink(highlightID: ignoreSpecificComment ? nil : highlightID, post: post, subreddit: subreddit, postFullname: postFullname, seenComments: seenComments, parentElement: .post(comments), comment: comment, commentWinstonData: commentWinstonData, children: comment.childrenWinston)
-                .if(comments.data.firstIndex(of: comment) != nil) { view in
+              CommentLink(highlightID: ignoreSpecificComment ? nil : highlightID, post: post, subreddit: subreddit, postFullname: postFullname, seenComments: seenComments, parentElement: .post($comments), comment: comment, commentWinstonData: commentWinstonData, children: comment.childrenWinston)
+                .if(comments.firstIndex(of: comment) != nil) { view in
                   view.anchorPreference(
                     key: CommentUtils.AnchorsKey.self,
                     value: .center
@@ -100,7 +100,7 @@ struct PostReplies: View {
               .frame(maxWidth: .infinity, minHeight: theme.spacing / 2, maxHeight: theme.spacing / 2)
               .id("\(comment.id)-bot-spacer")
             
-            if comments.data.count - 1 != i {
+            if comments.count - 1 != i {
               NiceDivider(divider: theme.divider)
                 .id("\(comment.id)-bot-divider")
             }
@@ -141,7 +141,7 @@ struct PostReplies: View {
           .frame(maxWidth: .infinity, minHeight: 100 )
           .listRowBackground(Color.clear)
           .onAppear {
-            if comments.data.count == 0 || post.data == nil {
+            if comments.count == 0 || post.data == nil {
               Task(priority: .background) {
                 await asyncFetch(post.data == nil)
               }
@@ -149,7 +149,7 @@ struct PostReplies: View {
             withAnimation { seenComments = post.winstonData?.seenComments }
           }
           .id("loading-comments")
-      } else if comments.data.count == 0 {
+      } else if comments.count == 0 {
         Text(QuirkyMessageUtil.noCommentsFoundMessage())
           .frame(maxWidth: .infinity, minHeight: 300)
           .opacity(0.25)

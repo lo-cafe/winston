@@ -10,7 +10,7 @@ import Defaults
 import Nuke
 
 struct CredentialsPanel: View {
-  @ObservedObject private var credentialsManager = RedditCredentialsManager.shared
+  private let credentialsManager = RedditCredentialsManager.shared
   @Environment(\.useTheme) private var theme
   
   var body: some View {
