@@ -302,13 +302,11 @@ struct SubredditPosts: View, Equatable {
         }
       }
     }
-    .onChange(of: sort) { val in
-      clearAndLoadData(forceRefresh: true)
-    }
+    .onChange(of: sort) { clearAndLoadData(forceRefresh: true) }
 //    .onChange(of: cs) { _ in updatePostsCalcs(selectedTheme) }
-    .onChange(of: subredditFeedDefSettings.compactPerSubreddit) { _ in updatePostsCalcs(selectedTheme) }
+    .onChange(of: subredditFeedDefSettings.compactPerSubreddit) { updatePostsCalcs(selectedTheme) }
     .onChange(of: selectedTheme, perform: updatePostsCalcs)
-    .onChange(of: searchText) { val in if searchText.isEmpty { clearAndLoadData() } }
+    .onChange(of: searchText) { if searchText.isEmpty { clearAndLoadData() } }
     .sheet(item: $customFilter, onDismiss: {
       self.subreddit.loadFlairs( { loaded in
         filters = loaded
