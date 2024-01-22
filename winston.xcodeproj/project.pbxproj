@@ -58,7 +58,7 @@
 		BB978B3C2B4F3BE200BE90D1 /* MDEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB978B382B4F3BE200BE90D1 /* MDEditor.swift */; };
 		BB978B432B4F756400BE90D1 /* External to Internal Links.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB978B422B4F756400BE90D1 /* External to Internal Links.swift */; };
 		BB978B452B4FA4A500BE90D1 /* ImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB978B442B4FA4A500BE90D1 /* ImageView.swift */; };
-		BBD6E9D72B50F37200901C1C /* Quirky Msg Util.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBD6E9D62B50F37200901C1C /* Quirky Msg Util.swift */; };
+		BBD6E9D72B50F37200901C1C /* QuirkyMsgUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBD6E9D62B50F37200901C1C /* QuirkyMsgUtil.swift */; };
 		BBD6E9D92B50F53000901C1C /* CommentSkipper.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBD6E9D82B50F53000901C1C /* CommentSkipper.swift */; };
 		BBD6E9DB2B50F5D300901C1C /* Comment util.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBD6E9DA2B50F5D300901C1C /* Comment util.swift */; };
 		BBD6E9DE2B51B03600901C1C /* MarkdownUI in Frameworks */ = {isa = PBXBuildFile; productRef = BBD6E9DD2B51B03600901C1C /* MarkdownUI */; };
@@ -629,7 +629,7 @@
 		BB978B382B4F3BE200BE90D1 /* MDEditor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MDEditor.swift; sourceTree = "<group>"; };
 		BB978B422B4F756400BE90D1 /* External to Internal Links.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "External to Internal Links.swift"; path = "winston/components/Markdown Handling/External to Internal Links.swift"; sourceTree = SOURCE_ROOT; };
 		BB978B442B4FA4A500BE90D1 /* ImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ImageView.swift; path = winston/components/Media/ImageView.swift; sourceTree = SOURCE_ROOT; };
-		BBD6E9D62B50F37200901C1C /* Quirky Msg Util.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "Quirky Msg Util.swift"; path = "winston/components/Quirky Msg Util.swift"; sourceTree = SOURCE_ROOT; };
+		BBD6E9D62B50F37200901C1C /* QuirkyMsgUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = QuirkyMsgUtil.swift; path = winston/components/QuirkyMsgUtil.swift; sourceTree = SOURCE_ROOT; };
 		BBD6E9D82B50F53000901C1C /* CommentSkipper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommentSkipper.swift; sourceTree = "<group>"; };
 		BBD6E9DA2B50F5D300901C1C /* Comment util.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "Comment util.swift"; path = "winston/utils/Comment util.swift"; sourceTree = SOURCE_ROOT; };
 		BBD6E9DF2B51B45D00901C1C /* Winston MD.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "Winston MD.swift"; path = "winston/components/Markdown Handling/Winston MD.swift"; sourceTree = SOURCE_ROOT; };
@@ -2310,7 +2310,7 @@
 				EC6081272B43B04E001A1077 /* PressableButton.swift */,
 				EC4792E12B45143000487AEE /* BetterLottieView.swift */,
 				EC49A8F02B49F7C100000EBD /* WinstonButton.swift */,
-				BBD6E9D62B50F37200901C1C /* Quirky Msg Util.swift */,
+				BBD6E9D62B50F37200901C1C /* QuirkyMsgUtil.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -2902,7 +2902,7 @@
 				ECE4497F2A6896B700E2A3B7 /* SubscribeButton.swift in Sources */,
 				EC77EC142B25761A0053B966 /* newCredentialListener.swift in Sources */,
 				ECE08B6A2AA9F03900F84DC9 /* LinesTheme.swift in Sources */,
-				BBD6E9D72B50F37200901C1C /* Quirky Msg Util.swift in Sources */,
+				BBD6E9D72B50F37200901C1C /* QuirkyMsgUtil.swift in Sources */,
 				EC1906F52A55B88500A0300E /* nestComments.swift in Sources */,
 				EC6495A82A999C4A00B1852C /* CachedMulti+CoreDataClass.swift in Sources */,
 				EC3AC9DF2AAD19580078EC78 /* ThemeColorPicker.swift in Sources */,
