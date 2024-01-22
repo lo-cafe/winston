@@ -33,6 +33,7 @@ struct SubItem: View, Equatable {
   var isActive: Bool
   var sub: Subreddit
   var cachedSub: CachedSub
+  var action: (Subreddit) -> ()
 //  @Default(.likedButNotSubbed) private var likedButNotSubbed
   
   func favoriteToggle() {
@@ -50,7 +51,7 @@ struct SubItem: View, Equatable {
 //      let localFav = likedButNotSubbed.contains(sub)
 //      let isActive = selectedSub == .reddit(.subFeed(sub))
       WListButton(showArrow: !IPAD, active: isActive) {
-        Nav.to(.reddit(.subFeed(sub)))
+        action(sub)
       } label: {
         HStack {
           Label {

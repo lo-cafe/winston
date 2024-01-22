@@ -27,7 +27,7 @@ struct SubredditsStack: View {
       if let redditCredentialSelectedID = generalDefSettings.redditCredentialSelectedID {
         Subreddits(firstDestination: $router.firstSelected, loaded: loaded, currentCredentialID: redditCredentialSelectedID)
           .measure($sidebarSize).id("subreddits-list-\(redditCredentialSelectedID)")
-          .injectInTabDestinations(viewControllerHolder: router.navController)
+          .modifier(AttachViewControllerToRouterModifier(viewControllerHolder: router.navController))
       }
     } detail: {
       NavigationStack(path: $router.path) {
