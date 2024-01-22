@@ -166,7 +166,7 @@ struct PostView: View, Equatable {
           }
         }
         .onPreferenceChange(CommentUtils.AnchorsKey.self) { anchors in
-          DispatchQueue.main.async {
+          Task(priority: .background) {
             topVisibleCommentId = CommentUtils.shared.topCommentRow(of: anchors, in: geometryReader)
           }
         }
