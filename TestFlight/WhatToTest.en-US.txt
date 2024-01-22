@@ -1,6 +1,1 @@
-- Markdown overhaul (tables, spoilers, quotes now supported)
-- Comment skipper button
-- Apollo style 'Navigation anywhere' - it will now drag the page as you drag your finger.
-- Custom filters to easily find posts that contain some text
-- Compact mode per subreddit
-- Misc. bug fixes and performance improvements
+- Performance improvements
