@@ -9,8 +9,10 @@ import Foundation
 import Combine
 import SafariServices
 import UIKit
+import SwiftUI
 
-class Nav: ObservableObject, Identifiable, Equatable {
+@Observable
+class Nav: Identifiable, Equatable {
   static let shared = Nav()
   static let router = Nav.shared.activeRouter
   
@@ -53,13 +55,13 @@ class Nav: ObservableObject, Identifiable, Equatable {
   }
   
   var id: UUID
-  @Published var activeTab: TabIdentifier {
+  var activeTab: TabIdentifier {
     willSet {
       if activeTab == newValue { self.activeRouter.resetNavPath() }
     }
   }
-  private var routers: [TabIdentifier:Router]
-  @Published var presentingSheetsQueue: [PresentingSheet] = []
+  var routers: [TabIdentifier:Router]
+  var presentingSheetsQueue: [PresentingSheet] = []
   var presentingSheet: PresentingSheet? {
     get { presentingSheetsQueue.isEmpty ? nil : presentingSheetsQueue[0] }
     set {
@@ -89,12 +91,12 @@ class Nav: ObservableObject, Identifiable, Equatable {
     self.activeTab = activeTab
     self.routers = Dictionary(uniqueKeysWithValues: TabIdentifier.allCases.map { ($0, Self.newRouterForTab($0, id)) })
     
-    self.routers.values.forEach { router in
-      router.$isAtRoot.sink { _ in
-          self.objectWillChange.send()
-        }
-        .store(in: &cancellables)
-    }
+//    self.routers.values.forEach { router in
+//      router.$isAtRoot.sink { _ in
+//          self.objectWillChange.send()
+//        }
+//        .store(in: &cancellables)
+//    }
   }
   
   func navigateTo(_ tab: TabIdentifier, _ dest: Router.NavDest, _ reset: Bool = true) {

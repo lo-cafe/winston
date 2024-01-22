@@ -8,8 +8,12 @@
 import SwiftUI
 
 struct Me: View {
-  @ObservedObject var router: Router
+  @State var router: Router
   @ObservedObject var redditAPI = RedditAPI.shared
+  
+  init(router: Router) {
+    self._router = .init(initialValue: router)
+  }
   
   @State private var loading = true
   var body: some View {

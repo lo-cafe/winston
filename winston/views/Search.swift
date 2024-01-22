@@ -43,7 +43,8 @@ enum SearchTypeArr {
 }
 
 struct Search: View {
-  @ObservedObject var router: Router
+  @State var router: Router
+  
   @State private var searchType: SearchType = .subreddit
   @StateObject private var resultsSubs = ObservableArray<Subreddit>()
   @StateObject private var resultsUsers = ObservableArray<User>()
@@ -58,6 +59,10 @@ struct Search: View {
   @Default(.PostLinkDefSettings) private var postLinkDefSettings
   @Environment(\.useTheme) private var theme
   @Environment(\.contentWidth) private var contentWidth
+  
+  init(router: Router) {
+    self._router = .init(initialValue: router)
+  }
   
   func fetch() {
     if searchQuery.text == "" { return }

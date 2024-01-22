@@ -9,11 +9,15 @@ import SwiftUI
 import Defaults
 
 struct SubredditsStack: View {
-  @ObservedObject var router: Router
+  @State var router: Router
   @Default(.BehaviorDefSettings) private var behaviorDefSettings // handle default feed selection routing
   @Default(.GeneralDefSettings) private var generalDefSettings // handle default feed selection routing
   @State private var columnVisibility: NavigationSplitViewVisibility = .automatic
   @State private var sidebarSize: CGSize = .zero
+  
+  init(router: Router) {
+    self._router = .init(initialValue: router)
+  }
   
   var postContentWidth: CGFloat { .screenW - (!IPAD || columnVisibility == .detailOnly ? 0 : sidebarSize.width) }
   
@@ -21,8 +25,7 @@ struct SubredditsStack: View {
   var body: some View {
     NavigationSplitView(columnVisibility: $columnVisibility) {
       if let redditCredentialSelectedID = generalDefSettings.redditCredentialSelectedID {
-        Subreddits(selectedSub: $router.firstSelected, loaded: loaded, currentCredentialID: redditCredentialSelectedID)
-          .equatable()
+        Subreddits(firstDestination: $router.firstSelected, loaded: loaded, currentCredentialID: redditCredentialSelectedID)
           .measure($sidebarSize).id("subreddits-list-\(redditCredentialSelectedID)")
           .injectInTabDestinations(viewControllerHolder: router.navController)
       }

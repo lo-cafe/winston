@@ -11,9 +11,8 @@ import Combine
 
 struct SwipeAnywhereTrigger: ViewModifier {
   var size: CGSize
-  @ObservedObject private var nav = Nav.shared
   func body(content: Content) -> some View {
-    FullSwipeNavigationStack(router: nav.activeRouter, size: size) {
+    FullSwipeNavigationStack(router: Nav.shared.activeRouter, size: size) {
       content
     }
   }

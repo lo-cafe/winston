@@ -31,7 +31,6 @@ struct SubItem: View, Equatable {
   }
   
   var isActive: Bool
-  var selectSub: (Subreddit) -> ()
   @ObservedObject var sub: Subreddit
   var cachedSub: CachedSub
 //  @Default(.likedButNotSubbed) private var likedButNotSubbed
@@ -51,7 +50,7 @@ struct SubItem: View, Equatable {
 //      let localFav = likedButNotSubbed.contains(sub)
 //      let isActive = selectedSub == .reddit(.subFeed(sub))
       WListButton(showArrow: !IPAD, active: isActive) {
-        selectSub(sub)
+        Nav.to(.reddit(.subFeed(sub)))
       } label: {
         HStack {
           Label {

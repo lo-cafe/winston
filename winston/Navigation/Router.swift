@@ -49,7 +49,8 @@ class ViewControllerHolder {
   }
 }
 
-class Router: ObservableObject, Hashable, Equatable, Identifiable {
+@Observable
+class Router: Hashable, Equatable, Identifiable {
   let id: String
   
   var firstSelected: NavDest? {
@@ -59,14 +60,14 @@ class Router: ObservableObject, Hashable, Equatable, Identifiable {
         if fullPath.count == 0 { fullPath.append(newValue) } else { fullPath[0] = newValue } } else { fullPath = [] }
     }
   }
-  @Published var fullPath: [NavDest] = []
+  var fullPath: [NavDest] = []
   var path: [NavDest] {
     get { Array(self.fullPath.dropFirst()) }
     set {
       if fullPath.isEmpty { self.fullPath = newValue } else { self.fullPath = [fullPath[0]] + newValue }
     }
   }
-  @Published private(set) var isAtRoot = false {
+  private(set) var isAtRoot = false {
     willSet {
       self.navController.isGestureEnabled = !newValue
     }
@@ -78,7 +79,7 @@ class Router: ObservableObject, Hashable, Equatable, Identifiable {
   init(id: String) {
     self.id = id
     self.navController = ViewControllerHolder(routerID: id)
-    $fullPath.map { $0.isEmpty }.assign(to: \.isAtRoot, on: self).store(in: &cancellables)
+//    $fullPath.map { $0.isEmpty }.assign(to: \.isAtRoot, on: self).store(in: &cancellables)
   }
   
   func goBack() { _ = withAnimation { self.fullPath.removeLast() } }

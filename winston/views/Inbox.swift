@@ -9,12 +9,16 @@ import SwiftUI
 import Defaults
 
 struct Inbox: View {
-  @ObservedObject var router: Router
+  @State var router: Router
   
   @StateObject private var messages = ObservableArray<Message>()
   @State private var loading = false
   @Default(.GeneralDefSettings) private var generalDefSettings
   @Environment(\.useTheme) private var selectedTheme
+  
+  init(router: Router) {
+    self._router = .init(initialValue: router)
+  }
   
   func fetch(_ loadMore: Bool = false, _ force: Bool = false) async {
     if messages.data.count > 0 && !force { return }

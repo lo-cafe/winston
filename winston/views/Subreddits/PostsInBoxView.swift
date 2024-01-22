@@ -10,7 +10,6 @@ import Defaults
 import Combine
 
 struct PostsInBoxView: View {
-  @Binding var initialSelected: Router.NavDest?
   @Default(.postsInBox) private var postsInBox
   
   var body: some View {
@@ -19,7 +18,7 @@ struct PostsInBoxView: View {
           ScrollView(.horizontal) {
             HStack(spacing: 12) {
               ForEach(postsInBox, id: \.self.id) { post in
-                PostInBoxLink(initialSelected: $initialSelected, postInBox: post, post: Post(id: post.id, subID: post.subredditName), sub: Subreddit(id: post.subredditName))
+                PostInBoxLink(postInBox: post, post: Post(id: post.id, subID: post.subredditName), sub: Subreddit(id: post.subredditName))
                   .animation(spring, value: postsInBox)
               }
             }

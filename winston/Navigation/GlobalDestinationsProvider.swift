@@ -9,7 +9,7 @@ import SwiftUI
 import Defaults
 
 struct GlobalDestinationsProvider<C: View>: View {
-  @ObservedObject private var nav = Nav.shared
+  @State var nav = Nav.shared
   
   @Environment(\.tabBarHeight) private var tabBarHeight
 

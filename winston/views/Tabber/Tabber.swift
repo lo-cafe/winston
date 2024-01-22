@@ -13,7 +13,7 @@ struct Tabber: View, Equatable {
   static func == (lhs: Tabber, rhs: Tabber) -> Bool { true }
   
   @ObservedObject private var redditCredentialsManager = RedditCredentialsManager.shared
-  @ObservedObject private var nav = Nav.shared
+  @State var nav = Nav.shared
   
   @State var tabBarHeight: Double? = nil
   

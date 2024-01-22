@@ -10,7 +10,6 @@ import NukeUI
 import Defaults
 
 struct PostInBoxLink: View {
-  @Binding var initialSelected: Router.NavDest?
   @Default(.postsInBox) private var postsInBox
   
   var postInBox: PostInBox
@@ -118,7 +117,7 @@ struct PostInBoxLink: View {
         .scaleEffect(deleting ? 1 : 0.85)
     )
     .onTapGesture {
-      initialSelected = .reddit(.post(post))
+      Nav.to(.reddit(.post(post)))
     }
     .gesture(
       LongPressGesture(minimumDuration: 0.5, maximumDistance: 10)
