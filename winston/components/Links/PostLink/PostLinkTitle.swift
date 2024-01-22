@@ -26,7 +26,6 @@ struct PostLinkTitle: View, Equatable {
   var body: some View {
     if let attrString = attrString {
       Prepend(attrString: attrString, title: label, fontSize: theme.size, fontWeight: theme.weight.ut, color: theme.color.uiColor(), tags: tags, size: size)
-        .equatable()
         .frame(width: size.width, height: size.height, alignment: .topLeading)
         .fixedSize(horizontal: false, vertical: true)
     }

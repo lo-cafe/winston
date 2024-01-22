@@ -93,7 +93,7 @@ func buildTitleWithTags(attrString: NSAttributedString, title: String, tags: [Pr
 
 struct Prepend: UIViewRepresentable, Equatable {
   static func == (lhs: Prepend, rhs: Prepend) -> Bool {
-    lhs.title == rhs.title && lhs.size == rhs.size && lhs.color == rhs.color && lhs.fontWeight == rhs.fontWeight && lhs.attrString.isEqual(to: rhs.attrString)
+    lhs.title == rhs.title && lhs.size == rhs.size && lhs.color == rhs.color && lhs.fontWeight == rhs.fontWeight
   }
   
   var attrString: NSAttributedString
@@ -110,7 +110,7 @@ struct Prepend: UIViewRepresentable, Equatable {
   }
   
   func updateUIView(_ uiLabel: UILabel, context: Context) {
-    if size != uiLabel.frame.size { uiLabel.frame.size = size }
-    if !(uiLabel.attributedText?.isEqual(to: attrString) ?? false) { uiLabel.attributedText = attrString }
+//    if size != uiLabel.frame.size { uiLabel.frame.size = size }
+//    if !(uiLabel.attributedText?.isEqual(to: attrString) ?? false) { uiLabel.attributedText = attrString }
   }
 }

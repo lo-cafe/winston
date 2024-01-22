@@ -33,7 +33,7 @@ struct SubredditPostsIOS: View, Equatable {
   
   @Default(.PostLinkDefSettings) private var postLinkDefSettings
   @Default(.SubredditFeedDefSettings) private var feedDefSettings
-    
+  
   @Environment(\.contentWidth) private var contentWidth
   
   func loadMorePosts() {
@@ -52,21 +52,21 @@ struct SubredditPostsIOS: View, Equatable {
     
     List {
       
-//      if !selectedTheme.postLinks.stickyFilters, let sub = subreddit {
-//        SubredditFilters(subId: sub.id, filters: filters, selected: filter, filterCallback: filterCallback, searchText: searchText, searchCallback: searchCallback, editCustomFilter: editCustomFilter, theme: selectedTheme)
-//          .equatable()
-//          .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
-//          .listRowSeparator(.hidden)
-//      }
+      //      if !selectedTheme.postLinks.stickyFilters, let sub = subreddit {
+      //        SubredditFilters(subId: sub.id, filters: filters, selected: filter, filterCallback: filterCallback, searchText: searchText, searchCallback: searchCallback, editCustomFilter: editCustomFilter, theme: selectedTheme)
+      //          .equatable()
+      //          .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
+      //          .listRowSeparator(.hidden)
+      //      }
       
-//      Section(
-//        header: subreddit != nil && selectedTheme.postLinks.stickyFilters ?
-//        SubredditFilters(subId: subreddit!.id, filters: filters, selected: filter, filterCallback: filterCallback, searchText: searchText, searchCallback: searchCallback, editCustomFilter: editCustomFilter, theme: selectedTheme)
-//          .equatable()
-//          .listRowSeparator(.hidden)
-//          .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
-//        : nil
-//      ) {
+      //      Section(
+      //        header: subreddit != nil && selectedTheme.postLinks.stickyFilters ?
+      //        SubredditFilters(subId: subreddit!.id, filters: filters, selected: filter, filterCallback: filterCallback, searchText: searchText, searchCallback: searchCallback, editCustomFilter: editCustomFilter, theme: selectedTheme)
+      //          .equatable()
+      //          .listRowSeparator(.hidden)
+      //          .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
+      //        : nil
+      //      ) {
       Section {
         ForEach(Array(posts.enumerated()), id: \.self.element.id) { i, post in
           if let sub = subreddit ?? post.winstonData?.subreddit, let winstonData = post.winstonData {
@@ -74,10 +74,10 @@ struct SubredditPostsIOS: View, Equatable {
               .environment(\.contextPost, post)
               .environment(\.contextSubreddit, sub)
               .environment(\.contextPostWinstonData, winstonData)
-            .task(priority: .background) {
-              if(posts.count - 7 == i && !isFiltered && !loading) { loadMorePosts() }
-            }
-            .listRowInsets(EdgeInsets(top: paddingV, leading: paddingH, bottom: paddingV, trailing: paddingH))
+              .task(priority: .background) {
+                if(posts.count - 7 == i && !isFiltered && !loading) { loadMorePosts() }
+              }
+              .listRowInsets(EdgeInsets(top: paddingV, leading: paddingH, bottom: paddingV, trailing: paddingH))
           }
           
           if selectedTheme.postLinks.divider.style != .no && (i != (posts.count - 1) || isFiltered) {
