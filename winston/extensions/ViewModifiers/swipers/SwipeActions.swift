@@ -24,6 +24,7 @@ struct SwipeUI<T: GenericRedditEntityDataType, B: Hashable>: ViewModifier {
   @State private var offset: CGFloat?
   @State private var triggeredAction: TriggeredAction = .none
   @State private var pressed = false
+  @State private var enableBG = false
   
   var secondary: Bool
   var offsetYAction: CGFloat = 0
@@ -88,7 +89,7 @@ struct SwipeUI<T: GenericRedditEntityDataType, B: Hashable>: ViewModifier {
       .overlay { Color.primary.opacity(pressed ? 0.1 : 0) }
       .offset(x: actualOffset)
       .background {
-        if !enableSwipeAnywhere && controlledIsSource {
+        if !enableSwipeAnywhere && controlledIsSource && enableBG {
           HStack {
             
             SwipeUIBtn(info: infoRight(), secondActiveFunc: actionsSet.rightSecond.active, firstActiveFunc: actionsSet.rightFirst.active, entity: entity!)
@@ -145,6 +146,7 @@ struct SwipeUI<T: GenericRedditEntityDataType, B: Hashable>: ViewModifier {
               if controlledDragAmount != nil {
                 controlledDragAmount?.wrappedValue =  x - offset
               } else {
+                if !enableBG { enableBG = true }
                 dragAmount = x - offset
               }
             }
@@ -163,6 +165,8 @@ struct SwipeUI<T: GenericRedditEntityDataType, B: Hashable>: ViewModifier {
               } else {
                 dragAmount = 0
               }
+            } completion: {
+              enableBG = false
             }
           }
         , including: disabled ? .none : .all

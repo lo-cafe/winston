@@ -15,7 +15,7 @@ let POSTLINK_INNER_H_PAD: CGFloat = 16
 
 struct PostLink: View, Equatable, Identifiable {
   static func == (lhs: PostLink, rhs: PostLink) -> Bool {
-    return lhs.id == rhs.id && lhs.repostAvatarRequest?.url == rhs.repostAvatarRequest?.url && lhs.theme == rhs.theme && lhs.defSettings == rhs.defSettings && lhs.compactPerSubreddit == rhs.compactPerSubreddit
+    return lhs.id == rhs.id && lhs.repostAvatarRequest?.url == rhs.repostAvatarRequest?.url && lhs.defSettings == rhs.defSettings && lhs.compactPerSubreddit == rhs.compactPerSubreddit
   }
   
   //  var disableOuterVSpacing = false
@@ -65,8 +65,8 @@ extension View {
     let fadeReadPosts = theme.theme.unseenType == .fade
     return self
       .padding(EdgeInsets(top: theme.theme.innerPadding.vertical, leading: theme.theme.innerPadding.horizontal, bottom: theme.theme.innerPadding.vertical, trailing: theme.theme.innerPadding.horizontal))
-      .background(PostLinkBG(theme: theme, stickied: post.data?.stickied, secondary: secondary).equatable())
-      .overlay(PostLinkGlowDot(unseenType: theme.theme.unseenType, seen: seen, badge: false).equatable(), alignment: .topTrailing)
+      .background(PostLinkBG(theme: theme, stickied: post.data?.stickied, secondary: secondary))
+      .overlay(PostLinkGlowDot(unseenType: theme.theme.unseenType, seen: seen, badge: false), alignment: .topTrailing)
       .contentShape(Rectangle())
       .compositingGroup()
 //      .brightness(isOpen.wrappedValue ? 0.075 : 0)

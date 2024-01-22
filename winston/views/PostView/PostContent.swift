@@ -56,7 +56,7 @@ struct PostContent: View, Equatable {
           .id("post-title")
           .onAppear { Task { await post.toggleSeen(true) } }
           .listRowInsets(EdgeInsets(top: postsTheme.padding.vertical, leading: postsTheme.padding.horizontal, bottom: postsTheme.spacing / 2, trailing: selectedTheme.posts.padding.horizontal))
-
+        
         Group {
           if !isCollapsed {
             VStack(spacing: 0) {

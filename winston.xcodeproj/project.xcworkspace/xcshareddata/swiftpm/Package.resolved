@@ -217,6 +217,15 @@
       }
     },
     {
+      "identity" : "swiftyui",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/haoking/SwiftyUI.git",
+      "state" : {
+        "revision" : "01d2f67c9573bb1ed891b8bee1540b68ea016577",
+        "version" : "1.8.0"
+      }
+    },
+    {
       "identity" : "symbolpicker",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/xnth97/SymbolPicker.git",

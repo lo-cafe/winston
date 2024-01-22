@@ -72,7 +72,7 @@ struct FloatingFeedMenu: View, Equatable {
         ZStack(alignment: .bottomTrailing) {
           if !showingFilters, !selected.isEmpty, let selectedFilter = filters.first(where: { $0.id == selected }) {
             FilterButton(filter: selectedFilter, isSelected: true, filterCallback: filterCallback, searchText: searchText, searchCallback: searchCallback, customFilterCallback: customFilterCallback)
-              .equatable()
+//              .equatable()
               .matchedGeometryEffect(id: "floating-\(selectedFilter.id)", in: ns, properties: .position)
               .padding(.trailing, itemsSpacingDownscaled)
               .frame(height: mainTriggerSize)
@@ -91,7 +91,7 @@ struct FloatingFeedMenu: View, Equatable {
                   let placeholder = isSelected && !showingFilters
                   let elId = "floating-\(el.id)\(placeholder ? "-placeholder" : "")"
                   FilterButton(filter: el, isSelected: isSelected, filterCallback: filterCallback, searchText: searchText, searchCallback: searchCallback, customFilterCallback: customFilterCallback)
-                    .equatable()
+//                    .equatable()
                     .matchedGeometryEffect(id: elId, in: ns, properties: .position)
                     .scaleEffect(showingFilters || isSelected ? 1 : 0.01, anchor: .trailing)
                     .opacity((showingFilters || isSelected) && !placeholder ? 1 : 0)
@@ -106,7 +106,7 @@ struct FloatingFeedMenu: View, Equatable {
                   let elId = "floating-\(el.id)\(placeholder ? "-placeholder" : "")"
                   
                   FilterButton(filter: el, isSelected: isSelected, filterCallback: filterCallback, searchText: searchText, searchCallback: searchCallback, customFilterCallback: customFilterCallback)
-                    .equatable()
+//                    .equatable()
                     .matchedGeometryEffect(id: "floating-\(el.id)", in: ns)
                     .scaleEffect(showingFilters || isSelected ? 1 : 0.01, anchor: .trailing)
                     .opacity((showingFilters || isSelected) && !placeholder ? 1 : 0)
@@ -169,7 +169,7 @@ struct FloatingFeedMenu: View, Equatable {
             }
           }
           
-          FloatingMainTrigger(menuOpen: $menuOpen, showingFilters: $showingFilters, dismiss: dismiss, size: mainTriggerSize, actionsSize: actionsSize).equatable()
+          FloatingMainTrigger(menuOpen: $menuOpen, showingFilters: $showingFilters, dismiss: dismiss, size: mainTriggerSize, actionsSize: actionsSize)
         }
         .padding([.trailing, .bottom], screenEdgeMargin)
       }

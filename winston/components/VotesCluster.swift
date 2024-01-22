@@ -57,16 +57,17 @@ struct VotesCluster: View, Equatable {
     if vertical {
       VotesClusterVertical(id: votesKit.id, likes: votesKit.likes, upvote: upvote, downvote: downvote)
     } else {
-      VotesClusterHorizontal(likes: votesKit.likes, ups: votesKit.ups, upvote_ratio: votesKit.ratio, upvote: upvote, downvote: downvote, showUpVoteRatio: showUpVoteRatio)
+      VotesClusterHorizontal(id: votesKit.id, likes: votesKit.likes, ups: votesKit.ups, upvote_ratio: votesKit.ratio, upvote: upvote, downvote: downvote, showUpVoteRatio: showUpVoteRatio)
     }
   }
 }
 
 struct VotesClusterHorizontal: View, Equatable {
   static func == (lhs: VotesClusterHorizontal, rhs: VotesClusterHorizontal) -> Bool {
-    lhs.likes == rhs.likes && lhs.ups == rhs.ups && lhs.upvote_ratio == rhs.upvote_ratio && lhs.showUpVoteRatio == rhs.showUpVoteRatio
+    lhs.id == rhs.id && lhs.likes == rhs.likes && lhs.ups == rhs.ups && lhs.upvote_ratio == rhs.upvote_ratio && lhs.showUpVoteRatio == rhs.showUpVoteRatio
   }
   
+  let id: String
   let likes: Bool?
   let ups: Int
   let upvote_ratio: Double
@@ -75,13 +76,13 @@ struct VotesClusterHorizontal: View, Equatable {
   var showUpVoteRatio: Bool
   var body: some View {
     HStack(spacing: showUpVoteRatio ? 4 : 8) {
-      VoteButton(active: (likes ?? false), color: .orange, image: "arrow.up").equatable().onTapGesture(perform: upvote)
+      VoteButton(active: (likes ?? false), color: .orange, image: "arrow.up").onTapGesture(perform: upvote)
       
-      VotesClusterInfo(ups: ups, likes: likes, likeRatio: upvote_ratio, showUpVoteRatio: showUpVoteRatio, flyingNumber: FlyingNumberInfo(counter: 0, color: likes))
-        .allowsHitTesting(false)
+      VotesClusterInfo(ups: ups, likes: likes, likeRatio: upvote_ratio, showUpVoteRatio: showUpVoteRatio).allowsHitTesting(false)
       
-      VoteButton(active: !(likes ?? true), color: .blue ,image: "arrow.down").equatable().onTapGesture(perform: downvote)
+      VoteButton(active: !(likes ?? true), color: .blue ,image: "arrow.down").onTapGesture(perform: downvote)
     }
+    .scaleEffect(1)
     //    .drawingGroup()
   }
 }
@@ -97,9 +98,9 @@ struct VotesClusterVertical: View, Equatable {
   let downvote: () -> ()
   var body: some View {
     VStack(spacing: 12) {
-      VoteButton(active: (likes ?? false), color: .orange, image: "arrow.up").equatable().highPriorityGesture(TapGesture().onEnded(upvote))
+      VoteButton(active: (likes ?? false), color: .orange, image: "arrow.up").highPriorityGesture(TapGesture().onEnded(upvote))
       
-      VoteButton(active: !(likes ?? true), color: .blue, image: "arrow.down").equatable().highPriorityGesture(TapGesture().onEnded(downvote))
+      VoteButton(active: !(likes ?? true), color: .blue, image: "arrow.down").highPriorityGesture(TapGesture().onEnded(downvote))
       
       Spacer().frame(maxHeight: .infinity)
     }
@@ -113,24 +114,28 @@ struct FlyingNumberInfo: Equatable {
   var color: Bool?
 }
 
-struct VotesClusterInfo: View, Equatable {
-  static func == (lhs: VotesClusterInfo, rhs: VotesClusterInfo) -> Bool {
-    lhs.ups == rhs.ups && lhs.likes == rhs.likes && lhs.likeRatio == rhs.likeRatio
-  }
-  
+struct VotesClusterInfo: View {
   var ups: Int
   var likes: Bool?
   var likeRatio: CGFloat?
   var showUpVoteRatio: Bool
   
   @State var flyingNumber: FlyingNumberInfo
+  
+  init(ups: Int, likes: Bool? = nil, likeRatio: CGFloat? = nil, showUpVoteRatio: Bool) {
+    self.ups = ups
+    self.likes = likes
+    self.likeRatio = likeRatio
+    self.showUpVoteRatio = showUpVoteRatio
+    self._flyingNumber = .init(initialValue: FlyingNumberInfo(counter: 0, color: likes))
+  }
+  
   var body: some View {
     VStack(spacing: 0) {
       Text(formatBigNumber(ups))
         .contentTransition(.numericText())
         .foregroundColor(likes != nil ? (likes! ? .orange : .blue) : .gray)
         .fontSize(16, .semibold)
-        .drawingGroup()
         .changeEffect(
           .rise(origin: UnitPoint(x: 0.75, y: 0.25)) {
             Text(flyingNumber.value > 0 ? "+\(flyingNumber.value)" : "\(flyingNumber.value)" )

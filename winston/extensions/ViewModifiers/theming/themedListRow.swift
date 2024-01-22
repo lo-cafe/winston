@@ -16,7 +16,7 @@ struct ThemedListRowModifier: ViewModifier {
   func body(content: Content) -> some View {
     content
       .buttonStyle(ButtonPressingProviderStyle(pressed: $pressed, isButton: isButton))
-      .listRowBackground(ThemedForegroundBG(theme: theme.lists.foreground, active: active, pressed: pressed).equatable())
+      .listRowBackground(ThemedForegroundBG(theme: theme.lists.foreground, active: active, pressed: pressed))
   }
 }
 

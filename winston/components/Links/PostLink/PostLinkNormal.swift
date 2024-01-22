@@ -10,9 +10,6 @@ import Defaults
 import NukeUI
 
 struct PostLinkNormalSelftext: View, Equatable {
-  static func == (lhs: PostLinkNormalSelftext, rhs: PostLinkNormalSelftext) -> Bool {
-    return lhs.selftext == rhs.selftext && lhs.theme == rhs.theme
-  }
   var selftext: String
   var theme: ThemeText
   var body: some View {
@@ -27,7 +24,7 @@ struct PostLinkNormalSelftext: View, Equatable {
 
 struct PostLinkNormal: View, Equatable, Identifiable {
   static func == (lhs: PostLinkNormal, rhs: PostLinkNormal) -> Bool {
-    return lhs.id == rhs.id && lhs.theme == rhs.theme && lhs.contentWidth == rhs.contentWidth && lhs.secondary == rhs.secondary && lhs.defSettings == rhs.defSettings
+    return lhs.id == rhs.id && lhs.contentWidth == rhs.contentWidth && lhs.secondary == rhs.secondary && lhs.defSettings == rhs.defSettings && lhs.theme == rhs.theme
   }
   
   @Environment(\.contextPost) var post
@@ -100,8 +97,6 @@ struct PostLinkNormal: View, Equatable, Identifiable {
             )
             .background(Color.primary.opacity(0.05))
             .cornerRadius(theme.theme.mediaCornerRadius)
-            //                }
-            //            .swipyRev(size: repostWinstonData.postDimensions.size, actionsSet: postSwipeActions, entity: repost)
             .environment(\.contextPost, repost)
             .environment(\.contextSubreddit, repostSub)
             .environment(\.contextPostWinstonData, repostWinstonData)
@@ -116,21 +111,22 @@ struct PostLinkNormal: View, Equatable, Identifiable {
       let over18 = data.over_18 ?? false
       VStack(alignment: .leading, spacing: theme.theme.verticalElementsSpacing) {
         
-        if theme.theme.showDivider && defSettings.dividerPosition == .top { SubsNStuffLine().equatable() }
+        if theme.theme.showDivider && defSettings.dividerPosition == .top { SubsNStuffLine() }
         
         if defSettings.titlePosition == .bottom { mediaComponentCall() }
         
-        PostLinkTitle(attrString: winstonData.titleAttr, label: data.title.escape, theme: theme.theme.titleText, size: winstonData.postDimensions.titleSize, nsfw: over18, flair: data.link_flair_text)
-          .padding(.bottom, 5)
-        
-        if !data.selftext.isEmpty && defSettings.showSelfText {
-          PostLinkNormalSelftext(selftext: data.selftext, theme: theme.theme.bodyText)
-            .lineSpacing(theme.theme.linespacing)
+        VStack(alignment: .leading, spacing: theme.theme.verticalElementsSpacing / 2.5) {
+          PostLinkTitle(attrString: winstonData.titleAttr, label: data.title.escape, theme: theme.theme.titleText, size: winstonData.postDimensions.titleSize, nsfw: over18, flair: data.link_flair_text)
+          
+          if !data.selftext.isEmpty && defSettings.showSelfText {
+            PostLinkNormalSelftext(selftext: data.selftext, theme: theme.theme.bodyText)
+              .lineSpacing(theme.theme.linespacing)
+          }
         }
         
         if defSettings.titlePosition == .top { mediaComponentCall() }
         
-        if theme.theme.showDivider && defSettings.dividerPosition == .bottom { SubsNStuffLine().equatable() }
+        if theme.theme.showDivider && defSettings.dividerPosition == .bottom { SubsNStuffLine() }
         
         HStack {
           let newCommentsCount = winstonData.seenCommentsCount == nil ? nil : data.num_comments - winstonData.seenCommentsCount!
