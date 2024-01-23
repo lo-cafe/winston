@@ -71,6 +71,7 @@ struct SubredditsStack: View {
             .attachViewControllerToRouter()
           }
         }
+        .injectInTabDestinations()
         .task(priority: .background) {
           if !loaded {
             // MARK: Route to default feed
