@@ -51,7 +51,8 @@ struct Inbox: View {
         .themedListBG(selectedTheme.lists.bg)
         .scrollContentBackground(.hidden)
       }
-      .injectInTabDestinations(viewControllerHolder: router.navController)
+      .attachViewControllerToRouter()
+      .injectInTabDestinations()
       .loader(loading)
       .onAppear {
         Task(priority: .background) {

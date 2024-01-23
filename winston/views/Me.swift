@@ -33,7 +33,8 @@ struct Me: View {
             }
         }
       }
-      .injectInTabDestinations(viewControllerHolder: router.navController)
+      .attachViewControllerToRouter()
+      .injectInTabDestinations()
     }
 //    .swipeAnywhere()
   }

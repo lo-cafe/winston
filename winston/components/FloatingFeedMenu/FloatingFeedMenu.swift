@@ -182,7 +182,7 @@ struct FloatingFeedMenu: View, Equatable {
 extension View {
   func floatingMenu(subId: String, filters: [FilterData], selected: String, filterCallback: @escaping ((String) -> ()), searchText: String, searchCallback: @escaping ((String?) -> ()), customFilterCallback: @escaping ((FilterData) -> ())) -> some View {
     self
-      .overlay(FloatingFeedMenu(subId: subId, filters: filters, selected: selected, filterCallback: filterCallback, searchText: searchText, searchCallback: searchCallback, customFilterCallback: customFilterCallback).equatable(), alignment: .bottomTrailing)
+      .overlay(FloatingFeedMenu(subId: subId, filters: filters, selected: selected, filterCallback: filterCallback, searchText: searchText, searchCallback: searchCallback, customFilterCallback: customFilterCallback), alignment: .bottomTrailing)
   }
 }
 

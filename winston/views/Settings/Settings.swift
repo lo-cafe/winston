@@ -78,7 +78,9 @@ struct Settings: View {
       .themedListBG(selectedTheme.lists.bg)
       .scrollContentBackground(.hidden)
       .navigationTitle("Settings")
-      .injectInTabDestinations(viewControllerHolder: router.navController)
+      
+      .attachViewControllerToRouter()
+      .injectInTabDestinations()
     }
   }
 }

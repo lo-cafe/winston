@@ -77,6 +77,7 @@ struct Subreddits: View, Equatable {
               }
             }
           }
+          .environment(\.isInSidebar, false)
           .frame(maxWidth: .infinity)
           .id("bigButtons")
           .listRowSeparator(.hidden)
@@ -127,7 +128,6 @@ struct Subreddits: View, Equatable {
               ForEach(foundSubs, id: \.self.element.uuid) { i, cachedSub in
                 let sub = Subreddit(data: SubredditData(entity: cachedSub))
                 SubItem(isActive: Router.NavDest.reddit(.subFeed(sub)) == firstDestination, sub: sub, cachedSub: cachedSub, action: selectSub)
-                //                  .equatable()
               }
             }
             
@@ -140,14 +140,12 @@ struct Subreddits: View, Equatable {
                 ForEach(favs, id: \.self.element) { i, cachedSub in
                   let sub = Subreddit(data: SubredditData(entity: cachedSub))
                   SubItem(isActive: Router.NavDest.reddit(.subFeed(sub)) == firstDestination, sub: sub, cachedSub: cachedSub, action: selectSub)
-//                    .equatable()
                     .id("\(cachedSub.uuid ?? "")-fav")
                     .onAppear{
                       UIApplication.shared.shortcutItems?.append(UIApplicationShortcutItem(type: "subFav", localizedTitle: cachedSub.display_name ?? "Test", localizedSubtitle: "", icon: UIApplicationShortcutIcon(type: .love), userInfo: ["name" : "sub" as NSSecureCoding]))
                     }
                 }
                 .onDelete(perform: deleteFromFavorites)
-                
               }
             }
             
@@ -158,7 +156,6 @@ struct Subreddits: View, Equatable {
                 ForEach(subs, id: \.self.element) { i, cachedSub in
                   let sub = Subreddit(data: SubredditData(entity: cachedSub))
                   SubItem(isActive: Router.NavDest.reddit(.subFeed(sub)) == firstDestination, sub: sub, cachedSub: cachedSub, action: selectSub)
-                  //                                      .equatable()
                 }
               }
               
@@ -173,7 +170,6 @@ struct Subreddits: View, Equatable {
                     ForEach(subs, id: \.self.element.uuid) { i, cachedSub in
                       let sub = Subreddit(data: SubredditData(entity: cachedSub))
                       SubItem(isActive: Router.NavDest.reddit(.subFeed(sub)) == firstDestination, sub: sub, cachedSub: cachedSub, action: selectSub)
-                      //                        .equatable()
                     }
                     .onDelete(perform: { i in
                       deleteFromList(at: i, letter: letter)
@@ -187,6 +183,7 @@ struct Subreddits: View, Equatable {
         }
         .themedListSection()
       }
+      .environment(\.isInSidebar, true)
       .themedListBG(selectedTheme.lists.bg)
       .scrollIndicators(.hidden)
       .listStyle(.sidebar)

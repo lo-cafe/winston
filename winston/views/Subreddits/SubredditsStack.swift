@@ -27,7 +27,7 @@ struct SubredditsStack: View {
       if let redditCredentialSelectedID = generalDefSettings.redditCredentialSelectedID {
         Subreddits(firstDestination: $router.firstSelected, loaded: loaded, currentCredentialID: redditCredentialSelectedID)
           .measure($sidebarSize).id("subreddits-list-\(redditCredentialSelectedID)")
-          .modifier(AttachViewControllerToRouterModifier(viewControllerHolder: router.navController))
+          .attachViewControllerToRouter()
       }
     } detail: {
       NavigationStack(path: $router.path) {
@@ -37,6 +37,7 @@ struct SubredditsStack: View {
             case .reddit(.multiFeed(let multi)):
               MultiPostsView(multi: multi)
                 .id("\(multi.id)-multi-first-tab")
+                .attachViewControllerToRouter()
             case .reddit(.subFeed(let sub)):
               SubredditPosts(subreddit: sub)
                 .id("\(sub.id)-sub-first-tab")
@@ -44,10 +45,12 @@ struct SubredditsStack: View {
               if let sub = post.winstonData?.subreddit {
                 PostView(post: post, subreddit: sub)
                   .id("\(post.id)-post-first-tab")
+                  .attachViewControllerToRouter()
               }
             case .reddit(.user(let user)):
               UserView(user: user)
                 .id("\(user.id)-user-first-tab")
+                .attachViewControllerToRouter()
             default:
               EmptyView()
             }
@@ -65,9 +68,9 @@ struct SubredditsStack: View {
                   .opacity(0.35)
               }
             }
+            .attachViewControllerToRouter()
           }
         }
-        .injectInTabDestinations(viewControllerHolder: router.navController)
         .task(priority: .background) {
           if !loaded {
             // MARK: Route to default feed

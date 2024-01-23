@@ -37,6 +37,10 @@ private struct TabBarHeightKey: EnvironmentKey {
   static let defaultValue: Double? = nil
 }
 
+private struct IsInSidebarKey: EnvironmentKey {
+  static let defaultValue = false
+}
+
 private struct BrighterBGKey: EnvironmentKey {
   static let defaultValue = false
 }
@@ -81,6 +85,10 @@ extension EnvironmentValues {
   var brighterBG: Bool {
     get { self[BrighterBGKey.self] }
     set { self[BrighterBGKey.self] = newValue }
+  }
+  var isInSidebar: Bool {
+    get { self[IsInSidebarKey.self] }
+    set { self[IsInSidebarKey.self] = newValue }
   }
   var primaryBGContext: NSManagedObjectContext {
     get { self[PrimaryBGContextKey.self] }

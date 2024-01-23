@@ -240,6 +240,7 @@ struct SubredditPosts: View, Equatable {
             SubredditPostsIPAD(showSub: isFeedsAndSuch, lastPostAfter: lastPostAfter, subreddit: subreddit, filters: filters, posts: filteredPosts, filter: filter, filterCallback: filterCallback, searchText: searchText, searchCallback: searchCallback, editCustomFilter: editCustomFilter, fetch: fetch, selectedTheme: selectedTheme, loading: loading, reachedEndOfFeed: $reachedEndOfFeed)
           } else {
             SubredditPostsIOS(showSub: isFeedsAndSuch, lastPostAfter: lastPostAfter, subreddit: subreddit, filters: filters, posts: filteredPosts, filter: filter, filterCallback: filterCallback, searchText: searchText, searchCallback: searchCallback, editCustomFilter: editCustomFilter, fetch: fetch, selectedTheme: selectedTheme, loading: loading, reachedEndOfFeed: $reachedEndOfFeed)
+              .attachViewControllerToRouter()
           }
         }
         .searchable(text: $searchText, prompt: "Search r/\(subreddit.data?.display_name ?? subreddit.id)")
@@ -264,27 +265,6 @@ struct SubredditPosts: View, Equatable {
     .listRowSeparator(.hidden)
     .listSectionSeparator(.hidden)
     .environment(\.defaultMinListRowHeight, 1)
-//    .overlay(
-//      isFeedsAndSuch
-//      ? nil
-//      : Button {
-//        newPost = true
-//      } label: {
-//        Image(systemName: "newspaper.fill")
-//          .fontSize(22, .bold)
-//          .frame(width: 64, height: 64)
-//          .foregroundColor(Color.accentColor)
-//          .floating()
-//          .contentShape(Circle())
-//      }
-//        .buttonStyle(NoBtnStyle())
-//        .shrinkOnTap()
-//        .padding(.all, 12)
-//      , alignment: .bottomTrailing
-//    )
-    //    .sheet(isPresented: $newPost, content: {
-    //      NewPostModal(subreddit: subreddit)
-    //    })
     .navigationBarItems(trailing: SubredditPostsNavBtns(sort: $sort, subreddit: subreddit))
     .onSubmit(of: .search) {
       clearAndLoadData(withSearchText: searchText)
