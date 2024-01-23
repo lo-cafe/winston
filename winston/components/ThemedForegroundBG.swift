@@ -36,7 +36,7 @@ struct ThemedForegroundRawBG<S: Shape>: View, Equatable {
   @Environment(\.brighterBG) private var brighter
   @Environment(\.isInSidebar) private var isInSidebar
   var body: some View {
-    let isActive = active && IPAD
+    let isActive = active && IPAD && isInSidebar
     ZStack {
       if let shiny {
         shape.winstonShiny(shiny)
