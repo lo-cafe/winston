@@ -127,7 +127,7 @@ struct MultiPostsView: View {
           
           if let imgLink = multi.data?.icon_url, let imgURL = URL(string: imgLink) {
             Button {
-//              routerProxy.router.path.append(SubViewType.info(subreddit))
+
             } label: {
               URLImage(url: imgURL)
                 .scaledToFill()

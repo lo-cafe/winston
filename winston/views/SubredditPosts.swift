@@ -10,11 +10,6 @@ import Defaults
 import SwiftUIIntrospect
 import CoreData
 
-enum SubViewType: Hashable {
-  case posts(Subreddit)
-  case info(Subreddit)
-}
-
 struct SubredditPosts: View, Equatable {
   static func == (lhs: SubredditPosts, rhs: SubredditPosts) -> Bool {
     lhs.subreddit == rhs.subreddit

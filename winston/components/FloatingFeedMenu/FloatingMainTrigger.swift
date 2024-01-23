@@ -42,7 +42,6 @@ struct FloatingMainTrigger: View, Equatable {
       .background(Circle().fill(.white.opacity((toggled || menuOpen ? 0.5 : 0) + (pressingDown ? 0.225 : 0))).blendMode(.overlay))
       .floating()
       .scaleEffect((menuOpen || toggled ? actionsSize / size : 1) * (pressingDown ? 0.85 : 1))
-//      .frame(width: hitboxSize, height: hitboxSize)
       .increaseHitboxOf(size, by: 1.125, shape: Circle(), disable: menuOpen)
       .animation(.bouncy(duration: longPressDuration, extraBounce: 0.225), value: pressingDown)
       .highPriorityGesture(
