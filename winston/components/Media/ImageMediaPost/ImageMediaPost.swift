@@ -59,7 +59,8 @@ struct ImageMediaPost: View, Equatable {
         let finalHeight = maxMediaHeightScreenPercentage != 110 ? Double(min(maxHeight, propHeight)) : Double(propHeight)
         
         GalleryThumb(cornerRadius: cornerRadius, width: compact ? scaledCompactModeThumbSize() : contentWidth, height: compact ? scaledCompactModeThumbSize() : sourceHeight > 0 ? finalHeight : nil, url: img.url, imgRequest: images.count > 0 ? images[0].request : nil)
-          .background(sourceHeight > 0 || compact ? nil : GeometryReader { geo in Color.clear.onAppear { winstonData.postDimensions.mediaSize = geo.size }.onChange(of: geo.size) { winstonData.postDimensions.mediaSize = $0 } })
+          .equatable()
+//          .background(sourceHeight > 0 || compact ? nil : GeometryReader { geo in Color.clear.onAppear { winstonData.postDimensions.mediaSize = geo.size }.onChange(of: geo.size) { winstonData.postDimensions.mediaSize = $0 } })
           .onTapGesture { withAnimation(spring) { fullscreenIndex = 0 } }
           .overlay(
             !compact || images.count <= 1
@@ -96,7 +97,7 @@ struct ImageMediaPost: View, Equatable {
               } else if images.count > 4 {
                 Text("\(images.count - 3)+")
                   .fontSize(24, .medium)
-                  .frame(width: width - 32, height: height - 32)
+                  .frame(width: width - 56, height: height - 56)
                   .background(Circle().fill(.primary.opacity(0.05)))
                   .frame(width: width, height: height)
                   .onTapGesture { withAnimation(spring) { fullscreenIndex = 0 } }
