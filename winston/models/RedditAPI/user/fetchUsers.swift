@@ -111,15 +111,6 @@ extension RedditAPI {
     return returnDict
   }
   
-  func addImgReqToAvatarCache(_ author: String, _ url: String, avatarSize: Double) {
-    let url = URL(string: String(url.split(separator: "?")[0]))
-    let req = ImageRequest(url: url, processors: [.resize(width: avatarSize)], priority: .veryHigh)
-    Post.prefetcher.startPrefetching(with: [req])
-    withAnimation {
-      Caches.avatars.addKeyValue(key: author, data: { req })
-    }
-  }
-  
   struct FetchUsersByIDPayload: Codable {
     let ids: String
     var raw_json = 1
