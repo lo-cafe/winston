@@ -120,9 +120,22 @@ class GenericRedditEntity<T: GenericRedditEntityDataType, B: Hashable>: Identifi
   }
 }
 
-enum RedditEntityType {
+enum RedditEntityType: Hashable, Equatable, Identifiable {
   case post(Post)
+  case subreddit(Subreddit)
+  case multi(Multi)
   case comment(Comment)
   case user(User)
-  case subreddit(Subreddit)
+  case message(Message)
+  
+  var id: String {
+    switch self {
+    case .post(let x): x.id
+    case .subreddit(let x): x.id
+    case .multi(let x): x.id
+    case .comment(let x): x.id
+    case .user(let x): x.id
+    case .message(let x): x.id
+    }
+  }
 }
