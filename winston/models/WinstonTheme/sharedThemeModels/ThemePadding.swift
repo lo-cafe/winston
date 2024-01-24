@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import SwiftUI
 
 struct ThemePadding: Codable, Hashable, Equatable {
   var horizontal: CGFloat
@@ -15,15 +14,3 @@ struct ThemePadding: Codable, Hashable, Equatable {
   func toSize() -> CGSize { CGSize(width: horizontal, height: vertical) }
 }
 
-struct ThemeColor: Codable, Hashable, Equatable {
-  var hex: String
-  var alpha: CGFloat = 1.0
-  
-  func color() -> Color {
-    return Color(uiColor: UIColor(hex: hex, alpha: alpha))
-  }
-  
-  func uiColor() -> UIColor {
-    return UIColor(hex: hex, alpha: Double(alpha))
-  }
-}
