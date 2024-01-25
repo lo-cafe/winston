@@ -18,14 +18,14 @@ class MarkdownUtil {
     
     // Replace http:// or https:// in existing markdown links
     processedText = processedText.replacingOccurrences(
-      of: "\\[([^\\]]+)\\]\\((https?://)(\\S+)(?:\\))",
-      with: "[$1](winstonapp://$3)",
+      of: #"([[(\w\])]+])\((https?:\/\/)(\S+?|)(?:)\)"#,
+      with: "$1(winstonapp://$3)",
       options: .regularExpression
     )
 
     // Replace URLs with http:// or https:// (if not already in markdown format)
     processedText = processedText.replacingOccurrences(
-      of: "\\b(?<!\\[)(https?://)(\\S+)(?!\\])\\b",
+      of: "\\b(?<!\\[)(https?://)(\\S+)(?!\\]))\\b",
       with: "[$0](winstonapp://$2)",
       options: .regularExpression
     )

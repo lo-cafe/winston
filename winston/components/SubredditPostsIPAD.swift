@@ -89,7 +89,6 @@ struct SubredditPostsIPAD: View, Equatable {
       theme: selectedTheme.postLinks
     )
 //    .ignoresSafeArea(.all)
-    .floatingMenu(subId: subreddit?.id ?? "", filters: filters, selected: filter, filterCallback: filterCallback, searchText: searchText, searchCallback: searchCallback, customFilterCallback: editCustomFilter)
     .overlay {
       if loading {
         ProgressView()
@@ -122,5 +121,6 @@ struct SubredditPostsIPAD: View, Equatable {
       }
     }
     .ignoresSafeArea(.all)
+		.floatingMenu(subId: subreddit?.id ?? "", filters: filters, selected: filter, filterCallback: filterCallback, searchText: searchText, searchCallback: searchCallback, customFilterCallback: editCustomFilter)
   }
 }
