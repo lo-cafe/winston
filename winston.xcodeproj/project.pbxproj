@@ -63,6 +63,7 @@
 		BBD6E9DB2B50F5D300901C1C /* Comment util.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBD6E9DA2B50F5D300901C1C /* Comment util.swift */; };
 		BBD6E9DE2B51B03600901C1C /* MarkdownUI in Frameworks */ = {isa = PBXBuildFile; productRef = BBD6E9DD2B51B03600901C1C /* MarkdownUI */; };
 		BBD6E9E02B51B45D00901C1C /* Winston MD.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBD6E9DF2B51B45D00901C1C /* Winston MD.swift */; };
+		BBF10D232B61E7AB00433066 /* MediaUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBF10D222B61E7AB00433066 /* MediaUtils.swift */; };
 		CE0EC5D82B1A9E9600C6E210 /* SubredditFilters.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE0EC5D72B1A9E9600C6E210 /* SubredditFilters.swift */; };
 		CECA71EB2B1E358700852DAD /* CustomFilterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CECA71EA2B1E358700852DAD /* CustomFilterView.swift */; };
 		EC051C472ACAF2DC00E9D9ED /* themeFileIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = EC051C462ACAF2DC00E9D9ED /* themeFileIcon.png */; };
@@ -634,6 +635,7 @@
 		BBD6E9D82B50F53000901C1C /* CommentSkipper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommentSkipper.swift; sourceTree = "<group>"; };
 		BBD6E9DA2B50F5D300901C1C /* Comment util.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "Comment util.swift"; path = "winston/utils/Comment util.swift"; sourceTree = SOURCE_ROOT; };
 		BBD6E9DF2B51B45D00901C1C /* Winston MD.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "Winston MD.swift"; path = "winston/components/Markdown Handling/Winston MD.swift"; sourceTree = SOURCE_ROOT; };
+		BBF10D222B61E7AB00433066 /* MediaUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MediaUtils.swift; path = winston/utils/MediaUtils.swift; sourceTree = SOURCE_ROOT; };
 		CE0EC5D72B1A9E9600C6E210 /* SubredditFilters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubredditFilters.swift; sourceTree = "<group>"; };
 		CECA71EA2B1E358700852DAD /* CustomFilterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomFilterView.swift; sourceTree = "<group>"; };
 		EC051C2A2ACAEFC500E9D9ED /* QuickLookThumbnailing.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuickLookThumbnailing.framework; path = System/Library/Frameworks/QuickLookThumbnailing.framework; sourceTree = SDKROOT; };
@@ -1629,7 +1631,6 @@
 		EC593AFB2A47AEAB002D6454 /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				EC8EF59F2B608C02009E51D2 /* SwiftData */,
 				EC8EF59D2B607BAB009E51D2 /* RedditEntities */,
 				EC1AC9B42B20084500674B31 /* Credentials */,
 				655065522B12034500C796E7 /* WinstonAPI */,
@@ -2245,6 +2246,7 @@
 				EC2760822B2ADFD100ADCE26 /* ConcurrentRunner.swift */,
 				ECDEBD1E2B31C8A200A8AC78 /* EasingFunction.swift */,
 				BBD6E9DA2B50F5D300901C1C /* Comment util.swift */,
+				BBF10D222B61E7AB00433066 /* MediaUtils.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -3159,6 +3161,7 @@
 				EC7FBE2F2B411C810082FA44 /* AppContent.swift in Sources */,
 				BB0D15292B069A9700668448 /* getItemId.swift in Sources */,
 				EC0854432A4D6A4800E88389 /* MasterButton.swift in Sources */,
+				BBF10D232B61E7AB00433066 /* MediaUtils.swift in Sources */,
 				ECAA23822A9EC34100874731 /* inlineSymbol.swift in Sources */,
 				EC31DB1A2B12F11C00A777ED /* Water.metal in Sources */,
 			);
