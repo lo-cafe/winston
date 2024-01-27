@@ -92,62 +92,71 @@ struct VideoPlayerPost: View, Equatable {
     
     if let sharedVideo = sharedVideo {
 			let hasAudio = sharedVideo.player.currentItem?.tracks.contains(where: {$0.assetTrack?.mediaType == AVMediaType.audio})
-      Group {
-        if let controller = controller {
-          AVPlayerRepresentable(fullscreen: $fullscreen, autoPlayVideos: autoPlayVideos, player: sharedVideo.player, aspect: .resizeAspectFill, controller: controller)
-            .frame(width: compact ? scaledCompactModeThumbSize() : contentWidth, height: compact ? scaledCompactModeThumbSize() : CGFloat(finalHeight))
-            .mask(RR(12, Color.black))
-            .allowsHitTesting(false)
-            .contentShape(Rectangle())
-            .onTapGesture {
-              if markAsSeen != nil { Task(priority: .background) { await markAsSeen?() } }
-              withAnimation {
-                fullscreen = true
-              }
+      if let controller = controller {
+        AVPlayerRepresentable(fullscreen: $fullscreen, autoPlayVideos: autoPlayVideos, player: sharedVideo.player, aspect: .resizeAspectFill, controller: controller)
+          .frame(width: compact ? scaledCompactModeThumbSize() : contentWidth, height: compact ? scaledCompactModeThumbSize() : CGFloat(finalHeight))
+          .mask(RR(12, Color.black))
+          .allowsHitTesting(false)
+          .contentShape(Rectangle())
+          .onTapGesture {
+            if markAsSeen != nil { Task(priority: .background) { await markAsSeen?() } }
+            withAnimation {
+              fullscreen = true
             }
-        } else {
-          ZStack {
-            
-            Group {
-              if !fullscreen {
-                VideoPlayer(player: sharedVideo.player)
-                  .scaledToFill()
-              } else {
-                Color.clear
-              }
-            }
-            .frame(width: compact ? scaledCompactModeThumbSize() : contentWidth, height: compact ? scaledCompactModeThumbSize() : CGFloat(finalHeight))
-            .clipped()
-            .fixedSize()
-            .mask(RR(12, Color.black))
-            .allowsHitTesting(false)
-            .contentShape(Rectangle())
-            .highPriorityGesture(TapGesture().onEnded({ _ in
-              if markAsSeen != nil { Task(priority: .background) { await markAsSeen?() } }
-              withAnimation {
-                fullscreen = true
-              }
-            }))
-            .allowsHitTesting(false)
-            .mask(RR(12, Color.black))
-            .overlay(
-              Color.clear
-                .contentShape(Rectangle())
-                .onTapGesture {
-                  if markAsSeen != nil { Task(priority: .background) { await markAsSeen?() } }
-                  withAnimation {
-                    fullscreen = true
-                  }
-                }
-            )
-            
-            Image(systemName: "play.fill").foregroundColor(.white.opacity(0.75)).fontSize(32).shadow(color: .black.opacity(0.45), radius: 12, y: 8).opacity(autoPlayVideos ? 0 : 1).allowsHitTesting(false)
           }
-          .onAppear {
-            if loopVideos {
-              addObserver()
+      } else {
+        ZStack {
+          
+          Group {
+            if !fullscreen {
+              VideoPlayer(player: sharedVideo.player)
+                .scaledToFill()
+            } else {
+              Color.clear
             }
-            
+          }
+          .frame(width: compact ? scaledCompactModeThumbSize() : contentWidth, height: compact ? scaledCompactModeThumbSize() : CGFloat(finalHeight))
+          .clipped()
+          .fixedSize()
+          .mask(RR(12, Color.black))
+          .allowsHitTesting(false)
+          .contentShape(Rectangle())
+          .highPriorityGesture(TapGesture().onEnded({ _ in
+            if markAsSeen != nil { Task(priority: .background) { await markAsSeen?() } }
+            withAnimation {
+              fullscreen = true
+            }
+          }))
+          .allowsHitTesting(false)
+          .mask(RR(12, Color.black))
+          .overlay(
+            Color.clear
+              .contentShape(Rectangle())
+              .onTapGesture {
+                if markAsSeen != nil { Task(priority: .background) { await markAsSeen?() } }
+                withAnimation {
+                  fullscreen = true
+                }
+              }
+          )
+          
+          Image(systemName: "play.fill").foregroundColor(.white.opacity(0.75)).fontSize(32).shadow(color: .black.opacity(0.45), radius: 12, y: 8).opacity(autoPlayVideos ? 0 : 1).allowsHitTesting(false)
+        }
+        .onAppear {
+          if loopVideos {
+            addObserver()
+          }
+          
+          if (sharedVideo.player.status == .failed) {
+            resetVideo?(sharedVideo)
+          }
+          
+          if autoPlayVideos {
+            sharedVideo.player.play()
+          }
+        }
+        .onChange(of: scenePhase) { newPhase in
+          if newPhase == .active {
             if (sharedVideo.player.status == .failed) {
               resetVideo?(sharedVideo)
             }
@@ -156,55 +165,36 @@ struct VideoPlayerPost: View, Equatable {
               sharedVideo.player.play()
             }
           }
-          .onChange(of: scenePhase) { newPhase in
-            if newPhase == .active {
-              if (sharedVideo.player.status == .failed) {
-                resetVideo?(sharedVideo)
-              }
-              
-              if autoPlayVideos {
-                sharedVideo.player.play()
-              }
-            }
-          }
-          .onDisappear() {
-            removeObserver()
-            Task(priority: .background) {
-              sharedVideo.player.seek(to: .zero)
-              sharedVideo.player.pause()
-            }
-          }
-          .onChange(of: fullscreen) { val in
-            if !firstFullscreen {
-              firstFullscreen = true
-              sharedVideo.player.isMuted = muteVideos
-              sharedVideo.player.play()
-            }
-            if !val && !autoPlayVideos {
-              sharedVideo.player.seek(to: .zero)
-              sharedVideo.player.pause()
-              firstFullscreen = false
-            }
-            
-            if pauseBackgroundAudioOnFullscreen && sharedVideo.player.isMuted == false && hasAudio == true {
-              Task(priority: .background) {
-                setAudioToMixWithOthers(val)
-              }
-            }
-            
-            sharedVideo.player.volume = val ? 1.0 : 0.0
-          }
-          .fullScreenCover(isPresented: $fullscreen) {
-            FullScreenVP(sharedVideo: sharedVideo)
+        }
+        .onDisappear() {
+          removeObserver()
+          Task(priority: .background) {
+            sharedVideo.player.seek(to: .zero)
+            sharedVideo.player.pause()
           }
         }
-      }
-      .contextMenu {
-        Button(action: {
-          MediaUtils.downloadVideo(videoURL: url)
-        }) {
-          Text("Download Video")
-          Image(systemName: "arrow.down.to.line.alt")
+        .onChange(of: fullscreen) { val in
+          if !firstFullscreen {
+            firstFullscreen = true
+						sharedVideo.player.isMuted = muteVideos
+            sharedVideo.player.play()
+          } 
+					if !val && !autoPlayVideos {
+						sharedVideo.player.seek(to: .zero)
+						sharedVideo.player.pause()
+						firstFullscreen = false
+					 }
+          
+          if pauseBackgroundAudioOnFullscreen && sharedVideo.player.isMuted == false && hasAudio == true {
+            Task(priority: .background) {
+              setAudioToMixWithOthers(val)
+            }
+          }
+          
+          sharedVideo.player.volume = val ? 1.0 : 0.0
+        }
+        .fullScreenCover(isPresented: $fullscreen) {
+          FullScreenVP(sharedVideo: sharedVideo)
         }
       }
     }
