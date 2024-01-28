@@ -1629,7 +1629,6 @@
 		EC593AFB2A47AEAB002D6454 /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				EC8EF59F2B608C02009E51D2 /* SwiftData */,
 				EC8EF59D2B607BAB009E51D2 /* RedditEntities */,
 				EC1AC9B42B20084500674B31 /* Credentials */,
 				655065522B12034500C796E7 /* WinstonAPI */,
@@ -2700,7 +2699,8 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/zsh;
-			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\nsource ~/.zshrc\ncd \"$PROJECT_DIR\"/winston-everywhere\nnpm install\nnpm run build\n\nFOLDER_PATH=\"${PROJECT_DIR}/winston-everywhere/dist\"\n\nfind \"${FOLDER_PATH}\" -type f > \"${FOLDER_PATH}/filelist.xcfilelist\"\n";
+			shellScript = "
+";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -3431,7 +3431,7 @@
 				INFOPLIST_FILE = "winston-everywhere/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "Winston Everywhere";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -3465,7 +3465,7 @@
 				INFOPLIST_FILE = "winston-everywhere/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "Winston Everywhere";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
