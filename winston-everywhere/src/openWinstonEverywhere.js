@@ -1,23 +1,25 @@
-document.onreadystatechange = function () {
-  if (document.readyState == "complete") {
-    console.log('Script is running after document is complete.');
+browser.webNavigation.onBeforeNavigate.addListener(function(details) {
+  if (details.frameId === 0) { // Ensure it's the main frame
+    console.log('Navigating to:', details.url);
+    
+    try {
+      var url = new URL(details.url);
+      console.log('Parsed URL:', url);
 
-    document.querySelectorAll('a').forEach(link => {
-      console.log('Checking link:', link.href);
-      
-      if (link && link.href) {
-        try {
-          var url = new URL(link.href);
-          console.log('Parsed URL:', url);
+      if (url.hostname.includes('reddit.com')) {
+        // Modify the URL before navigation
+        var newUrl = details.url.replace(/(https?:\/\/)?(www\.)?reddit\.com/gi, 'https://app.winston.cafe');
+        console.log('Modified URL:', newUrl);
 
-          if (url.hostname.includes('reddit.com')) {
-            link.href = link.href.replace(/(https?:\/\/)?(www\.)?reddit\.com/gi, 'https://app.winston.cafe');
-            console.log('Modified link:', link.href);
-          }
-        } catch (e) {
-          console.error('Invalid URL', link.href, e);
-        }
+        // Redirect to the modified URL
+        browser.webNavigation.onBeforeNavigate.removeListener(listener); // Remove the listener to avoid infinite loop
+        browser.webNavigation.navigate({ url: newUrl });
       }
-    });
+    } catch (e) {
+      console.error('Invalid URL', details.url, e);
+    }
   }
-}
+});
+
+// Start listening for navigation events
+var listener = browser.webNavigation.onBeforeNavigate.addListener(function() {});
