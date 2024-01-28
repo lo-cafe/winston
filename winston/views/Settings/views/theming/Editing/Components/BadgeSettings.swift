@@ -14,22 +14,6 @@ struct BadgeSettings: View {
     var body: some View {
       Group {
         
-        FakeSection("General") {
-          LabeledSlider(label: "Avatar Distance", value: $theme.spacing, range: 0...40)
-            .resetter($theme.spacing, defaultVal.spacing)
-        }
-        
-        FakeSection(footer: "Currently subrredits show inline in a text accent-colored on the right of the author. With this option you can force it to always appear as a accent-colored tag instead.") {
-          Toggle("Force subs as tag", isOn: $theme.forceSubsAsTags)
-            .padding(.horizontal, 16)
-        }
-        
-        if (showSub) {
-          FakeSection("Subreddit Color") {
-            SchemesColorPicker(theme: $theme.subColor, defaultVal: defaultVal.subColor)
-          }
-        }
-        
         FakeSection("Avatar") {
           Toggle("Show avatar", isOn: $theme.avatar.visible)
             .padding(.horizontal, 16)
@@ -39,6 +23,20 @@ struct BadgeSettings: View {
           Divider()
           LabeledSlider(label: "Corner radius", value: $theme.avatar.cornerRadius, range: 0...32)
             .resetter($theme.avatar.cornerRadius, defaultVal.avatar.cornerRadius)
+          Divider()
+          LabeledSlider(label: "Avatar Distance", value: $theme.spacing, range: 0...40)
+            .resetter($theme.spacing, defaultVal.spacing)
+        }
+        
+//        FakeSection(footer: "Currently subrredits show inline in a text accent-colored on the right of the author. With this option you can force it to always appear as a accent-colored tag instead.") {
+//          Toggle("Force subs as tag", isOn: $theme.forceSubsAsTags)
+//            .padding(.horizontal, 16)
+//        }
+        
+        if (showSub) {
+          FakeSection("Subreddit Color") {
+            SchemesColorPicker(theme: $theme.subColor, defaultVal: defaultVal.subColor)
+          }
         }
         
         FakeSection("Author font") {

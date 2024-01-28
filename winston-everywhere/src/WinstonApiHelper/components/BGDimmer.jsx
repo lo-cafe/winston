@@ -3,7 +3,7 @@ import MorphingStain from "./MorphingStain"
 const BGDimmer = ({ dimBG }) => {
   return (
     <div className="winstonBlurMask" style={{ opacity: dimBG ? 1 : 0 }}>
-      <div className="winHelper">
+      {/* <div className="winHelper">
         <MorphingStain
           size={1000}
           colors={["#FFB6C1", "#FFC0CB", "#FF69B4", "#FF1493"]}
@@ -41,12 +41,13 @@ const BGDimmer = ({ dimBG }) => {
           position={{ top: 0, right: window.innerWidth / 2 }}
           baseOpacity={0.5}
         />
-      </div>
+      </div> */}
     </div>
   )
 }
 
 export default BGDimmer
+
 
 
 

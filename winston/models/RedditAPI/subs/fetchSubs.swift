@@ -88,5 +88,6 @@ extension RedditAPI {
     var after: String?
     //    var show = "all"
     var count = 0
+    var raw_json = 1
   }
 }

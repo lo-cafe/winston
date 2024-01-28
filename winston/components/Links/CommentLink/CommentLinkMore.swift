@@ -90,8 +90,6 @@ struct CommentLinkMore: View {
       }
       .allowsHitTesting(!loadMoreLoading)
       .id("\(comment.id)-more")
-    } else {
-      Text("Depressive load more :(")
     }
   }
 }

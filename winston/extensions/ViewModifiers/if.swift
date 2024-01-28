@@ -8,9 +8,16 @@
 import SwiftUI
 
 extension View {
-  @ViewBuilder func `if`<Content: View>(_ condition: Bool, transform: (Self) -> Content) -> some View {
+  @ViewBuilder func `if`<C: View>(_ condition: Bool, transform: (Self) -> C) -> some View {
     if condition {
       transform(self)
+    } else {
+      self
+    }
+  }
+  @ViewBuilder func `ifLet`<C: View, E: Any>(_ el: E?, transform: (Self, E) -> C) -> some View {
+    if let el {
+      transform(self, el)
     } else {
       self
     }

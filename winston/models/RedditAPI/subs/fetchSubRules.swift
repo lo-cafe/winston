@@ -10,7 +10,7 @@ import Alamofire
 
 extension RedditAPI {
   func fetchSubRules(_ id: String) async -> FetchSubRulesResponse? {
-    switch await self.doRequest("\(RedditAPI.redditApiURLBase)\(id.hasPrefix("/r/") ? id : "/r/\(id)/")about/rules.json", method: .get, decodable: FetchSubRulesResponse.self)  {
+    switch await self.doRequest("\(RedditAPI.redditApiURLBase)\(id.hasPrefix("/r/") ? id : "/r/\(id)/")about/rules.json?raw_json=1", method: .get, decodable: FetchSubRulesResponse.self)  {
     case .success(let data):
       return data
     case .failure(let error):

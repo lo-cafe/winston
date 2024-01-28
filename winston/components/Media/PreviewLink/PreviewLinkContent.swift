@@ -18,20 +18,20 @@ import SafariServices
 
 struct PreviewLinkContent: View {
   var compact: Bool
-  @ObservedObject var viewModel: PreviewModel
+  var viewModel: PreviewModel
   var url: URL
   static let height: CGFloat = 88
   @Environment(\.openURL) private var openURL
   @Default(.BehaviorDefSettings) private var behaviorDefSettings
   var body: some View {
-    PreviewLinkContentRaw(compact: compact, image: viewModel.image, title: viewModel.title, description: viewModel.description, loading: viewModel.loading, url: url, openURL: openURL, openLinksInSafari: behaviorDefSettings.openLinksInSafari)
+    PreviewLinkContentRaw(compact: compact, image: viewModel.image, title: viewModel.title, description: viewModel.description, loading: viewModel.loading, url: url, openURL: openURL)
   }
 }
 
 
 struct PreviewLinkContentRaw: View, Equatable {
   static func == (lhs: PreviewLinkContentRaw, rhs: PreviewLinkContentRaw) -> Bool {
-    lhs.image == rhs.image && lhs.title == rhs.title && lhs.compact == rhs.compact && lhs.description == rhs.description && lhs.loading == rhs.loading && lhs.url == rhs.url && lhs.openLinksInSafari == rhs.openLinksInSafari
+    lhs.image == rhs.image && lhs.title == rhs.title && lhs.compact == rhs.compact && lhs.description == rhs.description && lhs.loading == rhs.loading && lhs.url == rhs.url
   }
   
   static let height: CGFloat = 88
@@ -42,7 +42,6 @@ struct PreviewLinkContentRaw: View, Equatable {
   var loading: Bool
   var url: URL
   var openURL: OpenURLAction
-  var openLinksInSafari: Bool
     
   var body: some View {
     HStack(spacing: 16) {
@@ -50,28 +49,23 @@ struct PreviewLinkContentRaw: View, Equatable {
       if !compact {
         VStack(alignment: .leading, spacing: 2) {
           VStack(alignment: .leading, spacing: 0) {
-            Text(title?.escape ?? "No title detected")
+            Text(title ?? "No title detected")
               .fontSize(17, .medium)
               .lineLimit(1)
               .truncationMode(.tail)
-              .fixedSize(horizontal: false, vertical: true)
             
             Text(cleanURL(url: url))
               .fontSize(13)
               .opacity(0.5)
               .lineLimit(1)
-              .fixedSize(horizontal: false, vertical: true)
           }
           .frame(maxWidth: .infinity, alignment: .leading)
           
-          Text(description?.escape ?? "No description detected")
+          Text(description ?? "No description detected")
             .fontSize(14)
             .lineLimit(2)
             .opacity(0.75)
-            .fixedSize(horizontal: false, vertical: true)
         }
-//        .skeleton(with: viewModel.loading)
-//        .multiline(lines: 4, scales: [1: 1, 2: 0.5, 3: 0.75, 4: 0.75])
         .frame(maxWidth: .infinity, alignment: .leading)
         .multilineTextAlignment(.leading)
       }
@@ -108,11 +102,7 @@ struct PreviewLinkContentRaw: View, Equatable {
     }
     .highPriorityGesture(TapGesture().onEnded {
       if let newURL = URL(string: url.absoluteString.replacingOccurrences(of: "https://reddit.com/", with: "winstonapp://")) {
-        if openLinksInSafari {
-          openURL(newURL)
-        } else {
-          Nav.openURL(newURL)
-        }
+        Nav.openURL(newURL)
       }
     })
   }

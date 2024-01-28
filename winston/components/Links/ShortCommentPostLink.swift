@@ -14,28 +14,11 @@ struct ShortCommentPostLink: View {
   @Environment(\.useTheme) private var selectedTheme
   var body: some View {
     if let data = comment.data, let _ = data.link_id, let _ = data.subreddit {
-      //      Button {
-      
-      //      } label: {
       VStack(alignment: .leading, spacing: 6) {
-        Text(data.link_title ?? "Error")
-          .fontSize(15, .medium)
-          .opacity(0.75)
-          .lineLimit(2)
-          .multilineTextAlignment(.leading)
-          .fixedSize(horizontal: false, vertical: true)
-//          .onAppear { attrStrLoader.load(str: data.selftext) }
-        
-        VStack(alignment: .leading, spacing: 2) {
-          if let author = data.author {
-            (Text(author).font(.system(size: selectedTheme.postLinks.theme.badge.authorText.size, weight: selectedTheme.postLinks.theme.badge.authorText.weight.t)).foregroundColor(author == "[deleted]" ? .red: selectedTheme.postLinks.theme.badge.authorText.color()))
-              .onTapGesture { Nav.to(.reddit(.user(User(id: data.author!)))) }
-          }
-          
-          if let subreddit = data.subreddit {
-            (Text("on ").font(.system(size: 13, weight: .medium)).foregroundColor(.primary.opacity(0.5)) + Text("r/\(subreddit)").font(.system(size: 14, weight: .semibold)).foregroundColor(.primary.opacity(0.75)))
-              .onTapGesture { Nav.to(.reddit(.subFeed(Subreddit(id: data.subreddit!)))) }
-          }
+        if let subreddit = data.subreddit {
+          (Text(data.link_title ?? "Error").font(.system(size: 15)).foregroundColor(.primary.opacity(0.75)) +
+           Text(" · ").font(.system(size: 13)).foregroundColor(.primary.opacity(0.5)) +
+           Text("r/\(subreddit)").italic().font(.system(size: 14)).foregroundColor(.primary.opacity(0.75)))
         }
       }
       .multilineTextAlignment(.leading)
@@ -44,18 +27,6 @@ struct ShortCommentPostLink: View {
       .frame(maxWidth: .infinity, alignment: .leading)
       .background(
         RR(14, Color.secondary.opacity(0.075))
-          .onTapGesture {
-            openedPost = true
-          }
-      )
-      .mask(RR(14, Color.black))
-      .contentShape(Rectangle())
-      .highPriorityGesture (
-        TapGesture().onEnded {
-          if let link_id = data.link_id, let subID = data.subreddit {
-            Nav.to(.reddit(.post(Post(id: link_id, subID: subID))))
-          }
-        }
       )
       .foregroundColor(.primary)
       .multilineTextAlignment(.leading)

@@ -8,14 +8,17 @@
 import SwiftUI
 
 struct Me: View {
-  @ObservedObject var router: Router
-  @ObservedObject var redditAPI = RedditAPI.shared
+  @State var router: Router
+  
+  init(router: Router) {
+    self._router = .init(initialValue: router)
+  }
   
   @State private var loading = true
   var body: some View {
     NavigationStack(path: $router.fullPath) {
       Group {
-        if let user = redditAPI.me {
+        if let user = RedditAPI.shared.me {
           UserView(user: user)
             .id("me-user-view-\(user.id)")
           
@@ -30,9 +33,10 @@ struct Me: View {
             }
         }
       }
+      .attachViewControllerToRouter()
       .injectInTabDestinations()
     }
-    .swipeAnywhere()
+//    .swipeAnywhere()
   }
 }
 

@@ -137,9 +137,6 @@ private struct ComplexWaveModifierVFX: ViewModifier {
   
   func body(content: Content) -> some View {
     content
-//      .ifIOS17({ view in
-//        if #available(iOS 17, *) {
-//          view
 //            .visualEffect { content, proxy in
 //              content
 //                .distortionEffect(ShaderLibrary[dynamicMember: "water"](
@@ -160,7 +157,5 @@ private struct ComplexWaveModifierVFX: ViewModifier {
 ////                  maxSampleOffset: .zero
 ////                )
 //            }
-//        }
-//      })
   }
 }

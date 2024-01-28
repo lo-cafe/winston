@@ -24,17 +24,20 @@ struct RedditCredential: Identifiable, Equatable, Hashable, Codable {
   var profilePicture: String? = nil
   func isInKeychain() -> Bool { RedditCredentialsManager.shared.credentials.contains { $0.id == self.id } }
   var validationStatus: CredentialValidationState {
-    var newRedditAPIPairState: CredentialValidationState = .invalid
+    var newRedditAPIPairState: CredentialValidationState = .empty
     
     if self.apiAppID.count == 22 && self.apiAppSecret.count == 30 {
       newRedditAPIPairState = .valid
     } else if self.apiAppID.count > 10 && self.apiAppSecret.count > 20 {
       newRedditAPIPairState = .maybeValid
+    } else if self.apiAppID.count > 0 || self.apiAppSecret.count > 0 {
+      newRedditAPIPairState = .invalid
     }
     
     guard self.refreshToken != nil else { return newRedditAPIPairState }
     return .authorized
   }
+  
   init(apiAppID: String = "", apiAppSecret: String = "", accessToken: String? = nil, refreshToken: String? = nil, expiration: Int? = nil, lastRefresh: Date? = nil, userName: String? = nil, profilePicture: String? = nil) {
     self.id = UUID()
     self.apiAppID = apiAppID
@@ -148,5 +151,22 @@ struct RedditCredential: Identifiable, Equatable, Hashable, Codable {
     let lastRefresh: Date
   }
   
-  enum CredentialValidationState { case authorized, valid, invalid, maybeValid }
+  enum CredentialValidationState: String {
+    case authorized, valid, invalid, maybeValid, empty
+    
+    func getMeta() -> Meta {
+        return switch self {
+        case .authorized: .init(color: .green, lottieIcon: "thumbup", label: "Perfect", description: "This means you can use this account normally.")
+        case .maybeValid, .valid: .init(color: .orange, lottieIcon: "warning-appear", label: "Unauthorized", description: "This means you need to allow your credentials to access your account.")
+        case .empty, .invalid: .init(color: .red, lottieIcon: "thumbdown", label: "Invalid", description: "This means that you credential info is wrong.")
+        }
+      }
+    
+    struct Meta: Equatable {
+      let color: Color
+      let lottieIcon: String
+      let label: String
+      let description: String
+    }
+  }
 }

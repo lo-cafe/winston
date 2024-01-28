@@ -15,23 +15,27 @@ struct NSFWMod: ViewModifier {
   func body(content: Content) -> some View {
     let blur = !unblur && isIt
     let squareSize: Double = size == nil ? 0 : min(size!.width, size!.height)
-    content
-      .frame(minHeight: isIt ? 75 : 0)
-      .opacity(blur ? 0.75 : 1)
-      .blur(radius: blur ? 30 : 0)
-      .allowsHitTesting(!blur)
-      .mask(RR(blur ? squareSize / 2 : 0, .black).frame(width: blur ? squareSize : size?.width, height: blur ? squareSize : size?.height).blur(radius: blur ? smallIcon ? 12 : 24 : 0))
-      .scaleEffect(blur ? 0.95 : 1)
-      .overlay(
-        !blur
-        ? nil
-        : NSFWOverlay(smallIcon: smallIcon).equatable().transition(.scaleAndBlur).highPriorityGesture(blur ? TapGesture().onEnded { withAnimation(.spring) { unblur = true } } : nil )
-      )
+    if isIt {
+      content
+        .frame(minHeight: isIt ? 75 : 0)
+        .opacity(blur ? 0.75 : 1)
+        .blur(radius: blur ? 30 : 0)
+        .allowsHitTesting(!blur)
+        .mask(RR(blur ? squareSize / 2 : 0, .black).frame(width: blur ? squareSize : size?.width, height: blur ? squareSize : size?.height).blur(radius: blur ? smallIcon ? 12 : 24 : 0))
+        .scaleEffect(blur ? 0.95 : 1)
+        .overlay(
+          !blur
+          ? nil
+          : NSFWOverlay(smallIcon: smallIcon).transition(.scaleAndBlur).highPriorityGesture(blur ? TapGesture().onEnded { withAnimation(.spring) { unblur = true } } : nil )
+        )
+    } else {
+      content
+    }
   }
 }
 
 struct NSFWOverlay: View, Equatable {
-  static func == (lhs: NSFWOverlay, rhs: NSFWOverlay) -> Bool { true }
+  static func == (lhs: NSFWOverlay, rhs: NSFWOverlay) -> Bool { lhs.smallIcon == rhs.smallIcon }
 
   var smallIcon: Bool = false
   var body: some View {

@@ -11,7 +11,7 @@ import Alamofire
 extension RedditAPI {
   func newReply(_ message: String, _ destinationID: String) async -> Bool? {
     let params = NewReplyPayload(text: message, thing_id: destinationID)
-    switch await self.doRequest("\(RedditAPI.redditApiURLBase)/api/comment", method: .post, params: params)  {
+    switch await self.doRequest("\(RedditAPI.redditApiURLBase)/api/comment?raw_json=1", method: .post, params: params)  {
     case .success:
       return true
     case .failure:

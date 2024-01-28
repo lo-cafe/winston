@@ -24,6 +24,7 @@ struct SwipeUI<T: GenericRedditEntityDataType, B: Hashable>: ViewModifier {
   @State private var offset: CGFloat?
   @State private var triggeredAction: TriggeredAction = .none
   @State private var pressed = false
+  @State private var enableBG = false
   
   var secondary: Bool
   var offsetYAction: CGFloat = 0
@@ -84,49 +85,54 @@ struct SwipeUI<T: GenericRedditEntityDataType, B: Hashable>: ViewModifier {
     let actualOffset = controlledDragAmount != nil ? 0 : dragAmount
     
     content
-      .scaleEffect(pressed ? 0.975 : 1)
+    //      .scaleEffect(pressed ? 0.975 : 1)
+      .overlay { Color.primary.opacity(pressed ? 0.1 : 0) }
       .offset(x: actualOffset)
-      .background(
-        !controlledIsSource || enableSwipeAnywhere
-        ? nil
-        : HStack {
-          
-          SwipeUIBtn(info: infoRight(), secondActiveFunc: actionsSet.rightSecond.active, firstActiveFunc: actionsSet.rightFirst.active, entity: entity!)
-          //            .equatable()
-            .scaleEffect(triggeredAction == .rightSecond ? 1.1 : triggeredAction == .rightFirst ? 1 : max(0.001, offsetXInterpolate([-0.9, 0.85], false)))
-            .opacity(max(0, offsetXInterpolate([-0.9, 1], false)))
-            .frame(width: actualOffsetX < 0 ? 10 : abs(actualOffsetX))
-            .offset(x: -8)
-          
-          Spacer()
-          
-          SwipeUIBtn(info: infoLeft(), secondActiveFunc: actionsSet.leftSecond.active, firstActiveFunc: actionsSet.leftFirst.active, entity: entity!)
-          //            .equatable()
-            .scaleEffect(triggeredAction == .leftSecond ? 1.1 : triggeredAction == .leftFirst ? 1 : max(0.001, offsetXNegativeInterpolate([-0.9, 0.85], false)))
-            .opacity(max(0, offsetXNegativeInterpolate([-0.9, 1], false)))
-            .frame(width: actualOffsetX > 0 ? 10 : abs(actualOffsetX))
-            .offset(x: 8)
-        }
+      .background {
+        if !enableSwipeAnywhere && controlledIsSource && enableBG {
+          HStack {
+            
+            SwipeUIBtn(info: infoRight(), secondActiveFunc: actionsSet.rightSecond.active, firstActiveFunc: actionsSet.rightFirst.active, entity: entity!)
+            //            .equatable()
+              .scaleEffect(triggeredAction == .rightSecond ? 1.1 : triggeredAction == .rightFirst ? 1 : max(0.001, offsetXInterpolate([-0.9, 0.85], false)))
+              .opacity(max(0, offsetXInterpolate([-0.9, 1], false)))
+              .frame(width: actualOffsetX < 0 ? 10 : abs(actualOffsetX))
+              .offset(x: -8)
+            
+            Spacer()
+            
+            SwipeUIBtn(info: infoLeft(), secondActiveFunc: actionsSet.leftSecond.active, firstActiveFunc: actionsSet.leftFirst.active, entity: entity!)
+            //            .equatable()
+              .scaleEffect(triggeredAction == .leftSecond ? 1.1 : triggeredAction == .leftFirst ? 1 : max(0.001, offsetXNegativeInterpolate([-0.9, 0.85], false)))
+              .opacity(max(0, offsetXNegativeInterpolate([-0.9, 1], false)))
+              .frame(width: actualOffsetX > 0 ? 10 : abs(actualOffsetX))
+              .offset(x: 8)
+          }
           .frame(maxWidth: .infinity, maxHeight: .infinity)
           .offset(y: offsetYAction)
           .allowsHitTesting(false)
-      )
+          .transition(.identity)
+        }
+      }
       .onTapGesture {
-        if let onTapAction { onTapAction() }
-        
+        onTapAction?()
         if !skipAnimation {
-          withAnimation(.bouncy(duration: 0.325, extraBounce: 0.25)) {
+          withAnimation(.easeIn(duration: 0.15)) {
             pressed = true
           }
-          pressed.toggle()
+          doThisAfter(0.5) {
+            withAnimation(.easeIn(duration: 0.15)) { pressed = false }
+          }
         }
       }
     // commenting this out since it is interfering with the on tap. i moved the animation of pressed to that.
-//      .onLongPressGesture(minimumDuration: 0.3, maximumDistance: 30, perform: { }, onPressingChanged: { val in
-//        withAnimation(.bouncy(duration: 0.325, extraBounce: 0.25)) {
-//          pressed = val
-//        }
-//      })
+    //      .onLongPressGesture(minimumDuration: 0.3, maximumDistance: 5, perform: { }, onPressingChanged: { val in
+    //        if !skipAnimation {
+    //          if val { timer.fireIn(0.025) { withAnimation(.smooth(duration: 0.325, extraBounce: 0.25)) { pressed = val } } }
+    //          else if pressed { timer.fireIn(0.1) { withAnimation(.bouncy(duration: 0.325, extraBounce: 0.25)) { pressed = val } } }
+    //          else { timer.invalidate() }
+    //        }
+    //      })
       .gesture(
         enableSwipeAnywhere
         ? nil
@@ -140,6 +146,7 @@ struct SwipeUI<T: GenericRedditEntityDataType, B: Hashable>: ViewModifier {
               if controlledDragAmount != nil {
                 controlledDragAmount?.wrappedValue =  x - offset
               } else {
+                if !enableBG { enableBG = true }
                 dragAmount = x - offset
               }
             }
@@ -158,6 +165,8 @@ struct SwipeUI<T: GenericRedditEntityDataType, B: Hashable>: ViewModifier {
               } else {
                 dragAmount = 0
               }
+            } completion: {
+              enableBG = false
             }
           }
         , including: disabled ? .none : .all
@@ -231,15 +240,7 @@ struct SwipeUIBtn<T: GenericRedditEntityDataType, B: Hashable>: View, Equatable 
       let active = info.3 ? secondActiveFunc(entity!) : firstActiveFunc(entity!)
       Image(systemName: active ? info.0.active : info.0.normal)
       //      Image(systemName: "square.and.arrow.up.circle.fill")
-        .ifIOS17({ img in
-          if #available(iOS 17, *) {
-            img.contentTransition(.symbolEffect)
-          } else {
-            img
-              .transition(.scaleAndBlur)
-              .id(active ? info.0.active : info.0.normal)
-          }
-        })
+        .contentTransition(.symbolEffect)
         .frame(36)
         .background(Circle().fill(Color.hex(active ? info.2.active : info.2.normal)))
         .foregroundStyle(Color.hex(active ? info.1.active : info.1.normal))

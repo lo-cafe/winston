@@ -36,6 +36,7 @@ struct PeakQuestionsOverlay: View {
   @State private var pressed = false
   @State private var open = false
   @State private var scaledDown = false
+  @State private var closedSize: CGSize? = nil
   @Namespace private var ns
   
   func toggle(_ q: PeakQuestion) {
@@ -61,60 +62,79 @@ struct PeakQuestionsOverlay: View {
   
   var body: some View {
     VStack(alignment: .center, spacing: 24) {
-      if open {
+      if closedSize != nil {
         PeakQuestionsScroller(peakQuestions: peakQuestions, selectedQuestion: selectedQuestion, prevSelectedQuestion: prevSelectedQuestion, selectQuestion: toggle, ns: ns)
           .padding(.top, 32)
           .zIndex(1)
-          .scaleEffect(scaledDown ? 0.9 : 1)
+          .compositingGroup()
+          .scaleEffect(open ? 1 : 0.1)
+          .blur(radius: open ? 0 : 40)
+          .offset(y: open ? 0 : 72)
+          .opacity(open ? 1 : 0)
           .allowsHitTesting(open)
       }
       
-      HStack(spacing: open ? -2 : 1) {
+      HStack(spacing: open ? -3 : 1) {
         Text("Any questions")
           .fontSize(open ? 22 : 18, open ? .bold : .semibold, design: .rounded)
         Image(systemName: "questionmark.bubble.fill")
           .symbolRenderingMode(.hierarchical)
           .fontSize(open ? 26 : 19, open ? .bold : .semibold, design: .rounded)
-          .ifIOS17 { v in
-            if #available(iOS 17, *) {
-              v.symbolEffect(.bounce, value: open)
-            }
-          }
+          .symbolEffect(.bounce, value: open)
           .rotationEffect(.degrees(open ? 7 : 0))
       }
+      .foregroundStyle(Color.accentColor)
       .brightness(open ? 0.075 : 0)
       .padding(.horizontal, 24)
       .frame(height: 48)
-      .compositingGroup()
-      .scaleEffect(scaledDown ? 0.95 : 1, anchor: .top)
-      .drawingGroup()
+      .scaleEffect(1)
       .contentShape(Rectangle())
-      .foregroundStyle(Color.accentColor)
+      .measureOnce($closedSize)
       .onTapGesture { withAnimation(.bouncy) { open.toggle() } }
       .onLongPressGesture(minimumDuration: 0.3, maximumDistance: 30, perform: { }) { val in
         Hap.shared.play(intensity: val ? 0.5 : 0.65, sharpness: 0)
         withAnimation(.smooth(duration: 0.2)) { pressed = val }
       }
+      .multilineTextAlignment(.center)
     }
-    .frame(width: open ? .screenW - 16 : nil, alignment: .bottom)
+    .frame(width: open ? .screenW - 16 : closedSize?.width, height: open ? nil : 48, alignment: .bottom)
+    .scaleEffect(1)
     .padding(.bottom, open ? 20 : 0)
     .clipShape(RoundedRectangle(cornerRadius: open ? 32 : 24, style: .continuous))
-    .background(RoundedRectangle(cornerRadius: open ? 32 : 24, style: .continuous).fill(Material.bar).scaleEffect(scaledDown ? 0.95 : 1))
+    .compositingGroup()
+    .opacity(scaledDown ? 0.35 : 1)
     .overlay {
-      RoundedRectangle(cornerRadius: open ? 32 : 24, style: .continuous)
-        .stroke(Color.primary.opacity(0.05), lineWidth: 0.5)
-        .padding(.all, 0.5)
-        .scaleEffect(scaledDown ? 0.95 : 1)
-        .drawingGroup()
+      RoundedRectangle(cornerRadius: open ? 32 : 24, style: .continuous).stroke(Color.primary.opacity(0.05), lineWidth: 0.5) .padding(.all, 0.5).allowsHitTesting(false)
     }
-    .contrast(scaledDown ? 0.65 : 1)
-    .brightness(scaledDown ? -0.175 : pressed ? 0.075 : 0)
+    .scaleEffect(scaledDown ? 0.95 : 1)
+    .brightness(pressed ? 0.1 : 0)
     .allowsHitTesting(selectedQuestion == nil)
+    .overlay {
+      if selectedQuestion != nil {
+        Rectangle().fill(Color.hitbox)
+          .onTapGesture { if let selectedQuestion { toggle(selectedQuestion) } }
+          .transition(.identity)
+          .allowsHitTesting(selectedQuestion != nil)
+      }
+    }
     .overlay(alignment: .center) {
       if let selectedQuestion, open {
         PeakQuestionView(peakQuestion: selectedQuestion, ns: ns, isSelected: true, toggleSelected: toggle, isAnswer: true).zIndex(5).id(selectedQuestion.id)
       }
     }
+    .drawingGroup()
+    .background(
+      RoundedRectangle(cornerRadius: open ? 32 : 24, style: .continuous)
+        .fill(Material.bar)
+        .brightness(pressed ? 0.1 : 0)
+        .overlay {
+          RoundedRectangle(cornerRadius: open ? 32 : 24, style: .continuous)
+            .fill(.black.opacity(scaledDown ? 0.35 : 0))
+            .allowsHitTesting(false)
+        }
+        .scaleEffect(scaledDown ? 0.95 : 1)
+    )
+    .scaleEffect(1)
     .padding(.bottom, open ? 24 : 44)
     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
     .background(!open ? nil : Color.black.opacity(0.5).onTapGesture {

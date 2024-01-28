@@ -9,11 +9,15 @@ import SwiftUI
 import Defaults
 
 struct SubredditsStack: View {
-  @ObservedObject var router: Router
+  @State var router: Router
   @Default(.BehaviorDefSettings) private var behaviorDefSettings // handle default feed selection routing
   @Default(.GeneralDefSettings) private var generalDefSettings // handle default feed selection routing
   @State private var columnVisibility: NavigationSplitViewVisibility = .automatic
   @State private var sidebarSize: CGSize = .zero
+  
+  init(router: Router) {
+    self._router = .init(initialValue: router)
+  }
   
   var postContentWidth: CGFloat { .screenW - (!IPAD || columnVisibility == .detailOnly ? 0 : sidebarSize.width) }
   
@@ -21,8 +25,9 @@ struct SubredditsStack: View {
   var body: some View {
     NavigationSplitView(columnVisibility: $columnVisibility) {
       if let redditCredentialSelectedID = generalDefSettings.redditCredentialSelectedID {
-        Subreddits(selectedSub: $router.firstSelected, loaded: loaded, currentCredentialID: redditCredentialSelectedID)
+        Subreddits(firstDestination: $router.firstSelected, loaded: loaded, currentCredentialID: redditCredentialSelectedID)
           .measure($sidebarSize).id("subreddits-list-\(redditCredentialSelectedID)")
+          .attachViewControllerToRouter()
       }
     } detail: {
       NavigationStack(path: $router.path) {
@@ -32,18 +37,20 @@ struct SubredditsStack: View {
             case .reddit(.multiFeed(let multi)):
               MultiPostsView(multi: multi)
                 .id("\(multi.id)-multi-first-tab")
+                .attachViewControllerToRouter()
             case .reddit(.subFeed(let sub)):
               SubredditPosts(subreddit: sub)
-                .equatable()
                 .id("\(sub.id)-sub-first-tab")
             case .reddit(.post(let post)):
               if let sub = post.winstonData?.subreddit {
                 PostView(post: post, subreddit: sub)
                   .id("\(post.id)-post-first-tab")
+                  .attachViewControllerToRouter()
               }
             case .reddit(.user(let user)):
               UserView(user: user)
                 .id("\(user.id)-user-first-tab")
+                .attachViewControllerToRouter()
             default:
               EmptyView()
             }
@@ -61,6 +68,7 @@ struct SubredditsStack: View {
                   .opacity(0.35)
               }
             }
+            .attachViewControllerToRouter()
           }
         }
         .injectInTabDestinations()
@@ -80,7 +88,7 @@ struct SubredditsStack: View {
       }
       .environment(\.contentWidth, postContentWidth)
     }
-    .swipeAnywhere()
+//    .swipeAnywhere()
     .environment(\.contentWidth, postContentWidth)
   }
 }

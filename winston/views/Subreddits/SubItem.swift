@@ -27,30 +27,31 @@ struct SubItemButton: View, Equatable {
 
 struct SubItem: View, Equatable {
   static func == (lhs: SubItem, rhs: SubItem) -> Bool {
-    lhs.sub == rhs.sub
+    lhs.sub == rhs.sub && lhs.isActive == rhs.isActive
   }
   
-  @Binding var selectedSub: Router.NavDest?
-  @ObservedObject var sub: Subreddit
+  var isActive: Bool
+  var sub: Subreddit
   var cachedSub: CachedSub
-  @Default(.likedButNotSubbed) private var likedButNotSubbed
+  var action: (Subreddit) -> ()
+//  @Default(.likedButNotSubbed) private var likedButNotSubbed
   
   func favoriteToggle() {
 //    guard let sub = sub else { return }
-    if likedButNotSubbed.contains(sub) {
-      _ = sub.localFavoriteToggle()
-    } else {
+//    if likedButNotSubbed.contains(sub) {
+//      _ = sub.localFavoriteToggle()
+//    } else {
       sub.favoriteToggle(entity: cachedSub)
-    }
+//    }
   }
   
   var body: some View {
     if let data = sub.data {
       let favorite = cachedSub.user_has_favorited
-      let localFav = likedButNotSubbed.contains(sub)
-      let isActive = selectedSub == .reddit(.subFeed(sub))
+//      let localFav = likedButNotSubbed.contains(sub)
+//      let isActive = selectedSub == .reddit(.subFeed(sub))
       WListButton(showArrow: !IPAD, active: isActive) {
-        selectedSub = .reddit(.subFeed(sub))
+        action(sub)
       } label: {
         HStack {
           Label {
@@ -63,7 +64,7 @@ struct SubItem: View, Equatable {
           Spacer()
           
           Image(systemName: "star.fill")
-            .foregroundColor((favorite || localFav) ? Color.accentColor : .gray.opacity(0.3))
+            .foregroundColor(favorite ? Color.accentColor : .gray.opacity(0.3))
             .highPriorityGesture( TapGesture().onEnded(favoriteToggle) )
         }
       }

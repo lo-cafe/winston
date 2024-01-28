@@ -17,7 +17,7 @@ struct UserViewContextPreview: View {
 }
 
 struct UserView: View {
-  @StateObject var user: User
+  var user: User
   @State private var lastActivities: [Either<Post, Comment>]?
   @State private var contentWidth: CGFloat = 0
   @State private var loadingOverview = true
@@ -27,7 +27,6 @@ struct UserView: View {
   @State private var dataTypeFilter: String = "" // Handles filtering for only posts or only comments.
   @State private var loadNextData: Bool = false
   
-  @ObservedObject var avatarCache = Caches.avatars
   //  @Environment(\.contentWidth) private var contentWidth
   
   func refresh() async {
@@ -64,13 +63,6 @@ struct UserView: View {
         }
       }
     }
-  }
-  
-  func getRepostAvatarRequest(_ post: Post?) -> ImageRequest? {
-    if let post = post, case .repost(let repost) = post.winstonData?.extractedMedia, let repostAuthorFullname = repost.data?.author_fullname {
-      return avatarCache.cache[repostAuthorFullname]?.data
-    }
-    return nil
   }
   
   var body: some View {
@@ -166,12 +158,39 @@ struct UserView: View {
           
           if let lastActivities = lastActivities {
             ForEach(Array(lastActivities.enumerated()), id: \.element) { i, item in
-              MixedContentLink(content: item, theme: selectedTheme.postLinks)
-                .onAppear {
-                  if(lastActivities.count - 7 == i) {
-                    getNextData()
-                  }
+              let isComment: Bool = {
+                switch item {
+                case .second: // is comment
+                  return true
+                default:
+                  return false
                 }
+              }()
+                
+              Group {
+                MixedContentLink(content: item, theme: selectedTheme.postLinks)
+                  .onAppear {
+                    if(lastActivities.count - 7 == i) {
+                      getNextData()
+                    }
+                  }
+                  .allowsHitTesting(!isComment)
+              }
+              .contentShape(Rectangle())
+              .onTapGesture {
+                guard isComment else {
+                  return
+                }
+                
+                switch item {
+                case .second(let comment):
+                  if let data = comment.data, let link_id = data.link_id, let subID = data.subreddit {
+                    Nav.to(.reddit(.postHighlighted(Post(id: link_id, subID: subID), comment.id)))
+                  }
+                default:
+                  return
+                }
+              }
               
               if selectedTheme.postLinks.divider.style != .no && i != (lastActivities.count - 1) {
                 NiceDivider(divider: selectedTheme.postLinks.divider)

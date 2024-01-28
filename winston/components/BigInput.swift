@@ -9,6 +9,7 @@ import SwiftUI
 
 struct BigInput: View {
   var l: String
+  var bg: Color = Color("acceptableBlack")
   @Binding var t: String
   @FocusState var focused: Bool
   var placeholder: String? = nil
@@ -25,7 +26,7 @@ struct BigInput: View {
         .padding(.horizontal, 12)
         .frame(maxWidth: .infinity)
         .background(
-          RR(16, Color("acceptableBlack"))
+          RR(16, bg)
             .brightness(focused ? cs == .dark ? 0.1 : 0.1 : 0)
             .shadow(color: .black.opacity(focused ? cs == .dark ? 0.25 : 0.15 : 0), radius: focused ? 12 : 0, y: focused ? 6 : 0)
             .animation(.easeOut.speed(2.5), value: focused)

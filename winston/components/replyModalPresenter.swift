@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct ReplyModalPresenter: ViewModifier {
-  @ObservedObject var shared = ReplyModalInstance.shared
+  var shared = ReplyModalInstance.shared
   func body(content: Content) -> some View {
     content
       .sheet(isPresented: Binding(get: { shared.isShowing == .post }, set: { if !$0 { shared.disable() } })) {
@@ -30,14 +30,15 @@ extension View {
   }
 }
 
-class ReplyModalInstance: ObservableObject {
+@Observable
+class ReplyModalInstance {
   static var shared = ReplyModalInstance()
   static private let placeholderPost = Post.placeholder()
   static private let placeholderComment = Comment.placeholder()
-  @Published public private(set) var subjectPost: Post = ReplyModalInstance.placeholderPost
-  @Published public private(set) var subjectComment: Comment = ReplyModalInstance.placeholderComment
-  @Published public private(set) var subjectCommentEdit: Comment = ReplyModalInstance.placeholderComment
-  @Published public private(set) var isShowing: Showing = .none { didSet { if isShowing == .none { self.clearSubjects() } } }
+  public private(set) var subjectPost: Post = ReplyModalInstance.placeholderPost
+  public private(set) var subjectComment: Comment = ReplyModalInstance.placeholderComment
+  public private(set) var subjectCommentEdit: Comment = ReplyModalInstance.placeholderComment
+  public private(set) var isShowing: Showing = .none { didSet { if isShowing == .none { self.clearSubjects() } } }
   
   func enable(_ subject: Subject) {
     switch subject {

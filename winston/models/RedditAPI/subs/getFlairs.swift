@@ -12,15 +12,13 @@ import UIKit
 
 extension RedditAPI {
   func getFlairs(_ subName: String) async -> [Flair]? {
-    switch await self.doRequest("\(RedditAPI.redditApiURLBase)/r/\(subName)/api/link_flair_v2", method: .get, decodable: FlairsResponse.self)  {
+    switch await self.doRequest("\(RedditAPI.redditApiURLBase)/r/\(subName)/api/link_flair_v2?raw_json=1", method: .get, decodable: [Flair].self)  {
     case .success(let data):
       return data
     case .failure(_):
       return nil
     }
   }
-  
-  typealias FlairsResponse = [Flair]
 }
 
 struct Flair: GenericRedditEntityDataType, Identifiable, Defaults.Serializable {

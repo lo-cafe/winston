@@ -40,7 +40,7 @@ struct CredentialsPanelEmptyView: View {
               .asFontSize(17)
           }
         })
-        .buttonStyle(.actionSecondary)
+        .buttonStyle(.actionOutlined)
         .opacity(0.5)
       }
       

@@ -12,7 +12,7 @@ struct SubscribeButton: View {
   
   @Environment(\.colorScheme) var colorScheme: ColorScheme
   @FetchRequest(sortDescriptors: [], animation: .default) var subs: FetchedResults<CachedSub>
-  @ObservedObject var subreddit: Subreddit
+  var subreddit: Subreddit
   var isSmall: Bool = false
   @State var loading = false
   @GestureState var pressing = false
@@ -49,11 +49,7 @@ struct SubscribeButton: View {
         .transition(.scaleAndBlur)
         
       }
-      .ifIOS17{ view in
-        if #available(iOS 17.0, *) {
-          view.contentTransition(.symbolEffect)
-        }
-      }
+      .contentTransition(.symbolEffect)
       .fontSize(16, isSmall ? .medium : .semibold)
       .foregroundColor(subscribed ? .white : isSmall ? .accentColor : .primary)
       .padding(.horizontal, isSmall ? 0 : 16)

@@ -27,10 +27,11 @@ struct BehaviorPanel: View {
       
       Group {
         Section("General") {
-          Toggle("Open links in Safari", isOn: $behaviorDefSettings.openLinksInSafari)
           Toggle("Open Youtube Videos Externally", isOn: $behaviorDefSettings.openYoutubeApp)
-          let auth_type = Biometrics().biometricType()
-          Toggle("Lock Winston With \(auth_type)", isOn: $generalDefSettings.useAuth)
+          #if !os(macOS)
+            let auth_type = Biometrics().biometricType()
+            Toggle("Lock Winston With \(auth_type)", isOn: $generalDefSettings.useAuth)
+          #endif
 
           VStack{
             Toggle("Live Text Analyzer", isOn: $behaviorDefSettings.doLiveText)
@@ -91,6 +92,7 @@ struct BehaviorPanel: View {
           Toggle("Blur NSFW in opened posts", isOn: $postPageDefSettings.blurNSFW)
           Toggle("Blur NSFW", isOn: $postLinkDefSettings.blurNSFW)
           Toggle("Save sort per subreddit", isOn: $subredditFeedDefSettings.perSubredditSort)
+          Toggle("Open subreddit options on tap", isOn: $subredditFeedDefSettings.openOptionsOnTap)
           Toggle("Open media from feed", isOn: $postLinkDefSettings.isMediaTappable)
           Menu {
             ForEach(SubListingSortOption.allCases) { opt in
@@ -196,6 +198,7 @@ struct BehaviorPanel: View {
           }
           
           Toggle("Collapse AutoModerator comments", isOn: $commentsSectionDefSettings.collapseAutoModerator)
+          Toggle("Comment skipper button", isOn: $commentsSectionDefSettings.commentSkipper)
           Toggle("Save comment sort per post", isOn: $postPageDefSettings.perPostSort)
         }
         

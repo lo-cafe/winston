@@ -15,7 +15,7 @@ extension RedditAPI {
   func fetchMyMultis() async -> Bool? {
     guard let currentCredentialID = RedditCredentialsManager.shared.selectedCredential?.id else { return nil }
 
-    let params = ["expand_srs":true]
+    let params = FetchMyMultisPayload()
     
     switch await self.doRequest("\(RedditAPI.redditApiURLBase)/api/multi/mine", method: .get, params: params, paramsLocation: .queryString, decodable: [MultiContainerResponse].self) {
     case .success(let data):
@@ -45,6 +45,11 @@ extension RedditAPI {
       print(error)
       return nil
     }
+  }
+  
+  struct FetchMyMultisPayload: Codable {
+    var expand_srs = true
+    var raw_json = 1
   }
   
   struct MultiContainerResponse: Codable {

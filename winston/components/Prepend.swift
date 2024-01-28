@@ -8,6 +8,7 @@
 import Foundation
 import SwiftUI
 import UIKit
+import SwiftyUI
 
 struct PrependTag: Hashable, Equatable {
   let label: String
@@ -20,7 +21,7 @@ func createTitleTagsAttrString(titleTheme: ThemeText, postData: PostData, textCo
   let titleFont = UIFont.systemFont(ofSize: titleTheme.size, weight: titleTheme.weight.ut)
   let titleTagsImages = getTagsFromTitle(postData).compactMap { createTagImage(withTitle: $0.label, textColor: $0.textColor, backgroundColor: $0.bgColor, font: tagFont) }
   
-  let attrTitle = NSMutableAttributedString(string: postData.title.escape, attributes: [.font: titleFont, .foregroundColor: textColor])
+  let attrTitle = NSMutableAttributedString(string: postData.title, attributes: [.font: titleFont, .foregroundColor: textColor])
   
   titleTagsImages.forEach { img in
     let attach = NSTextAttachment(image: img)
@@ -71,15 +72,16 @@ func createTitleTagsAttrString(titleTheme: ThemeText, postData: PostData, textCo
   }
 }
 
-func buildTitleWithTags(attrString: NSAttributedString, title: String, tags: [PrependTag], fontSize: Double, fontWeight: UIFont.Weight, color: UIColor, size: CGSize) -> UILabel {
+func buildTitleWithTags(attrString: NSAttributedString, title: String, fontSize: Double, fontWeight: UIFont.Weight, color: UIColor, size: CGSize) -> SwiftyLabel {
   
 //  let text = UITextView(usingTextLayoutManager: false)
-  let text = UILabel()
+  let text = SwiftyLabel()
   text.frame = .init(x: 0, y: 0, width: size.width, height: size.height)
 
 //  text.layer.shouldRasterize = true
 //  text.layer.rasterizationScale = UIScreen.main.scale
   text.textColor = color
+  text.textAlignment = .topLeft
   text.backgroundColor = .clear
   text.numberOfLines = 0
   text.lineBreakMode = .byWordWrapping
@@ -87,13 +89,13 @@ func buildTitleWithTags(attrString: NSAttributedString, title: String, tags: [Pr
   text.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
   text.translatesAutoresizingMaskIntoConstraints = false
   text.attributedText = attrString
-  text.sizeToFit()
+//  text.sizeToFit()
   return text
 }
 
 struct Prepend: UIViewRepresentable, Equatable {
   static func == (lhs: Prepend, rhs: Prepend) -> Bool {
-    lhs.title == rhs.title && lhs.size == rhs.size && lhs.color == rhs.color && lhs.fontWeight == rhs.fontWeight && lhs.attrString.isEqual(to: rhs.attrString)
+    lhs.title == rhs.title && lhs.size == rhs.size && lhs.color == rhs.color && lhs.fontWeight == rhs.fontWeight
   }
   
   var attrString: NSAttributedString
@@ -101,16 +103,15 @@ struct Prepend: UIViewRepresentable, Equatable {
   var fontSize: CGFloat
   var fontWeight: UIFont.Weight
   var color: UIColor
-  var tags: [PrependTag]
   var size: CGSize
   
-  func makeUIView(context: Context) -> UILabel {
-    let view = buildTitleWithTags(attrString: attrString, title: title, tags: tags, fontSize: fontSize, fontWeight: fontWeight, color: color, size: size)
+  func makeUIView(context: Context) -> SwiftyLabel {
+    let view = buildTitleWithTags(attrString: attrString, title: title, fontSize: fontSize, fontWeight: fontWeight, color: color, size: size)
     return view
   }
   
-  func updateUIView(_ uiLabel: UILabel, context: Context) {
-    if size != uiLabel.frame.size { uiLabel.frame.size = size }
-    if !(uiLabel.attributedText?.isEqual(to: attrString) ?? false) { uiLabel.attributedText = attrString }
+  func updateUIView(_ uiLabel: SwiftyLabel, context: Context) {
+//    if size != uiLabel.frame.size { uiLabel.frame.size = size }
+//    if !(uiLabel.attributedText?.isEqual(to: attrString) ?? false) { uiLabel.attributedText = attrString }
   }
 }

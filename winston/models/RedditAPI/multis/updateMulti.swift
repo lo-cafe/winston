@@ -16,6 +16,7 @@ extension RedditAPI {
     let key_color: String?
     let subreddits: [MultiSub]
     let visibility: MultiVisibility
+    var raw_json = 1
   }
   
   func upadteMulti(name: String, displayName: String, subs: [String], description: String = "", color: String? = nil, visibility: MultiVisibility = .pub) async -> Bool? {

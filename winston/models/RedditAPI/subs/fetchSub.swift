@@ -10,7 +10,7 @@ import Alamofire
 
 extension RedditAPI {
   func fetchSub(_ name: String) async -> ListingChild<SubredditData>? {
-    switch await self.doRequest("\(RedditAPI.redditApiURLBase)\(name.hasPrefix("/r/") ? name : "/r/\(name)/")about.json", method: .get, decodable: ListingChild<SubredditData>.self)  {
+    switch await self.doRequest("\(RedditAPI.redditApiURLBase)\(name.hasPrefix("/r/") ? name : "/r/\(name)/")about.json?raw_json=1", method: .get, decodable: ListingChild<SubredditData>.self)  {
     case .success(let data):
       return data
     case .failure(let error):

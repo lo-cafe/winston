@@ -10,8 +10,8 @@ import Defaults
 
 struct FeedThemingPanel: View {
   @Binding var theme: WinstonTheme
-  @StateObject private var previewPostSample = Post(data: postSampleData)
-  @StateObject private var previewPostSubSample = Subreddit(id: postSampleData.subreddit)
+  @State private var previewPostSample = Post(data: postSampleData)
+  @State private var previewPostSubSample = Subreddit(id: postSampleData.subreddit)
   
   @Default(.PostLinkDefSettings) private var postLinkDefSettings
   
@@ -53,20 +53,20 @@ struct FeedThemingPanel: View {
       ScrollView(showsIndicators: false) {
         if let winstonData = previewPostSample.winstonData {
           VStack(spacing: theme.postLinks.spacing) {
-            PostLink(id: previewPostSample.id, theme: theme.postLinks, showSub: true, secondary: true, contentWidth: contentWidth, defSettings: postLinkDefSettings)
+            PostLink(id: previewPostSample.id, theme: theme.postLinks, showSub: true, secondary: true, compactPerSubreddit: nil, contentWidth: contentWidth, defSettings: postLinkDefSettings)
             .equatable()
             .environment(\.useTheme, theme)
             //            .allowsHitTesting(false)
             
             NiceDivider(divider: theme.postLinks.divider)
             
-            PostLink(id: previewPostSample.id, theme: theme.postLinks, showSub: true, secondary: true, contentWidth: contentWidth, defSettings: postLinkDefSettings)
+            PostLink(id: previewPostSample.id, theme: theme.postLinks, showSub: true, secondary: true, compactPerSubreddit: nil, contentWidth: contentWidth, defSettings: postLinkDefSettings)
             .equatable()
             .environment(\.useTheme, theme)
           }
-          .environmentObject(previewPostSample)
-          .environmentObject(previewPostSubSample)
-          .environmentObject(winstonData)
+          .environment(\.contextPost, previewPostSample)
+          .environment(\.contextSubreddit, previewPostSubSample)
+          .environment(\.contextPostWinstonData, winstonData)
           .padding(.horizontal, theme.postLinks.theme.outerHPadding)
           .allowsHitTesting(false)
           .contentShape(Rectangle())

@@ -10,11 +10,13 @@ import YouTubePlayerKit
 import NukeUI
 import UIKit
 
+// WE SHOULD AVOID USING THIS TYPE OF CACHE
+// Don't create any more caches in this format,
+// there's no reason for the cache to be managed by us manually this way.
+
 class Caches {
-  static let ytPlayers = BaseCache<YTMediaExtracted>(cacheLimit: 35)
   static let postsAttrStr = BaseCache<AttributedString>(cacheLimit: 100)
-  static let postsPreviewModels = BaseObservableCache<PreviewModel>(cacheLimit: 100)
-  static let avatars = BaseCache<ImageRequest>(cacheLimit: 100, cache: ["t2_winston_sample":.init(data: ImageRequest(url: URL(string: "https://winston.cafe/icons/iconExplode.png")!), createdAt: Date())])
+  static let postsPreviewModels = BaseCache<PreviewModel>(cacheLimit: 100)
   static let videos = BaseCache<SharedVideo>(cacheLimit: 50)
   static let streamable = BaseCache<StreamableCached>(cacheLimit: 100)
 }

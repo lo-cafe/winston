@@ -13,17 +13,12 @@ struct SpoilerModifer: ViewModifier {
   func body(content: Content) -> some View {
     
     content
-      .ifIOS17{ content in
-        if #available(iOS 17.0, *) {
-          content
-            .distortionEffect(
-              .init(
-                function: .init(library: .default, name: "pixelate"),
-                arguments: [.float(pixelate)]),
-              maxSampleOffset: .zero
-            )
-        }
-      }
+      .distortionEffect(
+        .init(
+          function: .init(library: .default, name: "pixelate"),
+          arguments: [.float(pixelate)]),
+        maxSampleOffset: .zero
+      )
       .highPriorityGesture(TapGesture().onEnded{
         pixelate = 0.0
       })

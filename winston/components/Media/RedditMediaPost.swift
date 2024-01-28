@@ -27,6 +27,8 @@ struct RedditMediaPost: View {
           UserLinkContainer(noHPad: true, user: user)
         case .subreddit(let subreddit):
           SubredditLinkContainer(sub: subreddit)
+        default:
+          EmptyView()
         }
     }
     .frame(maxWidth: .infinity, minHeight: RedditMediaPost.height, maxHeight: RedditMediaPost.height)

@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Defaults
 
 struct FloatingMainTrigger: View, Equatable {
   static func == (lhs: FloatingMainTrigger, rhs: FloatingMainTrigger) -> Bool {
@@ -24,13 +25,13 @@ struct FloatingMainTrigger: View, Equatable {
   @State private var toggleTimer: Timer? = nil
   @GestureState private var pressingDown = false
   
+  @Default(.SubredditFeedDefSettings) var subredditFeedDefSettings
+  
   private let longPressDuration: Double = 0.275
   
   var body: some View {
-    Image(systemName: toggled || menuOpen ? "xmark" : "newspaper.fill")
-      .ifIOS17({ v in
-        if #available(iOS 17, *) { v.contentTransition(.symbolEffect) }
-      })
+    Image(systemName: toggled || menuOpen ? "xmark" : "slider.vertical.3")
+      .contentTransition(.symbolEffect)
       .transaction { trans in
         trans.animation = .easeInOut(duration: longPressDuration)
       }
@@ -41,7 +42,6 @@ struct FloatingMainTrigger: View, Equatable {
       .background(Circle().fill(.white.opacity((toggled || menuOpen ? 0.5 : 0) + (pressingDown ? 0.225 : 0))).blendMode(.overlay))
       .floating()
       .scaleEffect((menuOpen || toggled ? actionsSize / size : 1) * (pressingDown ? 0.85 : 1))
-//      .frame(width: hitboxSize, height: hitboxSize)
       .increaseHitboxOf(size, by: 1.125, shape: Circle(), disable: menuOpen)
       .animation(.bouncy(duration: longPressDuration, extraBounce: 0.225), value: pressingDown)
       .highPriorityGesture(
@@ -64,7 +64,22 @@ struct FloatingMainTrigger: View, Equatable {
             }
           }
       )
-      .simultaneousGesture(TapGesture().onEnded(dismiss))
+      .simultaneousGesture(TapGesture().onEnded({
+        if menuOpen {
+          dismiss()
+        } else if subredditFeedDefSettings.openOptionsOnTap  {
+          Hap.shared.play(intensity: 0.75, sharpness: 0.4)
+          withAnimation(.snappy(extraBounce: 0.3)) {
+            menuOpen = true
+            toggled = false
+          }
+          doThisAfter(0) {
+            withAnimation {
+              showingFilters = true
+            }
+          }
+        }
+      }))
       .allowsHitTesting(!disable)
       .onChange(of: pressingDown) {
         if $0 {

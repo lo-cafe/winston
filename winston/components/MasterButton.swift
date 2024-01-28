@@ -66,22 +66,11 @@ struct MasterButton: View {
           .frame(height: textSize)
       }
       if let icon = icon {
-        Image(systemName: icon)
-          .ifIOS17({ img in
-            if #available(iOS 17, *) {
-              img.contentTransition(.symbolEffect)
-            } else {
-              img.transition(.scaleAndBlur)
-            }
-          })
-          
-//          .id(icon)
+        Image(systemName: icon).contentTransition(.symbolEffect)
       }
       Group {
         if let label = label {
-          Text(label)
-            .fixedSize(horizontal: true, vertical: false)
-//            .id(label)
+          Text(label).fixedSize(horizontal: true, vertical: false)
         }
       }
       .transition(.scaleAndBlur)

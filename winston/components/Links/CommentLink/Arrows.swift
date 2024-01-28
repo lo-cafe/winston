@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-enum ArrowKind {
+enum ArrowKind: Equatable {
   case straight
   case straightCurve
   case curve
@@ -30,7 +30,11 @@ enum ArrowKind {
   var isEmpty: Bool { self == .empty }
 }
 
-struct Arrows: View {
+struct Arrows: View, Equatable {
+  static func == (lhs: Arrows, rhs: Arrows) -> Bool {
+    lhs.kind == rhs.kind && lhs.selectedTheme == rhs.selectedTheme
+  }
+  
   var kind: ArrowKind
   var offset: CGFloat = 0
   @Environment(\.useTheme) private var selectedTheme

@@ -8,13 +8,9 @@
 import SwiftUI
 import Defaults
 import SwiftUIIntrospect
-
-class Sizer: ObservableObject {
-  @Published var size: CGSize = .zero
-}
+import MarkdownUI
 
 struct CommentLinkContentPreview: View {
-  @ObservedObject var sizer: Sizer
   var forcedBodySize: CGSize?
   var showReplies = true
   var arrowKinds: [ArrowKind]
@@ -24,11 +20,11 @@ struct CommentLinkContentPreview: View {
   var comment: Comment
   var avatarsURL: [String:String]?
   var body: some View {
-    if let data = comment.data, let winstonData = comment.winstonData {
+    if let data = comment.data, let winstonData = comment.winstonData, let forcedBodySize {
       VStack(alignment: .leading, spacing: 0) {
-        CommentLinkContent(forcedBodySize: sizer.size, showReplies: showReplies, arrowKinds: arrowKinds, indentLines: indentLines, lineLimit: lineLimit, post: post, comment: comment, winstonData: winstonData, avatarsURL: avatarsURL)
+        CommentLinkContent(forcedBodySize: forcedBodySize, showReplies: showReplies, arrowKinds: arrowKinds, indentLines: indentLines, lineLimit: lineLimit, post: post, comment: comment, winstonData: winstonData, avatarsURL: avatarsURL)
       }
-      .frame(width: .screenW, height: sizer.size.height + CGFloat((data.depth != 0 ? 42 : 30) + 16))
+      .frame(width: .screenW, height: forcedBodySize.height + CGFloat((data.depth != 0 ? 42 : 30) + 16))
     }
   }
 }
@@ -46,17 +42,14 @@ struct CommentLinkContent: View {
   var indentLines: Int? = nil
   var lineLimit: Int?
   var post: Post?
-  @ObservedObject var comment: Comment
-  @ObservedObject var winstonData: CommentWinstonData
+  var comment: Comment
+  var winstonData: CommentWinstonData
   var avatarsURL: [String:String]?
 
-  @State private var sizer = Sizer()
-  @State private var showReplyModal = false
-  @State private var pressing = false
-  @State private var dragging = false
+  @SilentState private var size: CGSize = .zero
   @State private var offsetX: CGFloat = 0
-  @State private var bodySize: CGSize = .zero
   @State private var highlight = false
+  @State private var showSpoiler = false
   @State private var commentSwipeActions: SwipeActionsSet = Defaults[.CommentLinkDefSettings].swipeActions
   
   @Default(.CommentLinkDefSettings) private var defSettings
@@ -220,19 +213,23 @@ struct CommentLinkContent: View {
               VStack {
                 Group {
                   if lineLimit != nil {
-                    Text(body.md())
+                    Text(body)
                       .lineLimit(lineLimit)
                   } else {
-                    MD2(winstonData.bodyAttr == nil ? .str(body) : .nsAttr(winstonData.bodyAttr!), fontSize: theme.theme.bodyText.size, onTap: { if !selectable { withAnimation(spring) { comment.toggleCollapsed(optimistic: true) } } })
-                      .frame(width: winstonData.commentBodySize.width, height: winstonData.commentBodySize.height, alignment: .topLeading)
-                      .fixedSize()
-                      .overlay(
-                        !selectable
-                        ? nil
-                        : TextViewWrapper(attributedText: NSAttributedString(body.md()), maxLayoutWidth: sizer.size.width)
-                          .frame(width: sizer.size.width, height: sizer.size.height, alignment: .topLeading)
-                          .background(Rectangle().fill(theme.theme.bg()))
-                      )
+                    HStack {
+                      Markdown(MarkdownUtil.formatForMarkdown(body, showSpoiler: showSpoiler))
+                        .markdownTheme(.winstonMarkdown(fontSize: theme.theme.bodyText.size, lineSpacing: theme.theme.linespacing, textSelection: selectable))
+                      
+                      if MarkdownUtil.containsSpoiler(body) {
+                        Spacer()
+                        Image(systemName: showSpoiler ? "eye.slash.fill" : "eye.fill")
+                          .onTapGesture {
+                            withAnimation {
+                              showSpoiler = !showSpoiler
+                            }
+                          }
+                      }
+                    }
                   }
                 }
                 .fontSize(theme.theme.bodyText.size, theme.theme.bodyText.weight.t)
@@ -243,24 +240,17 @@ struct CommentLinkContent: View {
               .swipyUI(
                 offsetYAction: -15,
                 controlledDragAmount: $offsetX,
-                // onTap: { if !selectable { withAnimation(spring) { comment.toggleCollapsed(optimistic: true) } } },
+                onTap: { if !selectable { withAnimation(spring) { comment.toggleCollapsed(optimistic: true) } } },
                 actionsSet: commentSwipeActions,
                 entity: comment,
                 skipAnimation: true
               )
-              .onChange(of: theme) { newTheme in
-                let encoder = JSONEncoder()
-                if let jsonData = try? encoder.encode(stringToAttr(body, fontSize: newTheme.theme.bodyText.size)) {
-                  let json = String(decoding: jsonData, as: UTF8.self)
-                  comment.data?.winstonBodyAttrEncoded = json
-                }
-              }
               .frame(maxWidth: .infinity, alignment: .topLeading)
               .padding(.top, theme.theme.bodyAuthorSpacing)
-              .padding(.bottom, max(0, theme.theme.innerPadding.vertical + (data.depth == 0 && comment.childrenWinston.data.count == 0 ? -theme.theme.cornerRadius : theme.theme.innerPadding.vertical)))
+              .padding(.bottom, max(0, theme.theme.innerPadding.vertical + (data.depth == 0 && comment.childrenWinston.count == 0 ? -theme.theme.cornerRadius : theme.theme.innerPadding.vertical)))
               .scaleEffect(1)
               .contentShape(Rectangle())
-              .background(forcedBodySize != nil ? nil : GeometryReader { geo in Color.clear.onAppear { sizer.size = geo.size } } )
+//              .background(forcedBodySize != nil ? nil : GeometryReader { geo in Color.clear.onAppear { size = geo.size } } )
             } else {
               Spacer()
             }
@@ -310,7 +300,7 @@ struct CommentLinkContent: View {
           
         }
       } preview: {
-        CommentLinkContentPreview(sizer: sizer, forcedBodySize: sizer.size, showReplies: showReplies, arrowKinds: arrowKinds, indentLines: indentLines, lineLimit: lineLimit, post: post, comment: comment, avatarsURL: avatarsURL)
+        CommentLinkContentPreview(forcedBodySize: size, showReplies: showReplies, arrowKinds: arrowKinds, indentLines: indentLines, lineLimit: lineLimit, post: post, comment: comment, avatarsURL: avatarsURL)
           .id("\(data.id)-preview")
       }
     } else {

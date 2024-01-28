@@ -45,6 +45,9 @@
         }
       }
     },
+    " · " : {
+
+    },
     " testers! (but it needs help)" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -139,6 +142,18 @@
         }
       }
     },
+    "**1.** Open Reddit API settings" : {
+
+    },
+    "**2.** Check the **\"web app\"** option" : {
+
+    },
+    "**3.** Fill the **\"redirect uri\"** with this:" : {
+
+    },
+    "**4.** Fill up the form below and follow next instructions." : {
+
+    },
     "**u/%@** %@ in **r/%@**" : {
       "localizations" : {
         "de" : {
@@ -160,6 +175,9 @@
           }
         }
       }
+    },
+    "*Collapsed...*" : {
+
     },
     "*No results found*" : {
       "localizations" : {
@@ -461,6 +479,9 @@
         }
       }
     },
+    "Almost there, 1 sec!" : {
+
+    },
     "Announcements" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -532,10 +553,10 @@
     "Are you sure?" : {
 
     },
-    "Authorize" : {
+    "Ask in the Discord server" : {
 
     },
-    "Authorized" : {
+    "Authorize" : {
 
     },
     "Autoplay videos (muted)" : {
@@ -733,6 +754,9 @@
         }
       }
     },
+    "Comment skipper button" : {
+
+    },
     "Comments" : {
       "localizations" : {
         "de" : {
@@ -838,6 +862,9 @@
         }
       }
     },
+    "Copy **redirect uri**" : {
+
+    },
     "Copy access token" : {
 
     },
@@ -880,6 +907,9 @@
 
     },
     "Credentials" : {
+
+    },
+    "Credentials registered!" : {
 
     },
     "Current Theme" : {
@@ -991,6 +1021,7 @@
       }
     },
     "Depressive load more :(" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -1114,9 +1145,6 @@
           }
         }
       }
-    },
-    "Download" : {
-
     },
     "Drag Left" : {
       "localizations" : {
@@ -1261,6 +1289,9 @@
           }
         }
       }
+    },
+    "Everything went well. You can start using Winston now!" : {
+
     },
     "Export" : {
       "localizations" : {
@@ -1418,6 +1449,7 @@
       }
     },
     "Force subs as tag" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -1548,6 +1580,9 @@
     "Go to credentials settings" : {
 
     },
+    "Go to previous screen" : {
+
+    },
     "Go to Reddit API settings" : {
 
     },
@@ -1670,6 +1705,9 @@
         }
       }
     },
+    "I got an OAuth error" : {
+
+    },
     "I mean, hello!" : {
       "localizations" : {
         "de" : {
@@ -1691,6 +1729,9 @@
           }
         }
       }
+    },
+    "I wanna do it manually" : {
+
     },
     "I'm " : {
       "localizations" : {
@@ -1735,6 +1776,9 @@
           }
         }
       }
+    },
+    "I'm lost!" : {
+
     },
     "Icon" : {
       "localizations" : {
@@ -1862,6 +1906,9 @@
         }
       }
     },
+    "Instructions" : {
+
+    },
     "It worked!" : {
       "localizations" : {
         "de" : {
@@ -1929,6 +1976,9 @@
         }
       }
     },
+    "Join the Discord server" : {
+
+    },
     "Join the Discord Server" : {
       "localizations" : {
         "de" : {
@@ -1944,6 +1994,9 @@
           }
         }
       }
+    },
+    "Jump to Next Comment" : {
+
     },
     "Just a sec..." : {
       "localizations" : {
@@ -2076,6 +2129,9 @@
           }
         }
       }
+    },
+    "Loggin in..." : {
+
     },
     "Long Drag Left" : {
       "localizations" : {
@@ -2398,6 +2454,7 @@
       }
     },
     "No comments around..." : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -2454,6 +2511,9 @@
         }
       }
     },
+    "Now we need you to authorize your API credentials to access your own account. I know, it's redundant." : {
+
+    },
     "NSFW" : {
       "localizations" : {
         "de" : {
@@ -2489,7 +2549,11 @@
     "Omg, no credentials!" : {
 
     },
+    "OMG!" : {
+
+    },
     "on " : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -2538,6 +2602,7 @@
       }
     },
     "Open links in Safari" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -2574,6 +2639,9 @@
           }
         }
       }
+    },
+    "Open subreddit options on tap" : {
+
     },
     "Open Youtube Videos Externally" : {
       "localizations" : {
@@ -2922,6 +2990,9 @@
     "Refresh access token" : {
 
     },
+    "Repeat tutorial" : {
+
+    },
     "Reset preferences" : {
       "localizations" : {
         "de" : {
@@ -2954,6 +3025,9 @@
         }
       }
     },
+    "Restart tutorial" : {
+
+    },
     "Restart welcome tutorial" : {
 
     },
@@ -2974,6 +3048,9 @@
       }
     },
     "Save" : {
+
+    },
+    "Save and let's rock!" : {
 
     },
     "Save comment sort per post" : {
@@ -3357,7 +3434,7 @@
     "Something wrong with the information we received from Reddit. Please tap the error button and try again." : {
 
     },
-    "Something's wrong with the credentials we have for this account." : {
+    "Something's wrong with the credentials for this account." : {
 
     },
     "Start by duplicating the" : {
@@ -3379,9 +3456,6 @@
           }
         }
       }
-    },
-    "Status" : {
-
     },
     "Status:" : {
       "localizations" : {
@@ -3511,6 +3585,9 @@
         }
       }
     },
+    "Sweeeet!" : {
+
+    },
     "Sync API Key" : {
       "localizations" : {
         "de" : {
@@ -3526,6 +3603,9 @@
           }
         }
       }
+    },
+    "Take me there!" : {
+
     },
     "Tap to copy" : {
       "localizations" : {
@@ -3544,6 +3624,7 @@
       }
     },
     "Tap to expand" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -3575,6 +3656,9 @@
           }
         }
       }
+    },
+    "Tap to start a demo video" : {
+
     },
     "Tap to unblur" : {
       "localizations" : {
@@ -3609,10 +3693,16 @@
         }
       }
     },
+    "That error seems happen randomly. It usually helps if you create another credential in Reddit site and try again." : {
+
+    },
+    "The assistant should've brought you here, but you came by yourself, what happened?" : {
+
+    },
     "The authorization flow didn't work. Please tap the error button and try again or use another credential." : {
 
     },
-    "The credentials we have seem to be valid, but we need you to authorize the credentials to access your account (yeah, it sounds redundand, sorry)." : {
+    "The credentials seem to be valid, but we need you to authorize the credentials to access your account *(yeah, it sounds redundand, sorry)*." : {
 
     },
     "The theme was imported successfully. Enable it in \"Themes\" section in the Settings tab." : {
@@ -3630,9 +3720,6 @@
           }
         }
       }
-    },
-    "Theme Store" : {
-
     },
     "Theme Store Tint" : {
       "localizations" : {
@@ -3699,9 +3786,6 @@
       }
     },
     "There are two ways for doing that:" : {
-
-    },
-    "There was an error importing this theme" : {
 
     },
     "This is not working yet :(" : {
@@ -3885,9 +3969,6 @@
         }
       }
     },
-    "Unauthorized" : {
-
-    },
     "Unseen type" : {
       "localizations" : {
         "de" : {
@@ -4027,6 +4108,9 @@
     "We recommend you to use another key using the \"**Guided replace**\" button below, but you can do it manually by tapping the \"**Advanced settings**\" if you want." : {
 
     },
+    "We recommend you to use another key." : {
+
+    },
     "Well, you got 2 options:" : {
 
     },
@@ -4068,6 +4152,9 @@
           }
         }
       }
+    },
+    "Why are you here?" : {
+
     },
     "Winston" : {
       "localizations" : {
@@ -4184,6 +4271,9 @@
           }
         }
       }
+    },
+    "You can go back to the tutorial screen again or try the advanced mode, but if you're truly lost, I recommend you to join our Discord server." : {
+
     },
     "You can tap the video to pause it." : {
 

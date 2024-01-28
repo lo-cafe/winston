@@ -12,14 +12,15 @@ import SwiftUI
 import Defaults
 import Combine
 
-class RedditCredentialsManager: ObservableObject {
+@Observable
+class RedditCredentialsManager {
   static let shared = RedditCredentialsManager()
   static func getById(_ credID: UUID) -> RedditCredential? { RedditCredentialsManager.shared.credentials.first(where: { $0.id == credID } ) }
   static let keychainEntryDivider = "\\--(*.*)--/"
   static let oldKeychainServiceString = "lo.cafe.winston.reddit-credentials"
   static let keychainServiceString = "lo.cafe.winston.reddit-multi-credentials"
   static let keychain = Keychain(service: RedditCredentialsManager.keychainServiceString).synchronizable(Defaults[.BehaviorDefSettings].iCloudSyncCredentials)
-  @Published private(set) var credentials: [RedditCredential] = []
+  private(set) var credentials: [RedditCredential] = []
   var validCredentials: [RedditCredential] { credentials.filter { $0.validationStatus == .authorized } }
   var cancelables: [Defaults.Observation] = []
     
@@ -97,6 +98,10 @@ class RedditCredentialsManager: ObservableObject {
   
   func saveCred(_ cred: RedditCredential, forceCreate: Bool = true) {
     DispatchQueue.main.async {
+      if Defaults[.GeneralDefSettings].onboardingState != .dismissed {
+        Defaults[.GeneralDefSettings].onboardingState = .dismissed
+        Nav.shared.presentingSheetsQueue = Nav.shared.presentingSheetsQueue.filter { $0 != .onboarding }
+      }
       if let i = self.credentials.firstIndex(where: { $0.id == cred.id }) {
         self.credentials[i] = cred
       } else if forceCreate {

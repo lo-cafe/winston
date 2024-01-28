@@ -26,7 +26,7 @@ extension RedditAPI {
       HideDebouncer.shared.names.removeAll()
       Task(priority: .background) {
         let params = HidePayload(id: names.joined(separator: ","))
-        switch await self.doRequest("\(RedditAPI.redditApiURLBase)/api/\(hide ? "" : "un")hide", method: .post, params: params)  {
+        switch await self.doRequest("\(RedditAPI.redditApiURLBase)/api/\(hide ? "" : "un")hide?raw_json=1", method: .post, params: params)  {
         case .success:
           //          return true
           break

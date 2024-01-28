@@ -12,7 +12,6 @@ import Defaults
 /// A button with an icon, label, and optional shiny gradient, used in a list.
 struct ListBigBtn: View {
   /// The binding for the selected subreddit.
-  @Binding var selectedSub: Router.NavDest?
   /// The icon name.
   var icon: String
   /// The color of the icon.
@@ -26,25 +25,6 @@ struct ListBigBtn: View {
   
   @State private var pressed = false
   @Environment(\.useTheme) private var theme
-  
-  /// Initializes a `ListBigBtn`.
-  ///
-  /// - Parameters:
-  ///   - selectedSub: The binding for the selected subreddit (default is `nil`).
-  ///   - value: The value associated with the button.
-  ///   - destination: The destination subreddit (default is `nil`).
-  ///   - iconColor: The color of the icon.
-  ///   - label: The label text.
-  ///   - icon: The icon name.
-  ///   - shiny: The shiny gradient applied to the button (default is `nil`).
-  init(selectedSub: Binding<Router.NavDest?>? = nil, value: (any Hashable)? = nil, destination: Subreddit? = nil, icon: String, iconColor: Color, label: String, shiny: Gradient? = nil, action: @escaping () -> ()) {
-    self._selectedSub = selectedSub ?? .constant(nil)
-    self.label = label
-    self.iconColor = iconColor
-    self.icon = icon
-    self.shiny = shiny
-    self.action = action
-  }
   
   var body: some View {
     let isNotCircled = !icon.contains("circle")

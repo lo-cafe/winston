@@ -15,7 +15,7 @@ extension RedditAPI {
     if isGallery {
       payload.kind = nil
     }
-    switch await self.doRequest("\(RedditAPI.redditApiURLBase)/api/\(!isGallery ? "submit" : "submit_gallery_post.json")", method: .post, params: payload, decodable: SubmitPostResponse.self) {
+    switch await self.doRequest("\(RedditAPI.redditApiURLBase)/api/\(!isGallery ? "submit" : "submit_gallery_post.json")?raw_json=1", method: .post, params: payload, decodable: SubmitPostResponse.self) {
     case .success(let data):
       return data.json.data
     case .failure(let error):
@@ -55,6 +55,7 @@ extension RedditAPI {
     var title: String
     var url: String?
     var items: [NewPostGalleryItem]?
+    var raw_json = 1
   }
   
   enum PostType: String, Codable, CaseIterable {

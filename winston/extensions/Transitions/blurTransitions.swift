@@ -84,16 +84,11 @@ extension AnyTransition {
     )
   }
   static var scaleAndBlur: AnyTransition {
-    if #available(iOS 17, *) {
-      return AnyTransition(.blurReplace)
-    } else  {
-      return .modifier(
-        active: ScaleAndBlurEffect(isActive: false),
-        identity: ScaleAndBlurEffect(isActive: true)
-      )
-    }
+    .modifier(
+      active: ScaleAndBlurEffect(isActive: false),
+      identity: ScaleAndBlurEffect(isActive: true)
+    )
   }
-  
   static var fadeBlur: AnyTransition {
     .modifier(
       active: BlurAndFadeEffect(isActive: false),

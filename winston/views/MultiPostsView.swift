@@ -15,9 +15,9 @@ enum MultiViewType: Hashable {
 }
 
 struct MultiPostsView: View {
-  @ObservedObject var multi: Multi
+  var multi: Multi
   @State private var loading = true
-  @StateObject private var posts = NonObservableArray<Post>()
+  @State private var posts: [Post] = []
   @State private var lastPostAfter: String?
   @State private var searchText: String = ""
   @State private var sort: SubListingSortOption = Defaults[.SubredditFeedDefSettings].preferredSort
@@ -29,6 +29,7 @@ struct MultiPostsView: View {
   @Environment(\.useTheme) private var selectedTheme
   @Environment(\.contentWidth) private var contentWidth
 //  @Environment(\.colorScheme) private var cs
+	@Environment(\.horizontalSizeClass) private var hSizeClass
   @Default(.SubredditFeedDefSettings) var subredditFeedDefSettings
   
   func searchCallback(str: String?) {
@@ -48,15 +49,15 @@ struct MultiPostsView: View {
     //    if (multi.data == nil || force) {
     //      await multi.refreshSubreddit()
     //    }
-    if posts.data.count > 0 && lastPostAfter == nil && !force {
+    if posts.count > 0 && lastPostAfter == nil && !force {
       return
     }
     if let result = await multi.fetchPosts(sort: sort, after: loadMore ? lastPostAfter : nil, contentWidth: contentWidth), let newPosts = result.0 {
       withAnimation {
         if loadMore {
-          posts.data.append(contentsOf: newPosts)
+          posts.append(contentsOf: newPosts)
         } else {
-          posts.data = newPosts
+          posts = newPosts
         }
         loading = false
         lastPostAfter = result.1
@@ -77,7 +78,7 @@ struct MultiPostsView: View {
   func clearAndReloadData() {
     withAnimation {
       loading = true
-      posts.data.removeAll()
+      posts.removeAll()
       reachedEndOfFeed = false
     }
     
@@ -85,21 +86,21 @@ struct MultiPostsView: View {
   }
   
   func updatePostsCalcs(_ newTheme: WinstonTheme) {
-    Task(priority: .background) { posts.data.forEach { $0.setupWinstonData(data: $0.data, winstonData: $0.winstonData, contentWidth: contentWidth, secondary: false, theme: selectedTheme, sub: $0.winstonData?.subreddit, fetchAvatar: false) } }
+    Task(priority: .background) { posts.forEach { $0.setupWinstonData(data: $0.data, winstonData: $0.winstonData, contentWidth: contentWidth, secondary: false, theme: selectedTheme, sub: $0.winstonData?.subreddit, fetchAvatar: false) } }
   }
   
   var body: some View {
     Group {
-      if IPAD {
-        SubredditPostsIPAD(showSub: true, lastPostAfter: lastPostAfter, filters: [], posts: posts.data, filter: filter, filterCallback: filterCallback, searchText: searchText, searchCallback: searchCallback, editCustomFilter: editCustomFilter, fetch: fetch, selectedTheme: selectedTheme, loading: loading, reachedEndOfFeed: $reachedEndOfFeed)
+      if IPAD && hSizeClass == .regular {
+        SubredditPostsIPAD(showSub: true, lastPostAfter: lastPostAfter, filters: [], posts: posts, filter: filter, filterCallback: filterCallback, searchText: searchText, searchCallback: searchCallback, editCustomFilter: editCustomFilter, fetch: fetch, selectedTheme: selectedTheme, loading: loading, reachedEndOfFeed: $reachedEndOfFeed)
       } else {
-        SubredditPostsIOS(showSub: true, lastPostAfter: lastPostAfter, filters: [], posts: posts.data, filter: filter, filterCallback: filterCallback, searchText: searchText, searchCallback: searchCallback, editCustomFilter: editCustomFilter, fetch: fetch, selectedTheme: selectedTheme, loading: loading, reachedEndOfFeed: $reachedEndOfFeed)
+        SubredditPostsIOS(showSub: true, lastPostAfter: lastPostAfter, filters: [], posts: posts, filter: filter, filterCallback: filterCallback, searchText: searchText, searchCallback: searchCallback, editCustomFilter: editCustomFilter, fetch: fetch, selectedTheme: selectedTheme, loading: loading, reachedEndOfFeed: $reachedEndOfFeed)
       }
     }
     //.themedListBG(selectedTheme.postLinks.bg)
     .listStyle(.plain)
     .environment(\.defaultMinListRowHeight, 1)
-    //.loader(loading && posts.data.count == 0 && !reachedEndOfFeed)
+    //.loader(loading && posts.count == 0 && !reachedEndOfFeed)
     .navigationBarItems(
       trailing:
         HStack {
@@ -126,7 +127,7 @@ struct MultiPostsView: View {
           
           if let imgLink = multi.data?.icon_url, let imgURL = URL(string: imgLink) {
             Button {
-//              routerProxy.router.path.append(SubViewType.info(subreddit))
+
             } label: {
               URLImage(url: imgURL)
                 .scaledToFill()
@@ -138,7 +139,7 @@ struct MultiPostsView: View {
         .animation(nil, value: sort)
     )
     .onAppear {
-      if posts.data.count == 0 {
+      if posts.count == 0 {
         doThisAfter(0.0) {
           fetch()
         }

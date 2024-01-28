@@ -14,9 +14,8 @@ struct AccountSwitcherOverlayView: View, Equatable {
   
   let fingerPosition: AccountSwitcherTransmitter.PositionInfo
   let appear: Bool
-  @ObservedObject var transmitter: AccountSwitcherTransmitter
+  var transmitter: AccountSwitcherTransmitter
   
-  @ObservedObject private var credentialsManager = RedditCredentialsManager.shared
   @State private var showOverlay = false
   @State private var newCredentialSample = RedditCredential()
   
@@ -24,7 +23,7 @@ struct AccountSwitcherOverlayView: View, Equatable {
   private let targetsContainerSize: CGSize = .init(width: 250, height: 150)
 
   var body: some View {
-    let validCredentials = credentialsManager.credentials.filter { $0.validationStatus == .authorized }.reversed()
+    let validCredentials = RedditCredentialsManager.shared.credentials.filter { $0.validationStatus == .authorized }.reversed()
     let showAddBtn = validCredentials.count < 3
     let targetsCount = validCredentials.count + (showAddBtn ? 1 : 0)
     let lastsUntilEndOfAllTransitions = transmitter.selectedCred != nil ? (transmitter.positionInfo != nil || appear) : appear

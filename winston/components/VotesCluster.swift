@@ -57,16 +57,17 @@ struct VotesCluster: View, Equatable {
     if vertical {
       VotesClusterVertical(id: votesKit.id, likes: votesKit.likes, upvote: upvote, downvote: downvote)
     } else {
-      VotesClusterHorizontal(likes: votesKit.likes, ups: votesKit.ups, upvote_ratio: votesKit.ratio, upvote: upvote, downvote: downvote, showUpVoteRatio: showUpVoteRatio)
+      VotesClusterHorizontal(id: votesKit.id, likes: votesKit.likes, ups: votesKit.ups, upvote_ratio: votesKit.ratio, upvote: upvote, downvote: downvote, showUpVoteRatio: showUpVoteRatio)
     }
   }
 }
 
 struct VotesClusterHorizontal: View, Equatable {
   static func == (lhs: VotesClusterHorizontal, rhs: VotesClusterHorizontal) -> Bool {
-    lhs.likes == rhs.likes && lhs.ups == rhs.ups && lhs.upvote_ratio == rhs.upvote_ratio && lhs.showUpVoteRatio == rhs.showUpVoteRatio
+    lhs.id == rhs.id && lhs.likes == rhs.likes && lhs.ups == rhs.ups && lhs.upvote_ratio == rhs.upvote_ratio && lhs.showUpVoteRatio == rhs.showUpVoteRatio
   }
   
+  let id: String
   let likes: Bool?
   let ups: Int
   let upvote_ratio: Double
@@ -75,21 +76,13 @@ struct VotesClusterHorizontal: View, Equatable {
   var showUpVoteRatio: Bool
   var body: some View {
     HStack(spacing: showUpVoteRatio ? 4 : 8) {
-      if #available(iOS 17, *) {
-        VoteButton(active: (likes ?? false), color: .orange, image: "arrow.up").equatable().onTapGesture(perform: upvote)
-      } else {
-        VoteButtonFallback(color: (likes ?? false) ? .orange : .gray, voteAction: upvote, image: "arrow.up")
-      }
+      VoteButton(active: (likes ?? false), color: .orange, image: "arrow.up").onTapGesture(perform: upvote)
       
-      VotesClusterInfo(ups: ups, likes: likes, likeRatio: upvote_ratio, showUpVoteRatio: showUpVoteRatio, flyingNumber: FlyingNumberInfo(counter: 0, color: likes))
-        .allowsHitTesting(false)
+      VotesClusterInfo(ups: ups, likes: likes, likeRatio: upvote_ratio, showUpVoteRatio: showUpVoteRatio).allowsHitTesting(false)
       
-      if #available(iOS 17, *) {
-        VoteButton(active: !(likes ?? true), color: .blue ,image: "arrow.down").equatable().onTapGesture(perform: downvote)
-      } else {
-        VoteButtonFallback(color: !(likes ?? true) ? .blue : .gray, voteAction: downvote, image: "arrow.down")
-      }
+      VoteButton(active: !(likes ?? true), color: .blue ,image: "arrow.down").onTapGesture(perform: downvote)
     }
+    .scaleEffect(1)
     //    .drawingGroup()
   }
 }
@@ -105,17 +98,9 @@ struct VotesClusterVertical: View, Equatable {
   let downvote: () -> ()
   var body: some View {
     VStack(spacing: 12) {
-      if #available(iOS 17, *) {
-        VoteButton(active: (likes ?? false), color: .orange, image: "arrow.up").equatable().highPriorityGesture(TapGesture().onEnded(upvote))
-      } else {
-        VoteButtonFallback(color: (likes ?? false) ? .orange : .gray, voteAction: upvote, image: "arrow.up")
-      }
+      VoteButton(active: (likes ?? false), color: .orange, image: "arrow.up").highPriorityGesture(TapGesture().onEnded(upvote))
       
-      if #available(iOS 17, *) {
-        VoteButton(active: !(likes ?? true), color: .blue, image: "arrow.down").equatable().highPriorityGesture(TapGesture().onEnded(downvote))
-      } else {
-        VoteButtonFallback(color: !(likes ?? true) ? .blue : .gray, voteAction: downvote, image: "arrow.down")
-      }
+      VoteButton(active: !(likes ?? true), color: .blue, image: "arrow.down").highPriorityGesture(TapGesture().onEnded(downvote))
       
       Spacer().frame(maxHeight: .infinity)
     }
@@ -129,36 +114,36 @@ struct FlyingNumberInfo: Equatable {
   var color: Bool?
 }
 
-struct VotesClusterInfo: View, Equatable {
-  static func == (lhs: VotesClusterInfo, rhs: VotesClusterInfo) -> Bool {
-    lhs.ups == rhs.ups && lhs.likes == rhs.likes && lhs.likeRatio == rhs.likeRatio
-  }
-  
+struct VotesClusterInfo: View {
   var ups: Int
   var likes: Bool?
   var likeRatio: CGFloat?
   var showUpVoteRatio: Bool
   
   @State var flyingNumber: FlyingNumberInfo
+  
+  init(ups: Int, likes: Bool? = nil, likeRatio: CGFloat? = nil, showUpVoteRatio: Bool) {
+    self.ups = ups
+    self.likes = likes
+    self.likeRatio = likeRatio
+    self.showUpVoteRatio = showUpVoteRatio
+    self._flyingNumber = .init(initialValue: FlyingNumberInfo(counter: 0, color: likes))
+  }
+  
   var body: some View {
     VStack(spacing: 0) {
       Text(formatBigNumber(ups))
         .contentTransition(.numericText())
         .foregroundColor(likes != nil ? (likes! ? .orange : .blue) : .gray)
         .fontSize(16, .semibold)
-        .drawingGroup()
-        .ifIOS17 { view in
-          if #available(iOS 17, *) {
-            view
-              .changeEffect(
-                .rise(origin: UnitPoint(x: 0.75, y: 0.25)) {
-                  Text(flyingNumber.value > 0 ? "+\(flyingNumber.value)" : "\(flyingNumber.value)" )
-                    .foregroundStyle(flyingNumber.color == true ? .orange : flyingNumber.color == nil ? .gray : .blue)
-                    .font(.system(size: 12, weight: .semibold))
-                }, value: flyingNumber)
-          }
-        }
-      
+        .changeEffect(
+          .rise(origin: UnitPoint(x: 0.75, y: 0.25)) {
+            Text(flyingNumber.value > 0 ? "+\(flyingNumber.value)" : "\(flyingNumber.value)" )
+              .foregroundStyle(flyingNumber.color == true ? .orange : flyingNumber.color == nil ? .gray : .blue)
+              .font(.system(size: 12, weight: .semibold))
+          },
+          value: flyingNumber
+        )
       if showUpVoteRatio {
         if likeRatio != nil, let ratio = likeRatio {
           HStack(spacing: 1) {
@@ -170,14 +155,10 @@ struct VotesClusterInfo: View, Equatable {
         }
       }
     }
-    .ifIOS17 { view in
-      if #available(iOS 17, *) {
-        view.onChange(of: ups) { oldValue, newValue in
-          flyingNumber.counter += 1
-          flyingNumber.value = newValue - oldValue
-          flyingNumber.color = likes
-        }
-      }
+    .onChange(of: ups) { oldValue, newValue in
+      flyingNumber.counter += 1
+      flyingNumber.value = newValue - oldValue
+      flyingNumber.color = likes
     }
   }
 }

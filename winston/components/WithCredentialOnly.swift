@@ -27,7 +27,7 @@ struct WithCredentialOnly<Content: View>: View {
           Button("Go to credentials settings", systemImage: "gear") {
             Nav.fullTo(.settings, .setting(.credentials))
           }
-          .buttonStyle(.actionSecondary)
+          .buttonStyle(.actionOutlined)
           .opacity(0.5)
         }
         .compositingGroup()

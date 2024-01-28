@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct AccountSwitcherTrigger<Content: View>: View {
-  @EnvironmentObject private var transmitter: AccountSwitcherTransmitter
+  @Environment(\.accountSwitcherTransmitter) private var transmitter
   @State private var medium = UIImpactFeedbackGenerator(style: .soft)
   @State private var dragging = false
   @State private var takeScreenshot = false
@@ -19,7 +19,7 @@ struct AccountSwitcherTrigger<Content: View>: View {
   
   var body: some View {
     content()
-      .overlay(RadialMenuTriggerButton(fingerPos: $transmitter.positionInfo, snapshot: $transmitter.screenshot, onTap: onTap, onPressStarted: {
+      .overlay(RadialMenuTriggerButton(transmitter: transmitter, onTap: onTap, onPressStarted: {
         medium.prepare()
         medium.impactOccurred()
         if !transmitter.showing && transmitter.positionInfo != nil { transmitter.showing = true }
@@ -37,12 +37,14 @@ struct AccountSwitcherTrigger<Content: View>: View {
 
 
 struct RadialMenuTriggerButton: UIViewRepresentable {
-  @Binding var fingerPos: AccountSwitcherTransmitter.PositionInfo?
-  @Binding var snapshot: UIImage?
+  var transmitter: AccountSwitcherTransmitter
   var onTap: (() -> Void)? = nil
   var onPressStarted: (() -> Void)? = nil
   var onPressEnded: (() -> Void)? = nil
   var disabled: Bool?
+  
+  var fingerPos: AccountSwitcherTransmitter.PositionInfo? { get { transmitter.positionInfo } set { transmitter.positionInfo = newValue } }
+  var snapshot: UIImage? { get { transmitter.screenshot } set { transmitter.screenshot = newValue } }
   
   func makeUIView(context: Context) -> UIButton {
     let view = TappableUIView()

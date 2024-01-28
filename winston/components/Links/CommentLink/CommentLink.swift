@@ -62,11 +62,13 @@ class SubCommentsReferencesContainer: ObservableObject {
 
 struct CommentLink: View, Equatable {
   static func == (lhs: CommentLink, rhs: CommentLink) -> Bool {
-    lhs.post?.data == rhs.post?.data &&
-    lhs.subreddit?.data == rhs.subreddit?.data &&
+    lhs.post == rhs.post &&
+    lhs.subreddit == rhs.subreddit &&
     lhs.indentLines == rhs.indentLines &&
     lhs.highlightID == rhs.highlightID &&
-    lhs.comment == rhs.comment
+    lhs.comment == rhs.comment &&
+    lhs.children.count == rhs.children.count &&
+    (lhs.children.count > 0 ? lhs.children[0] == rhs.children[0] : true)
   }
   
   var lineLimit: Int?
@@ -81,11 +83,10 @@ struct CommentLink: View, Equatable {
   var seenComments: String?
   var parentElement: CommentParentElement? = nil
   
-  @ObservedObject var comment: Comment
-  @ObservedObject var commentWinstonData: CommentWinstonData
-  @ObservedObject var children: ObservableArray<Comment>
-  //  @State var collapsed = false
-  
+  var comment: Comment
+  var commentWinstonData: CommentWinstonData
+  var children: [Comment]
+
   var body: some View {
     if let data = comment.data {
       let collapsed = data.collapsed ?? false
@@ -105,9 +106,9 @@ struct CommentLink: View, Equatable {
         }
         
         if !collapsed && showReplies {
-          ForEach(Array(children.data.enumerated()), id: \.element.id) { index, commentChild in
-            let childrenCount = children.data.count
-            if let _ = commentChild.data, let childCommentWinstonData = commentChild.winstonData {
+          ForEach(Array(children.enumerated()), id: \.element.id) { index, commentChild in
+            let childrenCount = children.count
+            if let childCommentWinstonData = commentChild.winstonData {
               CommentLink(post: post, arrowKinds: arrowKinds.map { $0.child } + [(childrenCount - 1 == index ? ArrowKind.curve : ArrowKind.straightCurve)], postFullname: postFullname, seenComments: seenComments, parentElement: .comment(comment), comment: commentChild, commentWinstonData: childCommentWinstonData, children: commentChild.childrenWinston)
               //                .equatable()
             }

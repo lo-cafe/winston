@@ -12,7 +12,8 @@ import SwiftUI
 import Defaults
 import Combine
 
-class RedditAPI: ObservableObject {
+@Observable
+class RedditAPI {
   static let shared = RedditAPI()
   static let winstonAPIBase = "https://winston.lo.cafe/api"
   static let redditApiURLBase = "https://oauth.reddit.com"
@@ -20,7 +21,7 @@ class RedditAPI: ObservableObject {
   static let appRedirectURI: String = "https://app.winston.cafe/auth-success"
   
   var lastAuthState: String?
-  @Published var me: User?
+  var me: User?
   
   // This is a replacement for getRequestHeader. We need to replace every instance of the former by this one
   func fetchRequestHeaders(force: Bool = false, includeAuth: Bool = true, altCredential: RedditCredential? = nil, saveToken: Bool = true) async -> HTTPHeaders? {
@@ -35,15 +36,7 @@ class RedditAPI: ObservableObject {
       }
     }
     
-    //    for (protectionSpace, credentials) in URLCredentialStorage.shared.allCredentials {
-    //        for (_, credential) in credentials {
-//          // Even though the values are not optionals, it seems to crash at some points if you don't do the check
-//          if URLCredentialStorage.shared != nil && credential != nil && protectionSpace != nil {
-//            URLCredentialStorage.shared.remove(credential, for: protectionSpace)
-//          }
-//        }
-//    }
-    HTTPCookieStorage.shared.cookies?.forEach(HTTPCookieStorage.shared.deleteCookie)    
+    HTTPCookieStorage.shared.cookies?.forEach(HTTPCookieStorage.shared.deleteCookie)
     
     return headers
   }
@@ -63,7 +56,7 @@ class RedditAPI: ObservableObject {
   
   func doRequest<D: Decodable>(_ url: String, authenticated: Bool = true, method: HTTPMethod, decodable: D.Type, altCredential: RedditCredential? = nil, attempt: Int = 0, saveToken: Bool = true) async -> Result<D, AFError> {
     return await self._doRequest(authenticated: authenticated, altCredential: altCredential, saveToken: saveToken) { headers in
-      let req = AF.request(url, method: method, headers: headers, requestModifier: reqModifier).validate()
+      let req = AF.request(url, method: method, parameters: ["raw_json": 1], headers: headers, requestModifier: reqModifier).validate()
       return await req.serializingDecodable(decodable).response.result
     }
   }
@@ -77,14 +70,14 @@ class RedditAPI: ObservableObject {
   
   func doRequest(_ url: String, authenticated: Bool = true, method: HTTPMethod, paramsLocation: URLEncodedFormParameterEncoder.Destination = .httpBody, altCredential: RedditCredential? = nil, attempt: Int = 0, saveToken: Bool = true) async -> Result<String, AFError> {
     return await self._doRequest(authenticated: authenticated, altCredential: altCredential, saveToken: saveToken) { headers in
-      let req = AF.request(url, method: method, headers: headers).validate()
+      let req = AF.request(url, method: method, parameters: ["raw_json": 1], headers: headers).validate()
       return await req.serializingString().result
     }
   }
   
   func _doRequest<D: Decodable>(attempt: Int = 0, forceAuth: Bool = false, authenticated: Bool = true, altCredential: RedditCredential? = nil, saveToken: Bool = true, req: (HTTPHeaders) async -> Result<D, AFError>) async -> Result<D, AFError> {
     guard let headers = await fetchRequestHeaders(force: forceAuth, includeAuth: authenticated, altCredential: altCredential, saveToken: saveToken) else { return .failure(.serverTrustEvaluationFailed(reason: .noPublicKeysFound)) }
-
+    
     let result = await req(headers)
     if case .failure(let error) = result {
       print(error)
@@ -130,10 +123,6 @@ class RedditAPI: ObservableObject {
           }
           return true
         }
-//              Task(priority: .low) {
-//                _ = await self.fetchSubs()
-//                _ = await self.fetchMyMultis()
-//              }
         return true
       case .failure(let error):
         print(error)
@@ -143,17 +132,18 @@ class RedditAPI: ObservableObject {
     return false
   }
   
-  func monitorAuthCallback( credential: inout RedditCredential, _ rawUrl: URL) async -> Bool? {
+  func getAuthCodeFromURL(_ rawUrl: URL) -> String? {
     if let url = URL(string: rawUrl.absoluteString.replacingOccurrences(of: "winstonapp://", with: "https://app.winston.cafe/")), url.lastPathComponent == "auth-success", let query = URLComponents(url: url, resolvingAgainstBaseURL: false), let state = query.queryItems?.first(where: { $0.name == "state" })?.value, let code = query.queryItems?.first(where: { $0.name == "code" })?.value, state == lastAuthState {
-      let res = await injectFirstAccessTokenInto(&credential, authCode: code)
-      lastAuthState = nil
-      return res
+//      let res = await injectFirstAccessTokenInto(&credential, authCode: code)
+//      lastAuthState = nil
+//      return res
+      return code
     } else {
       return nil
     }
   }
   
-  func getAuthorizationCodeURL(_ appID: String) -> URL {
+  func  getAuthorizationCodeURL(_ appID: String) -> URL {
     let response_type: String = "code"
     let state: String = UUID().uuidString
     let redirect_uri: String = RedditAPI.appRedirectURI

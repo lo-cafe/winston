@@ -20,7 +20,7 @@ struct EndOfFeedView: View {
           self.handleTap()
         }
 
-      Text(quirkyEndOfFeed())
+      Text(QuirkyMessageUtil.quirkyEndOfFeed())
         .font(.system(size: 16, weight: .bold))
         .foregroundColor(.white)
         .padding()
@@ -36,7 +36,7 @@ struct EndOfFeedView: View {
     .alert(isPresented: $showAlert) {
       Alert(
         title: Text("Secrets Unveiled"),
-        message: Text(quirkyGoAwayMessage()),
+        message: Text(QuirkyMessageUtil.quirkyGoAwayMessage()),
         dismissButton: .default(Text("OK"))
       )
     }

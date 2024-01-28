@@ -42,25 +42,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
   
   func applicationDidFinishLaunching(_ application: UIApplication) {
     setAudioToMixWithOthers()
-    
-    let defaultPipeline = ImagePipeline { config in
-      let dataCache = try? DataCache(name: "lo.cafe.winston.datacache")
-      config.dataCache = dataCache
-      let dataLoader: DataLoader = {
-        let config = URLSessionConfiguration.default
-        config.urlCache = nil
-        return DataLoader(configuration: config)
-      }()
-      config.dataLoader = dataLoader
-      config.dataCachePolicy = .storeAll
-      config.isUsingPrepareForDisplay = false
-      
-//      let imgCache = ImageCache(costLimit: Int.max, countLimit: Int.max)
-//      imgCache.ttl = nil
-//      imgCache.entryCostLimit = 1
-//      config.isRateLimiterEnabled = false
-    }
-    ImagePipeline.shared = defaultPipeline
   }
   
   

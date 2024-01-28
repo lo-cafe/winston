@@ -12,10 +12,3 @@ struct SubredditPostsContainerPayload: Hashable {
   var highlightID: String? = nil
 }
 
-struct SubredditPostsContainer: View {
-  @StateObject var sub: Subreddit
-  var highlightID: String?
-  var body: some View {
-    SubredditPosts(subreddit: sub)
-  }
-}

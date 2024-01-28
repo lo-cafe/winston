@@ -10,12 +10,11 @@ import NukeUI
 import Defaults
 
 struct PostInBoxLink: View {
-  @Binding var initialSelected: Router.NavDest?
   @Default(.postsInBox) private var postsInBox
   
   var postInBox: PostInBox
-  @StateObject var post: Post
-  @StateObject var sub: Subreddit
+  var post: Post
+  var sub: Subreddit
   @State private var dragging = false
   @State private var deleting = false
   @State private var offsetY: CGFloat?
@@ -33,7 +32,7 @@ struct PostInBoxLink: View {
         Text(postInBox.subredditName)
           .fontSize(13,.medium)
       }
-      Text(postInBox.title.escape)
+      Text(postInBox.title)
         .lineLimit(2)
         .fontSize(16, .semibold)
         .fixedSize(horizontal: false, vertical: true)
@@ -118,7 +117,7 @@ struct PostInBoxLink: View {
         .scaleEffect(deleting ? 1 : 0.85)
     )
     .onTapGesture {
-      initialSelected = .reddit(.post(post))
+      Nav.to(.reddit(.post(post)))
     }
     .gesture(
       LongPressGesture(minimumDuration: 0.5, maximumDistance: 10)

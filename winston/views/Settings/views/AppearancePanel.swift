@@ -42,11 +42,7 @@ struct AppearancePanel: View {
             }
           }
         }
-        .ifIOS17{ content in
-          if #available(iOS 17.0, *) {
-            content.listSectionSpacing(15)
-          }
-        }
+        .listSectionSpacing(15)
         
         Section {
           HStack(spacing: 12){

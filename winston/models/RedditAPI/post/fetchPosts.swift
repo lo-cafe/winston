@@ -24,5 +24,6 @@ extension RedditAPI {
   
   struct FetchPostsPayload: Codable {
     var id: String
+    var raw_json = 1
   }
 }

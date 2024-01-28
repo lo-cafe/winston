@@ -47,7 +47,7 @@ struct NewPostGalleryItem: Codable {
 //
 //
 //struct FlairPicker: View {
-//  @ObservedObject var subreddit: Subreddit
+//  var subreddit: Subreddit
 //  @Binding var selectedFlair: Flair?
 //  //  @State var searchQuery = ""
 //  @StateObject var searchQuery = DebouncedText(delay: 0.25)

@@ -13,14 +13,8 @@ fileprivate struct NiceGradient: View {
   let length: Double
   let last: Bool
   var body: some View {
-    Group {
-      if #available(iOS 17.0, *) {
-        SmoothLinearGradient(from: .black, to: .black.opacity(0), startPoint: axis == .vertical ? last ? .top : .bottom : last ? .leading : .trailing, endPoint: axis == .vertical ? last ? .bottom : .top : last ? .trailing : .leading, curve: .easeInOut)
-      } else {
-        LinearGradient(colors: [.black.opacity(last ? 1 : 0), .black.opacity(last ? 0 : 1)], startPoint: axis == .vertical ? .top : .leading, endPoint: axis == .vertical ? .bottom : .trailing)
-      }
-    }
-    .frame(width: axis == .vertical ? nil : length, height: axis == .vertical ? length : nil)
+    SmoothLinearGradient(from: .black, to: .black.opacity(0), startPoint: axis == .vertical ? last ? .top : .bottom : last ? .leading : .trailing, endPoint: axis == .vertical ? last ? .bottom : .top : last ? .trailing : .leading, curve: .easeInOut)
+      .frame(width: axis == .vertical ? nil : length, height: axis == .vertical ? length : nil)
   }
 }
 

@@ -10,21 +10,16 @@ import Defaults
 import SwiftUIIntrospect
 import CoreData
 
-enum SubViewType: Hashable {
-  case posts(Subreddit)
-  case info(Subreddit)
-}
-
 struct SubredditPosts: View, Equatable {
   static func == (lhs: SubredditPosts, rhs: SubredditPosts) -> Bool {
     lhs.subreddit == rhs.subreddit
   }
   
-  @ObservedObject var redditAPI = RedditAPI.shared
-  @ObservedObject var subreddit: Subreddit
+  var subreddit: Subreddit
+  
   @Default(.filteredSubreddits) private var filteredSubreddits
   @State private var loading = true
-  @StateObject private var posts = NonObservableArray<Post>()
+  @State private var posts: [Post] = []
   @State private var loadedPosts: Set<String> = []
   @State private var lastPostAfter: String?
   @State private var searchText: String = ""
@@ -41,14 +36,15 @@ struct SubredditPosts: View, Equatable {
   @State private var reachedEndOfFeed: Bool = false
   @State private var showLoadMoreButton: Bool = false
   
-  @StateObject private var unfilteredPosts = NonObservableArray<Post>()
+  @State private var unfilteredPosts: [Post] = []
   @State private var unfilteredLastPostAfter: String?
   @State private var unfilteredreachedEndOfFeed: Bool = false
   
   @Environment(\.useTheme) private var selectedTheme
 //  @Environment(\.colorScheme) private var cs
   @Environment(\.contentWidth) private var contentWidth
-  
+  @Environment(\.horizontalSizeClass) private var hSizeClass
+	
   @Default(.SubredditFeedDefSettings) var subredditFeedDefSettings
   
   let context = PersistenceController.shared.container.newBackgroundContext()
@@ -91,7 +87,7 @@ struct SubredditPosts: View, Equatable {
     }
     
     // No posts left to appear, so load more posts
-    if filter == "flair:All" && lastPostAfter != nil && getFilteredPosts(posts: posts.data, onlyUnseen: true).count == 0 {
+    if filter == "flair:All" && lastPostAfter != nil && getFilteredPosts(posts: posts, onlyUnseen: true).count == 0 {
       if searchText.isEmpty {
         fetch(true, nil)
       } else {
@@ -109,6 +105,25 @@ struct SubredditPosts: View, Equatable {
       await subreddit.refreshSubreddit()
     }
     
+    if (searchText == nil || searchText!.isEmpty) && !loadMore && !forceRefresh && !unfilteredPosts.isEmpty {
+      posts = unfilteredPosts
+      lastPostAfter = unfilteredLastPostAfter
+      reachedEndOfFeed = unfilteredreachedEndOfFeed
+      return
+    }
+    
+    if posts.count > 0 && lastPostAfter == nil && !force {
+      reachedEndOfFeed = true
+      return
+    }
+  
+    if !loadMore && !subreddit.id.starts(with: "t5") {
+      // Remove filters from home/all/popular so it only shows filters for current posts
+      Task(priority: .userInitiated) {
+        subreddit.resetFlairs()
+      }
+    }
+    
     withAnimation {
       loading = true
     }
@@ -120,20 +135,33 @@ struct SubredditPosts: View, Equatable {
           let newPostsFiltered = newPosts.filter { !loadedPosts.contains($0.id) && !filteredSubreddits.contains($0.data?.subreddit ?? "") }
           
           if loadMore {
-            posts.data.append(contentsOf: newPostsFiltered)
+            posts.append(contentsOf: newPostsFiltered)
+//            posts.append(contentsOf: newPosts)
           } else {
-            posts.data = newPostsFiltered
+            posts = newPostsFiltered
+//            posts = newPosts
           }
           
           newPostsFiltered.forEach { loadedPosts.insert($0.id) }
           
           loading = false
           lastPostAfter = result.1
-          reachedEndOfFeed = newPostsFiltered.count == 0
+          
+//        reachedEndOfFeed = newPostsFiltered.count == 0
+          
+          Task(priority: .background) {
+            self.subreddit.loadFlairs( { loaded in
+              DispatchQueue.main.async {
+                withAnimation {
+                  filters = loaded
+                }
+              }
+            })
+          }
                     
           // Save posts if no searchText
           if searchText == nil || searchText!.isEmpty {
-            unfilteredPosts.data = posts.data
+            unfilteredPosts = posts
             unfilteredLastPostAfter = lastPostAfter
             unfilteredreachedEndOfFeed = reachedEndOfFeed
           }
@@ -177,7 +205,7 @@ struct SubredditPosts: View, Equatable {
   
   func clearAndLoadData(withSearchText searchText: String? = nil, forceRefresh: Bool = false) {
     withAnimation {
-      posts.data.removeAll()
+//      posts.removeAll()
       loadedPosts.removeAll()
       reachedEndOfFeed = false
       
@@ -194,25 +222,26 @@ struct SubredditPosts: View, Equatable {
   }
   
   func updatePostsCalcs(_ newTheme: WinstonTheme) {
-    Task(priority: .background) { posts.data.forEach { $0.setupWinstonData(data: $0.data, winstonData: $0.winstonData, contentWidth: contentWidth, secondary: false, theme: selectedTheme, sub: subreddit, fetchAvatar: false) } }
+    Task(priority: .background) { posts.forEach { $0.setupWinstonData(data: $0.data, winstonData: $0.winstonData, contentWidth: contentWidth, secondary: false, theme: selectedTheme, sub: subreddit, fetchAvatar: false) } }
   }
   
   var body: some View {
     Group {
       if !isSavedSubreddit {
         Group {
-          let filteredPosts = getFilteredPosts(posts: posts.data)
+          let filteredPosts = getFilteredPosts(posts: posts)
           
-          if IPAD {
+          if IPAD && hSizeClass == .regular {
             SubredditPostsIPAD(showSub: isFeedsAndSuch, lastPostAfter: lastPostAfter, subreddit: subreddit, filters: filters, posts: filteredPosts, filter: filter, filterCallback: filterCallback, searchText: searchText, searchCallback: searchCallback, editCustomFilter: editCustomFilter, fetch: fetch, selectedTheme: selectedTheme, loading: loading, reachedEndOfFeed: $reachedEndOfFeed)
           } else {
             SubredditPostsIOS(showSub: isFeedsAndSuch, lastPostAfter: lastPostAfter, subreddit: subreddit, filters: filters, posts: filteredPosts, filter: filter, filterCallback: filterCallback, searchText: searchText, searchCallback: searchCallback, editCustomFilter: editCustomFilter, fetch: fetch, selectedTheme: selectedTheme, loading: loading, reachedEndOfFeed: $reachedEndOfFeed)
+              .attachViewControllerToRouter()
           }
         }
         .searchable(text: $searchText, prompt: "Search r/\(subreddit.data?.display_name ?? subreddit.id)")
       } else {
-        if let savedMixedMediaLinks = savedMixedMediaLinks, let user = redditAPI.me {
-          MixedContentFeedView(mixedMediaLinks: savedMixedMediaLinks, loadNextData: $loadNextSavedData, user: user, reachedEndOfFeed: $reachedEndOfFeed)
+        if let savedMixedMediaLinks = savedMixedMediaLinks, let user = RedditAPI.shared.me {
+          MixedContentFeedView(mixedMediaLinks: savedMixedMediaLinks, loadNextData: $loadNextSavedData, user: user, subreddit: subreddit, reachedEndOfFeed: $reachedEndOfFeed)
             .onChange(of: loadNextSavedData) { shouldLoad in
               if shouldLoad {
                 fetch(shouldLoad)
@@ -231,27 +260,6 @@ struct SubredditPosts: View, Equatable {
     .listRowSeparator(.hidden)
     .listSectionSeparator(.hidden)
     .environment(\.defaultMinListRowHeight, 1)
-//    .overlay(
-//      isFeedsAndSuch
-//      ? nil
-//      : Button {
-//        newPost = true
-//      } label: {
-//        Image(systemName: "newspaper.fill")
-//          .fontSize(22, .bold)
-//          .frame(width: 64, height: 64)
-//          .foregroundColor(Color.accentColor)
-//          .floating()
-//          .contentShape(Circle())
-//      }
-//        .buttonStyle(NoBtnStyle())
-//        .shrinkOnTap()
-//        .padding(.all, 12)
-//      , alignment: .bottomTrailing
-//    )
-    //    .sheet(isPresented: $newPost, content: {
-    //      NewPostModal(subreddit: subreddit)
-    //    })
     .navigationBarItems(trailing: SubredditPostsNavBtns(sort: $sort, subreddit: subreddit))
     .onSubmit(of: .search) {
       clearAndLoadData(withSearchText: searchText)
@@ -261,7 +269,7 @@ struct SubredditPosts: View, Equatable {
     }
     .navigationTitle("\(isFeedsAndSuch ? subreddit.id.capitalized : "r/\(subreddit.data?.display_name ?? subreddit.id)")")
     .task(priority: .background) {
-      if posts.data.count == 0 && (savedMixedMediaLinks?.count == 0 || savedMixedMediaLinks == nil) {
+      if posts.count == 0 && (savedMixedMediaLinks?.count == 0 || savedMixedMediaLinks == nil) {
         do {
           try await asyncFetch()
         } catch {
@@ -269,13 +277,11 @@ struct SubredditPosts: View, Equatable {
         }
       }
     }
-    .onChange(of: sort) { val in
-      clearAndLoadData(forceRefresh: true)
-    }
+    .onChange(of: sort) { clearAndLoadData(forceRefresh: true) }
 //    .onChange(of: cs) { _ in updatePostsCalcs(selectedTheme) }
-    .onChange(of: subredditFeedDefSettings.compactPerSubreddit) { _ in updatePostsCalcs(selectedTheme) }
+    .onChange(of: subredditFeedDefSettings.compactPerSubreddit) { updatePostsCalcs(selectedTheme) }
     .onChange(of: selectedTheme, perform: updatePostsCalcs)
-    .onChange(of: searchText) { val in if searchText.isEmpty { clearAndLoadData() } }
+    .onChange(of: searchText) { if searchText.isEmpty { clearAndLoadData() } }
     .sheet(item: $customFilter, onDismiss: {
       self.subreddit.loadFlairs( { loaded in
         filters = loaded
@@ -293,7 +299,7 @@ struct SubredditPostsNavBtns: View, Equatable {
     lhs.sort == rhs.sort && (lhs.subreddit.data == nil) == (rhs.subreddit.data == nil)
   }
   @Binding var sort: SubListingSortOption
-  @ObservedObject var subreddit: Subreddit
+  var subreddit: Subreddit
   var body: some View {
     HStack {
       Menu {

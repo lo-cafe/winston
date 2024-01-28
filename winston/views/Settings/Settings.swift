@@ -11,16 +11,21 @@ import WhatsNewKit
 //import SceneKit
 
 struct Settings: View {
-  @ObservedObject var router: Router
+  @State var router: Router
+  
+  
+  @ObservedObject private var winstonAPI = WinstonAPI.shared
   @Environment(\.openURL) private var openURL
-  @Default(.likedButNotSubbed) var likedButNotSubbed
+  //  @Default(.likedButNotSubbed) private var likedButNotSubbed
   @Environment(\.useTheme) private var selectedTheme
   @State private var id = UUID().uuidString
+  @State private var presentingWhatsNew: Bool = false
+  @State private var presentingAnnouncement: Bool = false
   
-  @ObservedObject var winstonAPI = WinstonAPI.shared
+  init(router: Router) {
+    self._router = .init(initialValue: router)
+  }
   
-  @State var presentingWhatsNew: Bool = false
-  @State var presentingAnnouncement: Bool = false
   var body: some View {
     NavigationStack(path: $router.fullPath) {
       
@@ -73,6 +78,8 @@ struct Settings: View {
       .themedListBG(selectedTheme.lists.bg)
       .scrollContentBackground(.hidden)
       .navigationTitle("Settings")
+      
+      .attachViewControllerToRouter()
       .injectInTabDestinations()
     }
   }

@@ -6,10 +6,25 @@
 //
 
 import SwiftUI
+import Defaults
+
+struct AttachViewControllerToRouterModifier: ViewModifier {
+  @Default(.BehaviorDefSettings) private var behaviorDefSettings
+  
+  func body(content: Content) -> some View {
+    content
+      .background { AttachViewControllerToRouterView(disable: !behaviorDefSettings.enableSwipeAnywhere) }
+  }
+}
 
 extension View {
+  func attachViewControllerToRouter() -> some View {
+    self.modifier(AttachViewControllerToRouterModifier())
+  }
+  
   func injectInTabDestinations() -> some View {
     self
+//      .attachViewControllerToRouter()
       .navigationDestination(for: Router.NavDest.self, destination: { dest in
         switch dest {
         case .reddit(let reddDest):
@@ -23,7 +38,7 @@ extension View {
               PostView(post: post, subreddit: sub, highlightID: highlightID)
             }
           case .subFeed(let sub):
-            SubredditPosts(subreddit: sub).equatable()
+            SubredditPosts(subreddit: sub)
           case .subInfo(let sub):
             SubredditInfo(subreddit: sub)
           case .multiFeed(let multi):
@@ -64,5 +79,34 @@ extension View {
           }
         }
       })
+  }
+}
+
+
+fileprivate struct AttachViewControllerToRouterView: UIViewRepresentable {
+  var disable: Bool
+  func makeUIView(context: Context) -> some UIView {
+    return UIView()
+  }
+  
+  func updateUIView(_ uiView: UIViewType, context: Context) {
+    DispatchQueue.main.async {
+      if let controller = uiView.parentViewController {
+        Nav.router.navController.controller = controller
+      }
+      if disable {
+        Nav.router.navController.removeGestureFromViews()
+      } else {
+        Nav.router.navController.addGestureToViews()
+      }
+    }
+  }
+}
+
+fileprivate extension UIView {
+  var parentViewController: UIViewController? {
+    sequence(first: self) {
+      $0.next
+    }.first(where: { $0 is UIViewController }) as? UIViewController
   }
 }

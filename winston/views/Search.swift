@@ -43,11 +43,12 @@ enum SearchTypeArr {
 }
 
 struct Search: View {
-  @ObservedObject var router: Router
+  @State var router: Router
+  
   @State private var searchType: SearchType = .subreddit
-  @StateObject private var resultsSubs = ObservableArray<Subreddit>()
-  @StateObject private var resultsUsers = ObservableArray<User>()
-  @StateObject private var resultPosts = ObservableArray<Post>()
+  @State private var resultsSubs: [Subreddit] = []
+  @State private var resultsUsers: [User] = []
+  @State private var resultPosts: [Post] = []
   @State private var loading = false
   @State private var hideSpinner = false
   @StateObject var searchQuery = DebouncedText(delay: 0.25)
@@ -59,6 +60,10 @@ struct Search: View {
   @Environment(\.useTheme) private var theme
   @Environment(\.contentWidth) private var contentWidth
   
+  init(router: Router) {
+    self._router = .init(initialValue: router)
+  }
+  
   func fetch() {
     if searchQuery.text == "" { return }
     withAnimation {
@@ -66,43 +71,43 @@ struct Search: View {
     }
     switch searchType {
     case .subreddit:
-      resultsSubs.data.removeAll()
+      resultsSubs.removeAll()
       Task(priority: .background) {
         if let subs = await RedditAPI.shared.searchSubreddits(searchQuery.text)?.map({ Subreddit(data: $0) }) {
           await MainActor.run {
             withAnimation {
-              resultsSubs.data = subs
+              resultsSubs = subs
               loading = false
               
-              hideSpinner = resultsSubs.data.isEmpty
+              hideSpinner = resultsSubs.isEmpty
             }
           }
         }
       }
     case .user:
-      resultsUsers.data.removeAll()
+      resultsUsers.removeAll()
       Task(priority: .background) {
         if let users = await RedditAPI.shared.searchUsers(searchQuery.text)?.map({ User(data: $0) }) {
           await MainActor.run {
             withAnimation {
-              resultsUsers.data = users
+              resultsUsers = users
               loading = false
               
-              hideSpinner = resultsUsers.data.isEmpty
+              hideSpinner = resultsUsers.isEmpty
             }
           }
         }
       }
     case .post:
-      resultPosts.data.removeAll()
+      resultPosts.removeAll()
       Task(priority: .background) {
         if let dummyAllSub = dummyAllSub, let result = await dummyAllSub.fetchPosts(searchText: searchQuery.text), let newPosts = result.0 {
           await MainActor.run {
             withAnimation {
-              resultPosts.data = newPosts
+              resultPosts = newPosts
               loading = false
               
-              hideSpinner = resultPosts.data.isEmpty
+              hideSpinner = resultPosts.isEmpty
             }
           }
         }
@@ -126,26 +131,26 @@ struct Search: View {
           Section {
             switch searchType {
             case .subreddit:
-              ForEach(resultsSubs.data) { sub in
+              ForEach(resultsSubs) { sub in
                 SubredditLink(sub: sub)
               }
             case .user:
-              ForEach(resultsUsers.data) { user in
+              ForEach(resultsUsers) { user in
                 UserLink(user: user)
               }
             case .post:
               if let dummyAllSub = dummyAllSub {
-                ForEach(resultPosts.data) { post in
+                ForEach(resultPosts) { post in
                   if let winstonData = post.winstonData {
                     //                      SwipeRevolution(size: winstonData.postDimensions.size, actionsSet: postSwipeActions, entity: post) { controller in
-                    PostLink(id: post.id, theme: theme.postLinks, showSub: true, contentWidth: contentWidth, defSettings: postLinkDefSettings)
+                    PostLink(id: post.id, theme: theme.postLinks, showSub: true, compactPerSubreddit: nil, contentWidth: contentWidth, defSettings: postLinkDefSettings)
 //                    .swipyRev(size: winstonData.postDimensions.size, actionsSet: postSwipeActions, entity: post)
                     //                      }
                     .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
-                    .animation(.default, value: resultPosts.data)
-                    .environmentObject(post)
-                    .environmentObject(dummyAllSub)
-                    .environmentObject(winstonData)
+                    .animation(.default, value: resultPosts)
+                    .environment(\.contextPost, post)
+                    .environment(\.contextSubreddit, dummyAllSub)
+                    .environment(\.contextPostWinstonData, winstonData)
                   }
                 }
               }
@@ -159,6 +164,7 @@ struct Search: View {
       .themedListBG(theme.lists.bg)
       .listStyle(.plain)
       .loader(loading, hideSpinner && !searchQuery.text.isEmpty)
+      .attachViewControllerToRouter()
       .injectInTabDestinations()
       .scrollDismissesKeyboard(.automatic)
       .searchable(text: $searchQuery.text, placement: .toolbar)
@@ -170,9 +176,9 @@ struct Search: View {
       .onChange(of: searchType) { _ in fetch() }
       .onChange(of: searchQuery.debounced) { val in
         if val == "" {
-          resultsSubs.data = []
-          resultsUsers.data = []
-          resultPosts.data = []
+          resultsSubs = []
+          resultsUsers = []
+          resultPosts = []
         }
         fetch()
       }
@@ -183,6 +189,6 @@ struct Search: View {
         }
       }
     }
-    .swipeAnywhere()
+//    .swipeAnywhere()
   }
 }

@@ -11,7 +11,7 @@ import SwiftUI
 extension String {
   func md() -> AttributedString {
     //    if let htmlDecodedString = self.escape() {
-    let htmlDecodedString = self.escape
+    let htmlDecodedString = self
     do {
       let asq = try AttributedString(markdown: htmlDecodedString, options: AttributedString.MarkdownParsingOptions(interpretedSyntax: .inlineOnlyPreservingWhitespace))
       return asq
