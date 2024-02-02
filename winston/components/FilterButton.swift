@@ -12,24 +12,22 @@ struct FilterButton: View, Equatable {
     lhs.filter == rhs.filter && lhs.isSelected == rhs.isSelected
   }
   
-  var filter: FilterData
+  var filter: ShallowCachedFilter
   var isSelected: Bool
-  var filterCallback: ((String) -> ())
-  var searchText: String
-  var searchCallback: ((String?) -> ())
-  var customFilterCallback: ((FilterData) -> ())
-  let colorDotSize: Double = 8
-  let hPadding: Double = 14
-  let height: Double = 32
- let longPressDuration: Double = 0.275
+  var selectFilter: (ShallowCachedFilter) -> ()
   
-//  @GestureState private var pressingDown = false
+  private let colorDotSize: Double = 8
+  private let hPadding: Double = 14
+  private let height: Double = 32
+  private let longPressDuration: Double = 0.275
+  
+  //  @GestureState private var pressingDown = false
   @State private var pressingDown = false
   @State private var editTimer: Timer? = nil
   
   var body: some View {
-    let isSelected = filter.type == "search" ? searchText.lowercased() == filter.text.lowercased() : isSelected
-    let bgColor = Color.hex(filter.background_color)
+//    let isSelected = filter.type == "search" ? searchText.lowercased() == filter.text.lowercased() : isSelected
+    let bgColor = Color.hex(filter.bgColor ?? "FFFFFF")
     let brightness = bgColor.brightness()
     let contrastColor = brightness > 0.7 ? bgColor.darken(0.65) : bgColor.lighten(0.9)
     HStack(spacing: 6) {
@@ -40,8 +38,8 @@ struct FilterButton: View, Equatable {
         .transaction { trans in
           trans.animation = .bouncy
         }
-
-      Text(filter.getFormattedText())
+      
+      Text(filter.text)
         .fontSize(15, .medium)
         .foregroundColor(isSelected ? contrastColor : .primary)
     }
@@ -50,7 +48,7 @@ struct FilterButton: View, Equatable {
     .background(alignment: .leading) {
       GeometryReader { geo in
         Circle()
-          .fill(Color.hex(filter.background_color))
+          .fill(bgColor)
           .frame(width: geo.size.width, height: geo.size.width, alignment: .leading)
           .scaleEffect(isSelected ? 1 : colorDotSize / geo.size.width)
           .position(x: isSelected ? geo.size.width / 2 : hPadding + (colorDotSize / 2), y: height / 2)
@@ -67,27 +65,19 @@ struct FilterButton: View, Equatable {
     .animation(.bouncy(duration: 0.3, extraBounce: 0.225), value: pressingDown)
     .onTapGesture {
       Hap.shared.play(intensity: 0.5, sharpness: 0.5)
-      if filter.type == "search" {
-        if searchText != filter.text {
-          searchCallback(filter.text)
-        } else {
-            searchCallback(nil)
-        }
-      } else {
-          filterCallback(isSelected ? "flair:All" : filter.id)
-      }
+      selectFilter(filter)
     }
-    .onLongPressGesture(minimumDuration: .infinity, maximumDistance: 10, perform: {}, onPressingChanged: { val in
-      pressingDown = val
-      
-      if val && filter.type != "flair" {
-        editTimer = Timer.scheduledTimer(withTimeInterval: longPressDuration, repeats: false) { _ in
-          Hap.shared.play(intensity: 0.75, sharpness: 0.9)
-          customFilterCallback(filter)
-        }
-      } else {
-        editTimer?.invalidate()
-      }
-    })
+//    .onLongPressGesture(minimumDuration: .infinity, maximumDistance: 10, perform: {}, onPressingChanged: { val in
+//      pressingDown = val
+//      
+//      if val && filter.type != "flair" {
+//        editTimer = Timer.scheduledTimer(withTimeInterval: longPressDuration, repeats: false) { _ in
+//          Hap.shared.play(intensity: 0.75, sharpness: 0.9)
+//          customFilterCallback(filter)
+//        }
+//      } else {
+//        editTimer?.invalidate()
+//      }
+//    })
   }
 }

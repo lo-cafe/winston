@@ -50,7 +50,7 @@ struct NewPostGalleryItem: Codable {
 //  var subreddit: Subreddit
 //  @Binding var selectedFlair: Flair?
 //  //  @State var searchQuery = ""
-//  @StateObject var searchQuery = DebouncedText(delay: 0.25)
+//  @State var searchQuery = DebouncedText(delay: 0.25)
 //  @FocusState var focused: Bool
 //  @State var searching = false
 //  
@@ -77,7 +77,7 @@ struct NewPostGalleryItem: Codable {
 //            }
 //            .shrinkOnTap()
 //            if searching {
-//              TextField("", text: $searchQuery.text, prompt: Text("Search"))
+//              TextField("", text: $searchQuery.value, prompt: Text("Search"))
 //                .focused($focused)
 //                .fixedSize(horizontal: true, vertical: false)
 //            }
@@ -149,7 +149,7 @@ struct NewPostGalleryItem: Codable {
 //          withAnimation(spring) { searching = false }
 //          doThisAfter(0.0) {
 //            withAnimation {
-//              searchQuery.text = ""
+//              searchQuery.value = ""
 //              searchQuery.debounced = ""
 //            }
 //          }

@@ -25,7 +25,7 @@ func getTagsFromTitleRaw(_ data: PostData) -> [PrependTag] {
   var tags: [PrependTag] = []
   if data.over_18 ?? false { tags.append(.init(label: "NSFW", bgColor: UIColor(.red.opacity(0.9)), textColor: .white)) }
   if let flair = Post.extractFlairData(data: data, checkDefaultsForColor: true) {
-    tags.append(.init(label: flair.getFormattedText(), bgColor: UIColor(hex: flair.background_color), textColor: UIColor(hex: flair.text_color)))
+    tags.append(flair)
   }
   return tags
 }

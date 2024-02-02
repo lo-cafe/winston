@@ -395,6 +395,9 @@
         }
       }
     },
+    "abor" : {
+
+    },
     "About" : {
       "localizations" : {
         "de" : {
@@ -811,9 +814,6 @@
         }
       }
     },
-    "Compact" : {
-
-    },
     "Compact Mode" : {
       "localizations" : {
         "de" : {
@@ -954,6 +954,7 @@
 
     },
     "Default post sorting" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -970,6 +971,7 @@
       }
     },
     "Default search sorting" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -1146,6 +1148,9 @@
         }
       }
     },
+    "Download" : {
+
+    },
     "Drag Left" : {
       "localizations" : {
         "de" : {
@@ -1216,9 +1221,6 @@
 
     },
     "Edit credential" : {
-
-    },
-    "Edit filter" : {
 
     },
     "Enabling the extension" : {
@@ -2031,6 +2033,9 @@
         }
       }
     },
+    "lamor" : {
+
+    },
     "Large" : {
       "localizations" : {
         "de" : {
@@ -2417,9 +2422,6 @@
     "New credential" : {
 
     },
-    "New filter" : {
-
-    },
     "New post" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -2474,9 +2476,6 @@
 
     },
     "No filtered posts" : {
-
-    },
-    "Normal" : {
 
     },
     "Now paste it here:" : {
@@ -3118,6 +3117,7 @@
       }
     },
     "Search r/%@" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -3721,6 +3721,9 @@
         }
       }
     },
+    "Theme Store" : {
+
+    },
     "Theme Store Tint" : {
       "localizations" : {
         "de" : {
@@ -3786,6 +3789,9 @@
       }
     },
     "There are two ways for doing that:" : {
+
+    },
+    "There was an error importing this theme" : {
 
     },
     "This is not working yet :(" : {

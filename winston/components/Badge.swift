@@ -103,7 +103,6 @@ struct BadgeView: View, Equatable {
       
       if showAvatar {
         AvatarView(saved: saved, avatarImgRequest: avatarRequest, userID: author, fullname: fullname, theme: theme.avatar)
-//          .equatable()
           .highPriorityGesture(TapGesture().onEnded(openUser))
       }
       

@@ -92,20 +92,18 @@ extension RedditAPI {
     
     if !nonWinstonAppNames.isEmpty, let data = await self.fetchUsers(nonWinstonAppNames) {
       //      let avatarSize = Defaults[]
-      var reqs: [ImageRequest] = []
       let newDict = data.compactMapValues { val in
         if let urlStr = val.profile_img, let url = URL(string: String(urlStr.split(separator: "?")[0])) {
           //          let userInfoKey = ImageRequest.UserInfoKey()
           //          ImageProcessing
-          let thumbOpt = ImageRequest.ThumbnailOptions(size: .init(width: avatarSize, height: avatarSize), unit: .points, contentMode: .aspectFill)
-          let req = ImageRequest(url: url, processors: [ImageProcessors.ScaleFixer()], priority: .veryHigh, userInfo: [.thumbnailKey: thumbOpt])
-          reqs.append(req)
+//          let thumbOpt = ImageRequest.ThumbnailOptions(size: .init(width: avatarSize, height: avatarSize), unit: .points, contentMode: .aspectFill)
+//          let req = ImageRequest(url: url, processors: [ImageProcessors.ScaleFixer()], priority: .veryHigh, userInfo: [.thumbnailKey: thumbOpt])
+          let req = ImageRequest(url: url, processors: [ImageProcessors.Resize(width: avatarSize), ImageProcessors.ScaleFixer()], priority: .veryHigh)
           return req
         }
         return nil
       }
 
-      Post.prefetcher.startPrefetching(with: reqs)
       return newDict.merging(returnDict) { x, _ in x }
     }
     return returnDict

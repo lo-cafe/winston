@@ -51,7 +51,7 @@ struct Search: View {
   @State private var resultPosts: [Post] = []
   @State private var loading = false
   @State private var hideSpinner = false
-  @StateObject var searchQuery = DebouncedText(delay: 0.25)
+  @State var searchQuery = Debouncer("", delay: 0.25)
   
   @State private var dummyAllSub: Subreddit? = nil
   @State private var searchViewLoaded: Bool = false
@@ -65,7 +65,7 @@ struct Search: View {
   }
   
   func fetch() {
-    if searchQuery.text == "" { return }
+    if searchQuery.value == "" { return }
     withAnimation {
       loading = true
     }
@@ -73,7 +73,7 @@ struct Search: View {
     case .subreddit:
       resultsSubs.removeAll()
       Task(priority: .background) {
-        if let subs = await RedditAPI.shared.searchSubreddits(searchQuery.text)?.map({ Subreddit(data: $0) }) {
+        if let subs = await RedditAPI.shared.searchSubreddits(searchQuery.value)?.map({ Subreddit(data: $0) }) {
           await MainActor.run {
             withAnimation {
               resultsSubs = subs
@@ -87,7 +87,7 @@ struct Search: View {
     case .user:
       resultsUsers.removeAll()
       Task(priority: .background) {
-        if let users = await RedditAPI.shared.searchUsers(searchQuery.text)?.map({ User(data: $0) }) {
+        if let users = await RedditAPI.shared.searchUsers(searchQuery.value)?.map({ User(data: $0) }) {
           await MainActor.run {
             withAnimation {
               resultsUsers = users
@@ -101,7 +101,7 @@ struct Search: View {
     case .post:
       resultPosts.removeAll()
       Task(priority: .background) {
-        if let dummyAllSub = dummyAllSub, let result = await dummyAllSub.fetchPosts(searchText: searchQuery.text), let newPosts = result.0 {
+        if let dummyAllSub = dummyAllSub, let result = await dummyAllSub.fetchPosts(searchText: searchQuery.value), let newPosts = result.0 {
           await MainActor.run {
             withAnimation {
               resultPosts = newPosts
@@ -163,11 +163,11 @@ struct Search: View {
       }
       .themedListBG(theme.lists.bg)
       .listStyle(.plain)
-      .loader(loading, hideSpinner && !searchQuery.text.isEmpty)
+      .loader(loading, hideSpinner && !searchQuery.value.isEmpty)
       .attachViewControllerToRouter()
       .injectInTabDestinations()
       .scrollDismissesKeyboard(.automatic)
-      .searchable(text: $searchQuery.text, placement: .toolbar)
+      .searchable(text: $searchQuery.value, placement: .toolbar)
       .autocorrectionDisabled(true)
       .textInputAutocapitalization(.none)
       .refreshable { fetch() }

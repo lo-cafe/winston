@@ -10,30 +10,24 @@ import CoreData
 struct PersistenceController {
   static let shared = PersistenceController()
   
-  //    static var preview: PersistenceController = {
-  ////        let result = PersistenceController(inMemory: true)
-  ////        let viewContext = result.container.viewContext
-  ////        for _ in 0..<10 {
-  ////            let newItem = Item(context: viewContext)
-  ////            newItem.timestamp = Date()
-  ////        }
-  ////        do {
-  ////            try viewContext.save()
-  ////        } catch {
-  ////            // Replace this implementation with code to handle the error appropriately.
-  ////            // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-  ////            let nsError = error as NSError
-  ////            fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
-  ////        }
-  ////        return result
-  //    }()
-  
-//  let container: NSPersistentContainer
   let container: NSPersistentCloudKitContainer
   let primaryBGContext: NSManagedObjectContext
   
+  enum ContextType {
+    case main, bg
+  }
+  
+//  func fetchEntity(_ entity: String, runsOnBG: Bool = false, where whereProp: String? = nil, is isProp: CVarArg? = nil) {
+//    let context = !runsOnBG ? self.container.viewContext : self.primaryBGContext
+//    let fetchRequest = NSFetchRequest<CachedFilter>(entityName: "CachedFilter")
+//    if let whereProp, let isProp {
+//      fetchRequest.predicate = NSPredicate(format: "\(whereProp) == %@", isProp)
+//    }
+//    var existentFlairs = await context. { try? context.fetch(fetchRequest) } ?? []
+////    existentFlairs[0]
+//  }
+  
   init(inMemory: Bool = false) {
-//    container = NSPersistentContainer(name: "winston")
     container = NSPersistentCloudKitContainer(name: "winston")
         
     if inMemory {

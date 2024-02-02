@@ -32,7 +32,7 @@ enum ArrowKind: Equatable {
 
 struct Arrows: View, Equatable {
   static func == (lhs: Arrows, rhs: Arrows) -> Bool {
-    lhs.kind == rhs.kind && lhs.selectedTheme == rhs.selectedTheme
+    lhs.kind == rhs.kind
   }
   
   var kind: ArrowKind

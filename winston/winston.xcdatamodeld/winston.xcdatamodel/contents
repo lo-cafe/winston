@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="22522" systemVersion="23B74" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithCloudKit="YES" userDefinedModelVersionIdentifier="">
-    <entity name="CachedFilter" representedClassName="CachedFilter" syncable="YES" codeGenerationType="class">
-        <attribute name="background_color" optional="YES" attributeType="String"/>
-        <attribute name="occurences" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
-        <attribute name="subreddit_id" optional="YES" attributeType="String"/>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="22522" systemVersion="23C71" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithCloudKit="YES" usedWithSwiftData="YES" userDefinedModelVersionIdentifier="">
+    <entity name="CachedFilter" representedClassName="CachedFilter" syncable="YES">
+        <attribute name="bgColor" optional="YES" attributeType="String"/>
+        <attribute name="rawType" attributeType="String" defaultValueString="flair"/>
+        <attribute name="subID" optional="YES" attributeType="String"/>
         <attribute name="text" optional="YES" attributeType="String"/>
-        <attribute name="text_color" optional="YES" attributeType="String"/>
-        <attribute name="type" optional="YES" attributeType="String"/>
+        <attribute name="textColor" optional="YES" attributeType="String"/>
     </entity>
     <entity name="CachedMulti" representedClassName="CachedMulti" syncable="YES">
         <attribute name="display_name" optional="YES" attributeType="String"/>

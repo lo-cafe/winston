@@ -19,7 +19,6 @@ struct BehaviorPanel: View {
   @Default(.GeneralDefSettings) var generalDefSettings
   @Default(.VideoDefSettings) var videoDefSettings
   
-  
   @Environment(\.useTheme) private var theme
   @State private var imageAnalyzerSupport: Bool = true
   var body: some View {
@@ -94,87 +93,87 @@ struct BehaviorPanel: View {
           Toggle("Save sort per subreddit", isOn: $subredditFeedDefSettings.perSubredditSort)
           Toggle("Open subreddit options on tap", isOn: $subredditFeedDefSettings.openOptionsOnTap)
           Toggle("Open media from feed", isOn: $postLinkDefSettings.isMediaTappable)
-          Menu {
-            ForEach(SubListingSortOption.allCases) { opt in
-              if case .top(_) = opt {
-                Menu {
-                  ForEach(SubListingSortOption.TopListingSortOption.allCases, id: \.self) { topOpt in
-                    Button {
-                      subredditFeedDefSettings.preferredSort = .top(topOpt)
-                    } label: {
-                      HStack {
-                        Text(topOpt.rawValue.capitalized)
-                        Spacer()
-                        Image(systemName: topOpt.icon)
-                      }
-                    }
-                  }
-                } label: {
-                  Label(opt.rawVal.value.capitalized, systemImage: opt.rawVal.icon)
-                }
-              } else {
-                Button {
-                  subredditFeedDefSettings.preferredSort = opt
-                } label: {
-                  HStack {
-                    Text(opt.rawVal.value.capitalized)
-                    Spacer()
-                    Image(systemName: opt.rawVal.icon)
-                  }
-                }
-              }
-            }
-          } label: {
-            Button { } label: {
-              HStack {
-                Text("Default post sorting")
-                Spacer()
-                Image(systemName: subredditFeedDefSettings.preferredSort.rawVal.icon)
-              }
-              .foregroundColor(.primary)
-            }
-          }
+//          Menu {
+//            ForEach(SubListingSortOption.allCases) { opt in
+////              if case .top(_) = opt {
+////                Menu {
+////                  ForEach(SubListingSortOption.TopListingSortOption.allCases, id: \.self) { topOpt in
+////                    Button {
+////                      subredditFeedDefSettings.preferredSort = .top(topOpt)
+////                    } label: {
+////                      HStack {
+////                        Text(topOpt.rawValue.capitalized)
+////                        Spacer()
+////                        Image(systemName: topOpt.icon)
+////                      }
+////                    }
+////                  }
+////                } label: {
+////                  Label(opt.rawVal.value.capitalized, systemImage: opt.rawVal.icon)
+////                }
+////              } else {
+////                Button {
+////                  subredditFeedDefSettings.preferredSort = opt
+////                } label: {
+////                  HStack {
+////                    Text(opt.rawVal.value.capitalized)
+////                    Spacer()
+////                    Image(systemName: opt.rawVal.icon)
+////                  }
+////                }
+////              }
+//            }
+//          } label: {
+//            Button { } label: {
+//              HStack {
+//                Text("Default post sorting")
+//                Spacer()
+//                Image(systemName: subredditFeedDefSettings.preferredSort.rawVal.icon)
+//              }
+//              .foregroundColor(.primary)
+//            }
+//          }
           
-          Menu {
-            ForEach(SubListingSortOption.allCases) { opt in
-              if case .top(_) = opt {
-                Menu {
-                  ForEach(SubListingSortOption.TopListingSortOption.allCases, id: \.self) { topOpt in
-                    Button {
-                      subredditFeedDefSettings.preferredSearchSort = .top(topOpt)
-                    } label: {
-                      HStack {
-                        Text(topOpt.rawValue.capitalized)
-                        Spacer()
-                        Image(systemName: topOpt.icon)
-                      }
-                    }
-                  }
-                } label: {
-                  Label(opt.rawVal.value.capitalized, systemImage: opt.rawVal.icon)
-                }
-              } else {
-                Button {
-                  subredditFeedDefSettings.preferredSearchSort = opt
-                } label: {
-                  HStack {
-                    Text(opt.rawVal.value.capitalized)
-                    Spacer()
-                    Image(systemName: opt.rawVal.icon)
-                  }
-                }
-              }
-            }
-          } label: {
-            Button { } label: {
-              HStack {
-                Text("Default search sorting")
-                Spacer()
-                Image(systemName: subredditFeedDefSettings.preferredSearchSort.rawVal.icon)
-              }
-              .foregroundColor(.primary)
-            }
-          }
+//          Menu {
+//            ForEach(SubListingSortOption.allCases) { opt in
+//              if case .top(_) = opt {
+//                Menu {
+//                  ForEach(SubListingSortOption.TopListingSortOption.allCases, id: \.self) { topOpt in
+//                    Button {
+//                      subredditFeedDefSettings.preferredSearchSort = .top(topOpt)
+//                    } label: {
+//                      HStack {
+//                        Text(topOpt.rawValue.capitalized)
+//                        Spacer()
+//                        Image(systemName: topOpt.icon)
+//                      }
+//                    }
+//                  }
+//                } label: {
+//                  Label(opt.rawVal.value.capitalized, systemImage: opt.rawVal.icon)
+//                }
+//              } else {
+//                Button {
+//                  subredditFeedDefSettings.preferredSearchSort = opt
+//                } label: {
+//                  HStack {
+//                    Text(opt.rawVal.value.capitalized)
+//                    Spacer()
+//                    Image(systemName: opt.rawVal.icon)
+//                  }
+//                }
+//              }
+//            }
+//          } label: {
+//            Button { } label: {
+//              HStack {
+//                Text("Default search sorting")
+//                Spacer()
+//                Image(systemName: subredditFeedDefSettings.preferredSearchSort.rawVal.icon)
+//              }
+//              .foregroundColor(.primary)
+//            }
+//          }
           
           VStack(alignment: .leading) {
             HStack {

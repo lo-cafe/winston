@@ -27,7 +27,7 @@ struct AvatarView: View, Equatable {
     self.fullname = fullname
     self.theme = theme
     self.avatarSize = avatarSize
-  }  
+  }
   
   init(saved: Bool, url: URL?, userID: String, fullname: String? = nil, theme: AvatarTheme? = nil, avatarSize: CGFloat? = nil) {
     self.saved = saved
@@ -36,7 +36,7 @@ struct AvatarView: View, Equatable {
     self.fullname = fullname
     self.theme = theme
     self.avatarSize = avatarSize
-  }  
+  }
   
   init(saved: Bool, url: String, userID: String, fullname: String? = nil, theme: AvatarTheme? = nil, avatarSize: CGFloat? = nil) {
     self.saved = saved
@@ -55,8 +55,8 @@ struct AvatarView: View, Equatable {
         Image(systemName: "trash")
           .foregroundColor(.red)
       } else {
-    if let avatarImgRequest = avatarImgRequest {
-      ThumbReqImage(imgRequest: avatarImgRequest, size: CGSize(width: avatarSize, height: avatarSize))
+        if let avatarImgRequest = avatarImgRequest {
+          ThumbReqImage(imgRequest: avatarImgRequest, size: CGSize(width: avatarSize, height: avatarSize))
         } else {
           Text(userID.prefix(1).uppercased())
             .fontSize(avatarSize / 2)
@@ -66,8 +66,7 @@ struct AvatarView: View, Equatable {
     .frame(width: avatarSize, height: avatarSize)
     .background(RR(cornerRadius, .primary.opacity(0.15)).frame(avatarSize))
     .clipShape(RoundedRectangle(cornerRadius: cornerRadius, style: .continuous))
-    //    .drawingGroup()
-    .background(SavedFlag(cornerRadius: cornerRadius, saved: saved).equatable())
+    .background(SavedFlag(cornerRadius: cornerRadius, saved: saved))
   }
 }
 
