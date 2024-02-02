@@ -59,7 +59,6 @@ class FeedItemsManager<S> {
         newLastElementId = lastEl.selfPrefix + "_" + lastEl.id
       }
       
-      print(newEntities)
       withAnimation {
         displayMode = newEntities.count > 0 ? newEntities.count < chunkSize ? .endOfFeed : .items : entities.count > 0 ? .endOfFeed : .empty
         entities = newEntities
