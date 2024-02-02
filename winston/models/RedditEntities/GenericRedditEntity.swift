@@ -138,4 +138,15 @@ enum RedditEntityType: Hashable, Equatable, Identifiable {
     case .message(let x): x.id
     }
   }
+  
+  var selfPrefix: String {
+    switch self {
+    case .post(let x): x.selfPrefix
+    case .subreddit(let x): x.selfPrefix
+    case .multi(let x): x.selfPrefix
+    case .comment(let x): x.selfPrefix
+    case .user(let x): x.selfPrefix
+    case .message(let x): x.selfPrefix
+    }
+  }
 }

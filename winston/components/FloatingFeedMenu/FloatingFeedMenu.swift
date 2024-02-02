@@ -11,20 +11,16 @@ import Defaults
 
 struct FloatingFeedMenu: View, Equatable {
   static func == (lhs: FloatingFeedMenu, rhs: FloatingFeedMenu) -> Bool {
-    lhs.subId == rhs.subId && lhs.filters == rhs.filters && lhs.selected == rhs.selected && lhs.menuOpen == rhs.menuOpen
+    lhs.subId == rhs.subId && lhs.filters == rhs.filters && lhs.selectedFilter == rhs.selectedFilter
   }
   
   var subId: String
-  var filters: [FilterData]
-  var selected: String
-  var filterCallback: ((String) -> ())
-  var searchText: String
-  var searchCallback: ((String?) -> ())
-  var customFilterCallback: ((FilterData) -> ())
+  var filters: [ShallowCachedFilter]
+  @Binding var selectedFilter: ShallowCachedFilter?
   
   @State private var menuOpen = false
   @State private var showingFilters = false
-  @State var compact: Bool = false
+  @State private var compact: Bool
   
   @Namespace private var ns
   
@@ -38,16 +34,12 @@ struct FloatingFeedMenu: View, Equatable {
   @Default(.SubredditFeedDefSettings) var subredditFeedDefSettings
   @Default(.PostLinkDefSettings) var postLinkDefSettings
   
-  init(subId: String, filters: [FilterData], selected: String, filterCallback: @escaping ((String) -> ()), searchText: String, searchCallback: @escaping ((String?) -> ()), customFilterCallback: @escaping ((FilterData) -> ())) {
+  init(subId: String, filters: [ShallowCachedFilter], selectedFilter: Binding<ShallowCachedFilter?>) {
     self.subId = subId
     self.filters = filters
-    self.selected = selected
-    self.filterCallback = filterCallback
-    self.searchText = searchText
-    self.searchCallback = searchCallback
-    self.customFilterCallback = customFilterCallback
+    self._selectedFilter = selectedFilter
     
-    _compact = State(initialValue: subredditFeedDefSettings.compactPerSubreddit[subId] ?? postLinkDefSettings.compactMode.enabled)
+    _compact = State(initialValue: Defaults[.SubredditFeedDefSettings].compactPerSubreddit[subId] ?? Defaults[.PostLinkDefSettings].compactMode.enabled)
   }
   
   func dismiss() {
@@ -64,14 +56,21 @@ struct FloatingFeedMenu: View, Equatable {
     }
   }
   
+  func selectFilter(_ filter: ShallowCachedFilter) {
+    let newVal = selectedFilter == filter ? nil : filter
+    withAnimation(.spring) {
+      selectedFilter = newVal
+    }
+  }
+  
   var body: some View {
     ZStack(alignment: .bottomTrailing) {
       FloatingBGBlur(active: menuOpen, dismiss: dismiss).equatable()
       
       HStack(alignment: .bottom, spacing: 0) {
         ZStack(alignment: .bottomTrailing) {
-          if !showingFilters, !selected.isEmpty, let selectedFilter = filters.first(where: { $0.id == selected }) {
-            FilterButton(filter: selectedFilter, isSelected: true, filterCallback: filterCallback, searchText: searchText, searchCallback: searchCallback, customFilterCallback: customFilterCallback)
+          if !showingFilters, let selectedFilter {
+            FilterButton(filter: selectedFilter, isSelected: true, selectFilter: selectFilter)
 //              .equatable()
               .matchedGeometryEffect(id: "floating-\(selectedFilter.id)", in: ns, properties: .position)
               .padding(.trailing, itemsSpacingDownscaled)
@@ -80,17 +79,17 @@ struct FloatingFeedMenu: View, Equatable {
               .transition(.offset(x: 0.01))
           }
           
-          let sortedFlairs = filters.filter({ $0.type == "flair" }).sorted(by: {$0.occurences > $1.occurences })
-          let customFilters = filters.filter({ $0.type != "flair" })
+          let sortedFlairs = filters.filter({ $0.type == .flair })
+          let customFilters = filters.filter({ $0.type == .custom })
           if menuOpen {
             ScrollView(.horizontal, showsIndicators: false) {
               HStack(spacing: 8) {
                 
                 ForEach(Array(sortedFlairs.enumerated()).reversed(), id: \.element) { i, el in
-                  let isSelected = selected == el.id
+                  let isSelected = selectedFilter?.id == el.id
                   let placeholder = isSelected && !showingFilters
                   let elId = "floating-\(el.id)\(placeholder ? "-placeholder" : "")"
-                  FilterButton(filter: el, isSelected: isSelected, filterCallback: filterCallback, searchText: searchText, searchCallback: searchCallback, customFilterCallback: customFilterCallback)
+                  FilterButton(filter: el, isSelected: isSelected, selectFilter: selectFilter)
 //                    .equatable()
                     .matchedGeometryEffect(id: elId, in: ns, properties: .position)
                     .scaleEffect(showingFilters || isSelected ? 1 : 0.01, anchor: .trailing)
@@ -101,11 +100,11 @@ struct FloatingFeedMenu: View, Equatable {
                 }
                 
                 ForEach(Array(customFilters.enumerated()).reversed(), id: \.element) { i, el in
-                  let isSelected = selected == el.id
+                  let isSelected = selectedFilter?.id == el.id
                   let placeholder = isSelected && !showingFilters
                   let elId = "floating-\(el.id)\(placeholder ? "-placeholder" : "")"
                   
-                  FilterButton(filter: el, isSelected: isSelected, filterCallback: filterCallback, searchText: searchText, searchCallback: searchCallback, customFilterCallback: customFilterCallback)
+                  FilterButton(filter: el, isSelected: isSelected, selectFilter: selectFilter)
 //                    .equatable()
                     .matchedGeometryEffect(id: "floating-\(el.id)", in: ns)
                     .scaleEffect(showingFilters || isSelected ? 1 : 0.01, anchor: .trailing)
@@ -164,7 +163,7 @@ struct FloatingFeedMenu: View, Equatable {
                 .increaseHitboxOf(actionsSize, by: 1.125, shape: Circle(), disable: menuOpen)
                 .highPriorityGesture(TapGesture().onEnded({
                   Hap.shared.play(intensity: 0.75, sharpness: 0.9)
-                  customFilterCallback(FilterData())
+//                  customFilterCallback(FilterData())
                 }))
             }
           }
@@ -180,9 +179,13 @@ struct FloatingFeedMenu: View, Equatable {
 
 
 extension View {
-  func floatingMenu(subId: String, filters: [FilterData], selected: String, filterCallback: @escaping ((String) -> ()), searchText: String, searchCallback: @escaping ((String?) -> ()), customFilterCallback: @escaping ((FilterData) -> ())) -> some View {
+  func floatingMenu(subId: String?, filters: [ShallowCachedFilter], selectedFilter: Binding<ShallowCachedFilter?>) -> some View {
     self
-      .overlay(FloatingFeedMenu(subId: subId, filters: filters, selected: selected, filterCallback: filterCallback, searchText: searchText, searchCallback: searchCallback, customFilterCallback: customFilterCallback), alignment: .bottomTrailing)
+      .overlay(alignment: .bottomTrailing) {
+        if let subId {
+          FloatingFeedMenu(subId: subId, filters: filters, selectedFilter: selectedFilter)
+        }
+      }
   }
 }
 

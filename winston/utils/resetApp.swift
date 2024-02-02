@@ -34,7 +34,6 @@ func resetPreferences() {
 
 func resetCaches() {
   Caches.postsAttrStr.cache.removeAll()
-  Caches.postsPreviewModels.cache.removeAll()
   Caches.videos.cache.removeAll()
 }
 

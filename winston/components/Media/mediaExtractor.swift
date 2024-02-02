@@ -83,7 +83,7 @@ enum MediaExtractedType: Equatable {
   case repost(Post)
   case post(EntityExtracted<PostData, PostWinstonData>?)
   case comment(EntityExtracted<CommentData, CommentWinstonData>?)
-  case subreddit(EntityExtracted<SubredditData, SubredditWinstonData>?)
+  case subreddit(EntityExtracted<SubredditData, AnyHashable>?)
   case user(EntityExtracted<UserData, AnyHashable>?)
 }
 
@@ -133,7 +133,6 @@ func mediaExtractor(compact: Bool, contentWidth: Double = .screenW, _ data: Post
   
   if data.media?.type == "youtube.com", let oembed = data.media?.oembed, let html = oembed.html, let ytID = extractYoutubeIdFromOEmbed(html), let width = oembed.width, let height = oembed.height, let author_name = oembed.author_name, let author_url = oembed.author_url, let authorURL = URL(string: author_url), let thumb = oembed.thumbnail_url, let thumbURL = URL(string: thumb) {
     let thumbReq = ImageRequest(url: thumbURL, processors: [.resize(width: getPostContentWidth(contentWidth: contentWidth, theme: theme))], priority: .normal)
-    Post.prefetcher.startPrefetching(with: [thumbReq])
     let size = CGSize(width: CGFloat(width), height: CGFloat(height))
     let newExtracted = YTMediaExtracted(videoID: ytID, size: size, thumbnailURL: thumbURL, thumbnailRequest: thumbReq, player: YouTubePlayer(source: .video(id: ytID)), author: author_name, authorURL: authorURL)
     return .yt(newExtracted)
@@ -224,13 +223,13 @@ func mediaExtractor(compact: Bool, contentWidth: Double = .screenW, _ data: Post
       
     default:
       if !data.is_self, let linkURL = URL(string: data.url) {
-        return .link(PreviewModel.get(linkURL, compact: compact))
+        return .link(PreviewModel(linkURL, compact: compact))
       }
     }
   }
   
   if data.post_hint == "link" || !data.domain.isEmpty, let linkURL = URL(string: data.url) {
-    return .link(PreviewModel.get(linkURL, compact: compact))
+    return .link(PreviewModel(linkURL, compact: compact))
   }
   
   return nil

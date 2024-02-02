@@ -2,7 +2,8 @@
 //  CachedFilter+CoreDataClass.swift
 //  winston
 //
-//  Created by Zander Bobronnikov on 12/10/23.
+//  Created by Igor Marcossi on 25/01/24.
+//
 //
 
 import Foundation

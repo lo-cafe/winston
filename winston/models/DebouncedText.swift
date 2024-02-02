@@ -7,12 +7,22 @@
 
 import Foundation
 
-class DebouncedText: ObservableObject {
-  @Published var text: String = ""
-  @Published var debounced: String = ""
+@Observable
+class Debouncer<V> {
+  private var timer = TimerHolder()
+  private var delay: Double
+  var value: V {
+    didSet {
+      timer.fireIn(delay) {
+        self.debounced = self.value
+      }
+    }
+  }
+  private(set) var debounced: V
   
-  init(_ str: String = "", delay: DispatchQueue.SchedulerTimeType.Stride) {
-    text = str
-    $text.debounce(for: delay, scheduler: DispatchQueue.main).assign(to: &$debounced)
+  init(_ val: V, delay: Double = 0.4) {
+    value = val
+    debounced = val
+    self.delay = delay
   }
 }

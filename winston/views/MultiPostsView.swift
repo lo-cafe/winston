@@ -23,7 +23,7 @@ struct MultiPostsView: View {
   @State private var sort: SubListingSortOption = Defaults[.SubredditFeedDefSettings].preferredSort
   @State private var newPost = false
   @State private var filter: String = "flair:All"
-  @State private var customFilter: FilterData?
+//  @State private var customFilter: FilterData?
   @State private var reachedEndOfFeed: Bool = false
   
   @Environment(\.useTheme) private var selectedTheme
@@ -41,9 +41,9 @@ struct MultiPostsView: View {
     filter = str
   }
   
-  func editCustomFilter(filterData: FilterData) {
-    customFilter = filterData
-  }
+//  func editCustomFilter(filterData: FilterData) {
+//    customFilter = filterData
+//  }
   
   func asyncFetch(force: Bool = false, loadMore: Bool = false) async {
     //    if (multi.data == nil || force) {
@@ -91,11 +91,12 @@ struct MultiPostsView: View {
   
   var body: some View {
     Group {
-      if IPAD && hSizeClass == .regular {
-        SubredditPostsIPAD(showSub: true, lastPostAfter: lastPostAfter, filters: [], posts: posts, filter: filter, filterCallback: filterCallback, searchText: searchText, searchCallback: searchCallback, editCustomFilter: editCustomFilter, fetch: fetch, selectedTheme: selectedTheme, loading: loading, reachedEndOfFeed: $reachedEndOfFeed)
-      } else {
-        SubredditPostsIOS(showSub: true, lastPostAfter: lastPostAfter, filters: [], posts: posts, filter: filter, filterCallback: filterCallback, searchText: searchText, searchCallback: searchCallback, editCustomFilter: editCustomFilter, fetch: fetch, selectedTheme: selectedTheme, loading: loading, reachedEndOfFeed: $reachedEndOfFeed)
-      }
+      VStack {}
+//      if IPAD && hSizeClass == .regular {
+//        SubredditPostsIPAD(showSub: true, lastPostAfter: lastPostAfter, filters: [], posts: posts, filter: filter, searchText: searchText, fetch: fetch, selectedTheme: selectedTheme, loading: loading, reachedEndOfFeed: $reachedEndOfFeed)
+//      } else {
+//        SubredditPostsIOS(showSub: true, lastPostAfter: lastPostAfter, filters: [], posts: posts, filter: filter, searchText: searchText, fetch: fetch, selectedTheme: selectedTheme, loading: loading, reachedEndOfFeed: $reachedEndOfFeed)
+//      }
     }
     //.themedListBG(selectedTheme.postLinks.bg)
     .listStyle(.plain)
@@ -110,9 +111,9 @@ struct MultiPostsView: View {
                 sort = opt
               } label: {
                 HStack {
-                  Text(opt.rawVal.value.capitalized)
+                  Text(opt.meta.label.capitalized)
                   Spacer()
-                  Image(systemName: opt.rawVal.icon)
+                  Image(systemName: opt.meta.icon)
                     .foregroundColor(Color.accentColor)
                     .fontSize(17, .bold)
                 }
@@ -120,7 +121,7 @@ struct MultiPostsView: View {
             }
           }
         label: {
-            Image(systemName: sort.rawVal.icon)
+            Image(systemName: sort.meta.icon)
               .foregroundColor(Color.accentColor)
               .fontSize(17, .bold)
           }

@@ -25,7 +25,7 @@ struct Flair: GenericRedditEntityDataType, Identifiable, Defaults.Serializable {
       let type: String?
       let text_editable: Bool?
       let allowable_content: String?
-      let text: String?
+      let text: String
       let max_emojis: Int?
       let text_color: String?
       let mod_only: Bool?

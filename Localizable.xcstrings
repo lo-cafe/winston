@@ -395,6 +395,9 @@
         }
       }
     },
+    "abor" : {
+
+    },
     "About" : {
       "localizations" : {
         "de" : {
@@ -811,9 +814,6 @@
         }
       }
     },
-    "Compact" : {
-
-    },
     "Compact Mode" : {
       "localizations" : {
         "de" : {
@@ -954,6 +954,7 @@
 
     },
     "Default post sorting" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -970,6 +971,7 @@
       }
     },
     "Default search sorting" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -1219,9 +1221,6 @@
 
     },
     "Edit credential" : {
-
-    },
-    "Edit filter" : {
 
     },
     "Enabling the extension" : {
@@ -2034,6 +2033,9 @@
         }
       }
     },
+    "lamor" : {
+
+    },
     "Large" : {
       "localizations" : {
         "de" : {
@@ -2420,9 +2422,6 @@
     "New credential" : {
 
     },
-    "New filter" : {
-
-    },
     "New post" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -2477,9 +2476,6 @@
 
     },
     "No filtered posts" : {
-
-    },
-    "Normal" : {
 
     },
     "Now paste it here:" : {
@@ -3121,6 +3117,7 @@
       }
     },
     "Search r/%@" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {

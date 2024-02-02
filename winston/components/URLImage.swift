@@ -14,7 +14,7 @@ import SwiftyUI
 
 struct URLImage: View, Equatable {
   static func == (lhs: URLImage, rhs: URLImage) -> Bool {
-    lhs.url == rhs.url
+    lhs.url == rhs.url && lhs.imgRequest?.url == rhs.imgRequest?.url
   }
   
   let url: URL
@@ -41,7 +41,7 @@ struct URLImage: View, Equatable {
       .processors(processors)
     } else {
       if let imgRequest = imgRequest {
-        LazyImage(request: imgRequest) { state in
+        LazyImage(request: imgRequest, transaction: .init(animation: .default)) { state in
 //          if case .success(let response) = state.result {
 //            AltImage(image: response.image, size: size)
 ////            Image(uiImage: response.image).resizable()
@@ -101,7 +101,7 @@ struct ThumbReqImage: View, Equatable {
   var size: CGSize
   
   var body: some View {
-    LazyImage(request: imgRequest) { state in
+    LazyImage(request: imgRequest, transaction: .init(animation: .default)) { state in
 //                if case .success(let response) = state.result {
 ////                  Image(uiImage: response.image).resizable()
 //                  AltImage(image: response.image, size: size)

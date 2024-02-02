@@ -32,26 +32,27 @@ struct ThemedListBGModifier: ViewModifier {
       .onChange(of: cs) { val in
         updateImg(bg, val)
       }
-      .background(
-        disable || uiImage == nil
-        ? nil
-        : GeometryReader { geo in
-          Image(uiImage: uiImage)
-            .antialiased(true).resizable()
-            .aspectRatio(contentMode: .fill)
-            .saturation(!actuallyBrighter ? 1 : 0.75)
-            .contrast(!actuallyBrighter ? 1 : 0.6)
-            .brightness(!actuallyBrighter ? 0 : cs == .dark ? 0.25 : 0)
-            .frame(width: geo.size.width, height: geo.size.height)
-        }.edgesIgnoringSafeArea(.all).allowsHitTesting(false)
-      )
-      .background(
-        disable || uiImage != nil
-        ? nil
-        : GeometryReader { geo in
-          returnColor(bg: bg, cs: cs, brighter: actuallyBrighter)
-            .frame(width: geo.size.width, height: geo.size.height)
-        }.edgesIgnoringSafeArea(.all).allowsHitTesting(false))
+      .background {
+        if let uiImage, !disable {
+          GeometryReader { geo in
+            Image(uiImage: uiImage)
+              .antialiased(true).resizable()
+              .aspectRatio(contentMode: .fill)
+              .saturation(!actuallyBrighter ? 1 : 0.75)
+              .contrast(!actuallyBrighter ? 1 : 0.6)
+              .brightness(!actuallyBrighter ? 0 : cs == .dark ? 0.25 : 0)
+              .frame(width: geo.size.width, height: geo.size.height)
+          }.edgesIgnoringSafeArea(.all).allowsHitTesting(false)
+        }
+      }
+      .background {
+        if !disable && uiImage == nil {
+          GeometryReader { geo in
+            returnColor(bg: bg, cs: cs, brighter: actuallyBrighter)
+              .frame(width: geo.size.width, height: geo.size.height)
+          }.edgesIgnoringSafeArea(.all).allowsHitTesting(false)
+        }
+      }
       .scrollContentBackground(.hidden)
   }
 }

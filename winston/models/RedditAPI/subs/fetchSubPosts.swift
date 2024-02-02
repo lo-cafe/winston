@@ -10,10 +10,10 @@ import Alamofire
 import Defaults
 
 extension RedditAPI {
-  func fetchSubPosts(_ id: String, sort: SubListingSortOption = .best, after: String? = nil, searchText: String? = nil) async -> ([ListingChild<PostData>]?, String?)? {
+  func fetchSubPosts(_ id: String, sort: SubListingSortOption = .best, after: String? = nil, searchText: String? = nil, flair: String? = nil) async -> ([ListingChild<PostData>]?, String?)? {
       let subID = buildSubID(id, sort, after, searchText)
       let limit = Defaults[.SubredditFeedDefSettings].chunkLoadSize
-      let params = FetchSubsPayload(limit: limit, after: after)
+    let params = FetchSubPostsPayload(limit: limit, after: after, flair: flair)
       
       let urlString = "\(RedditAPI.redditApiURLBase)\(subID)".replacingOccurrences(of: " ", with: "%20")
       
@@ -105,6 +105,24 @@ extension RedditAPI {
       return "?t=year"
     case .all:
       return "?t=all"
+    }
+  }
+  
+  struct FetchSubPostsPayload: Codable {
+    var limit: Int
+    var after: String?
+    var count: Int
+    var f: String?
+    var raw_json: Int
+    
+    init(limit: Int, after: String? = nil, count: Int = 0, flair: String? = nil, raw_json: Int = 1) {
+      self.limit = limit
+      self.after = after
+      self.count = count
+      if let flair {
+        self.f = "flair_name:\"\(flair)\""
+      }
+      self.raw_json = raw_json
     }
   }
 }

@@ -21,27 +21,25 @@ struct PreviewLinkContent: View {
   var viewModel: PreviewModel
   var url: URL
   static let height: CGFloat = 88
-  @Environment(\.openURL) private var openURL
   @Default(.BehaviorDefSettings) private var behaviorDefSettings
   var body: some View {
-    PreviewLinkContentRaw(compact: compact, image: viewModel.image, title: viewModel.title, description: viewModel.description, loading: viewModel.loading, url: url, openURL: openURL)
+    PreviewLinkContentRaw(compact: compact, imageReq: viewModel.imageReq, title: viewModel.title, description: viewModel.description, loading: viewModel.loading, url: url)
   }
 }
 
 
 struct PreviewLinkContentRaw: View, Equatable {
   static func == (lhs: PreviewLinkContentRaw, rhs: PreviewLinkContentRaw) -> Bool {
-    lhs.image == rhs.image && lhs.title == rhs.title && lhs.compact == rhs.compact && lhs.description == rhs.description && lhs.loading == rhs.loading && lhs.url == rhs.url
+    lhs.title == rhs.title && lhs.compact == rhs.compact && lhs.description == rhs.description && lhs.loading == rhs.loading && lhs.url == rhs.url
   }
   
   static let height: CGFloat = 88
   var compact: Bool
-  var image: String?
+  var imageReq: ImageRequest?
   var title: String?
   var description: String?
   var loading: Bool
   var url: URL
-  var openURL: OpenURLAction
     
   var body: some View {
     HStack(spacing: 16) {
@@ -71,8 +69,8 @@ struct PreviewLinkContentRaw: View, Equatable {
       }
       
       Group {
-        if let image = image, let imageURL = URL(string: image) {
-          URLImage(url: imageURL, processors: [.resize(width:  compact ? scaledCompactModeThumbSize() : 76)])
+        if let imageReq, let imgURL = imageReq.url {
+          URLImage(url: imgURL, imgRequest: imageReq, size: CGSize(compact ? scaledCompactModeThumbSize() : 76))
             .scaledToFill()
         } else {
           if loading {

@@ -33,10 +33,3 @@ func getSafeArea()->UIEdgeInsets{
   return (keyWindow?.safeAreaInsets) ?? UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
 }
 
-extension String {
-    var urlEncoded: String {
-      return self.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
-//        let allowedCharacterSet = CharacterSet.alphanumerics.union(CharacterSet(charactersIn: "~-_."))
-//        return self.addingPercentEncoding(withAllowedCharacters: allowedCharacterSet)
-    }
-}

@@ -12,19 +12,19 @@ import NukeUI
 
 struct SubredditPostsIPAD: View, Equatable {
   static func == (lhs: SubredditPostsIPAD, rhs: SubredditPostsIPAD) -> Bool {
-    lhs.posts.count == rhs.posts.count && lhs.subreddit == rhs.subreddit && lhs.searchText == rhs.searchText && lhs.selectedTheme == rhs.selectedTheme && lhs.lastPostAfter == rhs.lastPostAfter && lhs.filter == rhs.filter && lhs.loading == rhs.loading && lhs.filters == rhs.filters
+    lhs.posts.count == rhs.posts.count && lhs.subreddit == rhs.subreddit && lhs.searchText == rhs.searchText && lhs.selectedTheme == rhs.selectedTheme && lhs.lastPostAfter == rhs.lastPostAfter && lhs.filter == rhs.filter && lhs.loading == rhs.loading
   }
   
   var showSub = false
   var lastPostAfter: String?
   var subreddit: Subreddit?
-  var filters: [FilterData]
+//  var filters: [FilterData]
   var posts: [Post]
   var filter: String
-  var filterCallback: ((String) -> ())
+//  var filterCallback: ((String) -> ())
   var searchText: String
-  var searchCallback: ((String?) -> ())
-  var editCustomFilter: ((FilterData) -> ())
+//  var searchCallback: ((String?) -> ())
+//  var editCustomFilter: ((FilterData) -> ())
   var fetch: (Bool, String?, Bool) -> ()
   var selectedTheme: WinstonTheme
   var loading: Bool
@@ -89,6 +89,7 @@ struct SubredditPostsIPAD: View, Equatable {
       theme: selectedTheme.postLinks
     )
 //    .ignoresSafeArea(.all)
+//    .floatingMenu(subId: subreddit?.id ?? "", filters: filters, selected: filter, filterCallback: filterCallback, searchText: searchText, searchCallback: searchCallback, customFilterCallback: editCustomFilter)
     .overlay {
       if loading {
         ProgressView()

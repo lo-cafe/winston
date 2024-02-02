@@ -146,7 +146,7 @@ struct SwipeUI<T: GenericRedditEntityDataType, B: Hashable>: ViewModifier {
               if controlledDragAmount != nil {
                 controlledDragAmount?.wrappedValue =  x - offset
               } else {
-                if !enableBG { enableBG = true }
+                
                 dragAmount = x - offset
               }
             }
@@ -173,6 +173,7 @@ struct SwipeUI<T: GenericRedditEntityDataType, B: Hashable>: ViewModifier {
       )
       .onChange(of: (controlledDragAmount?.wrappedValue ?? dragAmount)) { newValue in
         if !controlledIsSource { return }
+        if !enableBG { enableBG = true }
         if newValue == 0 {
           Task(priority: .background) { [triggeredAction] in
             

@@ -53,7 +53,7 @@ extension Comment {
   func setupWinstonData() {
     self.winstonData = .init()
 //    guard let winstonData = self.winstonData, let data = self.data else { return }
-//    let theme = getEnabledTheme().comments.theme
+//    let theme = InMemoryTheme.shared.currentTheme.comments.theme
 //    let cs: ColorScheme = UIScreen.main.traitCollection.userInterfaceStyle == .dark ? .dark : .light
   }
   
