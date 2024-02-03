@@ -138,7 +138,7 @@ struct PostLinkNormal: View, Equatable, Identifiable {
           
         }
       }
-      .postLinkStyle(post: post, sub: sub, theme: theme, size: winstonData.postDimensions.size, secondary: secondary, openPost: openPost, readPostOnScroll: defSettings.readOnScroll, hideReadPosts: defSettings.hideOnRead)
+      .postLinkStyle(post: post, sub: sub, theme: theme.theme, size: winstonData.postDimensions.size, secondary: secondary, openPost: openPost, readPostOnScroll: defSettings.readOnScroll, hideReadPosts: defSettings.hideOnRead)
       .swipyUI(onTap: openPost, actionsSet: defSettings.swipeActions, entity: post, secondary: secondary)
     }
   }

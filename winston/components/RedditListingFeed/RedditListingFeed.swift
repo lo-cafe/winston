@@ -94,8 +94,8 @@ struct RedditListingFeed<Header: View, Footer: View, S: Sorting>: View {
                         CommentLink(showReplies: false, comment: comment, commentWinstonData: commentWinstonData, children: comment.childrenWinston)
                       }
                     }
-                    .background(PostLinkBG(theme: theme, stickied: false, secondary: false))
-                    .mask(RR(theme.theme.cornerRadius, Color.black))
+                    .background(PostLinkBG(theme: selectedTheme.postLinks.theme, stickied: false, secondary: false))
+                    .mask(RR(selectedTheme.postLinks.theme.cornerRadius, Color.black))
                   case .user(let user): UserLink(user: user)
                   case .message(let message):
                     MessageLink(message: message)
@@ -168,7 +168,7 @@ struct RedditListingFeed<Header: View, Footer: View, S: Sorting>: View {
           }
         }
       }
-      .floatingMenu(subId: subreddit?.id, filters: Array(shallowCachedFilters), selectedFilter: $itemsManager.selectedFilter)
+      .floatingMenu(subId: subreddit?.id, filters: shallowCachedFilters, selectedFilter: $itemsManager.selectedFilter)
       //    .onChange(of: itemsManager.selectedFilter) { searchEnabled = $1?.type != .custom }
       .onChange(of: itemsManager.searchQuery.value) { itemsManager.displayMode = .loading }
       .onChange(of: subredditFeedDefSettings.chunkLoadSize) { itemsManager.chunkSize = $1 }

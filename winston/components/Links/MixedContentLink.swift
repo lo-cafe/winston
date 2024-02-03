@@ -37,7 +37,7 @@ struct MixedContentLink: View, Equatable {
           CommentLink(showReplies: false, comment: comment, commentWinstonData: commentWinstonData, children: comment.childrenWinston)
         }
       }
-      .background(PostLinkBG(theme: theme, stickied: false, secondary: false))
+      .background(PostLinkBG(theme: theme.theme, stickied: false, secondary: false))
       .mask(RR(theme.theme.cornerRadius, Color.black))
     }
   }
