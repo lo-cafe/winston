@@ -131,11 +131,11 @@ struct RedditListingFeed<Header: View, Footer: View, S: Sorting>: View {
         footer()
       }
       .themedListBG(theme)
+      .if(!disableSearch) { $0.searchable(text: $itemsManager.searchQuery.value) }
       .scrollIndicators(.never)
       .listStyle(.plain)
       .navigationTitle(title)
       .environment(\.defaultMinListRowHeight, 1)
-      .searchable(text: $itemsManager.searchQuery.value)
       .toolbar {
         ToolbarItem(placement: .topBarTrailing) {
           HStack {

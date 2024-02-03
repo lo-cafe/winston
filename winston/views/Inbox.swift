@@ -31,9 +31,7 @@ struct Inbox: View {
       RedditListingFeed(feedId: "inbox", title: "Inbox", theme: selectedTheme.lists.bg, fetch: fetcher, disableSearch: true)
         .injectInTabDestinations()
         .attachViewControllerToRouter()
-//        .listRowInsets(EdgeInsets(top: 6, leading: 0, bottom: 6, trailing: 0))
     }
-//    .swipeAnywhere()
   }
 }
 
