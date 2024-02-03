@@ -85,7 +85,6 @@ struct ThemesPanel: View {
 
 struct ThemeNavLink: View {
   @Default(.ThemesDefSettings) private var themesDefSettings
-  @State private var restartAlert = false
   
   @Environment(\.useTheme) private var selectedTheme
   @State private var isMoving = false
@@ -142,8 +141,7 @@ struct ThemeNavLink: View {
       
       Spacer()
       
-      Toggle("", isOn: Binding(get: { selectedTheme == theme  }, set: { _ in
-        if themesDefSettings.themesPresets.first(where: { $0.id == themesDefSettings.selectedThemeID })?.general != theme.general { restartAlert = true  }
+      Toggle("", isOn: Binding(get: { selectedTheme == theme }, set: { _ in
         themesDefSettings.selectedThemeID = theme.id
       }))
       .highPriorityGesture(TapGesture())
@@ -168,13 +166,6 @@ struct ThemeNavLink: View {
         print("Failed to move the file with error \(error)")
       }
     })
-    .alert("Restart required", isPresented: $restartAlert) {
-      Button("Gotcha!", role: .cancel) {
-        restartAlert = false
-      }
-    } message: {
-      Text("This theme changes a few settings that requires an app restart to take effect.")
-    }
   }
 }
 

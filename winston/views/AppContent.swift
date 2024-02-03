@@ -12,15 +12,16 @@ struct AppContent: View {
   @StateObject private var themeStore = ThemeStoreAPI()
   @Environment(\.scenePhase) var scenePhase
   
-  @Default(.ThemesDefSettings) private var themesDefSettings
+//  @Default(.ThemesDefSettings) private var themesDefSettings
   @Default(.GeneralDefSettings) private var generalDefSettings
 
-  var selectedTheme: WinstonTheme { themesDefSettings.themesPresets.first { $0.id == themesDefSettings.selectedThemeID } ?? defaultTheme }
+//  var selectedTheme: WinstonTheme { themesDefSettings.themesPresets.first { $0.id == themesDefSettings.selectedThemeID } ?? defaultTheme }
   
   let biometrics = Biometrics()
   @State private var isAuthenticating = false
   @State private var tabBarHeight: Double = 0
   @State private var lockBlur: Int = 50 // Set initial startup blur
+  @State private var restartAlert = false
     
   func setTabBarHeight(_ val: Double) {
     tabBarHeight = val
@@ -29,16 +30,26 @@ struct AppContent: View {
   var body: some View {
     AccountSwitcherProvider {
       GlobalDestinationsProvider {
-        Tabber(theme: selectedTheme).equatable()
+        Tabber(theme: InMemoryTheme.shared.currentTheme).equatable()
       }
     }
     .whatsNewSheet()
     .environment(\.tabBarHeight, tabBarHeight)
     .environment(\.setTabBarHeight, setTabBarHeight)
     .environmentObject(themeStore)
-    .environment(\.useTheme, selectedTheme)
-    .onAppear { themesDefSettings.themesPresets = themesDefSettings.themesPresets.filter { $0.id != "default" } }
-    .onChange(of: scenePhase) { newPhase in
+    .environment(\.useTheme, InMemoryTheme.shared.currentTheme)
+    .onAppear { Defaults[.ThemesDefSettings].themesPresets = Defaults[.ThemesDefSettings].themesPresets.filter { $0.id != "default" } }
+    .onChange(of: InMemoryTheme.shared.currentTheme, initial: false) { old, new in
+      restartAlert = old.general != new.general
+    }
+    .alert("Restart required", isPresented: $restartAlert) {
+      Button("Gotcha!", role: .cancel) {
+        restartAlert = false
+      }
+    } message: {
+      Text("This theme changes a few settings (like the visuals of tab/nav bars) that requires an app restart to take effect.")
+    }
+    .onChange(of: scenePhase) { _, newPhase in
       // No auth on MacOS
       var runningOnMac = false
       #if os(macOS)
