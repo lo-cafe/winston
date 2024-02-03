@@ -355,7 +355,7 @@
 		EC8B814B2AC9546C000DC827 /* frame.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC8B814A2AC9546C000DC827 /* frame.swift */; };
 		EC8B814E2AC9650E000DC827 /* AddingStrings.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC8B814D2AC9650E000DC827 /* AddingStrings.swift */; };
 		EC8C707B2B4E4EB7004DBA75 /* ImageProcessors+ScaleFixer.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC8C707A2B4E4EB7004DBA75 /* ImageProcessors+ScaleFixer.swift */; };
-		EC8EF59C2B606E37009E51D2 /* RedditEntitiesFeed.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC8EF59B2B606E37009E51D2 /* RedditEntitiesFeed.swift */; };
+		EC8EF59C2B606E37009E51D2 /* RedditListingFeed.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC8EF59B2B606E37009E51D2 /* RedditListingFeed.swift */; };
 		EC8EF5A32B608F63009E51D2 /* ThemeColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC8EF5A22B608F63009E51D2 /* ThemeColor.swift */; };
 		EC8F34662A6A348F00EB8249 /* SwipeActions.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC8F34652A6A348F00EB8249 /* SwipeActions.swift */; };
 		EC8F34792A6CE79B00EB8249 /* PostInBoxLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC8F34782A6CE79B00EB8249 /* PostInBoxLink.swift */; };
@@ -931,7 +931,7 @@
 		EC8B814A2AC9546C000DC827 /* frame.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = frame.swift; sourceTree = "<group>"; };
 		EC8B814D2AC9650E000DC827 /* AddingStrings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddingStrings.swift; sourceTree = "<group>"; };
 		EC8C707A2B4E4EB7004DBA75 /* ImageProcessors+ScaleFixer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ImageProcessors+ScaleFixer.swift"; sourceTree = "<group>"; };
-		EC8EF59B2B606E37009E51D2 /* RedditEntitiesFeed.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RedditEntitiesFeed.swift; sourceTree = "<group>"; };
+		EC8EF59B2B606E37009E51D2 /* RedditListingFeed.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RedditListingFeed.swift; sourceTree = "<group>"; };
 		EC8EF5A22B608F63009E51D2 /* ThemeColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeColor.swift; sourceTree = "<group>"; };
 		EC8F34652A6A348F00EB8249 /* SwipeActions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwipeActions.swift; sourceTree = "<group>"; };
 		EC8F34782A6CE79B00EB8249 /* PostInBoxLink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostInBoxLink.swift; sourceTree = "<group>"; };
@@ -2063,13 +2063,13 @@
 			path = RedditEntities;
 			sourceTree = "<group>";
 		};
-		EC8EF59E2B60884C009E51D2 /* RedditEntitiesFeed */ = {
+		EC8EF59E2B60884C009E51D2 /* RedditListingFeed */ = {
 			isa = PBXGroup;
 			children = (
 				ECEE87B52B63672F0042032B /* FeedItemsManager.swift */,
-				EC8EF59B2B606E37009E51D2 /* RedditEntitiesFeed.swift */,
+				EC8EF59B2B606E37009E51D2 /* RedditListingFeed.swift */,
 			);
-			path = RedditEntitiesFeed;
+			path = RedditListingFeed;
 			sourceTree = "<group>";
 		};
 		EC8F34942A6F55C800EB8249 /* Links */ = {
@@ -2304,7 +2304,7 @@
 		ECC10C752A4A8746009124BE /* Components */ = {
 			isa = PBXGroup;
 			children = (
-				EC8EF59E2B60884C009E51D2 /* RedditEntitiesFeed */,
+				EC8EF59E2B60884C009E51D2 /* RedditListingFeed */,
 				BB978B342B4F3BD500BE90D1 /* Markdown Handling */,
 				EC6081142B434AEF001A1077 /* ButtonStyles */,
 				EC4C7CB02B2DA1D70007A4DA /* FloatingFeedMenu */,
@@ -2981,7 +2981,7 @@
 				EC3AC9DD2AAD17D40078EC78 /* BadgeSettings.swift in Sources */,
 				ECA3662E2B0AFE3300B8242F /* RedditCredentialsManager.swift in Sources */,
 				ECA30A192A604ACC00BB19D1 /* SubredditIcon.swift in Sources */,
-				EC8EF59C2B606E37009E51D2 /* RedditEntitiesFeed.swift in Sources */,
+				EC8EF59C2B606E37009E51D2 /* RedditListingFeed.swift in Sources */,
 				EC9ECA082A8805DF00470F89 /* performantShadow.swift in Sources */,
 				EC7FBE232B4118460082FA44 /* CGSizeScreenSize.swift in Sources */,
 				EC4C7C9A2B2C545D0007A4DA /* BehaviorDefSettings.swift in Sources */,

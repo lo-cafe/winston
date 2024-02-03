@@ -9,7 +9,7 @@ import SwiftUI
 import Defaults
 import SwiftData
 
-struct RedditEntitiesFeed<Header: View, Footer: View, S: Sorting>: View {
+struct RedditListingFeed<Header: View, Footer: View, S: Sorting>: View {
   private var showSubInPosts: Bool
   private var feedId: String
   private var title: String
@@ -84,11 +84,22 @@ struct RedditEntitiesFeed<Header: View, Footer: View, S: Sorting>: View {
                         .environment(\.contextPostWinstonData, winstonData)
                         .listRowInsets(EdgeInsets(top: paddingV, leading: paddingH, bottom: paddingV, trailing: paddingH))
                     }
-                  case .subreddit(let x): EmptyView()
-                  case .multi(let x): EmptyView()
-                  case .comment(let x): EmptyView()
-                  case .user(let x): EmptyView()
-                  case .message(let x): EmptyView()
+                  case .subreddit(let sub): SubredditLink(sub: sub)
+                  case .multi(_): EmptyView()
+                  case .comment(let comment):
+                    VStack {
+                      ShortCommentPostLink(comment: comment)
+                        .padding()
+                      if let commentWinstonData = comment.winstonData {
+                        CommentLink(showReplies: false, comment: comment, commentWinstonData: commentWinstonData, children: comment.childrenWinston)
+                      }
+                    }
+                    .background(PostLinkBG(theme: theme, stickied: false, secondary: false))
+                    .mask(RR(theme.theme.cornerRadius, Color.black))
+                  case .user(let user): UserLink(user: user)
+                  case .message(let message):
+                    MessageLink(message: message)
+                      .listRowInsets(EdgeInsets(top: 6, leading: 0, bottom: 6, trailing: 0))
                   }
                 }
                 .onAppear { Task { await itemsManager.iAppeared🥳(entity: el, index: i) } }
