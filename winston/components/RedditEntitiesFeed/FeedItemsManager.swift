@@ -72,21 +72,21 @@ class FeedItemsManager<S> {
     }
   }
   
-  func iAppeared🥳(_ entity: (entity: RedditEntityType, index: Int)) async {
-    if entity.index == entities.count - 7 {
+  func iAppeared🥳(entity: RedditEntityType, index: Int) async {
+    if index == entities.count - 7 {
       Task { await fetchCaller(loadingMore: true) }
     }
     
-    let start = entity.index - prefetchRange < 0 ? 0 : entity.index - prefetchRange
-    let end = entity.index + (prefetchRange + 1) > entities.count ? entities.count : entity.index + (prefetchRange + 1)
+    let start = index - prefetchRange < 0 ? 0 : index - prefetchRange
+    let end = index + (prefetchRange + 1) > entities.count ? entities.count : index + (prefetchRange + 1)
     let toPrefetch = Array(entities[start..<end])
     var reqs = getImgReqsFrom(toPrefetch)
 
     Post.prefetcher.startPrefetching(with: reqs)
   }
   
-  func imGone🙁(_ entityTouple: (entity: RedditEntityType, index: Int)) async {
-    let reqs = getImgReqsFrom([entityTouple.entity])
+  func imGone🙁(entity: RedditEntityType, index: Int) async {
+    let reqs = getImgReqsFrom([entity])
     Post.prefetcher.stopPrefetching(with: reqs)
   }
   

@@ -74,13 +74,7 @@ struct RedditEntitiesFeed<Header: View, Footer: View, S: Sorting>: View {
                 Group {
                   switch el {
                   case .post(let post):
-                    if
-                      let winstonData = post.winstonData,
-                      let sub = winstonData.subreddit ?? subreddit
-                    //                  selectedFilter == nil ||
-                    //                    selectedFilter?.type == .custom ||
-                    //                    selectedFilter?.text == post.data?.link_flair_text
-                    {
+                    if let winstonData = post.winstonData, let sub = winstonData.subreddit ?? subreddit {
                       let isThereDivider = selectedTheme.postLinks.divider.style != .no
                       let paddingH = selectedTheme.postLinks.theme.outerHPadding
                       let paddingV = selectedTheme.postLinks.spacing / (isThereDivider ? 4 : 2)
@@ -97,8 +91,8 @@ struct RedditEntitiesFeed<Header: View, Footer: View, S: Sorting>: View {
                   case .message(let x): EmptyView()
                   }
                 }
-                .onAppear { Task { await itemsManager.iAppeared🥳((el, i)) } }
-                .onDisappear { Task { await itemsManager.imGone🙁((el, i)) } }
+                .onAppear { Task { await itemsManager.iAppeared🥳(entity: el, index: i) } }
+                .onDisappear { Task { await itemsManager.imGone🙁(entity: el, index: i) } }
               }
             }
           }
@@ -113,7 +107,7 @@ struct RedditEntitiesFeed<Header: View, Footer: View, S: Sorting>: View {
           
         }
         .listRowSeparator(.hidden)
-        
+        .listRowBackground(Color.clear)
         
         footer()
       }

@@ -23,13 +23,14 @@ struct ThemedListBGModifier: ViewModifier {
   func body(content: Content) -> some View {
     let actuallyBrighter = brighter && !forceNonBrighter
     content
+      .scrollContentBackground(.hidden)
       .onAppear {
         updateImg(bg, cs)
       }
-      .onChange(of: bg) { val in
+      .onChange(of: bg) { _, val in
         updateImg(val, cs)
       }
-      .onChange(of: cs) { val in
+      .onChange(of: cs) { _, val in
         updateImg(bg, val)
       }
       .background {
@@ -53,7 +54,6 @@ struct ThemedListBGModifier: ViewModifier {
           }.edgesIgnoringSafeArea(.all).allowsHitTesting(false)
         }
       }
-      .scrollContentBackground(.hidden)
   }
 }
 
