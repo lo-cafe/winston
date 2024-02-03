@@ -11,15 +11,16 @@ import Nuke
 
 @Observable
 class FeedItemsManager<S> {
-  typealias ItemsFetchFn = (_ lastElementId: String?, _ sorting: S, _ searchQuery: String?, _ flair: String?) async -> [RedditEntityType]?
+  typealias ItemsFetchFn = (_ lastElementId: String?, _ sorting: S?, _ searchQuery: String?, _ flair: String?) async -> [RedditEntityType]?
   
   enum DisplayMode: String { case loading, empty, items, endOfFeed, error }
   
+  private var currentTask: Task<(), Never>? = nil
   var displayMode: DisplayMode = .loading
   var entities: [RedditEntityType] = []
   var loadedEntitiesIds: Set<String> = []
   var lastElementId: String? = nil
-  var sorting: S {
+  var sorting: S? {
     willSet { withAnimation { displayMode = .loading } }
   }
   var searchQuery = Debouncer("")
@@ -31,13 +32,16 @@ class FeedItemsManager<S> {
   private var fetchFn: ItemsFetchFn
   private let prefetchRange = 2
   
-  init(sorting: S, fetchFn: @escaping ItemsFetchFn) {
+  init(sorting: S?, fetchFn: @escaping ItemsFetchFn) {
     self.sorting = sorting
     self.fetchFn = fetchFn
     self.chunkSize = Defaults[.SubredditFeedDefSettings].chunkLoadSize
   }
   
   func fetchCaller(loadingMore: Bool) async {
+    if !loadingMore, let currentTask, !currentTask.isCancelled {
+      currentTask.cancel()
+    }
 //    if displayMode != .loading { displayMode = .loading }
     let lastElementId = loadingMore ? self.lastElementId : nil
     let searchQuery = selectedFilter?.type == .custom ? selectedFilter?.text : searchQuery.debounced.isEmpty ? nil : searchQuery.debounced
@@ -56,7 +60,7 @@ class FeedItemsManager<S> {
       
       if !newEntities.isEmpty {
         let lastEl = newEntities[newEntities.count - 1]
-        newLastElementId = lastEl.selfPrefix + "_" + lastEl.id
+        newLastElementId = lastEl.fullname
       }
       
       withAnimation {
@@ -70,17 +74,18 @@ class FeedItemsManager<S> {
         displayMode = .error
       }
     }
+    self.currentTask = nil
   }
   
   func iAppeared🥳(entity: RedditEntityType, index: Int) async {
-    if index == entities.count - 7 {
-      Task { await fetchCaller(loadingMore: true) }
+    if entities.count > 0, index >= entities.count - 7, currentTask == nil {
+      self.currentTask = Task { await fetchCaller(loadingMore: true) }
     }
     
     let start = index - prefetchRange < 0 ? 0 : index - prefetchRange
     let end = index + (prefetchRange + 1) > entities.count ? entities.count : index + (prefetchRange + 1)
     let toPrefetch = Array(entities[start..<end])
-    var reqs = getImgReqsFrom(toPrefetch)
+    let reqs = getImgReqsFrom(toPrefetch)
 
     Post.prefetcher.startPrefetching(with: reqs)
   }

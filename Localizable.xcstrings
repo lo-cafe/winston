@@ -1148,6 +1148,9 @@
         }
       }
     },
+    "Download" : {
+
+    },
     "Drag Left" : {
       "localizations" : {
         "de" : {
@@ -3718,6 +3721,9 @@
         }
       }
     },
+    "Theme Store" : {
+
+    },
     "Theme Store Tint" : {
       "localizations" : {
         "de" : {
@@ -3785,6 +3791,9 @@
     "There are two ways for doing that:" : {
 
     },
+    "There was an error importing this theme" : {
+
+    },
     "This is not working yet :(" : {
       "localizations" : {
         "de" : {
@@ -3817,7 +3826,11 @@
         }
       }
     },
+    "This theme changes a few settings (like the visuals of tab/nav bars) that requires an app restart to take effect." : {
+
+    },
     "This theme changes a few settings that requires an app restart to take effect." : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {

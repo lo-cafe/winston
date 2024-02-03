@@ -20,8 +20,9 @@ struct RedditListingFeed<Header: View, Footer: View, S: Sorting>: View {
   private var subreddit: Subreddit?
   private var disableSearch: Bool
   @Default(.SubredditFeedDefSettings) private var subredditFeedDefSettings
+  @Default(.GeneralDefSettings) private var generalDefSettings
   
-  init(feedId: String, showSubInPosts: Bool = false, title: String, theme: ThemeBG, fetch: @escaping FeedItemsManager<S>.ItemsFetchFn, @ViewBuilder header: @escaping () -> Header = { EmptyView() }, @ViewBuilder footer: @escaping () -> Footer = { EmptyView() }, initialSorting: S, disableSearch: Bool = true, subreddit: Subreddit? = nil) {
+  init(feedId: String, showSubInPosts: Bool = false, title: String, theme: ThemeBG, fetch: @escaping FeedItemsManager<S>.ItemsFetchFn, @ViewBuilder header: @escaping () -> Header = { EmptyView() }, @ViewBuilder footer: @escaping () -> Footer = { EmptyView() }, initialSorting: S? = nil, disableSearch: Bool = true, subreddit: Subreddit? = nil) where S == SubListingSortOption {
     self.showSubInPosts = showSubInPosts
     self.feedId = feedId
     self.title = title
@@ -106,6 +107,14 @@ struct RedditListingFeed<Header: View, Footer: View, S: Sorting>: View {
                 .onDisappear { Task { await itemsManager.imGone🙁(entity: el, index: i) } }
               }
             }
+            
+            if itemsManager.displayMode == .endOfFeed {
+              Section {
+                EndOfFeedView()
+              }
+            }
+            
+//          default: EmptyView()
           }
           
           if itemsManager.displayMode == .items {
@@ -115,7 +124,6 @@ struct RedditListingFeed<Header: View, Footer: View, S: Sorting>: View {
                 .id("loading-more-spinner-\(itemsManager.entities.count)")
             }
           }
-          
         }
         .listRowSeparator(.hidden)
         .listRowBackground(Color.clear)
@@ -131,30 +139,32 @@ struct RedditListingFeed<Header: View, Footer: View, S: Sorting>: View {
       .toolbar {
         ToolbarItem(placement: .topBarTrailing) {
           HStack {
-            Menu {
-              ForEach(Array(S.allCases), id: \.self) { opt in
-                if let children = opt.meta.children {
-                  Menu {
-                    ForEach(children, id: \.self.meta.apiValue) { child in
-                      if let val = child.valueWithParent as? S {
-                        Button(child.meta.label, systemImage: child.meta.icon) {
-                          itemsManager.sorting = val
+            if let currSort = itemsManager.sorting {
+              Menu {
+                ForEach(Array(S.allCases), id: \.self) { opt in
+                  if let children = opt.meta.children {
+                    Menu {
+                      ForEach(children, id: \.self.meta.apiValue) { child in
+                        if let val = child.valueWithParent as? S {
+                          Button(child.meta.label, systemImage: child.meta.icon) {
+                            itemsManager.sorting = val
+                          }
                         }
                       }
+                    } label: {
+                      Label(opt.meta.label, systemImage: opt.meta.icon)
                     }
-                  } label: {
-                    Label(opt.meta.label, systemImage: opt.meta.icon)
-                  }
-                } else {
-                  Button(opt.meta.label, systemImage: opt.meta.icon) {
-                    itemsManager.sorting = opt
+                  } else {
+                    Button(opt.meta.label, systemImage: opt.meta.icon) {
+                      itemsManager.sorting = opt
+                    }
                   }
                 }
+              } label: {
+                Image(systemName: currSort.meta.icon)
+                  .foregroundColor(Color.accentColor)
+                  .fontSize(17, .bold)
               }
-            } label: {
-              Image(systemName: itemsManager.sorting.meta.icon)
-                .foregroundColor(Color.accentColor)
-                .fontSize(17, .bold)
             }
             //          .disabled(subreddit.id == "saved")
             //        }
@@ -170,9 +180,30 @@ struct RedditListingFeed<Header: View, Footer: View, S: Sorting>: View {
       }
       .floatingMenu(subId: subreddit?.id, filters: shallowCachedFilters, selectedFilter: $itemsManager.selectedFilter)
       //    .onChange(of: itemsManager.selectedFilter) { searchEnabled = $1?.type != .custom }
+      .refreshable {
+        await itemsManager.fetchCaller(loadingMore: false)
+        if let subreddit {
+          await subreddit.fetchAndCacheFlairs()
+          fetchedFilters = true
+        }
+      }
+      .onChange(of: generalDefSettings.redditCredentialSelectedID) { _, _ in
+        withAnimation {
+          itemsManager.entities = []
+          itemsManager.displayMode = .loading
+        }
+        
+        Task {
+          await itemsManager.fetchCaller(loadingMore: false)
+          if let subreddit {
+            await subreddit.fetchAndCacheFlairs()
+            fetchedFilters = true
+          }
+        }
+      }
       .onChange(of: itemsManager.searchQuery.value) { itemsManager.displayMode = .loading }
       .onChange(of: subredditFeedDefSettings.chunkLoadSize) { itemsManager.chunkSize = $1 }
-      .task(id: [itemsManager.searchQuery.debounced, itemsManager.selectedFilter?.text, itemsManager.sorting.meta.apiValue]) {
+      .task(id: [itemsManager.searchQuery.debounced, itemsManager.selectedFilter?.text, itemsManager.sorting?.meta.apiValue]) {
         if itemsManager.displayMode != .loading { return }
         await itemsManager.fetchCaller(loadingMore: false)
         if let subreddit, !fetchedFilters {

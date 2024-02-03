@@ -9,8 +9,9 @@ import Foundation
 import Alamofire
 
 extension RedditAPI {
-  func fetchInbox() async -> [MessageData]? {
-    let params = FetchInboxPayload()
+  func fetchInbox(after: String = "", limit: Int) async -> [MessageData]? {
+    print(after)
+    let params = FetchInboxPayload(after: after, limit: limit)
     switch await self.doRequest("\(RedditAPI.redditApiURLBase)/message/inbox.json", method: .get, params: params, paramsLocation: .queryString, decodable: Listing<MessageData>.self) {
     case .success(let data):
       return data.data?.children?.map { $0.data }.compactMap { $0 }

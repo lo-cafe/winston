@@ -44,12 +44,24 @@ class GenericRedditEntity<T: GenericRedditEntityDataType, B: Hashable>: Identifi
   
   var winstonData: B? = nil
   var _id: String
+  
   var id: String {
     get {
       return self._id + self.kind
     }
     set {
       self._id = newValue
+    }
+  }
+  var fullname: String {
+    var actualTypePrefix = self.typePrefix ?? ""
+    if actualTypePrefix.hasSuffix("_") { actualTypePrefix = String(actualTypePrefix.dropLast()) }
+    if id.hasPrefix("\(actualTypePrefix)_") {
+        return id
+    } else if id.hasPrefix("_") {
+        return actualTypePrefix + id
+    } else {
+        return "\(actualTypePrefix)_\(id)"
     }
   }
   var loading = false
@@ -127,6 +139,17 @@ enum RedditEntityType: Hashable, Equatable, Identifiable {
   case comment(Comment)
   case user(User)
   case message(Message)
+  
+  var fullname: String {
+    switch self {
+    case .post(let x): x.fullname
+    case .subreddit(let x): x.fullname
+    case .multi(let x): x.fullname
+    case .comment(let x): x.fullname
+    case .user(let x): x.fullname
+    case .message(let x): x.fullname
+    }
+  }  
   
   var id: String {
     switch self {

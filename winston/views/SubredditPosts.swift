@@ -17,8 +17,8 @@ struct SubredditPosts: View, Equatable {
   @Environment(\.useTheme) private var selectedTheme
   @Environment(\.contentWidth) private var contentWidth
   
-  func caller(_ lastElementId: String?, _ sorting: SubListingSortOption, _ searchQuery: String?, _ flair: String?) async -> [RedditEntityType]? {
-    if let result = await subreddit.fetchPosts(sort: sorting, after: lastElementId, searchText: searchQuery, contentWidth: contentWidth, flair: flair), let posts = result.0 {
+  func caller(_ lastElementId: String?, _ sorting: SubListingSortOption?, _ searchQuery: String?, _ flair: String?) async -> [RedditEntityType]? {
+      if let sorting, let result = await subreddit.fetchPosts(sort: sorting, after: lastElementId, searchText: searchQuery, contentWidth: contentWidth, flair: flair), let posts = result.0 {
       return posts.map { RedditEntityType.post($0) }
     }
     return nil
