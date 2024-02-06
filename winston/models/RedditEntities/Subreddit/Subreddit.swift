@@ -194,11 +194,18 @@ extension Subreddit {
   }
   
   func fetchPosts(sort: SubListingSortOption = .best, after: String? = nil, searchText: String? = nil, contentWidth: CGFloat = .screenW, flair: String? = nil) async -> ([Post]?, String?)? {
-    if let response = await RedditAPI.shared.fetchSubPosts(data?.url ?? (id == "home" ? "" : id), sort: sort, after: after, searchText: searchText, flair: flair), let data = response.0 {
+    if let response = await RedditAPI.shared.searchInSubreddit(data?.url ?? (id == "home" ? "" : id), RedditAPI.AdvancedPostsSearch(subreddit: data?.url ?? (id == "home" ? "" : id), flairs: flair == nil ? nil : [flair!], searchQuery: searchText, sortOption: sort)), let data = response.0 {
       let posts = Post.initMultiple(datas: data.compactMap { $0.data }, sub: self, contentWidth: contentWidth)
 //      CachedFeedFilter
       Task { cacheFlairsFromPosts(posts) }
       return (posts, response.1)
+    }
+    return nil
+  }
+  
+  func fetchPinnedPosts() async -> [Post]? {
+    if let response = await RedditAPI.shared.fetchSubPosts(data?.url ?? (id == "home" ? "" : id), limit: 10, sort: .best, after: nil, searchText: nil, flair: nil), let data = response.0 {
+      return Post.initMultiple(datas: data.compactMap { $0.data?.stickied == true ? $0.data : nil }, sub: self, contentWidth: .screenW)
     }
     return nil
   }
@@ -212,7 +219,7 @@ extension Subreddit {
       
       var comments: [Comment] = []
       
-      let selectedTheme = await InMemoryTheme.shared.currentTheme
+      let selectedTheme = InMemoryTheme.shared.currentTheme
       
       let returnData: [Either<Post, Comment>]? = savedMediaData.map {
         switch $0 {

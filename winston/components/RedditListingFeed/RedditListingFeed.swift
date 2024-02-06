@@ -38,7 +38,6 @@ struct RedditListingFeed<Header: View, Footer: View, S: Sorting>: View {
   
   @FetchRequest private var filters: FetchedResults<CachedFilter>
   
-  
   @State private var searchEnabled: Bool
   @SilentState private var fetchedFilters: Bool = false
   
@@ -50,11 +49,56 @@ struct RedditListingFeed<Header: View, Footer: View, S: Sorting>: View {
   @Default(.PostLinkDefSettings) private var postLinkDefSettings
   @Default(.SubredditFeedDefSettings) private var feedDefSettings
   
+  func refetch() async {
+    Task {
+      withAnimation { itemsManager.loadingPinned = true }
+      if let pinnedPosts = await subreddit?.fetchPinnedPosts() {
+        itemsManager.pinnedPosts = pinnedPosts
+      }
+      withAnimation { itemsManager.loadingPinned = false }
+    }
+    
+    await itemsManager.fetchCaller(loadingMore: false)
+    if let subreddit, !fetchedFilters {
+      await subreddit.fetchAndCacheFlairs()
+      fetchedFilters = true
+    }
+  }
+  
+  @ViewBuilder
+  func getPinnedSection() -> some View {
+    if itemsManager.pinnedPosts.count > 0 || itemsManager.loadingPinned {
+      let isThereDivider = selectedTheme.postLinks.divider.style != .no
+      let paddingH = selectedTheme.postLinks.theme.outerHPadding
+      let paddingV = selectedTheme.postLinks.spacing / (isThereDivider ? 4 : 2)
+      Section("Pinned") {
+        if itemsManager.loadingPinned {
+          ProgressView().frame(maxWidth:.infinity, minHeight: 100)
+        } else {
+          ScrollView(.horizontal) {
+            HStack(spacing: 12) {
+              ForEach(itemsManager.pinnedPosts) { post in
+                  StickiedPostLink(post: post)
+              }
+            }
+            .padding(.horizontal, paddingH)
+          }
+          .listRowInsets(.zero)
+          .scrollIndicators(.hidden)
+        }
+      }
+      .listRowInsets(EdgeInsets(top: 0, leading: paddingH, bottom: 0, trailing: paddingH))
+      .listRowSeparator(.hidden)
+    }
+  }
+  
   var body: some View {
     let shallowCachedFilters = filters.map { $0.getShallow() }
     GeometryReader { geo in
       List {
         header()
+        
+        getPinnedSection()
         
         Group {
           switch itemsManager.displayMode {
@@ -70,6 +114,7 @@ struct RedditListingFeed<Header: View, Footer: View, S: Sorting>: View {
           case .error:
             Text("lamor")
           case .endOfFeed, .items:
+            
             Section {
               ForEach(Array(itemsManager.entities.enumerated()), id: \.element) { i, el in
                 Group {
@@ -84,6 +129,12 @@ struct RedditListingFeed<Header: View, Footer: View, S: Sorting>: View {
                         .environment(\.contextSubreddit, sub)
                         .environment(\.contextPostWinstonData, winstonData)
                         .listRowInsets(EdgeInsets(top: paddingV, leading: paddingH, bottom: paddingV, trailing: paddingH))
+                      
+                      if isThereDivider && (i != (itemsManager.entities.count - 1)) {
+                        NiceDivider(divider: selectedTheme.postLinks.divider)
+                          .id("\(post.id)-divider")
+                          .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
+                      }
                     }
                   case .subreddit(let sub): SubredditLink(sub: sub)
                   case .multi(_): EmptyView()
@@ -99,8 +150,17 @@ struct RedditListingFeed<Header: View, Footer: View, S: Sorting>: View {
                     .mask(RR(selectedTheme.postLinks.theme.cornerRadius, Color.black))
                   case .user(let user): UserLink(user: user)
                   case .message(let message):
+                    let isThereDivider = selectedTheme.postLinks.divider.style != .no
+                    let paddingH = selectedTheme.postLinks.theme.outerHPadding
+                    let paddingV = selectedTheme.postLinks.spacing / (isThereDivider ? 4 : 2)
                     MessageLink(message: message)
-                      .listRowInsets(EdgeInsets(top: 6, leading: 0, bottom: 6, trailing: 0))
+                      .listRowInsets(EdgeInsets(top: paddingV, leading: paddingH, bottom: paddingV, trailing: paddingH))
+                    
+                    if isThereDivider && (i != (itemsManager.entities.count - 1)) {
+                      NiceDivider(divider: selectedTheme.postLinks.divider)
+                        .id("\(message.id)-divider")
+                        .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
+                    }
                   }
                 }
                 .onAppear { Task { await itemsManager.iAppeared🥳(entity: el, index: i) } }
@@ -121,7 +181,7 @@ struct RedditListingFeed<Header: View, Footer: View, S: Sorting>: View {
             Section {
               ProgressView()
                 .frame(maxWidth: .infinity, minHeight: 150)
-                .id("loading-more-spinner-\(itemsManager.entities.count)")
+                .id(UUID())
             }
           }
         }
@@ -180,36 +240,20 @@ struct RedditListingFeed<Header: View, Footer: View, S: Sorting>: View {
       }
       .floatingMenu(subId: subreddit?.id, filters: shallowCachedFilters, selectedFilter: $itemsManager.selectedFilter)
       //    .onChange(of: itemsManager.selectedFilter) { searchEnabled = $1?.type != .custom }
-      .refreshable {
-        await itemsManager.fetchCaller(loadingMore: false)
-        if let subreddit {
-          await subreddit.fetchAndCacheFlairs()
-          fetchedFilters = true
-        }
-      }
+      .refreshable { await refetch() }
       .onChange(of: generalDefSettings.redditCredentialSelectedID) { _, _ in
         withAnimation {
           itemsManager.entities = []
           itemsManager.displayMode = .loading
         }
         
-        Task {
-          await itemsManager.fetchCaller(loadingMore: false)
-          if let subreddit {
-            await subreddit.fetchAndCacheFlairs()
-            fetchedFilters = true
-          }
-        }
+        Task { await refetch() }
       }
       .onChange(of: itemsManager.searchQuery.value) { itemsManager.displayMode = .loading }
       .onChange(of: subredditFeedDefSettings.chunkLoadSize) { itemsManager.chunkSize = $1 }
       .task(id: [itemsManager.searchQuery.debounced, itemsManager.selectedFilter?.text, itemsManager.sorting?.meta.apiValue]) {
         if itemsManager.displayMode != .loading { return }
-        await itemsManager.fetchCaller(loadingMore: false)
-        if let subreddit, !fetchedFilters {
-          await subreddit.fetchAndCacheFlairs()
-          fetchedFilters = true
-        }
+        await refetch()
       }
     }
   }

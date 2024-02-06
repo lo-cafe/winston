@@ -57,7 +57,6 @@ class Router: Hashable, Equatable, Identifiable {
     get { fullPath.isEmpty ? nil : fullPath[0] }
     set {
       if let newValue = newValue {
-        print(fullPath.count)
         if fullPath.count == 0 { fullPath.append(newValue) } else { fullPath[0] = newValue } } else { fullPath = [] }
     }
   }

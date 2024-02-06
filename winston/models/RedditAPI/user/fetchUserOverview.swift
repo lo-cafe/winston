@@ -9,7 +9,7 @@ import Foundation
 import Alamofire
 
 extension RedditAPI {
-  func fetchUserOverview(_ userName: String, _ dataTypeFilter: String? = nil, _ after: String? = nil) async -> [Either<PostData, CommentData>]? {
+  func fetchUserOverview(_ userName: String, _ dataTypeFilter: String? = nil, _ after: String? = nil) async -> ([Either<PostData, CommentData>]?, String?)? {
       var endpoint: String
 
       if let dataTypeFilter = dataTypeFilter, !dataTypeFilter.isEmpty {
@@ -38,7 +38,7 @@ extension RedditAPI {
 
     switch await self.doRequest(requestURL.absoluteString, method: .get, decodable: Listing<Either<PostData, CommentData>>.self)  {
       case .success(let data):
-        return data.data?.children?.map { $0.data }.compactMap { $0 }
+      return (data.data?.children?.map { $0.data }.compactMap { $0 }, data.data?.after)
       case .failure(let error):
         print(error)
         return nil

@@ -11,36 +11,44 @@ import Defaults
 
 extension RedditAPI {
   
-  func searchInSubreddit(_ subreddit: String, _ query: String) async -> [UserData]? {
-    let limit = Defaults[.SubredditFeedDefSettings].chunkLoadSize
-    let params = SearchInSubredditPayload(limit: limit, q: query)
-    switch await self.doRequest("\(RedditAPI.redditApiURLBase)/r/\(subreddit)/search", method: .get, params: params, paramsLocation: .queryString, decodable: Listing<UserData>.self)  {
-    case .success(let data):
-      return data.data?.children?.compactMap { $0.data }
-    case .failure(_):
-      return nil
+  func searchInSubreddit(_ subreddit: String, _ advanced: AdvancedPostsSearch) async -> ([ListingChild<PostData>]?, String?)? {
+    if let subName = SubMetaFormatter(name: subreddit).name {
+      switch await self.doRequest("\(RedditAPI.redditApiURLBase)/r/\(subName)/search.json", method: .get, params: advanced, paramsLocation: .queryString, decodable: Listing<PostData>.self)  {
+      case .success(let data):
+        return (data.data?.children, data.data?.after)
+      case .failure(_):
+        return nil
+      }
     }
-  }
-  
-  func searchInSubreddit(_ subreddit: String, _ advanced: AdvancedPostsSearch) async -> [UserData]? {
-    let limit = Defaults[.SubredditFeedDefSettings].chunkLoadSize
-    switch await self.doRequest("\(RedditAPI.redditApiURLBase)/r/\(subreddit)/search", method: .get, params: advanced, paramsLocation: .queryString, decodable: Listing<UserData>.self)  {
-    case .success(let data):
-      return data.data?.children?.compactMap { $0.data }
-    case .failure(_):
-      return nil
-    }
+    return nil
   }
   
  
   struct AdvancedPostsSearch: Encodable {
     let subreddit: String
     var flairs: [String]?
-    var searchQuery: String?
+    var searchQuery: String
     var restrictSr: String
     var sort: String
     var time: String
     var limit: String
+    
+    init(subreddit: String, flairs: [String]?, searchQuery: String? = nil, restrictSr: String = "true", sortOption: SubListingSortOption, limit: Int = Defaults[.SubredditFeedDefSettings].chunkLoadSize) {
+        self.subreddit = subreddit
+        self.flairs = flairs
+        self.searchQuery = searchQuery ?? "*"
+        self.restrictSr = restrictSr
+        self.limit = "\(limit)"
+        
+        switch sortOption {
+        case .best, .hot, .new, .controversial:
+            self.sort = sortOption.meta.apiValue
+            self.time = ""
+        case .top(let topOption):
+            self.sort = sortOption.meta.apiValue
+            self.time = topOption.meta.apiValue
+        }
+    }
     
     enum CodingKeys: String, CodingKey {
       case searchQuery = "q"
@@ -59,9 +67,9 @@ extension RedditAPI {
         let flairQueries = flairs.map { "flair:\"\($0)\"" }
         queryItems.append(contentsOf: flairQueries)
       }
-      if let searchQuery = searchQuery {
+//      if let searchQuery = searchQuery {
         queryItems.append(searchQuery)
-      }
+//      }
       let queryString = queryItems.joined(separator: " OR ")
       try container.encode(queryString, forKey: .searchQuery)
       

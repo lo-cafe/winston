@@ -12,27 +12,37 @@ struct EndOfFeedView: View {
   @State private var showAlert = false
 
   var body: some View {
-    ZStack {
-      Image("winstonEOF")
+    ZStack(alignment: .top) {
+      Image(.winstonEOF)
         .resizable()
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
         .aspectRatio(contentMode: .fill)
-        .onTapGesture {
-          self.handleTap()
-        }
+        .scaledToFill()
 
-      Text(QuirkyMessageUtil.quirkyEndOfFeed())
-        .font(.system(size: 16, weight: .bold))
-        .foregroundColor(.white)
-        .padding()
-        .background(Color.black.opacity(0.3))
-        .cornerRadius(10)
-        .multilineTextAlignment(.center)
-        .offset(y: 20)
-        .lineLimit(4)
-        .onTapGesture {
-          self.handleTap()
-        }
+      ZStack {
+        Text(QuirkyMessageUtil.quirkyEndOfFeed())
+          .fixedSize(horizontal: false, vertical: true)
+          .font(.system(size: 16, weight: .bold))
+          .foregroundColor(.white)
+          .padding()
+          .background(Color.black.opacity(0.3))
+          .background(Material.ultraThin)
+          .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+          .multilineTextAlignment(.center)
+          .lineLimit(4)
+      }
+      .padding()
+      .frame(maxWidth: .infinity)
     }
+    .overlay(Color.winstonEOFOverlay.opacity(0.5))
+    .frame(minWidth: 0, maxWidth: .infinity, minHeight: 150, maxHeight: 150, alignment: .center)
+//    .fixedSize()
+    .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
+    .onTapGesture {
+      self.handleTap()
+    }
+    .listRowInsets(EdgeInsets(top: 8, leading: 12, bottom: 8, trailing: 12))
+//    .padding(.horizontal, 24)
     .alert(isPresented: $showAlert) {
       Alert(
         title: Text("Secrets Unveiled"),

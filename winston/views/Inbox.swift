@@ -21,9 +21,11 @@ struct Inbox: View {
     self._router = .init(initialValue: router)
   }
   
-  func fetcher(_ after: String?, _ sorting: SubListingSortOption?, _ searchQuery: String?, _ flair: String?) async -> [RedditEntityType]? {
-    let data: [RedditEntityType]? = (await RedditAPI.shared.fetchInbox(after: after ?? "", limit: subredditFeedDefSettings.chunkLoadSize))?.map { .message(Message(data: $0)) }
-    return data
+  func fetcher(_ after: String?, _ sorting: SubListingSortOption?, _ searchQuery: String?, _ flair: String?) async -> ([RedditEntityType]?, String?)? {
+    if let result = await RedditAPI.shared.fetchInbox(after: after ?? "", limit: subredditFeedDefSettings.chunkLoadSize), let entities = result.0 {
+      return (entities.map { RedditEntityType.message(Message(data: $0)) }, result.1)
+    }
+    return nil
   }
   
   var body: some View {

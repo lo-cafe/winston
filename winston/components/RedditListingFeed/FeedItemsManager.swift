@@ -11,12 +11,14 @@ import Nuke
 
 @Observable
 class FeedItemsManager<S> {
-  typealias ItemsFetchFn = (_ lastElementId: String?, _ sorting: S?, _ searchQuery: String?, _ flair: String?) async -> [RedditEntityType]?
+  typealias ItemsFetchFn = (_ lastElementId: String?, _ sorting: S?, _ searchQuery: String?, _ flair: String?) async -> (entities: [RedditEntityType]?, after: String?)?
   
   enum DisplayMode: String { case loading, empty, items, endOfFeed, error }
   
   private var currentTask: Task<(), Never>? = nil
   var displayMode: DisplayMode = .loading
+  var loadingPinned = false
+  var pinnedPosts: [Post] = []
   var entities: [RedditEntityType] = []
   var loadedEntitiesIds: Set<String> = []
   var lastElementId: String? = nil
@@ -46,29 +48,41 @@ class FeedItemsManager<S> {
     let lastElementId = loadingMore ? self.lastElementId : nil
     let searchQuery = selectedFilter?.type == .custom ? selectedFilter?.text : searchQuery.debounced.isEmpty ? nil : searchQuery.debounced
     let filter = selectedFilter?.type != .custom ? selectedFilter?.text : nil
-    if let fetchedEntities = await fetchFn(lastElementId, sorting, searchQuery, filter) {
-      var newEntities = !loadingMore ? fetchedEntities : entities
-      var newLoadedEntitiesIds = !loadingMore ? [] : loadedEntitiesIds
-      var newLastElementId = !loadingMore ? nil : lastElementId
+
+    if let (fetchedEntities, after) = await fetchFn(lastElementId, sorting, searchQuery, filter), let fetchedEntities {
       
-      fetchedEntities.forEach { entity in
-        if !loadingMore || !loadedEntitiesIds.contains(entity.id) {
-          if loadingMore { newEntities.append(entity) }
-          newLoadedEntitiesIds.insert(entity.id)
+      if !loadingMore {
+        var newLoadedEntitiesIds = Set<String>()
+        fetchedEntities.forEach { ent in
+          newLoadedEntitiesIds.insert(ent.fullname)
         }
+        withAnimation {
+          displayMode = fetchedEntities.count == 0 ? .empty : fetchedEntities.count < chunkSize ? .endOfFeed : .items
+          entities = fetchedEntities
+//          self.lastElementId = fetchedEntities.count == 0 ? nil : fetchedEntities[fetchedEntities.count - 1].fullname
+          self.lastElementId = after
+          loadedEntitiesIds = newLoadedEntitiesIds
+        }
+        return
       }
       
-      if !newEntities.isEmpty {
-        let lastEl = newEntities[newEntities.count - 1]
-        newLastElementId = lastEl.fullname
-      }
+      var newLoadedEntitiesIds = loadedEntitiesIds
+      var newEntities = entities
       
+      fetchedEntities.forEach { ent in
+        if newLoadedEntitiesIds.contains(ent.fullname) { return }
+        newLoadedEntitiesIds.insert(ent.fullname)
+        newEntities.append(ent)
+      }
+                  
       withAnimation {
-        displayMode = newEntities.count > 0 ? newEntities.count < chunkSize ? .endOfFeed : .items : entities.count > 0 ? .endOfFeed : .empty
+        displayMode = fetchedEntities.count < chunkSize ? .endOfFeed : .items
         entities = newEntities
-        self.lastElementId = newLastElementId
+//        self.lastElementId = fetchedEntities.count == 0 ? nil : fetchedEntities[fetchedEntities.count - 1].fullname
+        self.lastElementId = after
         loadedEntitiesIds = newLoadedEntitiesIds
       }
+      
     } else {
       withAnimation {
         displayMode = .error
@@ -78,7 +92,7 @@ class FeedItemsManager<S> {
   }
   
   func iAppeared🥳(entity: RedditEntityType, index: Int) async {
-    if entities.count > 0, index >= entities.count - 7, currentTask == nil {
+    if displayMode != .endOfFeed, entities.count > 0, index >= entities.count - 7, currentTask == nil {
       self.currentTask = Task { await fetchCaller(loadingMore: true) }
     }
     

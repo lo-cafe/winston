@@ -29,50 +29,50 @@ struct UserView: View {
   
   //  @Environment(\.contentWidth) private var contentWidth
   
-  func refresh() async {
-    await user.refetchUser()
-    if let data = await user.refetchOverview(dataTypeFilter) {
-      await MainActor.run {
-        withAnimation {
-          loadingOverview = false
-          lastActivities = data
-        }
-      }
-      
-      await user.redditAPI.updateOverviewSubjectsWithAvatar(subjects: data, avatarSize: selectedTheme.postLinks.theme.badge.avatar.size)
-      
-      if let lastItem = data.last {
-        lastItemId = getItemId(for: lastItem)
-      }
-    }
-  }
+//  func refresh() async {
+//    await user.refetchUser()
+//    if let data = await user.refetchOverview(dataTypeFilter) {
+//      await MainActor.run {
+//        withAnimation {
+//          loadingOverview = false
+//          lastActivities = data
+//        }
+//      }
+//      
+//      await user.redditAPI.updateOverviewSubjectsWithAvatar(subjects: data, avatarSize: selectedTheme.postLinks.theme.badge.avatar.size)
+//      
+//      if let lastItem = data.last {
+//        lastItemId = getItemId(for: lastItem)
+//      }
+//    }
+//  }
   
-  func getNextData() {
-    Task {
-      if let lastId = lastItemId, let overviewData = await user.refetchOverview(dataTypeFilter, lastId) {
-        await MainActor.run {
-          withAnimation {
-            lastActivities?.append(contentsOf: overviewData)
-          }
-        }
-        
-        await user.redditAPI.updateOverviewSubjectsWithAvatar(subjects: overviewData, avatarSize: selectedTheme.postLinks.theme.badge.avatar.size)
-        
-        if let lastItem = overviewData.last {
-          lastItemId = getItemId(for: lastItem)
-        }
-      }
-    }
-  }
+//  func getNextData() {
+//    Task {
+//      if let lastId = lastItemId, let overviewData = await user.refetchOverview(dataTypeFilter, lastId) {
+//        await MainActor.run {
+//          withAnimation {
+//            lastActivities?.append(contentsOf: overviewData)
+//          }
+//        }
+//        
+//        await user.redditAPI.updateOverviewSubjectsWithAvatar(subjects: overviewData, avatarSize: selectedTheme.postLinks.theme.badge.avatar.size)
+//        
+//        if let lastItem = overviewData.last {
+//          lastItemId = getItemId(for: lastItem)
+//        }
+//      }
+//    }
+//  }
   
-  func fetcher(_ after: String?, _ sorting: SubListingSortOption?, _ searchQuery: String?, _ flair: String?) async -> [RedditEntityType]? {
-    if let overviewData = await user.refetchOverview(dataTypeFilter, after) {
+  func fetcher(_ after: String?, _ sorting: SubListingSortOption?, _ searchQuery: String?, _ flair: String?) async -> ([RedditEntityType]?, String?)? {
+    if let overviewDataResult = await user.refetchOverview(dataTypeFilter, after), let overviewData = overviewDataResult.0 {
       
       Task { await user.redditAPI.updateOverviewSubjectsWithAvatar(subjects: overviewData, avatarSize: selectedTheme.postLinks.theme.badge.avatar.size) }
       
       let newData: [RedditEntityType]? = overviewData.compactMap { if case .first(let post) = $0 { return .post(post) } else if case .second(let comment) = $0 { return .comment(comment) }; return nil }
       
-      return newData
+      return (newData, overviewDataResult.1)
     }
     return nil
   }

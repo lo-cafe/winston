@@ -442,6 +442,8 @@
 		ECC2C7B42AAB4A64000E196C /* ThemeEditPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECC2C7B32AAB4A64000E196C /* ThemeEditPanel.swift */; };
 		ECC2C7B72AAC90BD000E196C /* PostSample.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECC2C7B62AAC90BD000E196C /* PostSample.swift */; };
 		ECC38B672B18729D00609C87 /* maxRelative.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECC38B662B18729D00609C87 /* maxRelative.swift */; };
+		ECC3A2262B72041900CF1CC7 /* SubMetaFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECC3A2252B72041900CF1CC7 /* SubMetaFormatter.swift */; };
+		ECC3A2282B721CAB00CF1CC7 /* StickiedPostLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECC3A2272B721CAB00CF1CC7 /* StickiedPostLink.swift */; };
 		ECC68D492A7A9136005BC7B4 /* WDivider.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECC68D482A7A9136005BC7B4 /* WDivider.swift */; };
 		ECC68D4B2A7A9554005BC7B4 /* nsfw.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECC68D4A2A7A9554005BC7B4 /* nsfw.swift */; };
 		ECCB11812B5E19B7009881BE /* SilentState.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECCB11802B5E19B7009881BE /* SilentState.swift */; };
@@ -1010,6 +1012,8 @@
 		ECC2C7B32AAB4A64000E196C /* ThemeEditPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeEditPanel.swift; sourceTree = "<group>"; };
 		ECC2C7B62AAC90BD000E196C /* PostSample.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostSample.swift; sourceTree = "<group>"; };
 		ECC38B662B18729D00609C87 /* maxRelative.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = maxRelative.swift; sourceTree = "<group>"; };
+		ECC3A2252B72041900CF1CC7 /* SubMetaFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubMetaFormatter.swift; sourceTree = "<group>"; };
+		ECC3A2272B721CAB00CF1CC7 /* StickiedPostLink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StickiedPostLink.swift; sourceTree = "<group>"; };
 		ECC68D482A7A9136005BC7B4 /* WDivider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WDivider.swift; sourceTree = "<group>"; };
 		ECC68D4A2A7A9554005BC7B4 /* nsfw.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = nsfw.swift; sourceTree = "<group>"; };
 		ECCB11802B5E19B7009881BE /* SilentState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SilentState.swift; sourceTree = "<group>"; };
@@ -2084,6 +2088,7 @@
 				EC8F34782A6CE79B00EB8249 /* PostInBoxLink.swift */,
 				ECAA8B5F2A75216E00D9D636 /* ShortPostLink.swift */,
 				ECFB019E2B0D08420083E4FC /* MixedContentLink.swift */,
+				ECC3A2272B721CAB00CF1CC7 /* StickiedPostLink.swift */,
 			);
 			path = Links;
 			sourceTree = "<group>";
@@ -2297,6 +2302,7 @@
 				EC2760822B2ADFD100ADCE26 /* ConcurrentRunner.swift */,
 				ECDEBD1E2B31C8A200A8AC78 /* EasingFunction.swift */,
 				BBD6E9DA2B50F5D300901C1C /* Comment util.swift */,
+				ECC3A2252B72041900CF1CC7 /* SubMetaFormatter.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -2832,6 +2838,7 @@
 				65840EE82AE11BFD000315E1 /* exportImportSettings.swift in Sources */,
 				ECC2C7B22AAB48D1000E196C /* ThemesPanel.swift in Sources */,
 				ECAA8B892A764A3C00D9D636 /* YTMediaPost.swift in Sources */,
+				ECC3A2282B721CAB00CF1CC7 /* StickiedPostLink.swift in Sources */,
 				EC2A39152AC20155001E5354 /* PostLinkTitle.swift in Sources */,
 				EC8F349D2A6F988900EB8249 /* Placeholder.swift in Sources */,
 				EC60813A2B43FE24001A1077 /* preventWidowedLines.swift in Sources */,
@@ -2845,6 +2852,7 @@
 				EC3BC5EE2ACC22340050CA8F /* Gesturer.swift in Sources */,
 				EC7DBDEF2A846D0C00D7C123 /* save.swift in Sources */,
 				ECBD8E2F2ABBF49900C74E87 /* decodePostToCache.swift in Sources */,
+				ECC3A2262B72041900CF1CC7 /* SubMetaFormatter.swift in Sources */,
 				ECA30A1B2A604FD600BB19D1 /* unreadMessage.swift in Sources */,
 				ECF974452AA1788100C3BC75 /* closeSheetBtn.swift in Sources */,
 				EC200C882A7795BA00E69543 /* PostContent.swift in Sources */,

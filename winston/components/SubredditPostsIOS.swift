@@ -64,7 +64,7 @@ import NukeUI
 //              .listRowInsets(EdgeInsets(top: paddingV, leading: paddingH, bottom: paddingV, trailing: paddingH))
 //          }
 //          
-//          if selectedTheme.postLinks.divider.style != .no && (i != (posts.count - 1) || isFiltered) {
+//          if isThereDivider && (i != (posts.count - 1) || isFiltered) {
 //            NiceDivider(divider: selectedTheme.postLinks.divider)
 //              .id("\(post.id)-divider")
 //              .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))

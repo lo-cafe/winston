@@ -10,9 +10,8 @@ import Alamofire
 import Defaults
 
 extension RedditAPI {
-  func fetchSubPosts(_ id: String, sort: SubListingSortOption = .best, after: String? = nil, searchText: String? = nil, flair: String? = nil) async -> ([ListingChild<PostData>]?, String?)? {
+  func fetchSubPosts(_ id: String, limit: Int = Defaults[.SubredditFeedDefSettings].chunkLoadSize, sort: SubListingSortOption = .best, after: String? = nil, searchText: String? = nil, flair: String? = nil) async -> ([ListingChild<PostData>]?, String?)? {
       let subID = buildSubID(id, sort, after, searchText)
-      let limit = Defaults[.SubredditFeedDefSettings].chunkLoadSize
     let params = FetchSubPostsPayload(limit: limit, after: after, flair: flair)
       
       let urlString = "\(RedditAPI.redditApiURLBase)\(subID)".replacingOccurrences(of: " ", with: "%20")

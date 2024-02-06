@@ -9,12 +9,11 @@ import Foundation
 import Alamofire
 
 extension RedditAPI {
-  func fetchInbox(after: String = "", limit: Int) async -> [MessageData]? {
-    print(after)
+  func fetchInbox(after: String = "", limit: Int) async -> ([MessageData]?, String?)? {
     let params = FetchInboxPayload(after: after, limit: limit)
     switch await self.doRequest("\(RedditAPI.redditApiURLBase)/message/inbox.json", method: .get, params: params, paramsLocation: .queryString, decodable: Listing<MessageData>.self) {
     case .success(let data):
-      return data.data?.children?.map { $0.data }.compactMap { $0 }
+      return (data.data?.children?.map { $0.data }.compactMap { $0 }, data.data?.after)
     case .failure(let error):
       print(error)
       return nil
