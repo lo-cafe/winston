@@ -76,7 +76,7 @@ struct RedditListingFeed<Header: View, Footer: View, S: Sorting>: View {
           ProgressView().frame(maxWidth:.infinity, minHeight: 100)
         } else {
           ScrollView(.horizontal) {
-            HStack(spacing: 12) {
+            HStack(spacing: paddingV * 2) {
               ForEach(itemsManager.pinnedPosts) { post in
                   StickiedPostLink(post: post)
               }
@@ -87,7 +87,7 @@ struct RedditListingFeed<Header: View, Footer: View, S: Sorting>: View {
           .scrollIndicators(.hidden)
         }
       }
-      .listRowInsets(EdgeInsets(top: 0, leading: paddingH, bottom: 0, trailing: paddingH))
+      .listRowInsets(EdgeInsets(top: 0, leading: paddingH, bottom: paddingV, trailing: paddingH))
       .listRowSeparator(.hidden)
     }
   }
