@@ -44,7 +44,7 @@ class FeedItemsManager<S> {
     if !loadingMore, let currentTask, !currentTask.isCancelled {
       currentTask.cancel()
     }
-//    if displayMode != .loading { displayMode = .loading }
+
     let lastElementId = loadingMore ? self.lastElementId : nil
     let searchQuery = selectedFilter?.type == .custom ? selectedFilter?.text : searchQuery.debounced.isEmpty ? nil : searchQuery.debounced
     let filter = selectedFilter?.type != .custom ? selectedFilter?.text : nil
@@ -74,6 +74,8 @@ class FeedItemsManager<S> {
         newLoadedEntitiesIds.insert(ent.fullname)
         newEntities.append(ent)
       }
+      
+      
                   
       withAnimation {
         displayMode = fetchedEntities.count < chunkSize ? .endOfFeed : .items
@@ -84,9 +86,7 @@ class FeedItemsManager<S> {
       }
       
     } else {
-      withAnimation {
-        displayMode = .error
-      }
+      withAnimation { displayMode = .error }
     }
     self.currentTask = nil
   }

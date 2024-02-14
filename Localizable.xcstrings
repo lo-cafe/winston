@@ -2033,9 +2033,6 @@
         }
       }
     },
-    "lamor" : {
-
-    },
     "Large" : {
       "localizations" : {
         "de" : {
@@ -2185,6 +2182,9 @@
           }
         }
       }
+    },
+    "Manually reload" : {
+
     },
     "Many of you is not aware about our patreon, which has a 1U$ tier. If each of our testers would donate 1U$/month, it'd be more than enough to allow us to focus all our time on Winston and other amazing projects." : {
       "extractionState" : "stale",
@@ -3792,6 +3792,9 @@
       }
     },
     "There are two ways for doing that:" : {
+
+    },
+    "There was an error" : {
 
     },
     "There was an error importing this theme" : {

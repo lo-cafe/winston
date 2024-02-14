@@ -114,9 +114,7 @@ struct RedditListingFeed<Header: View, Footer: View, S: Sorting>: View {
             }
           case .empty:
             Text("abor")
-          case .error:
-            Text("lamor")
-          case .endOfFeed, .items:
+          case .error, .endOfFeed, .items:
             
             Section {
               ForEach(Array(itemsManager.entities.enumerated()), id: \.element) { i, el in
@@ -174,6 +172,26 @@ struct RedditListingFeed<Header: View, Footer: View, S: Sorting>: View {
             if itemsManager.displayMode == .endOfFeed {
               Section {
                 EndOfFeedView()
+              }
+            }
+            
+            if itemsManager.displayMode == .error {
+              Section {
+                VStack {
+                  Text("There was an error")
+                  
+                  Button("Manually reload", systemImage: "arrow.clockwise") {
+                    withAnimation {
+                      itemsManager.displayMode = .items
+                    }
+                    Task { await itemsManager.fetchCaller(loadingMore: true) }
+                  }
+                  .buttonStyle(.actionSecondary)
+                }
+                .frame(maxWidth: .infinity)
+                .compositingGroup()
+                .opacity(0.5)
+                .id("error-load-more-manual")
               }
             }
             

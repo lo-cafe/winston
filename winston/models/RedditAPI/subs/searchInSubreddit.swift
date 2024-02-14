@@ -32,8 +32,10 @@ extension RedditAPI {
     var sort: String
     var time: String
     var limit: String
+    var after: String
     
-    init(subreddit: String, flairs: [String]?, searchQuery: String? = nil, restrictSr: String = "true", sortOption: SubListingSortOption, limit: Int = Defaults[.SubredditFeedDefSettings].chunkLoadSize) {
+    init(after: String? = nil, subreddit: String, flairs: [String]?, searchQuery: String? = nil, restrictSr: String = "true", sortOption: SubListingSortOption, limit: Int = Defaults[.SubredditFeedDefSettings].chunkLoadSize) {
+        self.after = after ?? ""
         self.subreddit = subreddit
         self.flairs = flairs
         self.searchQuery = searchQuery ?? "*"
@@ -51,6 +53,7 @@ extension RedditAPI {
     }
     
     enum CodingKeys: String, CodingKey {
+      case after = "after"
       case searchQuery = "q"
       case restrictSr = "restrict_sr"
       case sort
@@ -73,6 +76,7 @@ extension RedditAPI {
       let queryString = queryItems.joined(separator: " OR ")
       try container.encode(queryString, forKey: .searchQuery)
       
+      try container.encode(after, forKey: .after)
       try container.encode(restrictSr, forKey: .restrictSr)
       try container.encode(sort, forKey: .sort)
       try container.encode(time, forKey: .time)
