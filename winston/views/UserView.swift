@@ -67,7 +67,6 @@ struct UserView: View {
   
   func fetcher(_ after: String?, _ sorting: SubListingSortOption?, _ searchQuery: String?, _ flair: String?) async -> ([RedditEntityType]?, String?)? {
     if let overviewDataResult = await user.refetchOverview(dataTypeFilter, after), let overviewData = overviewDataResult.0 {
-      
       Task { await user.redditAPI.updateOverviewSubjectsWithAvatar(subjects: overviewData, avatarSize: selectedTheme.postLinks.theme.badge.avatar.size) }
       
       let newData: [RedditEntityType]? = overviewData.compactMap { if case .first(let post) = $0 { return .post(post) } else if case .second(let comment) = $0 { return .comment(comment) }; return nil }
@@ -79,7 +78,7 @@ struct UserView: View {
   
   var body: some View {
     
-    RedditListingFeed(feedId: user.id, title: user.data?.name ?? "Loading...", theme: selectedTheme.lists.bg, fetch: fetcher, header: {
+    RedditListingFeed(feedId: user.fullname, title: user.data?.name ?? "Loading...", theme: selectedTheme.lists.bg, fetch: fetcher, header: {
       VStack(spacing: 16) {
         if let data = user.data {
           Group {
@@ -176,7 +175,11 @@ struct UserView: View {
       .transition(.opacity)
     }, disableSearch: true)
     .navigationBarTitleDisplayMode(.inline)
-    
+    .task {
+      if user.data == nil {
+        await user.refetchUser()
+      }
+    }
     //    List {
     //      if let data = user.data {
     //        Group {

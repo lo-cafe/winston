@@ -22,7 +22,8 @@ extension User {
   }
   
   func refetchOverview(_ dataTypeFilter: String? = nil, _ after: String? = nil) async -> ([Either<Post, Comment>]?, String?)? {
-    if let name = data?.name, let overviewDataResult = await RedditAPI.shared.fetchUserOverview(name, dataTypeFilter, after), let overviewData = overviewDataResult.0 {
+    let name = data?.name ?? data?.id ?? id
+    if let overviewDataResult = await RedditAPI.shared.fetchUserOverview(name, dataTypeFilter, after), let overviewData = overviewDataResult.0 {
       await MainActor.run {
         self.loading = false
       }
