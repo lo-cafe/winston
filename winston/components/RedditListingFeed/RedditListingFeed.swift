@@ -78,7 +78,7 @@ struct RedditListingFeed<Header: View, Footer: View, S: Sorting>: View {
           ScrollView(.horizontal) {
             LazyHStack(spacing: paddingV * 2) {
               ForEach(itemsManager.pinnedPosts) { post in
-                  StickiedPostLink(post: post)
+                StickiedPostLink(post: post)
               }
             }
             .scrollTargetLayout()
@@ -113,7 +113,8 @@ struct RedditListingFeed<Header: View, Footer: View, S: Sorting>: View {
                 .id(UUID())
             }
           case .empty:
-            Text("abor")
+            Text("Nothing around here :(")
+              .frame(maxWidth: .infinity)
           case .error, .endOfFeed, .items:
             
             Section {
@@ -149,6 +150,12 @@ struct RedditListingFeed<Header: View, Footer: View, S: Sorting>: View {
                     }
                     .background(PostLinkBG(theme: selectedTheme.postLinks.theme, stickied: false, secondary: false))
                     .mask(RR(selectedTheme.postLinks.theme.cornerRadius, Color.black))
+                    .allowsHitTesting(false)
+                    .onTapGesture {
+                      if let data = comment.data, let link_id = data.link_id, let subID = data.subreddit {
+                        Nav.to(.reddit(.postHighlighted(Post(id: link_id, subID: subID), comment.id)))
+                      }
+                    }
                   case .user(let user): UserLink(user: user)
                   case .message(let message):
                     let isThereDivider = selectedTheme.postLinks.divider.style != .no
@@ -195,7 +202,7 @@ struct RedditListingFeed<Header: View, Footer: View, S: Sorting>: View {
               }
             }
             
-//          default: EmptyView()
+            //          default: EmptyView()
           }
           
           if itemsManager.displayMode == .items {
