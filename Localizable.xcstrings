@@ -395,9 +395,6 @@
         }
       }
     },
-    "abor" : {
-
-    },
     "About" : {
       "localizations" : {
         "de" : {
@@ -2476,6 +2473,9 @@
 
     },
     "No filtered posts" : {
+
+    },
+    "Nothing around here :(" : {
 
     },
     "Now paste it here:" : {
