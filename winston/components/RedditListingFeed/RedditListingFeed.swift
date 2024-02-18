@@ -50,12 +50,14 @@ struct RedditListingFeed<Header: View, Footer: View, S: Sorting>: View {
   @Default(.SubredditFeedDefSettings) private var feedDefSettings
   
   func refetch() async {
-    Task {
-      withAnimation { itemsManager.loadingPinned = true }
-      if let pinnedPosts = await subreddit?.fetchPinnedPosts() {
-        itemsManager.pinnedPosts = pinnedPosts
+    if let subreddit, !feedsAndSuch.contains(subreddit.id) {
+      Task {
+        withAnimation { itemsManager.loadingPinned = true }
+        if let pinnedPosts = await subreddit.fetchPinnedPosts() {
+          itemsManager.pinnedPosts = pinnedPosts
+        }
+        withAnimation { itemsManager.loadingPinned = false }
       }
-      withAnimation { itemsManager.loadingPinned = false }
     }
     
     await itemsManager.fetchCaller(loadingMore: false)
