@@ -108,7 +108,7 @@ struct AccountSwitcherProvider<Content: View>: View {
           .zIndex(1)
         
         if let screenshot = transmitter.screenshot {
-          Image(uiImage: screenshot).resizable().frame(.screenSize)
+          Image(uiImage: screenshot).frame(.screenSize)
             .blur(radius: accTransKit.focusCloser ? 15 : transmitter.showing ? 10 : 0)
           //            .offset(x: accTransKit.passLens ? (parallaxW * (accTransKit.willLensHeadLeft ? -1 : 1)) : 0)
             .background(.black)
@@ -117,7 +117,7 @@ struct AccountSwitcherProvider<Content: View>: View {
             .saturation(accTransKit.focusCloser ? 2 : transmitter.showing ? 1.75 : 1)
             .transition(.identity)
             .zIndex(2)
-            .drawingGroup()
+//            .drawingGroup()
             .allowsHitTesting(false)
         }
       }
