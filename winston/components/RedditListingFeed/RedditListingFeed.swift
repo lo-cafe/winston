@@ -69,7 +69,7 @@ struct RedditListingFeed<Header: View, Footer: View, S: Sorting>: View {
   
   @ViewBuilder
   func getPinnedSection() -> some View {
-    if itemsManager.pinnedPosts.count > 0 || itemsManager.loadingPinned {
+    if itemsManager.displayMode != .loading, itemsManager.pinnedPosts.count > 0 || itemsManager.loadingPinned {
       let isThereDivider = selectedTheme.postLinks.divider.style != .no
       let paddingH = selectedTheme.postLinks.theme.outerHPadding
       let paddingV = selectedTheme.postLinks.spacing / (isThereDivider ? 4 : 2)
@@ -94,6 +94,7 @@ struct RedditListingFeed<Header: View, Footer: View, S: Sorting>: View {
       }
       .listRowInsets(EdgeInsets(top: 0, leading: paddingH, bottom: 0, trailing: paddingH))
       .listRowSeparator(.hidden)
+      .listRowBackground(Color.clear)
     }
   }
   
