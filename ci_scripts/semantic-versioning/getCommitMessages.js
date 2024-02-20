@@ -1,8 +1,9 @@
-const { exec } = require("child_process");
+import { exec } from "child_process";
 
 // Function to execute git commands
 function executeGitCommand(command, callback) {
-  exec(command, (error, stdout, stderr) => {
+  exec(command, { maxBuffer: 1024 * 1024 * 10 }, (error, stdout, stderr) => {
+    // Increase maxBuffer for large outputs
     if (error) {
       console.error(`exec error: ${error}`);
       callback(error, null);
@@ -19,8 +20,11 @@ function executeGitCommand(command, callback) {
 function organizeCommitsByPrefix(commitMessages) {
   const organizedCommits = {};
 
-  commitMessages.forEach((commitMessage) => {
-    const match = commitMessage.match(
+  commitMessages.forEach((rawCommit) => {
+    const [firstLine, description] = rawCommit
+      .split("---DETAILS---")
+      .map((part) => part.trim());
+    const match = firstLine.match(
       /^(feat|fix|docs|style|refactor|test|chore)(?:\((.*)\))?:(.*)$/,
     );
     if (match) {
@@ -28,13 +32,20 @@ function organizeCommitsByPrefix(commitMessages) {
       if (!organizedCommits[type]) {
         organizedCommits[type] = [];
       }
-      organizedCommits[type].push({ scope, subject: subject.trim() });
+      organizedCommits[type].push({
+        scope,
+        subject: subject.trim(),
+        description: description || "",
+      });
     } else {
       // Handle commits without a known prefix
       if (!organizedCommits["others"]) {
         organizedCommits["others"] = [];
       }
-      organizedCommits["others"].push({ subject: commitMessage.trim() });
+      organizedCommits["others"].push({
+        subject: firstLine.trim(),
+        description: description || "",
+      });
     }
   });
 
@@ -42,7 +53,7 @@ function organizeCommitsByPrefix(commitMessages) {
 }
 
 // Main function
-function generateCommitReport() {
+export default function generateCommitReport(cb) {
   // First, find the last tag name
   executeGitCommand("git describe --tags --abbrev=0", (error, lastTagName) => {
     if (error) {
@@ -50,25 +61,24 @@ function generateCommitReport() {
       return;
     }
 
-    // Then, retrieve commit messages since the last tag
+    // Then, retrieve commit messages since the last tag including descriptions
     executeGitCommand(
-      `git log ${lastTagName}..HEAD --pretty=format:"%s"`,
+      `git log ${lastTagName}..HEAD --pretty=format:"%s---DETAILS---%n%b---COMMITEND---"`,
       (error, stdout) => {
         if (error) {
           console.log("Could not retrieve commit messages.");
           return;
         }
 
+        // Splitting commits using a custom delimiter ("---COMMITEND---")
+        const commitDelim = "---COMMITEND---";
         const commitMessages = stdout
-          .split("\n")
+          .split(commitDelim)
           .filter((msg) => msg.trim() !== "");
         const organizedCommits = organizeCommitsByPrefix(commitMessages);
 
-        console.log(JSON.stringify(organizedCommits, null, 2));
+        if (cb) cb(organizedCommits);
       },
     );
   });
 }
-
-// Execute the main function
-generateCommitReport();

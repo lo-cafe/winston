@@ -98,3 +98,4 @@ iOSInjectionProject/
 node_modules/
 
 .parcel-cache/
+.env
