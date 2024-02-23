@@ -1,0 +1,9 @@
+{
+  "branches": [
+    { "name": "main" },
+    { "name": "beta", "label": "beta" },
+    { "name": "alpha", "label": "alpha" }
+  ],
+  "companyBundleId": "lo.cafe",
+  "targets": ["winston", "winston-everywhere"]
+}

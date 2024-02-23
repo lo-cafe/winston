@@ -45,12 +45,16 @@ async function fetchChatCompletion(prompt) {
 }
 
 export default async function processItems(items) {
+  if (!OPENAI_API_KEY) {
+    return items.map((item) => ({ ...item, icon: "star.fill" }));
+  }
   return Promise.all(
     items.map(async (item) => {
       try {
         const generalPrompt = `Generate one single suggestion. Don't say anything except the single suggestion. Don't wrap the suggestion in quotes.`;
-        const subjectPrompt = `Generate a short, user-friendly new feature title based on the following feature commit message: "${item.subject}". I want just the title, WITHOUT any announcement like "New feature:" in the beggining of the phrase. ${generalPrompt}`;
-        const descriptionPrompt = `Rewrite the following feature commit message description to be short, user - friendly: "${item.description.length < 5 ? item.subject : item.description}".${generalPrompt} `;
+        const textGeneralPrompt = `We only need the actual information, WITHOUT any announcement like "New feature:" in the beggining of the phrase.`;
+        const subjectPrompt = `Generate a short, user-friendly new feature title based on the following feature commit message: "${item.subject}". ${textGeneralPrompt} ${generalPrompt}`;
+        const descriptionPrompt = `Rewrite the following feature commit message description to be short, user-friendly: "${item.description.length < 5 ? item.subject : item.description}". ${textGeneralPrompt} ${generalPrompt} `;
         const iconPrompt = `Given a feature about "${item.subject}", suggest an appropriate icon name from the SF Symbols collection.${generalPrompt} `;
 
         const subjectProm = fetchChatCompletion(subjectPrompt);
@@ -71,11 +75,3 @@ export default async function processItems(items) {
     }),
   );
 }
-
-const items = [
-  {
-    subject: "adding new btn for creating new post",
-    description:
-      "adds a new fab in posts feed that enables many actions including post creation",
-  },
-];

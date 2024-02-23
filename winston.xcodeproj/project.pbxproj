@@ -87,6 +87,9 @@
 		EC0854432A4D6A4800E88389 /* MasterButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC0854422A4D6A4800E88389 /* MasterButton.swift */; };
 		EC0854482A4D6E8C00E88389 /* getInitialSize.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC0854472A4D6E8C00E88389 /* getInitialSize.swift */; };
 		EC08544A2A4D6EAE00E88389 /* blurTransitions.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC0854492A4D6EAE00E88389 /* blurTransitions.swift */; };
+		EC0F860C2B86354B00014234 /* prod-changelog.json in Resources */ = {isa = PBXBuildFile; fileRef = EC0F860B2B86354B00014234 /* prod-changelog.json */; };
+		EC0F860E2B86355300014234 /* beta-changelog.json in Sources */ = {isa = PBXBuildFile; fileRef = EC0F860D2B86355300014234 /* beta-changelog.json */; };
+		EC0F86102B86356400014234 /* alpha-changelog.json in Resources */ = {isa = PBXBuildFile; fileRef = EC0F860F2B86356400014234 /* alpha-changelog.json */; };
 		EC12D7182A59C7A800C300B3 /* Arrows.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC12D7172A59C7A800C300B3 /* Arrows.swift */; };
 		EC12D71A2A59C81A00C300B3 /* CommentLinkContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC12D7192A59C81A00C300B3 /* CommentLinkContent.swift */; };
 		EC1312A52AB50C6800C95D3A /* PostTextsTheming.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC1312A42AB50C6700C95D3A /* PostTextsTheming.swift */; };
@@ -671,6 +674,9 @@
 		EC0854422A4D6A4800E88389 /* MasterButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MasterButton.swift; sourceTree = "<group>"; };
 		EC0854472A4D6E8C00E88389 /* getInitialSize.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = getInitialSize.swift; sourceTree = "<group>"; };
 		EC0854492A4D6EAE00E88389 /* blurTransitions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = blurTransitions.swift; sourceTree = "<group>"; };
+		EC0F860B2B86354B00014234 /* prod-changelog.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "prod-changelog.json"; sourceTree = "<group>"; };
+		EC0F860D2B86355300014234 /* beta-changelog.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "beta-changelog.json"; sourceTree = "<group>"; };
+		EC0F860F2B86356400014234 /* alpha-changelog.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "alpha-changelog.json"; sourceTree = "<group>"; };
 		EC12D7172A59C7A800C300B3 /* Arrows.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Arrows.swift; sourceTree = "<group>"; };
 		EC12D7192A59C81A00C300B3 /* CommentLinkContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentLinkContent.swift; sourceTree = "<group>"; };
 		EC1312A42AB50C6700C95D3A /* PostTextsTheming.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostTextsTheming.swift; sourceTree = "<group>"; };
@@ -1247,6 +1253,16 @@
 			path = RedditAPI;
 			sourceTree = "<group>";
 		};
+		EC0F860A2B86353700014234 /* changelogs */ = {
+			isa = PBXGroup;
+			children = (
+				EC0F860B2B86354B00014234 /* prod-changelog.json */,
+				EC0F860D2B86355300014234 /* beta-changelog.json */,
+				EC0F860F2B86356400014234 /* alpha-changelog.json */,
+			);
+			path = changelogs;
+			sourceTree = "<group>";
+		};
 		EC12D7162A59C79500C300B3 /* CommentLink */ = {
 			isa = PBXGroup;
 			children = (
@@ -1600,6 +1616,7 @@
 		EC593ACB2A4673B2002D6454 = {
 			isa = PBXGroup;
 			children = (
+				EC0F860A2B86353700014234 /* changelogs */,
 				EC6495AA2A99A52800B1852C /* managed */,
 				ECA30A152A5FA06D00BB19D1 /* TestFlight */,
 				EC22A3152A5B74AC0062A112 /* ci_scripts */,
@@ -2682,9 +2699,11 @@
 				EC60812E2B43C2F5001A1077 /* doorlock.json in Resources */,
 				EC421D4B2B4B82DD0038C27A /* error-appear.json in Resources */,
 				65C3A1C72B136430004609CA /* InfoPlist.strings in Resources */,
+				EC0F860C2B86354B00014234 /* prod-changelog.json in Resources */,
 				EC982A382B4A6BE200FFE582 /* confetti.json in Resources */,
 				EC6081342B43F4F6001A1077 /* checkmark.json in Resources */,
 				ECED2EB72B282AAF00F4D25F /* particle.mov in Resources */,
+				EC0F86102B86356400014234 /* alpha-changelog.json in Resources */,
 				EC4792F12B468AA000487AEE /* list.json in Resources */,
 				EC593ADC2A4673B3002D6454 /* Assets.xcassets in Resources */,
 				EC6CBE332A7D6BF80089EAA0 /* README.md in Resources */,
@@ -2816,6 +2835,7 @@
 				EC8F34662A6A348F00EB8249 /* SwipeActions.swift in Sources */,
 				EC4792E52B452F1B00487AEE /* EditCredentialProfile.swift in Sources */,
 				EC3188252A92F42800CB3738 /* MultiLink.swift in Sources */,
+				EC0F860E2B86355300014234 /* beta-changelog.json in Sources */,
 				652011FA2AC2C46C005DD899 /* themeStore.swift in Sources */,
 				ECAA8B5A2A75004300D9D636 /* redditURLParser.swift in Sources */,
 				EC63735D2A791E47000A03A3 /* Onboarding7Ending.swift in Sources */,
@@ -3354,7 +3374,7 @@
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_ENTITLEMENTS = winston/winston.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 555;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = Z2NNLU4F7U;
 				ENABLE_PREVIEWS = NO;
 				FRAMEWORK_SEARCH_PATHS = "$(SRCROOT)/**";
@@ -3383,6 +3403,7 @@
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "";
 			};
 			name = Beta;
 		};
@@ -3405,7 +3426,7 @@
 					"@executable_path/../../Frameworks",
 				);
 				LIBRARY_SEARCH_PATHS = "";
-				MARKETING_VERSION = 1.1.3;
+				MARKETING_VERSION = 1.1.4;
 				OTHER_LDFLAGS = (
 					"-framework",
 					SafariServices,
@@ -3493,7 +3514,7 @@
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_ENTITLEMENTS = winston/winston.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 5551;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = Z2NNLU4F7U;
 				ENABLE_PREVIEWS = NO;
 				FRAMEWORK_SEARCH_PATHS = "$(SRCROOT)/**";
@@ -3522,6 +3543,7 @@
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "";
 			};
 			name = Alpha;
 		};
@@ -3544,7 +3566,7 @@
 					"@executable_path/../../Frameworks",
 				);
 				LIBRARY_SEARCH_PATHS = "";
-				MARKETING_VERSION = 1.1.3;
+				MARKETING_VERSION = 1.1.4;
 				OTHER_LDFLAGS = (
 					"-framework",
 					SafariServices,
@@ -3632,7 +3654,7 @@
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_ENTITLEMENTS = winston/winston.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 535;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = Z2NNLU4F7U;
 				ENABLE_PREVIEWS = NO;
 				FRAMEWORK_SEARCH_PATHS = "$(SRCROOT)/**";
@@ -3661,6 +3683,7 @@
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "";
 			};
 			name = Debug;
 		};
@@ -3683,7 +3706,7 @@
 					"@executable_path/../../Frameworks",
 				);
 				LIBRARY_SEARCH_PATHS = "";
-				MARKETING_VERSION = 1.1.3;
+				MARKETING_VERSION = 1.1.4;
 				OTHER_LDFLAGS = (
 					"-framework",
 					SafariServices,
@@ -3771,7 +3794,7 @@
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_ENTITLEMENTS = winston/winston.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 532;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = Z2NNLU4F7U;
 				ENABLE_PREVIEWS = NO;
 				FRAMEWORK_SEARCH_PATHS = "$(SRCROOT)/**";
@@ -3793,13 +3816,14 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.1.3;
+				MARKETING_VERSION = 1.2.3;
 				PRODUCT_BUNDLE_IDENTIFIER = lo.cafe.winston;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SCAN_ALL_SOURCE_FILES_FOR_INCLUDES = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "";
 			};
 			name = Prod;
 		};
@@ -3822,7 +3846,7 @@
 					"@executable_path/../../Frameworks",
 				);
 				LIBRARY_SEARCH_PATHS = "";
-				MARKETING_VERSION = 1.1.3;
+				MARKETING_VERSION = 1.1.4;
 				OTHER_LDFLAGS = (
 					"-framework",
 					SafariServices,

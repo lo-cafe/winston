@@ -5,13 +5,15 @@
   "main": "getCommitMessages.js",
   "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "pipeline": "node src/index.js"
   },
   "author": "lo.cafe",
   "license": "ISC",
   "dependencies": {
+    "compare-versions": "^6.1.0",
     "dotenv": "^16.4.5",
     "openai": "^4.28.0",
-    "semver": "^7.6.0"
+    "semver": "^7.6.0",
+    "xcode": "^3.0.1"
   }
 }
