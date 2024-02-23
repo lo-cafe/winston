@@ -1,8 +1,9 @@
 {
   "branches": [
     { "name": "main" },
-    { "name": "beta", "label": "beta" },
-    { "name": "alpha", "label": "alpha" }
+    { "name": "versioning", "preReleaseLabel": "beta" },
+    { "name": "alpha", "preReleaseLabel": "alpha" },
+    { "name": "debug", "preReleaseLabel": "debug", "versionate": false }
   ],
   "companyBundleId": "lo.cafe",
   "targets": ["winston", "winston-everywhere"]

@@ -1,9 +1,6 @@
 lockfileVersion: '6.0'
 
 dependencies:
-  compare-versions:
-    specifier: ^6.1.0
-    version: 6.1.0
   dotenv:
     specifier: ^16.4.5
     version: 16.4.5
@@ -90,10 +87,6 @@ packages:
     engines: {node: '>= 0.8'}
     dependencies:
       delayed-stream: 1.0.0
-    dev: false
-
-  /compare-versions@6.1.0:
-    resolution: {integrity: sha512-LNZQXhqUvqUTotpZ00qLSaify3b4VFD588aRr8MKFw4CMUr98ytzCW5wDH5qx/DEY5kCDXcbcRuCqL0szEf2tg==}
     dev: false
 
   /crypt@0.0.2:
