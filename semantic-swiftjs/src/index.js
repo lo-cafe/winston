@@ -42,6 +42,7 @@ executeGitCommand("git branch --show-current", (_, currBranch) => {
     const project = xcode.project(projectPath).parse(async () => {
       const configSection = project.pbxXCBuildConfigurationSection()
       const versionsObj = {}
+      const buildVersionsObj = {}
       Object.keys(configSection).forEach((key) => {
         const bundleId = removeQuotes(
           configSection[key].buildSettings && configSection[key].buildSettings.PRODUCT_BUNDLE_IDENTIFIER
@@ -52,6 +53,13 @@ executeGitCommand("git branch --show-current", (_, currBranch) => {
 
           if (config.targets.includes(bundleIdSuffix)) {
             preReleaseLabel = ""
+          }
+
+          buildVersionsObj[bundleId] = {
+            buildVersion: configSection[key].buildSettings.CURRENT_PROJECT_VERSION,
+            setBuildVersion: (newVer) => {
+              configSection[key].buildSettings.CURRENT_PROJECT_VERSION = newVer
+            },
           }
 
           versionsObj[bundleId] = {
@@ -88,12 +96,7 @@ executeGitCommand("git branch --show-current", (_, currBranch) => {
 
       if (newVersion === currentVersion) return
 
-      // console.log("asaq")
       const formattedReport = await processItems(report.feat)
-      // console.log("asa")
-      // console.log(formattedReport)
-      // const formattedReport = report
-      // console.log(report)
 
       const currVer = Object.values(versionsObj).find(
         (x) => x.preReleaseLabel == branchConfig.preReleaseLabel
@@ -113,6 +116,12 @@ executeGitCommand("git branch --show-current", (_, currBranch) => {
         }
       })
 
+      const highestBuildVersion = Math.max(...Object.values(buildVersionsObj).map((x) => x.buildVersion))
+
+      Object.values(buildVersionsObj).forEach((x) => {
+        x.setBuildVersion(highestBuildVersion + 1)
+      })
+
       fs.writeFileSync(projectPath, project.writeSync())
       console.log("new project written")
     })
@@ -124,10 +133,10 @@ function writeReportToChangelog(report, newVersion, preReleaseLabel) {
   const fileContent = fs.readFileSync(changelogFile)
   const changelog = JSON.parse(fileContent)
   const foundChangelogIndex = changelog.findIndex((x) => x.version === newVersion)
-  if (foundChangelogIndex) {
+  if (foundChangelogIndex !== -1) {
     changelog[foundChangelogIndex] = { version: newVersion, report }
   } else {
-    changelog.push({ version: newVersion, report })
+    changelog.unshift({ version: newVersion, report })
   }
   fs.writeFileSync(changelogFile, JSON.stringify(changelog))
 }
