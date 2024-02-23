@@ -270,6 +270,7 @@
 		EC593B922A494E7F002D6454 /* defaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC593B912A494E7F002D6454 /* defaults.swift */; };
 		EC5A1E432B178FF800EBBE96 /* calculateDistance.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC5A1E422B178FF800EBBE96 /* calculateDistance.swift */; };
 		EC5A1E452B1790B300EBBE96 /* vibrate.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC5A1E442B1790B300EBBE96 /* vibrate.swift */; };
+		EC5EA3EA2B88FB7A004BDE14 /* semantic-swiftjs in Resources */ = {isa = PBXBuildFile; fileRef = EC5EA3E92B88FB7A004BDE14 /* semantic-swiftjs */; };
 		EC5EDA712A4DA94A00140A08 /* SwipeActionsOld.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC5EDA702A4DA94A00140A08 /* SwipeActionsOld.swift */; };
 		EC5EDA732A4E8EC400140A08 /* fetchSub.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC5EDA722A4E8EC400140A08 /* fetchSub.swift */; };
 		EC5EDA752A4E937700140A08 /* GenericRedditEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC5EDA742A4E937700140A08 /* GenericRedditEntity.swift */; };
@@ -852,6 +853,7 @@
 		EC593B912A494E7F002D6454 /* defaults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = defaults.swift; sourceTree = "<group>"; };
 		EC5A1E422B178FF800EBBE96 /* calculateDistance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = calculateDistance.swift; sourceTree = "<group>"; };
 		EC5A1E442B1790B300EBBE96 /* vibrate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = vibrate.swift; sourceTree = "<group>"; };
+		EC5EA3E92B88FB7A004BDE14 /* semantic-swiftjs */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "semantic-swiftjs"; sourceTree = "<group>"; };
 		EC5EDA702A4DA94A00140A08 /* SwipeActionsOld.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwipeActionsOld.swift; sourceTree = "<group>"; };
 		EC5EDA722A4E8EC400140A08 /* fetchSub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = fetchSub.swift; sourceTree = "<group>"; };
 		EC5EDA742A4E937700140A08 /* GenericRedditEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericRedditEntity.swift; sourceTree = "<group>"; };
@@ -1600,6 +1602,7 @@
 		EC593ACB2A4673B2002D6454 = {
 			isa = PBXGroup;
 			children = (
+				EC5EA3E92B88FB7A004BDE14 /* semantic-swiftjs */,
 				EC6495AA2A99A52800B1852C /* managed */,
 				ECA30A152A5FA06D00BB19D1 /* TestFlight */,
 				EC22A3152A5B74AC0062A112 /* ci_scripts */,
@@ -2696,6 +2699,7 @@
 				EC4792F32B468ACF00487AEE /* search.json in Resources */,
 				EC4792F52B468ADA00487AEE /* gear.json in Resources */,
 				EC4792EF2B4689D200487AEE /* user.json in Resources */,
+				EC5EA3EA2B88FB7A004BDE14 /* semantic-swiftjs in Resources */,
 				65E45A6E2AFD3C1D007DBBFC /* changelog.json in Resources */,
 				ECA3700B2B47D68900C73CB0 /* auth-ext.mov in Resources */,
 				EC6081382B43FAA8001A1077 /* thumbup.json in Resources */,
