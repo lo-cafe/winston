@@ -29,6 +29,7 @@ jobs:
 
       - name: Run npm
         run: |
+          set -e  # Exit immediately if a command exits with a non-zero status.
           cd /home/runner/work/winston/winston/semantic-swiftjs/
           npm ci && npm run pipeline
 
