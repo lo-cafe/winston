@@ -25,6 +25,7 @@ jobs:
         with:
           node-version: "20.x"
           cache: "npm"
+          cache-dependency-path: /home/runner/work/semantic-swiftjs/winston/package-lock.json
       - run: npm ci
       - run: npm run pipeline
 
