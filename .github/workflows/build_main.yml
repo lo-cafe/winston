@@ -9,7 +9,7 @@ on:
       - main
       - beta
       - alpha
-      - versioning # When TESTING always push to this branch in FORK!!
+      - versioning # When TESTING always push to this branch in FORK!! test
   workflow_dispatch:
 
 jobs:
