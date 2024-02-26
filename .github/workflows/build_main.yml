@@ -1,7 +1,7 @@
 name: Build winston
 permissions:
-    contents: write
-    pull-requests: write
+  contents: write
+  pull-requests: write
 
 on:
   push:
@@ -9,6 +9,7 @@ on:
       - main
       - beta
       - alpha
+      - versioning # When TESTING always push to this branch in FORK!!
   workflow_dispatch:
 
 jobs:
@@ -19,16 +20,11 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set cache-dependency-path environment variablget_cdp
-        id: get_cdp
-        run: echo "::set-output name=CDP::$(realpath $(pwd)/../../semantic-swiftjs/package-lock.json)" ## TODO: Doesnt work
-
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
         with:
           node-version: "20.x"
           cache: "npm"
-          cache-dependency-path: ${{ steps.get_cdp.outputs.CDP }} ##TODO: Doesnt work
       - run: npm ci
       - run: npm run pipeline
 
@@ -69,7 +65,7 @@ jobs:
         if: env.ACT != 'true' ##Check if its ran locally with act (act -P macos-13=-self-hosted -W build_main.yml)
         uses: maxim-lobanov/setup-xcode@v1
         with:
-          xcode-version: '15.0'
+          xcode-version: "15.0"
 
       - name: Install the Apple certificate and provisioning profile
         env:
