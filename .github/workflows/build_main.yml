@@ -26,8 +26,8 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: "20.x"
-          cache: "npm"
-          cache-dependency-path: /home/runner/work/winston/winston/semantic-swiftjs/package-lock.json
+          cache: "pnpm"
+          cache-dependency-path: /home/runner/work/winston/winston/semantic-swiftjs/pnpm-lock.yaml
       - run: npm ci
       - run: npm run pipeline
 
