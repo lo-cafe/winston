@@ -31,7 +31,13 @@ jobs:
         run: |
           cd /home/runner/work/winston/winston/semantic-swiftjs/
           npm ci
-          if npm run pipeline | grep -q "fatal"; then ##TODO: This shouldnt be neccesarry
+          ##TODO: Below shouldnt be neccesarry, remove when semantic-swiftjs is
+          # fixed
+          OUTPUT=$(npm run pipeline  2>&1)
+          echo "$OUTPUT"
+          echo "$OUTPUT" | grep "fatal: No names found, cannot describe anything."
+          if [ $? -eq 0 ]; then
+            echo "Error detected, exiting..."
             exit 1
           fi
 
