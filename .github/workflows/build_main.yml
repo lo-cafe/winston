@@ -20,14 +20,12 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - run: echo $(pwd) && cd /home/runner/work/winston/winston/semantic-swiftjs/ && cat package-lock.json
-
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
         with:
           node-version: "20.x"
           cache: "npm"
-          cache-dependency-path: /home/runner/winston/winston/semantic-swiftjs/package-lock.json
+          cache-dependency-path: /home/runner/work/winston/winston/semantic-swiftjs/
       - run: npm ci
       - run: npm run pipeline
 
