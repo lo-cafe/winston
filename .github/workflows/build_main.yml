@@ -21,7 +21,7 @@ jobs:
         uses: actions/checkout@v4
 
       - run: |
-          cd /home/runner/work/winston/semantic-swiftjs/
+          cd /home/runner/work/semantic-swiftjs/
           echo "Path:$(pwd)"
 
       - name: Use Node.js ${{ matrix.node-version }}
