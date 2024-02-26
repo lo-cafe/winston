@@ -31,7 +31,7 @@ jobs:
         run: |
           cd /home/runner/work/winston/winston/semantic-swiftjs/
           npm ci
-          if ! npm run pipeline; then
+          if ! npm run pipeline; then ##TODO: This shouldnt be neccesarry
             exit 1
           fi
 
