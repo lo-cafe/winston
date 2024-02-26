@@ -29,9 +29,11 @@ jobs:
 
       - name: Run npm
         run: |
-          set -e  # Exit immediately if a command exits with a non-zero status.
           cd /home/runner/work/winston/winston/semantic-swiftjs/
-          npm ci && npm run pipeline
+          npm ci
+          if ! npm run pipelin; then
+            exit 1
+          fi
 
       - name: Commit and tag
         uses: stefanzweifel/git-auto-commit-action@v5
