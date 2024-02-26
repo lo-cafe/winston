@@ -20,7 +20,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - run: echo $(pwd)
+      - run: echo $(pwd) && cd /home/runner/winston/winston/semantic-swiftjs/ && cat package-lock.json
 
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
