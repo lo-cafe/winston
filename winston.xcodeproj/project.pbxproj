@@ -271,6 +271,13 @@
 		EC5A1E432B178FF800EBBE96 /* calculateDistance.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC5A1E422B178FF800EBBE96 /* calculateDistance.swift */; };
 		EC5A1E452B1790B300EBBE96 /* vibrate.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC5A1E442B1790B300EBBE96 /* vibrate.swift */; };
 		EC5EA3EC2B88FEAA004BDE14 /* changelogs in Resources */ = {isa = PBXBuildFile; fileRef = EC5EA3EB2B88FEAA004BDE14 /* changelogs */; };
+		EC5EA3EF2B89030A004BDE14 /* ChangeloggerProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC5EA3EE2B89030A004BDE14 /* ChangeloggerProvider.swift */; };
+		EC5EA3F12B8A1E87004BDE14 /* Changelogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC5EA3F02B8A1E87004BDE14 /* Changelogger.swift */; };
+		EC5EA3F32B8A298B004BDE14 /* newspaper.json in Resources */ = {isa = PBXBuildFile; fileRef = EC5EA3F22B8A298B004BDE14 /* newspaper.json */; };
+		EC5EA3F52B8A2E15004BDE14 /* ChangeloggerRelease.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC5EA3F42B8A2E15004BDE14 /* ChangeloggerRelease.swift */; };
+		EC5EA3F72B8A2F0E004BDE14 /* star.json in Resources */ = {isa = PBXBuildFile; fileRef = EC5EA3F62B8A2F0E004BDE14 /* star.json */; };
+		EC5EA3F92B8A332A004BDE14 /* SmallTag.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC5EA3F82B8A332A004BDE14 /* SmallTag.swift */; };
+		EC5EA3FB2B8A333E004BDE14 /* ReleaseFeature.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC5EA3FA2B8A333E004BDE14 /* ReleaseFeature.swift */; };
 		EC5EDA712A4DA94A00140A08 /* SwipeActionsOld.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC5EDA702A4DA94A00140A08 /* SwipeActionsOld.swift */; };
 		EC5EDA732A4E8EC400140A08 /* fetchSub.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC5EDA722A4E8EC400140A08 /* fetchSub.swift */; };
 		EC5EDA752A4E937700140A08 /* GenericRedditEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC5EDA742A4E937700140A08 /* GenericRedditEntity.swift */; };
@@ -406,7 +413,6 @@
 		ECA5E6482AA5D36E00F6C7A5 /* resetApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECA5E6472AA5D36E00F6C7A5 /* resetApp.swift */; };
 		ECA86A812AB94DA200C31EC6 /* SubredditsStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECA86A802AB94DA200C31EC6 /* SubredditsStack.swift */; };
 		ECAA23822A9EC34100874731 /* inlineSymbol.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECAA23812A9EC34100874731 /* inlineSymbol.swift */; };
-		ECAA35532AFE550900C0C232 /* SwiftUIIntrospect in Frameworks */ = {isa = PBXBuildFile; productRef = ECAA35522AFE550900C0C232 /* SwiftUIIntrospect */; };
 		ECAA8B5A2A75004300D9D636 /* redditURLParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECAA8B592A75004300D9D636 /* redditURLParser.swift */; };
 		ECAA8B5C2A75025200D9D636 /* fetchInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECAA8B5B2A75025200D9D636 /* fetchInfo.swift */; };
 		ECAA8B602A75216E00D9D636 /* ShortPostLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECAA8B5F2A75216E00D9D636 /* ShortPostLink.swift */; };
@@ -854,6 +860,13 @@
 		EC5A1E422B178FF800EBBE96 /* calculateDistance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = calculateDistance.swift; sourceTree = "<group>"; };
 		EC5A1E442B1790B300EBBE96 /* vibrate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = vibrate.swift; sourceTree = "<group>"; };
 		EC5EA3EB2B88FEAA004BDE14 /* changelogs */ = {isa = PBXFileReference; lastKnownFileType = folder; name = changelogs; path = "semantic-swiftjs/changelogs"; sourceTree = "<group>"; };
+		EC5EA3EE2B89030A004BDE14 /* ChangeloggerProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangeloggerProvider.swift; sourceTree = "<group>"; };
+		EC5EA3F02B8A1E87004BDE14 /* Changelogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Changelogger.swift; sourceTree = "<group>"; };
+		EC5EA3F22B8A298B004BDE14 /* newspaper.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = newspaper.json; sourceTree = "<group>"; };
+		EC5EA3F42B8A2E15004BDE14 /* ChangeloggerRelease.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangeloggerRelease.swift; sourceTree = "<group>"; };
+		EC5EA3F62B8A2F0E004BDE14 /* star.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = star.json; sourceTree = "<group>"; };
+		EC5EA3F82B8A332A004BDE14 /* SmallTag.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmallTag.swift; sourceTree = "<group>"; };
+		EC5EA3FA2B8A333E004BDE14 /* ReleaseFeature.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReleaseFeature.swift; sourceTree = "<group>"; };
 		EC5EDA702A4DA94A00140A08 /* SwipeActionsOld.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwipeActionsOld.swift; sourceTree = "<group>"; };
 		EC5EDA722A4E8EC400140A08 /* fetchSub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = fetchSub.swift; sourceTree = "<group>"; };
 		EC5EDA742A4E937700140A08 /* GenericRedditEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericRedditEntity.swift; sourceTree = "<group>"; };
@@ -1176,7 +1189,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				ECAA35532AFE550900C0C232 /* SwiftUIIntrospect in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1710,6 +1722,18 @@
 			path = Globals;
 			sourceTree = "<group>";
 		};
+		EC5EA3ED2B8902B6004BDE14 /* Changelogger */ = {
+			isa = PBXGroup;
+			children = (
+				EC5EA3EE2B89030A004BDE14 /* ChangeloggerProvider.swift */,
+				EC5EA3F42B8A2E15004BDE14 /* ChangeloggerRelease.swift */,
+				EC5EA3F02B8A1E87004BDE14 /* Changelogger.swift */,
+				EC5EA3F82B8A332A004BDE14 /* SmallTag.swift */,
+				EC5EA3FA2B8A333E004BDE14 /* ReleaseFeature.swift */,
+			);
+			path = Changelogger;
+			sourceTree = "<group>";
+		};
 		EC6081142B434AEF001A1077 /* ButtonStyles */ = {
 			isa = PBXGroup;
 			children = (
@@ -1737,11 +1761,13 @@
 				EC982A372B4A6BE200FFE582 /* confetti.json */,
 				EC6081372B43FAA8001A1077 /* thumbup.json */,
 				EC4792F42B468ADA00487AEE /* gear.json */,
+				EC5EA3F62B8A2F0E004BDE14 /* star.json */,
 				EC421D502B4B93E40038C27A /* book-opening.json */,
 				EC4792EC2B4689CB00487AEE /* bell.json */,
 				EC6081432B440417001A1077 /* thumbup-appear.json */,
 				EC4792E82B453F1C00487AEE /* error.json */,
 				EC421D4A2B4B82DD0038C27A /* error-appear.json */,
+				EC5EA3F22B8A298B004BDE14 /* newspaper.json */,
 				EC61D8762B4B47E200B236FF /* spinner.json */,
 				EC61D8742B4B478900B236FF /* party-appear.json */,
 				EC60812D2B43C2F5001A1077 /* doorlock.json */,
@@ -2315,6 +2341,7 @@
 		ECC10C752A4A8746009124BE /* Components */ = {
 			isa = PBXGroup;
 			children = (
+				EC5EA3ED2B8902B6004BDE14 /* Changelogger */,
 				EC8EF59E2B60884C009E51D2 /* RedditListingFeed */,
 				BB978B342B4F3BD500BE90D1 /* Markdown Handling */,
 				EC6081142B434AEF001A1077 /* ButtonStyles */,
@@ -2598,7 +2625,6 @@
 			);
 			name = "winston-everywhere";
 			packageProductDependencies = (
-				ECAA35522AFE550900C0C232 /* SwiftUIIntrospect */,
 			);
 			productName = "winston-everywhere";
 			productReference = ECAA8B652A75261000D9D636 /* winston-everywhere.appex */;
@@ -2682,6 +2708,7 @@
 				EC6081442B440417001A1077 /* thumbup-appear.json in Resources */,
 				EC982A3A2B4A6F8B00FFE582 /* confetti-magic.json in Resources */,
 				EC5EA3EC2B88FEAA004BDE14 /* changelogs in Resources */,
+				EC5EA3F72B8A2F0E004BDE14 /* star.json in Resources */,
 				EC22A3172A5B74CE0062A112 /* ci_post_clone.sh in Resources */,
 				EC60812E2B43C2F5001A1077 /* doorlock.json in Resources */,
 				EC421D4B2B4B82DD0038C27A /* error-appear.json in Resources */,
@@ -2711,6 +2738,7 @@
 				EC60812C2B43C2EA001A1077 /* keys.json in Resources */,
 				EC61D8752B4B478900B236FF /* party-appear.json in Resources */,
 				EC051C472ACAF2DC00E9D9ED /* themeFileIcon.png in Resources */,
+				EC5EA3F32B8A298B004BDE14 /* newspaper.json in Resources */,
 				EC61D8772B4B47E200B236FF /* spinner.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2846,6 +2874,7 @@
 				ECC2C7B22AAB48D1000E196C /* ThemesPanel.swift in Sources */,
 				ECAA8B892A764A3C00D9D636 /* YTMediaPost.swift in Sources */,
 				ECC3A2282B721CAB00CF1CC7 /* StickiedPostLink.swift in Sources */,
+				EC5EA3FB2B8A333E004BDE14 /* ReleaseFeature.swift in Sources */,
 				EC2A39152AC20155001E5354 /* PostLinkTitle.swift in Sources */,
 				EC8F349D2A6F988900EB8249 /* Placeholder.swift in Sources */,
 				EC60813A2B43FE24001A1077 /* preventWidowedLines.swift in Sources */,
@@ -3013,6 +3042,7 @@
 				EC593AFA2A47AE3E002D6454 /* Settings.swift in Sources */,
 				EC0854482A4D6E8C00E88389 /* getInitialSize.swift in Sources */,
 				EC5EDA752A4E937700140A08 /* GenericRedditEntity.swift in Sources */,
+				EC5EA3F12B8A1E87004BDE14 /* Changelogger.swift in Sources */,
 				EC91C8562AB9838D00F2AD30 /* CommonListsThemingPanel.swift in Sources */,
 				EC4C7C962B2C54310007A4DA /* VideoDefSettings.swift in Sources */,
 				652012082AC327C7005DD899 /* uploadTheme.swift in Sources */,
@@ -3086,6 +3116,7 @@
 				ECAEFF602A77A41D0052FCD3 /* stringFallback.swift in Sources */,
 				ECEFC2692A5DFA4B0003C6C4 /* formatBigNumber.swift in Sources */,
 				EC6CBE352A7D6E760089EAA0 /* LICENSE.md in Sources */,
+				EC5EA3F92B8A332A004BDE14 /* SmallTag.swift in Sources */,
 				ECFB019F2B0D08420083E4FC /* MixedContentLink.swift in Sources */,
 				EC4C7C9E2B2C54760007A4DA /* SubredditFeedDefSettings.swift in Sources */,
 				EC31881A2A92BA9500CB3738 /* fetchMultiPosts.swift in Sources */,
@@ -3197,6 +3228,7 @@
 				65A5FFF22ACED3BF000D1ADA /* getPreviewImages.swift in Sources */,
 				EC6081282B43B04E001A1077 /* PressableButton.swift in Sources */,
 				ECE08B862AAA43F400F84DC9 /* NiceDivider.swift in Sources */,
+				EC5EA3EF2B89030A004BDE14 /* ChangeloggerProvider.swift in Sources */,
 				EC421D5A2B4BC5F10038C27A /* CredentialStatusMetaView.swift in Sources */,
 				EC12D7182A59C7A800C300B3 /* Arrows.swift in Sources */,
 				ECDD514E2A726E5900FD9498 /* modifyColor.swift in Sources */,
@@ -3209,6 +3241,7 @@
 				65D265412ABEC6FF009E01F9 /* urlCleaner.swift in Sources */,
 				ECF82A1B2B216CD900CBF45D /* themedListRow.swift in Sources */,
 				EC3188142A92A43300CB3738 /* fetchMultiInfo.swift in Sources */,
+				EC5EA3F52B8A2E15004BDE14 /* ChangeloggerRelease.swift in Sources */,
 				EC12D71A2A59C81A00C300B3 /* CommentLinkContent.swift in Sources */,
 				ECE08B592AA9A3C300F84DC9 /* WinstonTheme.swift in Sources */,
 				ECE08B5E2AA9C94800F84DC9 /* CommentsTheme.swift in Sources */,
@@ -3361,6 +3394,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = Z2NNLU4F7U;
 				ENABLE_PREVIEWS = NO;
+				EXCLUDED_SOURCE_FILE_NAMES = alpha.json;
 				FRAMEWORK_SEARCH_PATHS = "$(SRCROOT)/**";
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = winston/Info.plist;
@@ -3381,9 +3415,11 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = "1.1.3-beta";
+				OTHER_SWIFT_FLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = lo.cafe.winston.beta;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SCAN_ALL_SOURCE_FILES_FOR_INCLUDES = NO;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = BETA;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -3401,7 +3437,7 @@
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "winston-everywhere/Info.plist";
-				INFOPLIST_KEY_CFBundleDisplayName = "Winston Everywhere";
+				INFOPLIST_KEY_CFBundleDisplayName = "Winston Everywhere Beta";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -3415,7 +3451,7 @@
 					"-framework",
 					SafariServices,
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "lo.cafe.winston.winston-everywhere.beta";
+				PRODUCT_BUNDLE_IDENTIFIER = "lo.cafe.winston.beta.winston-everywhere";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
@@ -3501,6 +3537,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = Z2NNLU4F7U;
 				ENABLE_PREVIEWS = NO;
+				EXCLUDED_SOURCE_FILE_NAMES = "";
 				FRAMEWORK_SEARCH_PATHS = "$(SRCROOT)/**";
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = winston/Info.plist;
@@ -3521,9 +3558,11 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = "1.1.3-alpha";
+				OTHER_SWIFT_FLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = lo.cafe.winston.alpha;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SCAN_ALL_SOURCE_FILES_FOR_INCLUDES = NO;
+				"SWIFT_ACTIVE_COMPILATION_CONDITIONS[arch=*]" = ALPHA;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -3541,7 +3580,7 @@
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "winston-everywhere/Info.plist";
-				INFOPLIST_KEY_CFBundleDisplayName = "Winston Everywhere";
+				INFOPLIST_KEY_CFBundleDisplayName = "Winston Everywhere Alpha";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -3555,7 +3594,7 @@
 					"-framework",
 					SafariServices,
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "lo.cafe.winston.winston-everywhere.alpha";
+				PRODUCT_BUNDLE_IDENTIFIER = "lo.cafe.winston.alpha.winston-everywhere";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
@@ -3632,7 +3671,7 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_ALTERNATE_APPICON_NAMES = "";
 				"ASSETCATALOG_COMPILER_ALTERNATE_APPICON_NAMES[sdk=*]" = "iconExplodeDebug iconPeakDebug iconSimpleFaceBlackDebug iconSimpleFaceBlueDebug iconSimpleEyesBlackDebug iconSimpleEyesBlueDebug iconSideDebug";
-				ASSETCATALOG_COMPILER_APPICON_NAME = iconStandardBeta;
+				ASSETCATALOG_COMPILER_APPICON_NAME = iconStandardDebug;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
@@ -3661,9 +3700,11 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = "1.1.3-debug";
+				OTHER_SWIFT_FLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = lo.cafe.winston.debug;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SCAN_ALL_SOURCE_FILES_FOR_INCLUDES = NO;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -3681,7 +3722,7 @@
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "winston-everywhere/Info.plist";
-				INFOPLIST_KEY_CFBundleDisplayName = "Winston Everywhere";
+				INFOPLIST_KEY_CFBundleDisplayName = "Winston Everywhere Debug";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -3695,7 +3736,7 @@
 					"-framework",
 					SafariServices,
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "lo.cafe.winston.winston-everywhere.debug";
+				PRODUCT_BUNDLE_IDENTIFIER = "lo.cafe.winston.debug.winston-everywhere";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
@@ -3781,6 +3822,10 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = Z2NNLU4F7U;
 				ENABLE_PREVIEWS = NO;
+				EXCLUDED_SOURCE_FILE_NAMES = (
+					beta.json,
+					alpha.json,
+				);
 				FRAMEWORK_SEARCH_PATHS = "$(SRCROOT)/**";
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = winston/Info.plist;
@@ -3801,9 +3846,12 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.2.3;
+				OTHER_SWIFT_FLAGS = "";
+				"OTHER_SWIFT_FLAGS[arch=*]" = "";
 				PRODUCT_BUNDLE_IDENTIFIER = lo.cafe.winston;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SCAN_ALL_SOURCE_FILES_FOR_INCLUDES = NO;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = PROD;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -4212,11 +4260,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = ECA3700E2B480FC900C73CB0 /* XCRemoteSwiftPackageReference "WrappingHStack" */;
 			productName = WrappingHStack;
-		};
-		ECAA35522AFE550900C0C232 /* SwiftUIIntrospect */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = EC08543B2A4CFE1C00E88389 /* XCRemoteSwiftPackageReference "swiftui-introspect" */;
-			productName = SwiftUIIntrospect;
 		};
 		ECAA8B832A76421000D9D636 /* YouTubePlayerKit */ = {
 			isa = XCSwiftPackageProductDependency;

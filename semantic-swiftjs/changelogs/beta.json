@@ -1,1 +1,185 @@
-[]
+[
+   {
+      "version": "1.5.0-beta",
+      "timestamp": 1708860266803,
+      "report": {
+         "fix": [
+            {
+               "subject": "Resolved issue with user login",
+               "description": ""
+            },
+            {
+               "subject": "Fixed crash when opening settings",
+               "description": ""
+            },
+            {
+               "subject": "Corrected typos in notifications",
+               "description": ""
+            }
+         ],
+         "others": [
+            {
+               "subject": "Optimized image loading",
+               "description": ""
+            }
+         ],
+         "feat": [
+            {
+               "subject": "Integration with third-party analytics",
+               "description": "Added support for XYZ analytics.",
+               "icon": "chart.bar.fill"
+            },
+            {
+               "subject": "Custom Themes",
+               "description": "Let users personalize the app with custom themes.",
+               "icon": "paintbrush.fill"
+            },
+            {
+               "subject": "Offline Mode",
+               "description": "Ensure core functionalities work offline.",
+               "icon": "wifi.slash"
+            },
+            {
+               "subject": "Cloud Backup",
+               "description": "Offer cloud backup to protect user data.",
+               "icon": "cloud.fill"
+            },
+            {
+               "subject": "Personalized Recommendations",
+               "description": "Use AI to recommend content based on user activity.",
+               "icon": "star.fill"
+            }
+         ]
+      }
+   },
+   {
+      "version": "1.4.1-beta",
+      "timestamp": 1708860266803,
+      "report": {
+         "fix": [
+            {
+               "subject": "Patch for memory leaks",
+               "description": ""
+            }
+         ],
+         "others": [
+            {
+               "subject": "Refactored login algorithm",
+               "description": ""
+            },
+            {
+               "subject": "Updated SDK to latest version",
+               "description": ""
+            }
+         ]
+      }
+   },
+   {
+      "version": "1.4.0-beta",
+      "timestamp": 1708860266803,
+      "report": {
+         "fix": [],
+         "others": [
+            {
+               "subject": "Minor UI adjustments",
+               "description": ""
+            }
+         ],
+         "feat": [
+            {
+               "subject": "Customizable Dashboards",
+               "description": "Users can now customize their dashboards.",
+               "icon": "square.grid.3x2.fill"
+            }
+         ]
+      }
+   },
+   {
+      "version": "1.3.0-beta",
+      "timestamp": 1708860266803,
+      "report": {
+         "fix": [
+            {
+               "subject": "Fixed unexpected logout",
+               "description": ""
+            }
+         ],
+         "others": [
+            {
+               "subject": "Improved data encryption",
+               "description": ""
+            },
+            {
+               "subject": "Added new server locations",
+               "description": ""
+            }
+         ],
+         "feat": [
+            {
+               "subject": "Real-time Data Sync",
+               "description": "Synchronize data in real-time across devices.",
+               "icon": "arrow.triangle.2.circlepath"
+            },
+            {
+               "subject": "Enhanced Search Capabilities",
+               "description": "Search functionality has been greatly improved.",
+               "icon": "magnifyingglass"
+            },
+            {
+               "subject": "New User Onboarding Experience",
+               "description": "A new onboarding experience for new users.",
+               "icon": "person.crop.circle.badge.plus"
+            }
+         ]
+      }
+   },
+   {
+      "version": "1.2.0-beta",
+      "timestamp": 1708860266803,
+      "report": {
+         "fix": [],
+         "others": [],
+         "feat": [
+            {
+               "subject": "Push Notifications Update",
+               "description": "Revamped push notifications for better engagement.",
+               "icon": "bell.fill"
+            }
+         ]
+      }
+   },
+   {
+      "version": "1.1.0-beta",
+      "timestamp": 1708860266803,
+      "report": {
+         "fix": [
+            {
+               "subject": "Corrected display issue on smaller screens",
+               "description": ""
+            },
+            {
+               "subject": "Fixed server timeout error",
+               "description": ""
+            }
+         ],
+         "others": [
+            {
+               "subject": "Upgraded user profile management",
+               "description": ""
+            }
+         ],
+         "feat": [
+            {
+               "subject": "New Payment Gateway Integration",
+               "description": "Added integration with ABC Payment Gateway.",
+               "icon": "creditcard.fill"
+            },
+            {
+               "subject": "User Feedback System",
+               "description": "Implemented a system for users to provide feedback.",
+               "icon": "message.fill"
+            }
+         ]
+      }
+   }
+]

@@ -1145,9 +1145,6 @@
         }
       }
     },
-    "Download" : {
-
-    },
     "Drag Left" : {
       "localizations" : {
         "de" : {
@@ -1380,6 +1377,9 @@
           }
         }
       }
+    },
+    "Features" : {
+
     },
     "Filtered Subreddits" : {
       "localizations" : {
@@ -1908,6 +1908,9 @@
     "Instructions" : {
 
     },
+    "Isn't this app beautiful?" : {
+
+    },
     "It worked!" : {
       "localizations" : {
         "de" : {
@@ -2109,9 +2112,6 @@
           }
         }
       }
-    },
-    "LOAD MORE" : {
-
     },
     "Lock Winston With %@" : {
       "localizations" : {
@@ -2470,9 +2470,6 @@
       }
     },
     "No credential" : {
-
-    },
-    "No filtered posts" : {
 
     },
     "Nothing around here :(" : {
@@ -3724,9 +3721,6 @@
         }
       }
     },
-    "Theme Store" : {
-
-    },
     "Theme Store Tint" : {
       "localizations" : {
         "de" : {
@@ -3797,9 +3791,6 @@
     "There was an error" : {
 
     },
-    "There was an error importing this theme" : {
-
-    },
     "This is not working yet :(" : {
       "localizations" : {
         "de" : {
@@ -3851,6 +3842,9 @@
           }
         }
       }
+    },
+    "This update includes new features and bug fixes." : {
+
     },
     "This will allow you to do go back by swiping anywhere in the screen, but will disable post and comments swipe gestures." : {
       "localizations" : {
@@ -4033,6 +4027,9 @@
         }
       }
     },
+    "v1.5.6" : {
+
+    },
     "View full conversation" : {
       "localizations" : {
         "de" : {
@@ -4134,6 +4131,9 @@
 
     },
     "What to do now?" : {
+
+    },
+    "What's new?" : {
 
     },
     "Whats New" : {

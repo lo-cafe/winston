@@ -96,7 +96,8 @@ executeGitCommand("git branch --show-current", (_, currBranch) => {
 
       if (newVersion === currentVersion) return
 
-      const formattedReport = await processItems(report.feat)
+      const formattedReportFeat = await processItems(report.feat)
+      const formattedReport = {...report, feat: formattedReportFeat}
 
       const currVer = Object.values(versionsObj).find(
         (x) => x.preReleaseLabel == branchConfig.preReleaseLabel
@@ -136,7 +137,7 @@ function writeReportToChangelog(report, newVersion, preReleaseLabel) {
   if (foundChangelogIndex !== -1) {
     changelog[foundChangelogIndex] = { version: newVersion, report }
   } else {
-    changelog.unshift({ version: newVersion, report })
+    changelog.unshift({ version: newVersion, timestamp: Date.now(), report })
   }
   fs.writeFileSync(changelogFile, JSON.stringify(changelog))
 }
