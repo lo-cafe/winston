@@ -16,7 +16,7 @@ struct SmallTag: View {
       .fontWidth(.compressed)
       .foregroundStyle(.primaryInverted)
       .padding(.horizontal, 6)
-      .padding(.vertical, 3)
+      .padding(.vertical, 1)
       .background(Capsule(style: .continuous).fill(color))
       .opacity(0.5)
   }

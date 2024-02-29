@@ -26,9 +26,13 @@ extension UIScreen {
 }
 
 extension CGFloat {
-  static var screenCornerRadius: CGFloat =  UIApplication.shared.windows.first?.screen.displayCornerRadius ?? 0
+  static var screenCornerRadius: CGFloat = UIApplication.shared.windows.first?.screen.displayCornerRadius ?? 0
+  static var topSafeArea: CGFloat = getSafeArea().top
+  static var bottomSafeArea: CGFloat = getSafeArea().bottom
 }
 
 extension Double {
-  static var screenCornerRadius: Double =  CGFloat.screenCornerRadius
+  static var screenCornerRadius: Double = CGFloat.screenCornerRadius
+  static var topSafeArea: Double = getSafeArea().top
+  static var bottomSafeArea: Double = getSafeArea().bottom
 }

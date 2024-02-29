@@ -8,6 +8,16 @@
 import Foundation
 import SwiftUI
 
+#if DEBUG
+      private var envSuffix = "Debug"
+#elseif ALPHA
+      private var envSuffix = "Alpha"
+#elseif BETA
+      private var envSuffix = "Beta"
+#else
+      private var envSuffix = ""
+#endif
+
 enum WinstonAppIcon: String, CaseIterable, Identifiable {
   var id: String { self.rawValue }
   
@@ -49,17 +59,17 @@ enum WinstonAppIcon: String, CaseIterable, Identifiable {
   var name: String? {
     switch self {
     case .standard: return nil
-    case .explode: return "iconExplode"
-    case .peak: return "iconPeak"
-    case .side: return "iconSide"
-    case .simpleEyesBlack: return "iconSimpleEyesBlack"
-    case .simpleEyesBlue: return "iconSimpleEyesBlue"
-    case .simpleFaceBlack: return "iconSimpleFaceBlack"
-    case .simpleFaceBlue: return "iconSimpleFaceBlue"
+    case .explode: return "iconExplode\(envSuffix)"
+    case .peak: return "iconPeak\(envSuffix)"
+    case .side: return "iconSide\(envSuffix)"
+    case .simpleEyesBlack: return "iconSimpleEyesBlack\(envSuffix)"
+    case .simpleEyesBlue: return "iconSimpleEyesBlue\(envSuffix)"
+    case .simpleFaceBlack: return "iconSimpleFaceBlack\(envSuffix)"
+    case .simpleFaceBlue: return "iconSimpleFaceBlue\(envSuffix)"
     }
   }
   
-  var preview: UIImage { UIImage(named: self.name ?? "iconStandard")! }
+  var preview: UIImage { UIImage(named: self.name ?? "iconStandard\(envSuffix)")! }
 }
 
 class AppIconManger {

@@ -31,6 +31,7 @@ struct TakeSnapshotView: UIViewRepresentable {
     }
     
     func takeScreenshotAndSave() {
+      DispatchQueue.main.async {
       guard let view = UIApplication.shared.windows.first?.rootViewController?.view else {
         return
       }
@@ -44,7 +45,6 @@ struct TakeSnapshotView: UIViewRepresentable {
       }
       
       // Save the screenshot to the Photos library
-      DispatchQueue.main.async {
         self.parent.screenshot = screenshotImage
       }
     }

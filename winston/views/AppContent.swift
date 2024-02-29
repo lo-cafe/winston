@@ -20,7 +20,7 @@ struct AppContent: View {
   let biometrics = Biometrics()
   @State private var isAuthenticating = false
   @State private var tabBarHeight: Double = 0
-  @State private var lockBlur: Int = 50 // Set initial startup blur
+  @State private var lockBlur: Int = Defaults[.GeneralDefSettings].useAuth ? 50 : 0 // Set initial startup blur
   @State private var restartAlert = false
     
   func setTabBarHeight(_ val: Double) {
@@ -35,7 +35,7 @@ struct AppContent: View {
         }
       }
     }
-//    .whatsNewSheet()
+    .whatsNewSheet()
     .environment(\.tabBarHeight, tabBarHeight)
     .environment(\.setTabBarHeight, setTabBarHeight)
     .environmentObject(themeStore)

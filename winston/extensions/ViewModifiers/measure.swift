@@ -9,34 +9,38 @@ import Foundation
 import SwiftUI
 
 extension View {
-    func measureOnce(_ sizeBinding: Binding<CGSize?>) -> some View {
-        self
-        .background(
-          sizeBinding.wrappedValue != nil ?
-          nil :
+  func measureOnce(_ sizeBinding: Binding<CGSize?>) -> some View {
+    self
+      .background(
+        sizeBinding.wrappedValue != nil ?
+        nil :
           GeometryReader { geometry in
             Color.clear
               .preference(key: ViewSizeKey.self, value: geometry.size)
           }
-        )
-        .onPreferenceChange(ViewSizeKey.self) { size in
-          if sizeBinding.wrappedValue == nil {
-            sizeBinding.wrappedValue = size
-          }
-        }
-    }
-    func measure(_ sizeBinding: Binding<CGSize>) -> some View {
-        self
-        .background(
-          GeometryReader { geometry in
-            Color.clear
-              .preference(key: ViewSizeKey.self, value: geometry.size)
-          }
-        )
-        .onPreferenceChange(ViewSizeKey.self) { size in
+      )
+      .onPreferenceChange(ViewSizeKey.self) { size in
+        if sizeBinding.wrappedValue == nil {
           sizeBinding.wrappedValue = size
         }
-    }
+      }
+  }
+  func measure(_ sizeBinding: Binding<CGSize>, disable: Bool = false) -> some View {
+    self
+      .background(
+        disable
+        ? nil
+        : GeometryReader { geometry in
+          Color.clear
+            .preference(key: ViewSizeKey.self, value: geometry.size)
+        }
+      )
+      .onPreferenceChange(ViewSizeKey.self) { size in
+        if !disable {
+          sizeBinding.wrappedValue = size
+        }
+      }
+  }
 }
 
 struct ViewSizeKey: PreferenceKey {

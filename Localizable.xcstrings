@@ -703,6 +703,9 @@
         }
       }
     },
+    "Channel" : {
+
+    },
     "Check out Winston's Source Code" : {
       "localizations" : {
         "de" : {
@@ -1424,6 +1427,9 @@
           }
         }
       }
+    },
+    "Fixed bugs" : {
+
     },
     "For that, just click the button below, scroll down the page and click \"Accept\"." : {
       "localizations" : {
@@ -2670,6 +2676,9 @@
           }
         }
       }
+    },
+    "Others" : {
+
     },
     "Paste here the app ID" : {
       "localizations" : {
@@ -4027,9 +4036,6 @@
         }
       }
     },
-    "v1.5.6" : {
-
-    },
     "View full conversation" : {
       "localizations" : {
         "de" : {
@@ -4125,6 +4131,9 @@
 
     },
     "Well, you got 2 options:" : {
+
+    },
+    "What about the past?" : {
 
     },
     "What else can you do" : {

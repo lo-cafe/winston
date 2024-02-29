@@ -10,52 +10,62 @@ import SwiftUI
 struct ChangeloggerProvider<C: View>: View {
   @ViewBuilder var content: () -> C
   
-  @State private var showing = false
+//  @State private var showing = false
+  @State private var releases: [ChangelogRelease]? = nil
   var body: some View {
     ZStack {
       content()
-        .blur(radius: showing ? 40 : 0, opaque: true)
-        .saturation(showing ? 2 : 1)
+      
+      if let releases {
+        Changelogger(releases: releases)
+      }
     }
     .ignoresSafeArea(.all)
     .onAppear {
 #if DEBUG
-      var changelogFile = "alpha"
+      let changelogFile = "alpha"
 #elseif ALPHA
-      var changelogFile = "alpha"
+      let changelogFile = "alpha"
 #elseif BETA
-      var changelogFile = "beta"
+      let changelogFile = "beta"
 #else
-      var changelogFile = "production"
+      let changelogFile = "production"
 #endif
       
-      if let url = Bundle.main.url(forResource: changelogFile, withExtension: "json", subdirectory: "changelogs") {
-        do {
-          let data = try Data(contentsOf: url)
-          let decoder = JSONDecoder()
-          let changelogRelease = try decoder.decode(ChangelogRelease.self, from: data)
-          print(changelogRelease) // Use the changelogRelease struct as needed
-        } catch {
-          print(error)
+      doThisAfter(0.5) {
+        if let url = Bundle.main.url(forResource: changelogFile, withExtension: "json", subdirectory: "changelogs") {
+          do {
+            let data = try Data(contentsOf: url)
+            let decoder = JSONDecoder()
+            let changelogReleases = try decoder.decode([ChangelogRelease].self, from: data)
+            
+            releases = changelogReleases
+          } catch {
+            print(error)
+          }
         }
       }
       
-//      withAnimation(.spring) { showing = true }
     }
   }
 }
 
-struct ChangelogRelease: Codable {
+struct ChangelogRelease: Codable, Identifiable, Hashable, Equatable {
+  static func == (lhs: ChangelogRelease, rhs: ChangelogRelease) -> Bool {
+    return lhs.id == rhs.id
+  }
+  var id: String { self.version }
   let version: String
   let timestamp: Double
   let report: ChangelogReleaseReport
   
-  struct ChangelogReleaseReport: Codable {
+  struct ChangelogReleaseReport: Codable, Hashable, Equatable {
     var fix: [ChangelogReportChange]?
     var feat: [ChangelogReportChange]?
     var others: [ChangelogReportChange]?
     
-    struct ChangelogReportChange: Codable {
+    struct ChangelogReportChange: Codable, Hashable, Equatable, Identifiable {
+      var id: String { (self.icon ?? "") + self.subject + self.description }
       let icon: String?
       let subject: String
       let description: String
