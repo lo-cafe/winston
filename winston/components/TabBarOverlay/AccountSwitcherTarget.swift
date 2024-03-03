@@ -153,16 +153,18 @@ struct AccountSwitcherTarget: View, Equatable {
     .offset(attractionOffset + appearingOffset)
     .animation(hovered ? .snappy(duration: 0.15, extraBounce: 0.35) : .spring, value: hovered)
     .animation(.bouncy, value: attraction)
-    .opacity(appear ? 1 : 0)
-    .animation(appear ? .bouncy.delay(0.05 * Double((targetsCount - 1) - index)) : .snappy.delay(0.025 * Double(index)), value: appear)
-    .vibrate(.continuous(sharpness: hovered ? 0 : interpolateVibration([0.3, 0], false), intensity: hovered ? 0 : interpolateVibration([0.3, 0], false)), trigger: isSelected && !hovered ? distance : 0, disabled: !appear)
-    .vibrate(.transient(sharpness: !isSelected && !hovered ? 1.0 : 0, intensity: isSelected && hovered ? 0 : 1.0), trigger: hovered, disabled: !appear)
-    .onChange(of: hovered) {
-      if !isSelected {
-        if transmitter.selectedCred == nil && $0 { transmitter.selectedCred = cred }
-        else if transmitter.selectedCred == cred && !$0 { transmitter.selectedCred = nil }
-      } else if $0 { jump += 1 }
+    .animation(appear ? .bouncy.delay(0.05 * Double((targetsCount - 1) - index)) : .snappy.delay(0.025 * Double(index))) { v in
+      v.opacity(appear ? 1 : 0)
     }
+    .onChange(of: hovered) { _, newHovered in
+      if !isSelected {
+        if transmitter.selectedCred == nil && newHovered { transmitter.selectedCred = cred }
+        else if transmitter.selectedCred == cred && !newHovered { transmitter.selectedCred = nil }
+      } else if newHovered { jump += 1 }
+      if !appear { return }
+      Hap.shared.play(intensity: isSelected && newHovered ? 0 : 1.0, sharpness: !isSelected && !newHovered ? 1.0 : 0)
+    }
+    .vibrate(.continuous(sharpness: hovered ? 0 : interpolateVibration([0.3, 0], false), intensity: hovered ? 0 : interpolateVibration([0.3, 0], false)), trigger: isSelected && !hovered ? distance : 0, disabled: !appear)
     .transition(.identity)
   }
 }

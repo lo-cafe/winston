@@ -60,54 +60,10 @@ struct PostReplies: View {
   }
   
   var body: some View {
-    let theme = selectedTheme.comments
-    let horPad = theme.theme.outerHPadding
     Group {
-      let postFullname = post.data?.name ?? ""
       Group {
         ForEach(Array(comments.enumerated()), id: \.element.id) { i, comment in
-          Section {
-            
-            Spacer()
-              .frame(maxWidth: .infinity, minHeight: theme.spacing / 2, maxHeight: theme.spacing / 2)
-              .id("\(comment.id)-top-spacer")
-            
-            Spacer()
-              .frame(maxWidth: .infinity, minHeight: theme.theme.cornerRadius * 2, maxHeight: theme.theme.cornerRadius * 2, alignment: .top)
-              .background(CommentBG(cornerRadius: theme.theme.cornerRadius, pos: .top).fill(theme.theme.bg()))
-              .frame(maxWidth: .infinity, minHeight: theme.theme.cornerRadius, maxHeight: theme.theme.cornerRadius, alignment: .top)
-              .clipped()
-              .id("\(comment.id)-top-decoration")
-            
-            if let commentWinstonData = comment.winstonData {
-              CommentLink(highlightID: ignoreSpecificComment ? nil : highlightID, post: post, subreddit: subreddit, postFullname: postFullname, seenComments: seenComments, parentElement: .post($comments), comment: comment, commentWinstonData: commentWinstonData, children: comment.childrenWinston)
-                .if(comments.firstIndex(of: comment) != nil) { view in
-                  view.anchorPreference(
-                    key: CommentUtils.AnchorsKey.self,
-                    value: .center
-                  ) { [comment.id: $0] }
-                }
-            }
-            
-            Spacer()
-              .frame(maxWidth: .infinity, minHeight: theme.theme.cornerRadius * 2, maxHeight: theme.theme.cornerRadius * 2, alignment: .top)
-              .background(CommentBG(cornerRadius: theme.theme.cornerRadius, pos: .bottom).fill(theme.theme.bg()))
-              .frame(maxWidth: .infinity, minHeight: theme.theme.cornerRadius, maxHeight: theme.theme.cornerRadius, alignment: .bottom)
-              .clipped()
-              .id("\(comment.id)-bot-decoration")
-            
-            Spacer()
-              .frame(maxWidth: .infinity, minHeight: theme.spacing / 2, maxHeight: theme.spacing / 2)
-              .id("\(comment.id)-bot-spacer")
-            
-            if comments.count - 1 != i {
-              NiceDivider(divider: theme.divider)
-                .id("\(comment.id)-bot-divider")
-            }
-            
-          }
-          .listRowBackground(Color.clear)
-          .listRowInsets(EdgeInsets(top: 0, leading: horPad, bottom: 0, trailing: horPad))
+          PostReply(post: post, subreddit: subreddit, comment: comment, i: i, comments: $comments, highlightID: highlightID, ignoreSpecificComment: ignoreSpecificComment, seenComments: seenComments)
         }
         Section {
           Spacer()

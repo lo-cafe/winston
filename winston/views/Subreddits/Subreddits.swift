@@ -57,32 +57,32 @@ struct Subreddits: View, Equatable {
     ScrollViewReader { proxy in
       List(selection: $firstDestination) {
         if searchText == "" {
-          VStack(spacing: 12) {
-            HStack(spacing: 12) {
-              ListBigBtn(icon: "house.circle.fill", iconColor: .blue, label: "Home") {
-                firstDestination = .reddit(.subFeed(Subreddit(id: "home")))
-              }
-              
-              ListBigBtn(icon: "chart.line.uptrend.xyaxis.circle.fill", iconColor: .red, label: "Popular") {
-                firstDestination = .reddit(.subFeed(Subreddit(id: "popular")))
-              }
-            }
-            HStack(spacing: 12) {
-              ListBigBtn(icon: "signpost.right.and.left.circle.fill", iconColor: .orange, label: "All") {
-                firstDestination = .reddit(.subFeed(Subreddit(id: "all")))
-              }
-              
-              ListBigBtn(icon: "bookmark.circle.fill", iconColor: .green, label: "Saved") {
-                firstDestination = .reddit(.subFeed(Subreddit(id: "saved")))
-              }
-            }
-          }
-          .environment(\.isInSidebar, false)
-          .frame(maxWidth: .infinity)
-          .id("bigButtons")
-          .listRowSeparator(.hidden)
-          .listRowBackground(Color.clear)
-          .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
+//          VStack(spacing: 12) {
+//            HStack(spacing: 12) {
+//              ListBigBtn(icon: "house.circle.fill", iconColor: .blue, label: "Home") {
+//                firstDestination = .reddit(.subFeed(Subreddit(id: "home")))
+//              }
+//              
+//              ListBigBtn(icon: "chart.line.uptrend.xyaxis.circle.fill", iconColor: .red, label: "Popular") {
+//                firstDestination = .reddit(.subFeed(Subreddit(id: "popular")))
+//              }
+//            }
+//            HStack(spacing: 12) {
+//              ListBigBtn(icon: "signpost.right.and.left.circle.fill", iconColor: .orange, label: "All") {
+//                firstDestination = .reddit(.subFeed(Subreddit(id: "all")))
+//              }
+//              
+//              ListBigBtn(icon: "bookmark.circle.fill", iconColor: .green, label: "Saved") {
+//                firstDestination = .reddit(.subFeed(Subreddit(id: "saved")))
+//              }
+//            }
+//          }
+//          .environment(\.isInSidebar, false)
+//          .frame(maxWidth: .infinity)
+//          .id("bigButtons")
+//          .listRowSeparator(.hidden)
+//          .listRowBackground(Color.clear)
+//          .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
           
           //          Section{
           //            UpsellCard(upsellName: "themesUpsell_01", {

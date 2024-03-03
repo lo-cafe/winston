@@ -46,14 +46,14 @@ struct LightBoxImage: View {
   }
   
   var body: some View {
-    let interpolate = interpolatorBuilder([0, 100], value: abs(drag.height))
+    let interpolate = interpolatorBuilder([0.0, 100.0], value: abs(drag.height))
     HStack(spacing: SPACING) {
       ForEach(Array(imagesArr.enumerated()), id: \.element.id) { index, img in
         let selected = index == activeIndex
         LightBoxElementView(el: img, onTap: toggleOverlay, doLiveText: doLiveText, isPinching: $isPinching, isZoomed: $isZoomed)
           .allowsHitTesting(selected)
-          .scaleEffect(!selected ? 1 : interpolate([1, 0.9], true))
-          .blur(radius: selected && loading ? 24 : 0)
+          .scaleEffect(!selected ? 1 : interpolate([1.0, 0.9], true))
+          .blur(radius: selected && loading ? 24.0 : 0.0)
           .offset(x: !selected ? 0 : dragAxis == .vertical ? drag.width : 0, y: i != activeIndex ? 0 : dragAxis == .vertical ? drag.height : 0)
       }
     }
@@ -63,7 +63,7 @@ struct LightBoxImage: View {
     .highPriorityGesture(
       scale > 1
       ? nil
-      : DragGesture(minimumDistance: 20)
+      : DragGesture(minimumDistance: 20.0)
         .onChanged { val in
           
           if dragAxis == nil || dragOffset == nil {
@@ -78,7 +78,7 @@ struct LightBoxImage: View {
           if let dragAxis = dragAxis, let dragOffset = dragOffset {
             var transaction = Transaction()
             transaction.isContinuous = true
-            transaction.animation = .interpolatingSpring(stiffness: 1000, damping: 100, initialVelocity: 0)
+            transaction.animation = .interpolatingSpring(stiffness: 1000.0, damping: 100.0, initialVelocity: 0)
             
             var endPos = val.translation
             if dragAxis == .horizontal {
@@ -125,14 +125,14 @@ struct LightBoxImage: View {
     )
     .overlay {
       if let postTitle = postTitle, let badgeKit = badgeKit {
-        LightBoxOverlay(postTitle: postTitle, badgeKit: badgeKit, avatarImageRequest: avatarImageRequest, opacity: !showOverlay || isPinching ? 0 : interpolate([1, 0], false), imagesArr: imagesArr, activeIndex: activeIndex, loading: $loading, done: $done)
+        LightBoxOverlay(postTitle: postTitle, badgeKit: badgeKit, avatarImageRequest: avatarImageRequest, opacity: !showOverlay || isPinching ? 0 : interpolate([1.0, 0.0], false), imagesArr: imagesArr, activeIndex: activeIndex, loading: $loading, done: $done)
       }
     }
     .background(
       !appearBlack
       ? nil
       : Color.black
-        .opacity(interpolate([1, 0], false))
+        .opacity(interpolate([1.0, 0.0], false))
         .onTapGesture {
           withAnimation(.easeOut) {
             appearBlack = false
