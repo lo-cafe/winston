@@ -66,8 +66,12 @@ struct PostContent: View, Equatable {
                 }
                 
                 if !data.selftext.isEmpty {
-                  Markdown(MarkdownUtil.formatForMarkdown(data.selftext))
-                    .markdownTheme(.winstonMarkdown(fontSize: selectedTheme.posts.bodyText.size, lineSpacing: selectedTheme.posts.linespacing))
+                    HStack{
+                        Markdown(MarkdownUtil.formatForMarkdown(data.selftext))
+                          .markdownTheme(.winstonMarkdown(fontSize: selectedTheme.posts.bodyText.size, lineSpacing: selectedTheme.posts.linespacing))
+                        
+                        Spacer()
+                    }
                 }
               }
               .nsfw(over18 && defSettings.blurNSFW)
