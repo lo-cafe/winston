@@ -18,7 +18,8 @@ struct AppearancePanel: View {
   
   var body: some View {
     List {
-      Group {
+        // MARK: -- THEME
+        Group {
         Section {
           WListButton(showArrow: true) {
             Nav.present(.editingTheme(theme))
@@ -60,7 +61,7 @@ struct AppearancePanel: View {
         .listRowSeparator(.hidden)
         .listRowBackground(Color.clear)
         .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
-        
+        // MARK: -- General
         Section("General") {
           Toggle("Show Username in Tab Bar", isOn: $appearanceDefSettings.showUsernameInTabBar)
           Toggle("Disable subs list letter sections", isOn: $appearanceDefSettings.disableAlphabetLettersSectionsInSubsList)
@@ -81,6 +82,7 @@ struct AppearancePanel: View {
         //        .themedListSection()
         //      }
 //        
+        // MARK: -- Posts
         Section("Posts") {
           Toggle("Show Upvote Ratio", isOn: $postLinkDefSettings.showUpVoteRatio)
           Toggle("Show Voting Buttons", isOn: $postLinkDefSettings.showVotesCluster)
@@ -94,7 +96,7 @@ struct AppearancePanel: View {
           )
           Toggle("Show Author", isOn: $postLinkDefSettings.showAuthor)
         }
-        
+        // MARK: -- Compact Posts
         Section("Compact Posts") {
           Toggle("Compact Mode", isOn: $postLinkDefSettings.compactMode.enabled)
           Toggle("Show Thumbnail Placeholder", isOn: $postLinkDefSettings.compactMode.showPlaceholderThumbnail)
@@ -126,11 +128,19 @@ struct AppearancePanel: View {
               Text("Right").tag("Right")
             }
         }
-        
+        // MARK: -- Comments
         Section("Comments") {
           Toggle("Colored Usernames", isOn: $commentLinkDefSettings.coloredNames)
+        Picker("Next Comment Button Position", selection: Binding(get: {
+          commentLinkDefSettings.jumpNextCommentButtonLeft ? "Left" : "Right"
+        }, set: { val, _ in
+          commentLinkDefSettings.jumpNextCommentButtonLeft = val == "Left" ? true : false
+        })) {
+            Text("Left").tag("Left")
+            Text("Right").tag("Right")
         }
-        
+        }
+        // MARK: -- Accessibility
         Section("Accessibility"){
           Toggle("Theme Store Tint", isOn: $appearanceDefSettings.themeStoreTint)
           Toggle("\"Shiny\" Text and Buttons", isOn: $appearanceDefSettings.shinyTextAndButtons)
@@ -144,12 +154,7 @@ struct AppearancePanel: View {
     .navigationBarTitleDisplayMode(.inline)
   }
 }
-//
-//struct Appearance_Previews: PreviewProvider {
-//    static var previews: some View {
-//        Appearance()
-//    }
-//}
+
 
 
 //Compact Mode Thumbnail Size Modifiers

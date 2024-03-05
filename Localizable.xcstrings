@@ -2110,9 +2110,6 @@
         }
       }
     },
-    "LOAD MORE" : {
-
-    },
     "Lock Winston With %@" : {
       "localizations" : {
         "de" : {
@@ -2436,6 +2433,9 @@
         }
       }
     },
+    "Next Comment Button Position" : {
+
+    },
     "Nice!" : {
       "localizations" : {
         "de" : {
@@ -2470,9 +2470,6 @@
       }
     },
     "No credential" : {
-
-    },
-    "No filtered posts" : {
 
     },
     "Nothing around here :(" : {
