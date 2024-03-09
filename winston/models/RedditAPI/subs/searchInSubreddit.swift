@@ -17,6 +17,7 @@ extension RedditAPI {
       url += "/r/\(subName)"
     }
     url += "/search.json"
+    print(advanced)
     switch await self.doRequest(url, method: .get, params: advanced, paramsLocation: .queryString, decodable: Listing<PostData>.self)  {
     case .success(let data):
       return (data.data?.children, data.data?.after)

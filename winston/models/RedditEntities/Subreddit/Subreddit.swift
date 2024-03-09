@@ -194,9 +194,12 @@ extension Subreddit {
   }
   
   func fetchPosts(sort: SubListingSortOption = .best, after: String? = nil, searchText: String? = nil, contentWidth: CGFloat = .screenW, flair: String? = nil) async -> ([Post]?, String?)? {
-    if let response = await RedditAPI.shared.searchInSubreddit(data?.url ?? (id == "home" ? nil : id), RedditAPI.AdvancedPostsSearch(after: after, subreddit: data?.url ?? (id == "home" ? "" : id), flairs: flair == nil ? nil : [flair!], searchQuery: searchText, sortOption: sort)), let data = response.0 {
+    let response = flair == nil && searchText == nil
+    ? await RedditAPI.shared.fetchSubPosts(data?.url ?? (id == "home" ? "" : id), sort: sort, after: after)
+    : await RedditAPI.shared.searchInSubreddit(data?.url ?? (id == "home" ? nil : id), RedditAPI.AdvancedPostsSearch(after: after, subreddit: data?.url ?? (id == "home" ? "" : id), flairs: flair == nil ? nil : [flair!], searchQuery: searchText, sortOption: sort))
+    if let response, let data = response.0 {
       let posts = Post.initMultiple(datas: data.compactMap { $0.data }, sub: self, contentWidth: contentWidth)
-//      CachedFeedFilter
+      
       Task { cacheFlairsFromPosts(posts) }
       return (posts, response.1)
     }
