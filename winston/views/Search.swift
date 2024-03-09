@@ -102,9 +102,15 @@ struct Search: View {
       resultPosts.removeAll()
       Task(priority: .background) {
         if let dummyAllSub = dummyAllSub, let result = await dummyAllSub.fetchPosts(searchText: searchQuery.value), let newPosts = result.0 {
+          let actualNewPosts = newPosts.compactMap {
+            if case .post(let post) = $0 {
+              return post
+            }
+            return nil
+          }
           await MainActor.run {
             withAnimation {
-              resultPosts = newPosts
+              resultPosts = actualNewPosts
               loading = false
               
               hideSpinner = resultPosts.isEmpty

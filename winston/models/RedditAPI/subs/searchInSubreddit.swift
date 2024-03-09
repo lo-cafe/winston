@@ -11,14 +11,14 @@ import Defaults
 
 extension RedditAPI {
   
-  func searchInSubreddit(_ subreddit: String?, _ advanced: AdvancedPostsSearch) async -> ([ListingChild<PostData>]?, String?)? {
+  func searchInSubreddit(_ subreddit: String?, _ advanced: AdvancedPostsSearch) async -> ([ListingChild<Either<PostData, CommentData>>]?, String?)? {
     var url = "\(RedditAPI.redditApiURLBase)"
     if let subreddit, let subName = SubMetaFormatter(name: subreddit).name {
       url += "/r/\(subName)"
     }
     url += "/search.json"
     print(advanced)
-    switch await self.doRequest(url, method: .get, params: advanced, paramsLocation: .queryString, decodable: Listing<PostData>.self)  {
+    switch await self.doRequest(url, method: .get, params: advanced, paramsLocation: .queryString, decodable: Listing<Either<PostData, CommentData>>.self)  {
     case .success(let data):
       return (data.data?.children, data.data?.after)
     case .failure(_):

@@ -9,7 +9,7 @@ import Foundation
 
 struct PostData: GenericRedditEntityDataType {
   let subreddit: String
-  var selftext: String
+  var selftext: String?
   var author_fullname: String? = nil
   var saved: Bool
   let gilded: Int

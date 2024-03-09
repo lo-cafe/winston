@@ -168,7 +168,7 @@ extension Subreddit {
     return nil
   }
   
-  func cacheFlairsFromPosts(_ posts: [Post]) {
+  func cacheFlairsFromPosts(_ entities: [RedditEntityType]) {
     let context = PersistenceController.shared.container.viewContext
     let bgContext = PersistenceController.shared.primaryBGContext
     
@@ -176,8 +176,8 @@ extension Subreddit {
     fetchRequest.predicate = NSPredicate(format: "subID == %@", self.id)
     
     if let existentFilters = bgContext.performAndWait({ try? bgContext.fetch(fetchRequest) }) {
-      posts.forEach { post in
-        if let postData = post.data, let flairText = postData.link_flair_text {
+      entities.forEach { entity in
+        if case .post(let post) = entity, let postData = post.data, let flairText = postData.link_flair_text {
           guard !bgContext.performAndWait({(existentFilters.contains { $0.text == flairText })}) else { return }
           context.performAndWait {
             let newFilter = CachedFilter(context: context)
@@ -193,25 +193,49 @@ extension Subreddit {
     }
   }
   
-  func fetchPosts(sort: SubListingSortOption = .best, after: String? = nil, searchText: String? = nil, contentWidth: CGFloat = .screenW, flair: String? = nil) async -> ([Post]?, String?)? {
+  func fetchPosts(sort: SubListingSortOption = .best, after: String? = nil, searchText: String? = nil, contentWidth: CGFloat = .screenW, flair: String? = nil) async -> ([RedditEntityType]?, String?)? {
     let response = flair == nil && searchText == nil
     ? await RedditAPI.shared.fetchSubPosts(data?.url ?? (id == "home" ? "" : id), sort: sort, after: after)
     : await RedditAPI.shared.searchInSubreddit(data?.url ?? (id == "home" ? nil : id), RedditAPI.AdvancedPostsSearch(after: after, subreddit: data?.url ?? (id == "home" ? "" : id), flairs: flair == nil ? nil : [flair!], searchQuery: searchText, sortOption: sort))
     if let response, let data = response.0 {
-      let posts = Post.initMultiple(datas: data.compactMap { $0.data }, sub: self, contentWidth: contentWidth)
+      var isMixed = false
+      let datas = data.compactMap {
+        if case .second(_) = $0.data {
+          isMixed = true
+        }
+        return $0.data
+      }
+      var entities = [RedditEntityType]()
+      if isMixed {
+        entities = datas.compactMap {
+          return switch $0 {
+          case .first(let postData):
+              .post(.init(data: postData, contentWidth: contentWidth))
+          case .second(let commentData):
+              .comment(.init(data: commentData))
+          }
+        }
+      } else {
+        entities = Post.initMultiple(datas: data.compactMap {
+          if case .first(let postData) = $0.data {
+            return postData
+          }
+          return nil
+        }, sub: self, contentWidth: contentWidth).map { .post($0) }
+      }
       
-      Task { cacheFlairsFromPosts(posts) }
-      return (posts, response.1)
+      Task { [entities] in cacheFlairsFromPosts(entities) }
+      return (entities, response.1)
     }
     return nil
   }
   
-  func fetchPinnedPosts() async -> [Post]? {
-    if let response = await RedditAPI.shared.fetchSubPosts(data?.url ?? (id == "home" ? "" : id), limit: 10, sort: .best, after: nil, searchText: nil, flair: nil), let data = response.0 {
-      return Post.initMultiple(datas: data.compactMap { $0.data?.stickied == true ? $0.data : nil }, sub: self, contentWidth: .screenW)
-    }
-    return nil
-  }
+//  func fetchPinnedPosts() async -> [Post]? {
+//    if let response = await RedditAPI.shared.fetchSubPosts(data?.url ?? (id == "home" ? "" : id), limit: 10, sort: .best, after: nil, searchText: nil, flair: nil), let data = response.0 {
+//      return Post.initMultiple(datas: data.compactMap { $0.data?.stickied == true ? $0.data : nil }, sub: self, contentWidth: .screenW)
+//    }
+//    return nil
+//  }
   
   func fetchSavedMixedMedia(after: String? = nil, searchText: String? = nil, contentWidth: CGFloat = .screenW) async -> [Either<Post, Comment>]? {
     // saved feed is a mix of posts and comments - logic needs to be handled separately

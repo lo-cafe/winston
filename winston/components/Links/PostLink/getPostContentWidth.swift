@@ -73,7 +73,7 @@ func getPostDimensions(post: Post, winstonData: PostWinstonData? = nil, columnWi
     let theme = selectedTheme.postLinks.theme
     let postGeneralSpacing = theme.verticalElementsSpacing + theme.linespacing
     let title = data.title
-    let body = data.selftext
+    let body = data.selftext ?? ""
     
     var ACC_titleHeight: Double = 0
     var ACC_bodyHeight: Double = 0
@@ -183,7 +183,7 @@ func getPostDimensions(post: Post, winstonData: PostWinstonData? = nil, columnWi
     
     
     let theresTitle = true
-    let theresSelftext = !compact && !data.selftext.isEmpty
+    let theresSelftext = !compact && !(data.selftext?.isEmpty ?? true)
     let theresMedia = extractedMedia != nil
     let theresSubDivider = !compact && theme.showDivider
     let theresBadge = true

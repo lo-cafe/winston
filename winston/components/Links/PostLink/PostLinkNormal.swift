@@ -10,14 +10,16 @@ import Defaults
 import NukeUI
 
 struct PostLinkNormalSelftext: View, Equatable {
-  var selftext: String
+  var selftext: String?
   var theme: ThemeText
   var body: some View {
-    Text(selftext).lineLimit(3)
-      .fontSize(theme.size, theme.weight.t)
-      .foregroundColor(theme.color())
-      .fixedSize(horizontal: false, vertical: true)
-      .frame(maxWidth: .infinity, alignment: .topLeading)
+    if let selftext {
+      Text(selftext).lineLimit(3)
+        .fontSize(theme.size, theme.weight.t)
+        .foregroundColor(theme.color())
+        .fixedSize(horizontal: false, vertical: true)
+        .frame(maxWidth: .infinity, alignment: .topLeading)
+    }
     //      .id("body")
   }
 }
@@ -118,8 +120,8 @@ struct PostLinkNormal: View, Equatable, Identifiable {
         VStack(alignment: .leading, spacing: theme.theme.verticalElementsSpacing / 2.5) {
           PostLinkTitle(attrString: winstonData.titleAttr, label: data.title, theme: theme.theme.titleText, size: winstonData.postDimensions.titleSize)
           
-          if !data.selftext.isEmpty && defSettings.showSelfText {
-            PostLinkNormalSelftext(selftext: data.selftext, theme: theme.theme.bodyText)
+          if !(data.selftext?.isEmpty ?? true) && defSettings.showSelfText, let selftext = data.selftext {
+            PostLinkNormalSelftext(selftext: selftext, theme: theme.theme.bodyText)
               .lineSpacing(theme.theme.linespacing)
           }
         }

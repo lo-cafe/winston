@@ -20,7 +20,7 @@ extension Post {
   static var prefix = "t3"
   var selfPrefix: String { Self.prefix }
   
-  convenience init(data: T, sub: Subreddit? = nil, contentWidth: Double = .screenW, secondary: Bool = false, imgPriority: ImageRequest.Priority = .low, theme: WinstonTheme? = nil, fetchAvatar: Bool = true) {
+  convenience init(data: T, sub: Subreddit? = nil, contentWidth: Double = .screenW, secondary: Bool = false, theme: WinstonTheme? = nil, fetchAvatar: Bool = true) {
     let theme = theme ?? InMemoryTheme.shared.currentTheme
     self.init(data: data, typePrefix: "\(Post.prefix)_")
     setupWinstonData(data: data, contentWidth: contentWidth, secondary: secondary, theme: theme, sub: sub, fetchAvatar: fetchAvatar)
@@ -143,14 +143,7 @@ extension Post {
       
       let posts = Array(datas.enumerated()).concurrentMap { i, data in
         let isSeen = context.performAndWait { results.contains(where: { $0.postID == data.id }) }
-        let priorityIMap: [Int:ImageRequest.Priority] = [
-          4: .veryHigh,
-          9: .high,
-          14: .normal,
-          19: .low
-        ]
-        let priority = i > 19 ? .veryLow : priorityIMap[priorityIMap.keys.first { $0 > i } ?? 19]!
-        let newPost = Post(data: data, sub: sub, contentWidth: contentWidth, imgPriority: i > 7 ? .veryLow : priority, theme: theme, fetchAvatar: false)
+        let newPost = Post(data: data, sub: sub, contentWidth: contentWidth, theme: theme, fetchAvatar: false)
         newPost.data?.winstonSeen = isSeen
         
         if (isSeen) {
@@ -166,15 +159,17 @@ extension Post {
         return newPost
       }
       
-      let repostsAvatars = posts.compactMap { post in
-        if case .repost(let repost) = post.winstonData?.extractedMedia {
-          return repost
+      Task(priority: .background) {
+        let repostsAvatars = posts.compactMap { post in
+          if case .repost(let repost) = post.winstonData?.extractedMedia {
+            return repost
+          }
+          return nil
         }
-        return nil
+        
+        Task(priority: .background) { await RedditAPI.shared.updatePostsWithAvatar(posts: repostsAvatars, avatarSize: InMemoryTheme.shared.currentTheme.postLinks.theme.badge.avatar.size) }
+        Task(priority: .background) { await RedditAPI.shared.updatePostsWithAvatar(posts: posts, avatarSize: InMemoryTheme.shared.currentTheme.postLinks.theme.badge.avatar.size) }
       }
-      
-      Task(priority: .background) { await RedditAPI.shared.updatePostsWithAvatar(posts: repostsAvatars, avatarSize: InMemoryTheme.shared.currentTheme.postLinks.theme.badge.avatar.size) }
-      Task(priority: .background) { await RedditAPI.shared.updatePostsWithAvatar(posts: posts, avatarSize: InMemoryTheme.shared.currentTheme.postLinks.theme.badge.avatar.size) }
       
       return posts
     }

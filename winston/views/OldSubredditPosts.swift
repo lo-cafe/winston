@@ -67,7 +67,7 @@ import CoreData
 ////      return filtered.filter({ flairWithoutEmojis(str: $0.data?.link_flair_text)?.first ?? "" == filterData[1] })
 ////    } else if filterData[0] == "filter" {
 ////      return filtered.filter({ ($0.data?.title.lowercased().contains(filterData[1].lowercased()) ?? false) ||
-////        ($0.data?.selftext.lowercased().contains(filterData[1].lowercased()) ?? false) })
+////        (($0.data?.selftext ?? "").lowercased().contains(filterData[1].lowercased()) ?? false) })
 ////    }
 ////    
 ////    return filtered

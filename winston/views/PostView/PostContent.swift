@@ -65,10 +65,10 @@ struct PostContent: View, Equatable {
                   MediaPresenter(winstonData: winstonData, fullPage: true, controller: nil, postTitle: data.title, badgeKit: data.badgeKit, avatarImageRequest: winstonData.avatarImageRequest, markAsSeen: {}, cornerRadius: selectedTheme.postLinks.theme.mediaCornerRadius, blurPostLinkNSFW: defSettings.blurNSFW, media: extractedMedia, over18: over18, compact: false, contentWidth: winstonData.postDimensionsForcedNormal.mediaSize?.width ?? 0, maxMediaHeightScreenPercentage: Defaults[.PostLinkDefSettings].maxMediaHeightScreenPercentage, resetVideo: nil)
                 }
                 
-                if !data.selftext.isEmpty {
+                if !(data.selftext?.isEmpty ?? true) {
                     HStack{
-                        Markdown(MarkdownUtil.formatForMarkdown(data.selftext))
-                          .markdownTheme(.winstonMarkdown(fontSize: selectedTheme.posts.bodyText.size, lineSpacing: selectedTheme.posts.linespacing))
+                  Markdown(MarkdownUtil.formatForMarkdown(data.selftext ?? ""))
+                    .markdownTheme(.winstonMarkdown(fontSize: selectedTheme.posts.bodyText.size, lineSpacing: selectedTheme.posts.linespacing))
                         
                         Spacer()
                     }
