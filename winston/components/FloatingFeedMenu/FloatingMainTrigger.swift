@@ -30,7 +30,7 @@ struct FloatingMainTrigger: View, Equatable {
   private let longPressDuration: Double = 0.275
   
   var body: some View {
-    Image(systemName: toggled || menuOpen ? "xmark" : "slider.vertical.3")
+    Image(systemName: toggled || menuOpen ? "xmark" : "slider.horizontal.3")
       .contentTransition(.symbolEffect)
       .transaction { trans in
         trans.animation = .easeInOut(duration: longPressDuration)
