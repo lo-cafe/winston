@@ -99,3 +99,5 @@ node_modules/
 
 .parcel-cache/
 .env
+
+analyze-files-build-time/analyzed.txt

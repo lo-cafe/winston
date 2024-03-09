@@ -20,17 +20,16 @@ struct Changelogger: View {
   let releaseOpeningAnimation: Animation = .smooth(duration: 0.5, extraBounce: 0.3)
   var body: some View {
     ScrollView(.vertical, showsIndicators: false) {
+      
       LazyVStack(alignment: .center, spacing: 24) {
         VStack(alignment: .center, spacing: 8) {
-          if active {
-            BetterLottieView("newspaper", size: 80, color: Color.changelogYellow)
-              .transition(.identity)
-            VStack(alignment: .center, spacing: 0) {
-              Text("What's new?").fontSize(32, .bold, design: .rounded)
-              Text("Isn't this app beautiful?").fontSize(16, .regular, design: .rounded).opacity(0.75)
-            }
-            .transition(.comeFrom(.bottom, index: 0, total: 4, disableEndDelay: true, disableScale: true))
+          PlayableLottieView("newspaper", size: 80, color: .changelogYellow, progress: active ? 1 : 0)
+          VStack(alignment: .center, spacing: 0) {
+            Text("What's new?").fontSize(32, .bold, design: .rounded)
+            Text("Isn't this app beautiful?").fontSize(16, .regular, design: .rounded).opacity(0.75)
           }
+          .offset(y: active ? 0 : 24)
+          .opacity(active ? 1 : 0)
         }
         .opacity(openRelease != nil ? bgItemsOpacity : 1)
         
@@ -55,22 +54,23 @@ struct Changelogger: View {
                 withAnimation(releaseOpeningAnimation) { openRelease = release; lastOpenRelease = release; }
               }
               .opacity(openRelease != nil && openRelease != release ? bgItemsOpacity : 1)
-                .scrollTransition(topLeading: .identity, bottomTrailing: .interactive) { content, phase in
-                  content
-                    .opacity(phase.isIdentity ? 1 : 0)
-                    .scaleEffect(phase.isIdentity ? 1 : 0.75, anchor: .bottom)
-                    .offset(y: phase.isIdentity ? 0 : -125)
-                }
-                .zIndex(lastOpenRelease == release ? 999 : Double(releases.count - i))
-                
+              .scrollTransition(topLeading: .identity, bottomTrailing: .interactive) { content, phase in
+                content
+                  .opacity(phase.isIdentity ? 1 : 0)
+                  .scaleEffect(phase.isIdentity ? 1 : 0.75, anchor: .bottom)
+                  .offset(y: phase.isIdentity ? 0 : -125)
+              }
+              .zIndex(lastOpenRelease == release ? 999 : Double(releases.count - i))
+              
             }
           }
           .transition(.comeFrom(.bottom, index: 3, total: 4, disableEndDelay: true, disableScale: true))
+          .zIndex(lastOpenRelease == releases[0] ? 0 : 3)
         }
       }
       .padding(.top, 64 + 56)
       .padding(.horizontal, 24)
-      .frame(maxWidth: .infinity, minHeight: .screenH)
+      .frame(maxWidth: .infinity, minHeight: .screenH, alignment: .top)
     }
     .frame(maxWidth: 600, maxHeight: .infinity, alignment: .top)
     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
@@ -96,7 +96,7 @@ struct Changelogger: View {
     .allowsHitTesting(openRelease == nil)
     .overlay {
       if let openRelease {
-        ChangeloggerRelease(release: openRelease, ns: ns, open: true) {
+        ChangeloggerRelease(release: openRelease, ns: ns, small: openRelease != releases[0], open: true) {
           withAnimation(releaseOpeningAnimation) {
             self.openRelease = nil
           } completion: {
@@ -122,11 +122,13 @@ struct Changelogger: View {
           .background(.primaryInverted)
           .onAppear {
             withAnimation(.spring) { active = true }
+            //            active = true
           }
       }
     }
     .onAppear {
       screenshot = takeScreenshotAndSave()
     }
+    .transition(.identity)
   }
 }

@@ -8,6 +8,41 @@
 import SwiftUI
 import Lottie
 
+struct PlayableLottieView: View {
+  var animationName: String
+  var size: Double
+  var color: Color
+  var progress: Double
+  @State private var mode: LottiePlaybackMode
+  
+  init(_ animationName: String, size: Double = 16, color: Color = .primary, progress: Double = 1) {
+    self.animationName = animationName
+    self.size = size
+    self.color = color
+    self.progress = progress
+    self._mode = .init(wrappedValue: .paused(at: .progress(progress)))
+  }
+  
+  var body: some View {
+    let actualColor = color
+    let rgb = UIColor(actualColor).rgb
+    let colorProvider = ColorValueProvider(.init(r: rgb.0, g: rgb.1, b: rgb.2, a: actualColor.alpha))
+    
+    LottieView(animation: .named(animationName))
+      .playbackMode(mode)
+      .valueProvider(colorProvider, for: colorLottieKeypath)
+      .configure { v in
+        v.configuration = .init(renderingEngine: .coreAnimation)
+      }
+      .resizable()
+      .frame(size)
+      .onChange(of: progress) { old, new in
+        if old != new {
+          mode = .playing(.toProgress(new, loopMode: .playOnce))
+        }
+      }
+  }
+}
 struct StillLottieView: View {
   var animationName: String
   var size: Double

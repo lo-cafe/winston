@@ -39,12 +39,17 @@ struct ChangeloggerRelease: View {
     } else {
       ScrollView(.vertical) {
         HStack(alignment: .top, spacing: 4) {
-          VStack(alignment: .center, spacing: -12) {
+          VStack(alignment: .center, spacing: 0) {
             Image(systemName: "star.fill")
               .fontSize(40)
               .foregroundStyle(.yellow)
 //              .matchedGeometryEffect(id: "\(release.version)-icon", in: ns, properties: [.position])
+            
+            if open || !small {
+              VerticalCurly(offset: 0)
+            }
           }
+          .frame(maxHeight: .infinity, alignment: .top)
           VStack(alignment: .leading, spacing: 8) {
             VStack(alignment: .leading, spacing: 0) {
               VStack(alignment: .leading, spacing: 0) {

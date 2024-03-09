@@ -177,6 +177,7 @@
 		EC31DB182B12F0EB00A777ED /* CircleWave.metal in Sources */ = {isa = PBXBuildFile; fileRef = EC31DB172B12F0EB00A777ED /* CircleWave.metal */; };
 		EC31DB1A2B12F11C00A777ED /* Water.metal in Sources */ = {isa = PBXBuildFile; fileRef = EC31DB192B12F11C00A777ED /* Water.metal */; };
 		EC320A2A2B3D26E500BD5FC4 /* FloatingBGBlur.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC320A292B3D26E500BD5FC4 /* FloatingBGBlur.swift */; };
+		EC38F1642B929A15008086A0 /* VerticalCurly.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC38F1632B929A15008086A0 /* VerticalCurly.swift */; };
 		EC3AC9CD2AAC9A970078EC78 /* SubredditSample.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC3AC9CC2AAC9A970078EC78 /* SubredditSample.swift */; };
 		EC3AC9CF2AACB2A30078EC78 /* LabeledSlider.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC3AC9CE2AACB2A30078EC78 /* LabeledSlider.swift */; };
 		EC3AC9D22AACC3DB0078EC78 /* DebouncedOnChange in Frameworks */ = {isa = PBXBuildFile; productRef = EC3AC9D12AACC3DB0078EC78 /* DebouncedOnChange */; };
@@ -778,6 +779,7 @@
 		EC31DB172B12F0EB00A777ED /* CircleWave.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = CircleWave.metal; sourceTree = "<group>"; };
 		EC31DB192B12F11C00A777ED /* Water.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = Water.metal; sourceTree = "<group>"; };
 		EC320A292B3D26E500BD5FC4 /* FloatingBGBlur.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FloatingBGBlur.swift; sourceTree = "<group>"; };
+		EC38F1632B929A15008086A0 /* VerticalCurly.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerticalCurly.swift; sourceTree = "<group>"; };
 		EC3AC9CC2AAC9A970078EC78 /* SubredditSample.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubredditSample.swift; sourceTree = "<group>"; };
 		EC3AC9CE2AACB2A30078EC78 /* LabeledSlider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LabeledSlider.swift; sourceTree = "<group>"; };
 		EC3AC9D32AACCBE40078EC78 /* LabeledTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LabeledTextField.swift; sourceTree = "<group>"; };
@@ -2438,6 +2440,7 @@
 				EC49A8F02B49F7C100000EBD /* WinstonButton.swift */,
 				BBD6E9D62B50F37200901C1C /* QuirkyMsgUtil.swift */,
 				ECAB0FA62B7CEDC700D54885 /* LoadingStateProvider.swift */,
+				EC38F1632B929A15008086A0 /* VerticalCurly.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -3054,6 +3057,7 @@
 				ECC17EC22B94F077003BE860 /* HapticHolder.swift in Sources */,
 				ECE08B6A2AA9F03900F84DC9 /* LinesTheme.swift in Sources */,
 				BBD6E9D72B50F37200901C1C /* QuirkyMsgUtil.swift in Sources */,
+				EC38F1642B929A15008086A0 /* VerticalCurly.swift in Sources */,
 				EC1906F52A55B88500A0300E /* nestComments.swift in Sources */,
 				EC6495A82A999C4A00B1852C /* CachedMulti+CoreDataClass.swift in Sources */,
 				EC3AC9DF2AAD19580078EC78 /* ThemeColorPicker.swift in Sources */,
@@ -3740,7 +3744,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = "1.1.3-debug";
-				OTHER_SWIFT_FLAGS = "";
+				OTHER_SWIFT_FLAGS = "-Xfrontend -debug-time-function-bodies";
 				PRODUCT_BUNDLE_IDENTIFIER = lo.cafe.winston.debug;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SCAN_ALL_SOURCE_FILES_FOR_INCLUDES = NO;
