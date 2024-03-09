@@ -320,7 +320,7 @@ enum SubListingSortOption: Sorting {
     }
   }
   
-  enum TopListingSortOption: String, Sorting {
+  enum TopListingSortOption: String, Sorting, CaseIterable {
     case hour, day, week, month, year, all
 
     var valueWithParent: (any Sorting)? {

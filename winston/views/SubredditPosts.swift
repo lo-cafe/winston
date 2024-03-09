@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Defaults
 
 struct SubredditPosts: View, Equatable {
   static func == (lhs: SubredditPosts, rhs: SubredditPosts) -> Bool {
@@ -16,6 +17,7 @@ struct SubredditPosts: View, Equatable {
   
   @Environment(\.useTheme) private var selectedTheme
   @Environment(\.contentWidth) private var contentWidth
+  @Default(.SubredditFeedDefSettings) private var subFeeedSettings
   
   func caller(_ lastElementId: String?, _ sorting: SubListingSortOption?, _ searchQuery: String?, _ flair: String?) async -> ([RedditEntityType]?, String?)? {
       if let sorting, let result = await subreddit.fetchPosts(sort: sorting, after: lastElementId, searchText: searchQuery, contentWidth: contentWidth, flair: flair), let entity = result.0 {
@@ -33,6 +35,6 @@ struct SubredditPosts: View, Equatable {
   }
   
     var body: some View {
-      RedditListingFeed(feedId: subreddit.id, title: titleFormatted, theme: selectedTheme.postLinks.bg, fetch: caller, initialSorting: SubListingSortOption.best, disableSearch: subreddit.id == "saved", subreddit: subreddit)
+      RedditListingFeed(feedId: subreddit.id, title: titleFormatted, theme: selectedTheme.postLinks.bg, fetch: caller, initialSorting: subFeeedSettings.preferredSort, disableSearch: subreddit.id == "saved", subreddit: subreddit)
     }
 }

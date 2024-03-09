@@ -951,7 +951,6 @@
 
     },
     "Default post sorting" : {
-      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -968,7 +967,6 @@
       }
     },
     "Default search sorting" : {
-      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -1144,9 +1142,6 @@
           }
         }
       }
-    },
-    "Download" : {
-
     },
     "Drag Left" : {
       "localizations" : {
@@ -3721,9 +3716,6 @@
         }
       }
     },
-    "Theme Store" : {
-
-    },
     "Theme Store Tint" : {
       "localizations" : {
         "de" : {
@@ -3792,9 +3784,6 @@
 
     },
     "There was an error" : {
-
-    },
-    "There was an error importing this theme" : {
 
     },
     "This is not working yet :(" : {
