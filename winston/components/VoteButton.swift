@@ -16,10 +16,8 @@ struct VoteButton: View, Equatable {
   var body: some View {
     Image(systemName: image)
       .symbolEffect(active ? .bounce.up : .bounce.down, options: .speed(2.75), value: active)
-      .frame(37)
-      .background(Color.clear)
-      .contentShape(Rectangle())
       .frame(21)
+      .increaseHitboxBy(8)
       .foregroundColor(active ? color : .gray)
   }
 }
