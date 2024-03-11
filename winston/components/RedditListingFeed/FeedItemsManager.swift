@@ -76,13 +76,15 @@ class FeedItemsManager<S> {
       }
       
       
-                  
-      withAnimation {
-        displayMode = fetchedEntities.count < chunkSize ? .endOfFeed : .items
-        entities = newEntities
-//        self.lastElementId = fetchedEntities.count == 0 ? nil : fetchedEntities[fetchedEntities.count - 1].fullname
-        self.lastElementId = after
-        loadedEntitiesIds = newLoadedEntitiesIds
+         
+      DispatchQueue.main.async { [newEntities, newLoadedEntitiesIds] in
+        withAnimation {
+          self.displayMode = fetchedEntities.count < self.chunkSize ? .endOfFeed : .items
+          self.entities = newEntities
+          //        self.lastElementId = fetchedEntities.count == 0 ? nil : fetchedEntities[fetchedEntities.count - 1].fullname
+          self.lastElementId = after
+          self.loadedEntitiesIds = newLoadedEntitiesIds
+        }
       }
       
     } else {
