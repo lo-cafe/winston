@@ -27,7 +27,7 @@ class Nav: Identifiable, Equatable {
   static let swipeAnywhereGestureName = "swipe-anywhere-winston"
   
   static private func newRouterForTab(_ tab: TabIdentifier, _ id: UUID) -> Router { Router(id: "\(tab.rawValue)TabRouter-\(id.uuidString)") }
-    
+  
   enum TabIdentifier: String, Codable, Hashable, CaseIterable {
     case posts, inbox, me, search, settings
   }
@@ -76,7 +76,7 @@ class Nav: Identifiable, Equatable {
   }
   var activeRouter: Router { Nav.shared[activeTab] }
   private var cancellables = Set<AnyCancellable>()
-
+  
   
   private init(activeTab: TabIdentifier = .posts) {
     let newSwipeAnywhereGesture: UIPanGestureRecognizer = {
@@ -91,12 +91,12 @@ class Nav: Identifiable, Equatable {
     self.activeTab = activeTab
     self.routers = Dictionary(uniqueKeysWithValues: TabIdentifier.allCases.map { ($0, Self.newRouterForTab($0, id)) })
     
-//    self.routers.values.forEach { router in
-//      router.$isAtRoot.sink { _ in
-//          self.objectWillChange.send()
-//        }
-//        .store(in: &cancellables)
-//    }
+    //    self.routers.values.forEach { router in
+    //      router.$isAtRoot.sink { _ in
+    //          self.objectWillChange.send()
+    //        }
+    //        .store(in: &cancellables)
+    //    }
   }
   
   func navigateTo(_ tab: TabIdentifier, _ dest: Router.NavDest, _ reset: Bool = true) {
@@ -121,15 +121,15 @@ class Nav: Identifiable, Equatable {
   }
   
   static func openURL(_ url: URL) {
-		if url.scheme?.lowercased().contains(/http(s)?/)==true {
-    let vc = SFSafariViewController(url: url)
-    UIApplication.shared.firstKeyWindow?.rootViewController?.present(vc, animated: true)
-		} else {
-			UIApplication.shared.open(url)
-		}
+    if url.scheme?.lowercased().contains(/http(s)?/)==true {
+      let vc = SFSafariViewController(url: url)
+      UIApplication.shared.firstKeyWindow?.rootViewController?.present(vc, animated: true)
+    } else {
+      UIApplication.shared.open(url)
+    }
   }
-
-
+  
+  
   static func openURL(_ urlStr: String) {
     if let url = URL(string: urlStr)  {
       openURL(url)
