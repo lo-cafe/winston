@@ -36,10 +36,19 @@ struct SwipeActionsSet: Codable, Defaults.Serializable, Equatable, Hashable, Ide
 }
 
 
-let allPostSwipeActions: [AnySwipeAction] = [AnySwipeAction(UpvotePostAction()), AnySwipeAction(DownvotePostAction()), AnySwipeAction(SavePostAction()), AnySwipeAction(ReplyPostAction()), AnySwipeAction(SeenPostAction()), AnySwipeAction(FilterSubredditAction())/**, AnySwipeAction(SharePostAction()) **/, AnySwipeAction(NoneAction())]
+
+let allPostSwipeActions: [AnySwipeAction] = [
+  AnySwipeAction(UpvotePostAction()),
+  AnySwipeAction(DownvotePostAction()),
+  AnySwipeAction(SavePostAction()),
+  AnySwipeAction(SeenPostAction()),
+  AnySwipeAction(FilterSubredditAction()),
+  AnySwipeAction(ReplyPostAction()),
+  AnySwipeAction(NoneAction())
+]
 
 let allCommentSwipeActions: [AnySwipeAction] = [
-  AnySwipeAction(UpvoteCommentAction()), AnySwipeAction(DownvoteCommentAction()), AnySwipeAction(EditCommentAction()), AnySwipeAction(ReplyCommentAction()), AnySwipeAction(SaveCommentAction()), AnySwipeAction(SelectTextCommentAction())/**, AnySwipeAction(ShareCommentAction())**/, AnySwipeAction(CopyCommentAction()), AnySwipeAction(DeleteCommentAction()), AnySwipeAction(CollapseCommentAction()),AnySwipeAction(NoneAction())]
+  AnySwipeAction(UpvoteCommentAction()), AnySwipeAction(DownvoteCommentAction()), AnySwipeAction(EditCommentAction()), AnySwipeAction(ReplyCommentAction()), AnySwipeAction(SaveCommentAction()), AnySwipeAction(SelectTextCommentAction()),  AnySwipeAction(CopyCommentAction()), AnySwipeAction(DeleteCommentAction()), AnySwipeAction(CollapseCommentAction()),AnySwipeAction(NoneAction())]
 
 let allSwipeActions = allPostSwipeActions + allCommentSwipeActions
 
@@ -181,6 +190,8 @@ struct SavePostAction: SwipeAction {
   func enabled(_ entity: Post) -> Bool { true }
 }
 
+
+
 struct ReplyPostAction: SwipeAction {
   var id = "reply-post-swipe-action"
   var label = "Reply"
@@ -233,17 +244,6 @@ struct FilterSubredditAction: SwipeAction {
     return false
   }
   func enabled(_ entity: Post) -> Bool { true }
-}
-
-struct SharePostAction: SwipeAction {
-  var id = "share-post-swipe-action"
-  var label = "Share"
-  var icon = SwipeActionItem(normal: "square.and.arrow.up.fill")
-  var color = SwipeActionItem(normal: "0B84FE")
-  var bgColor = SwipeActionItem(normal: "353439")
-  func action(_ entity: Comment) async { }
-  func active(_ entity: Comment) -> Bool { false }
-  func enabled(_ entity: Comment) -> Bool { false }
 }
 
 struct UpvoteCommentAction: SwipeAction {
@@ -313,9 +313,11 @@ struct ShareCommentAction: SwipeAction {
   var icon = SwipeActionItem(normal: "square.and.arrow.up.fill")
   var color = SwipeActionItem(normal: "0B84FE")
   var bgColor = SwipeActionItem(normal: "353439")
-  func action(_ entity: Comment) async { }
-  func active(_ entity: Comment) -> Bool { return false }
-  func enabled(_ entity: Comment) -> Bool { false }
+  func action(_ entity: Comment) async { 
+   
+  }
+  func active(_ entity: Comment) -> Bool { true }
+  func enabled(_ entity: Comment) -> Bool { true }
 }
 
 struct CopyCommentAction: SwipeAction {

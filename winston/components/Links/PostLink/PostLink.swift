@@ -71,7 +71,14 @@ extension View {
       .compositingGroup()
 //      .brightness(isOpen.wrappedValue ? 0.075 : 0)
       .opacity(fadeReadPosts && seen ? theme.unseenFadeOpacity : 1)
-      .contextMenu(menuItems: { PostLinkContext(post: post) }, preview: { PostLinkContextPreview(post: post, sub: sub) })
+      .contextMenu(menuItems: {
+        PostLinkContext(post: post)
+        
+        if let permalink = post.data?.permalink, let permaURL = URL(string: "https://reddit.com\(permalink.escape.urlEncoded)") {
+          ShareLink(item: permaURL) { Label("Share", systemImage: "square.and.arrow.up") }
+        }
+        
+      }, preview: { PostLinkContextPreview(post: post, sub: sub) })
       .foregroundStyle(.primary)
       .multilineTextAlignment(.leading)
       .onDisappear {
