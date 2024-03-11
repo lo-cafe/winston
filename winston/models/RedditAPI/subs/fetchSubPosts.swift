@@ -45,10 +45,10 @@ extension RedditAPI {
     let appendedFileType = ".json"
     var subID = ""
   
-    if id != "saved" {
+    if id != savedKeyword {
       subID = id == "" ? "/" : id.hasPrefix("/r/") ? id : "/r/\(id)"
     } else if let username = RedditAPI.shared.me?.data?.name {
-      subID = "/user/\(username)/\(id)"
+      subID = "/user/\(username)/saved"
     } else {
       print("Sub ID failed to build. Invalid logic... content will fail to load.")
     }

@@ -73,7 +73,7 @@ struct Subreddits: View, Equatable {
               }
               
               ListBigBtn(icon: "bookmark.circle.fill", iconColor: .green, label: "Saved") {
-                firstDestination = .reddit(.subFeed(Subreddit(id: "saved")))
+                firstDestination = .reddit(.subFeed(Subreddit(id: savedKeyword)))
               }
             }
           }

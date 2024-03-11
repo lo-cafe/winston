@@ -84,8 +84,8 @@ struct AppContent: View {
           return
         }
         switch name {
-        case "saved":
-          print("saved is selected")
+        case savedKeyword:
+          print("\(savedKeyword) is selected")
         case "search":
           print("search is selected")
           // MANDRAKE
@@ -112,7 +112,7 @@ struct AppContent: View {
       return ["name" : "search" as NSSecureCoding]
     }
     var savedInfo: [String: NSSecureCoding] {
-      return ["name" : "saved" as NSSecureCoding]
+      return ["name" : savedKeyword as NSSecureCoding]
     }
     var statususerInfo: [String: NSSecureCoding] {
       return ["name" : "status" as NSSecureCoding]

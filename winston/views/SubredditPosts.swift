@@ -29,12 +29,12 @@ struct SubredditPosts: View, Equatable {
   var titleFormatted: String {
     return switch subreddit.id {
     case "home": "Home"
-    case "saved": "Saved"
+    case savedKeyword: "Saved"
     default: "r/\(subreddit.data?.display_name ?? subreddit.id)"
     }
   }
   
     var body: some View {
-      RedditListingFeed(feedId: subreddit.id, showSubInPosts: subreddit.isFeed, title: titleFormatted, theme: selectedTheme.postLinks.bg, fetch: caller, initialSorting: subFeeedSettings.preferredSort, disableSearch: subreddit.id == "saved", subreddit: subreddit)
+      RedditListingFeed(feedId: subreddit.id, showSubInPosts: subreddit.isFeed, title: titleFormatted, theme: selectedTheme.postLinks.bg, fetch: caller, initialSorting: subFeeedSettings.preferredSort, disableSearch: subreddit.id == savedKeyword, subreddit: subreddit)
     }
 }
