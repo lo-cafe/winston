@@ -30,6 +30,8 @@ extension Subreddit {
     self.init(id: entity.uuid ?? UUID().uuidString, typePrefix: "\(Subreddit.prefix)_")
     self.data = SubredditData(entity: entity)
   }
+  
+  var isFeed: Bool { feedsAndSuch.contains(self.id) }
     
   /// Add a subreddit to the local like list
   /// This is a seperate list from reddits liked intenden for usage with subreddits a user wants to favorite but not subscribe to

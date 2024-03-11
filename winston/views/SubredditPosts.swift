@@ -35,6 +35,6 @@ struct SubredditPosts: View, Equatable {
   }
   
     var body: some View {
-      RedditListingFeed(feedId: subreddit.id, title: titleFormatted, theme: selectedTheme.postLinks.bg, fetch: caller, initialSorting: subFeeedSettings.preferredSort, disableSearch: subreddit.id == "saved", subreddit: subreddit)
+      RedditListingFeed(feedId: subreddit.id, showSubInPosts: subreddit.isFeed, title: titleFormatted, theme: selectedTheme.postLinks.bg, fetch: caller, initialSorting: subFeeedSettings.preferredSort, disableSearch: subreddit.id == "saved", subreddit: subreddit)
     }
 }
