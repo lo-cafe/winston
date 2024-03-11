@@ -36,16 +36,22 @@ struct NSFWMod: ViewModifier {
 
 struct NSFWOverlay: View, Equatable {
   static func == (lhs: NSFWOverlay, rhs: NSFWOverlay) -> Bool { lhs.smallIcon == rhs.smallIcon }
-
+  
   var smallIcon: Bool = false
   var body: some View {
     VStack {
-      Text("NSFW")
-        .fontSize(15, .medium)
-        .padding(.horizontal, 8)
-        .padding(.vertical, 3)
-        .background(.red, in: Capsule(style: .continuous))
-        .foregroundColor(.white)
+      Group {
+        if smallIcon {
+          Image(systemName: "18.circle")
+        } else {
+          Text("NSFW")
+        }
+      }
+      .fontSize(smallIcon ? 21 : 15, .medium)
+      .padding(.horizontal, smallIcon ? 3 : 8)
+      .padding(.vertical, 3)
+      .background(.red, in: Capsule(style: .continuous))
+      .foregroundColor(.white)
       if !smallIcon { Text("Tap to unblur") }
     }
     .frame(maxWidth: .infinity, maxHeight: .infinity)
