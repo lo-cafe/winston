@@ -20,17 +20,17 @@ struct AppearancePanel: View {
     List {
         // MARK: -- THEME
         Group {
-        Section {
-          WListButton(showArrow: true) {
-            Nav.present(.editingTheme(theme))
-          } label: {
-            OnlineThemeItem(theme: ThemeData(theme_name: theme.metadata.name, theme_author:theme.metadata.author, theme_description: theme.metadata.description,color:theme.metadata.color, icon: theme.metadata.icon), showDownloadButton: false)
-          }
-          .disabled(theme.id == "default")
-        } header: {
-          Text("Current Theme")
-        }
-        .listRowSeparator(.hidden)
+//        Section {
+//          WListButton(showArrow: true) {
+//            Nav.present(.editingTheme(theme))
+//          } label: {
+//            OnlineThemeItem(theme: ThemeData(theme_name: theme.metadata.name, theme_author:theme.metadata.author, theme_description: theme.metadata.description,color:theme.metadata.color, icon: theme.metadata.icon), showDownloadButton: false)
+//          }
+//          .disabled(theme.id == "default")
+//        } header: {
+//          Text("Current Theme")
+//        }
+//        .listRowSeparator(.hidden)
         
         Section {
           WNavigationLink(value: .setting(.appIcon)) {
