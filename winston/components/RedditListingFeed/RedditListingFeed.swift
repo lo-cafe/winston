@@ -100,6 +100,9 @@ struct RedditListingFeed<Header: View, Footer: View, S: Sorting>: View {
   
   var body: some View {
     let shallowCachedFilters = filters.map { $0.getShallow() }
+    let isThereDivider = selectedTheme.postLinks.divider.style != .no
+    let paddingH = selectedTheme.postLinks.theme.outerHPadding
+    let paddingV = selectedTheme.postLinks.spacing / (isThereDivider ? 4 : 2)
     GeometryReader { geo in
       List {
         header()
@@ -126,9 +129,6 @@ struct RedditListingFeed<Header: View, Footer: View, S: Sorting>: View {
                   switch el {
                   case .post(let post):
                     if let winstonData = post.winstonData, let sub = winstonData.subreddit ?? subreddit {
-                      let isThereDivider = selectedTheme.postLinks.divider.style != .no
-                      let paddingH = selectedTheme.postLinks.theme.outerHPadding
-                      let paddingV = selectedTheme.postLinks.spacing / (isThereDivider ? 4 : 2)
                       PostLink(id: post.id, theme: selectedTheme.postLinks, showSub: showSubInPosts, compactPerSubreddit: feedDefSettings.compactPerSubreddit[sub.id], contentWidth: contentWidth, defSettings: postLinkDefSettings)
                         .environment(\.contextPost, post)
                         .environment(\.contextSubreddit, sub)
@@ -144,21 +144,24 @@ struct RedditListingFeed<Header: View, Footer: View, S: Sorting>: View {
                   case .subreddit(let sub): SubredditLink(sub: sub)
                   case .multi(_): EmptyView()
                   case .comment(let comment):
-                    VStack {
+                    VStack(spacing: 8) {
                       ShortCommentPostLink(comment: comment)
-                        .padding()
+                        .padding(.horizontal, 12)
                       if let commentWinstonData = comment.winstonData {
                         CommentLink(showReplies: false, comment: comment, commentWinstonData: commentWinstonData, children: comment.childrenWinston)
                       }
                     }
+                    .padding(.vertical, 12)
                     .background(PostLinkBG(theme: selectedTheme.postLinks.theme, stickied: false, secondary: false))
                     .mask(RR(selectedTheme.postLinks.theme.cornerRadius, Color.black))
                     .allowsHitTesting(false)
+                    .contentShape(Rectangle())
                     .onTapGesture {
                       if let data = comment.data, let link_id = data.link_id, let subID = data.subreddit {
                         Nav.to(.reddit(.postHighlighted(Post(id: link_id, subID: subID), comment.id)))
                       }
                     }
+                    .listRowInsets(EdgeInsets(top: paddingV, leading: paddingH, bottom: paddingV, trailing: paddingH))
                   case .user(let user): UserLink(user: user)
                   case .message(let message):
                     let isThereDivider = selectedTheme.postLinks.divider.style != .no
