@@ -110,7 +110,7 @@ struct PostLinkNormal: View, Equatable, Identifiable {
   
   var body: some View {
     if let data = post.data {
-      let over18 = data.over_18 ?? false
+//      let over18 = data.over_18 ?? false
       VStack(alignment: .leading, spacing: theme.theme.verticalElementsSpacing) {
         
         if theme.theme.showDivider && defSettings.dividerPosition == .top { SubsNStuffLine() }
