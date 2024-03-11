@@ -1,1 +1,15 @@
-- Performance improvements
+Winston’s 1.1.3 Update is Here!
+
+- Complete rewrite of how Winston displays the elements in each feed, resulting in a major boost to Winston’s smoothness
+- Fixed bug regarding crossposts in compact mode
+- Fixed rare bug causing crashes when  in compact mode
+- Addition to chose the comment skipper button location
+- Fixed compact mode bug relating to post link heights
+- Fixed crashed related to UI being updated in the background
+- Refilled Winston’s food bowl
+
+Where are we headed next?
+- Restructuring the Search Function with a surprise adittion of Kagi Search
+- Refine compact mode
+- Take theming to the next level with a different style for the bars
+- Restructuring versioning and changelog

@@ -910,6 +910,7 @@
 
     },
     "Current Theme" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {

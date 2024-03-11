@@ -1,36 +1,16 @@
 {
   "title": "What's new in Winston",
-  "version": "1.1.2",
+  "version": "1.1.3",
   "features": [
     {
-      "subtitle": "Tables, spoilers, and quotes are now supported.",
-      "systemImage": "square.and.line.vertical.and.square",
-      "title": "Markdown Overhaul"
+      "subtitle": "Complete rewrite of how Winston displays the elements in each feed, resulting in a major boost to Winston’s smoothness.",
+      "systemImage": "hare.fill",
+      "title": "Ultra feed component"
     },
     {
       "subtitle": null,
-      "systemImage": "arrow.right.circle",
-      "title": "Comment Skipper Button"
-    },
-    {
-      "subtitle": "Drag the page as you drag your finger for a seamless experience.",
-      "systemImage": "arrow.triangle.branch",
-      "title": "Apollo Style 'Navigation Anywhere'"
-    },
-    {
-      "subtitle": "Easily find posts that contain specific text with custom filters.",
-      "systemImage": "slider.horizontal.3",
-      "title": "Custom Filters"
-    },
-    {
-      "subtitle": "Enjoy a refined UI, especially in compact mode, tailored for each subreddit.",
-      "systemImage": "rectangle.3.group",
-      "title": "Compact Mode per Subreddit"
-    },
-    {
-      "subtitle": null,
-      "systemImage": "wrench.and.screwdriver",
-      "title": "Misc. Bug Fixes and Performance Improvements"
+      "systemImage": "hand.thumbsup.fill",
+      "title": "Improved stability"
     }
   ]
 }
