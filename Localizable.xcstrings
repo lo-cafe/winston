@@ -1443,7 +1443,6 @@
       }
     },
     "Force subs as tag" : {
-      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {

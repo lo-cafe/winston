@@ -28,10 +28,10 @@ struct BadgeSettings: View {
             .resetter($theme.spacing, defaultVal.spacing)
         }
         
-//        FakeSection(footer: "Currently subrredits show inline in a text accent-colored on the right of the author. With this option you can force it to always appear as a accent-colored tag instead.") {
-//          Toggle("Force subs as tag", isOn: $theme.forceSubsAsTags)
-//            .padding(.horizontal, 16)
-//        }
+        FakeSection(footer: "Currently subrredits show inline in a text accent-colored on the right of the author. With this option you can force it to always appear as a accent-colored tag instead.") {
+          Toggle("Force subs as tag", isOn: $theme.forceSubsAsTags)
+            .padding(.horizontal, 16)
+        }
         
         if (showSub) {
           FakeSection("Subreddit Color") {
