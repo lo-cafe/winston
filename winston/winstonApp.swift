@@ -38,7 +38,7 @@ struct winstonApp: App {
       return ["name" : "search" as NSSecureCoding]
     }
     var savedInfo: [String: NSSecureCoding] {
-      return ["name" : savedKeyword as NSSecureCoding]
+      return ["name" : "saved" as NSSecureCoding]
     }
     var statususerInfo: [String: NSSecureCoding] {
       return ["name" : "status" as NSSecureCoding]

@@ -20,8 +20,7 @@ let compactModeThumbSize: CGFloat = 75
 let screenScale = UIScreen.main.scale
 let colorLottieKeypath = AnimationKeypath(keypath: "**.Color")
 let emptyColorLottieKeypath = AnimationKeypath(keypath: "**.EmptyKeyPath")
-let savedKeyword = "winstonSaved"
-let feedsAndSuch = ["home", savedKeyword, "all", "popular"]
+let feedsAndSuch = ["home", "saved", "all", "popular"]
 let IMAGES_FORMATS = [".gif", ".png", ".jpg", ".jpeg", ".webp", ".bmp", ".tiff", ".svg", ".ico", ".heic", ".heif"]
 let VIDEOS_FORMATS = [".mov", ".mp4", ".avi", ".mkv", ".flv", ".wmv", ".mpg", ".mpeg", ".webm"]
 
