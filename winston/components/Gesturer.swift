@@ -9,7 +9,7 @@ import Foundation
 import SwiftUI
 //import SwiftUIX
 
-struct GesturerHolder<Content: View>: UIViewRepresentable, Identifiable {
+struct GesturerHolder<Content: View>: UIViewControllerRepresentable, Identifiable {
 //  static func == (lhs: GesturerHolder<Content>, rhs: GesturerHolder<Content>) -> Bool {
 //    lhs.id == rhs.id
 //  }
@@ -53,15 +53,23 @@ struct GesturerHolder<Content: View>: UIViewRepresentable, Identifiable {
     self.content = content
   }
   
-  func makeUIView(context: Context) -> UIView {
+  func makeUIViewController(context: Context) -> UIHostingController<Content> {
     
 //    let hostingView = UIHostingView(rootView: self.content)
     let hostingController = UIHostingController(rootView: self.content)
 //    let contentView = self.content(hostingController)
 //    hostingController.rootView = contentView
-    hostingController.view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+//    hostingController.view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+//    NSLayoutConstraint.activate([
+//      hostingController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+//      hostingController.view.trailing.constraint(equalTo: view.trailing),
+//      hostingController.view.top.constraint(equalTo: view.top),
+//      hostingController.view.bottom.constraint(equalTo: view.bottom),
+//    ])
+    hostingController.sizingOptions = .preferredContentSize
 //    hostingView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
     context.coordinator.view = hostingController.view
+//    context.coordinator.controller = hostingController
 //    context.coordinator.view = hostingView
     
       
@@ -76,16 +84,16 @@ struct GesturerHolder<Content: View>: UIViewRepresentable, Identifiable {
         addDragRecognizer(to: view, with: context)
       }
     }
-      return hostingController.view
+      return hostingController
 //    return hostingView
   }
   
-  func updateUIView(_ hostingController: UIView, context: Context) {
-//    let newContentView = self.content(hostingController)
-//    hostingController.rootView = newContentView
+  func updateUIViewController(_ hostingController: UIHostingController<Content>, context: Context) {
 //    hostingController.view.bounds = CGRect(origin: .zero, size: size)
 //    hostingController.view.frame = hostingController.view.bounds
 //    context.coordinator.view = hostingController.view
+      hostingController.rootView = self.content
+//      hostingController.sizingOptions = .intrinsicContentSize
   }
   
   func makeCoordinator() -> Coordinator {
@@ -122,6 +130,7 @@ struct GesturerHolder<Content: View>: UIViewRepresentable, Identifiable {
     
 //    var hostingConfig: UIHostingConfiguration<Content, EmptyView>
     private var parent: GesturerHolder
+//    var controller: UIHostingController<Content>? = nil
     private var panning = false
     var view: UIView? = nil
     
@@ -221,3 +230,10 @@ struct GesturerHolder<Content: View>: UIViewRepresentable, Identifiable {
 //  }
 //
 //}
+
+class SelfSizingHostingController<Content>: UIHostingController<Content> where Content: View {
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        self.view.invalidateIntrinsicContentSize()
+    }
+}
