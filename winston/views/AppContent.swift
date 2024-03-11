@@ -84,8 +84,8 @@ struct AppContent: View {
           return
         }
         switch name {
-        case "saved":
-          print("saved is selected")
+        case savedKeyword:
+          print("\(savedKeyword) is selected")
         case "search":
           print("search is selected")
           // MANDRAKE
