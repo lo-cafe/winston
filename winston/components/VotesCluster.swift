@@ -101,10 +101,8 @@ struct VotesClusterVertical: View, Equatable {
       VoteButton(active: (likes ?? false), color: .orange, image: "arrow.up").highPriorityGesture(TapGesture().onEnded(upvote))
       
       VoteButton(active: !(likes ?? true), color: .blue, image: "arrow.down").highPriorityGesture(TapGesture().onEnded(downvote))
-      
-      Spacer().frame(maxHeight: .infinity)
     }
-    .frame(width: VotesCluster.verticalWidth)
+    .frame(width: VotesCluster.verticalWidth, alignment: .top)
   }
 }
 

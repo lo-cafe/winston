@@ -95,7 +95,6 @@ struct PostLinkCompact: View, Equatable, Identifiable {
   func votesPiece() -> some View {
     if let data = post.data, defSettings.showVotesCluster {
       VotesCluster(votesKit: data.votesKit, voteAction: post.vote, vertical: true, showUpVoteRatio: defSettings.showUpVoteRatio).fontSize(22, .medium)
-        .frame(maxHeight: .infinity)
         .fontSize(22, .medium)
     }
   }
