@@ -6,6 +6,8 @@
 //
 
 import SwiftUI
+import NukeUI
+import Defaults
 
 enum SearchType: String {
   case subreddit = "Subreddit"
@@ -41,65 +43,77 @@ enum SearchTypeArr {
 }
 
 struct Search: View {
-  var reset: Bool
-  @StateObject var router: Router
+  @State var router: Router
+  
   @State private var searchType: SearchType = .subreddit
-  @StateObject private var resultsSubs = ObservableArray<Subreddit>()
-  @StateObject private var resultsUsers = ObservableArray<User>()
-  @StateObject private var resultPosts = ObservableArray<Post>()
+  @State private var resultsSubs: [Subreddit] = []
+  @State private var resultsUsers: [User] = []
+  @State private var resultPosts: [Post] = []
   @State private var loading = false
   @State private var hideSpinner = false
-  @StateObject var searchQuery = DebouncedText(delay: 0.25)
+  @State var searchQuery = Debouncer("", delay: 0.25)
   
   @State private var dummyAllSub: Subreddit? = nil
   @State private var searchViewLoaded: Bool = false
   
+  @Default(.PostLinkDefSettings) private var postLinkDefSettings
   @Environment(\.useTheme) private var theme
+  @Environment(\.contentWidth) private var contentWidth
+  
+  init(router: Router) {
+    self._router = .init(initialValue: router)
+  }
   
   func fetch() {
-    if searchQuery.text == "" { return }
+    if searchQuery.value == "" { return }
     withAnimation {
       loading = true
     }
     switch searchType {
     case .subreddit:
-      resultsSubs.data.removeAll()
+      resultsSubs.removeAll()
       Task(priority: .background) {
-        if let subs = await RedditAPI.shared.searchSubreddits(searchQuery.text)?.map({ Subreddit(data: $0, api: RedditAPI.shared) }) {
+        if let subs = await RedditAPI.shared.searchSubreddits(searchQuery.value)?.map({ Subreddit(data: $0) }) {
           await MainActor.run {
             withAnimation {
-              resultsSubs.data = subs
+              resultsSubs = subs
               loading = false
               
-              hideSpinner = resultsSubs.data.isEmpty
+              hideSpinner = resultsSubs.isEmpty
             }
           }
         }
       }
     case .user:
-      resultsUsers.data.removeAll()
+      resultsUsers.removeAll()
       Task(priority: .background) {
-        if let users = await RedditAPI.shared.searchUsers(searchQuery.text)?.map({ User(data: $0, api: RedditAPI.shared) }) {
+        if let users = await RedditAPI.shared.searchUsers(searchQuery.value)?.map({ User(data: $0) }) {
           await MainActor.run {
             withAnimation {
-              resultsUsers.data = users
+              resultsUsers = users
               loading = false
               
-              hideSpinner = resultsUsers.data.isEmpty
+              hideSpinner = resultsUsers.isEmpty
             }
           }
         }
       }
     case .post:
-      resultPosts.data.removeAll()
+      resultPosts.removeAll()
       Task(priority: .background) {
-        if let dummyAllSub = dummyAllSub, let result = await dummyAllSub.fetchPosts(searchText: searchQuery.text), let newPosts = result.0 {
+        if let dummyAllSub = dummyAllSub, let result = await dummyAllSub.fetchPosts(searchText: searchQuery.value), let newPosts = result.0 {
+          let actualNewPosts = newPosts.compactMap {
+            if case .post(let post) = $0 {
+              return post
+            }
+            return nil
+          }
           await MainActor.run {
             withAnimation {
-              resultPosts.data = newPosts
+              resultPosts = actualNewPosts
               loading = false
               
-              hideSpinner = resultPosts.data.isEmpty
+              hideSpinner = resultPosts.isEmpty
             }
           }
         }
@@ -108,81 +122,79 @@ struct Search: View {
   }
   
   var body: some View {
-    NavigationStack(path: $router.path) {
-      DefaultDestinationInjector(routerProxy: RouterProxy(router)) {
-        List {
-          Group {
-            Section {
-              HStack {
-                SearchOption(activateSearchType: { searchType = .subreddit }, active: searchType == SearchType.subreddit, searchType: .subreddit)
-                SearchOption(activateSearchType: { searchType = .user }, active: searchType == SearchType.user, searchType: .user)
-                SearchOption(activateSearchType: { searchType = .post }, active: searchType == SearchType.post, searchType: .post)
-              }
-              .id("options")
+    NavigationStack(path: $router.fullPath) {
+      List {
+        Group {
+          Section {
+            HStack {
+              SearchOption(activateSearchType: { searchType = .subreddit }, active: searchType == SearchType.subreddit, searchType: .subreddit)
+              SearchOption(activateSearchType: { searchType = .user }, active: searchType == SearchType.user, searchType: .user)
+              SearchOption(activateSearchType: { searchType = .post }, active: searchType == SearchType.post, searchType: .post)
             }
-            
-            Section {
-              switch searchType {
-              case .subreddit:
-                ForEach(resultsSubs.data) { sub in
-                  SubredditLink(sub: sub)
-                }
-              case .user:
-                ForEach(resultsUsers.data) { user in
-                  UserLink(user: user)
-                }
-              case .post:
-                if let dummyAllSub = dummyAllSub {
-                  ForEach(resultPosts.data) { post in
-                    PostLink(post: post, sub: dummyAllSub)
-//                      .equatable()
-                      .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
-                      .animation(.default, value: resultPosts.data)
+            .id("options")
+          }
+          
+          Section {
+            switch searchType {
+            case .subreddit:
+              ForEach(resultsSubs) { sub in
+                SubredditLink(sub: sub)
+              }
+            case .user:
+              ForEach(resultsUsers) { user in
+                UserLink(user: user)
+              }
+            case .post:
+              if let dummyAllSub = dummyAllSub {
+                ForEach(resultPosts) { post in
+                  if let winstonData = post.winstonData {
+                    //                      SwipeRevolution(size: winstonData.postDimensions.size, actionsSet: postSwipeActions, entity: post) { controller in
+                    PostLink(id: post.id, theme: theme.postLinks, showSub: true, compactPerSubreddit: nil, contentWidth: contentWidth, defSettings: postLinkDefSettings)
+//                    .swipyRev(size: winstonData.postDimensions.size, actionsSet: postSwipeActions, entity: post)
+                    //                      }
+                    .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
+                    .animation(.default, value: resultPosts)
+                    .environment(\.contextPost, post)
+                    .environment(\.contextSubreddit, dummyAllSub)
+                    .environment(\.contextPostWinstonData, winstonData)
                   }
                 }
               }
             }
           }
-          .listRowSeparator(.hidden)
-          .listRowBackground(Color.clear)
-          .listRowInsets(EdgeInsets(top: 6, leading: 16, bottom: 6, trailing: 16))
         }
-        .themedListBG(theme.lists.bg)
-        .listStyle(.plain)
-        .background(Color(UIColor.systemGroupedBackground))
-        .scrollContentBackground(.hidden)
-        .loader(loading, hideSpinner && !searchQuery.text.isEmpty)
-        .onChange(of: searchType) { _ in fetch() }
-        .onChange(of: reset) { _ in router.path.removeLast(router.path.count) }
-        .onChange(of: searchQuery.debounced) { val in
-          if val == "" {
-            resultsSubs.data = []
-            resultsUsers.data = []
-            resultPosts.data = []
-          }
-          fetch()
-        }
+        .listRowSeparator(.hidden)
+        .listRowBackground(Color.clear)
+        .listRowInsets(EdgeInsets(top: 6, leading: 16, bottom: 6, trailing: 16))
       }
-      .searchable(text: $searchQuery.text, placement: .toolbar)
+      .themedListBG(theme.lists.bg)
+      .listStyle(.plain)
+      .loader(loading, hideSpinner && !searchQuery.value.isEmpty)
+      .attachViewControllerToRouter(tabID: .search)
+      .injectInTabDestinations()
+      .scrollDismissesKeyboard(.automatic)
+      .searchable(text: $searchQuery.value, placement: .toolbar)
       .autocorrectionDisabled(true)
       .textInputAutocapitalization(.none)
       .refreshable { fetch() }
       .onSubmit(of: .search) { fetch() }
       .navigationTitle("Search")
+      .onChange(of: searchType) { _ in fetch() }
+      .onChange(of: searchQuery.debounced) { val in
+        if val == "" {
+          resultsSubs = []
+          resultsUsers = []
+          resultPosts = []
+        }
+        fetch()
+      }
       .onAppear() {
         if !searchViewLoaded {
-          dummyAllSub = Subreddit(id: "all", api: RedditAPI.shared)
+          dummyAllSub = Subreddit(id: "all")
           searchViewLoaded = true
         }
       }
-//      .defaultNavDestinations(router)
     }
-    .swipeAnywhere(routerProxy: RouterProxy(router), routerContainer: router.isRootWrapper)
+//    .swipeAnywhere()
   }
 }
-
-//struct Search_Previews: PreviewProvider {
-//    static var previews: some View {
-//        Search()
-//    }
-//}

@@ -1,0 +1,382 @@
+@mixin animate($animation, $duration, $method, $times) {
+  animation: $animation $duration $method $times;
+}
+
+@mixin keyframes($name) {
+  @keyframes #{$name} {
+    @content;
+  }
+}
+
+.winstonBlurMask {
+  position: fixed;
+  z-index: 99999999;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  background: rgba(255, 255, 255, 0);
+  backdrop-filter: blur(20px) saturate(180%);
+  opacity: 0;
+  transition: opacity 0.5s ease-out;
+  will-change: opacity;
+
+  .winHelper {
+    // opacity: 0;
+    // transition: opacity 0.5s ease-out;
+    height: 100%;
+    width: 100%;
+    position: relative;
+    filter: blur(225px);
+
+    .winsonStain {
+      position: absolute;
+      overflow: visible;
+      background-color: transparent;
+      transform: scale(1);
+      transition-timing-function: ease;
+      transition-property: opacity, background-color, transform;
+      will-change: transform, background-color;
+
+      // @include keyframes(gradient) {
+      //   0% {
+      //     background-position: 0% 50%;
+      //   }
+      //   50% {
+      //     background-position: 100% 50%;
+      //   }
+      //   100% {
+      //     background-position: 0% 50%;
+      //   }
+      // }
+    }
+  }
+}
+
+.wrapperWinston {
+  position: fixed;
+  z-index: 9999999999;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+  font-size: 48px;
+  background: #000;
+  color: #fff;
+  width: calc(100% - 64px);
+  box-sizing: border-box;
+  gap: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  font-family: "SF Pro", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu,
+    Cantarell, "Open Sans", "Helvetica Neue", sans-serif !important;
+  text-align: center;
+  // top: 100vh;
+  // transition: all 1s cubic-bezier(.12,1.335,.4,.98) 0s;
+  // height: 726.406px;
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-drag: none;
+  * {
+    box-sizing: border-box;
+    outline: none !important;
+    font-family: "SF Pro", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu,
+      Cantarell, "Open Sans", "Helvetica Neue", sans-serif !important;
+  }
+
+  p {
+    margin: 0;
+  }
+
+  img {
+    width: 178px;
+  }
+  h1 {
+    font-weight: 700;
+    font-size: 84px;
+    margin: 0;
+  }
+
+  .winstonContent {
+    overflow: hidden;
+    gap: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 56px;
+  }
+
+  .arrowWinston {
+    position: absolute;
+    width: 100px;
+    z-index: -1;
+    height: 100px;
+    background-color: black;
+    transition: all 1s cubic-bezier(0.12, 1.335, 0.4, 0.98) 0s;
+    left: 84px;
+    border-radius: 12px;
+  }
+
+  .buttonsHolder {
+    display: flex;
+    margin-top: 46px;
+    width: 100%;
+    gap: 24px;
+  }
+
+  .fullWidthWinstonBtn {
+    background: #3b3b3f;
+    color: #fff;
+    border: none;
+    border-radius: 1000px;
+    font-family: SF Pro, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu,
+      Cantarell, Open Sans, Helvetica Neue, sans-serif;
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    font-size: 48px;
+    font-weight: 500;
+    padding: 28px 56px;
+    -webkit-tap-highlight-color: rgba(255, 255, 255, 0);
+
+    &:active {
+      filter: brightness(0.5);
+    }
+    &:focus {
+      outline: none;
+    }
+    &.primary {
+      background: #008eff;
+    }
+  }
+}
+
+.existentCredentialsWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100%;
+  gap: 16px;
+  margin-top: 32px;
+  align-items: stretch;
+
+  .existentCredential {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    width: 100%;
+    padding: 32px 0;
+    border-radius: 40px;
+    color: white;
+    border: none;
+    gap: 24px;
+
+    &.bordered {
+      padding: 32px 24px;
+      background-color: rgba(49, 209, 88, 0.25);
+      justify-content: center;
+
+      .body { 
+        flex: 0;
+      }
+
+      & > svg {
+        color: rgb(49, 209, 88);
+      }
+    }
+
+    & > svg {
+      font-size: 88px;
+      color: #008eff;
+    }
+
+    .body {
+      flex: 1;
+      gap: 12px;
+      text-align: left;
+
+      .name {
+        font-size: 48px;
+        font-weight: 600;
+        margin-right: 16px;
+      }
+
+      .appID {
+        font-size: 32px;
+        font-weight: 400;
+        opacity: 0.5;
+      }
+
+      .appSecret {
+        display: none;
+      }
+    }
+
+    .btnsWrapper {
+      display: flex;
+      flex-direction: row;
+      flex-shrink: 0;
+      gap: 16px;
+
+      .deleteWrapper {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: flex-end;
+        width: 100px;
+      }
+
+      button {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        overflow: hidden;
+        padding: 28px 48px;
+        border-radius: 100px;
+        font-size: 44px;
+        font-weight: 600;
+        border: none;
+        color: #0b84ff;
+        line-height: 100%;
+        background: rgba(10, 133, 255, 0.25);
+        gap: 4px;
+        -webkit-tap-highlight-color: rgba(255, 255, 255, 0);
+
+        span {
+          height: 44px;
+        }
+
+        &:active {
+          filter: brightness(0.5);
+        }
+        &:focus {
+          outline: none;
+        }
+
+        .disabled {
+          opacity: 0.5;
+          filter: grayscale(1);
+          pointer-events: none;
+        }
+
+        &.delete {
+          background: rgba(255, 69, 58, 0.25);
+          color: #ff453a;
+          padding: 28px;
+          border-radius: 0;
+        }
+        img {
+          width: 48px;
+          height: 48px;
+        }
+      }
+    }
+  }
+}
+
+.closeButton {
+  position: absolute;
+  right: 64px;
+  top: 64px;
+  font-size: 72px;
+  color: rgba(255, 255, 255, 0.5);
+  background: transparent;
+  border: none;
+  outline: none;
+  &:active {
+    color: rgba(255, 255, 255, 0.2);
+  }
+}
+
+.spinner {
+  position: absolute;
+  left: 64px;
+  top: 64px;
+  font-size: 75px;
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+}
+
+.spinnerBlade {
+  position: absolute;
+  left: 0.4629em;
+  bottom: 0;
+  width: 0.11428571em;
+  height: 0.31428571em;
+  border-radius: 0.05714286em;
+  background-color: transparent;
+  transform-origin: center -0.2222em;
+  -webkit-animation: spinner-fade 0.66s infinite linear;
+  animation: spinner-fade 0.66s infinite linear;
+}
+.spinnerBlade:nth-child(1) {
+  -webkit-animation-delay: 0s;
+  animation-delay: 0s;
+  transform: rotate(0deg);
+}
+.spinnerBlade:nth-child(2) {
+  -webkit-animation-delay: 0.083s;
+  animation-delay: 0.083s;
+  transform: rotate(45deg);
+}
+.spinnerBlade:nth-child(3) {
+  -webkit-animation-delay: 0.166s;
+  animation-delay: 0.166s;
+  transform: rotate(90deg);
+}
+.spinnerBlade:nth-child(4) {
+  -webkit-animation-delay: 0.249s;
+  animation-delay: 0.249s;
+  transform: rotate(135deg);
+}
+.spinnerBlade:nth-child(5) {
+  -webkit-animation-delay: 0.332s;
+  animation-delay: 0.332s;
+  transform: rotate(180deg);
+}
+.spinnerBlade:nth-child(6) {
+  -webkit-animation-delay: 0.415s;
+  animation-delay: 0.415s;
+  transform: rotate(225deg);
+}
+.spinnerBlade:nth-child(7) {
+  -webkit-animation-delay: 0.498s;
+  animation-delay: 0.498s;
+  transform: rotate(270deg);
+}
+.spinnerBlade:nth-child(8) {
+  -webkit-animation-delay: 0.581s;
+  animation-delay: 0.581s;
+  transform: rotate(315deg);
+}
+
+@-webkit-keyframes spinner-fade {
+  0% {
+    background-color: #69717d;
+  }
+  100% {
+    background-color: transparent;
+  }
+}
+
+@keyframes spinner-fade {
+  0% {
+    background-color: #69717d;
+  }
+  100% {
+    background-color: transparent;
+  }
+}

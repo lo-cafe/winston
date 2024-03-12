@@ -10,29 +10,80 @@ import Alamofire
 import Defaults
 
 extension RedditAPI {
-  func searchInSubreddit(_ subreddit: String, _ query: String) async -> [UserData]? {
-    await refreshToken()
-    //    await getModHash()
-    if let headers = self.getRequestHeaders() {
-      let limit = Defaults[.feedPostsLoadLimit]
-      let params = SearchInSubredditPayload(limit: limit, q: query)
-      let response = await AF.request(
-        "\(RedditAPI.redditApiURLBase)/r/\(subreddit)/search",
-        method: .get,
-        parameters: params,
-        encoder: URLEncodedFormParameterEncoder(destination: .queryString),
-        headers: headers
-      )
-        .serializingDecodable(Listing<UserData>.self).result
-      switch response {
-      case .success(let data):
-        return data.data?.children?.compactMap { $0.data }
-      case .failure(let error):
-        Oops.shared.sendError(error)
-        return nil
-      }
-    } else {
+  
+  func searchInSubreddit(_ subreddit: String?, _ advanced: AdvancedPostsSearch) async -> ([ListingChild<Either<PostData, CommentData>>]?, String?)? {
+    var url = "\(RedditAPI.redditApiURLBase)"
+    if let subreddit, let subName = SubMetaFormatter(name: subreddit).name {
+      url += "/r/\(subName)"
+    }
+    url += "/search.json"
+    print(advanced)
+    switch await self.doRequest(url, method: .get, params: advanced, paramsLocation: .queryString, decodable: Listing<Either<PostData, CommentData>>.self)  {
+    case .success(let data):
+      return (data.data?.children, data.data?.after)
+    case .failure(_):
       return nil
+    }
+  }
+  
+ 
+  struct AdvancedPostsSearch: Encodable {
+    let subreddit: String
+    var flairs: [String]?
+    var searchQuery: String
+    var restrictSr: String
+    var sort: String
+    var time: String
+    var limit: String
+    var after: String
+    
+    init(after: String? = nil, subreddit: String, flairs: [String]?, searchQuery: String? = nil, restrictSr: String = "true", sortOption: SubListingSortOption, limit: Int = Defaults[.SubredditFeedDefSettings].chunkLoadSize) {
+        self.after = after ?? ""
+        self.subreddit = subreddit
+        self.flairs = flairs
+        self.searchQuery = searchQuery ?? "*"
+        self.restrictSr = restrictSr
+        self.limit = "\(limit)"
+        
+        switch sortOption {
+        case .best, .hot, .new, .controversial:
+            self.sort = sortOption.meta.apiValue
+            self.time = ""
+        case .top(let topOption):
+            self.sort = sortOption.meta.apiValue
+            self.time = topOption.meta.apiValue
+        }
+    }
+    
+    enum CodingKeys: String, CodingKey {
+      case after = "after"
+      case searchQuery = "q"
+      case restrictSr = "restrict_sr"
+      case sort
+      case time = "t"
+      case limit
+    }
+    
+    func encode(to encoder: Encoder) throws {
+      var container = encoder.container(keyedBy: CodingKeys.self)
+      
+      // Consolidating flairs and searchQuery into `q` parameter as a query string
+      var queryItems: [String] = []
+      if let flairs = flairs {
+        let flairQueries = flairs.map { "flair:\"\($0)\"" }
+        queryItems.append(contentsOf: flairQueries)
+      }
+//      if let searchQuery = searchQuery {
+        queryItems.append(searchQuery)
+//      }
+      let queryString = queryItems.joined(separator: " OR ")
+      try container.encode(queryString, forKey: .searchQuery)
+      
+      try container.encode(after, forKey: .after)
+      try container.encode(restrictSr, forKey: .restrictSr)
+      try container.encode(sort, forKey: .sort)
+      try container.encode(time, forKey: .time)
+      try container.encode(limit, forKey: .limit)
     }
   }
   
@@ -49,6 +100,7 @@ extension RedditAPI {
     var sort: SearchInSubredditSort = .relevance
     var type: String = "sr,link,user"
     var category: String = ""
+    var raw_json = 1
   }
   
   enum SearchInSubredditSort: String, Codable {

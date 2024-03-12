@@ -28,7 +28,7 @@ extension CachedSub {
     @NSManaged public var icon_img: String?
     @NSManaged public var key_color: String?
     @NSManaged public var name: String?
-    @NSManaged public var over_18: Bool
+    @NSManaged public var over18: Bool
     @NSManaged public var primary_color: String?
     @NSManaged public var restrict_commenting: Bool
     @NSManaged public var subscribers: Double
@@ -40,18 +40,19 @@ extension CachedSub {
     @NSManaged public var user_is_moderator: Bool
     @NSManaged public var user_is_subscriber: Bool
     @NSManaged public var uuid: String?
+    @NSManaged public var winstonCredentialID: UUID?
   
-  convenience init(data: SubredditData, context: NSManagedObjectContext) {
+  convenience init(data: SubredditData, context: NSManagedObjectContext, credentialID: UUID) {
     self.init(context: context)
-    update(data: data)
+    update(data: data, credentialID: credentialID)
   }
   
-  func update(data x: SubredditData) {
+  func update(data x: SubredditData, credentialID: UUID) {
     self.uuid = x.name
     self.allow_galleries = x.allow_galleries ?? false
     self.allow_images = x.allow_images ?? false
     self.allow_videos = x.allow_videos ?? false
-    self.over_18 = x.over_18 ?? false
+    self.over18 = x.over18 ?? false
     self.restrict_commenting = x.restrict_commenting ?? false
     self.user_has_favorited = x.user_has_favorited ?? false
     self.user_is_banned = x.user_is_banned ?? false
@@ -71,6 +72,7 @@ extension CachedSub {
     self.url = x.url
     self.user_flair_background_color = x.user_flair_background_color
     self.subscribers = Double(x.subscribers ?? 0)
+    self.winstonCredentialID = credentialID
   }
 
 }

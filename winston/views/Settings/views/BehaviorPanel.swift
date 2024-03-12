@@ -7,104 +7,111 @@
 
 import SwiftUI
 import Defaults
+import VisionKit
 
 struct BehaviorPanel: View {
-  @Default(.maxPostLinkImageHeightPercentage) var maxPostLinkImageHeightPercentage
-  @Default(.openYoutubeApp) var openYoutubeApp
-  @Default(.preferenceDefaultFeed) var preferenceDefaultFeed
-  @Default(.preferredSort) var preferredSort
-  @Default(.preferredCommentSort) var preferredCommentSort
-  @Default(.blurPostLinkNSFW) var blurPostLinkNSFW
-  @Default(.blurPostNSFW) var blurPostNSFW
-  @Default(.collapseAutoModerator) var collapseAutoModerator
-  @Default(.readPostOnScroll) var readPostOnScroll
-  @Default(.hideReadPosts) var hideReadPosts
-  @Default(.enableSwipeAnywhere) var enableSwipeAnywhere
-  @Default(.autoPlayVideos) var autoPlayVideos
-  @Default(.loopVideos) private var loopVideos
-  @Default(.lightboxViewsPost) private var lightboxViewsPost
-  @Default(.openLinksInSafari) private var openLinksInSafari
-  @Default(.feedPostsLoadLimit) private var feedPostsLoadLimit
+  @Default(.BehaviorDefSettings) var behaviorDefSettings
+  @Default(.PostLinkDefSettings) var postLinkDefSettings
+  @Default(.PostPageDefSettings) var postPageDefSettings
+  @Default(.CommentLinkDefSettings) var commentLinkDefSettings
+  @Default(.CommentsSectionDefSettings) var commentsSectionDefSettings
+  @Default(.SubredditFeedDefSettings) var subredditFeedDefSettings
+  @Default(.GeneralDefSettings) var generalDefSettings
+  @Default(.VideoDefSettings) var videoDefSettings
   
   @Environment(\.useTheme) private var theme
-  
+  @State private var imageAnalyzerSupport: Bool = true
   var body: some View {
     List {
       
-      Section("General") {
-        Group {
-          Toggle("Open links in safari", isOn: $openLinksInSafari)
-          Toggle("Open Youtube Videos Externally", isOn: $openYoutubeApp)
-                    
-          Picker("Default Launch Feed", selection: $preferenceDefaultFeed) {
+      Group {
+        Section("General") {
+          Toggle("Open Youtube Videos Externally", isOn: $behaviorDefSettings.openYoutubeApp)
+#if !os(macOS)
+          let auth_type = Biometrics().biometricType()
+          Toggle("Lock Winston With \(auth_type)", isOn: $generalDefSettings.useAuth)
+#endif
+          
+          VStack{
+            Toggle("Live Text Analyzer", isOn: $behaviorDefSettings.doLiveText)
+              .disabled(!imageAnalyzerSupport)
+              .onAppear{
+                imageAnalyzerSupport = ImageAnalyzer.isSupported
+                if !ImageAnalyzer.isSupported {
+                  behaviorDefSettings.doLiveText = false
+                }
+              }
+            
+            
+            if !imageAnalyzerSupport{
+              HStack{
+                Text("Your iPhone does not support Live Text :(")
+                  .fontSize(12)
+                  .opacity(0.5)
+                Spacer()
+              }
+            }
+          }
+          
+          Picker("Default Launch Feed", selection: $behaviorDefSettings.preferenceDefaultFeed) {
             Text("Home").tag("home")
             Text("Popular").tag("popular")
             Text("All").tag("all")
-            
             Text("Subscription List").tag("subList")
           }
           .pickerStyle(DefaultPickerStyle())
+          
+          WSNavigationLink(.setting(.filteredSubreddits), "Filtered Subreddits")
         }
-        .themedListRowBG(enablePadding: true)
         
         
-        WSNavigationLink(SettingsPages.filteredSubreddits, "Filtered Subreddits")
-      }
-      .themedListDividers()
-      
-      Section {
-        LabeledSlider(label: "Loading limit", value: Binding(get: { CGFloat(feedPostsLoadLimit) }, set: { val in feedPostsLoadLimit = Int(val) }), range: 15...100)
-          .themedListRowBG(enablePadding: true)
-      } footer: {
-        Text("Sets how many posts to load per chunk (loads more on scroll)")
-      }
-      .themedListDividers()
-      
-      Section {
-        Toggle("Navigation everywhere", isOn: $enableSwipeAnywhere)
-          .themedListRowBG(enablePadding: true)
-      } footer: {
-        Text("This will allow you to do go back by swiping anywhere in the screen, but will disable post and comments swipe gestures.")
-      }
-      .themedListDividers()
-      
-      Section("Posts") {
-        WSNavigationLink(SettingsPages.postSwipe, "Posts swipe settings")
-        Group {
-          Toggle("Loop videos", isOn: $loopVideos)
-          Toggle("Autoplay videos (muted)", isOn: $autoPlayVideos)
-          Toggle("Read on preview media", isOn: $lightboxViewsPost)
-          Toggle("Read on scroll", isOn: $readPostOnScroll)
-          Toggle("Hide read posts", isOn: $hideReadPosts)
-          Toggle("Blur NSFW in opened posts", isOn: $blurPostNSFW)
-          Toggle("Blur NSFW in posts links", isOn: $blurPostLinkNSFW)
+        Section {
+          LabeledSlider(label: "Loading limit", value: Binding(get: { CGFloat(subredditFeedDefSettings.chunkLoadSize) }, set: { val in subredditFeedDefSettings.chunkLoadSize = Int(val) }), range: 15...100, disablePadding: true)
+          //            .themedListRowLikeBG(enablePadding: true, disableBG: true)
+        } footer: {
+          Text("Sets how many posts to load per chunk (loads more on scroll)")
+        }
+        
+        Section {
+          Toggle("Navigation everywhere", isOn: $behaviorDefSettings.enableSwipeAnywhere)
+        } footer: {
+          Text("This will allow you to do go back by swiping anywhere in the screen, but will disable post and comments swipe gestures.")
+            .padding(.bottom)
+        }
+        
+        Section("Posts") {
+          WSNavigationLink(.setting(.postSwipe), "Posts swipe settings")
+          Toggle("Loop videos", isOn: $videoDefSettings.loop)
+          Toggle("Autoplay videos (muted)", isOn: $videoDefSettings.autoPlay)
+          Toggle("Default mute fullscreen videos", isOn: $videoDefSettings.mute)
+          Toggle("Pause background audio on fullscreen", isOn: $videoDefSettings.pauseBGAudioOnFullscreen)
+          Toggle("Read on preview media", isOn: $postLinkDefSettings.lightboxReadsPost)
+          Toggle("Read on scroll", isOn: $postLinkDefSettings.readOnScroll)
+          Toggle("Hide read posts", isOn: $postLinkDefSettings.hideOnRead)
+          Toggle("Blur NSFW in opened posts", isOn: $postPageDefSettings.blurNSFW)
+          Toggle("Blur NSFW", isOn: $postLinkDefSettings.blurNSFW)
+          Toggle("Save sort per subreddit", isOn: $subredditFeedDefSettings.perSubredditSort)
+          Toggle("Open subreddit options on tap", isOn: $subredditFeedDefSettings.openOptionsOnTap)
+          Toggle("Open media from feed", isOn: $postLinkDefSettings.isMediaTappable)
+          
+          
           Menu {
-            ForEach(SubListingSortOption.allCases) { opt in
-              if case .top(_) = opt {
+            ForEach(Array(SubListingSortOption.allCases), id: \.self) { opt in
+              if let children = opt.meta.children {
                 Menu {
-                  ForEach(SubListingSortOption.TopListingSortOption.allCases, id: \.self) { topOpt in
-                    Button {
-                      preferredSort = .top(topOpt)
-                    } label: {
-                      HStack {
-                        Text(topOpt.rawValue.capitalized)
-                        Spacer()
-                        Image(systemName: topOpt.icon)
+                  ForEach(children, id: \.self.meta.apiValue) { child in
+                    if let val = child.valueWithParent as? SubListingSortOption {
+                      Button(child.meta.label, systemImage: child.meta.icon) {
+                        subredditFeedDefSettings.preferredSort = val
                       }
                     }
                   }
                 } label: {
-                  Label(opt.rawVal.value.capitalized, systemImage: opt.rawVal.icon)
+                  Label(opt.meta.label, systemImage: opt.meta.icon)
                 }
               } else {
-                Button {
-                  preferredSort = opt
-                } label: {
-                  HStack {
-                    Text(opt.rawVal.value.capitalized)
-                    Spacer()
-                    Image(systemName: opt.rawVal.icon)
-                  }
+                Button(opt.meta.label, systemImage: opt.meta.icon) {
+                  subredditFeedDefSettings.preferredSort = opt
                 }
               }
             }
@@ -113,42 +120,75 @@ struct BehaviorPanel: View {
               HStack {
                 Text("Default post sorting")
                 Spacer()
-                Image(systemName: preferredSort.rawVal.icon)
+                Image(systemName: subredditFeedDefSettings.preferredSort.meta.icon)
+                  .foregroundStyle(Color.accentColor)
               }
               .foregroundColor(.primary)
             }
           }
           
+          
+          Menu {
+            ForEach(Array(SubListingSortOption.allCases), id: \.self) { opt in
+              if let children = opt.meta.children {
+                Menu {
+                  ForEach(children, id: \.self.meta.apiValue) { child in
+                    if let val = child.valueWithParent as? SubListingSortOption {
+                      Button(child.meta.label, systemImage: child.meta.icon) {
+                        subredditFeedDefSettings.preferredSearchSort = val
+                      }
+                    }
+                  }
+                } label: {
+                  Label(opt.meta.label, systemImage: opt.meta.icon)
+                }
+              } else {
+                Button(opt.meta.label, systemImage: opt.meta.icon) {
+                  subredditFeedDefSettings.preferredSearchSort = opt
+                }
+              }
+            }
+          } label: {
+            Button { } label: {
+              HStack {
+                Text("Default search sorting")
+                Spacer()
+                Image(systemName: subredditFeedDefSettings.preferredSearchSort.meta.icon)
+                  .foregroundStyle(Color.accentColor)
+              }
+              .foregroundColor(.primary)
+            }
+          }
+          
+          
           VStack(alignment: .leading) {
             HStack {
               Text("Max Posts Image Height")
               Spacer()
-              Text(maxPostLinkImageHeightPercentage == 110 ? "Original" : "\(Int(maxPostLinkImageHeightPercentage))%")
+              Text(postLinkDefSettings.maxMediaHeightScreenPercentage == 110 ? "Original" : "\(Int(postLinkDefSettings.maxMediaHeightScreenPercentage))%")
                 .opacity(0.6)
             }
-            Slider(value: $maxPostLinkImageHeightPercentage, in: 10...110, step: 10)
+            Slider(value: $postLinkDefSettings.maxMediaHeightScreenPercentage, in: 10...110, step: 10)
           }
         }
-        .themedListRowBG(enablePadding: true)
-      }
-      .themedListDividers()
-      
-      Section("Comments") {
-        WSNavigationLink(SettingsPages.commentSwipe, "Comments Swipe Settings")
+        .themedListSection()
         
-        Group {
-          Picker("Comments Sorting", selection: $preferredCommentSort) {
+        Section("Comments") {
+          WSNavigationLink(.setting(.commentSwipe), "Comments Swipe Settings")
+          
+          Picker("Comments Sorting", selection: $commentsSectionDefSettings.preferredSort) {
             ForEach(CommentSortOption.allCases, id: \.self) { val in
               Label(val.rawVal.id.capitalized, systemImage: val.rawVal.icon)
             }
           }
           
-          Toggle("Collapse AutoModerator comments", isOn: $collapseAutoModerator)
+          Toggle("Collapse AutoModerator comments", isOn: $commentsSectionDefSettings.collapseAutoModerator)
+          Toggle("Comment skipper button", isOn: $commentsSectionDefSettings.commentSkipper)
+          Toggle("Save comment sort per post", isOn: $postPageDefSettings.perPostSort)
         }
-        .themedListRowBG(enablePadding: true)
+        
       }
-      .themedListDividers()
-      
+      .themedListSection()
     }
     .themedListBG(theme.lists.bg)
     .navigationTitle("Behavior")

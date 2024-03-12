@@ -9,34 +9,50 @@ import SwiftUI
 import Defaults
 
 struct SubredditsStack: View {
-  var reset: Bool
-  @StateObject var router: Router
-  @State var selectedSub: FirstSelectable?
-  @Default(.preferenceDefaultFeed) private var preferenceDefaultFeed // handle default feed selection routing
+  @State var router: Router
+  @Default(.BehaviorDefSettings) private var behaviorDefSettings // handle default feed selection routing
+  @Default(.GeneralDefSettings) private var generalDefSettings // handle default feed selection routing
   @State private var columnVisibility: NavigationSplitViewVisibility = .automatic
   @State private var sidebarSize: CGSize = .zero
   
-  var postContentWidth: CGFloat { UIScreen.screenWidth - (!IPAD || columnVisibility != .doubleColumn ? 0 : sidebarSize.width) }
+  init(router: Router) {
+    self._router = .init(initialValue: router)
+  }
+  
+  var postContentWidth: CGFloat { .screenW - (!IPAD || columnVisibility == .detailOnly ? 0 : sidebarSize.width) }
   
   @State private var loaded = false
   var body: some View {
     NavigationSplitView(columnVisibility: $columnVisibility) {
-      Subreddits(selectedSub: $selectedSub, loaded: loaded, routerProxy: RouterProxy(router))
-        .measure($sidebarSize)
+      if let redditCredentialSelectedID = generalDefSettings.redditCredentialSelectedID {
+        Subreddits(firstDestination: $router.firstSelected, loaded: loaded, currentCredentialID: redditCredentialSelectedID)
+          .measure($sidebarSize).id("subreddits-list-\(redditCredentialSelectedID)")
+          .attachViewControllerToRouter(tabID: .posts)
+      }
     } detail: {
       NavigationStack(path: $router.path) {
-        DefaultDestinationInjector(routerProxy: RouterProxy(router)) {
-          if let selectedSub = selectedSub {
-            switch selectedSub {
-            case .multi(let multi):
+        Group {
+          if let firstSelected = router.firstSelected {
+            switch firstSelected {
+            case .reddit(.multiFeed(let multi)):
               MultiPostsView(multi: multi)
-                .id(multi.id)
-            case .sub(let sub):
+                .id("\(multi.id)-multi-first-tab")
+                .attachViewControllerToRouter(tabID: .posts)
+            case .reddit(.subFeed(let sub)):
               SubredditPosts(subreddit: sub)
-                .id(sub.id)
-            case .post(let payload):
-              PostView(post: payload.post, subreddit: payload.sub)
-                .id(payload.post.id)
+                .id("\(sub.id)-sub-first-tab")
+            case .reddit(.post(let post)):
+              if let sub = post.winstonData?.subreddit {
+                PostView(post: post, subreddit: sub)
+                  .id("\(post.id)-post-first-tab")
+                  .attachViewControllerToRouter(tabID: .posts)
+              }
+            case .reddit(.user(let user)):
+              UserView(user: user)
+                .id("\(user.id)-user-first-tab")
+                .attachViewControllerToRouter(tabID: .posts)
+            default:
+              EmptyView()
             }
           } else {
             VStack(spacing: 24) {
@@ -52,18 +68,18 @@ struct SubredditsStack: View {
                   .opacity(0.35)
               }
             }
+            .attachViewControllerToRouter(tabID: .posts)
           }
         }
-        .task {
+        .injectInTabDestinations()
+        .task(priority: .background) {
           if !loaded {
             // MARK: Route to default feed
-            if preferenceDefaultFeed != "subList" && router.path.count == 0 { // we are in subList, can ignore
-              let tempSubreddit = Subreddit(id: preferenceDefaultFeed, api: RedditAPI.shared)
-              router.path.append(SubViewType.posts(tempSubreddit))
+            if behaviorDefSettings.preferenceDefaultFeed != "subList" && router.path.count == 0 { // we are in subList, can ignore
+              let tempSubreddit = Subreddit(id: behaviorDefSettings.preferenceDefaultFeed)
+              router.navigateTo(.reddit(.subFeed(tempSubreddit)))
             }
-            
-            _ = await RedditAPI.shared.fetchSubs()
-            _ = await RedditAPI.shared.fetchMyMultis()
+
             withAnimation {
               loaded = true
             }
@@ -72,13 +88,7 @@ struct SubredditsStack: View {
       }
       .environment(\.contentWidth, postContentWidth)
     }
-    .swipeAnywhere(routerProxy: RouterProxy(router), routerContainer: router.isRootWrapper)
+//    .swipeAnywhere()
     .environment(\.contentWidth, postContentWidth)
-    .onChange(of: reset) { _ in
-      withAnimation {
-        router.path.removeLast(router.path.count)
-        selectedSub = nil
-      }
-    }
   }
 }

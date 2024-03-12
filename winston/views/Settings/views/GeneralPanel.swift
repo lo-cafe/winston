@@ -7,45 +7,95 @@
 
 import SwiftUI
 import Defaults
+import Nuke
 import WebKit
+import UniformTypeIdentifiers
 
 struct GeneralPanel: View {
   @Default(.likedButNotSubbed) var likedButNotSubbed
+  @Default(.BehaviorDefSettings) var behaviorDefSettings
   @State private var totalCacheSize: String = ""
   @Environment(\.useTheme) private var theme
-  
+  @State var isMoving: Bool = false
+  @State var settingsFileURL: String = ""
+  @State var doImport: Bool = false
   var body: some View {
     List{
-      Section("Advanced") {
-        
-        WListButton {
-          resetPreferences()
-        } label: {
-          Label("Reset preferences", systemImage: "trash")
-            .foregroundColor(.red)
+      
+      Group {
+        Section("General"){
+          Toggle("Sync API Key", isOn: $behaviorDefSettings.iCloudSyncCredentials)
         }
         
-        WListButton {
-          clearCache()
-          resetCaches()
-          resetCoreData()
-        } label: {
-          Label("Clear Cache (" + totalCacheSize + ")", systemImage: "trash")
-            .foregroundColor(.red)
-        }
-        .onAppear{
-          calculateTotalCacheSize()
+        Section("Backup"){
+          WListButton {
+            let date = Date()
+            let file = exportUserDefaultsToJSON(fileName: "WinstonSettings-" + date.ISO8601Format() + ".json")
+            if let file {
+              isMoving.toggle()
+              settingsFileURL = file
+            }
+          } label: {
+            HStack {
+              Image(systemName: "arrowshape.turn.up.left")
+              Text("Export Settings").foregroundStyle(Color.accentColor)
+            }
+          }
+          .fileMover(isPresented: $isMoving, file: URL(string: settingsFileURL), onCompletion: { completion in
+            //          print(completion)
+          })
+          
+          WListButton {
+            doImport.toggle()
+          } label: {
+            Label("Import Settings", systemImage: "square.and.arrow.down")
+          }.fileImporter(isPresented: $doImport, allowedContentTypes: [UTType.json], allowsMultipleSelection: false, onCompletion: { result in
+            switch result {
+            case .success(let file):
+              let success = importUserDefaultsFromJSON(jsonFilePath: file[0])
+              if success {
+                print("success")
+              } else {
+                print("error")
+              }
+            case .failure(let error):
+              print(error.localizedDescription)
+            }
+            
+          })
         }
         
-        WListButton {
-          likedButNotSubbed = []
-        } label: {
-          Label("Clear " + String(likedButNotSubbed.count) + " Local Favorites", systemImage: "heart.slash.fill")
-            .foregroundColor(.red)
+        Section("Advanced") {
+          
+          WListButton {
+            resetPreferences()
+          } label: {
+            Label("Reset preferences", systemImage: "trash")
+              .foregroundColor(.red)
+          }
+          
+          WListButton {
+            clearCache()
+            resetCaches()
+            resetCoreData()
+          } label: {
+            Label("Clear Cache (" + totalCacheSize + ")", systemImage: "trash")
+              .foregroundColor(.red)
+          }
+          .onAppear{
+            calculateTotalCacheSize()
+          }
+          
+          WListButton {
+            likedButNotSubbed = []
+          } label: {
+            Label("Clear " + String(likedButNotSubbed.count) + " Local Favorites", systemImage: "heart.slash.fill")
+              .foregroundColor(.red)
+          }
         }
-        
       }
-      .themedListDividers()
+      .themedListSection()
+      
     }
     .themedListBG(theme.lists.bg)
     .navigationTitle("General")
@@ -90,12 +140,17 @@ struct GeneralPanel: View {
   }
   
   func clearCache() {
+    (try? DataCache(name: "lo.cafe.winston.datacache"))?.flush()
+    Nuke.ImageCache.shared.removeAll()
+    Nuke.DataLoader.sharedUrlCache.removeAllCachedResponses()
+    (ImagePipeline.shared.configuration.dataLoader as? DataLoader)?.session.configuration.urlCache?.removeAllCachedResponses()
     let temporaryDirectory = FileManager.default.temporaryDirectory
     let cacheDirectory = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first
     
-    clearDirectory(directory: temporaryDirectory)
-    clearDirectory(directory: cacheDirectory)
     
+    flushFilesInDirectoryButNotFolders(temporaryDirectory)
+    flushFilesInDirectoryButNotFolders(cacheDirectory)
+    resetCoreData()
     totalCacheSize = "0 bytes"
     print("Cache cleared successfully.")
   }
@@ -120,3 +175,24 @@ struct GeneralPanel: View {
 }
 
 
+
+func flushFilesInDirectoryButNotFolders(_ at: URL?) {
+  guard let at = at else { return }
+  let fileManager = FileManager.default
+  guard let enumerator = fileManager.enumerator(at: at, includingPropertiesForKeys: nil) else { return }
+  
+  for case let file as String in enumerator {
+    let path = at.appendingPathComponent(file)
+    var isDirectory: ObjCBool = false
+    
+    if fileManager.fileExists(atPath: path.path, isDirectory: &isDirectory) {
+      if !isDirectory.boolValue {
+        do {
+          try fileManager.removeItem(at: path)
+        } catch let error as NSError {
+          print("Error: \(error.localizedDescription)")
+        }
+      }
+    }
+  }
+}

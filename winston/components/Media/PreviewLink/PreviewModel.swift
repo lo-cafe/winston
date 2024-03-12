@@ -11,40 +11,43 @@ import OpenGraph
 import NukeUI
 import Defaults
 
-final class PreviewModel: ObservableObject {
-  
-  @Published var image: String?
-  @Published var title: String?
-  @Published var url: URL?
-  @Published var description: String?
-  @Published var loading = true
-  
-  var previewURL: URL? {
-    didSet {
-      if previewURL != nil { fetchMetadata() }
-    }
+@Observable
+final class PreviewModel: Equatable {
+  static func == (lhs: PreviewModel, rhs: PreviewModel) -> Bool {
+    lhs.url == rhs.url
   }
+  
+  var imageReq: ImageRequest?
+  var title: String?
+  var url: URL?
+  var description: String?
+  var loading = true
+  
+  var previewURL: URL?
   
   init() {}
   
-  init(_ url: URL) {
+  init(_ url: URL, compact: Bool) {
     self.previewURL = url
-    fetchMetadata()
+    Task {
+      await fetchMetadata(compact: compact)
+    }
   }
   
-  private func fetchMetadata() {
+  private func fetchMetadata(compact: Bool) async {
     guard let previewURL else { return }
-    Task(priority: .background) {
+    
       var headers = [String: String]()
       headers["User-Agent"] = "facebookexternalhit/1.1"
       headers["charset"] = "UTF-8"
       if let og = try? await OpenGraph.fetch(url: previewURL, headers: headers) {
+        var newImageReq: ImageRequest?
         if let imgURL = URL(string: og[.image] ?? "") {
-          Post.prefetcher.startPrefetching(with: [ImageRequest(url: imgURL, processors: [.resize(width:  Defaults[.compactMode] ? scaledCompactModeThumbSize() : 76)], priority: .veryLow)])
+          newImageReq = ImageRequest(url: imgURL, processors: [.resize(width:  compact ? scaledCompactModeThumbSize() : 76)])
         }
-        await MainActor.run {
+        await MainActor.run { [newImageReq] in
           withAnimation {
-            image = og[.image]
+            imageReq = newImageReq
             title = og[.title]
             description = og[.description]
             url = URL(string: og[.url] ?? "")
@@ -57,7 +60,6 @@ final class PreviewModel: ObservableObject {
             loading = false
           }
         }
-      }
     }
   }
 }

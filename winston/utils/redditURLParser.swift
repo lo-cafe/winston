@@ -17,14 +17,16 @@ enum RedditURLType: Equatable, Hashable {
 }
 
 func parseRedditURL(_ rawUrlString: String) -> RedditURLType {
-  let urlString = rawUrlString.replacingOccurrences(of: "winstonapp://", with: "https://app.winston.lo.cafe/").replacingOccurrences(of: "https://reddit.com/", with: "https://app.winston.lo.cafe/")
+  let urlString = rawUrlString
+    .replacingOccurrences(of: "winstonapp://", with: "https://app.winston.cafe/")
+    .replacingOccurrences(of: #"(www\.|old\.)?reddit\.com\/"#, with: "", options: .regularExpression)
   guard let urlComponents = URLComponents(string: urlString) else {
     return .other(link: urlString)
   }
   
   let pathComponents = urlComponents.path.components(separatedBy: "/").filter({ !$0.isEmpty })
     
-  if urlComponents.host?.hasSuffix("reddit.com") == true || urlComponents.host?.hasSuffix("app.winston.lo.cafe") == true, pathComponents.count > 1 {
+  if urlComponents.host?.hasSuffix("reddit.com") == true || urlComponents.host?.hasSuffix("app.winston.cafe") == true, pathComponents.count > 1 {
     switch pathComponents[0] {
     case "r":
       let subredditName = pathComponents[1]
@@ -35,8 +37,10 @@ func parseRedditURL(_ rawUrlString: String) -> RedditURLType {
           return .comment(id: commentId, postID: postId, subreddit: subredditName)
         }
         return .post(id: postId, subreddit: subredditName)
-      }
-      return .subreddit(name: subredditName)
+      } else if pathComponents.count > 2 && pathComponents[2] == "wiki" {
+				return .other(link: urlString)
+			}
+				return .subreddit(name: subredditName)
       
     case "user", "u":
       let username = pathComponents[1]

@@ -6,14 +6,19 @@
 //
 
 import SwiftUI
+import NukeUI
 import Defaults
 
 private let SPACING = 24.0
 
 struct LightBoxImage: View {
-  var post: Post
+  var postTitle: String? = nil
+  var badgeKit: BadgeKit? = nil
+  var avatarImageRequest: ImageRequest? = nil
+  var markAsSeen: (() async -> ())? = nil
   var i: Int
-  var imagesArr: [MediaExtracted]
+  var imagesArr: [ImgExtracted]
+  var doLiveText: Bool
   @Environment(\.dismiss) private var dismiss
   @State private var appearBlack = false
   @State private var appearContent = false
@@ -25,9 +30,8 @@ struct LightBoxImage: View {
   @State private var loading = false
   @State private var done = false
   @State private var showOverlay = true
-  @Default(.lightboxViewsPost) private var lightboxViewsPost
-  
   @State private var isPinching: Bool = false
+  @State private var isZoomed: Bool = false
   @State private var scale: CGFloat = 1.0
   
   private enum Axis {
@@ -46,7 +50,7 @@ struct LightBoxImage: View {
     HStack(spacing: SPACING) {
       ForEach(Array(imagesArr.enumerated()), id: \.element.id) { index, img in
         let selected = index == activeIndex
-        LightBoxElementView(el: img, onTap: toggleOverlay, isPinching: $isPinching)
+        LightBoxElementView(el: img, onTap: toggleOverlay, doLiveText: doLiveText, isPinching: $isPinching, isZoomed: $isZoomed)
           .allowsHitTesting(selected)
           .scaleEffect(!selected ? 1 : interpolate([1, 0.9], true))
           .blur(radius: selected && loading ? 24 : 0)
@@ -55,7 +59,7 @@ struct LightBoxImage: View {
     }
     .fixedSize(horizontal: true, vertical: false)
     .offset(x: xPos + (dragAxis == .horizontal ? drag.width : 0))
-    .frame(maxWidth: UIScreen.screenWidth, maxHeight: UIScreen.screenHeight, alignment: .leading)
+    .frame(maxWidth: .screenW, maxHeight: .screenH, alignment: .leading)
     .highPriorityGesture(
       scale > 1
       ? nil
@@ -91,8 +95,8 @@ struct LightBoxImage: View {
             drag = .zero
             xPos += val.translation.width - (dragOffset?.width ?? 0)
             dragOffset = nil
-            let newActiveIndex = min(imagesArr.count - 1, max(0, activeIndex + (predictedEnd < -(UIScreen.screenWidth / 2) ? 1 : predictedEnd > UIScreen.screenWidth / 2 ? -1 : 0)))
-            let finalXPos = -(CGFloat(newActiveIndex) * (UIScreen.screenWidth + (SPACING)))
+            let newActiveIndex = min(imagesArr.count - 1, max(0, activeIndex + (predictedEnd < -(.screenW / 2) ? 1 : predictedEnd > .screenW / 2 ? -1 : 0)))
+            let finalXPos = -(CGFloat(newActiveIndex) * (.screenW + (SPACING)))
             let distance = abs(finalXPos - xPos)
             activeIndex = newActiveIndex
             var initialVel = abs(predictedEnd / distance)
@@ -119,7 +123,11 @@ struct LightBoxImage: View {
           }
         }
     )
-    .overlay(LightBoxOverlay(post: post, opacity: !showOverlay || isPinching ? 0 : interpolate([1, 0], false), imagesArr: imagesArr, activeIndex: activeIndex, loading: $loading, done: $done))
+    .overlay {
+      if let postTitle = postTitle, let badgeKit = badgeKit {
+        LightBoxOverlay(postTitle: postTitle, badgeKit: badgeKit, avatarImageRequest: avatarImageRequest, opacity: !showOverlay || isPinching ? 0 : interpolate([1, 0], false), imagesArr: imagesArr, activeIndex: activeIndex, loading: $loading, done: $done)
+      }
+    }
     .background(
       !appearBlack
       ? nil
@@ -133,22 +141,22 @@ struct LightBoxImage: View {
         .allowsHitTesting(appearBlack)
         .transition(.opacity)
     )
-    .overlay(
-      !loading && !done
-      ? nil
-      : ZStack {
-        if done {
-          Image(systemName: "checkmark.circle.fill")
-            .fontSize(40)
-            .transition(.scaleAndBlur)
-        } else {
-          ProgressView()
-            .transition(.scaleAndBlur)
+    .overlay {
+      if loading || done {
+        ZStack {
+          if done {
+            Image(systemName: "checkmark.circle.fill")
+              .fontSize(40)
+              .transition(.scaleAndBlur)
+          } else {
+            ProgressView()
+              .transition(.scaleAndBlur)
+          }
         }
-      }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(.black.opacity(0.25))
-    )
+      }
+    }
     .ignoresSafeArea(edges: .all)
     .compositingGroup()
     .opacity(appearContent ? 1 : 0)
@@ -163,10 +171,10 @@ struct LightBoxImage: View {
       }
     }
     .onAppear {
-      if lightboxViewsPost { Task(priority: .background) { await post.toggleSeen(true) } }
-      xPos = -CGFloat(i) * (UIScreen.screenWidth + SPACING)
+      if let markAsSeen { Task(priority: .background) { await markAsSeen() } }
+      xPos = -CGFloat(i) * (.screenW + SPACING)
       activeIndex = i
-      doThisAfter(0) {
+      doThisAfter(0.0) {
         withAnimation(.easeOut) {
           appearContent = true
           appearBlack = true

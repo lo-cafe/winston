@@ -10,35 +10,14 @@ import Alamofire
 
 extension RedditAPI {
   func fetchMoreReplies(comments: [String], moreID: String, postFullname: String, sort: CommentSortOption = .confidence, dropFirst: Bool = false) async -> [ListingChild<CommentData>]? {
-    await refreshToken()
-    //    await getModHash()
-    if let headers = self.getRequestHeaders() {
       let params = MoreRepliesPayload(children: comments.joined(separator: ","), link_id: postFullname, sort: sort.rawVal.value, id: moreID)
-      let response = await AF.request(
-        "\(RedditAPI.redditApiURLBase)/api/morechildren.json",
-        method: .get,
-        parameters: params,
-        encoder: URLEncodedFormParameterEncoder(destination: .queryString),
-        headers: headers
-      ).serializingDecodable(MoreRepliesResponse.self).response
-      switch response.result {
+      switch await self.doRequest("\(RedditAPI.redditApiURLBase)/api/morechildren.json", method: .get, params: params, paramsLocation: .queryString, decodable: MoreRepliesResponse.self) {
       case .success(let data):
         return data.json.data?.things
       case .failure(let err):
-        Oops.shared.sendError(err)
         print(err)
-//        var errorString: String?
-//        if let data = response.data {
-//          if let json = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: String] {
-//            errorString = json["error"]
-//          }
-//        }
-//        print(errorString)
         return nil
       }
-    } else {
-      return nil
-    }
   }
   
   struct MoreRepliesPayload: Codable {
@@ -49,6 +28,7 @@ extension RedditAPI {
     var link_id: String
     var sort: String
     var id: String = ""
+    var raw_json = 1
   }
   
   struct MoreRepliesResponse: Codable {

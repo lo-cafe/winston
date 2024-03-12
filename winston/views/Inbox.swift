@@ -9,57 +9,31 @@ import SwiftUI
 import Defaults
 
 struct Inbox: View {
-  var reset: Bool
-  @StateObject var router: Router
-  @StateObject var messages = ObservableArray<Message>()
-  @State var loading = false
+  @State var router: Router
   
+  @State private var messages: [Message] = []
+  @State private var loading = false
+  @Default(.GeneralDefSettings) private var generalDefSettings
+  @Default(.SubredditFeedDefSettings) var subredditFeedDefSettings
   @Environment(\.useTheme) private var selectedTheme
   
-  func fetch(_ loadMore: Bool = false, _ force: Bool = false) async {
-    if messages.data.count > 0 && !force { return }
-    await MainActor.run {
-      withAnimation {
-        loading = true
-      }
+  init(router: Router) {
+    self._router = .init(initialValue: router)
+  }
+  
+  func fetcher(_ after: String?, _ sorting: SubListingSortOption?, _ searchQuery: String?, _ flair: String?) async -> ([RedditEntityType]?, String?)? {
+    if let result = await RedditAPI.shared.fetchInbox(after: after ?? "", limit: subredditFeedDefSettings.chunkLoadSize), let entities = result.0 {
+      return (entities.map { RedditEntityType.message(Message(data: $0)) }, result.1)
     }
-    if let newItems = await RedditAPI.shared.fetchInbox() {
-      await MainActor.run {
-        withAnimation {
-          loading = false
-          messages.data = newItems.map { Message(data: $0, api: RedditAPI.shared) }
-        }
-      }
-    }
+    return nil
   }
   
   var body: some View {
-    NavigationStack(path: $router.path) {
-      DefaultDestinationInjector(routerProxy: RouterProxy(router)) {
-        List {
-          ForEach(messages.data, id: \.self.id) { message in
-            MessageLink(message: message)
-          }
-          .listRowSeparator(.hidden)
-          .listRowBackground(Color.clear)
-          .listRowInsets(EdgeInsets(top: 6, leading: 0, bottom: 6, trailing: 0))
-        }
-        .themedListBG(selectedTheme.lists.bg)
-        .scrollContentBackground(.hidden)
-        .onChange(of: reset) { _ in router.path.removeLast(router.path.count) }
-      }
-      .loader(loading)
-      .onAppear {
-        Task(priority: .background) {
-          await fetch()
-        }
-      }
-      .refreshable {
-        await fetch(false, true)
-      }
-      .navigationTitle("Inbox")
+    NavigationStack(path: $router.fullPath) {
+      RedditListingFeed(feedId: "inbox", title: "Inbox", theme: selectedTheme.lists.bg, fetch: fetcher, disableSearch: true)
+        .injectInTabDestinations()
+        .attachViewControllerToRouter(tabID: .inbox)
     }
-    .swipeAnywhere(routerProxy: RouterProxy(router), routerContainer: router.isRootWrapper)
   }
 }
 

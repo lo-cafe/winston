@@ -24,10 +24,11 @@ struct SwipeActionItem: Codable, Hashable, Defaults.Serializable {
   }
 }
 
-struct SwipeActionsSet: Codable, Defaults.Serializable, Equatable {
+struct SwipeActionsSet: Codable, Defaults.Serializable, Equatable, Hashable, Identifiable {
   static func == (prev: SwipeActionsSet, next: SwipeActionsSet) -> Bool {
-    return prev.leftFirst == next.leftFirst && prev.leftSecond == next.leftSecond && prev.rightFirst == next.rightFirst && prev.rightSecond == next.rightSecond
+    return prev.id == next.id && prev.leftFirst == next.leftFirst && prev.leftSecond == next.leftSecond && prev.rightFirst == next.rightFirst && prev.rightSecond == next.rightSecond
   }
+  var id: String
   var leftFirst: AnySwipeAction
   var leftSecond: AnySwipeAction
   var rightFirst: AnySwipeAction
@@ -35,14 +36,23 @@ struct SwipeActionsSet: Codable, Defaults.Serializable, Equatable {
 }
 
 
-let allPostSwipeActions: [AnySwipeAction] = [AnySwipeAction(UpvotePostAction()), AnySwipeAction(DownvotePostAction()), AnySwipeAction(SavePostAction()), AnySwipeAction(ReplyPostAction()), AnySwipeAction(SeenPostAction()), AnySwipeAction(FilterSubredditAction())/**, AnySwipeAction(SharePostAction()) **/, AnySwipeAction(NoneAction())]
+
+let allPostSwipeActions: [AnySwipeAction] = [
+  AnySwipeAction(UpvotePostAction()),
+  AnySwipeAction(DownvotePostAction()),
+  AnySwipeAction(SavePostAction()),
+  AnySwipeAction(SeenPostAction()),
+  AnySwipeAction(FilterSubredditAction()),
+  AnySwipeAction(ReplyPostAction()),
+  AnySwipeAction(NoneAction())
+]
 
 let allCommentSwipeActions: [AnySwipeAction] = [
-  AnySwipeAction(UpvoteCommentAction()), AnySwipeAction(DownvoteCommentAction()), AnySwipeAction(EditCommentAction()), AnySwipeAction(ReplyCommentAction()), AnySwipeAction(SaveCommentAction()), AnySwipeAction(SelectTextCommentAction())/**, AnySwipeAction(ShareCommentAction())**/, AnySwipeAction(CopyCommentAction()), AnySwipeAction(DeleteCommentAction()), AnySwipeAction(NoneAction())]
+  AnySwipeAction(UpvoteCommentAction()), AnySwipeAction(DownvoteCommentAction()), AnySwipeAction(EditCommentAction()), AnySwipeAction(ReplyCommentAction()), AnySwipeAction(SaveCommentAction()), AnySwipeAction(SelectTextCommentAction()),  AnySwipeAction(CopyCommentAction()), AnySwipeAction(DeleteCommentAction()), AnySwipeAction(CollapseCommentAction()),AnySwipeAction(NoneAction())]
 
 let allSwipeActions = allPostSwipeActions + allCommentSwipeActions
 
-struct AnySwipeAction: Codable, Defaults.Serializable, Identifiable, Hashable {
+struct AnySwipeAction: Codable, Defaults.Serializable, Identifiable, Hashable, Equatable {
   static func == (lhs: AnySwipeAction, rhs: AnySwipeAction) -> Bool {
     lhs.id == rhs.id
   }
@@ -153,7 +163,7 @@ struct UpvotePostAction: SwipeAction {
   var icon = SwipeActionItem(normal: "arrow.up")
   var color = SwipeActionItem(normal: "FFFFFF")
   var bgColor = SwipeActionItem(normal: "FEA00A", active: "FF463B")
-  func action(_ entity: Post) async { _ = await entity.vote(action: .up) }
+  func action(_ entity: Post) async { _ = await entity.vote(.up) }
   func active(_ entity: Post) -> Bool { entity.data?.likes == true }
   func enabled(_ entity: Post) -> Bool { true }
 }
@@ -164,7 +174,7 @@ struct DownvotePostAction: SwipeAction {
   var icon = SwipeActionItem(normal: "arrow.down")
   var color = SwipeActionItem(normal: "FFFFFF")
   var bgColor = SwipeActionItem(normal: "0B84FE", active: "FF463B")
-  func action(_ entity: Post) async { _ = await entity.vote(action: .down) }
+  func action(_ entity: Post) async { _ = await entity.vote(.down) }
   func active(_ entity: Post) -> Bool { entity.data?.likes == false }
   func enabled(_ entity: Post) -> Bool { true }
 }
@@ -179,6 +189,8 @@ struct SavePostAction: SwipeAction {
   func active(_ entity: Post) -> Bool { entity.data?.saved == true }
   func enabled(_ entity: Post) -> Bool { true }
 }
+
+
 
 struct ReplyPostAction: SwipeAction {
   var id = "reply-post-swipe-action"
@@ -198,7 +210,7 @@ struct SeenPostAction: SwipeAction {
   var color = SwipeActionItem(normal: "0B84FE")
   var bgColor = SwipeActionItem(normal: "353439")
   func action(_ entity: Post) async {
-    if Defaults[.hideReadPosts] {
+    if Defaults[.PostLinkDefSettings].hideOnRead {
       if let data = entity.data {
         Task(priority: .background) {
           await entity.hide(!(data.winstonSeen ?? false))
@@ -232,17 +244,6 @@ struct FilterSubredditAction: SwipeAction {
     return false
   }
   func enabled(_ entity: Post) -> Bool { true }
-}
-
-struct SharePostAction: SwipeAction {
-  var id = "share-post-swipe-action"
-  var label = "Share"
-  var icon = SwipeActionItem(normal: "square.and.arrow.up.fill")
-  var color = SwipeActionItem(normal: "0B84FE")
-  var bgColor = SwipeActionItem(normal: "353439")
-  func action(_ entity: Comment) async { }
-  func active(_ entity: Comment) -> Bool { false }
-  func enabled(_ entity: Comment) -> Bool { false }
 }
 
 struct UpvoteCommentAction: SwipeAction {
@@ -312,9 +313,11 @@ struct ShareCommentAction: SwipeAction {
   var icon = SwipeActionItem(normal: "square.and.arrow.up.fill")
   var color = SwipeActionItem(normal: "0B84FE")
   var bgColor = SwipeActionItem(normal: "353439")
-  func action(_ entity: Comment) async { }
-  func active(_ entity: Comment) -> Bool { return false }
-  func enabled(_ entity: Comment) -> Bool { false }
+  func action(_ entity: Comment) async { 
+   
+  }
+  func active(_ entity: Comment) -> Bool { true }
+  func enabled(_ entity: Comment) -> Bool { true }
 }
 
 struct CopyCommentAction: SwipeAction {
@@ -348,6 +351,17 @@ struct DeleteCommentAction: SwipeAction {
   func action(_ entity: Comment) async { _ = await entity.del() }
   func active(_ entity: Comment) -> Bool { false }
   func enabled(_ entity: Comment) -> Bool { entity.data?.author == entity.redditAPI.me?.data?.name }
+}
+
+struct CollapseCommentAction: SwipeAction {
+  var id = "collapse-comment-swipe-action"
+  var label = "Collapse comment"
+  var icon = SwipeActionItem(normal: "eye.slash.fill")
+  var color = SwipeActionItem(normal: "FFFFFF")
+  var bgColor = SwipeActionItem(normal: "FEA00A", active: "FF463B")
+  func action(_ entity: Comment) async { entity.toggleCollapsed(optimistic: true) }
+  func active(_ entity: Comment) -> Bool { false }
+  func enabled(_ entity: Comment) -> Bool { true }
 }
 
 struct NoneAction: SwipeAction {

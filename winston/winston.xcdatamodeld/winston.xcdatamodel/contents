@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="21754" systemVersion="22F82" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithCloudKit="YES" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="22522" systemVersion="23C71" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithCloudKit="YES" usedWithSwiftData="YES" userDefinedModelVersionIdentifier="">
+    <entity name="CachedFilter" representedClassName="CachedFilter" syncable="YES">
+        <attribute name="bgColor" optional="YES" attributeType="String"/>
+        <attribute name="rawType" attributeType="String" defaultValueString="flair"/>
+        <attribute name="subID" optional="YES" attributeType="String"/>
+        <attribute name="text" optional="YES" attributeType="String"/>
+        <attribute name="textColor" optional="YES" attributeType="String"/>
+    </entity>
     <entity name="CachedMulti" representedClassName="CachedMulti" syncable="YES">
         <attribute name="display_name" optional="YES" attributeType="String"/>
         <attribute name="icon_url" optional="YES" attributeType="String"/>
@@ -8,12 +15,8 @@
         <attribute name="over_18" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="path" optional="YES" attributeType="String"/>
         <attribute name="uuid" optional="YES" attributeType="String"/>
+        <attribute name="winstonCredentialID" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <relationship name="subreddits" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="CachedSub" inverseName="multis" inverseEntity="CachedSub"/>
-        <uniquenessConstraints>
-            <uniquenessConstraint>
-                <constraint value="uuid"/>
-            </uniquenessConstraint>
-        </uniquenessConstraints>
     </entity>
     <entity name="CachedSub" representedClassName="CachedSub" syncable="YES">
         <attribute name="allow_galleries" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
@@ -28,7 +31,7 @@
         <attribute name="icon_img" optional="YES" attributeType="String"/>
         <attribute name="key_color" optional="YES" attributeType="String"/>
         <attribute name="name" optional="YES" attributeType="String"/>
-        <attribute name="over_18" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="over18" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="primary_color" optional="YES" attributeType="String"/>
         <attribute name="restrict_commenting" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="subscribers" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
@@ -40,12 +43,8 @@
         <attribute name="user_is_moderator" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="user_is_subscriber" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="uuid" optional="YES" attributeType="String"/>
+        <attribute name="winstonCredentialID" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <relationship name="multis" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="CachedMulti" inverseName="subreddits" inverseEntity="CachedMulti"/>
-        <uniquenessConstraints>
-            <uniquenessConstraint>
-                <constraint value="uuid"/>
-            </uniquenessConstraint>
-        </uniquenessConstraints>
     </entity>
     <entity name="CollapsedComment" representedClassName="CollapsedComment" syncable="YES" codeGenerationType="class">
         <attribute name="commentID" optional="YES" attributeType="String"/>
@@ -67,6 +66,8 @@
         <attribute name="timestamp" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
     </entity>
     <entity name="SeenPost" representedClassName="SeenPost" syncable="YES" codeGenerationType="class">
+        <attribute name="numComments" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="postID" optional="YES" attributeType="String"/>
+        <attribute name="seenComments" optional="YES" attributeType="String"/>
     </entity>
 </model>

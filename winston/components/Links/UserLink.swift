@@ -9,7 +9,7 @@ import SwiftUI
 
 struct UserLinkContainer: View {
   var noHPad = false
-  @StateObject var user: User
+  @State var user: User
   var body: some View {
     UserLink(noHPad: noHPad, user: user)
   }
@@ -18,11 +18,12 @@ struct UserLinkContainer: View {
 struct UserLink: View {
   var noHPad = false
   var user: User
-  @EnvironmentObject private var routerProxy: RouterProxy
     var body: some View {
       if let data = user.data {
         HStack(spacing: 12) {
-          Avatar(url: data.icon_img, userID: data.name, avatarSize: 64)
+          if let icon = data.icon_img {
+            AvatarView(saved: false, url: icon, userID: data.name, avatarSize: 64)
+          }
           
           VStack(alignment: .leading) {
             Text("u/\(data.name)")
@@ -38,10 +39,10 @@ struct UserLink: View {
         .padding(.horizontal, noHPad ? 0 : 16)
         .padding(.vertical, 14)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .themedListRowBG()
+        .themedListRowLikeBG()
         .mask(RR(20, .black))
         .onTapGesture {
-          routerProxy.router.path.append(user)
+          Nav.to(.reddit(.user(user)))
         }
       }
     }

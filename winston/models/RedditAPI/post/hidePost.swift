@@ -25,28 +25,15 @@ extension RedditAPI {
       let names = HideDebouncer.shared.names
       HideDebouncer.shared.names.removeAll()
       Task(priority: .background) {
-        await self.refreshToken()
-        if let headers = self.getRequestHeaders() {
-          let params = HidePayload(id: names.joined(separator: ","))
-          let dataTask = AF.request(
-            "\(RedditAPI.redditApiURLBase)/api/\(hide ? "" : "un")hide",
-            method: .post,
-            parameters: params,
-            encoder: URLEncodedFormParameterEncoder(destination: .httpBody),
-            headers: headers
-          ).serializingString()
-          let result = await dataTask.result
-          switch result {
-          case .success:
-            //          return true
-            break
-          case .failure:
-            //        print(error)
-            //          return nil
-            break
-          }
-        } else {
-          //        return nil
+        let params = HidePayload(id: names.joined(separator: ","))
+        switch await self.doRequest("\(RedditAPI.redditApiURLBase)/api/\(hide ? "" : "un")hide?raw_json=1", method: .post, params: params)  {
+        case .success:
+          //          return true
+          break
+        case .failure:
+          //        print(error)
+          //          return nil
+          break
         }
       }
     }

@@ -9,30 +9,25 @@ import Foundation
 import Alamofire
 
 extension RedditAPI {
-  func fetchMe(force: Bool = false) async -> User? {
+  func fetchMe(force: Bool = false, altCredential: RedditCredential? = nil, saveToken: Bool = true) async -> UserData? {
     if !force, let me = me {
-      return me
-    }
-    await refreshToken()
-    if let headers = self.getRequestHeaders() {
-      let response = await AF.request(
-        "\(RedditAPI.redditApiURLBase)/api/v1/me",
-        method: .get,
-        headers: headers
-      )
-        .serializingDecodable(UserData.self).response
-      switch response.result {
+      RedditAPI.shared.me = me
+    } else {
+      switch await self.doRequest("\(RedditAPI.redditApiURLBase)/api/v1/me", method: .get, decodable: UserData.self, altCredential: altCredential, saveToken: saveToken)  {
       case .success(let data):
         await MainActor.run {
-          me = User(data: data, api: self)
+          RedditAPI.shared.me = User(data: data)
         }
-        return me
+        return data
       case .failure(let error):
         print(error)
+        await MainActor.run {
+          RedditAPI.shared.me = nil
+        }
         return nil
       }
-    } else {
-      return nil
     }
+    return nil
   }
 }
+

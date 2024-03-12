@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct ListsTheme: Codable, Hashable {
+struct ListsTheme: Codable, Hashable, Equatable {
   enum CodingKeys: String, CodingKey {
     case bg, foreground, dividersColors
   }

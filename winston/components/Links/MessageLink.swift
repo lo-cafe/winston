@@ -9,11 +9,8 @@ import SwiftUI
 import Defaults
 
 struct MessageLink: View {
-  @Default(.preferenceShowPostsCards) private var preferenceShowPostsCards
-  @Default(.preferenceShowPostsAvatars) private var preferenceShowPostsAvatars
   @State private var pressed = false
-  @ObservedObject var message: Message
-  @EnvironmentObject private var routerProxy: RouterProxy
+  var message: Message
   
   var body: some View {
     if let data = message.data, let author = data.author, let subreddit = data.subreddit, let parentID = data.parent_id, let name = data.name {
@@ -31,14 +28,14 @@ struct MessageLink: View {
       .padding(.horizontal, 16)
       .padding(.vertical, 12)
       .frame(maxWidth: .infinity, alignment: .topLeading)
-      .themedListRowBG()
+      .themedListRowLikeBG()
       .mask(RR(20, .black))
       .allowsHitTesting(false)
       .compositingGroup()
       .opacity(!(data.new ?? false) ? 0.65 : 1)
       .swipyActions(pressing: $pressed, onTap: {
         if data.context != nil {
-          routerProxy.router.path.append(PostViewPayload(post: Post(id: getPostId(from: data.context!) ?? "lol", api: message.redditAPI), postSelfAttr: nil, sub: Subreddit(id: subreddit, api: message.redditAPI), highlightID: actualParentID))
+          Nav.to(.reddit(.postHighlighted(Post(id: getPostId(from: data.context!) ?? "lol", subID: subreddit), actualParentID)))
         }
       }, rightActionIcon: !(data.new ?? false) ? "eye.slash.fill" : "eye.fill", rightActionHandler: {
         Task(priority: .background) {

@@ -9,35 +9,43 @@ import SwiftUI
 import NukeUI
 import Nuke
 
-struct Avatar: View {
-  var url:  String?
-  let userID: String
-  var fullname: String?
-  var theme: AvatarTheme?
-  var avatarSize: CGFloat?
-  @ObservedObject private var avatarCache = Caches.avatars
-  
-  var body: some View {
-    let id = fullname ?? userID
-    let avatarRequest = avatarCache.cache[id]
-    let avatarSize = avatarSize ?? theme?.size ?? 0
-//    let newURL = avatarRequest.isNil ? URL(string: String(url?.split(separator: "?")[0] ?? "")) : nil
-    AvatarRaw(avatarImgRequest: avatarRequest?.data, userID: userID, fullname: fullname, theme: theme, avatarSize: avatarSize)
-//      .equatable()
-//      .task { if avatarRequest.isNil, let url = url { RedditAPI.shared.addImgReqToAvatarCache(id, url, avatarSize: avatarSize) } }
+struct AvatarView: View, Equatable {
+  static func == (lhs: AvatarView, rhs: AvatarView) -> Bool {
+    lhs.saved == rhs.saved && lhs.avatarImgRequest?.url == rhs.avatarImgRequest?.url && lhs.theme == rhs.theme && rhs.avatarSize == lhs.avatarSize
   }
-}
-
-struct AvatarRaw: View, Equatable {
-  static func == (lhs: AvatarRaw, rhs: AvatarRaw) -> Bool {
-    lhs.avatarImgRequest?.url == rhs.avatarImgRequest?.url
-  }
-  
+  var saved: Bool
   var avatarImgRequest: ImageRequest?
   var userID: String
   var fullname: String? = nil
   var theme: AvatarTheme?
   var avatarSize: CGFloat?
+  
+  init(saved: Bool, avatarImgRequest: ImageRequest? = nil, userID: String, fullname: String? = nil, theme: AvatarTheme? = nil, avatarSize: CGFloat? = nil) {
+    self.saved = saved
+    self.avatarImgRequest = avatarImgRequest
+    self.userID = userID
+    self.fullname = fullname
+    self.theme = theme
+    self.avatarSize = avatarSize
+  }
+  
+  init(saved: Bool, url: URL?, userID: String, fullname: String? = nil, theme: AvatarTheme? = nil, avatarSize: CGFloat? = nil) {
+    self.saved = saved
+    self.avatarImgRequest = .init(url: url)
+    self.userID = userID
+    self.fullname = fullname
+    self.theme = theme
+    self.avatarSize = avatarSize
+  }
+  
+  init(saved: Bool, url: String, userID: String, fullname: String? = nil, theme: AvatarTheme? = nil, avatarSize: CGFloat? = nil) {
+    self.saved = saved
+    self.avatarImgRequest = .init(stringLiteral: url)
+    self.userID = userID
+    self.fullname = fullname
+    self.theme = theme
+    self.avatarSize = avatarSize
+  }
   
   var body: some View {
     let avatarSize = avatarSize ?? theme?.size ?? 0
@@ -46,26 +54,36 @@ struct AvatarRaw: View, Equatable {
       if userID == "[deleted]" {
         Image(systemName: "trash")
           .foregroundColor(.red)
-          .background(
-            RR(cornerRadius, Color.gray.opacity(0.5))
-              .frame(width: avatarSize, height: avatarSize)
-          )
       } else {
-        if let avatarImgRequest = avatarImgRequest, let url = avatarImgRequest.url {
-          URLImage(url: url, imgRequest: avatarImgRequest, processors: [.resize(width: avatarSize)])
-//            .equatable()
-            .scaledToFill()
+        if let avatarImgRequest = avatarImgRequest {
+          ThumbReqImage(imgRequest: avatarImgRequest, size: CGSize(width: avatarSize, height: avatarSize))
         } else {
           Text(userID.prefix(1).uppercased())
             .fontSize(avatarSize / 2)
-            .background(
-              RR(cornerRadius, .gray.opacity(0.5))
-                .frame(width: avatarSize, height: avatarSize)
-            )
         }
       }
     }
     .frame(width: avatarSize, height: avatarSize)
-    .mask(RR(cornerRadius, .black))
+    .background(RR(cornerRadius, .primary.opacity(0.15)).frame(avatarSize))
+    .clipShape(RoundedRectangle(cornerRadius: cornerRadius, style: .continuous))
+    .background(SavedFlag(cornerRadius: cornerRadius, saved: saved))
+  }
+}
+
+
+struct SavedFlag: View, Equatable {
+  private let flagY: CGFloat = 16
+  static func == (lhs: SavedFlag, rhs: SavedFlag) -> Bool {
+    lhs.saved == rhs.saved && lhs.cornerRadius == rhs.cornerRadius
+  }
+  var cornerRadius: Double
+  var saved: Bool
+  var body: some View {
+    ZStack {
+      Image(systemName: "bookmark.fill")
+        .foregroundColor(.green)
+        .animation(.easeOut(duration: 0.15).delay(saved ? 0 : 0.5)) { $0.opacity(saved ? 1 : 0) }
+        .animation(.interpolatingSpring(stiffness: 150, damping: 12).delay(0.4)) { $0.offset(y: saved ? flagY : 0) }
+    }
   }
 }

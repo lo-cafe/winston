@@ -11,24 +11,59 @@ import SwiftUI
 import AVKit
 import AVFoundation
 import Nuke
+import CoreHaptics
 
-class AppDelegate: NSObject, UIApplicationDelegate {
+class AppDelegate: UIResponder, UIApplicationDelegate {
+  static private(set) var instance: AppDelegate! = nil
+  var supportsHaptics: Bool = false
+  
   func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
-    try? AVAudioSession.sharedInstance().setCategory(.playback, mode: .default, options: [.mixWithOthers])
+    AppDelegate.instance = self
+    setAudioToMixWithOthers()
+    
+    let hapticCapability = CHHapticEngine.capabilitiesForHardware()
+    supportsHaptics = hapticCapability.supportsHaptics
+    
     return true
   }
-  func applicationDidFinishLaunching(_ application: UIApplication) {
-    let defaultPipeline = ImagePipeline { config in
-      config.dataCache = try? DataCache(name: "lo.cafe.winston.datacache")
-      let dataLoader: DataLoader = {
-        let config = URLSessionConfiguration.default
-        config.urlCache = nil
-        return DataLoader(configuration: config)
-      }()
-      config.dataLoader = dataLoader
-      config.dataCachePolicy = .storeAll
-      config.isUsingPrepareForDisplay = true
+    
+  func application(_ application: UIApplication, configurationForConnecting connectingSceneSession: UISceneSession, options: UIScene.ConnectionOptions) -> UISceneConfiguration {
+    setAudioToMixWithOthers()
+    
+    if let shortcutItem = options.shortcutItem {
+      shortcutItemToProcess = shortcutItem
     }
-    ImagePipeline.shared = defaultPipeline
+    
+    let sceneConfiguration = UISceneConfiguration(name: "Custom Configuration", sessionRole: connectingSceneSession.role)
+    sceneConfiguration.delegateClass = CustomSceneDelegate.self
+    
+    return sceneConfiguration
   }
+  
+  func applicationDidFinishLaunching(_ application: UIApplication) {
+    setAudioToMixWithOthers()
+  }
+  
+  
+}
+
+class CustomSceneDelegate: UIResponder, UIWindowSceneDelegate {
+  func windowScene(_ windowScene: UIWindowScene, performActionFor shortcutItem: UIApplicationShortcutItem, completionHandler: @escaping (Bool) -> Void) {
+    shortcutItemToProcess = shortcutItem
+  }
+}
+
+public func setAudioToMixWithOthers(_ activateplayback: Bool = false) {
+	do {
+		let audioSession = AVAudioSession.sharedInstance()
+		if (activateplayback == true) {
+			try audioSession.setCategory(.playback, mode: AVAudioSession.Mode.default, options: [.mixWithOthers])
+			try audioSession.setActive(true)
+		} else {
+			try audioSession.setCategory(.ambient, options: [.mixWithOthers])
+			try audioSession.setActive(false, options: AVAudioSession.SetActiveOptions.notifyOthersOnDeactivation)
+		}
+	} catch {
+		print("Error setting audio session to mix with others")
+	}
 }

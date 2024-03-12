@@ -8,16 +8,17 @@
 import SwiftUI
 
 struct PostLinkContextPreview: View {
-  var post: Post
-  var sub: Subreddit
-  var routerProxy: RouterProxy
+  weak var post: Post?
+  weak var sub: Subreddit?
   var body: some View {
-    NavigationStack { PostView(post: post, subreddit: sub, forceCollapse: true).environmentObject(routerProxy) }
+    if let post = post, let sub = sub {
+      NavigationStack { PostView(post: post, subreddit: sub, forceCollapse: true) }
+    }
   }
 }
 
 struct PostLinkContext: View {
-  @ObservedObject var post: Post
+  var post: Post
   var body: some View {
     //        if let perma = post.winstonData?.permaURL {
     //          ShareLink(item: perma) { Label("Share", systemImage: "square.and.arrow.up") }

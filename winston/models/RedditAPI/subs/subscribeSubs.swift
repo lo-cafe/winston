@@ -10,26 +10,12 @@ import Alamofire
 
 extension RedditAPI {
   func subscribeSubs(action: SubscribeSubAction, subs: [String]) async -> Bool? {
-    await refreshToken()
-    //    await getModHash()
-    if let headers = self.getRequestHeaders() {
-      let params = SubscribeSubPayload(action: action, sr_name: subs.joined(separator: ","))
-      let dataTask = AF.request(
-        "\(RedditAPI.redditApiURLBase)/api/subscribe",
-        method: .post,
-        parameters: params,
-        encoder: URLEncodedFormParameterEncoder(destination: .queryString),
-        headers: headers
-      ).serializingString()
-      let result = await dataTask.result
-      switch result {
-      case .success:
-        return true
-      case .failure:
-        //        print(error)
-        return nil
-      }
-    } else {
+    let params = SubscribeSubPayload(action: action, sr_name: subs.joined(separator: ","))
+    switch await self.doRequest("\(RedditAPI.redditApiURLBase)/api/subscribe", method: .post, params: params, paramsLocation: .queryString)  {
+    case .success:
+      return true
+    case .failure:
+      //        print(error)
       return nil
     }
   }
@@ -39,6 +25,7 @@ extension RedditAPI {
     var action_source = "o"
     var skip_initial_defaults = true
     let sr_name: String
+    var raw_json = 1
     //    let uh: String
   }
   

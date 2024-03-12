@@ -10,31 +10,18 @@ import Alamofire
 
 extension RedditAPI {
   func submitPost(title: String, data postData: NewPostData, _ kind: PostType, sr: String) async -> SubmitPostResponseData? {
-    await refreshToken()
-    if let headers = self.getRequestHeaders() {
-      let isGallery = postData.gallery != nil
-      var payload = SubmitPostPayload(flair_id: postData.flair?.id, flair_text: postData.flair?.text, kind: kind, sr: sr, title: title, items: postData.gallery)
-      if isGallery {
-        payload.kind = nil
-      }
-      let response = await AF.request(
-        "\(RedditAPI.redditApiURLBase)/api/\(!isGallery ? "submit" : "submit_gallery_post.json")",
-        method: .post,
-        parameters: payload,
-        encoder: URLEncodedFormParameterEncoder(destination: .httpBody),
-        headers: headers
-      )
-        .serializingDecodable(SubmitPostResponse.self).response
-      switch response.result {
-      case .success(let data):
-        return data.json.data
-      case .failure(let error):
-        Oops.shared.sendError(error)
-        print(error)
-        return nil
-      }
+    let isGallery = postData.gallery != nil
+    var payload = SubmitPostPayload(flair_id: postData.flair?.id, flair_text: postData.flair?.text, kind: kind, sr: sr, title: title, items: postData.gallery)
+    if isGallery {
+      payload.kind = nil
     }
-    return nil
+    switch await self.doRequest("\(RedditAPI.redditApiURLBase)/api/\(!isGallery ? "submit" : "submit_gallery_post.json")?raw_json=1", method: .post, params: payload, decodable: SubmitPostResponse.self) {
+    case .success(let data):
+      return data.json.data
+    case .failure(let error):
+      print(error)
+      return nil
+    }
   }
   
   struct SubmitPostResponseData: Codable {
@@ -68,6 +55,7 @@ extension RedditAPI {
     var title: String
     var url: String?
     var items: [NewPostGalleryItem]?
+    var raw_json = 1
   }
   
   enum PostType: String, Codable, CaseIterable {

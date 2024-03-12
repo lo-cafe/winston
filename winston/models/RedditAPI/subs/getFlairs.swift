@@ -7,37 +7,25 @@
 
 import Foundation
 import Alamofire
+import Defaults
+import UIKit
 
 extension RedditAPI {
   func getFlairs(_ subName: String) async -> [Flair]? {
-    await refreshToken()
-    //    await getModHash()
-    if let headers = self.getRequestHeaders() {
-      let response = await AF.request(
-        "\(RedditAPI.redditApiURLBase)/r/\(subName)/api/link_flair_v2",
-        method: .get,
-        headers: headers
-      )
-        .serializingDecodable(FlairsResponse.self).response
-      switch response.result {
-      case .success(let data):
-        return data
-      case .failure(let error):
-        Oops.shared.sendError(error)
-        return nil
-      }
+    switch await self.doRequest("\(RedditAPI.redditApiURLBase)/r/\(subName)/api/link_flair_v2?raw_json=1", method: .get, decodable: [Flair].self)  {
+    case .success(let data):
+      return data
+    case .failure(_):
+      return nil
     }
-    return nil
   }
-  
-  typealias FlairsResponse = [Flair]
 }
 
-struct Flair: GenericRedditEntityDataType, Identifiable {
+struct Flair: GenericRedditEntityDataType, Identifiable, Defaults.Serializable {
       let type: String?
       let text_editable: Bool?
       let allowable_content: String?
-      let text: String?
+      let text: String
       let max_emojis: Int?
       let text_color: String?
       let mod_only: Bool?

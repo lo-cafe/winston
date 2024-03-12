@@ -10,7 +10,8 @@ import Foundation
 func getCommentSampleData(_ withChild: Bool = true) -> CommentData {
   var commentSampleData = CommentData(id: "winstonSample")
   commentSampleData.author = "Winston"
-  commentSampleData.author_fullname = "t2_winston_sample"
+  commentSampleData.author_fullname = "t2_winston_empty_sample"
+  commentSampleData.author_flair_text = "flair"
   commentSampleData.body = "My best friend was called apollo, but he passed away a few ago :("
   commentSampleData.created = Date().timeIntervalSince1970 - 115200
   commentSampleData.ups = 483
@@ -26,4 +27,4 @@ func getCommentSampleData(_ withChild: Bool = true) -> CommentData {
   return commentSampleData
 }
 
-let commentSample = Comment(data: getCommentSampleData(), api: RedditAPI.shared)
+let commentSample = Comment(data: getCommentSampleData())

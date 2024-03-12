@@ -9,21 +9,17 @@ import SwiftUI
 import Defaults
 
 struct CommentLinkFull: View {
-  @EnvironmentObject private var routerProxy: RouterProxy
   var post: Post
-  var subreddit: Subreddit
   var arrowKinds: [ArrowKind]
   var comment: Comment
   var indentLines: Int?
   @State private var loadMoreLoading = false
   @State private var id = UUID().uuidString
   @Environment(\.useTheme) private var selectedTheme
-  @Environment(\.colorScheme) private var cs
   
   var body: some View {
-    let curveColor = selectedTheme.comments.theme.indentColor.cs(cs).color()
-    let cardedCommentsInnerHPadding = selectedTheme.comments.theme.innerPadding.horizontal
-    let horPad = cardedCommentsInnerHPadding
+    let curveColor = selectedTheme.comments.theme.indentColor()
+    let horPad = selectedTheme.comments.theme.innerPadding.horizontal
     if let data = comment.data {
       HStack {
         if data.depth != 0 && indentLines != 0 {
@@ -53,13 +49,13 @@ struct CommentLinkFull: View {
       .background(curveColor)
       .contentShape(Rectangle())
       .onTapGesture {
-        routerProxy.router.path.append(PostViewPayload(post: post, postSelfAttr: nil, sub: subreddit))
+        Nav.to(.reddit(.post(post)))
       }
       .allowsHitTesting(!loadMoreLoading)
       .opacity(loadMoreLoading ? 0.5 : 1)
       .id("\(comment.id)-\(id)")
     } else {
-      Text("Depressive load more :(")
+      Text("Depressive load full :(")
     }
   }
 }

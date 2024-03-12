@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-enum ArrowKind {
+enum ArrowKind: Equatable {
   case straight
   case straightCurve
   case curve
@@ -30,34 +30,37 @@ enum ArrowKind {
   var isEmpty: Bool { self == .empty }
 }
 
-struct Arrows: View {
+struct Arrows: View, Equatable {
+  static func == (lhs: Arrows, rhs: Arrows) -> Bool {
+    lhs.kind == rhs.kind
+  }
+  
   var kind: ArrowKind
   var offset: CGFloat = 0
   @Environment(\.useTheme) private var selectedTheme
-  @Environment(\.colorScheme) private var cs
   var body: some View {
     let curve = selectedTheme.comments.theme.indentCurve
     let curveColor = selectedTheme.comments.theme.indentColor
     let avatarSize = selectedTheme.comments.theme.badge.avatar.size
-      Group {
-        switch kind {
-        case .curve:
-          CurveShape(offset: offset, curve: curve, avatarSize: avatarSize)
-            .stroke(curveColor.cs(cs).color(), style: StrokeStyle(lineWidth: 2, lineCap: .round))
-        case .straight:
-          StraightShape()
-            .stroke(curveColor.cs(cs).color(), style: StrokeStyle(lineWidth: 2, lineCap: .round))
-            .padding(.vertical, -1)
-        case .straightCurve:
-          StraightCurveShape(offset: offset, curve: curve, avatarSize: avatarSize)
-            .stroke(curveColor.cs(cs).color(), style: StrokeStyle(lineWidth: 2, lineCap: .round))
-            .padding(.vertical, -1)
-        case .empty:
-          Color.clear
-        }
+    Group {
+      switch kind {
+      case .curve:
+        CurveShape(offset: offset, curve: curve, avatarSize: avatarSize)
+          .stroke(curveColor(), style: StrokeStyle(lineWidth: 2, lineCap: .round))
+      case .straight:
+        StraightShape()
+          .stroke(curveColor(), style: StrokeStyle(lineWidth: 2, lineCap: .round))
+          .padding(.vertical, -1)
+      case .straightCurve:
+        StraightCurveShape(offset: offset, curve: curve, avatarSize: avatarSize)
+          .stroke(curveColor(), style: StrokeStyle(lineWidth: 2, lineCap: .round))
+          .padding(.vertical, -1)
+      case .empty:
+        Color.clear
       }
-      .padding(.all, 1)
-      .frame(maxWidth: curve, maxHeight: .infinity, alignment: .topLeading)
+    }
+    .padding(.all, 1)
+    .frame(maxWidth: curve, maxHeight: .infinity, alignment: .topLeading)
   }
 }
 

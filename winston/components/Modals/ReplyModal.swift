@@ -8,6 +8,7 @@
 import SwiftUI
 import HighlightedTextEditor
 import Defaults
+import NukeUI
 
 class TextFieldObserver : ObservableObject {
   @Published var debouncedTeplyText: String
@@ -24,7 +25,7 @@ class TextFieldObserver : ObservableObject {
 }
 
 struct EditReplyModalComment: View {
-  @ObservedObject var comment: Comment
+  var comment: Comment
   
   func action(_ endLoading: (@escaping (Bool) -> ()), text: String) {
     if let _ = comment.typePrefix {
@@ -47,7 +48,7 @@ struct EditReplyModalComment: View {
 }
 
 struct ReplyModalComment: View {
-  @ObservedObject var comment: Comment
+  var comment: Comment
   
   func action(_ endLoading: (@escaping (Bool) -> ()), text: String) {
     if let _ = comment.typePrefix {
@@ -65,8 +66,9 @@ struct ReplyModalComment: View {
   var body: some View {
     ReplyModal(thingFullname: comment.data?.name ?? "", action: action) {
       VStack {
-        CommentLink(indentLines: 0, showReplies: false, comment: comment)
-//          .equatable()
+        if let commentWinstonData = comment.winstonData {
+          CommentLink(indentLines: 0, showReplies: false, comment: comment, commentWinstonData: commentWinstonData, children: comment.childrenWinston)
+        }
       }
     }
   }
@@ -102,7 +104,6 @@ struct ReplyModal<Content: View>: View {
   var action: ((@escaping (Bool) -> ()), String) -> ()
   let content: (() -> Content)?
   
-  @ObservedObject private var globalLoader = TempGlobalState.shared.globalLoader
   
   @State private var alertExit = false
   @StateObject private var textWrapper: TextFieldObserver
@@ -114,9 +115,8 @@ struct ReplyModal<Content: View>: View {
   @State private var selection: PresentationDetent = .medium
   @Environment(\.useTheme) private var selectedTheme
   @FetchRequest(sortDescriptors: []) var drafts: FetchedResults<ReplyDraft>
-  @Environment(\.colorScheme) private var cs
-  @EnvironmentObject private var routerProxy: RouterProxy
-  @ObservedObject var redditAPI = RedditAPI.shared
+  @Environment(\.globalLoaderStart) private var globalLoaderStart
+  @Environment(\.globalLoaderDismiss) private var globalLoaderDismiss
   
   init(title: String = "Replying", loadingLabel: String = "Commenting...", submitBtnLabel: String = "Send", thingFullname: String, action: @escaping (@escaping (Bool) -> Void, String) -> Void, text: String? = nil, content: (() -> Content)?) {
     self.title = title
@@ -134,9 +134,9 @@ struct ReplyModal<Content: View>: View {
         VStack(spacing: 12) {
           
           VStack(alignment: .leading) {
-            if let me = redditAPI.me?.data {
-              BadgeView(author: me.name, fullname: "t2_\(me.id)", created: Date().timeIntervalSince1970, avatarURL: me.icon_img ?? me.snoovatar_img, theme: selectedTheme.comments.theme.badge, routerProxy: routerProxy, cs: cs)
-                .equatable()
+            if let me = RedditAPI.shared.me?.data, let avatarLink = me.icon_img ?? me.snoovatar_img, let rootURL = rootURLString(avatarLink), let avatarURL = URL(string: rootURL) {
+              BadgeView(avatarRequest: ImageRequest(url: avatarURL), saved: false, author: me.name, fullname: "t2_\(me.id)", userFlair: "", created: Date().timeIntervalSince1970, avatarURL: me.icon_img ?? me.snoovatar_img, theme: selectedTheme.comments.theme.badge, commentsCount: "0", votesCount: "0")
+//              BadgeOpt(avatarRequest: ImageRequest(url: avatarURL), badgeKit: .init(numComments: 0, ups: 0, saved: false, author: me.name, authorFullname: "t2_\(me.id)", userFlair: "", created: Date().timeIntervalSince1970), avatarURL: me.icon_img ?? me.snoovatar_img, theme: selectedTheme.comments.theme.badge)
             }
             MDEditor(text: $textWrapper.replyText)
           }
@@ -167,9 +167,9 @@ struct ReplyModal<Content: View>: View {
           withAnimation(spring) {
             dismiss()
           }
-          globalLoader.enable(loadingLabel)
+          globalLoaderStart(loadingLabel)
           action({ result in
-            globalLoader.dismiss()
+            globalLoaderDismiss()
             if result {
               if let currentDraft = currentDraft {
                 Task {
@@ -266,12 +266,12 @@ struct ReplyModal<Content: View>: View {
       !selectedTheme.general.modalsBG.blurry
       ? nil
       : GeometryReader { geo in
-        selectedTheme.general.modalsBG.color.cs(cs).color()
+        selectedTheme.general.modalsBG.color()
           .frame(width: geo.size.width, height: geo.size.height)
       }
         .edgesIgnoringSafeArea(.all)
     )
-    .presentationBackground(selectedTheme.general.modalsBG.blurry ? AnyShapeStyle(.bar) : AnyShapeStyle(selectedTheme.general.modalsBG.color.cs(cs).color()))
+    .presentationBackground(selectedTheme.general.modalsBG.blurry ? AnyShapeStyle(.bar) : AnyShapeStyle(selectedTheme.general.modalsBG.color()))
     .presentationDetents([.large, .fraction(0.75), .medium, collapsedPresentation], selection: $selection)
     .presentationCornerRadius(32)
     .presentationBackgroundInteraction(.enabled)

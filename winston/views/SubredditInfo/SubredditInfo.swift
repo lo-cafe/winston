@@ -21,12 +21,10 @@ enum SubInfoTabs: String, CaseIterable, Identifiable {
 }
 
 struct SubredditInfo: View {
-  @ObservedObject var subreddit: Subreddit
-
+  var subreddit: Subreddit
+  
   @State private var selectedTab: SubInfoTabs = .info
   
-  @StateObject private var myPosts = ObservableArray<Post>()
-  @State private var myPostsLoaded = false
   @State private var addedToFavs = false
   @Default(.likedButNotSubbed) var likedButNotSubbed
   @Environment(\.useTheme) private var theme
@@ -36,7 +34,7 @@ struct SubredditInfo: View {
       Group {
         if let data = subreddit.data {
           VStack(spacing: 12) {
-            SubredditIcon(data: data, size: 125)
+            SubredditIcon(subredditIconKit: data.subredditIconKit, size: 125)
             
             VStack {
               Text("r/\(data.display_name ?? "")")
@@ -49,9 +47,9 @@ struct SubredditInfo: View {
                 
               }
             }
-//            .toast(isPresenting: $addedToFavs){
-//              AlertToast(displayMode: .hud, type: .systemImage("star.fill", Color.blue), title: "Added to Favorites")
-//            }
+            //            .toast(isPresenting: $addedToFavs){
+            //              AlertToast(displayMode: .hud, type: .systemImage("star.fill", Color.blue), title: "Added to Favorites")
+            //            }
             
             Picker("", selection: $selectedTab) {
               ForEach(SubInfoTabs.allCases) { tab in
@@ -74,7 +72,7 @@ struct SubredditInfo: View {
                       addedToFavs.toggle()
                     }
                   } else {
-                    await subreddit.favoriteToggle()
+                    subreddit.favoriteToggle()
                   }
                 }
               } label: {
@@ -84,17 +82,17 @@ struct SubredditInfo: View {
               }
             }
           }
-            
-            switch selectedTab {
-            case .info:
-              SubredditInfoTab(subreddit: subreddit)
-                .listRowBackground(Color.clear)
-                .listRowInsets(EdgeInsets(top: 8, leading: 0, bottom: 8, trailing: 0))
-            case .myposts:
-              SubredditMyPostsTab()
-            case .rules:
-              SubredditRulesTab(subreddit: subreddit)
-            }
+          
+          switch selectedTab {
+          case .info:
+            SubredditInfoTab(subreddit: subreddit)
+              .listRowBackground(Color.clear)
+              .listRowInsets(EdgeInsets(top: 8, leading: 0, bottom: 8, trailing: 0))
+          case .myposts:
+            SubredditMyPostsTab()
+          case .rules:
+            SubredditRulesTab(subreddit: subreddit)
+          }
         }
       }
       .listRowSeparator(.hidden)

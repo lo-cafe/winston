@@ -13,7 +13,10 @@ func importTheme(at rawFileURL: URL) -> Bool {
   do {
     let fileManager = FileManager.default
     let docUrls = fileManager.urls(for: .documentDirectory, in: .userDomainMask)
-    guard let documentDirectory: URL = docUrls.first else { return false }
+    guard let documentDirectory: URL = docUrls.first else {
+      print("Error getting directory")
+      return false
+    }
     let fileURL = documentDirectory.appendingPathComponent("\(UUID().uuidString).zip")
     
     if fileManager.fileExists(atPath: fileURL.path()) {
@@ -21,7 +24,10 @@ func importTheme(at rawFileURL: URL) -> Bool {
     }
     
     let gotAccess = rawFileURL.startAccessingSecurityScopedResource()
-    if !gotAccess { return false }
+    if !rawFileURL.path.hasPrefix(NSTemporaryDirectory()) && !gotAccess {
+      print("Error getting file access")
+      return false
+    }
     try? fileManager.copyItem(at: rawFileURL, to: fileURL)
     rawFileURL.stopAccessingSecurityScopedResource()
     let unzipDirectory = try Zip.quickUnzipFile(fileURL)
@@ -40,7 +46,7 @@ func importTheme(at rawFileURL: URL) -> Bool {
     }
     
     DispatchQueue.main.async {
-      Defaults[.themesPresets].append(theme)
+      Defaults[.ThemesDefSettings].themesPresets.append(theme)
     }
     
     return true

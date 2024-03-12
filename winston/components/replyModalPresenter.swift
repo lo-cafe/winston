@@ -8,60 +8,57 @@
 import SwiftUI
 
 struct ReplyModalPresenter: ViewModifier {
-  @ObservedObject var shared = ReplyModalInstance.shared
-  @StateObject var routerProxy: RouterProxy
+  var shared = ReplyModalInstance.shared
   func body(content: Content) -> some View {
     content
       .sheet(isPresented: Binding(get: { shared.isShowing == .post }, set: { if !$0 { shared.disable() } })) {
         ReplyModalPost(post: shared.subjectPost)
-          .environmentObject(routerProxy)
       }
       .sheet(isPresented: Binding(get: { shared.isShowing == .comment }, set: { if !$0 { shared.disable() } })) {
         ReplyModalComment(comment: shared.subjectComment)
-          .environmentObject(routerProxy)
       }
       .sheet(isPresented: Binding(get: { shared.isShowing == .commentEdit }, set: { if !$0 { shared.disable() } })) {
         EditReplyModalComment(comment: shared.subjectCommentEdit)
-          .environmentObject(routerProxy)
       }
   }
 }
 
 extension View {
-  func replyModalPresenter(routerProxy: RouterProxy) -> some View {
+  func replyModalPresenter() -> some View {
     self
-      .modifier(ReplyModalPresenter(routerProxy: routerProxy))
+      .modifier(ReplyModalPresenter())
   }
 }
 
-class ReplyModalInstance: ObservableObject {
+@Observable
+class ReplyModalInstance {
   static var shared = ReplyModalInstance()
   static private let placeholderPost = Post.placeholder()
   static private let placeholderComment = Comment.placeholder()
-  @Published public private(set) var subjectPost: Post = ReplyModalInstance.placeholderPost
-  @Published public private(set) var subjectComment: Comment = ReplyModalInstance.placeholderComment
-  @Published public private(set) var subjectCommentEdit: Comment = ReplyModalInstance.placeholderComment
-  @Published public private(set) var isShowing: Showing = .none { didSet { if isShowing == .none { self.clearSubjects() } } }
+  public private(set) var subjectPost: Post = ReplyModalInstance.placeholderPost
+  public private(set) var subjectComment: Comment = ReplyModalInstance.placeholderComment
+  public private(set) var subjectCommentEdit: Comment = ReplyModalInstance.placeholderComment
+  public private(set) var isShowing: Showing = .none { didSet { if isShowing == .none { self.clearSubjects() } } }
   
   func enable(_ subject: Subject) {
     switch subject {
     case .commentEdit(let comment):
       subjectCommentEdit = comment
-      doThisAfter(0) {
+      doThisAfter(0.0) {
         withAnimation(spring) {
           self.isShowing = .commentEdit
         }
       }
     case .comment(let comment):
       subjectComment = comment
-      doThisAfter(0) {
+      doThisAfter(0.0) {
         withAnimation(spring) {
           self.isShowing = .comment
         }
       }
     case .post(let post):
       subjectPost = post
-      doThisAfter(0) {
+      doThisAfter(0.0) {
         withAnimation(spring) {
           self.isShowing = .post
         }
