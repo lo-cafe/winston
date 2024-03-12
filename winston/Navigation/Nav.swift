@@ -76,7 +76,7 @@ class Nav: Identifiable, Equatable {
   private var cancellables = Set<AnyCancellable>()
   
   
-  private init(activeTab: TabIdentifier = .settings) {
+  private init(activeTab: TabIdentifier = .posts) {
     let id = UUID()
     self.id = id
     self.activeTab = activeTab
