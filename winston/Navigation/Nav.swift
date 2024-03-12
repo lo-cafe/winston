@@ -14,7 +14,6 @@ import SwiftUI
 @Observable
 class Nav: Identifiable, Equatable {
   static let shared = Nav()
-  static let router = Nav.shared.activeRouter
   
   /* <Util static functions for ease of use> */
   static func back() { Nav.shared.activeRouter.goBack() }
@@ -23,12 +22,11 @@ class Nav: Identifiable, Equatable {
   static func present(_ content: PresentingSheet?) { Nav.shared.presentingSheet = content }
   static func resetStack() { Nav.shared.activeRouter.resetNavPath() }
   /* </Util static functions for ease of use> */
-  
-  static let swipeAnywhereGestureName = "swipe-anywhere-winston"
-  
+    
   static private func newRouterForTab(_ tab: TabIdentifier, _ id: UUID) -> Router { Router(id: "\(tab.rawValue)TabRouter-\(id.uuidString)") }
   
-  enum TabIdentifier: String, Codable, Hashable, CaseIterable {
+  enum TabIdentifier: String, Codable, Hashable, CaseIterable, Identifiable, Equatable {
+    var id: String { self.rawValue }
     case posts, inbox, me, search, settings
   }
   
@@ -78,25 +76,11 @@ class Nav: Identifiable, Equatable {
   private var cancellables = Set<AnyCancellable>()
   
   
-  private init(activeTab: TabIdentifier = .posts) {
-    let newSwipeAnywhereGesture: UIPanGestureRecognizer = {
-      let gesture = UIPanGestureRecognizer()
-      gesture.name = Self.swipeAnywhereGestureName
-      gesture.isEnabled = true
-      return gesture
-    }()
-    
+  private init(activeTab: TabIdentifier = .settings) {
     let id = UUID()
     self.id = id
     self.activeTab = activeTab
     self.routers = Dictionary(uniqueKeysWithValues: TabIdentifier.allCases.map { ($0, Self.newRouterForTab($0, id)) })
-    
-    //    self.routers.values.forEach { router in
-    //      router.$isAtRoot.sink { _ in
-    //          self.objectWillChange.send()
-    //        }
-    //        .store(in: &cancellables)
-    //    }
   }
   
   func navigateTo(_ tab: TabIdentifier, _ dest: Router.NavDest, _ reset: Bool = true) {

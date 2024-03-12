@@ -7,27 +7,22 @@
 
 import SwiftUI
 import Defaults
-import Combine
-
-struct SwipeAnywhereTrigger: ViewModifier {
-  var size: CGSize
-  func body(content: Content) -> some View {
-    FullSwipeNavigationStack(router: Nav.shared.activeRouter, size: size) {
-      content
-    }
-  }
-}
 
 extension View {
-  func swipeAnywhere(size: CGSize) -> some View {
-    self.modifier(SwipeAnywhereTrigger(size: size))
+  func swipeAnywhere(size: CGSize, activeTab: Nav.TabIdentifier) -> some View {
+    FullSwipeNavigationStack(activeTab: activeTab, size: size, content: self)
   }
 }
 
-struct FullSwipeNavigationStack<C: View>: UIViewRepresentable {
-  var router: Router
+struct FullSwipeNavigationStack<C: View>: UIViewControllerRepresentable, Equatable {
+  static func == (lhs: FullSwipeNavigationStack<C>, rhs: FullSwipeNavigationStack<C>) -> Bool {
+    return lhs.activeTab == rhs.activeTab
+  }
+  
+  var activeTab: Nav.TabIdentifier
   var size: CGSize
-  @ViewBuilder var content: () -> C
+  var content: C
+  
   func makeCoordinator() -> Coordinator {
     Coordinator()
   }
@@ -40,8 +35,8 @@ struct FullSwipeNavigationStack<C: View>: UIViewRepresentable {
     view.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
   }
   
-  func makeUIView(context: Context) -> UIView {
-    let hostingController = UIHostingController<C>(rootView: content())
+  func makeUIViewController(context: Context) -> UIHostingController<C> {
+    let hostingController = UIHostingController<C>(rootView: content)
     setupConstraints(hostingController.view)
     hostingController.view.frame.size = self.size
     hostingController.view.isOpaque = false
@@ -49,26 +44,28 @@ struct FullSwipeNavigationStack<C: View>: UIViewRepresentable {
     hostingController.view.backgroundColor = .clear
     hostingController.view.isExclusiveTouch = false
     hostingController.view.isMultipleTouchEnabled = true
-    return hostingController.view
+    return hostingController
   }
   
-  func updateUIView(_ uiView: UIView, context: Context) {
-    if let controller = uiView.parentController as? UIHostingController<C> {
-      controller.rootView = content()
-    }
-    setupConstraints(uiView)
+  func updateUIViewController(_ hostingController: UIHostingController<C>, context: Context) {
+    setupConstraints(hostingController.view)
     let newSize = self.size
-    uiView.frame.size = newSize
+    hostingController.view.frame.size = newSize
     
-    if context.coordinator.prevRouterID == router.id { return }
-    uiView.gestureRecognizers?.forEach { gesture in
-      uiView.removeGestureRecognizer(gesture)
+    if context.coordinator.prevActiveTab == activeTab { return }
+    context.coordinator.prevActiveTab = activeTab
+    
+    hostingController.view.gestureRecognizers?.forEach { gesture in
+      hostingController.view.removeGestureRecognizer(gesture)
     }
-    uiView.addGestureRecognizer(router.navController.tabBarGesture)
-    uiView.addGestureRecognizer(UITapGestureRecognizer())
+
+    hostingController.view.addGestureRecognizer(Nav.shared.activeRouter.navController.tabBarGesture)
+    hostingController.view.addGestureRecognizer(UITapGestureRecognizer())
+    hostingController.rootView = content
+
   }
   
-  class Coordinator: NSObject {
-    var prevRouterID: String?
-  }
+    class Coordinator: NSObject {
+      var prevActiveTab: Nav.TabIdentifier? = nil
+    }
 }

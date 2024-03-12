@@ -33,7 +33,7 @@ struct Me: View {
             }
         }
       }
-      .attachViewControllerToRouter()
+      .attachViewControllerToRouter(tabID: .me)
       .injectInTabDestinations()
     }
 //    .swipeAnywhere()

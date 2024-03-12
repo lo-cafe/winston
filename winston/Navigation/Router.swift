@@ -7,34 +7,40 @@
 
 import Foundation
 import SwiftUI
-import Combine
 
-class ViewControllerHolder {
-  let globalGesture: UIPanGestureRecognizer
-  let tabBarGesture: UIPanGestureRecognizer
+class ViewControllerHolder: Identifiable, Equatable {
+  static func == (lhs: ViewControllerHolder, rhs: ViewControllerHolder) -> Bool {
+    lhs.id == rhs.id
+  }
+  
+  var id: String { "ctrl-holder-\(self.routerID)" }
+  let routerID: String
+  var globalGesture: UIPanGestureRecognizer
+  var tabBarGesture: UIPanGestureRecognizer
+  var navController: UINavigationController?
   var controller: UIViewController? {
-    didSet {
-      controller?.navigationController?.addFullSwipeGesture(globalGesture)
-      controller?.navigationController?.addFullSwipeGesture(tabBarGesture)
+    willSet {
+      if let newController = newValue, controller != newController {
+        newController.navigationController?.addFullSwipeGesture(globalGesture)
+        newController.navigationController?.addFullSwipeGesture(tabBarGesture)
+      }
     }
   }
   
   init(routerID: String) {
-    let gesture = UIPanGestureRecognizer()
-    gesture.name = "swipe-anywhere-gesture:router-\(routerID)"
-    gesture.isEnabled = true
-    gesture.cancelsTouchesInView = false
-    let tabBarGesture = UIPanGestureRecognizer()
-    tabBarGesture.name = "swipe-tabbar-gesture:router-\(routerID)"
-    tabBarGesture.isEnabled = true
-    tabBarGesture.cancelsTouchesInView = false
-    self.globalGesture = gesture
-    self.tabBarGesture = tabBarGesture
+    self.routerID = routerID
+    self.globalGesture = Self.newGesture("swipe-anywhere-gesture:router-\(routerID)")
+    self.globalGesture.isEnabled = false
+    self.tabBarGesture = Self.newGesture("swipe-tabbar-gesture:router-\(routerID)")
+    self.tabBarGesture.isEnabled = false
   }
   
-  var isGestureEnabled: Bool {
-    get { globalGesture.isEnabled }
-    set { globalGesture.isEnabled = newValue }
+  static func newGesture(_ id: String) -> UIPanGestureRecognizer {
+    let gesture = UIPanGestureRecognizer()
+    gesture.name = "\(id)-\(UUID().uuidString)"
+    gesture.isEnabled = true
+    gesture.cancelsTouchesInView = false
+    return gesture
   }
   
   func addGestureToViews() {
@@ -60,29 +66,31 @@ class Router: Hashable, Equatable, Identifiable {
         if fullPath.count == 0 { fullPath.append(newValue) } else { fullPath[0] = newValue } } else { fullPath = [] }
     }
   }
-  var fullPath: [NavDest] = []
+  var fullPath: [NavDest] = [] {
+    didSet {
+      if fullPath.isEmpty != isAtRoot { isAtRoot = fullPath.isEmpty }
+    }
+  }
   var path: [NavDest] {
     get { Array(self.fullPath.dropFirst()) }
     set {
       if fullPath.isEmpty { self.fullPath = newValue } else { self.fullPath = [fullPath[0]] + newValue }
     }
   }
-  private(set) var isAtRoot = false {
+  private(set) var isAtRoot = true {
     willSet {
-      self.navController.isGestureEnabled = !newValue
+      self.navController.tabBarGesture.isEnabled = !newValue
+      self.navController.globalGesture.isEnabled = !newValue
     }
   }
   var navController: ViewControllerHolder
-  
-  private var cancellables = Set<AnyCancellable>()
-  
+    
   init(id: String) {
     self.id = id
     self.navController = ViewControllerHolder(routerID: id)
-//    $fullPath.map { $0.isEmpty }.assign(to: \.isAtRoot, on: self).store(in: &cancellables)
   }
   
-  func goBack() { _ = withAnimation { self.fullPath.removeLast() } }
+  func goBack() { if self.fullPath.count > 0 { _ = withAnimation { self.fullPath.removeLast() } } }
   func resetNavPath() { withAnimation { self.fullPath.removeAll() } }
   func navigateTo(_ dest: NavDest, _ reset: Bool = false) { self.path = reset ? [dest] : self.path + [dest] }
   

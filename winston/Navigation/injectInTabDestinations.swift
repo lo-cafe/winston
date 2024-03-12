@@ -9,17 +9,18 @@ import SwiftUI
 import Defaults
 
 struct AttachViewControllerToRouterModifier: ViewModifier {
+  var tabID: Nav.TabIdentifier
   @Default(.BehaviorDefSettings) private var behaviorDefSettings
   
   func body(content: Content) -> some View {
     content
-      .background { AttachViewControllerToRouterView(disable: !behaviorDefSettings.enableSwipeAnywhere) }
+      .background { AttachViewControllerToRouterView(tabID: tabID, disable: !behaviorDefSettings.enableSwipeAnywhere) }
   }
 }
 
 extension View {
-  func attachViewControllerToRouter() -> some View {
-    self.modifier(AttachViewControllerToRouterModifier())
+  func attachViewControllerToRouter(tabID: Nav.TabIdentifier) -> some View {
+    self.modifier(AttachViewControllerToRouterModifier(tabID: tabID))
   }
   
   func injectInTabDestinations() -> some View {
@@ -84,6 +85,7 @@ extension View {
 
 
 fileprivate struct AttachViewControllerToRouterView: UIViewRepresentable {
+  var tabID: Nav.TabIdentifier
   var disable: Bool
   func makeUIView(context: Context) -> some UIView {
     return UIView()
@@ -92,12 +94,12 @@ fileprivate struct AttachViewControllerToRouterView: UIViewRepresentable {
   func updateUIView(_ uiView: UIViewType, context: Context) {
     DispatchQueue.main.async {
       if let controller = uiView.parentViewController {
-        Nav.router.navController.controller = controller
+        Nav.shared[tabID].navController.controller = controller
       }
       if disable {
-        Nav.router.navController.removeGestureFromViews()
+        Nav.shared.activeRouter.navController.removeGestureFromViews()
       } else {
-        Nav.router.navController.addGestureToViews()
+        Nav.shared.activeRouter.navController.addGestureToViews()
       }
     }
   }

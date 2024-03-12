@@ -30,7 +30,7 @@ struct AppContent: View {
   var body: some View {
     AccountSwitcherProvider {
       GlobalDestinationsProvider {
-        Tabber(theme: InMemoryTheme.shared.currentTheme).equatable()
+        Tabber(theme: InMemoryTheme.shared.currentTheme)
       }
     }
     .whatsNewSheet()

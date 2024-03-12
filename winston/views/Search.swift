@@ -170,7 +170,7 @@ struct Search: View {
       .themedListBG(theme.lists.bg)
       .listStyle(.plain)
       .loader(loading, hideSpinner && !searchQuery.value.isEmpty)
-      .attachViewControllerToRouter()
+      .attachViewControllerToRouter(tabID: .search)
       .injectInTabDestinations()
       .scrollDismissesKeyboard(.automatic)
       .searchable(text: $searchQuery.value, placement: .toolbar)

@@ -27,7 +27,7 @@ struct SubredditsStack: View {
       if let redditCredentialSelectedID = generalDefSettings.redditCredentialSelectedID {
         Subreddits(firstDestination: $router.firstSelected, loaded: loaded, currentCredentialID: redditCredentialSelectedID)
           .measure($sidebarSize).id("subreddits-list-\(redditCredentialSelectedID)")
-          .attachViewControllerToRouter()
+          .attachViewControllerToRouter(tabID: .posts)
       }
     } detail: {
       NavigationStack(path: $router.path) {
@@ -37,7 +37,7 @@ struct SubredditsStack: View {
             case .reddit(.multiFeed(let multi)):
               MultiPostsView(multi: multi)
                 .id("\(multi.id)-multi-first-tab")
-                .attachViewControllerToRouter()
+                .attachViewControllerToRouter(tabID: .posts)
             case .reddit(.subFeed(let sub)):
               SubredditPosts(subreddit: sub)
                 .id("\(sub.id)-sub-first-tab")
@@ -45,12 +45,12 @@ struct SubredditsStack: View {
               if let sub = post.winstonData?.subreddit {
                 PostView(post: post, subreddit: sub)
                   .id("\(post.id)-post-first-tab")
-                  .attachViewControllerToRouter()
+                  .attachViewControllerToRouter(tabID: .posts)
               }
             case .reddit(.user(let user)):
               UserView(user: user)
                 .id("\(user.id)-user-first-tab")
-                .attachViewControllerToRouter()
+                .attachViewControllerToRouter(tabID: .posts)
             default:
               EmptyView()
             }
@@ -68,7 +68,7 @@ struct SubredditsStack: View {
                   .opacity(0.35)
               }
             }
-            .attachViewControllerToRouter()
+            .attachViewControllerToRouter(tabID: .posts)
           }
         }
         .injectInTabDestinations()
