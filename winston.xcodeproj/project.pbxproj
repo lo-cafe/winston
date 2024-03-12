@@ -197,7 +197,6 @@
 		EC3B32462AC64F4C002C1291 /* SubredditPostsIPAD.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC3B32452AC64F4C002C1291 /* SubredditPostsIPAD.swift */; };
 		EC3BC5EC2ACC21AA0050CA8F /* SwipeRevolution.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC3BC5EB2ACC21AA0050CA8F /* SwipeRevolution.swift */; };
 		EC3BC5EE2ACC22340050CA8F /* Gesturer.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC3BC5ED2ACC22340050CA8F /* Gesturer.swift */; };
-		EC3E7B242B0542EA004B4F21 /* Pow in Frameworks */ = {isa = PBXBuildFile; productRef = EC3E7B232B0542EA004B4F21 /* Pow */; };
 		EC3E7B262B05510B004B4F21 /* UserView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC3E7B252B05510B004B4F21 /* UserView.swift */; };
 		EC421D4B2B4B82DD0038C27A /* error-appear.json in Resources */ = {isa = PBXBuildFile; fileRef = EC421D4A2B4B82DD0038C27A /* error-appear.json */; };
 		EC421D4F2B4B939E0038C27A /* AdvancedInstructions.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC421D4E2B4B939E0038C27A /* AdvancedInstructions.swift */; };
@@ -322,6 +321,7 @@
 		EC6495A82A999C4A00B1852C /* CachedMulti+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC6495A42A999C4A00B1852C /* CachedMulti+CoreDataClass.swift */; };
 		EC6495A92A999C4A00B1852C /* CachedMulti+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC6495A52A999C4A00B1852C /* CachedMulti+CoreDataProperties.swift */; };
 		EC6650EA2AB7E21E006B83A4 /* Zip in Frameworks */ = {isa = PBXBuildFile; productRef = EC6650E92AB7E21E006B83A4 /* Zip */; };
+		EC66A2A52BA00530004E20BB /* Pow in Frameworks */ = {isa = PBXBuildFile; productRef = EC66A2A42BA00530004E20BB /* Pow */; };
 		EC684C832AF1FD9E00BC2A84 /* ScrollSwipe_WIP.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC684C822AF1FD9E00BC2A84 /* ScrollSwipe_WIP.swift */; };
 		EC6CBE332A7D6BF80089EAA0 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = EC6CBE322A7D6BF80089EAA0 /* README.md */; };
 		EC6CBE352A7D6E760089EAA0 /* LICENSE.md in Sources */ = {isa = PBXBuildFile; fileRef = EC6CBE342A7D6E760089EAA0 /* LICENSE.md */; };
@@ -1149,10 +1149,10 @@
 				ECE08B8D2AAB44DC00F84DC9 /* SymbolPicker in Frameworks */,
 				EC593B0C2A47B801002D6454 /* Alamofire in Frameworks */,
 				EC593B092A47B42D002D6454 /* KeychainAccess in Frameworks */,
-				EC3E7B242B0542EA004B4F21 /* Pow in Frameworks */,
 				ECE285972A4FD6FC009CF9DD /* SwiftDate in Frameworks */,
 				EC9BB1C62A8B05AA0070CD97 /* NukeVideo in Frameworks */,
 				BBD6E9DE2B51B03600901C1C /* MarkdownUI in Frameworks */,
+				EC66A2A52BA00530004E20BB /* Pow in Frameworks */,
 				EC6081262B43A766001A1077 /* Lottie in Frameworks */,
 				EC9BB1C42A8B05AA0070CD97 /* NukeUI in Frameworks */,
 				ECE449742A67648E00E2A3B7 /* Popovers in Frameworks */,
@@ -2567,7 +2567,6 @@
 				EC2D72B22AC5335E002601E0 /* CHTCollectionViewWaterfallLayout */,
 				EC1685302AEF4BF2000DD701 /* Gifu */,
 				6514FFEB2AFD01520051D264 /* WhatsNewKit */,
-				EC3E7B232B0542EA004B4F21 /* Pow */,
 				654559062B0E456A0080E27F /* Shiny */,
 				EC4C7CAE2B2C75600007A4DA /* Disk */,
 				ECDEBD232B31C91D00A8AC78 /* SmoothGradient */,
@@ -2575,6 +2574,7 @@
 				ECA3700F2B480FC900C73CB0 /* WrappingHStack */,
 				BBD6E9DD2B51B03600901C1C /* MarkdownUI */,
 				ECB0D46D2B5ED1DE00F90B9B /* SwiftyUI */,
+				EC66A2A42BA00530004E20BB /* Pow */,
 			);
 			productName = winston;
 			productReference = EC593AD42A4673B2002D6454 /* winston.app */;
@@ -2651,7 +2651,6 @@
 				EC2D72B12AC5335E002601E0 /* XCRemoteSwiftPackageReference "CHTCollectionViewWaterfallLayout" */,
 				EC16852F2AEF4BF2000DD701 /* XCRemoteSwiftPackageReference "Gifu" */,
 				6514FFEA2AFD01520051D264 /* XCRemoteSwiftPackageReference "WhatsNewKit" */,
-				EC3E7B222B0542EA004B4F21 /* XCRemoteSwiftPackageReference "Pow" */,
 				654559052B0E456A0080E27F /* XCRemoteSwiftPackageReference "shiny" */,
 				EC4C7CAD2B2C75600007A4DA /* XCRemoteSwiftPackageReference "Disk" */,
 				ECDEBD222B31C91D00A8AC78 /* XCRemoteSwiftPackageReference "SmoothGradient" */,
@@ -2659,6 +2658,7 @@
 				ECA3700E2B480FC900C73CB0 /* XCRemoteSwiftPackageReference "WrappingHStack" */,
 				BBD6E9DC2B51B01B00901C1C /* XCRemoteSwiftPackageReference "swift-markdown-ui" */,
 				ECB0D46C2B5ED1DE00F90B9B /* XCRemoteSwiftPackageReference "SwiftyUI" */,
+				EC66A2A32BA00530004E20BB /* XCRemoteSwiftPackageReference "Pow" */,
 			);
 			productRefGroup = EC593AD52A4673B2002D6454 /* Products */;
 			projectDirPath = "";
@@ -3662,14 +3662,6 @@
 				minimumVersion = 1.0.0;
 			};
 		};
-		EC3E7B222B0542EA004B4F21 /* XCRemoteSwiftPackageReference "Pow" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/movingparts-io/Pow";
-			requirement = {
-				branch = main;
-				kind = branch;
-			};
-		};
 		EC4C7CAD2B2C75600007A4DA /* XCRemoteSwiftPackageReference "Disk" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/saoudrizwan/Disk.git";
@@ -3716,6 +3708,14 @@
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 2.0.0;
+			};
+		};
+		EC66A2A32BA00530004E20BB /* XCRemoteSwiftPackageReference "Pow" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/EmergeTools/Pow";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.3;
 			};
 		};
 		EC828EA52A904E0A009478B1 /* XCRemoteSwiftPackageReference "ConfettiSwiftUI" */ = {
@@ -3857,11 +3857,6 @@
 			package = EC3AC9D02AACC3DB0078EC78 /* XCRemoteSwiftPackageReference "DebouncedOnChange" */;
 			productName = DebouncedOnChange;
 		};
-		EC3E7B232B0542EA004B4F21 /* Pow */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = EC3E7B222B0542EA004B4F21 /* XCRemoteSwiftPackageReference "Pow" */;
-			productName = Pow;
-		};
 		EC4C7CAE2B2C75600007A4DA /* Disk */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = EC4C7CAD2B2C75600007A4DA /* XCRemoteSwiftPackageReference "Disk" */;
@@ -3891,6 +3886,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = EC6650E82AB7E21E006B83A4 /* XCRemoteSwiftPackageReference "Zip" */;
 			productName = Zip;
+		};
+		EC66A2A42BA00530004E20BB /* Pow */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = EC66A2A32BA00530004E20BB /* XCRemoteSwiftPackageReference "Pow" */;
+			productName = Pow;
 		};
 		EC828EA62A904E0A009478B1 /* ConfettiSwiftUI */ = {
 			isa = XCSwiftPackageProductDependency;

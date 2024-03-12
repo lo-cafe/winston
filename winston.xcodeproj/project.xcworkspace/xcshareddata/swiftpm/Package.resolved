@@ -1,5 +1,5 @@
 {
-  "originHash" : "b6651336d20cf1cbd80c9e6070fd599e2e39269958ea837910675db76848188b",
+  "originHash" : "6fbefa3eb909c8253687a1944c542b5235ac9d01331117130a91cd659cf7cfe0",
   "pins" : [
     {
       "identity" : "alamofire",
@@ -139,10 +139,10 @@
     {
       "identity" : "pow",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/movingparts-io/Pow",
+      "location" : "https://github.com/EmergeTools/Pow",
       "state" : {
-        "branch" : "main",
-        "revision" : "d5dc8370f8da53aa54cee9fa909cbe8d6d122ccc"
+        "revision" : "cc014eba4b65f689cadc281ad925de5607f2adc9",
+        "version" : "1.0.3"
       }
     },
     {

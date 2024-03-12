@@ -811,6 +811,9 @@
         }
       }
     },
+    "Compact" : {
+
+    },
     "Compact Mode" : {
       "localizations" : {
         "de" : {
@@ -1144,6 +1147,9 @@
         }
       }
     },
+    "Download" : {
+
+    },
     "Drag Left" : {
       "localizations" : {
         "de" : {
@@ -1214,6 +1220,9 @@
 
     },
     "Edit credential" : {
+
+    },
+    "Edit filter" : {
 
     },
     "Enabling the extension" : {
@@ -2105,6 +2114,9 @@
         }
       }
     },
+    "LOAD MORE" : {
+
+    },
     "Lock Winston With %@" : {
       "localizations" : {
         "de" : {
@@ -2411,6 +2423,9 @@
     "New credential" : {
 
     },
+    "New filter" : {
+
+    },
     "New post" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -2465,6 +2480,12 @@
       }
     },
     "No credential" : {
+
+    },
+    "No filtered posts" : {
+
+    },
+    "Normal" : {
 
     },
     "Nothing around here :(" : {
@@ -3716,6 +3737,9 @@
         }
       }
     },
+    "Theme Store" : {
+
+    },
     "Theme Store Tint" : {
       "localizations" : {
         "de" : {
@@ -3784,6 +3808,9 @@
 
     },
     "There was an error" : {
+
+    },
+    "There was an error importing this theme" : {
 
     },
     "This is not working yet :(" : {
