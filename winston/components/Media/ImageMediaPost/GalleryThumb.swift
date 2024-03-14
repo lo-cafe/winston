@@ -24,12 +24,11 @@ struct GalleryThumb: View, Equatable {
   
   var body: some View {
     URLImage(url: url, imgRequest: imgRequest, processors: [.resize(width: width)], size: CGSize(width: width, height: height ?? 0))
-      .scaledToFill()
+            .scaledToFit()
       .zIndex(1)
       .fixedSize(horizontal: false, vertical: height == nil)
       .allowsHitTesting(false)
       .frame(width: width, height: height)
-      .clipped()
       .mask(RR(cornerRadius, Color.black).equatable())
       .contentShape(Rectangle())
   }
