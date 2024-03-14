@@ -14,5 +14,6 @@ struct SubredditFeedDefSettings: Equatable, Hashable, Codable, Defaults.Serializ
   var chunkLoadSize: Int = 25
   var perSubredditSort: Bool = false
   var openOptionsOnTap: Bool = false
+  var showPrefixOnFeedTitle: Bool = true
   var subredditSorts: Dictionary<String, SubListingSortOption> = .init()
 }

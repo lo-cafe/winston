@@ -22,6 +22,7 @@ struct UserView: View {
   @State private var contentWidth: CGFloat = 0
   @State private var loadingOverview = true
   @State private var lastItemId: String? = nil
+  @Default(.SubredditFeedDefSettings) private var subFeedSettings
   @Environment(\.useTheme) private var selectedTheme
   
   @State private var dataTypeFilter: String = "" // Handles filtering for only posts or only comments.
@@ -78,7 +79,7 @@ struct UserView: View {
   
   var body: some View {
     
-    RedditListingFeed(feedId: user.fullname, title: user.data?.name ?? "Loading...", theme: selectedTheme.lists.bg, fetch: fetcher, header: {
+    RedditListingFeed(feedId: user.fullname, title: "\(subFeedSettings.showPrefixOnFeedTitle ? "u/" : "")\(user.data?.name ?? "Loading...")", theme: selectedTheme.lists.bg, fetch: fetcher, header: {
       VStack(spacing: 16) {
         if let data = user.data {
           Group {

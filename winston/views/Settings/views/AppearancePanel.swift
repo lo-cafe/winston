@@ -12,6 +12,7 @@ struct AppearancePanel: View {
   @Default(.PostLinkDefSettings) var postLinkDefSettings
   @Default(.AppearanceDefSettings) var appearanceDefSettings
   @Default(.CommentLinkDefSettings) var commentLinkDefSettings
+  @Default(.SubredditFeedDefSettings) var subFeedDefSettings
 
   @Environment(\.useTheme) private var theme
   @State private var appIconManager = AppIconManger()
@@ -64,7 +65,8 @@ struct AppearancePanel: View {
         // MARK: -- General
         Section("General") {
           Toggle("Show Username in Tab Bar", isOn: $appearanceDefSettings.showUsernameInTabBar)
-          Toggle("Disable subs list letter sections", isOn: $appearanceDefSettings.disableAlphabetLettersSectionsInSubsList)
+          Toggle("Disable Subs List Letter Sections", isOn: $appearanceDefSettings.disableAlphabetLettersSectionsInSubsList)
+          Toggle("Show Prefix on Feed Title", isOn: $subFeedDefSettings.showPrefixOnFeedTitle)
         }
         
         //      Section("Theming") {
@@ -99,6 +101,9 @@ struct AppearancePanel: View {
         // MARK: -- Compact Posts
         Section("Compact Posts") {
           Toggle("Compact Mode", isOn: $postLinkDefSettings.compactMode.enabled)
+          
+          if
+          
           Toggle("Show Thumbnail Placeholder", isOn: $postLinkDefSettings.compactMode.showPlaceholderThumbnail)
             Picker("Thumbnail Position", selection: Binding(
               get: { postLinkDefSettings.compactMode.thumbnailSide == .trailing ? "Right" : "Left" },
