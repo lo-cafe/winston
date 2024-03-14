@@ -30,131 +30,17 @@ struct MultiPostsView: View {
   @Environment(\.contentWidth) private var contentWidth
 //  @Environment(\.colorScheme) private var cs
 	@Environment(\.horizontalSizeClass) private var hSizeClass
-  @Default(.SubredditFeedDefSettings) var subredditFeedDefSettings
+  @Default(.SubredditFeedDefSettings) var subFeedSettings
   
-  func searchCallback(str: String?) {
-    searchText = str ?? ""
-    clearAndReloadData()
-  }
-  
-  func filterCallback(str: String) {
-    filter = str
-  }
-  
-//  func editCustomFilter(filterData: FilterData) {
-//    customFilter = filterData
-//  }
-  
-  func asyncFetch(force: Bool = false, loadMore: Bool = false) async {
-    //    if (multi.data == nil || force) {
-    //      await multi.refreshSubreddit()
-    //    }
-    if posts.count > 0 && lastPostAfter == nil && !force {
-      return
-    }
-    if let result = await multi.fetchPosts(sort: sort, after: loadMore ? lastPostAfter : nil, contentWidth: contentWidth), let newPosts = result.0 {
-      withAnimation {
-        if loadMore {
-          posts.append(contentsOf: newPosts)
-        } else {
-          posts = newPosts
-        }
-        loading = false
-        lastPostAfter = result.1
-        reachedEndOfFeed = newPosts.count == 0
-      }
-      Task(priority: .background) {
-        await RedditAPI.shared.updatePostsWithAvatar(posts: newPosts, avatarSize: selectedTheme.postLinks.theme.badge.avatar.size)
-      }
-    }
-  }
-  
-  func fetch(loadMore: Bool = false, _ searchText: String? = nil, forceRefresh: Bool = false) {
-    Task(priority: .background) {
-      await asyncFetch(loadMore: loadMore)
-    }
-  }
-  
-  func clearAndReloadData() {
-    withAnimation {
-      loading = true
-      posts.removeAll()
-      reachedEndOfFeed = false
-    }
+  func caller(_ lastElementId: String?, _ sorting: SubListingSortOption?, _ searchQuery: String?, _ flair: String?) async -> ([RedditEntityType]?, String?)? {
     
-    fetch()
-  }
-  
-  func updatePostsCalcs(_ newTheme: WinstonTheme) {
-    Task(priority: .background) { posts.forEach { $0.setupWinstonData(data: $0.data, winstonData: $0.winstonData, contentWidth: contentWidth, secondary: false, theme: selectedTheme, sub: $0.winstonData?.subreddit, fetchAvatar: false) } }
+      if let sorting, let result = await multi.fetchPosts(sort: sorting, after: lastElementId, contentWidth: contentWidth), let newPosts = result.0 {
+        return (newPosts, result.1)
+    }
+    return nil
   }
   
   var body: some View {
-    Group {
-      VStack {}
-//      if IPAD && hSizeClass == .regular {
-//        SubredditPostsIPAD(showSub: true, lastPostAfter: lastPostAfter, filters: [], posts: posts, filter: filter, searchText: searchText, fetch: fetch, selectedTheme: selectedTheme, loading: loading, reachedEndOfFeed: $reachedEndOfFeed)
-//      } else {
-//        SubredditPostsIOS(showSub: true, lastPostAfter: lastPostAfter, filters: [], posts: posts, filter: filter, searchText: searchText, fetch: fetch, selectedTheme: selectedTheme, loading: loading, reachedEndOfFeed: $reachedEndOfFeed)
-//      }
-    }
-    //.themedListBG(selectedTheme.postLinks.bg)
-    .listStyle(.plain)
-    .environment(\.defaultMinListRowHeight, 1)
-    //.loader(loading && posts.count == 0 && !reachedEndOfFeed)
-    .navigationBarItems(
-      trailing:
-        HStack {
-          Menu {
-            ForEach(SubListingSortOption.allCases) { opt in
-              Button {
-                sort = opt
-              } label: {
-                HStack {
-                  Text(opt.meta.label.capitalized)
-                  Spacer()
-                  Image(systemName: opt.meta.icon)
-                    .foregroundColor(Color.accentColor)
-                    .fontSize(17, .bold)
-                }
-              }
-            }
-          }
-        label: {
-            Image(systemName: sort.meta.icon)
-              .foregroundColor(Color.accentColor)
-              .fontSize(17, .bold)
-          }
-          
-          if let imgLink = multi.data?.icon_url, let imgURL = URL(string: imgLink) {
-            Button {
-
-            } label: {
-              URLImage(url: imgURL)
-                .scaledToFill()
-                .frame(width: 30, height: 30)
-                .mask(Circle())
-            }
-          }
-        }
-        .animation(nil, value: sort)
-    )
-    .onAppear {
-      if posts.count == 0 {
-        doThisAfter(0.0) {
-          fetch()
-        }
-      }
-    }
-    .onChange(of: sort) { _ in clearAndReloadData() }
-//    .searchable(text: $searchText, prompt: "Search r/\(subreddit.data?.display_name ?? subreddit.id)")
-//    .onChange(of: cs) { _ in updatePostsCalcs(selectedTheme) }
-    .onChange(of: subredditFeedDefSettings.compactPerSubreddit) { _ in updatePostsCalcs(selectedTheme) }
-    .onChange(of: selectedTheme, perform: updatePostsCalcs)
-    .refreshable { await asyncFetch(force: true) }
-    .navigationTitle(multi.data?.name ?? "MultiZ")
-    .scrollContentBackground(.hidden)
-    //.background(.thinMaterial)
+    RedditListingFeed(feedId: multi.id, showSubInPosts: true, title: "\(subFeedSettings.showPrefixOnFeedTitle ? "m/" : "")\(multi.data?.name ?? "Multi")", theme: selectedTheme.postLinks.bg, fetch: caller, initialSorting: subFeedSettings.preferredSort, disableSearch: true)
   }
-  
 }
