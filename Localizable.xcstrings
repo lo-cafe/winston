@@ -1071,6 +1071,7 @@
       }
     },
     "Disable subs list letter sections" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -1085,6 +1086,9 @@
           }
         }
       }
+    },
+    "Disable Subs List Letter Sections" : {
+
     },
     "DISCARD" : {
       "localizations" : {
@@ -3294,6 +3298,9 @@
 
     },
     "Show Divider at Top" : {
+
+    },
+    "Show Prefix on Feed Title" : {
 
     },
     "Show Self Text" : {
