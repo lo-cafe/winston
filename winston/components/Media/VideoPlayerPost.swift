@@ -171,8 +171,9 @@ struct VideoPlayerPost: View, Equatable {
           }
         }
         .onDisappear() {
-          removeObserver()
+            removeObserver()
           Task(priority: .background) {
+            setAudioToMixWithOthers(false)
             sharedVideo.player.seek(to: .zero)
             sharedVideo.player.pause()
           }
