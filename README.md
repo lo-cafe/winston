@@ -23,7 +23,7 @@ At the moment, Winston hasn't made its grand appearance on the App Store. But wo
 
 1. **TestFlight**: Take part in Winston's journey by joining our TestFlight [here](https://testflight.apple.com/join/3UF8bAUN). Be aware that this could be full or unavailable due to TestFlight's occasional downtimes.
 
-2. **Sideloading**: Employ [Sideloadly](https://sideloadly.io/) or a sideloading method of your preference to install the Winston IPA directly. Grab the IPA file from our [releases](https://github.com/Kinark/winston/releases/latest) page!
+2. **Sideloading**: Employ [Sideloadly](https://sideloadly.io/) or a sideloading method of your preference to install the Winston IPA directly. Grab the IPA file from our [releases](https://github.com/lo-cafe/winston/releases/latest) page!
 
 ## 🎁 Make Winston Better (Contribution)
 
