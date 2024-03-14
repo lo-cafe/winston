@@ -73,7 +73,7 @@ struct MixedContentFeedView: View {
       .environment(\.defaultMinListRowHeight, 1)
     }
 //    .onChange(of: cs) { _ in updateContentsCalcs(selectedTheme) }
-//    .onChange(of: selectedTheme, perform: updateContentsCalcs)
+    .onChange(of: selectedTheme, perform: updateContentsCalcs)
     .themedListBG(selectedTheme.postLinks.bg)
     .scrollContentBackground(.hidden)
     .scrollIndicators(.never)
