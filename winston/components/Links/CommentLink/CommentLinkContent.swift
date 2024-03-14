@@ -20,11 +20,15 @@ struct CommentLinkContentPreview: View {
   var comment: Comment
   var avatarsURL: [String:String]?
   var body: some View {
-    if let data = comment.data, let winstonData = comment.winstonData, let forcedBodySize {
+    if let winstonData = comment.winstonData, let forcedBodySize {
+      
       VStack(alignment: .leading, spacing: 0) {
-        CommentLinkContent(forcedBodySize: forcedBodySize, showReplies: showReplies, arrowKinds: arrowKinds, indentLines: indentLines, lineLimit: lineLimit, post: post, comment: comment, winstonData: winstonData, avatarsURL: avatarsURL)
+        CommentLinkContent(forcedBodySize: nil, showReplies: showReplies, arrowKinds: arrowKinds, indentLines: indentLines, lineLimit: lineLimit, post: post, comment: comment, winstonData: winstonData, avatarsURL: avatarsURL)
       }
-      .frame(width: .screenW, height: forcedBodySize.height + CGFloat((data.depth != 0 ? 42 : 30) + 16))
+//      .frame(width: .screenW, height: forcedBodySize.height + CGFloat((data.depth != 0 ? 42 : 30) + 16))
+      .padding(.vertical, 12)
+      .frame(width: .screenW)
+      .fixedSize()
     }
   }
 }
@@ -219,6 +223,7 @@ struct CommentLinkContent: View {
                     HStack {
                       Markdown(MarkdownUtil.formatForMarkdown(body, showSpoiler: showSpoiler))
                         .markdownTheme(.winstonMarkdown(fontSize: theme.theme.bodyText.size, lineSpacing: theme.theme.linespacing, textSelection: selectable))
+                        .fixedSize(horizontal: false, vertical: true)
                       
                       if MarkdownUtil.containsSpoiler(body) {
                         Spacer()
@@ -250,7 +255,7 @@ struct CommentLinkContent: View {
               .padding(.bottom, max(0, theme.theme.innerPadding.vertical + (data.depth == 0 && comment.childrenWinston.count == 0 ? -theme.theme.cornerRadius : theme.theme.innerPadding.vertical)))
               .scaleEffect(1)
               .contentShape(Rectangle())
-//              .background(forcedBodySize != nil ? nil : GeometryReader { geo in Color.clear.onAppear { size = geo.size } } )
+              .measure($size)
             } else {
               Spacer()
             }

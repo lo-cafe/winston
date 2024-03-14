@@ -67,6 +67,8 @@ func migrateOldDefaults() {
     compactPerSubreddit: Defaults[._compactPerSubreddit],
     chunkLoadSize: Defaults[._feedPostsLoadLimit],
     perSubredditSort: Defaults[._perSubredditSort],
+    openOptionsOnTap: false,
+    showPrefixOnFeedTitle: true,
     subredditSorts: Defaults[._subredditSorts]
   )
   let newCommentLinkDefSettings = CommentLinkDefSettings(

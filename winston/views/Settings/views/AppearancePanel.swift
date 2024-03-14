@@ -12,25 +12,26 @@ struct AppearancePanel: View {
   @Default(.PostLinkDefSettings) var postLinkDefSettings
   @Default(.AppearanceDefSettings) var appearanceDefSettings
   @Default(.CommentLinkDefSettings) var commentLinkDefSettings
-
+  @Default(.SubredditFeedDefSettings) var subFeedDefSettings
+  
   @Environment(\.useTheme) private var theme
   @State private var appIconManager = AppIconManger()
   
   var body: some View {
     List {
-        // MARK: -- THEME
-        Group {
-//        Section {
-//          WListButton(showArrow: true) {
-//            Nav.present(.editingTheme(theme))
-//          } label: {
-//            OnlineThemeItem(theme: ThemeData(theme_name: theme.metadata.name, theme_author:theme.metadata.author, theme_description: theme.metadata.description,color:theme.metadata.color, icon: theme.metadata.icon), showDownloadButton: false)
-//          }
-//          .disabled(theme.id == "default")
-//        } header: {
-//          Text("Current Theme")
-//        }
-//        .listRowSeparator(.hidden)
+      // MARK: -- THEME
+      Group {
+        //        Section {
+        //          WListButton(showArrow: true) {
+        //            Nav.present(.editingTheme(theme))
+        //          } label: {
+        //            OnlineThemeItem(theme: ThemeData(theme_name: theme.metadata.name, theme_author:theme.metadata.author, theme_description: theme.metadata.description,color:theme.metadata.color, icon: theme.metadata.icon), showDownloadButton: false)
+        //          }
+        //          .disabled(theme.id == "default")
+        //        } header: {
+        //          Text("Current Theme")
+        //        }
+        //        .listRowSeparator(.hidden)
         
         Section {
           WNavigationLink(value: .setting(.appIcon)) {
@@ -64,7 +65,8 @@ struct AppearancePanel: View {
         // MARK: -- General
         Section("General") {
           Toggle("Show Username in Tab Bar", isOn: $appearanceDefSettings.showUsernameInTabBar)
-          Toggle("Disable subs list letter sections", isOn: $appearanceDefSettings.disableAlphabetLettersSectionsInSubsList)
+          Toggle("Disable Subs List Letter Sections", isOn: $appearanceDefSettings.disableAlphabetLettersSectionsInSubsList)
+          Toggle("Show Prefix on Feed Title", isOn: $subFeedDefSettings.showPrefixOnFeedTitle)
         }
         
         //      Section("Theming") {
@@ -81,7 +83,7 @@ struct AppearancePanel: View {
         //        }
         //        .themedListSection()
         //      }
-//        
+        //
         // MARK: -- Posts
         Section("Posts") {
           Toggle("Show Upvote Ratio", isOn: $postLinkDefSettings.showUpVoteRatio)
@@ -99,7 +101,9 @@ struct AppearancePanel: View {
         // MARK: -- Compact Posts
         Section("Compact Posts") {
           Toggle("Compact Mode", isOn: $postLinkDefSettings.compactMode.enabled)
-          Toggle("Show Thumbnail Placeholder", isOn: $postLinkDefSettings.compactMode.showPlaceholderThumbnail)
+          
+          if postLinkDefSettings.compactMode.enabled {
+            Toggle("Show Thumbnail Placeholder", isOn: $postLinkDefSettings.compactMode.showPlaceholderThumbnail)
             Picker("Thumbnail Position", selection: Binding(
               get: { postLinkDefSettings.compactMode.thumbnailSide == .trailing ? "Right" : "Left" },
               set: { postLinkDefSettings.compactMode.thumbnailSide = $0 == "Right" ? .trailing : .leading })
@@ -127,18 +131,20 @@ struct AppearancePanel: View {
               Text("Left").tag("Left")
               Text("Right").tag("Right")
             }
+          }
         }
+        
         // MARK: -- Comments
         Section("Comments") {
           Toggle("Colored Usernames", isOn: $commentLinkDefSettings.coloredNames)
-        Picker("Next Comment Button Position", selection: Binding(get: {
-          commentLinkDefSettings.jumpNextCommentButtonLeft ? "Left" : "Right"
-        }, set: { val, _ in
-          commentLinkDefSettings.jumpNextCommentButtonLeft = val == "Left" ? true : false
-        })) {
+          Picker("Next Comment Button Position", selection: Binding(get: {
+            commentLinkDefSettings.jumpNextCommentButtonLeft ? "Left" : "Right"
+          }, set: { val, _ in
+            commentLinkDefSettings.jumpNextCommentButtonLeft = val == "Left" ? true : false
+          })) {
             Text("Left").tag("Left")
             Text("Right").tag("Right")
-        }
+          }
         }
         // MARK: -- Accessibility
         Section("Accessibility"){
@@ -149,6 +155,7 @@ struct AppearancePanel: View {
       }
       .themedListSection()
     }
+    .animation(.spring, value: postLinkDefSettings.compactMode.enabled)
     .themedListBG(theme.lists.bg)
     .navigationTitle("Appearance")
     .navigationBarTitleDisplayMode(.inline)
