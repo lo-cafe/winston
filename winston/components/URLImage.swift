@@ -29,12 +29,14 @@ struct URLImage: View, Equatable {
       LazyImage(url: url) { state in
         if let imageData = state.imageContainer?.data {
           GIFImage(data: imageData, size: size)
-            .scaledToFill()
+            .scaledToFit()
+            
+            .frame(width: size?.width, height: size?.height)
         } else if state.error != nil {
           Color.red.opacity(0.1)
             .overlay(Image(systemName: "xmark.circle.fill").foregroundColor(.red))
         } else {
-          URLImageLoader(size: 50).equatable()
+            URLImageLoader(size: 50).equatable().scaledToFit()
         }
       }
       .onDisappear(.cancel)
@@ -49,9 +51,14 @@ struct URLImage: View, Equatable {
           if let image = state.image {
             if doLiveText && ImageAnalyzer.isSupported {
               LiveTextInteraction(image: image)
-                .scaledToFill()
+                .scaledToFit()
+                
+                .frame(width: size?.width, height: size?.height)
             } else {
               image
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: size?.width, height: size?.height)
             }
           // } else if state.error != nil {
           //   Color.red.opacity(0.1)
@@ -71,17 +78,20 @@ struct URLImage: View, Equatable {
           if let image = state.image {
             if doLiveText && ImageAnalyzer.isSupported {
               LiveTextInteraction(image: image)
-                .scaledToFill()
+                
+                    .frame(width: size?.width, height: size?.height)
+                .scaledToFit()
             } else {
               image
                 .resizable()
+                .frame(width: size?.width, height: size?.height)
                 .scaledToFit()
             }
           } else if state.error != nil {
             Color.red.opacity(0.1)
               .overlay(Image(systemName: "xmark.circle.fill").foregroundColor(.red))
           } else {
-            URLImageLoader(size: 50).equatable()
+              URLImageLoader(size: 50).equatable().scaledToFit()
           }
         }
         .onDisappear(.cancel)
@@ -135,7 +145,7 @@ struct URLImageLoader: View, Equatable {
   var body: some View {
     Image(.loader)
       .resizable()
-      .scaledToFill()
+      .scaledToFit()
       .mask(Circle())
       .opacity(0.5)
       .frame(maxWidth: size, maxHeight: size)

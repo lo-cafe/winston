@@ -811,9 +811,6 @@
         }
       }
     },
-    "Compact" : {
-
-    },
     "Compact Mode" : {
       "localizations" : {
         "de" : {
@@ -1221,9 +1218,6 @@
 
     },
     "Edit credential" : {
-
-    },
-    "Edit filter" : {
 
     },
     "Enabling the extension" : {
@@ -2115,9 +2109,6 @@
         }
       }
     },
-    "LOAD MORE" : {
-
-    },
     "Lock Winston With %@" : {
       "localizations" : {
         "de" : {
@@ -2424,9 +2415,6 @@
     "New credential" : {
 
     },
-    "New filter" : {
-
-    },
     "New post" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -2481,12 +2469,6 @@
       }
     },
     "No credential" : {
-
-    },
-    "No filtered posts" : {
-
-    },
-    "Normal" : {
 
     },
     "Nothing around here :(" : {
