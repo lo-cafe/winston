@@ -145,7 +145,9 @@ struct VideoPlayerPost: View, Equatable {
         .onAppear {
           
           //lets hope that this fixes the audio overtaking bug
-          setAudioToMixWithOthers(false)
+            Task(priority: .background){
+                setAudioToMixWithOthers(false)
+            }
           
           if loopVideos {
             addObserver()
