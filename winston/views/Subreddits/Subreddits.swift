@@ -206,7 +206,7 @@ struct Subreddits: View, Equatable {
         Task(priority: .background) {
           _ = await RedditAPI.shared.fetchMyMultis()
         }
-        _ = await RedditAPI.shared.fetchSubs()
+        _ = await RedditAPI.shared.fetchSubsAndSyncCoreData()
       }
       .navigationTitle("Subs")
     }
