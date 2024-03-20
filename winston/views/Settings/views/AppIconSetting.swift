@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct AppIconSetting: View {
-  @State private var appIconManager = AppIconManger()
   @State private var appIcon: WinstonAppIcon = .standard
   @Environment(\.useTheme) private var theme
   var body: some View {
@@ -54,12 +53,11 @@ struct AppIconSetting: View {
       
     }
     .themedListBG(theme.lists.bg)
-    .onChange(of: appIcon) { icon in
-      appIconManager.setIcon(icon) { x in
-      }
+    .onChange(of: appIcon) { _, icon in
+      AppIconManger.shared.currentAppIcon = icon
     }
     .onAppear {
-      appIcon = appIconManager.current
+      appIcon = AppIconManger.shared.currentAppIcon
     }
     .navigationTitle("App icon")
   }
