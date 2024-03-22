@@ -144,11 +144,6 @@ struct VideoPlayerPost: View, Equatable {
         }
         .onAppear {
           
-          //lets hope that this fixes the audio overtaking bug
-            Task(priority: .background){
-                setAudioToMixWithOthers(false)
-            }
-          
           if loopVideos {
             addObserver()
           }
@@ -192,7 +187,7 @@ struct VideoPlayerPost: View, Equatable {
 						firstFullscreen = false
 					 }
           
-          if pauseBackgroundAudioOnFullscreen && !sharedVideo.player.isMuted && hasAudio != nil {
+          if pauseBackgroundAudioOnFullscreen {
             Task(priority: .background) {
               setAudioToMixWithOthers(val)
             }
