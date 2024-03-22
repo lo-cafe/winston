@@ -8,8 +8,6 @@
 import SwiftUI
 
 struct AppIconSetting: View {
-  @State private var appIconManager = AppIconManger()
-  @State private var appIcon: WinstonAppIcon = .standard
   @Environment(\.useTheme) private var theme
   var body: some View {
     List {
@@ -38,15 +36,16 @@ struct AppIconSetting: View {
               
               //              Spacer()
               
-              if(icon == appIcon)
+              if(icon == AppIconManger.shared.currentAppIcon)
               {
                 Image(systemName: "checkmark")
                   .foregroundColor(.accentColor)
               }
             }
           }
+          .contentShape(Rectangle())
           .onTapGesture {
-            appIcon = icon
+            AppIconManger.shared.currentAppIcon = icon
           }
         }
       }
@@ -54,13 +53,6 @@ struct AppIconSetting: View {
       
     }
     .themedListBG(theme.lists.bg)
-    .onChange(of: appIcon) { icon in
-      appIconManager.setIcon(icon) { x in
-      }
-    }
-    .onAppear {
-      appIcon = appIconManager.current
-    }
     .navigationTitle("App icon")
   }
 }
