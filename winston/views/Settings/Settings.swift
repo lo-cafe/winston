@@ -65,6 +65,10 @@ struct Settings: View {
                   .scaledToFit()
               }
             }
+              
+              WSListButton("Report a Bug", icon: "ladybug.fill") {
+                openURL(URL(string: "https://github.com/lo-cafe/winston/issues")!)
+              }
 
           }
         }
