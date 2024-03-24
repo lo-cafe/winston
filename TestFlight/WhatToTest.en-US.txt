@@ -1,6 +1,1 @@
-Quick update to fix some bugs, 1.1.4!
-
-- Implemented option to toggle visibility of feeds prefixes
-- Fixed multis not showing up
-- Now compact posts settings will be hidden if the option is not available
-- Fixed comments context menu preview showing in the wrong size
+TRY THE NEW TIP JAR NOOOOOOOOOOOW!

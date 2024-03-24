@@ -18,6 +18,7 @@ struct Settings: View {
   @Environment(\.openURL) private var openURL
   //  @Default(.likedButNotSubbed) private var likedButNotSubbed
   @Environment(\.useTheme) private var selectedTheme
+  @Environment(\.openTipJar) private var openTipJar
   @State private var id = UUID().uuidString
   @State private var presentingWhatsNew: Bool = false
   @State private var presentingAnnouncement: Bool = false
@@ -55,7 +56,8 @@ struct Settings: View {
             }
             
             WListButton {
-              openURL(URL(string: "https://ko-fi.com/locafe")!)
+              openTipJar()
+//              openURL(URL(string: "https://ko-fi.com/locafe")!)
             } label: {
               Label {
                 Text("Tip jar")

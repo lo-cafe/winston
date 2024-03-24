@@ -1148,9 +1148,6 @@
         }
       }
     },
-    "Download" : {
-
-    },
     "Drag Left" : {
       "localizations" : {
         "de" : {
@@ -1216,6 +1213,9 @@
           }
         }
       }
+    },
+    "Earn %lld comets" : {
+
     },
     "EASY" : {
 
@@ -1779,6 +1779,9 @@
       }
     },
     "I'm lost!" : {
+
+    },
+    "iCloud" : {
 
     },
     "Icon" : {
@@ -3167,6 +3170,9 @@
         }
       }
     },
+    "Select a tip above" : {
+
+    },
     "SELECTING" : {
       "localizations" : {
         "de" : {
@@ -3594,6 +3600,7 @@
 
     },
     "Sync API Key" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -3608,6 +3615,12 @@
           }
         }
       }
+    },
+    "Sync credentials" : {
+
+    },
+    "Syncing will run on every app restart and on every preference change. Preferences also include themes." : {
+
     },
     "Take me there!" : {
 
@@ -3698,6 +3711,9 @@
         }
       }
     },
+    "Thanks for supporting the project!" : {
+
+    },
     "That error seems happen randomly. It usually helps if you create another credential in Reddit site and try again." : {
 
     },
@@ -3725,9 +3741,6 @@
           }
         }
       }
-    },
-    "Theme Store" : {
-
     },
     "Theme Store Tint" : {
       "localizations" : {
@@ -3797,9 +3810,6 @@
 
     },
     "There was an error" : {
-
-    },
-    "There was an error importing this theme" : {
 
     },
     "This is not working yet :(" : {
@@ -3901,6 +3911,9 @@
           }
         }
       }
+    },
+    "Tip %@" : {
+
     },
     "Tip jar" : {
       "localizations" : {
@@ -4254,6 +4267,9 @@
           }
         }
       }
+    },
+    "x" : {
+
     },
     "Yes" : {
       "localizations" : {

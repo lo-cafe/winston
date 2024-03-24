@@ -43,6 +43,38 @@ class Hap {
     
   }
   
+  func playAhapFromFileName(_ filename: String) {
+    guard supportsHaptics, let engine = self.engine else { return }
+    
+    guard let url = Bundle.main.url(forResource: filename, withExtension: "ahap"), let pattern = try? CHHapticPattern(contentsOf: url) else {
+      print("Failed to find \(filename) in bundle.")
+      return
+    }
+    
+    playAhapFromURL(url)
+  }
+  
+  func playAhapFromURL(_ url: URL) {
+    guard supportsHaptics, let engine = self.engine else { return }
+    
+    guard let pattern = try? CHHapticPattern(contentsOf: url) else {
+      print("Failed to find.")
+      return
+    }
+    
+    playPattern(pattern)
+  }
+  
+  func playPattern(_ pattern: CHHapticPattern) {
+    guard supportsHaptics, let engine = self.engine else { return }
+    do {
+      let player = try engine.makePlayer(with: pattern)
+      try player.start(atTime: CHHapticTimeImmediate)
+    } catch let error {
+      print("Failed to play.")
+    }
+  }
+  
   func stopContinuous() {
     guard supportsHaptics, let continuousPlayer = self.continuousPlayer else { return }
     
@@ -57,9 +89,9 @@ class Hap {
   func updateContinuous(intensity: Float, sharpness: Float) {
     guard supportsHaptics, let continuousPlayer = self.continuousPlayer else { return }
     
-//    if continuousHapticTimer == nil {
-//      self.startPlayingContinuousHaptics()
-//    }
+    //    if continuousHapticTimer == nil {
+    //      self.startPlayingContinuousHaptics()
+    //    }
     
     let intensityParameter = CHHapticDynamicParameter(parameterID: .hapticIntensityControl, value: intensity, relativeTime: 0)
     let sharpnessParameter = CHHapticDynamicParameter(parameterID: .hapticSharpnessControl, value: sharpness, relativeTime: 0)
@@ -70,15 +102,15 @@ class Hap {
       print("Dynamic Parameter Error: \(error)")
     }
     
-//    setupTimer()
+    //    setupTimer()
     
-//    func setupTimer() {
-//      continuousHapticTimer?.invalidate()
-//      continuousHapticTimer = .init(timeInterval: Date().timeIntervalSince1970 + 0.5, repeats: false, block: { _ in
-//        self.continuousHapticTimer = nil
-//        self.stopPlayingContinuousHaptics()
-//      })
-//    }
+    //    func setupTimer() {
+    //      continuousHapticTimer?.invalidate()
+    //      continuousHapticTimer = .init(timeInterval: Date().timeIntervalSince1970 + 0.5, repeats: false, block: { _ in
+    //        self.continuousHapticTimer = nil
+    //        self.stopPlayingContinuousHaptics()
+    //      })
+    //    }
   }
   
   func play(intensity: Float, sharpness: Float) {
@@ -131,7 +163,7 @@ class Hap {
       print("Engine Creation Error: \(error)")
     }
     guard let engine = engine else { return }
-
+    
     engine.playsHapticsOnly = true
     
     // The stopped handler alerts you of engine stoppage.

@@ -34,11 +34,18 @@ struct AppContent: View {
       }
     }
     .whatsNewSheet()
+    .tipJarModalProvider()
     .environment(\.tabBarHeight, tabBarHeight)
     .environment(\.setTabBarHeight, setTabBarHeight)
     .environmentObject(themeStore)
     .environment(\.useTheme, InMemoryTheme.shared.currentTheme)
-    .onAppear { Defaults[.ThemesDefSettings].themesPresets = Defaults[.ThemesDefSettings].themesPresets.filter { $0.id != "default" } }
+    .task {
+      IAPManager.shared.startListeningForUpdates()
+      await IAPManager.shared.fetchAllProducts()
+    }
+    .onAppear {
+      Defaults[.ThemesDefSettings].themesPresets = Defaults[.ThemesDefSettings].themesPresets.filter { $0.id != "default" }
+    }
     .onChange(of: InMemoryTheme.shared.currentTheme, initial: false) { old, new in
       restartAlert = old.general != new.general
     }

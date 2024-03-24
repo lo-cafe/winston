@@ -1,5 +1,5 @@
 {
-  "originHash" : "d16ca18e166dfc98920bfadfdf5e090c20dcca1347a747334c0a591e86bd45ae",
+  "originHash" : "5de6cb29e3f0db71c163ddd4757f01d796e8cc4ac7f218bfd7ff2133724e0630",
   "pins" : [
     {
       "identity" : "alamofire",
@@ -26,15 +26,6 @@
       "state" : {
         "revision" : "1fe42247efc8aea1ad03332d2b44f2d7fb1644bc",
         "version" : "0.9.10"
-      }
-    },
-    {
-      "identity" : "confettiswiftui",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/simibac/ConfettiSwiftUI.git",
-      "state" : {
-        "revision" : "f45961f97bbae6fff6e2e64546fea0189425ad92",
-        "version" : "1.1.0"
       }
     },
     {
@@ -155,15 +146,6 @@
       }
     },
     {
-      "identity" : "skeletonui",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/CSolanaM/SkeletonUI.git",
-      "state" : {
-        "revision" : "e3cf87cb96a10562bc660c9d48418a395d8385ed",
-        "version" : "1.0.11"
-      }
-    },
-    {
       "identity" : "smoothgradient",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/raymondjavaxx/SmoothGradient.git",
@@ -179,24 +161,6 @@
       "state" : {
         "revision" : "ae799d015a5374708f7b4c85f3294c05f2a564e2",
         "version" : "2.3.0"
-      }
-    },
-    {
-      "identity" : "swift-snapshot-testing",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/pointfreeco/swift-snapshot-testing",
-      "state" : {
-        "revision" : "bb0ea08db8e73324fe6c3727f755ca41a23ff2f4",
-        "version" : "1.14.2"
-      }
-    },
-    {
-      "identity" : "swift-syntax",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/apple/swift-syntax.git",
-      "state" : {
-        "revision" : "74203046135342e4a4a627476dd6caf8b28fe11b",
-        "version" : "509.0.0"
       }
     },
     {

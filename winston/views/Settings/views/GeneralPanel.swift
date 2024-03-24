@@ -14,6 +14,7 @@ import UniformTypeIdentifiers
 struct GeneralPanel: View {
   @Default(.likedButNotSubbed) var likedButNotSubbed
   @Default(.BehaviorDefSettings) var behaviorDefSettings
+  @Default(.GeneralDefSettings) var generalDefSettings
   @State private var totalCacheSize: String = ""
   @Environment(\.useTheme) private var theme
   @State var isMoving: Bool = false
@@ -23,8 +24,24 @@ struct GeneralPanel: View {
     List{
       
       Group {
-        Section("General"){
-          Toggle("Sync API Key", isOn: $behaviorDefSettings.iCloudSyncCredentials)
+        
+        Section {
+          Toggle("Sync credentials", systemImage: "person.2.badge.key.fill", isOn: $behaviorDefSettings.iCloudSyncCredentials)
+//          Toggle("Sync preferences", systemImage: "slider.horizontal.3", isOn: $generalDefSettings.iCloudSyncUserDefaults)
+//            .onChange(of: generalDefSettings.iCloudSyncUserDefaults) { _, new in
+//              Zephyr.syncUbiquitousKeyValueStoreOnChange = new
+//            }
+//          WListButton {
+//            print(NSUbiquitousKeyValueStore.default.dictionaryRepresentation["ZephyrSyncKey"])
+//            print(UserDefaults.standard.dictionaryRepresentation()["ZephyrSyncKey"])
+////            Zephyr.sync()
+//          } label: {
+//            Label("Force preferences sync", systemImage: "arrow.clockwise")
+//          }
+        } header: {
+          Text("iCloud")
+        } footer: {
+          Text("Syncing will run on every app restart and on every preference change. Preferences also include themes.")
         }
         
         Section("Backup"){
@@ -36,10 +53,7 @@ struct GeneralPanel: View {
               settingsFileURL = file
             }
           } label: {
-            HStack {
-              Image(systemName: "arrowshape.turn.up.left")
-              Text("Export Settings").foregroundStyle(Color.accentColor)
-            }
+            Label("Export Settings", systemImage: "arrowshape.turn.up.left")
           }
           .fileMover(isPresented: $isMoving, file: URL(string: settingsFileURL), onCompletion: { completion in
             //          print(completion)

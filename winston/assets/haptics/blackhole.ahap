@@ -1,0 +1,97 @@
+{
+  "Pattern" : [
+    {
+      "Event" : {
+        "Time" : 0.001,
+        "Name" : "Haptic Event 0",
+        "EventParameters" : [
+          {
+            "ParameterValue" : 1,
+            "ParameterID" : "HapticIntensity"
+          },
+          {
+            "ParameterValue" : 0,
+            "ParameterID" : "HapticSharpness"
+          },
+          {
+            "ParameterID" : "AttackTime",
+            "ParameterValue" : 0.753
+          },
+          {
+            "ParameterID" : "DecayTime",
+            "ParameterValue" : 0
+          },
+          {
+            "ParameterValue" : 0.772,
+            "ParameterID" : "ReleaseTime"
+          },
+          {
+            "ParameterID" : "Sustained",
+            "ParameterValue" : 0
+          }
+        ],
+        "EventDuration" : 0.8129999999999999,
+        "EventType" : "HapticContinuous"
+      }
+    },
+    {
+      "Event" : {
+        "Time" : 0.821,
+        "EventType" : "HapticTransient",
+        "EventParameters" : [
+          {
+            "ParameterID" : "HapticIntensity",
+            "ParameterValue" : 1
+          },
+          {
+            "ParameterValue" : 1,
+            "ParameterID" : "HapticSharpness"
+          }
+        ],
+        "Name" : "Haptic Event 1"
+      }
+    },
+    {
+      "Event" : {
+        "EventDuration" : 4,
+        "EventType" : "HapticContinuous",
+        "Name" : "Haptic Event 2",
+        "EventParameters" : [
+          {
+            "ParameterID" : "HapticIntensity",
+            "ParameterValue" : 1
+          },
+          {
+            "ParameterValue" : 0.335,
+            "ParameterID" : "HapticSharpness"
+          },
+          {
+            "ParameterValue" : 0.341,
+            "ParameterID" : "AttackTime"
+          },
+          {
+            "ParameterID" : "DecayTime",
+            "ParameterValue" : 0
+          },
+          {
+            "ParameterID" : "ReleaseTime",
+            "ParameterValue" : 4
+          },
+          {
+            "ParameterValue" : 1,
+            "ParameterID" : "Sustained"
+          }
+        ],
+        "Time" : 1.377
+      }
+    }
+  ],
+  "Version" : 1,
+  "Metadata" : {
+    "Description" : "",
+    "Title" : "",
+    "Tags" : "",
+    "Project" : "My Project",
+    "Created" : ""
+  }
+}

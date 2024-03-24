@@ -19,7 +19,7 @@ struct AnnouncementSheet: View {
         
         ScrollView{
           VStack{
-            Text(announcement.name)
+            Text(announcement.name ?? "")
               .fontSize(24, .bold)
             Text(Date(timeIntervalSince1970: Double(announcement.timestamp  ?? 0) / 1000), style: .date)
               .opacity(0.5)

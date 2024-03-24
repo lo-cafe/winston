@@ -67,7 +67,7 @@ extension PrimitiveButtonStyle where Self == SecondaryOutlinedActionButtonPrimit
 
 extension PrimitiveButtonStyle where Self == ActionButtonPrimitive {
   static var action: ActionButtonPrimitive { ActionButtonPrimitive() }
-  static func action(fullWidth: Bool = true) -> ActionButtonPrimitive { ActionButtonPrimitive(fullWidth: fullWidth, color: Color(uiColor: UIColor.systemGray4)) }
+  static func action(fullWidth: Bool = true) -> ActionButtonPrimitive { ActionButtonPrimitive(fullWidth: fullWidth) }
   static var actionSecondary: ActionButtonPrimitive { ActionButtonPrimitive(color: .acceptablePrimary, textColor: .primary) }
   static func actionSecondary(fullWidth: Bool = true) -> ActionButtonPrimitive { ActionButtonPrimitive(fullWidth: fullWidth, color: .acceptablePrimary, textColor: .primary) }
 }
