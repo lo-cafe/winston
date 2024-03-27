@@ -9,6 +9,5 @@ import SwiftUI
 import Defaults
 
 struct TipJarSettings: Equatable, Hashable, Codable, Defaults.Serializable {
-  var comets = 0
   var tipJarPhase = 0
 }

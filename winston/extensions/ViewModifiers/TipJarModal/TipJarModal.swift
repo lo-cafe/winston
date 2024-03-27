@@ -9,6 +9,7 @@ import SwiftUI
 import Defaults
 import StoreKit
 import Pow
+import CloudStorage
 
 private let starsCount = 7
 
@@ -16,6 +17,7 @@ struct TipJarModal: View {
   var closeTipJar: () -> ()
   @Environment (\.colorScheme) private var colorScheme: ColorScheme
   @Default(.TipJarSettings) private var tipJarSettings
+  @CloudStorage(IAPManager.iCloudCometsKeyName) var comets: Int = 0
   @State private var selectedIAPProduct: IAPManager.IAPProduct? = nil
   @State private var showConfetti = false
   @State private var shotComets = 0
@@ -30,7 +32,7 @@ struct TipJarModal: View {
       VStack(alignment: .center, spacing: 12) {
         ForEach(IAPManager.IAPProduct.allCases.sorted(by: { $1.comets - $0.comets > 0 })) { iapPrd in
           let prd = IAPManager.shared.allProducts[iapPrd]
-          TipJarOption(title: iapPrd.name, comets: iapPrd.comets, price: prd?.displayPrice ?? "", selected: selectedIAPProduct == iapPrd) {
+          TipJarOption(title: iapPrd.name, description: iapPrd.descripton, price: prd?.displayPrice ?? "", selected: selectedIAPProduct == iapPrd) {
             if selectedIAPProduct != iapPrd { iapPrd.vibrate() }
             selectedIAPProduct = selectedIAPProduct == iapPrd ? nil : iapPrd
           }
@@ -74,7 +76,7 @@ struct TipJarModal: View {
     .padding(.bottom, 150)
     .padding(16)
     .frame(maxWidth: .infinity)
-    .background { Stars(shotComets: $shotComets, totalWidth: CGFloat.screenW - 32.0) }
+    .background { SpaceAdventure(shotComets: $shotComets, totalWidth: CGFloat.screenW - 32.0, comets: comets) }
     .background(RR(24, Color(uiColor: UIColor.systemGray6)))
     .overlay(alignment: .top) {
       if showConfetti {
@@ -94,15 +96,22 @@ struct TipJarModal: View {
         .offset(y: -36)
     }
     .overlay(alignment: .topLeading) {
-      HStack(spacing: 4) {
-        Image(.meteor).resizable().frame(16)
-        HStack(spacing: 0) {
-          Text("x").fontSize(16, .semibold)
-          Text("\(tipJarSettings.comets - shotComets)").fontSize(16, .semibold).contentTransition(.numericText())
+      VStack {
+        if comets > 0 {
+          HStack(spacing: 4) {
+            Image(.meteor).resizable().frame(16)
+            HStack(spacing: 0) {
+              Text("x").fontSize(16, .semibold)
+              Text("\(comets - shotComets)").fontSize(16, .semibold).contentTransition(.numericText())
+            }
+          }
+          .transition(.scaleAndBlur)
         }
-        .animation(.spring, value: tipJarSettings.comets)
       }
+      .animation(.spring, value: comets)
       .padding(EdgeInsets(top: 12, leading: 16, bottom: 0, trailing: 0))
+      .compositingGroup()
+      .opacity(0.25)
     }
     .closeSheetBtn(closeTipJar)
     .geometryGroup()

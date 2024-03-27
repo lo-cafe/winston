@@ -49,6 +49,9 @@ struct Supernova: View {
       .offset(y: offset)
       .task {
         player.play()
+        if let appearAhapPattern = try? CHHapticPattern(contentsOf: Bundle.main.url(forResource: "supernova-appear", withExtension: "ahap")!) {
+          Hap.shared.playPattern(appearAhapPattern)
+        }
         ahapPattern = try? CHHapticPattern(contentsOf: Bundle.main.url(forResource: "supernova", withExtension: "ahap")!)
       }
       .onReceive(timer) { _ in

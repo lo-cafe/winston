@@ -9,7 +9,8 @@ import SwiftUI
 
 struct TipJarOption: View {
   var title: String
-  var comets: Int
+//  var comets: Int
+  var description: String
   var price: String
   var selected: Bool
   var onTap: () -> ()
@@ -20,7 +21,8 @@ struct TipJarOption: View {
         Text(title).fontSize(16, .medium)
         HStack(spacing: 4) {
           Image(.meteor).resizable().frame(15)
-          Text("Earn \(comets) comets").fontSize(15)
+//          Text("Earn \(comets) comets").fontSize(15)
+          Text(description).fontSize(15)
         }
         .compositingGroup()
         .opacity(0.85)

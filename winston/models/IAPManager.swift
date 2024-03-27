@@ -11,14 +11,18 @@ import Defaults
 
 @Observable
 class IAPManager {
+  static let iCloudCometsKeyName = "iCloudCometsCount"
   static let shared = IAPManager()
-  var allProducts: [IAPProduct:Product] = [:]
-  var boughtProducts: [IAPProduct] = []
+  var allProducts = [IAPProduct:Product]()
+//  var boughtProducts = [IAPProduct]()
   var transactionListener: Task<Void, Error>? = nil
   
-  var totalComets: Int { boughtProducts.reduce(0) { partialResult, iapPrd in
-    return partialResult + iapPrd.comets
-  } }
+  func addComets(_ newComets: Int) {
+    if let cometsInICloudStr = NSUbiquitousKeyValueStore.default.string(forKey: Self.iCloudCometsKeyName), let cometsInICloud = Int(cometsInICloudStr) {
+      NSUbiquitousKeyValueStore.default.set("\(cometsInICloud + newComets)", forKey: Self.iCloudCometsKeyName)
+      NSUbiquitousKeyValueStore.default.synchronize()
+    }
+  }
   
   func fetchAllProducts() async {
     if let allRemoteProducts = try? await Product.products(for: IAPProduct.allCases.map { $0.rawValue }) {
@@ -31,48 +35,30 @@ class IAPManager {
     }
   }
   
-  func startListeningForUpdates() {
-    transactionListener = createTransactionTask()
-  }
-  
   deinit {
     transactionListener?.cancel()
+  }
+  
+  func startListeningForUpdates() {
+    self.transactionListener = createTransactionTask()
   }
   
   private func createTransactionTask() -> Task<Void, Error> {
     return Task.detached {
       for await update in Transaction.updates {
-        await self.processResult(update)
+        _ = await self.processResult(update)
       }
     }
   }
   
   func processResult<T>(_ r: VerificationResult<T>) async -> Bool {
     if let transaction = self.verifyPurchase(r) as? StoreKit.Transaction, let iapPrd = IAPProduct(rawValue: transaction.productID) {
-      Defaults[.TipJarSettings].comets += iapPrd.comets
+      addComets(iapPrd.comets)
       await transaction.finish()
       return true
     }
     return false
   }
-  
-//  func refreshPurchasedProducts() async {
-//    // Iterate through the user's purchased products.
-//    var newBoughtProducts = [IAPProduct]()
-//    for await verificationResult in Transaction.all {
-//      switch verificationResult {
-//      case .verified(let transaction):
-//        if let iapPrd = IAPProduct(rawValue: transaction.productID) {
-//          newBoughtProducts.append(iapPrd)
-//        }
-//        break
-//      case .unverified(let unverifiedTransaction, let verificationError):
-//        break
-//      }
-//    }
-//    if newBoughtProducts.count == boughtProducts.count { return }
-//    boughtProducts = newBoughtProducts
-//  }
   
   private func verifyPurchase<T>(_ result: VerificationResult<T>) -> T? {
     switch result {
@@ -81,7 +67,6 @@ class IAPManager {
     case .verified(let safe):
       return safe
     }
-    return nil
   }
   
   enum IAPProduct: String, Identifiable, Hashable, CaseIterable {
@@ -95,6 +80,14 @@ class IAPManager {
       case .cafezinhoTip: "Cafézinho"
       case .espressoTip: "Espresso"
       case .cappuccinoTip: "Cappuccino"
+      }
+    }
+    
+    var descripton: String {
+      return switch self {
+      case .cafezinhoTip: "A typical brazilian cup of black coffee"
+      case .espressoTip: "Oh nice, we appreciate the espresso!"
+      case .cappuccinoTip: "A CAPPUCCINO? Oh dude, thx a lot"
       }
     }
     

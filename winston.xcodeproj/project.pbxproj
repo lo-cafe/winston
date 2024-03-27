@@ -328,6 +328,7 @@
 		EC684C832AF1FD9E00BC2A84 /* ScrollSwipe_WIP.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC684C822AF1FD9E00BC2A84 /* ScrollSwipe_WIP.swift */; };
 		EC6CBE332A7D6BF80089EAA0 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = EC6CBE322A7D6BF80089EAA0 /* README.md */; };
 		EC6CBE352A7D6E760089EAA0 /* LICENSE.md in Sources */ = {isa = PBXBuildFile; fileRef = EC6CBE342A7D6E760089EAA0 /* LICENSE.md */; };
+		EC7567042BB47DCB00CB67A3 /* supernova-appear.ahap in Resources */ = {isa = PBXBuildFile; fileRef = EC7567032BB47DCB00CB67A3 /* supernova-appear.ahap */; };
 		EC77B1832AA4021D00C482DF /* injectInTabDestinations.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC77B1822AA4021D00C482DF /* injectInTabDestinations.swift */; };
 		EC77EC0B2B2549AA0053B966 /* GlobalDestinationsProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC77EC0A2B2549AA0053B966 /* GlobalDestinationsProvider.swift */; };
 		EC77EC0D2B25540C0053B966 /* measureTabBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC77EC0C2B25540C0053B966 /* measureTabBar.swift */; };
@@ -338,6 +339,7 @@
 		EC796DCD2B14468600B425A1 /* CGPointHashable.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC796DCC2B14468600B425A1 /* CGPointHashable.swift */; };
 		EC796DCF2B1455D400B425A1 /* AccountSwitcherProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC796DCE2B1455D400B425A1 /* AccountSwitcherProvider.swift */; };
 		EC796DD12B14595700B425A1 /* AccountSwitcherTrigger.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC796DD02B14595700B425A1 /* AccountSwitcherTrigger.swift */; };
+		EC7BFE4A2BB46B3E00E375C1 /* CloudStorage in Frameworks */ = {isa = PBXBuildFile; productRef = EC7BFE492BB46B3E00E375C1 /* CloudStorage */; };
 		EC7DBDEF2A846D0C00D7C123 /* save.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC7DBDEE2A846D0C00D7C123 /* save.swift */; };
 		EC7DBDF12A86C91A00D7C123 /* CommentSwipePanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC7DBDF02A86C91A00D7C123 /* CommentSwipePanel.swift */; };
 		EC7DBDF32A86C92200D7C123 /* PostSwipePanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC7DBDF22A86C92200D7C123 /* PostSwipePanel.swift */; };
@@ -570,7 +572,7 @@
 		ECFA479B2BAC4AD000E864EB /* TipJarModal.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECFA479A2BAC4AD000E864EB /* TipJarModal.swift */; };
 		ECFA479D2BAC4B1600E864EB /* TipJarOption.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECFA479C2BAC4B1600E864EB /* TipJarOption.swift */; };
 		ECFA479F2BAC88BC00E864EB /* winston for Reddit.storekit in Resources */ = {isa = PBXBuildFile; fileRef = ECFA479E2BAC88BC00E864EB /* winston for Reddit.storekit */; };
-		ECFA47A12BAD3F9100E864EB /* Stars.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECFA47A02BAD3F9100E864EB /* Stars.swift */; };
+		ECFA47A12BAD3F9100E864EB /* SpaceAdventure.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECFA47A02BAD3F9100E864EB /* SpaceAdventure.swift */; };
 		ECFA47A32BAD40BA00E864EB /* ChildStar.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECFA47A22BAD40BA00E864EB /* ChildStar.swift */; };
 		ECFB019F2B0D08420083E4FC /* MixedContentLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECFB019E2B0D08420083E4FC /* MixedContentLink.swift */; };
 		ECFDEAD02A7F151500DF102D /* PostsInBoxView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECFDEACF2A7F151500DF102D /* PostsInBoxView.swift */; };
@@ -920,6 +922,7 @@
 		EC684C822AF1FD9E00BC2A84 /* ScrollSwipe_WIP.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScrollSwipe_WIP.swift; sourceTree = "<group>"; };
 		EC6CBE322A7D6BF80089EAA0 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		EC6CBE342A7D6E760089EAA0 /* LICENSE.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = LICENSE.md; sourceTree = "<group>"; };
+		EC7567032BB47DCB00CB67A3 /* supernova-appear.ahap */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "supernova-appear.ahap"; sourceTree = "<group>"; };
 		EC77B1822AA4021D00C482DF /* injectInTabDestinations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = injectInTabDestinations.swift; sourceTree = "<group>"; };
 		EC77EC0A2B2549AA0053B966 /* GlobalDestinationsProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobalDestinationsProvider.swift; sourceTree = "<group>"; };
 		EC77EC0C2B25540C0053B966 /* measureTabBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = measureTabBar.swift; sourceTree = "<group>"; };
@@ -1150,7 +1153,7 @@
 		ECFA479A2BAC4AD000E864EB /* TipJarModal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TipJarModal.swift; path = winston/extensions/ViewModifiers/TipJarModal/TipJarModal.swift; sourceTree = SOURCE_ROOT; };
 		ECFA479C2BAC4B1600E864EB /* TipJarOption.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TipJarOption.swift; path = winston/extensions/ViewModifiers/TipJarModal/TipJarOption.swift; sourceTree = SOURCE_ROOT; };
 		ECFA479E2BAC88BC00E864EB /* winston for Reddit.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; path = "winston for Reddit.storekit"; sourceTree = "<group>"; };
-		ECFA47A02BAD3F9100E864EB /* Stars.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Stars.swift; path = winston/extensions/ViewModifiers/TipJarModal/Stars.swift; sourceTree = SOURCE_ROOT; };
+		ECFA47A02BAD3F9100E864EB /* SpaceAdventure.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SpaceAdventure.swift; path = winston/extensions/ViewModifiers/TipJarModal/SpaceAdventure.swift; sourceTree = SOURCE_ROOT; };
 		ECFA47A22BAD40BA00E864EB /* ChildStar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ChildStar.swift; path = winston/extensions/ViewModifiers/TipJarModal/ChildStar.swift; sourceTree = SOURCE_ROOT; };
 		ECFB019E2B0D08420083E4FC /* MixedContentLink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MixedContentLink.swift; sourceTree = "<group>"; };
 		ECFDEACF2A7F151500DF102D /* PostsInBoxView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostsInBoxView.swift; sourceTree = "<group>"; };
@@ -1175,6 +1178,7 @@
 				EC593B0C2A47B801002D6454 /* Alamofire in Frameworks */,
 				EC593B092A47B42D002D6454 /* KeychainAccess in Frameworks */,
 				ECE285972A4FD6FC009CF9DD /* SwiftDate in Frameworks */,
+				EC7BFE4A2BB46B3E00E375C1 /* CloudStorage in Frameworks */,
 				EC9BB1C62A8B05AA0070CD97 /* NukeVideo in Frameworks */,
 				BBD6E9DE2B51B03600901C1C /* MarkdownUI in Frameworks */,
 				EC66A2A52BA00530004E20BB /* Pow in Frameworks */,
@@ -2456,6 +2460,7 @@
 		ECD77F802BB004A2006382F7 /* haptics */ = {
 			isa = PBXGroup;
 			children = (
+				EC7567032BB47DCB00CB67A3 /* supernova-appear.ahap */,
 				ECD77F832BB0070D006382F7 /* supernova.ahap */,
 				EC13D4442BB06CF300741E39 /* blackhole.ahap */,
 			);
@@ -2548,7 +2553,7 @@
 				ECFA479A2BAC4AD000E864EB /* TipJarModal.swift */,
 				ECE683BF2BAA7D3F00322465 /* tipJarModalProvider.swift */,
 				ECFA479C2BAC4B1600E864EB /* TipJarOption.swift */,
-				ECFA47A02BAD3F9100E864EB /* Stars.swift */,
+				ECFA47A02BAD3F9100E864EB /* SpaceAdventure.swift */,
 				ECFA47A22BAD40BA00E864EB /* ChildStar.swift */,
 				EC90E0AA2BAF3673004887D9 /* Supernova.swift */,
 				ECD77F7E2BAFFAF2006382F7 /* Blackhole.swift */,
@@ -2627,6 +2632,7 @@
 				BBD6E9DD2B51B03600901C1C /* MarkdownUI */,
 				ECB0D46D2B5ED1DE00F90B9B /* SwiftyUI */,
 				EC66A2A42BA00530004E20BB /* Pow */,
+				EC7BFE492BB46B3E00E375C1 /* CloudStorage */,
 			);
 			productName = winston;
 			productReference = EC593AD42A4673B2002D6454 /* winston.app */;
@@ -2709,6 +2715,7 @@
 				BBD6E9DC2B51B01B00901C1C /* XCRemoteSwiftPackageReference "swift-markdown-ui" */,
 				ECB0D46C2B5ED1DE00F90B9B /* XCRemoteSwiftPackageReference "SwiftyUI" */,
 				EC66A2A32BA00530004E20BB /* XCRemoteSwiftPackageReference "Pow" */,
+				EC7BFE482BB46B3E00E375C1 /* XCRemoteSwiftPackageReference "CloudStorage" */,
 			);
 			productRefGroup = EC593AD52A4673B2002D6454 /* Products */;
 			projectDirPath = "";
@@ -2738,6 +2745,7 @@
 				EC4792F12B468AA000487AEE /* list.json in Resources */,
 				EC593ADC2A4673B3002D6454 /* Assets.xcassets in Resources */,
 				EC6CBE332A7D6BF80089EAA0 /* README.md in Resources */,
+				EC7567042BB47DCB00CB67A3 /* supernova-appear.ahap in Resources */,
 				EC4792E92B453F1C00487AEE /* error.json in Resources */,
 				EC6081362B43F59E001A1077 /* warning-appear.json in Resources */,
 				ECFA479F2BAC88BC00E864EB /* winston for Reddit.storekit in Resources */,
@@ -2846,7 +2854,7 @@
 				EC0854192A4BFC4600E88389 /* CommentLink.swift in Sources */,
 				EC63734F2A791369000A03A3 /* OnboardingBigStep.swift in Sources */,
 				ECF5B3092AC83C8E00355589 /* AppIconSetting.swift in Sources */,
-				ECFA47A12BAD3F9100E864EB /* Stars.swift in Sources */,
+				ECFA47A12BAD3F9100E864EB /* SpaceAdventure.swift in Sources */,
 				ECEF412A2B239FAC005FE84E /* Published+Codable.swift in Sources */,
 				EC77EC182B2585FF0053B966 /* openFromWebListener.swift in Sources */,
 				EC31882B2A94439D00CB3738 /* mediaExtractor.swift in Sources */,
@@ -3782,6 +3790,14 @@
 				minimumVersion = 1.0.3;
 			};
 		};
+		EC7BFE482BB46B3E00E375C1 /* XCRemoteSwiftPackageReference "CloudStorage" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/nonstrict-hq/CloudStorage.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.4.0;
+			};
+		};
 		EC9269F02A51A732003F33B1 /* XCRemoteSwiftPackageReference "HighlightedTextEditor" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/kyle-n/HighlightedTextEditor";
@@ -3939,6 +3955,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = EC66A2A32BA00530004E20BB /* XCRemoteSwiftPackageReference "Pow" */;
 			productName = Pow;
+		};
+		EC7BFE492BB46B3E00E375C1 /* CloudStorage */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = EC7BFE482BB46B3E00E375C1 /* XCRemoteSwiftPackageReference "CloudStorage" */;
+			productName = CloudStorage;
 		};
 		EC9269F12A51A732003F33B1 /* HighlightedTextEditor */ = {
 			isa = XCSwiftPackageProductDependency;

@@ -10,7 +10,7 @@ import Defaults
 
 private let starsCount = 7
 
-struct Stars: View {
+struct SpaceAdventure: View {
   enum Phase: Int {
     case stars = 1
     case supernova = 2
@@ -19,15 +19,17 @@ struct Stars: View {
   
   @Binding private var shotComets: Int
   var totalWidth: CGFloat
+  var comets: Int
   @Environment (\.colorScheme) private var colorScheme: ColorScheme
   @Default(.TipJarSettings) private var tipJarSettings
   @State private var phase: Phase = .stars
   @State private var stars: [ChildStarProps]
   
-  init(shotComets: Binding<Int>, totalWidth: CGFloat) {
+  init(shotComets: Binding<Int>, totalWidth: CGFloat, comets: Int) {
     self._shotComets = shotComets
     self.totalWidth = totalWidth
     self._stars = .init(initialValue: Array(0...(starsCount - 1)).map { ChildStarProps(starsCount: starsCount, index: $0, totalWidth: totalWidth) })
+    self.comets = comets
   }
   
   var gradientColor: Color {
@@ -38,7 +40,7 @@ struct Stars: View {
   }
   
   func shootComet() -> Bool {
-    if tipJarSettings.comets - shotComets > 0 {
+    if comets - shotComets > 0 {
       withAnimation(.spring) { shotComets += 1 }
       return true
     }
