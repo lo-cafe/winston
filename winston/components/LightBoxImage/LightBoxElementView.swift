@@ -18,12 +18,13 @@ struct LightBoxElementView: View {
   var el: ImgExtracted
   var onTap: (()->())?
   var doLiveText: Bool
+  var showOverlay: Bool
   @Binding var isPinching: Bool
   @State private var altSize: CGSize = .zero
   @Binding var isZoomed: Bool
   var body: some View {
     ZoomableScrollView(onTap: onTap, isZoomed: $isZoomed){
-      URLImage(url: el.url, doLiveText: doLiveText)
+      URLImage(url: el.url, doLiveText: doLiveText, showOverlay: showOverlay)
       .scaledToFit()
     }
     .id("\(el.id)\(altSize.width + altSize.height)")

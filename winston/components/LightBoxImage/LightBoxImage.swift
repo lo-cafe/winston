@@ -50,7 +50,7 @@ struct LightBoxImage: View {
     HStack(spacing: SPACING) {
       ForEach(Array(imagesArr.enumerated()), id: \.element.id) { index, img in
         let selected = index == activeIndex
-        LightBoxElementView(el: img, onTap: toggleOverlay, doLiveText: doLiveText, isPinching: $isPinching, isZoomed: $isZoomed)
+        LightBoxElementView(el: img, onTap: toggleOverlay, doLiveText: doLiveText, showOverlay: showOverlay, isPinching: $isPinching, isZoomed: $isZoomed)
           .allowsHitTesting(selected)
           .scaleEffect(!selected ? 1 : interpolate([1, 0.9], true))
           .blur(radius: selected && loading ? 24 : 0)
