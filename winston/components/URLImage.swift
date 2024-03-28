@@ -14,11 +14,12 @@ import SwiftyUI
 
 struct URLImage: View, Equatable {
   static func == (lhs: URLImage, rhs: URLImage) -> Bool {
-    lhs.url == rhs.url && lhs.imgRequest?.url == rhs.imgRequest?.url
+    lhs.url == rhs.url && lhs.imgRequest?.url == rhs.imgRequest?.url && lhs.showOverlay == rhs.showOverlay
   }
   
   let url: URL
   var doLiveText: Bool = false
+  var showOverlay: Bool = false
   var imgRequest: ImageRequest? = nil
   var pipeline: ImagePipeline? = nil
   var processors: [ImageProcessing]? = nil
@@ -50,7 +51,7 @@ struct URLImage: View, Equatable {
 //          }
           if let image = state.image {
             if doLiveText && ImageAnalyzer.isSupported {
-              LiveTextInteraction(image: image)
+              LiveTextInteraction(image: image, showOverlay: showOverlay)
                 .scaledToFit()
                 
                 .frame(width: size?.width, height: size?.height)
@@ -77,7 +78,7 @@ struct URLImage: View, Equatable {
         LazyImage(url: url) { state in
           if let image = state.image {
             if doLiveText && ImageAnalyzer.isSupported {
-              LiveTextInteraction(image: image)
+              LiveTextInteraction(image: image, showOverlay: showOverlay)
                 
                     .frame(width: size?.width, height: size?.height)
                 .scaledToFit()

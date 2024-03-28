@@ -12,6 +12,7 @@ import VisionKit
 @MainActor
 struct LiveTextInteraction: UIViewRepresentable {
   var image: Image
+  var showOverlay: Bool
   let analyzer = ImageAnalyzer()
   let interaction = ImageAnalysisInteraction()
   
@@ -27,25 +28,30 @@ struct LiveTextInteraction: UIViewRepresentable {
       imageView.addInteraction(interaction)
     }
     imageView.contentMode = .scaleAspectFit
-    return imageView
-  }
-  
-  func updateUIView(_ uiView: UIViewType, context: Context) {
+
     Task {
       if ImageAnalyzer.isSupported {
         let configsArray: ImageAnalyzer.AnalysisTypes = [.text, .machineReadableCode] //.visualLookup crashes iOS 16.X devices even if you check for it in an if
         let configuration = ImageAnalyzer.Configuration(configsArray)
         do {
-          if let image = (uiView as? UIImageView)?.image {
-            let analysis = try await analyzer.analyze(image, configuration: configuration)
-            interaction.preferredInteractionTypes = .automatic
-            interaction.isSupplementaryInterfaceHidden = false
-            interaction.analysis = analysis;
-          }
+          let analysis = try await analyzer.analyze(image, configuration: configuration)
+          interaction.preferredInteractionTypes = .automatic
+          interaction.isSupplementaryInterfaceHidden = false
+          interaction.analysis = analysis;
         } catch {
           print(error)
         }
       }
+    }
+    
+    return imageView
+  }
+  
+  func updateUIView(_ uiView: UIViewType, context: Context) {
+    if let view = uiView as? LiveTextImageView,
+       let interaction = uiView.interactions.first as? ImageAnalysisInteraction,
+       showOverlay == interaction.isSupplementaryInterfaceHidden {
+      interaction.setSupplementaryInterfaceHidden(!showOverlay, animated: true)
     }
   }
 }
