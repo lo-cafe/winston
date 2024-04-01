@@ -87,7 +87,7 @@ class IAPManager {
       return switch self {
       case .cafezinhoTip: "A typical brazilian cup of black coffee"
       case .espressoTip: "Oh nice, we appreciate the espresso!"
-      case .cappuccinoTip: "A CAPPUCCINO? Oh dude, thx a lot"
+      case .cappuccinoTip: "A CAPPUCCINO? Oh dude, thx a lot!"
       }
     }
     
