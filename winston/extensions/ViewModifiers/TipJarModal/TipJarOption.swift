@@ -16,21 +16,16 @@ struct TipJarOption: View {
   var onTap: () -> ()
   @State private var pressing = false
   var body: some View {
-    HStack(alignment: .top) {
-      VStack(alignment: .leading, spacing: 1) {
+    VStack(alignment: .leading, spacing: 1) {
+      HStack(alignment: .center) {
         Text(title).fontSize(16, .medium)
-        HStack(spacing: 4) {
-          Image(.meteor).resizable().frame(15)
-//          Text("Earn \(comets) comets").fontSize(15)
-          Text(description).fontSize(15)
-        }
-        .compositingGroup()
-        .opacity(0.85)
+        Spacer()
+        
+        Text(price).fontSize(16, .semibold)
       }
       
-      Spacer()
-      
-      Text(price).fontSize(16, .semibold)
+      Text(description).fontSize(15)
+        .opacity(0.75)
     }
     .padding(EdgeInsets(top: 12, leading: 16, bottom: 12, trailing: 16))
 //    .background(RoundedRectangle(cornerRadius: 16, style: .continuous).stroke((selected ? Color.accentColor : Color.primary).opacity(selected ? 1 : 0.15), lineWidth: 1).padding(.all, 1))
