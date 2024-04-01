@@ -106,6 +106,9 @@ struct TipJarModal: View {
             }
           }
           .transition(.scaleAndBlur)
+          .onLongPressGesture(minimumDuration: 5, maximumDistance: 10) {
+            comets = 0
+          }
         }
       }
       .animation(.spring, value: comets)
