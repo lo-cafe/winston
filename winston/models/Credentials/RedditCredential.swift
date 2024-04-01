@@ -13,7 +13,7 @@ import Defaults
 import Combine
 
 struct RedditCredential: Identifiable, Equatable, Hashable, Codable {
-  enum CodingKeys: String, CodingKey { case id, apiAppID, apiAppSecret, accessToken, refreshToken, userName, profilePicture }
+  enum CodingKeys: String, CodingKey { case id, apiAppID, apiAppSecret, accessToken, refreshToken, userName, profilePicture, _userAgent }
   
   var id: UUID
   var apiAppID: String { willSet { if apiAppID != newValue { clearIdentity() } } }
@@ -21,6 +21,15 @@ struct RedditCredential: Identifiable, Equatable, Hashable, Codable {
   var accessToken: AccessToken? = nil
   var refreshToken: String? = nil
   var userName: String? = nil
+  var _userAgent: String? = nil
+  var userAgent: String {
+    get {
+      _userAgent ?? "ios:lo.cafe.winston:v0.1.0 (by /u/\(userName ?? "UnknownUser"))"
+    }
+    set {
+      _userAgent = newValue
+    }
+  }
   var profilePicture: String? = nil
   func isInKeychain() -> Bool { RedditCredentialsManager.shared.credentials.contains { $0.id == self.id } }
   var validationStatus: CredentialValidationState {
