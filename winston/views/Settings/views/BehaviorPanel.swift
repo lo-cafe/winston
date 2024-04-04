@@ -93,6 +93,7 @@ struct BehaviorPanel: View {
           Toggle("Save sort per subreddit", isOn: $subredditFeedDefSettings.perSubredditSort)
           Toggle("Open subreddit options on tap", isOn: $subredditFeedDefSettings.openOptionsOnTap)
           Toggle("Open media from feed", isOn: $postLinkDefSettings.isMediaTappable)
+					Toggle("Show Inline Images", isOn: $postPageDefSettings.inlineImages)
           
           
           Menu {

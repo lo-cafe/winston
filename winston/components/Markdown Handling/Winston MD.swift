@@ -93,6 +93,10 @@ extension Theme {
        }
        .fixedSize(horizontal: false, vertical: true)
       }
+		.image { configuration in
+			configuration.label
+			  .relativePadding(.horizontal, length: .em(IPAD ? 4: 1))
+			}
     return theme
   }
 }

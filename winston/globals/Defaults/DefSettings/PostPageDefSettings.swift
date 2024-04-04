@@ -13,4 +13,5 @@ struct PostPageDefSettings: Equatable, Hashable, Codable, Defaults.Serializable 
   var perPostSort: Bool = false
   var postSorts: Dictionary<String, CommentSortOption> = .init()
   var showUpVoteRatio: Bool = true
+	var inlineImages: Bool = false
 }

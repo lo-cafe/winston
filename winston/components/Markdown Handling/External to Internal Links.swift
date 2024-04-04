@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Defaults
 
 class MarkdownUtil {
   static func containsSpoiler(_ text: String) -> Bool {
@@ -23,9 +24,18 @@ class MarkdownUtil {
       options: .regularExpression
     )
 
-    // Replace URLs with http:// or https:// (if not already in markdown format)
+	if Defaults[.PostPageDefSettings].inlineImages {
+		// Replace URLs with http:// or https:// (if not already in markdown format)
+		processedText = processedText.replacingOccurrences(
+			of: #"\b(?<!\[)(https?:\/\/)(.*\.(?:png|jpe?g|bmp|tiff|webp|svgz?|ico)(?:\?.*))?(?!\])\b"#,
+			with: "[![$0]($0)](winstonapp://$2)",
+			options: .regularExpression
+		)
+	}
+		
+		// Replace URLs with http:// or https:// (if not already in markdown format)
     processedText = processedText.replacingOccurrences(
-      of: "\\b(?<!\\[)(https?://)(\\S+)(?!\\])\\b",
+      of: "\\b(?<!\\[|\\()(https?://)(\\S+)(?!\\]|\\))\\b",
       with: "[$0](winstonapp://$2)",
       options: .regularExpression
     )
