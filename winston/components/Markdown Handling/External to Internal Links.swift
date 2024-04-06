@@ -27,7 +27,7 @@ class MarkdownUtil {
 	if Defaults[.PostPageDefSettings].inlineImages {
 		// Replace URLs with http:// or https:// (if not already in markdown format)
 		processedText = processedText.replacingOccurrences(
-			of: #"\b(?<!\[)(https?:\/\/)(.*\.(?:png|jpe?g|bmp|tiff|webp|svgz?|ico)(?:\?.*))?(?!\])\b"#,
+			of: #"\b(?<!\[)(https?:\/\/)(.*\.(?:png|jpe?g|bmp|tiff|webp|svgz?|ico)(?:\?.*)?)(?!\])\b"#,
 			with: "[![$0]($0)](winstonapp://$2)",
 			options: .regularExpression
 		)
