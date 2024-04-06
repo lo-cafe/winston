@@ -18,7 +18,7 @@ class IAPManager {
   var transactionListener: Task<Void, Error>? = nil
   
   func addComets(_ newComets: Int) {
-    if let cometsInICloudStr = NSUbiquitousKeyValueStore.default.string(forKey: Self.iCloudCometsKeyName), let cometsInICloud = Int(cometsInICloudStr) {
+    if let cometsInICloud = Int(NSUbiquitousKeyValueStore.default.string(forKey: Self.iCloudCometsKeyName) ?? "0") {
       NSUbiquitousKeyValueStore.default.set("\(cometsInICloud + newComets)", forKey: Self.iCloudCometsKeyName)
       NSUbiquitousKeyValueStore.default.synchronize()
     }
