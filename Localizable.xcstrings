@@ -1148,6 +1148,9 @@
         }
       }
     },
+    "Download" : {
+
+    },
     "Drag Left" : {
       "localizations" : {
         "de" : {
@@ -1601,6 +1604,7 @@
       }
     },
     "Hello, World!" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -3739,6 +3743,9 @@
         }
       }
     },
+    "Theme Store" : {
+
+    },
     "Theme Store Tint" : {
       "localizations" : {
         "de" : {
@@ -3807,6 +3814,9 @@
 
     },
     "There was an error" : {
+
+    },
+    "There was an error importing this theme" : {
 
     },
     "This is not working yet :(" : {
