@@ -1,5 +1,5 @@
 //
-//  Haptico.swift
+//  Hap.swift
 //  winston
 //
 //  Created by Igor Marcossi on 16/12/23.
