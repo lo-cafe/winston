@@ -38,39 +38,46 @@ struct TipJarModal: View {
           }
         }
       }
-      Button {
-        if let selectedProduct {
-          Task {
-            let result = try await selectedProduct.purchase()
-            switch result {
-            case .pending: print("Pending...")
-            case .success(let res):
-              if await IAPManager.shared.processResult(res) {
-                showConfetti = true
-                selectedIAPProduct = nil
-                doThisAfter(2) {
-                  showConfetti = false
+        VStack(alignment: .center, spacing: 8) {
+            Button {
+                if let selectedProduct {
+                    Task {
+                        let result = try await selectedProduct.purchase()
+                        switch result {
+                        case .pending: print("Pending...")
+                        case .success(let res):
+                            if await IAPManager.shared.processResult(res) {
+                                showConfetti = true
+                                selectedIAPProduct = nil
+                                doThisAfter(2) {
+                                    showConfetti = false
+                                }
+                            }
+                        case .userCancelled: print("Cancelled...")
+                        @unknown default: break
+                        }
+                    }
                 }
-              }
-            case .userCancelled: print("Cancelled...")
-            @unknown default: break
+            } label: {
+                Label(
+                    title: {
+                        Text(selectedProduct == nil ? "Select a tip above" : "Tip \(selectedProduct!.displayPrice)")
+                            .fontSize(16, .semibold)
+                            .contentTransition(.identity)
+                    },
+                    icon: { Image(.whiteJar).resizable().scaledToFit().frame(16) }
+                )
             }
-          }
+            .buttonStyle(.action(fullWidth: true))
+            .disabled(selectedProduct == nil)
+            //      .blendMode(selectedProduct == nil ? .softLight : .normal)
+            
+            Text("They say the stars hide a secret...")
+                .opacity(0.3)
+                .padding(.horizontal, 48)
+                .fontSize(13)
+                .multilineTextAlignment(.center)
         }
-      } label: {
-        Label(
-          title: {
-            Text(selectedProduct == nil ? "Select a tip above" : "Tip \(selectedProduct!.displayPrice)")
-              .fontSize(16, .semibold)
-              .contentTransition(.identity)
-          },
-          icon: { Image(.whiteJar).resizable().scaledToFit().frame(16) }
-        )
-      }
-      .buttonStyle(.action(fullWidth: true))
-      .disabled(selectedProduct == nil)
-      .blendMode(selectedProduct == nil ? .softLight : .normal)
-      
     }
     .padding(.top, 36)
     .padding(.bottom, 150)
