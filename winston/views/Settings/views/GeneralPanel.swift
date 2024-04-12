@@ -40,9 +40,10 @@ struct GeneralPanel: View {
 //          }
         } header: {
           Text("iCloud")
-        } footer: {
-          Text("Syncing will run on every app restart and on every preference change. Preferences also include themes.")
         }
+//      footer: {
+//          Text("Syncing will run on every app restart and on every preference change. Preferences also include themes.")
+//        }
         
         Section("Backup"){
           WListButton {
