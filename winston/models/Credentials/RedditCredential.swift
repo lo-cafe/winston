@@ -13,6 +13,10 @@ import Defaults
 import Combine
 
 struct RedditCredential: Identifiable, Equatable, Hashable, Codable {
+    static func defaultUserAgent(userName: String? = nil) -> String {
+        return "ios:lo.cafe.winston:v0.1.0 (by /u/\(userName ?? "UnknownUser"))"
+    }
+    
     enum CodingKeys: String, CodingKey { case id, apiAppID, apiAppSecret, accessToken, refreshToken, userName, profilePicture, _userAgent }
     
     var id: UUID
@@ -24,7 +28,7 @@ struct RedditCredential: Identifiable, Equatable, Hashable, Codable {
     var _userAgent: String? = nil
     var userAgent: String {
         get {
-            _userAgent ?? "ios:lo.cafe.winston:v0.1.0 (by /u/\(userName ?? "UnknownUser"))"
+            _userAgent ?? RedditCredential.defaultUserAgent(userName: userName)
         }
         set {
             _userAgent = newValue
@@ -69,6 +73,7 @@ struct RedditCredential: Identifiable, Equatable, Hashable, Codable {
         refreshToken = try values.decodeIfPresent(String.self, forKey: .refreshToken)
         userName = try values.decodeIfPresent(String.self, forKey: .userName)
         profilePicture = try values.decodeIfPresent(String.self, forKey: .profilePicture)
+        _userAgent = try values.decodeIfPresent(String.self, forKey: ._userAgent)
     }
     
     func encode(to encoder: Encoder) throws {
@@ -81,6 +86,7 @@ struct RedditCredential: Identifiable, Equatable, Hashable, Codable {
         try container.encodeIfPresent(refreshToken, forKey: .refreshToken)
         try container.encodeIfPresent(userName, forKey: .userName)
         try container.encodeIfPresent(profilePicture, forKey: .profilePicture)
+        try container.encodeIfPresent(_userAgent, forKey: ._userAgent)
     }
     
     mutating func clearIdentity() {
@@ -88,6 +94,7 @@ struct RedditCredential: Identifiable, Equatable, Hashable, Codable {
         refreshToken = nil
         userName = nil
         profilePicture = nil
+        _userAgent = nil
     }
     
     func save(_ forceCreate: Bool = true) {

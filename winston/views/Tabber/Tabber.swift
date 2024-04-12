@@ -96,7 +96,6 @@ struct Tabber: View, Equatable {
     .globalLoaderProvider()
     .refetchMeListener()
     .task(priority: .background) {
-      migrateOldDefaults()
       cleanCredentialOrphanEntities()
       autoSelectCredentialIfNil()
       removeDefaultThemeFromThemes()
