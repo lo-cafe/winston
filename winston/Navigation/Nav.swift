@@ -31,7 +31,6 @@ class Nav: Identifiable, Equatable {
   }
   
   enum PresentingSheet: Codable, Hashable, Identifiable, Equatable {
-    case tipJar
     case onboarding
     case editingCredential(RedditCredential)
     case announcement(Announcement)
