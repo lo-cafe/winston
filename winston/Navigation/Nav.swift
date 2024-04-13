@@ -42,7 +42,6 @@ class Nav: Identifiable, Equatable {
       switch self {
       case .announcement(let ann): newID = ann.id
       case .editingCredential(let cred): newID = cred.id.uuidString
-      case .tipJar: newID = "tipJar"
       case .onboarding: newID = "onboarding"
       case .editingTheme(let theme): newID = theme.id
       case .sharedTheme(let themeData): newID = themeData.id
