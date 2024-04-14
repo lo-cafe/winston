@@ -28,7 +28,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
   }
     
   func application(_ application: UIApplication, configurationForConnecting connectingSceneSession: UISceneSession, options: UIScene.ConnectionOptions) -> UISceneConfiguration {
-    setAudioToMixWithOthers()
     
     if let shortcutItem = options.shortcutItem {
       shortcutItemToProcess = shortcutItem
@@ -39,12 +38,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     return sceneConfiguration
   }
-  
-  func applicationDidFinishLaunching(_ application: UIApplication) {
-    setAudioToMixWithOthers()
-  }
-  
-  
 }
 
 class CustomSceneDelegate: UIResponder, UIWindowSceneDelegate {
