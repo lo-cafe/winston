@@ -24,6 +24,7 @@
       }
     },
     " " : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -445,6 +446,9 @@
       }
     },
     "Add a new credential" : {
+
+    },
+    "Add More Items" : {
 
     },
     "Advanced" : {
@@ -1960,6 +1964,7 @@
       }
     },
     "It's also always available in the Settings tab :)" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -2204,6 +2209,7 @@
       }
     },
     "Many users wanted to be able to support the project without a monthly subscription (like Patreon), so now we got a tip jar!" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -2498,6 +2504,7 @@
       }
     },
     "Now we got a tip jar!" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -2710,9 +2717,6 @@
       }
     },
     "Pause background audio on fullscreen" : {
-
-    },
-    "Pinned" : {
 
     },
     "Placeholder image" : {
@@ -3618,9 +3622,6 @@
       }
     },
     "Sync credentials" : {
-
-    },
-    "Syncing will run on every app restart and on every preference change. Preferences also include themes." : {
 
     },
     "Take me there!" : {

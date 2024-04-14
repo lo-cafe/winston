@@ -43,23 +43,7 @@ struct RedditListingFeed<Header: View, Footer: View, S: Sorting>: View {
   
   @State private var itemsManager: FeedItemsManager<S>
   
-  @Environment(\.useTheme) private var selectedTheme
-  @Environment(\.contentWidth) private var contentWidth
-  
-  @Default(.PostLinkDefSettings) private var postLinkDefSettings
-  @Default(.SubredditFeedDefSettings) private var feedDefSettings
-  
   func refetch() async {
-//    if let subreddit, !feedsAndSuch.contains(subreddit.id) {
-//      Task {
-//        withAnimation { itemsManager.loadingPinned = true }
-//        if let pinnedPosts = await subreddit.fetchPinnedPosts() {
-//          itemsManager.pinnedPosts = pinnedPosts
-//        }
-//        withAnimation { itemsManager.loadingPinned = false }
-//      }
-//    }
-    
     await itemsManager.fetchCaller(loadingMore: false)
     if let subreddit, !fetchedFilters {
       await subreddit.fetchAndCacheFlairs()
@@ -67,47 +51,11 @@ struct RedditListingFeed<Header: View, Footer: View, S: Sorting>: View {
     }
   }
   
-  @ViewBuilder
-  func getPinnedSection() -> some View {
-    if itemsManager.displayMode != .loading, itemsManager.pinnedPosts.count > 0 || itemsManager.loadingPinned {
-      let isThereDivider = selectedTheme.postLinks.divider.style != .no
-      let paddingH = selectedTheme.postLinks.theme.outerHPadding
-      let paddingV = selectedTheme.postLinks.spacing / (isThereDivider ? 4 : 2)
-      Section("Pinned") {
-        if itemsManager.loadingPinned {
-          ProgressView().frame(maxWidth:.infinity, minHeight: 100)
-        } else {
-          ScrollView(.horizontal) {
-            LazyHStack(spacing: paddingV * 2) {
-              ForEach(itemsManager.pinnedPosts) { post in
-                StickiedPostLink(post: post)
-              }
-            }
-            .scrollTargetLayout()
-            .padding(.horizontal, paddingH)
-            .padding(.bottom, paddingV)
-          }
-          .scrollTargetBehavior(.viewAligned)
-          .listRowInsets(.zero)
-          .scrollIndicators(.hidden)
-        }
-      }
-      .listRowInsets(EdgeInsets(top: 0, leading: paddingH, bottom: 0, trailing: paddingH))
-      .listRowSeparator(.hidden)
-      .listRowBackground(Color.clear)
-    }
-  }
-  
   var body: some View {
     let shallowCachedFilters = filters.map { $0.getShallow() }
-    let isThereDivider = selectedTheme.postLinks.divider.style != .no
-    let paddingH = selectedTheme.postLinks.theme.outerHPadding
-    let paddingV = selectedTheme.postLinks.spacing / (isThereDivider ? 4 : 2)
     GeometryReader { geo in
       List {
         header()
-        
-//        getPinnedSection()
         
         Group {
           switch itemsManager.displayMode {
@@ -125,58 +73,12 @@ struct RedditListingFeed<Header: View, Footer: View, S: Sorting>: View {
             
             Section {
               ForEach(Array(itemsManager.entities.enumerated()), id: \.element) { i, el in
-                Group {
-                  switch el {
-                  case .post(let post):
-                    if let winstonData = post.winstonData, let sub = winstonData.subreddit ?? subreddit {
-                      PostLink(id: post.id, theme: selectedTheme.postLinks, showSub: showSubInPosts, compactPerSubreddit: feedDefSettings.compactPerSubreddit[sub.id], contentWidth: contentWidth, defSettings: postLinkDefSettings)
-                        .environment(\.contextPost, post)
-                        .environment(\.contextSubreddit, sub)
-                        .environment(\.contextPostWinstonData, winstonData)
-                        .listRowInsets(EdgeInsets(top: paddingV, leading: paddingH, bottom: paddingV, trailing: paddingH))
-                      
-                      if isThereDivider && (i != (itemsManager.entities.count - 1)) {
-                        NiceDivider(divider: selectedTheme.postLinks.divider)
-                          .id("\(post.id)-divider")
-                          .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
-                      }
-                    }
-                  case .subreddit(let sub): SubredditLink(sub: sub)
-                  case .multi(_): EmptyView()
-                  case .comment(let comment):
-                    VStack(spacing: 8) {
-                      ShortCommentPostLink(comment: comment)
-                        .padding(.horizontal, 12)
-                      if let commentWinstonData = comment.winstonData {
-                        CommentLink(showReplies: false, comment: comment, commentWinstonData: commentWinstonData, children: comment.childrenWinston)
-                      }
-                    }
-                    .padding(.vertical, 12)
-                    .background(PostLinkBG(theme: selectedTheme.postLinks.theme, stickied: false, secondary: false))
-                    .mask(RR(selectedTheme.postLinks.theme.cornerRadius, Color.black))
-                    .allowsHitTesting(false)
-                    .contentShape(Rectangle())
-                    .onTapGesture {
-                      if let data = comment.data, let link_id = data.link_id, let subID = data.subreddit {
-                        Nav.to(.reddit(.postHighlighted(Post(id: link_id, subID: subID), comment.id)))
-                      }
-                    }
-                    .listRowInsets(EdgeInsets(top: paddingV, leading: paddingH, bottom: paddingV, trailing: paddingH))
-                  case .user(let user): UserLink(user: user)
-                  case .message(let message):
-                    let isThereDivider = selectedTheme.postLinks.divider.style != .no
-                    let paddingH = selectedTheme.postLinks.theme.outerHPadding
-                    let paddingV = selectedTheme.postLinks.spacing / (isThereDivider ? 4 : 2)
-                    MessageLink(message: message)
-                      .listRowInsets(EdgeInsets(top: paddingV, leading: paddingH, bottom: paddingV, trailing: paddingH))
-                    
-                    if isThereDivider && (i != (itemsManager.entities.count - 1)) {
-                      NiceDivider(divider: selectedTheme.postLinks.divider)
-                        .id("\(message.id)-divider")
-                        .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
-                    }
-                  }
-                }
+                RedditEntityView(
+                  entity: el,
+                  subreddit: subreddit,
+                  isLastItem: i != (itemsManager.entities.count - 1),
+                  showSubInPosts: showSubInPosts
+                )
                 .onAppear { Task { await itemsManager.iAppeared🥳(entity: el, index: i) } }
                 .onDisappear { Task { await itemsManager.imGone🙁(entity: el, index: i) } }
               }
