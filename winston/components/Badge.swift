@@ -179,9 +179,8 @@ struct BadgeView: View, Equatable {
         .foregroundStyle(defaultIconColor)
         .font(.system(size: theme.statsText.size, weight: theme.statsText.weight.t))
       }
-//      .drawingGroup()
     }
-    .scaleEffect(1)
+    .geometryGroup()
     .animation(showAvatar ? nil : spring.delay(0.4), value: saved)
   }
 }

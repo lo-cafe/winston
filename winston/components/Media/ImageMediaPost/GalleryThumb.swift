@@ -29,7 +29,7 @@ struct GalleryThumb: View, Equatable {
             .fixedSize(horizontal: false, vertical: height == nil)
             .allowsHitTesting(false)
             .frame(width: width, height: height)
-            .mask(RR(cornerRadius, Color.black).equatable())
+            .mask(RR(cornerRadius, Color.black))
             .contentShape(Rectangle())
     }
 }
