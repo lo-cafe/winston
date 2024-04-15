@@ -14,7 +14,6 @@ struct GeneralDefSettings: Equatable, Hashable, Codable, Defaults.Serializable {
   }
   
   var redditCredentialSelectedID: UUID? = nil
-  var redditAPIUserAgent: String = "ios:lo.cafe.winston:v0.1.0 (by /u/Kinark)"
   var onboardingState: OnboardingState = .unknown
   var lastSeenAnnouncementTimeStamp: Int = 0
   var iCloudSyncUserDefaults = true
