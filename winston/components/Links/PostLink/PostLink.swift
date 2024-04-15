@@ -67,6 +67,7 @@ extension View {
       .padding(EdgeInsets(top: theme.innerPadding.vertical, leading: theme.innerPadding.horizontal, bottom: theme.innerPadding.vertical, trailing: theme.innerPadding.horizontal))
       .background(PostLinkBG(theme: theme, stickied: post.data?.stickied, secondary: secondary))
       .overlay(PostLinkGlowDot(unseenType: theme.unseenType, seen: seen, badge: false), alignment: .topTrailing)
+      .geometryGroup()
       .contentShape(Rectangle())
       .compositingGroup()
 //      .brightness(isOpen.wrappedValue ? 0.075 : 0)
@@ -145,7 +146,7 @@ struct PostLinkBG: View, Equatable {
       } else {
         
         if theme.bg.blurry {
-          RR(theme.cornerRadius, .ultraThinMaterial).equatable()
+          RR(theme.cornerRadius, .ultraThinMaterial)
         }
         
         RoundedRectangle(cornerRadius: theme.cornerRadius, style: .continuous).fill(secondary ? .primary.opacity(0.06) : theme.bg.color())
@@ -158,7 +159,7 @@ struct PostLinkBG: View, Equatable {
       }
     }
     .allowsHitTesting(false)
-    .mask(RR(theme.cornerRadius, Color.black).equatable())
+    .clipShape(RoundedRectangle(cornerRadius: theme.cornerRadius, style: .continuous))
   }
 }
 
