@@ -24,7 +24,7 @@ struct AdvancedInstructions: View {
         HStack(spacing: 0) {
           HStack(spacing: 8) {
             
-            LottieSwitch(animation: .named("article"))
+            LottieSwitch(animation: .named("book-opening"))
               .isOn($open)
               .valueProvider(colorProvider, for: colorLottieKeypath)
               .configuration(.init(renderingEngine: .coreAnimation))

@@ -93,7 +93,7 @@ struct GlobalLoaderProviderModifier: ViewModifier {
 extension View {
   func globalLoaderProvider() -> some View {
     self
-      .modifier(GlobalLoaderProviderModifier())
+      .modifier(ThemeImportingListenerModifier())
   }
 }
 

@@ -27,7 +27,7 @@ struct URLImage: View, Equatable {
     
     var body: some View {
         if url.absoluteString.hasSuffix(".gif") {
-            LazyImageOpt(url: url) { state in
+            LazyImage(url: url) { state in
                 if let imageData = state.imageContainer?.data {
                     GIFImage(data: imageData, size: size)
                         .scaledToFit()
@@ -37,14 +37,14 @@ struct URLImage: View, Equatable {
                     Color.red.opacity(0.1)
                         .overlay(Image(systemName: "xmark.circle.fill").foregroundColor(.red))
                 } else {
-                    URLImageLoader(size: 50).scaledToFit()
+                    URLImageLoader(size: 50).equatable().scaledToFit()
                 }
             }
             .onDisappear(.cancel)
             .processors(processors)
         } else {
             if let imgRequest = imgRequest {
-                LazyImageOpt(request: imgRequest, transaction: .init(animation: .default)) { state in
+                LazyImage(request: imgRequest, transaction: .init(animation: .default)) { state in
                     //          if case .success(let response) = state.result {
                     //            AltImage(image: response.image, size: size)
                     ////            Image(uiImage: response.image).resizable()
@@ -74,7 +74,7 @@ struct URLImage: View, Equatable {
                 .onDisappear(.cancel)
                 //        .id("\(imgRequest.url?.absoluteString ?? "")-nuke")
             } else {
-                LazyImageOpt(url: url) { state in
+                LazyImage(url: url) { state in
                     if let image = state.image {
                         if doLiveText && ImageAnalyzer.isSupported {
                             LiveTextInteraction(image: image, showOverlay: showOverlay)
@@ -91,7 +91,7 @@ struct URLImage: View, Equatable {
                         Color.red.opacity(0.1)
                             .overlay(Image(systemName: "xmark.circle.fill").foregroundColor(.red))
                     } else {
-                        URLImageLoader(size: 50).scaledToFit()
+                        URLImageLoader(size: 50).equatable().scaledToFit()
                     }
                 }
                 .onDisappear(.cancel)
@@ -111,7 +111,7 @@ struct ThumbReqImage: View, Equatable {
     var size: CGSize
     
     var body: some View {
-        LazyImageOpt(request: imgRequest, transaction: .init(animation: .default)) { state in
+        LazyImage(request: imgRequest, transaction: .init(animation: .default)) { state in
             //                if case .success(let response) = state.result {
             ////                  Image(uiImage: response.image).resizable()
             //                  AltImage(image: response.image, size: size)

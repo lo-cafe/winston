@@ -170,7 +170,7 @@ struct VideoPlayerPost: View, Equatable {
         .onDisappear() {
             removeObserver()
           Task(priority: .background) {
-//            setAudioToMixWithOthers(false)
+            setAudioToMixWithOthers(false)
             sharedVideo.player.seek(to: .zero)
             sharedVideo.player.pause()
           }
@@ -187,11 +187,11 @@ struct VideoPlayerPost: View, Equatable {
 						firstFullscreen = false
 					 }
           
-//          if pauseBackgroundAudioOnFullscreen {
-//            Task(priority: .background) {
-//              setAudioToMixWithOthers(val)
-//            }
-//          }
+          if pauseBackgroundAudioOnFullscreen {
+            Task(priority: .background) {
+              setAudioToMixWithOthers(val)
+            }
+          }
           
           sharedVideo.player.volume = val ? 1.0 : 0.0
         }
