@@ -155,17 +155,36 @@ struct GeneralPanel: View {
     }
     
     func clearCache() {
-        (try? DataCache(name: "lo.cafe.winston.datacache"))?.flush()
+        do {
+            // Attempt to flush the custom data cache
+            let dataCache = try DataCache(name: "lo.cafe.winston.datacache")
+            try dataCache.flush()
+            print("Custom DataCache flushed successfully.")
+        } catch {
+            print("Failed to flush DataCache with error: \(error)")
+        }
+        
+        // Clearing Nuke's image and data caches
         Nuke.ImageCache.shared.removeAll()
+        print("Nuke ImageCache cleared.")
+        
         Nuke.DataLoader.sharedUrlCache.removeAllCachedResponses()
-        (ImagePipeline.shared.configuration.dataLoader as? DataLoader)?.session.configuration.urlCache?.removeAllCachedResponses()
+        print("Nuke DataLoader cache cleared.")
+        
+        // Try to clear URL session configuration cache
+        URLCache.shared.removeAllCachedResponses()
+        
+        
         let temporaryDirectory = FileManager.default.temporaryDirectory
         let cacheDirectory = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first
         
         
         flushFilesInDirectoryButNotFolders(temporaryDirectory)
         flushFilesInDirectoryButNotFolders(cacheDirectory)
+        
+        // Resetting Core Data
         resetCoreData()
+        
         totalCacheSize = "0 bytes"
         print("Cache cleared successfully.")
     }
@@ -192,22 +211,31 @@ struct GeneralPanel: View {
 
 
 func flushFilesInDirectoryButNotFolders(_ at: URL?) {
-    guard let at = at else { return }
+    guard let directoryURL = at else { return }
     let fileManager = FileManager.default
-    guard let enumerator = fileManager.enumerator(at: at, includingPropertiesForKeys: nil) else { return }
     
-    for case let file as String in enumerator {
-        let path = at.appendingPathComponent(file)
-        var isDirectory: ObjCBool = false
-        
-        if fileManager.fileExists(atPath: path.path, isDirectory: &isDirectory) {
-            if !isDirectory.boolValue {
-                do {
-                    try fileManager.removeItem(at: path)
-                } catch let error as NSError {
-                    print("Error: \(error.localizedDescription)")
-                }
+    guard let enumerator = fileManager.enumerator(at: directoryURL, includingPropertiesForKeys: [.isDirectoryKey], options: [.skipsHiddenFiles], errorHandler: { (url, error) -> Bool in
+        print("Enumerator error at \(url): \(error). Skipping...")
+        return true
+    }) else { return }
+    
+    for case let fileURL as URL in enumerator {
+        do {
+            // Check if the file or directory is part of the Nuke cache or related to SQLite (which crashes if related file is currently in use by the app)
+            let path = fileURL.path
+            if path.contains("com.github.kean.Nuke.Cache") || path.contains("sqlite") || path.hasSuffix(".db")
+                || path.hasSuffix("-journal") || path.hasSuffix("-wal") || path.hasSuffix("-shm") {
+                // Skip this file or directory
+                continue
             }
+            
+            let resourceValues = try fileURL.resourceValues(forKeys: [.isDirectoryKey])
+            if let isDirectory = resourceValues.isDirectory, !isDirectory {
+                try fileManager.removeItem(at: fileURL)
+                print("Removed item at \(path)")
+            }
+        } catch {
+            print("Error removing item at \(fileURL.path): \(error)")
         }
     }
 }
