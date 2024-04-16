@@ -179,8 +179,8 @@ struct RedditListingFeed<Header: View, Footer: View, S: Sorting>: View {
                                         }
                                     }
                                 }
-                                .onAppear { Task { await itemsManager.iAppeared🥳(entity: el, index: i) } }
-                                .onDisappear { Task { await itemsManager.imGone🙁(entity: el, index: i) } }
+                                .onAppear { Task { await itemsManager.elementAppeared(entity: el, index: i) } }
+                                .onDisappear { Task { await itemsManager.elementDisappeared(entity: el, index: i) } }
                             }
                         }
                         

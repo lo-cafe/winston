@@ -93,7 +93,7 @@ class FeedItemsManager<S> {
         self.currentTask = nil
     }
     
-    func iAppeared🥳(entity: RedditEntityType, index: Int) async {
+    func elementAppeared(entity: RedditEntityType, index: Int) async {
         if displayMode != .endOfFeed, entities.count > 0, index >= entities.count - 7, currentTask == nil {
             self.currentTask = Task { await fetchCaller(loadingMore: true) }
         }
@@ -106,7 +106,7 @@ class FeedItemsManager<S> {
         Post.prefetcher.startPrefetching(with: reqs)
     }
     
-    func imGone🙁(entity: RedditEntityType, index: Int) async {
+    func elementDisappeared(entity: RedditEntityType, index: Int) async {
         let reqs = getImgReqsFrom([entity])
         Post.prefetcher.stopPrefetching(with: reqs)
     }
