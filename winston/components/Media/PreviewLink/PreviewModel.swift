@@ -48,8 +48,8 @@ final class PreviewModel: Equatable {
         await MainActor.run { [newImageReq] in
           withAnimation {
             imageReq = newImageReq
-            title = og[.title]
-            description = og[.description]
+            title = og[.title]?.escape
+            description = og[.description]?.escape
             url = URL(string: og[.url] ?? "")
             loading = false
           }
