@@ -25,13 +25,13 @@ struct TabBarOverlay: View {
             if tab == .me {
               AccountSwitcherTrigger(onTap: { Nav.shared.activeTab = .me }) {
                 Color.clear
-                  .frame(width: .screenW / 5, height: max(0, (tabBarHeight)))
+                  .frame(width: geo.size.width / 5, height: max(0, (tabBarHeight)))
                   .background(Color.hitbox)
                   .contentShape(Rectangle())
               }
             } else {
               Color.clear
-                .frame(width: .screenW / 5, height: max(0, (tabBarHeight)))
+                .frame(width: geo.size.width / 5, height: max(0, (tabBarHeight)))
                 .background(Color.hitbox)
                 .contentShape(Rectangle())
                 .overlay { SimpleTappableView { Nav.shared.activeTab = tab } }
