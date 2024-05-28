@@ -1,3 +1,4 @@
+[THIS IS JUST A RENEW UPDATE FOR TESTFLIGHT]
 Quick update to fix some bugs, 1.1.4!
 
 - Implemented option to toggle visibility of feeds prefixes
