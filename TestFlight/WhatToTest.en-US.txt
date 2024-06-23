@@ -1,1 +1,18 @@
-TRY THE NEW TIP JAR NOOOOOOOOOOOW!
+Fixes some bugs, 1.1.5!
+
+	•	Fixed placeholder message alignment
+	•	Fixed Reddit API preferences page
+	•	Added localization support
+	•	Cleaned unused code and replaced glitchy book Lottie
+	•	Removed old, unused TipJar component
+	•	Added back GlobalLoaderProvider
+	•	Fixed broken build
+	•	Improved RedditListingFeed component and cleaned up some files
+	•	Fixed many UI bugs and stutters; added new NukeUI Opt components
+	•	Removed redundant code calling setAudioToMixWithOthers three times
+	•	Provided RedditListingFeed with a force refresh handler; fixed UserView issues
+	•	Fixed blur flash on app open
+	•	Fixed cache clear button not working
+	•	Added inline image option
+	•	Improved spoiler handling in selftext
+	•	Corrected tab bar hit detection in Split View on iPad

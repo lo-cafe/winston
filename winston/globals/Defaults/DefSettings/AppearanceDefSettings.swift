@@ -15,3 +15,4 @@ struct AppearanceDefSettings: Equatable, Hashable, Codable, Defaults.Serializabl
   var themeStoreTint: Bool = true
   var shinyTextAndButtons: Bool = false
 }
+//
