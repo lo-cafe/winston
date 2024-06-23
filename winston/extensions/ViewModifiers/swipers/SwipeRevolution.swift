@@ -159,9 +159,16 @@ struct SwipeRevolution<T: GenericRedditEntityDataType, B: Hashable>: ViewModifie
       let offsetXInterpolate = interpolatorBuilder([0, firstActionThreshold], value: actualOffsetX)
       let offsetXNegativeInterpolate = interpolatorBuilder([0, -firstActionThreshold], value: actualOffsetX)
       
-      GesturerHolder(id: entity.id, size: size, directions: .horizontal, onTap: nil, onDragChanged:dragChanged, onDragEnded: dragEnded, disabled: false, content: content)
+        VStack {
+//            GeometryReader { geo in
+//            GesturerHolder(id: entity.id, size: size, directions: .horizontal, onTap: nil, onDragChanged:dragChanged, onDragEnded: dragEnded, disabled: false, content: { content })
+//                .fixedSize(horizontal: false, vertical: true)
+//                    .frame(height: geo.size.height)
+//                .frame(width: .screenW, height: 300)
+//            }
+        }
       //      content(nil)
-      .frame(width: size.width, height: size.height)
+//      .frame(width: size.width, height: size.height)
       .offset(x: dragAmount)
 //      .transaction { if dragAmount != 0 { $0.animation = nil } }
       .background(

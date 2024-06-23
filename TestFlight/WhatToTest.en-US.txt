@@ -1,7 +1,18 @@
-[THIS IS JUST A RENEW UPDATE FOR TESTFLIGHT]
-Quick update to fix some bugs, 1.1.4!
+Fixes some bugs, 1.1.5!
 
-- Implemented option to toggle visibility of feeds prefixes
-- Fixed multis not showing up
-- Now compact posts settings will be hidden if the option is not available
-- Fixed comments context menu preview showing in the wrong size
+	•	Fixed placeholder message alignment
+	•	Fixed Reddit API preferences page
+	•	Added localization support
+	•	Cleaned unused code and replaced glitchy book Lottie
+	•	Removed old, unused TipJar component
+	•	Added back GlobalLoaderProvider
+	•	Fixed broken build
+	•	Improved RedditListingFeed component and cleaned up some files
+	•	Fixed many UI bugs and stutters; added new NukeUI Opt components
+	•	Removed redundant code calling setAudioToMixWithOthers three times
+	•	Provided RedditListingFeed with a force refresh handler; fixed UserView issues
+	•	Fixed blur flash on app open
+	•	Fixed cache clear button not working
+	•	Added inline image option
+	•	Improved spoiler handling in selftext
+	•	Corrected tab bar hit detection in Split View on iPad

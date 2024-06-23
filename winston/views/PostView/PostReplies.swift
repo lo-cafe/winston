@@ -154,6 +154,7 @@ struct PostReplies: View {
           .frame(maxWidth: .infinity, minHeight: 300)
           .opacity(0.25)
           .listRowBackground(Color.clear)
+          .multilineTextAlignment(.center)
           .id("no-comments-placeholder")
       }
     }

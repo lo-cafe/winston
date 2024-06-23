@@ -143,6 +143,7 @@ struct VideoPlayerPost: View, Equatable {
           Image(systemName: "play.fill").foregroundColor(.white.opacity(0.75)).fontSize(32).shadow(color: .black.opacity(0.45), radius: 12, y: 8).opacity(autoPlayVideos ? 0 : 1).allowsHitTesting(false)
         }
         .onAppear {
+          
           if loopVideos {
             addObserver()
           }
@@ -167,8 +168,9 @@ struct VideoPlayerPost: View, Equatable {
           }
         }
         .onDisappear() {
-          removeObserver()
+            removeObserver()
           Task(priority: .background) {
+//            setAudioToMixWithOthers(false)
             sharedVideo.player.seek(to: .zero)
             sharedVideo.player.pause()
           }
@@ -185,11 +187,11 @@ struct VideoPlayerPost: View, Equatable {
 						firstFullscreen = false
 					 }
           
-          if pauseBackgroundAudioOnFullscreen && sharedVideo.player.isMuted == false && hasAudio == true {
-            Task(priority: .background) {
-              setAudioToMixWithOthers(val)
-            }
-          }
+//          if pauseBackgroundAudioOnFullscreen {
+//            Task(priority: .background) {
+//              setAudioToMixWithOthers(val)
+//            }
+//          }
           
           sharedVideo.player.volume = val ? 1.0 : 0.0
         }

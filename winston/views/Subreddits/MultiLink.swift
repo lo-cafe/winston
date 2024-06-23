@@ -27,7 +27,7 @@ struct MultiLink: View {
             .frame(width: 72, height: 72)
             .mask(Circle())
         }
-        Text(multi.data?.display_name)
+        Text(multi.data?.display_name ?? "")
           .foregroundColor(.primary)
           .fontSize(15, .medium)
       }

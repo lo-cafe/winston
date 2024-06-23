@@ -9,8 +9,6 @@ import SwiftUI
 import Defaults
 
 private let starsCount = 7
-private let BG_GRAD_DARK = Color.hex("FFB13D")
-private let BG_GRAD_LIGHT = Color.hex("FFCC02")
 private let HANG_ANIM = Animation.spring(response: 0.3, dampingFraction: 0.5)
 private let ROT_ANIM = Animation.spring(response: 0.4, dampingFraction: 0.25)
 
@@ -39,7 +37,6 @@ struct Onboarding: View {
   }
   
   var body: some View {
-    let BG_GRAD = colorScheme == .dark ? BG_GRAD_DARK : BG_GRAD_LIGHT
     TabView(selection: $currentTab) {
       OnboardingWelcomeWrapper(nextStep: nextStep)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -121,7 +118,7 @@ struct Onboarding: View {
       }
         .frame(maxWidth: .infinity, maxHeight: 200)
         .background(
-          LinearGradient(gradient: Gradient(stops: generateGradientStops(BG_GRAD)), startPoint: .top, endPoint: .bottom)
+          LinearGradient(gradient: Gradient(stops: generateGradientStops(Color.starsBGGradient)), startPoint: .top, endPoint: .bottom)
             .frame(maxWidth: .infinity, maxHeight: colorScheme == .dark ? 175 : .infinity)
             .opacity(colorScheme == .dark ? 0.5 : 1)
           , alignment: .bottom
@@ -158,7 +155,9 @@ func generateGradientStops(_ color: Color) -> [Gradient.Stop] {
 
 struct Star: View {
   var number: Int
+  var totalWidth: Double = .screenW
   @State var duration = CGFloat.random(in: 1.25...2)
+  @State var id = UUID()
   @State var up = false
   @State var rotation: CGFloat = 180
   @State var position = CGPoint(x: 0, y: 200 + 42)
@@ -168,11 +167,10 @@ struct Star: View {
   @Environment (\.colorScheme) var colorScheme: ColorScheme
   
   func move() {
-    withAnimation(.easeInOut(duration: duration)) {
+    
       offset = CGFloat.rand(8...16)
       up.toggle()
       rotation = CGFloat.random(in: -20...20)
-    }
   }
   
   var body: some View {
@@ -185,24 +183,30 @@ struct Star: View {
       .rotationEffect(Angle(degrees: rotation))
     //            .shadow(color: Color(NSColor(hex: colorScheme == .dark ? "FFA262" : "656565")), radius: size * 0.75, y: colorScheme == .dark ? 0 : size * 0.5)
       .shadow(color: Color.hex(colorScheme == .dark ? "FFA262" : "A9A400"), radius: size * 0.75, y: colorScheme == .dark ? 0 : size * 0.5)
-      .shadow(color: Color.hex(colorScheme == .dark ? "FFA262" : "A9A400").opacity(0.75), radius: size * 0.75, y: colorScheme == .dark ? 0 : size * 0.5)
+      .shadow(color: Color.hex(colorScheme == .dark ? "FFA262" : "A9A400").opacity(0.75), radius: size * 1.25, y: colorScheme == .dark ? 0 : size * 0.5)
       .offset(y: up ? offset : 0)
       .position(position)
       .onReceive(timer) { _ in
-        move()
+        withAnimation(.easeInOut(duration: duration)) {
+          move()
+        }
       }
       .onAppear {
         timer.upstream.connect().cancel()
-        position.x = (((.screenW - 48) / CGFloat(starsCount - 1)) * CGFloat(number)) + 24 + (CGFloat.rand(0...24) * ([-1, 1].randomElement())!)
+        position.x = (((totalWidth - 48) / CGFloat(starsCount - 1)) * CGFloat(number)) + 24 + (CGFloat.rand(0...24) * ([-1, 1].randomElement())!)
         DispatchQueue.main.asyncAfter(deadline: .now() + CGFloat.random(in: 0...0.75)) {
-          timer = Timer.publish(every: duration, on: .current, in: .common).autoconnect()
-          move()
           withAnimation(.spring(response: CGFloat.random(in: 0.5...0.7), dampingFraction: 2)) {
+            timer = Timer.publish(every: duration, on: .current, in: .common).autoconnect()
             position.y = CGFloat.rand(50...CGFloat(200 - Int(size) - 30))
+            move()
+//            offset = CGFloat.rand(8...16)
+//            up.toggle()
+//            rotation = CGFloat.random(in: -20...20)
           }
         }
       }
       .onDisappear { timer.upstream.connect().cancel() }
+      .id(id)
   }
 }
 

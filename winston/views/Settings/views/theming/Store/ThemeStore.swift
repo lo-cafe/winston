@@ -90,7 +90,7 @@ struct OnlineThemeItem: View {
       .frame(width: 52, height: 52)
       .background(RR(16, theme.color?.color() ?? .blue))
       VStack(alignment: .leading, spacing: 0) {
-        Text(theme.theme_name)
+        Text(theme.theme_name ?? "")
           .fontSize(16, .semibold)
           .frame(maxWidth: 200)
           .lineLimit(1)

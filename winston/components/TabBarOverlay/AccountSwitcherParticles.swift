@@ -36,17 +36,12 @@ struct AccountSwitcherParticles: View, Equatable {
 
 struct PPlayer: UIViewRepresentable {
   var player: AVPlayer
+  var gravity: AVLayerVideoGravity = .resizeAspectFill
 
   func makeUIView(context: Context) -> UIView {
     let view = PlayerView()
-//    view.playerLayer.frame = CGRect(x: 0, y: 0, width: view.frame.height, height: view.frame.width)
-//    let rotationDegrees: CGFloat = 90.0
-//    let rotationRadians: CGFloat = (rotationDegrees * .pi) / 180.0
-//    view.playerLayer.setAffineTransform(CGAffineTransform.identity.rotated(by: rotationRadians))
-
     view.player = self.player
-    view.playerLayer.videoGravity = .resizeAspectFill
-//    view.playerLayer.setAffineTransform(CGAffineTransform(scaleX: 1, y: -1))
+    view.playerLayer.videoGravity = gravity
     view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
     
     return view
@@ -55,25 +50,13 @@ struct PPlayer: UIViewRepresentable {
   func updateUIView(_ view: UIView, context: Context) { }
 
   class PlayerView: UIView {
-      // Override the property to make AVPlayerLayer the view's backing layer.
       override static var layerClass: AnyClass { AVPlayerLayer.self }
       
-      // The associated player object.
       var player: AVPlayer? {
           get { playerLayer.player }
           set { playerLayer.player = newValue }
       }
       
       var playerLayer: AVPlayerLayer { layer as! AVPlayerLayer }
-    
-//    init() {
-//      super.init()
-//      self.playerLayer.videoGravity = .resizeAspectFill
-//      self.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-//    }
-//    
-//    required init?(coder: NSCoder) {
-//      fatalError("init(coder:) has not been implemented")
-//    }
   }
 }

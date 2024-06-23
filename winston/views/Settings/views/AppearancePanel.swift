@@ -15,7 +15,6 @@ struct AppearancePanel: View {
   @Default(.SubredditFeedDefSettings) var subFeedDefSettings
   
   @Environment(\.useTheme) private var theme
-  @State private var appIconManager = AppIconManger()
   
   var body: some View {
     List {
@@ -36,7 +35,7 @@ struct AppearancePanel: View {
         Section {
           WNavigationLink(value: .setting(.appIcon)) {
             HStack{
-              Image(uiImage: appIconManager.current.preview)
+              Image(uiImage: AppIconManger.shared.currentAppIcon.preview)
                 .resizable()
                 .frame(width: 32, height: 32)
                 .mask(RoundedRectangle(cornerSize: CGSize(width: 10, height: 10)))

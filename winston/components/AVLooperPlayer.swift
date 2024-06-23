@@ -9,13 +9,13 @@ import Foundation
 import AVKit
 
 class AVLooperPlayer: AVQueuePlayer {
-    private var looper: AVPlayerLooper!
+  private var looper: AVPlayerLooper!
   
   func togglePlaying() { if self.isPlaying { self.pause() } else { self.play() } }
-
-    convenience override init(url: URL) {
-        let playerItem = AVPlayerItem(url: url)
-        self.init(playerItem: playerItem)
-        looper = AVPlayerLooper(player: self, templateItem: playerItem)
-    }
+  
+  convenience override init(url: URL) {
+    let playerItem = AVPlayerItem(url: url)
+    self.init(playerItem: playerItem)
+    looper = AVPlayerLooper(player: self, templateItem: playerItem)
+  }
 }

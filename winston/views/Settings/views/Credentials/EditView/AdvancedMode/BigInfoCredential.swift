@@ -74,7 +74,7 @@ struct BigInfoCredential: View {
         .allowsHitTesting(!empty)
         .saturation(empty ? 0 : 1)
       }
-      Text(empty ? "Empty" : value).opacity(0.5)
+      Text(empty ? "Empty" : (value ?? "")).opacity(0.5)
         .fontSize(12, .medium, design: .monospaced)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         .blur(radius: loading ? 24 : 0)

@@ -10,7 +10,7 @@ import SwiftUI
 import UIKit
 import NukeUI
 import OpenGraph
-import SkeletonUI
+//import SkeletonUI
 import YouTubePlayerKit
 import Defaults
 import Combine

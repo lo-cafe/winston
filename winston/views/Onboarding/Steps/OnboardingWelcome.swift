@@ -64,29 +64,17 @@ struct OnboardingWelcome: View {
     .onAppear {
       if !showCat {
         doThisAfter(0.5) {
-          withAnimation(spring) {
-            showCat = true
-          }
+          withAnimation(spring) { showCat = true }
           doThisAfter(0.85) {
-            withAnimation(spring) {
-              showMeow = true
-            }
+            withAnimation(spring) { showMeow = true }
             doThisAfter(0.75) {
-              withAnimation(spring) {
-                showHello = true
-              }
+              withAnimation(spring) { showHello = true }
               doThisAfter(1.25) {
-                withAnimation(spring) {
-                  showAppName = true
-                }
+                withAnimation(spring) { showAppName = true }
                 doThisAfter(1.0) {
-                  withAnimation(spring) {
-                    showText = true
-                  }
+                  withAnimation(spring) { showText = true }
                   doThisAfter(1.25) {
-                    withAnimation(spring) {
-                      showBtn = true
-                    }
+                    withAnimation(spring) { showBtn = true }
                   }
                 }
               }

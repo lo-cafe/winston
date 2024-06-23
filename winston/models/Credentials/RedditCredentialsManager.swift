@@ -92,7 +92,7 @@ class RedditCredentialsManager {
   
   func updateMe(altCred: RedditCredential? = nil) {
     Task(priority: .background) { await RedditAPI.shared.fetchMe(force: true, altCredential: altCred) }
-    Task(priority: .background) { await RedditAPI.shared.fetchSubs() }
+    Task(priority: .background) { await RedditAPI.shared.fetchSubsAndSyncCoreData() }
     Task(priority: .background) { await RedditAPI.shared.fetchMyMultis() }
   }
   

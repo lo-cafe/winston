@@ -8,7 +8,7 @@
 import Foundation
 import SwiftUI
 
-enum WinstonAppIcon: String, CaseIterable, Identifiable {
+enum WinstonAppIcon: String, CaseIterable, Identifiable, Hashable, Equatable {
   var id: String { self.rawValue }
   
   case standard,
@@ -62,22 +62,27 @@ enum WinstonAppIcon: String, CaseIterable, Identifiable {
   var preview: UIImage { UIImage(named: self.name ?? "iconStandard")! }
 }
 
+@Observable
 class AppIconManger {
-  var current: WinstonAppIcon {
-    return WinstonAppIcon.allCases.first(where: {
-      $0.name == UIApplication.shared.alternateIconName
-    }) ?? .standard
-  }
+  static let shared = AppIconManger()
+  private(set) var _currentAppIconName: String? = UIApplication.shared.alternateIconName
   
-  func setIcon(_ appIcon: WinstonAppIcon, completion: ((Bool) -> Void)? = nil) {
-    guard current != appIcon,
-          UIApplication.shared.supportsAlternateIcons
-    else { return }
-    UIApplication.shared.setAlternateIconName(appIcon.name) { error in
-      if let error = error {
-        print("Error setting alternate icon \(appIcon.name ?? ""): \(error.localizedDescription)")
+  var currentAppIcon: WinstonAppIcon {
+    get {
+      return WinstonAppIcon.allCases.first(where: {
+        $0.name == _currentAppIconName
+      }) ?? .standard
+    }
+    set {
+      guard _currentAppIconName != newValue.name,
+            UIApplication.shared.supportsAlternateIcons
+      else { return }
+      UIApplication.shared.setAlternateIconName(newValue.name) { error in
+        if let error = error {
+          print("Error setting alternate icon \(newValue.name ?? ""): \(error.localizedDescription)")
+        }
+        self._currentAppIconName = newValue.name
       }
-      completion?(error != nil)
     }
   }
 }
