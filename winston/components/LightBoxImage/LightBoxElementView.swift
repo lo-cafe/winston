@@ -29,7 +29,7 @@ struct LightBoxElementView: View {
     }
     .id("\(el.id)\(altSize.width + altSize.height)")
     .frame(width: .screenW)
-    .preferredColorScheme(.dark)
+    .colorScheme(.dark)
     .edgesIgnoringSafeArea(.all)
     .statusBar(hidden: true)
   }

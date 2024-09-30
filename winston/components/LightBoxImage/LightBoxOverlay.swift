@@ -30,6 +30,7 @@ struct LightBoxOverlay: View {
           .allowsHitTesting(false)
         BadgeView(avatarRequest: avatarImageRequest, saved: false, usernameColor: nil, author: badgeKit.author, fullname: badgeKit.authorFullname, userFlair: badgeKit.userFlair, created: badgeKit.created, avatarURL: nil, theme: selectedTheme.postLinks.theme.badge)
       }
+      .colorScheme(.dark)
       
       Spacer()
       
@@ -38,7 +39,7 @@ struct LightBoxOverlay: View {
           .fontSize(16, .semibold)
           .padding(.horizontal, 12)
           .padding(.vertical, 8)
-          .background(Capsule(style: .continuous).fill(.regularMaterial))
+          .background(Capsule(style: .continuous).fill(.regularMaterial).colorScheme(.dark))
           .frame(maxWidth: .infinity)
           .allowsHitTesting(false)
       }
