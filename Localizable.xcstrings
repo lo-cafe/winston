@@ -1814,6 +1814,9 @@
     "If it's taking too long, tap cancel and try again." : {
 
     },
+    "If it's taking too long, tap cancel and try again. Or you can press the button below to paste the URL reddit redirected you to." : {
+
+    },
     "Import Settings" : {
       "localizations" : {
         "de" : {
@@ -2684,6 +2687,9 @@
         }
       }
     },
+    "Paste" : {
+
+    },
     "Paste here the app ID" : {
       "localizations" : {
         "de" : {
@@ -2717,6 +2723,9 @@
       }
     },
     "Pause background audio on fullscreen" : {
+
+    },
+    "Pinned" : {
 
     },
     "Placeholder image" : {
@@ -3723,6 +3732,9 @@
 
     },
     "The authorization flow didn't work. Please tap the error button and try again or use another credential." : {
+
+    },
+    "The clipboard contains no URLs. Make sure to have properly copied the URL, tap the error button and try again." : {
 
     },
     "The credentials seem to be valid, but we need you to authorize the credentials to access your account *(yeah, it sounds redundand, sorry)*." : {

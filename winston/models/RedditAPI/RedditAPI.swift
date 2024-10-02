@@ -183,8 +183,9 @@ class RedditAPI {
         return false
     }
     
-    func getAuthCodeFromURL(_ rawUrl: URL) -> String? {
-        if let url = URL(string: rawUrl.absoluteString.replacingOccurrences(of: "winstonapp://", with: "https://app.winston.cafe/")), url.lastPathComponent == "auth-success", let query = URLComponents(url: url, resolvingAgainstBaseURL: false), let state = query.queryItems?.first(where: { $0.name == "state" })?.value, let code = query.queryItems?.first(where: { $0.name == "code" })?.value, state == lastAuthState {
+    /// This function is preferred when the URL to be evaluated is already the app.winston.cafe URL with https scheme
+    func getAuthCodeFromURL(_ url: URL) -> String? {
+      if ((url.scheme == "https" && url.host() == "app.winston.cafe") || url.scheme == "winstonapp"), url.lastPathComponent == "auth-success", let query = URLComponents(url: url, resolvingAgainstBaseURL: false), let state = query.queryItems?.first(where: { $0.name == "state" })?.value, let code = query.queryItems?.first(where: { $0.name == "code" })?.value, state == lastAuthState {
             //      let res = await injectFirstAccessTokenInto(&credential, authCode: code)
             //      lastAuthState = nil
             //      return res
@@ -193,6 +194,15 @@ class RedditAPI {
             return nil
         }
     }
+  
+//    /// This function is preferred when the URL to be evaluated is already the app.winston.cafe URL with https scheme
+//    func getAuthCodeFromURLWithHTTPS(_ url: URL) -> String? {
+//      if url.lastPathComponent == "auth-success", let query = URLComponents(url: url, resolvingAgainstBaseURL: false), let state = query.queryItems?.first(where: { $0.name == "state" })?.value, let code = query.queryItems?.first(where: { $0.name == "code" })?.value, state == lastAuthState {
+//        return code
+//      } else {
+//        return nil
+//      }
+//    }
     
     func  getAuthorizationCodeURL(_ appID: String) -> URL {
         let response_type: String = "code"

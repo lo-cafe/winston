@@ -16,6 +16,7 @@ struct EditCredWhatToDoBannerBody: View, Equatable {
   var advanced: Bool
   var openURL: () -> ()
   @Binding var completionStatus: EditCredWhatToDoBanner.BannerStatus
+  @Binding var draftCredential: RedditCredential
   @Environment(\.colorScheme) private var cs
   
   var body: some View {
@@ -35,7 +36,7 @@ struct EditCredWhatToDoBannerBody: View, Equatable {
             Text("The credentials seem to be valid, but we need you to authorize the credentials to access your account *(yeah, it sounds redundand, sorry)*.").opacity(0.8)
             PressableButton(animation: .easeOut(duration: 0.2)) {
               switch completionStatus {
-              case .fetchError, .wrongUrl, .waitingForCallback: withAnimation(.spring) { completionStatus = .onHold }
+              case .fetchError, .wrongUrl, .noUrl, .waitingForCallback: withAnimation(.spring) { completionStatus = .onHold }
               case .success: break
               case .onHold:
                 withAnimation(.spring) { completionStatus = .waitingForCallback }
@@ -54,7 +55,7 @@ struct EditCredWhatToDoBannerBody: View, Equatable {
                   case .waitingForCallback:
                     ProgressView()
                     Text("Cancel")
-                  case .wrongUrl, .fetchError:
+                  case .wrongUrl, .fetchError, .noUrl:
                     BetterLottieView("error", size: 19, initialDelay: 0.2, color: .white)
                     Text("Something went wrong")
                   }
@@ -76,9 +77,15 @@ struct EditCredWhatToDoBannerBody: View, Equatable {
       Group {
         switch completionStatus {
         case .onHold, .success: EmptyView()
-        case .waitingForCallback: Text("If it's taking too long, tap cancel and try again.")
+        case .waitingForCallback:
+          if advanced {
+            Text("If it's taking too long, tap cancel and try again. Or you can press the button below to paste the URL reddit redirected you to.")
+          } else {
+            Text("If it's taking too long, tap cancel and try again.")
+          }
         case .wrongUrl: Text("Something wrong with the information we received from Reddit. Please tap the error button and try again.")
         case .fetchError: Text("The authorization flow didn't work. Please tap the error button and try again or use another credential.")
+        case .noUrl: Text("The clipboard contains no URLs. Make sure to have properly copied the URL, tap the error button and try again.")
         }
       }
       .opacity(0.65)
@@ -86,6 +93,52 @@ struct EditCredWhatToDoBannerBody: View, Equatable {
       .transition(.scaleAndBlur)
       .id("details-what-to-do-\(completionStatus.rawValue)")
       
+      if advanced && (completionStatus == .waitingForCallback) {
+        VStack(alignment: .leading/*, spacing: 12*/) {
+          PressableButton(animation: .easeOut(duration: 0.2)) {
+            if UIPasteboard.general.hasURLs {
+              let url = UIPasteboard.general.url!
+              
+              Task(priority: .background) {
+                var tempCred = draftCredential
+                if let authToken = RedditAPI.shared.getAuthCodeFromURL(url) {
+                  let success = await RedditAPI.shared.injectFirstAccessTokenInto(&tempCred, authCode: authToken)
+                  await MainActor.run {
+                    withAnimation(.spring) {
+                      completionStatus = success ? .success : .fetchError
+                    }
+                    if completionStatus == .success {
+                      doThisAfter(2) {
+                        withAnimation { draftCredential = tempCred }
+                      }
+                    }
+                  }
+                } else {
+                  await MainActor.run {
+                    withAnimation(.spring) {
+                      completionStatus = .wrongUrl
+                    }
+                  }
+                }
+              }
+            } else {
+              completionStatus = .noUrl
+            }
+          } label: { pressed in
+            HStack(spacing: 4) {
+              Image(systemName: "doc.on.clipboard.fill")
+              Text("Paste")
+            }
+            .fontSize(16, .semibold)
+            .padding(.horizontal, 16)
+            .padding(.vertical, 12)
+            .frame(maxWidth: .infinity)
+            .background(RR(12, .pink))
+            .foregroundStyle(Color.primary)
+            .brightness(!pressed ? 0 : cs == .dark ? 0.05 : -0.05)
+          }
+        }
+      }
     }
     .fontSize(15)
     .animation(.spring, value: completionStatus)
@@ -104,7 +157,7 @@ struct EditCredWhatToDoBanner: View, Equatable {
   @Environment(\.openURL) private var openURL
   @State private var completionStatus: BannerStatus = .onHold
   
-  enum BannerStatus: String { case fetchError, wrongUrl, success, waitingForCallback, onHold }
+  enum BannerStatus: String { case fetchError, wrongUrl, success, waitingForCallback, onHold, noUrl }
   
   var body: some View {
     let status = draftCredential.validationStatus
@@ -122,7 +175,7 @@ struct EditCredWhatToDoBanner: View, Equatable {
         
         EditCredWhatToDoBannerBody(status: status, advanced: advanced, openURL: {
           openURL(RedditAPI.shared.getAuthorizationCodeURL(draftCredential.apiAppID))
-        }, completionStatus: $completionStatus).equatable()
+        }, completionStatus: $completionStatus, draftCredential: $draftCredential).equatable()
         .transition(.identity)
         .id(statusMeta.label)
         .padding(EdgeInsets(top: 0, leading: padding.leading, bottom: padding.bottom, trailing: padding.trailing))
