@@ -18,4 +18,5 @@ class Caches {
   static let postsAttrStr = BaseCache<AttributedString>(cacheLimit: 100)
   static let videos = BaseCache<SharedVideo>(cacheLimit: 50)
   static let streamable = BaseCache<StreamableCached>(cacheLimit: 100)
+  static let redgifs = BaseCache<RedgifsCached>(cacheLimit: 100)
 }

@@ -109,7 +109,10 @@ func getPostDimensions(post: Post, winstonData: PostWinstonData? = nil, columnWi
           }
         case .video(let video):
           ACC_mediaSize = defaultMediaSize(video.size)
+        // Streamable and redgifs won't be ever considered, might be better to use a default case
         case .streamable(_):
+          ACC_mediaSize = CGSize(width: contentWidth, height: 100)
+        case .redgifs(_):
           ACC_mediaSize = CGSize(width: contentWidth, height: 100)
         case .yt(let ytMediaExtracted):
           let size = ytMediaExtracted.size

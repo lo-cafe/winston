@@ -74,12 +74,111 @@ struct StreamableCached: Equatable {
   }
 }
 
+struct RedgifsExtracted: Equatable {
+  static func == (lhs: RedgifsExtracted, rhs: RedgifsExtracted) -> Bool {
+      lhs.id == rhs.id
+  }
+  
+  let id: String
+  
+  init(id: String) {
+    self.id = id
+  }
+}
+
+struct RedgifsCached: Equatable {
+  static func == (lhs: RedgifsCached, rhs: RedgifsCached) -> Bool {
+    lhs.url == rhs.url && lhs.size == rhs.size
+  }
+  
+  let url: URL
+  let size: CGSize
+  
+  init(url: URL, size: CGSize) {
+    self.url = url
+    self.size = size
+  }
+}
+
+enum RedgifsError: Error {
+  case tokenNonExistent
+}
+
+class RedgifsClient {
+  static let shared = RedgifsClient()
+  
+  private var token: String?
+  private var tokenExpiry: Date?
+  
+  private init() {}
+  
+  func refreshToken() async throws {
+    let token: String = try await RedgifsClient.getToken()
+    self.token = token
+    tokenExpiry = await RedgifsClient.getTokenExpiry(token: token)
+  }
+  
+  func getToken() async throws -> String {
+    if token == nil {
+      try await refreshToken()
+    } else if let tokenExpiry = tokenExpiry, Date.now > tokenExpiry {
+      try await refreshToken()
+    }
+    
+    guard let token else { throw RedgifsError.tokenNonExistent }
+    
+    return token
+  }
+  
+  private struct JWTData: Decodable {
+    let expiry: Date
+    
+    enum CodingKeys: String, CodingKey {
+      case expiry = "exp"
+    }
+  }
+  
+  private struct TokenResponse: Decodable {
+    let token: String
+    let expiry: Date?
+  }
+  
+  static func getTokenExpiry(token: String) async -> Date? {
+    // Get the data part of a JWT, Base64 Decode that into a JSON string, decode that JSON and extract the expiry
+    let splitToken = token.components(separatedBy: ".")
+    if splitToken.count == 3, let decodedData = Data(base64Encoded: splitToken[1]) {
+      let jsonDecoder = JSONDecoder()
+      jsonDecoder.dateDecodingStrategy = .secondsSince1970
+
+      guard let jwtData = try? jsonDecoder.decode(JWTData.self, from: decodedData) else {
+        return nil
+      }
+      
+      return jwtData.expiry
+    } else {
+      return nil
+    }
+  }
+  
+  static func getToken() async throws -> String {
+    let headers: HTTPHeaders = [.accept("application/json"),.defaultUserAgent,.defaultAcceptEncoding,.defaultAcceptLanguage]
+    
+    let data = try await AF.request("https://api.redgifs.com/v2/auth/temporary", headers: headers)
+      .validate()
+      .serializingDecodable(TokenResponse.self)
+      .value
+    
+    return data.token
+  }
+}
+
 enum MediaExtractedType: Equatable {
   case link(PreviewModel)
   case video(SharedVideo)
   case imgs([ImgExtracted])
   case yt(YTMediaExtracted)
   case streamable(StreamableExtracted)
+  case redgifs(RedgifsExtracted)
   case repost(Post)
   case post(EntityExtracted<PostData, PostWinstonData>?)
   case comment(EntityExtracted<CommentData, CommentWinstonData>?)
@@ -87,10 +186,23 @@ enum MediaExtractedType: Equatable {
   case user(EntityExtracted<UserData, AnyHashable>?)
 }
 
+fileprivate func urlComponentsExtractor(data: PostData) -> (URLComponents?, [String]) {
+  let actualURL = data.url.hasPrefix("/r/") || data.url.hasPrefix("/u/") ? "https://reddit.com\(data.url)" : data.url
+  guard let urlComponents = URLComponents(string: actualURL) else {
+    return (nil, [])
+  }
+  
+  let pathComponents = urlComponents.path.components(separatedBy: "/").filter({ !$0.isEmpty })
+  
+  return (urlComponents, pathComponents)
+}
 
 // ORDER MATTERS!
 func mediaExtractor(compact: Bool, contentWidth: Double = .screenW, _ data: PostData, theme: WinstonTheme? = nil) -> MediaExtractedType? {
   guard !data.is_self else { return nil }
+  
+  var urlComponents: URLComponents?
+  var pathComponents: [String] = []
 
   let contentWidth = contentWidth - ((theme?.postLinks.theme.innerPadding.horizontal ?? 0) * 2) - ((theme?.postLinks.theme.outerHPadding ?? 0) * 2)
   
@@ -121,6 +233,20 @@ func mediaExtractor(compact: Bool, contentWidth: Double = .screenW, _ data: Post
       return nil
     }
     return .imgs(galleryArr)
+  }
+  
+  if data.domain.contains("streamable.com") {
+    return .streamable(StreamableExtracted(url: data.url))
+  }
+  
+  if data.domain.contains("redgifs.com") {
+    (urlComponents, pathComponents) = urlComponentsExtractor(data: data)
+    
+    if let urlComponents = urlComponents {
+      if urlComponents.host == "www.redgifs.com" || urlComponents.host == "v3.redgifs.com", pathComponents.count >= 2, pathComponents[0] == "watch" || pathComponents[0] == "ifr" {
+        return .redgifs(RedgifsExtracted(id: pathComponents[1]))
+      }
+    }
   }
   
   if let videoPreview = data.preview?.reddit_video_preview, let url = videoPreview.hls_url, let videoURL = URL(string: url), let width = videoPreview.width, let height = videoPreview.height  {
@@ -175,17 +301,21 @@ func mediaExtractor(compact: Bool, contentWidth: Double = .screenW, _ data: Post
   if VIDEOS_FORMATS.contains(where: { data.url.hasSuffix($0) }), let url = URL(string: data.url) {
     return .video(SharedVideo.get(url: url, size: CGSize(width: 0, height: 0)))
   }
-  
-  if data.url.contains("streamable.com") {
-    return .streamable(StreamableExtracted(url: data.url))
+
+  if urlComponents == nil {
+    (urlComponents, pathComponents) = urlComponentsExtractor(data: data)
   }
   
-  let actualURL = data.url.hasPrefix("/r/") || data.url.hasPrefix("/u/") ? "https://reddit.com\(data.url)" : data.url
-  guard let urlComponents = URLComponents(string: actualURL) else {
+  guard let urlComponents else {
     return nil
   }
   
-  let pathComponents = urlComponents.path.components(separatedBy: "/").filter({ !$0.isEmpty })
+//  let actualURL = data.url.hasPrefix("/r/") || data.url.hasPrefix("/u/") ? "https://reddit.com\(data.url)" : data.url
+//  guard let urlComponents = URLComponents(string: actualURL) else {
+//    return nil
+//  }
+//  
+//  let pathComponents = urlComponents.path.components(separatedBy: "/").filter({ !$0.isEmpty })
   
   if urlComponents.host?.hasSuffix("reddit.com") == true || urlComponents.host?.hasSuffix("app.winston.cafe") == true, pathComponents.count > 1 {
     switch pathComponents[0] {
@@ -263,4 +393,54 @@ struct StreamableAPIFile: Codable {
   let url: String
   let width: Int
   let height: Int
+}
+
+struct RedgifsResponse: Decodable {
+  let created: Date?
+  let width: Int?
+  let height: Int?
+  let username: String
+  let videoURL: String
+  
+  enum OuterKeys: String, CodingKey {
+    case gif
+  }
+  
+  enum CodingKeys: String, CodingKey {
+    case created = "createDate"
+    case width, height
+    case username = "userName"
+    case URLs = "urls"
+  }
+  
+  enum URLCodingKeys: String, CodingKey {
+    case thumbnail
+    case videoThumbnail = "vthumbnail"
+    case standardDefinition = "sd"
+    case highDefinition = "hd"
+    case poster
+  }
+  
+  init(from decoder: any Decoder) throws {
+    let outerContainer = try decoder.container(keyedBy: OuterKeys.self)
+    
+    let container = try outerContainer.nestedContainer(keyedBy: CodingKeys.self, forKey: .gif)
+    
+    if let decodedDate = try? container.decode(Int.self, forKey: .created) {
+      created = Date(timeIntervalSince1970: Double(decodedDate))
+    } else {
+      created = nil
+    }
+    width = try? container.decode(Int.self, forKey: .width)
+    height = try? container.decode(Int.self, forKey: .height)
+    username = try container.decode(String.self, forKey: .username)
+    
+    let imageContainer = try container.nestedContainer(
+      keyedBy: URLCodingKeys.self,
+      forKey: .URLs
+    )
+    
+    // Logic here can be alternated between SD and HD video based on metrics or user prefs
+    videoURL = try imageContainer.decode(String.self, forKey: .highDefinition)
+  }
 }

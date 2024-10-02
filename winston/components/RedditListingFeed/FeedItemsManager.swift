@@ -136,6 +136,8 @@ class FeedItemsManager<S> {
                         newPartial.append(video.thumbnailRequest)
                     case .streamable(_):
                         break
+                    case .redgifs(_):
+                        break
                     case .repost(_):
                         break
                     case .post(_):

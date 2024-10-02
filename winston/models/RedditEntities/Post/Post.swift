@@ -74,6 +74,29 @@ extension Post {
             }
           }
         }
+      case .redgifs(let redgif):
+        if let redgifCached = Caches.redgifs.get(key: redgif.id) {
+          let sharedVideo = SharedVideo.get(url: redgifCached.url, size: redgifCached.size)
+          
+          extractedMedia = .video(sharedVideo)
+          extractedMediaForcedNormal = .video(sharedVideo)
+        } else {
+          Task(priority: .background) {
+            if let video = await self.loadRedgifsMedia(redgif: redgif) {
+              Caches.redgifs.addKeyValue(key: redgif.id, data: { RedgifsCached(url: video.url, size: video.size) }, expires: Date().dateByAdding(1, .day).date)
+              
+              DispatchQueue.main.async {
+                withAnimation {
+                  self.winstonData?.extractedMedia = .video(video)
+                  self.winstonData?.extractedMediaForcedNormal = .video(video)
+                  
+                  self.winstonData?.postDimensions = getPostDimensions(post: self, winstonData: self.winstonData, columnWidth: contentWidth, secondary: secondary, rawTheme: theme, subId: sub?.id)
+                  self.winstonData?.postDimensionsForcedNormal = getPostDimensions(post: self, winstonData: self.winstonData, columnWidth: contentWidth, secondary: secondary, rawTheme: theme, compact: false)
+                }
+              }
+            }
+          }
+        }
       default:
         break
       }
@@ -236,6 +259,41 @@ extension Post {
         }
       }
     case .failure:
+      return nil
+    }
+    
+    return nil
+  }
+  
+  func loadRedgifsMedia(redgif: RedgifsExtracted) async -> SharedVideo? {
+    var token: String
+    do {
+      token = try await RedgifsClient.shared.getToken()
+    } catch {
+      print("Error getting RedGifs token: \(error)")
+      return nil
+    }
+    
+    let headers: HTTPHeaders = [.authorization(bearerToken: token), .accept("application/json"),.defaultUserAgent,.defaultAcceptEncoding,.defaultAcceptLanguage]
+
+    let response = await AF.request("https://api.redgifs.com/v2/gifs/\(redgif.id)", headers: headers)
+      .validate()
+      .serializingDecodable(RedgifsResponse.self).response
+    
+    switch response.result {
+    case .success(let data):
+      if let width = data.width, let height = data.height {
+        if let videoURL = URL(string: data.videoURL) {
+          let size = CGSize(width: width, height: height)
+          return SharedVideo.get(url: videoURL, size: size)
+        }
+      } else {
+        // Perhaps load the video and get the width and height?
+        return nil
+      }
+    // Doesn't account for case where Redgifs client failed to parse API token expiry, and as such token expires and req fails
+    case .failure(let failure):
+      print("Error loading RedGifs video with reason \(String(data: response.data ?? Data(), encoding: .utf8))")
       return nil
     }
     
