@@ -7,6 +7,7 @@
 
 import SwiftUI
 import Defaults
+import CoreData
 
 struct SubredditsStack: View {
   @State var router: Router
@@ -14,9 +15,24 @@ struct SubredditsStack: View {
   @Default(.GeneralDefSettings) private var generalDefSettings // handle default feed selection routing
   @State private var columnVisibility: NavigationSplitViewVisibility = .automatic
   @State private var sidebarSize: CGSize = .zero
-  
+  @Environment(\.managedObjectContext) private var viewContext  
+  @FetchRequest var multis: FetchedResults<CachedMulti>
+
   init(router: Router) {
     self._router = .init(initialValue: router)
+
+    let fetchRequest: NSFetchRequest<CachedMulti> = CachedMulti.fetchRequest()
+    fetchRequest.sortDescriptors = []
+    
+    let behaviorDefSettings = Defaults[.BehaviorDefSettings]
+    if behaviorDefSettings.preferenceDefaultFeed == "multireddit" && !behaviorDefSettings.preferenceDefaultFeedName.isEmpty {
+      fetchRequest.predicate = NSPredicate(format: "path = %@", behaviorDefSettings.preferenceDefaultFeedName)
+      fetchRequest.fetchLimit = 1
+    } else {
+      fetchRequest.predicate = NSPredicate(format: "FALSEPREDICATE")
+      fetchRequest.fetchLimit = 0
+    }
+    self._multis = .init(fetchRequest: fetchRequest)
   }
   
   var postContentWidth: CGFloat { .screenW - (!IPAD || columnVisibility == .detailOnly ? 0 : sidebarSize.width) }
@@ -76,8 +92,15 @@ struct SubredditsStack: View {
           if !loaded {
             // MARK: Route to default feed
             if behaviorDefSettings.preferenceDefaultFeed != "subList" && router.path.count == 0 { // we are in subList, can ignore
-              let tempSubreddit = Subreddit(id: behaviorDefSettings.preferenceDefaultFeed)
-              router.navigateTo(.reddit(.subFeed(tempSubreddit)))
+
+              if behaviorDefSettings.preferenceDefaultFeed == "multireddit" {
+                if let multi = multis.first {
+                  router.navigateTo(.reddit(.multiFeed(Multi(data: MultiData(entity: multi)))))
+                }
+              } else {
+                let tempSubreddit = Subreddit(id: behaviorDefSettings.preferenceDefaultFeed)
+                router.navigateTo(.reddit(.subFeed(tempSubreddit)))
+              }
             }
 
             withAnimation {

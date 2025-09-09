@@ -162,7 +162,7 @@ struct VibrateModifier<T: Equatable>: ViewModifier {
       do {
         engine = try CHHapticEngine()
       } catch let error {
-        fatalError("Engine Creation Error: \(error)")
+        print("Engine Creation Error: \(error)")
       }
       guard let engine = engine else { return }
       

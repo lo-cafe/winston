@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		32EC8EC72E6FB1E200EFA036 /* MultiredditPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32EC8EC62E6FB1E200EFA036 /* MultiredditPicker.swift */; };
 		65010D032AC70ADD00A8F611 /* getDownloadURL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65010D022AC70ADD00A8F611 /* getDownloadURL.swift */; };
 		650ACAFC2A87A36900A7C600 /* calcVotes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 650ACAFB2A87A36900A7C600 /* calcVotes.swift */; };
 		6514FFEC2AFD01520051D264 /* WhatsNewKit in Frameworks */ = {isa = PBXBuildFile; productRef = 6514FFEB2AFD01520051D264 /* WhatsNewKit */; };
@@ -605,6 +606,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		32EC8EC62E6FB1E200EFA036 /* MultiredditPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiredditPicker.swift; sourceTree = "<group>"; };
 		65010D022AC70ADD00A8F611 /* getDownloadURL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = getDownloadURL.swift; sourceTree = "<group>"; };
 		650ACAFB2A87A36900A7C600 /* calcVotes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = calcVotes.swift; sourceTree = "<group>"; };
 		652011F92AC2C46C005DD899 /* themeStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = themeStore.swift; sourceTree = "<group>"; };
@@ -1332,6 +1334,7 @@
 				653E2DA42A8E278800833556 /* GeneralPanel.swift */,
 				EC91C85B2AB99E5600F2AD30 /* FilteredSubredditsSettings.swift */,
 				ECF5B3082AC83C8E00355589 /* AppIconSetting.swift */,
+				32EC8EC62E6FB1E200EFA036 /* MultiredditPicker.swift */,
 			);
 			path = views;
 			sourceTree = "<group>";
@@ -3287,6 +3290,7 @@
 				EC3188142A92A43300CB3738 /* fetchMultiInfo.swift in Sources */,
 				EC12D71A2A59C81A00C300B3 /* CommentLinkContent.swift in Sources */,
 				ECE08B592AA9A3C300F84DC9 /* WinstonTheme.swift in Sources */,
+				32EC8EC72E6FB1E200EFA036 /* MultiredditPicker.swift in Sources */,
 				ECE08B5E2AA9C94800F84DC9 /* CommentsTheme.swift in Sources */,
 				ECE449832A68A22200E2A3B7 /* favorite.swift in Sources */,
 				652F240A2B0E222B00BB95A3 /* SpoilerModifer.swift in Sources */,
@@ -3754,8 +3758,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/sindresorhus/Defaults";
 			requirement = {
-				branch = main;
-				kind = branch;
+				kind = upToNextMajorVersion;
+				minimumVersion = 9.0.3;
 			};
 		};
 		EC593B072A47B42D002D6454 /* XCRemoteSwiftPackageReference "KeychainAccess" */ = {

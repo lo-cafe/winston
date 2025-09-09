@@ -11,6 +11,7 @@ struct BehaviorDefSettings: Equatable, Hashable, Codable, Defaults.Serializable 
   var openYoutubeApp: Bool = false
   var enableSwipeAnywhere: Bool = false
   var preferenceDefaultFeed: String = "subList"
+  var preferenceDefaultFeedName: String = ""
   var doLiveText: Bool = true
   var iCloudSyncCredentials: Bool = true
 }

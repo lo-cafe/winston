@@ -952,6 +952,9 @@
         }
       }
     },
+    "Default Multireddit" : {
+
+    },
     "Default mute fullscreen videos" : {
 
     },
@@ -2390,6 +2393,9 @@
         }
       }
     },
+    "Multireddit" : {
+
+    },
     "Multis" : {
       "localizations" : {
         "de" : {
@@ -2482,6 +2488,9 @@
       }
     },
     "No credential" : {
+
+    },
+    "None" : {
 
     },
     "Nothing around here :(" : {

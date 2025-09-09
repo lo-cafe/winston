@@ -58,8 +58,14 @@ struct BehaviorPanel: View {
             Text("Popular").tag("popular")
             Text("All").tag("all")
             Text("Subscription List").tag("subList")
+            Text("Multireddit").tag("multireddit")
           }
           .pickerStyle(DefaultPickerStyle())
+
+          if behaviorDefSettings.preferenceDefaultFeed == "multireddit" {
+            MultiredditPicker()
+              .pickerStyle(.navigationLink)
+          }
           
           WSNavigationLink(.setting(.filteredSubreddits), "Filtered Subreddits")
         }
