@@ -15,7 +15,14 @@ class MarkdownUtil {
   
   static func formatForMarkdown(_ text: String, showSpoiler: Bool = false) -> String {
     var processedText = text
-    
+    let regex = /```(.*?)```/.dotMatchesNewlines()
+    let matches = processedText.matches(of: regex )
+    var mc = 0
+    for match in matches {
+      processedText = processedText.replacingOccurrences(of: match.output.0, with: "@@CODEBLOCK##\(mc)@@")
+      mc+=1
+    }
+
     // Replace http:// or https:// in existing markdown links
     processedText = processedText.replacingOccurrences(
       of: "\\[([^\\]]+)\\]\\((https?://)(\\S+)(?:\\))",
@@ -86,7 +93,11 @@ class MarkdownUtil {
       }
       
     }
-        
+    while mc > 0 {
+      mc-=1
+      processedText = processedText.replacingOccurrences(of: "@@CODEBLOCK##\(mc)@@", with: matches[mc].output.0)
+    }
     return processedText
   }
 }
+
